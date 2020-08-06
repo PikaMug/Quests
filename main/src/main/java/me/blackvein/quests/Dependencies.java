@@ -18,16 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import me.blackvein.quests.reflect.denizen.DenizenAPI;
-import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
-import me.blackvein.quests.util.Lang;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import net.citizensnpcs.api.CitizensPlugin;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import ro.nicuch.citizensbooks.CitizensBooksAPI;
-import ro.nicuch.citizensbooks.CitizensBooksPlugin;
-
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
@@ -39,6 +29,15 @@ import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 
 import de.erethon.dungeonsxl.DungeonsXL;
+import me.blackvein.quests.reflect.denizen.DenizenAPI;
+import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
+import me.blackvein.quests.util.Lang;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import net.citizensnpcs.api.CitizensPlugin;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import ro.nicuch.citizensbooks.CitizensBooksAPI;
+import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
 public class Dependencies {
     
@@ -56,7 +55,7 @@ public class Dependencies {
     private static DungeonsXL dungeons = null;
     private static PartiesAPI parties = null;
     
-    public Dependencies(Quests plugin) {
+    public Dependencies(final Quests plugin) {
         this.plugin = plugin;
     }
     
@@ -90,7 +89,7 @@ public class Dependencies {
             try {
                 Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
                 mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Unsupported version
             }
         }
@@ -110,7 +109,7 @@ public class Dependencies {
                 phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
                 plugin.getLogger().info("Sucessfully linked Quests with PhatLoots " 
                         + phatLoots.getDescription().getVersion());
-            } catch (NoClassDefFoundError e) {
+            } catch (final NoClassDefFoundError e) {
                 plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
             }
         }
@@ -130,7 +129,7 @@ public class Dependencies {
                 citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
                 plugin.getLogger().info("Sucessfully linked Quests with Citizens " 
                         + citizens.getDescription().getVersion());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
         }
@@ -168,14 +167,14 @@ public class Dependencies {
             try {
                 Class.forName("com.alessiodp.parties.api.Parties");
                 parties = Parties.getApi();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Unsupported version
             }
         }
         return parties;
     }
     
-    public boolean isPluginAvailable(String pluginName) {
+    public boolean isPluginAvailable(final String pluginName) {
         if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
             if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
                 plugin.getLogger().warning(pluginName 
@@ -204,19 +203,19 @@ public class Dependencies {
 
     private boolean setupEconomy() {
         try {
-            RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
+            final RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
                     .getRegistration(net.milkbowl.vault.economy.Economy.class);
             if (economyProvider != null) {
                 economy = economyProvider.getProvider();
             }
             return (economy != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
 
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
+        final RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
@@ -224,7 +223,7 @@ public class Dependencies {
         return (permission != null);
     }
     
-    public String getCurrency(boolean plural) {
+    public String getCurrency(final boolean plural) {
         if (getVaultEconomy() == null) {
             return Lang.get("money");
         }
@@ -243,42 +242,42 @@ public class Dependencies {
         }
     }
     
-    public boolean runDenizenScript(String scriptName, Quester quester) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
     }
     
-    public Location getNPCLocation(int id) {
+    public Location getNPCLocation(final int id) {
         return citizens.getNPCRegistry().getById(id).getStoredLocation();
     }
 
-    public String getNPCName(int id) {
+    public String getNPCName(final int id) {
         return citizens.getNPCRegistry().getById(id).getName();
     }
     
-    public int getMcmmoSkillLevel(SkillType st, String player) {
-        McMMOPlayer mPlayer = UserManager.getPlayer(player);
+    public int getMcmmoSkillLevel(final SkillType st, final String player) {
+        final McMMOPlayer mPlayer = UserManager.getPlayer(player);
         if (mPlayer == null) {
             return -1;
         }
         return mPlayer.getProfile().getSkillLevel(st);
     }
 
-    public Hero getHero(UUID uuid) {
-        Player p = plugin.getServer().getPlayer(uuid);
+    public Hero getHero(final UUID uuid) {
+        final Player p = plugin.getServer().getPlayer(uuid);
         if (p == null) {
             return null;
         }
         return heroes.getCharacterManager().getHero(p);
     }
 
-    public boolean testPrimaryHeroesClass(String primaryClass, UUID uuid) {
-        Hero hero = getHero(uuid);
+    public boolean testPrimaryHeroesClass(final String primaryClass, final UUID uuid) {
+        final Hero hero = getHero(uuid);
         return hero.getHeroClass().getName().equalsIgnoreCase(primaryClass);
     }
 
     @SuppressWarnings("deprecation")
-    public boolean testSecondaryHeroesClass(String secondaryClass, UUID uuid) {
-        Hero hero = getHero(uuid);
+    public boolean testSecondaryHeroesClass(final String secondaryClass, final UUID uuid) {
+        final Hero hero = getHero(uuid);
         return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
     }
 }

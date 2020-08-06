@@ -14,6 +14,7 @@ package me.blackvein.quests.particle;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -43,8 +44,8 @@ class ParticleProvider_Bukkit extends ParticleProvider {
     }
 
     @Override
-    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ, 
-            float speed, int count, int[] data) {
+    void spawnParticle(final Player player, final Location location, final Object particle, final float offsetX, final float offsetY, final float offsetZ, 
+            final float speed, final int count, final int[] data) {
         player.spawnParticle((Particle) particle, location, count, offsetX, offsetY, offsetZ, speed, data);
     }
 }

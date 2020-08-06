@@ -17,8 +17,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import me.blackvein.quests.Quests;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -32,6 +30,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 
+import me.blackvein.quests.Quests;
+
 @SuppressWarnings("deprecation")
 public class LocaleQuery {
     private static Class<?> craftMagicNumbers = null;
@@ -39,27 +39,27 @@ public class LocaleQuery {
     private final Quests plugin;
     private static boolean oldVersion = false;
     private static boolean hasBasePotionData = false;
-    private Map<String, String> oldBlocks = getBlockKeys();
-    private Map<String, String> oldItems = getItemKeys();
-    private Map<String, String> oldPotions_18 = getPotionKeys_18();
-    private Map<String, String> oldPotions = getPotionKeys();
-    private Map<String, String> oldLingeringPotions = getLingeringPotionKeys();
-    private Map<String, String> oldSplashPotions = getSplashPotionKeys();
-    private Map<String, String> oldEntities = getEntityKeys();
+    private final Map<String, String> oldBlocks = getBlockKeys();
+    private final Map<String, String> oldItems = getItemKeys();
+    private final Map<String, String> oldPotions_18 = getPotionKeys_18();
+    private final Map<String, String> oldPotions = getPotionKeys();
+    private final Map<String, String> oldLingeringPotions = getLingeringPotionKeys();
+    private final Map<String, String> oldSplashPotions = getSplashPotionKeys();
+    private final Map<String, String> oldEntities = getEntityKeys();
     
-    public LocaleQuery(Quests plugin) {
+    public LocaleQuery(final Quests plugin) {
         this.plugin = plugin;
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         try {
             craftMagicNumbers = Class.forName("org.bukkit.craftbukkit.{v}.util.CraftMagicNumbers"
                     .replace("{v}", version));
             itemClazz = Class.forName("net.minecraft.server.{v}.Item".replace("{v}", version));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
     
-    public void setBukkitVersion(String bukkitVersion) {
+    public void setBukkitVersion(final String bukkitVersion) {
         oldVersion = isBelow113(bukkitVersion);
         if (Material.getMaterial("LINGERING_POTION") != null) {
             // Bukkit version is 1.9+
@@ -84,13 +84,13 @@ public class LocaleQuery {
      * @param enchantments Enchantments for the item being translated
      * @param meta ItemMeta for the item being translated
      */
-    public boolean sendMessage(Player player, String message, Material material, short durability, 
-            Map<Enchantment, Integer> enchantments, ItemMeta meta) {
+    public boolean sendMessage(final Player player, final String message, final Material material, final short durability, 
+            final Map<Enchantment, Integer> enchantments, final ItemMeta meta) {
         if (player == null || material == null) {
             return false;
         }
         String matKey = "";
-        String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+        final String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
         if (oldVersion) {
             if (material.isBlock()) {
                 if (durability >= 0 && oldBlocks.containsKey(material.name() + "." + durability)) {
@@ -102,7 +102,7 @@ public class LocaleQuery {
                     return false;
                 }
             } else {
-                ItemStack i = new ItemStack(material, 1, durability);
+                final ItemStack i = new ItemStack(material, 1, durability);
                 if (durability >= 0 && i.getItemMeta() instanceof PotionMeta) {
                     if (hasBasePotionData) {
                         if (material.equals(Material.POTION)) {
@@ -128,7 +128,7 @@ public class LocaleQuery {
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (Enchantment e : enchantments.keySet()) {
+                for (final Enchantment e : enchantments.keySet()) {
                     enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
                         .replace("environmental", "all").replace("protection", "protect");
                     count++;
@@ -140,7 +140,7 @@ public class LocaleQuery {
             } else {
                 try {
                     matKey = queryMaterial(material);
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     plugin.getLogger().severe("Unable to query Material: " + material.name());
                     return false;
                 }
@@ -153,7 +153,7 @@ public class LocaleQuery {
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (Enchantment e : enchantments.keySet()) {
+                for (final Enchantment e : enchantments.keySet()) {
                     enchKeys[count] = "enchantment." + e.getKey().toString().toLowerCase().replace(":", ".");
                     count++;
                 }
@@ -161,7 +161,7 @@ public class LocaleQuery {
         }
         String msg = message.replace("<item>", "\",{\"translate\":\"" + matKey + "\"},\"");
         if (enchKeys != null && enchKeys.length > 0) {
-            for (String ek : enchKeys) {
+            for (final String ek : enchKeys) {
                 msg = msg.replace("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
             }
         }
@@ -184,8 +184,8 @@ public class LocaleQuery {
      * @param durability Durability for the item being translated
      * @param enchantments Enchantments for the item being translated
      */
-    public boolean sendMessage(Player player, String message, Material material, short durability, 
-            Map<Enchantment, Integer> enchantments) {
+    public boolean sendMessage(final Player player, final String message, final Material material, final short durability, 
+            final Map<Enchantment, Integer> enchantments) {
         return sendMessage(player, message, material, durability, enchantments, null);
     }
     
@@ -200,15 +200,15 @@ public class LocaleQuery {
      * @param message The message to be sent to the player
      * @param enchantments Enchantments for the item being translated
      */
-    public boolean sendMessage(Player player, String message, Map<Enchantment, Integer> enchantments) {
+    public boolean sendMessage(final Player player, final String message, final Map<Enchantment, Integer> enchantments) {
         if (enchantments == null) {
             return false;
         }
-        String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+        final String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
         if (oldVersion) {
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (Enchantment e : enchantments.keySet()) {
+                for (final Enchantment e : enchantments.keySet()) {
                     enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
                         .replace("environmental", "all").replace("protection", "protect");
                     count++;
@@ -217,15 +217,15 @@ public class LocaleQuery {
         } else {
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (Enchantment e : enchantments.keySet()) {
+                for (final Enchantment e : enchantments.keySet()) {
                     enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
                     count++;
                 }
             }
         }
-        String msg = message;
+        final String msg = message;
         if (enchKeys != null && enchKeys.length > 0) {
-            for (String ek : enchKeys) {
+            for (final String ek : enchKeys) {
                 msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
             }
         }
@@ -245,7 +245,7 @@ public class LocaleQuery {
      * @param type The entity type to be translated
      * @param extra Career, Ocelot, or Rabbit type if applicable
      */
-    public boolean sendMessage(Player player, String message, EntityType type, String extra) {
+    public boolean sendMessage(final Player player, final String message, final EntityType type, final String extra) {
         if (type == null ) {
             return false;
         }
@@ -268,7 +268,7 @@ public class LocaleQuery {
                 key = "entity.minecraft." + type.toString().toLowerCase();
             }
         }
-        String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
+        final String msg = message.replace("<mob>", "\",{\"translate\":\"" + key + "\"},\"");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
         return true;
     }
@@ -280,16 +280,16 @@ public class LocaleQuery {
      * @return the raw key
      * @throws IllegalArgumentException if an item with that material could not be found
      */
-    public String queryMaterial(Material material) throws IllegalArgumentException{
+    public String queryMaterial(final Material material) throws IllegalArgumentException{
         try {
             Object item = null;
-            Method m = craftMagicNumbers.getDeclaredMethod("getItem", material.getClass());
+            final Method m = craftMagicNumbers.getDeclaredMethod("getItem", material.getClass());
             m.setAccessible(true);
             item = m.invoke(craftMagicNumbers, material);
             if (item == null) {
                 throw new IllegalArgumentException(material.name() + " material could not be queried!");
             }                          
-            String name = (String) itemClazz.getMethod("getName").invoke(item);
+            final String name = (String) itemClazz.getMethod("getName").invoke(item);
             return name;
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
@@ -311,11 +311,11 @@ public class LocaleQuery {
      * 
      * @return true if Bukkit version is at 1.12.2 or below
      */
-    public static boolean isBelow113(String bukkitVersion) {
+    public static boolean isBelow113(final String bukkitVersion) {
         return _isBelow113(bukkitVersion);
     }
     
-    private static boolean _isBelow113(String bukkitVersion) {
+    private static boolean _isBelow113(final String bukkitVersion) {
         if (bukkitVersion.matches("^[0-9.]+$")) {
             switch(bukkitVersion) {
             case "1.12.2" :
@@ -356,7 +356,7 @@ public class LocaleQuery {
     }
     
     private LinkedHashMap<String, String> getBlockKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("AIR", "tile.air.name");
         keys.put("BARRIER", "tile.barrier.name");
         keys.put("STONE", "tile.stone.stone.name");
@@ -814,7 +814,7 @@ public class LocaleQuery {
     }
     
     private LinkedHashMap<String, String> getItemKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("NAME_TAG", "item.nameTag.name");
         keys.put("LEASH", "item.leash.name");
         keys.put("IRON_SPADE", "item.shovelIron.name");
@@ -1119,7 +1119,7 @@ public class LocaleQuery {
     }
     
     public Map<String, String> getPotionKeys_18() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("WATER", "potion.empty");
         keys.put("SPEED", "potion.moveSpeed.postfix");
         keys.put("SLOWNESS", "potion.moveSlowdown.postfix");
@@ -1138,7 +1138,7 @@ public class LocaleQuery {
     }
     
     public Map<String, String> getPotionKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("UNCRAFTABLE", "potion.effect.empty");
         keys.put("WATER", "potion.effect.water");
         keys.put("MUNDANE", "potion.effect.mundane");
@@ -1163,7 +1163,7 @@ public class LocaleQuery {
     }
     
     public Map<String, String> getSplashPotionKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("UNCRAFTABLE", "splash_potion.effect.empty");
         keys.put("WATER", "splash_potion.effect.water");
         keys.put("MUNDANE", "splash_potion.effect.mundane");
@@ -1188,7 +1188,7 @@ public class LocaleQuery {
     }
     
     public Map<String, String> getLingeringPotionKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("UNCRAFTABLE", "lingering_potion.effect.empty");
         keys.put("WATER", "lingering_potion.effect.water");
         keys.put("MUNDANE", "lingering_potion.effect.mundane");
@@ -1213,7 +1213,7 @@ public class LocaleQuery {
     }
     
     public Map<String, String> getEntityKeys() {
-        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
         keys.put("DROPPED_ITEM", "entity.Item.name");
         keys.put("EXPERIENCE_ORB", "entity.XPOrb.name");
         keys.put("SMALL_FIREBALL", "entity.SmallFireball.name");

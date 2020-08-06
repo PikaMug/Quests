@@ -44,7 +44,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
     private final ConversationFactory convoCreator;
     private List<String> editingConditionNames = new LinkedList<String>();
 
-    public ConditionFactory(Quests plugin) {
+    public ConditionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
@@ -61,19 +61,19 @@ public class ConditionFactory implements ConversationAbandonedListener {
         return editingConditionNames;
     }
     
-    public void setNamesOfConditionsBeingEdited(List<String> conditionNames) {
+    public void setNamesOfConditionsBeingEdited(final List<String> conditionNames) {
         this.editingConditionNames = conditionNames;
     }
 
     @Override
-    public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
+    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
     }
     
-    public Prompt returnToMenu(ConversationContext context) {
+    public Prompt returnToMenu(final ConversationContext context) {
         return new ConditionMainPrompt(context);
     }
     
-    public void loadData(Condition condition, ConversationContext context) {
+    public void loadData(final Condition condition, final ConversationContext context) {
         if (condition.isFailQuest() == true) {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
         } else {
@@ -81,25 +81,25 @@ public class ConditionFactory implements ConversationAbandonedListener {
         }
         if (condition.getItemsWhileHoldingMainHand() != null 
                 && condition.getItemsWhileHoldingMainHand().isEmpty() == false) {
-            LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
             items.addAll(condition.getItemsWhileHoldingMainHand());
             context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
         }
         if (condition.getWorldsWhileStayingWithin() != null 
                 && condition.getWorldsWhileStayingWithin().isEmpty() == false) {
-            LinkedList<String> worlds = new LinkedList<String>();
+            final LinkedList<String> worlds = new LinkedList<String>();
             worlds.addAll(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
         }
         if (condition.getBiomesWhileStayingWithin() != null 
                 && condition.getBiomesWhileStayingWithin().isEmpty() == false) {
-            LinkedList<String> biomes = new LinkedList<String>();
+            final LinkedList<String> biomes = new LinkedList<String>();
             biomes.addAll(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
         }
     }
 
-    public void clearData(ConversationContext context) {
+    public void clearData(final ConversationContext context) {
         context.setSessionData(CK.C_OLD_CONDITION, null);
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
@@ -108,33 +108,34 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
     }
 
-    public void deleteCondition(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
-        File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
+    public void deleteCondition(final ConversationContext context) {
+        final YamlConfiguration data = new YamlConfiguration();
+        final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
         try {
             data.load(conditionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
         }
-        String condition = (String) context.getSessionData(CK.ED_CONDITION_DELETE);
-        ConfigurationSection sec = data.getConfigurationSection("conditions");
+        final String condition = (String) context.getSessionData(CK.ED_CONDITION_DELETE);
+        final ConfigurationSection sec = data.getConfigurationSection("conditions");
         sec.set(condition, null);
         try {
             data.save(conditionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            public void execute(Boolean response) {
+        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            @Override
+            public void execute(final Boolean response) {
                 if (!response) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
                 }
@@ -142,26 +143,25 @@ public class ConditionFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("conditionEditorDeleted"));
-        for (Quester q : plugin.getQuesters()) {
-            for (Quest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }
         clearData(context);
     }
 
-    @SuppressWarnings("unchecked")
-    public void saveCondition(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
-        File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
+    public void saveCondition(final ConversationContext context) {
+        final YamlConfiguration data = new YamlConfiguration();
+        final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
         try {
             data.load(conditionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
@@ -169,38 +169,39 @@ public class ConditionFactory implements ConversationAbandonedListener {
         }
         if (((String) context.getSessionData(CK.C_OLD_CONDITION)).isEmpty() == false) {
             data.set("conditions." + (String) context.getSessionData(CK.C_OLD_CONDITION), null);
-            LinkedList<Condition> temp = plugin.getConditions();
+            final LinkedList<Condition> temp = plugin.getConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
             plugin.setConditions(temp);
         }
-        ConfigurationSection section = data.createSection("conditions." + (String) context.getSessionData(CK.C_NAME));
-        editingConditionNames.remove((String) context.getSessionData(CK.C_NAME));
+        final ConfigurationSection section = data.createSection("conditions." + (String) context.getSessionData(CK.C_NAME));
+        editingConditionNames.remove(context.getSessionData(CK.C_NAME));
         if (context.getSessionData(CK.C_FAIL_QUEST) != null) {
-            String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
+            final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("fail-quest", true);
             }
         }
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", 
-                    (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
+                    context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) != null) {
             section.set("stay-within-world", 
-                    (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD));
+                    context.getSessionData(CK.C_WHILE_WITHIN_WORLD));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) != null) {
             section.set("stay-within-biome", 
-                    (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
+                    context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
         }
         try {
             data.save(conditionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            public void execute(Boolean response) {
+        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            @Override
+            public void execute(final Boolean response) {
                 if (!response) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
                 }
@@ -208,8 +209,8 @@ public class ConditionFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("conditionEditorSaved"));
-        for (Quester q : plugin.getQuesters()) {
-            for (Quest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }

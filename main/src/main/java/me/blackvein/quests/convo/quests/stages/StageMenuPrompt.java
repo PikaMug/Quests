@@ -25,23 +25,26 @@ import me.blackvein.quests.util.Lang;
 public class StageMenuPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
-    private int size = 2;
+    private final int size = 2;
 
-    public StageMenuPrompt(ConversationContext context) {
+    public StageMenuPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("stageEditorStages");
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
-        int stages = getStages(context);
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        final int stages = getStages(context);
         if (number > 0) {
             if (number < (stages + 1) && number > 0) {
                 return ChatColor.BLUE;
@@ -54,8 +57,9 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         return null;
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
-        int stages = getStages(context);
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
+        final int stages = getStages(context);
         if (number > 0) {
             if (number < (stages + 1) && number > 0) {
                 return ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + number;
@@ -68,13 +72,14 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         return null;
     }
     
-    public String getAdditionalText(ConversationContext context, int number) {
+    @Override
+    public String getAdditionalText(final ConversationContext context, final int number) {
         return null;
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
@@ -86,9 +91,9 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-        int i = input.intValue();
-        int stages = getStages(context);
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        final int i = input.intValue();
+        final int stages = getStages(context);
         if (i > 0) {
             if (i < (stages + 1) && i > 0) {
                 return new StageMainPrompt((i), context);
@@ -101,7 +106,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         return new StageMenuPrompt(context);
     }
 
-    public int getStages(ConversationContext context) {
+    public int getStages(final ConversationContext context) {
         int num = 1;
         while (true) {
             if (context.getSessionData("stage" + num) != null) {
@@ -113,8 +118,8 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         return (num - 1);
     }
 
-    public void deleteStage(ConversationContext context, int stageNum) {
-        int stages = getStages(context);
+    public void deleteStage(final ConversationContext context, final int stageNum) {
+        final int stages = getStages(context);
         int current = stageNum;
         String pref = "stage" + current;
         String newPref;

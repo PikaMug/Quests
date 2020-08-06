@@ -41,121 +41,121 @@ public class Settings {
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
     
-    public Settings(Quests plugin) {
+    public Settings(final Quests plugin) {
         this.plugin = plugin;
     }
     
     public int getAcceptTimeout() {
         return acceptTimeout;
     }
-    public void setAcceptTimeout(int acceptTimeout) {
+    public void setAcceptTimeout(final int acceptTimeout) {
         this.acceptTimeout = acceptTimeout;
     }
     public boolean canAllowCommands() {
         return allowCommands;
     }
-    public void setAllowCommands(boolean allowCommands) {
+    public void setAllowCommands(final boolean allowCommands) {
         this.allowCommands = allowCommands;
     }
     public boolean canAllowCommandsForNpcQuests() {
         return allowCommandsForNpcQuests;
     }
-    public void setAllowCommandsForNpcQuests(boolean allowCommandsForNpcQuests) {
+    public void setAllowCommandsForNpcQuests(final boolean allowCommandsForNpcQuests) {
         this.allowCommandsForNpcQuests = allowCommandsForNpcQuests;
     }
     public boolean canAllowPranks() {
         return allowPranks;
     }
-    public void setAllowPranks(boolean allowPranks) {
+    public void setAllowPranks(final boolean allowPranks) {
         this.allowPranks = allowPranks;
     }
     public boolean canAskConfirmation() {
         return askConfirmation;
     }
-    public void setAskConfirmation(boolean askConfirmation) {
+    public void setAskConfirmation(final boolean askConfirmation) {
         this.askConfirmation = askConfirmation;
     }
     public boolean canGenFilesOnJoin() {
         return genFilesOnJoin;
     }
-    public void setGenFilesOnJoin(boolean genFilesOnJoin) {
+    public void setGenFilesOnJoin(final boolean genFilesOnJoin) {
         this.genFilesOnJoin = genFilesOnJoin;
     }
     public boolean canIgnoreLockedQuests() {
         return ignoreLockedQuests;
     }
-    public void setIgnoreLockedQuests(boolean ignoreLockedQuests) {
+    public void setIgnoreLockedQuests(final boolean ignoreLockedQuests) {
         this.ignoreLockedQuests = ignoreLockedQuests;
     }
     public int getKillDelay() {
         return killDelay;
     }
-    public void setKillDelay(int killDelay) {
+    public void setKillDelay(final int killDelay) {
         this.killDelay = killDelay;
     }
     public int getMaxQuests() {
         return maxQuests;
     }
-    public void setMaxQuests(int maxQuests) {
+    public void setMaxQuests(final int maxQuests) {
         this.maxQuests = maxQuests;
     }
     public boolean canNpcEffects() {
         return npcEffects;
     }
-    public void setNpcEffects(boolean npcEffects) {
+    public void setNpcEffects(final boolean npcEffects) {
         this.npcEffects = npcEffects;
     }
     public String getEffect() {
         return effect;
     }
-    public void setEffect(String effect) {
+    public void setEffect(final String effect) {
         this.effect = effect;
     }
     public String getRedoEffect() {
         return redoEffect;
     }
-    public void setRedoEffect(String redoEffect) {
+    public void setRedoEffect(final String redoEffect) {
         this.redoEffect = redoEffect;
     }
     public boolean canShowQuestReqs() {
         return showQuestReqs;
     }
-    public void setShowQuestReqs(boolean showQuestReqs) {
+    public void setShowQuestReqs(final boolean showQuestReqs) {
         this.showQuestReqs = showQuestReqs;
     }
     public boolean canShowQuestTitles() {
         return showQuestTitles;
     }
-    public void setShowQuestTitles(boolean showQuestTitles) {
+    public void setShowQuestTitles(final boolean showQuestTitles) {
         this.showQuestTitles = showQuestTitles;
     }
     public int getStrictPlayerMovement() {
         return strictPlayerMovement;
     }
-    public void setStrictPlayerMovement(int strictPlayerMovement) {
+    public void setStrictPlayerMovement(final int strictPlayerMovement) {
         this.strictPlayerMovement = strictPlayerMovement;
     }
     public int getTopLimit() {
         return topLimit;
     }
-    public void setTopLimit(int topLimit) {
+    public void setTopLimit(final int topLimit) {
         this.topLimit = topLimit;
     }
     public boolean canTranslateNames() {
         return translateNames;
     }
-    public void setTranslateNames(boolean translateItems) {
+    public void setTranslateNames(final boolean translateItems) {
         this.translateNames = translateItems;
     }
     public boolean canTranslateSubCommands() {
         return translateSubCommands;
     }
-    public void setTranslateSubCommands(boolean translateSubCommands) {
+    public void setTranslateSubCommands(final boolean translateSubCommands) {
         this.translateSubCommands = translateSubCommands;
     }
     
     public void init() {
-        FileConfiguration config = plugin.getConfig();
+        final FileConfiguration config = plugin.getConfig();
         acceptTimeout = config.getInt("accept-timeout", 20);
         allowCommands = config.getBoolean("allow-command-questing", true);
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
@@ -182,7 +182,7 @@ public class Settings {
         translateSubCommands = config.getBoolean("translate-subcommands", false);
         try {
             config.save(new File(plugin.getDataFolder(), "config.yml"));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

@@ -28,13 +28,13 @@ public class MiscUtil {
      * @param milliseconds Total amount of time to convert
      * @return Converted time in text
      */
-    public static String getTime(long milliseconds) {
+    public static String getTime(final long milliseconds) {
         String message = "";
-        long days = milliseconds / 86400000;
-        long hours = (milliseconds % 86400000) / 3600000;
-        long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
-        long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
-        long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
+        final long days = milliseconds / 86400000;
+        final long hours = (milliseconds % 86400000) / 3600000;
+        final long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
+        final long seconds = (((milliseconds % 86400000) % 3600000) % 60000) / 1000;
+        final long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
         if (days > 0L) {
             if (days == 1L) {
                 message += " 1 " + Lang.get("timeDay") + ",";
@@ -83,13 +83,13 @@ public class MiscUtil {
      * @param input To convert
      * @return Converted text
      */
-    public static String getCapitalized(String input) {
+    public static String getCapitalized(final String input) {
         if (input.isEmpty()) {
             return input;
         }
-        String firstLetter = input.substring(0, 1);
-        String remainder = input.substring(1);
-        String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
+        final String firstLetter = input.substring(0, 1);
+        final String remainder = input.substring(1);
+        final String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
         return capitalized;
     }
     
@@ -99,12 +99,12 @@ public class MiscUtil {
      * @param type any mob type, ideally
      * @return cleaned-up string
      */
-    public static String getPrettyMobName(EntityType type) {
-        String baseString = type.toString();
-        String[] substrings = baseString.split("_");
+    public static String getPrettyMobName(final EntityType type) {
+        final String baseString = type.toString();
+        final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
-        for (String s : substrings) {
+        for (final String s : substrings) {
             prettyString = prettyString.concat(getCapitalized(s));
             if (size < substrings.length) {
                 prettyString = prettyString.concat(" ");
@@ -123,11 +123,11 @@ public class MiscUtil {
      * @param type To convert
      * @return Converted text
      */
-    public static String snakeCaseToUpperCamelCase(String input) {
+    public static String snakeCaseToUpperCamelCase(final String input) {
         String name = input.toLowerCase();
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
         for (int i = 0; i < input.chars().filter(num -> num == '_').count(); i++) {
-            int index = name.indexOf('_');
+            final int index = name.indexOf('_');
             if (index != -1) {
                 name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
                         + name.substring(index + 2);
@@ -144,7 +144,8 @@ public class MiscUtil {
      * @param type To convert
      * @return Converted text
      */
-    public static String getProperMobName(EntityType type) {
+    @Deprecated
+    public static String getProperMobName(final EntityType type) {
         return snakeCaseToUpperCamelCase(type.name());
     }
 
@@ -156,7 +157,7 @@ public class MiscUtil {
      */
     public static EntityType getProperMobType(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
-        for (EntityType et : EntityType.values()) {
+        for (final EntityType et : EntityType.values()) {
             if (et.isAlive() && et.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return et;
             }
@@ -172,7 +173,7 @@ public class MiscUtil {
      */
     public static Biome getProperBiome(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
-        for (Biome b : Biome.values()) {
+        for (final Biome b : Biome.values()) {
             if (b.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return b;
             }
@@ -186,7 +187,7 @@ public class MiscUtil {
      * @param type any dye type, ideally
      * @return cleaned-up string, or 'White' if null
      */
-    public static String getPrettyDyeColorName(DyeColor color) {
+    public static String getPrettyDyeColorName(final DyeColor color) {
         if (color == null) {
             return "White";
         }
@@ -194,11 +195,11 @@ public class MiscUtil {
             // Legacy
             return Lang.get("COLOR_" + color.name());
         } else {
-            String baseString = color.toString();
-            String[] substrings = baseString.split("_");
+            final String baseString = color.toString();
+            final String[] substrings = baseString.split("_");
             String prettyString = "";
             int size = 1;
-            for (String s : substrings) {
+            for (final String s : substrings) {
                 prettyString = prettyString.concat(getCapitalized(s));
                 if (size < substrings.length) {
                     prettyString = prettyString.concat(" ");
@@ -217,7 +218,7 @@ public class MiscUtil {
      */
     public static DyeColor getProperDyeColor(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
-        for (DyeColor dc : DyeColor.values()) {
+        for (final DyeColor dc : DyeColor.values()) {
             if (dc.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return dc;
             }
@@ -233,7 +234,7 @@ public class MiscUtil {
      */
     public static Effect getProperEffect(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
-        for (Effect eff : Effect.values()) {
+        for (final Effect eff : Effect.values()) {
             if (eff.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return eff;
             }
@@ -250,13 +251,13 @@ public class MiscUtil {
      * @param lineColor Color to use at start of each new line
      * @return Converted text
      */
-    public static LinkedList<String> makeLines(String input, String wordDelimiter, int lineLength
-            , ChatColor lineColor) {
-        LinkedList<String> toReturn = new LinkedList<String>();
-        String[] split = input.split(wordDelimiter);
+    public static LinkedList<String> makeLines(final String input, final String wordDelimiter, final int lineLength
+            , final ChatColor lineColor) {
+        final LinkedList<String> toReturn = new LinkedList<String>();
+        final String[] split = input.split(wordDelimiter);
         String line = "";
         int currentLength = 0;
-        for (String piece : split) {
+        for (final String piece : split) {
             if ((currentLength + piece.length()) > (lineLength + 1)) {
                 // TODO - determine whether replaceAll and carots (^) are necessary here
                 if (lineColor != null) {
@@ -307,7 +308,7 @@ public class MiscUtil {
      * @return processed string
      */
     public static String spaceToCapital(String input) {
-        int index = input.indexOf(' ');
+        final int index = input.indexOf(' ');
         if (index == -1) {
             return null;
         }

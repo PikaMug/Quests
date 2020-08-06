@@ -38,14 +38,14 @@ public class WeatherPrompt extends FixedSetPrompt {
     
     private final Quests plugin;
     
-    public WeatherPrompt(ConversationContext context) {
+    public WeatherPrompt(final ConversationContext context) {
         super("1", "2", "3", "4");
         this.plugin = (Quests)context.getPlugin();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         String text = ChatColor.GOLD + "- " + Lang.get("eventEditorWeather") + " -\n";
         if (context.getSessionData(CK.E_WORLD_STORM) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -74,8 +74,8 @@ public class WeatherPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetLightning") + "\n";
-            LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
-            for (String loc : locations) {
+            final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
+            for (final String loc : locations) {
                 text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
             }
         }
@@ -85,13 +85,13 @@ public class WeatherPrompt extends FixedSetPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
         if (input.equalsIgnoreCase("1")) {
             return new StormPrompt();
         } else if (input.equalsIgnoreCase("2")) {
             return new ThunderPrompt();
         } else if (input.equalsIgnoreCase("3")) {
-            Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
+            final Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
             selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
             return new LightningPrompt();
@@ -106,7 +106,7 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorStormTitle") + "\n";
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -125,7 +125,7 @@ public class WeatherPrompt extends FixedSetPrompt {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                             + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    int dur = (int) context.getSessionData(CK.E_WORLD_STORM_DURATION);
+                    final int dur = (int) context.getSessionData(CK.E_WORLD_STORM_DURATION);
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                             + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + MiscUtil.getTime(dur * 1000) 
                             + ChatColor.YELLOW + ")\n";
@@ -139,7 +139,7 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1")) {
                 return new StormWorldPrompt();
             } else if (input.equalsIgnoreCase("2")) {
@@ -170,9 +170,9 @@ public class WeatherPrompt extends FixedSetPrompt {
     private class StormWorldPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorWorldsTitle") + "\n" + ChatColor.DARK_PURPLE;
-            for (World w : plugin.getServer().getWorlds()) {
+            for (final World w : plugin.getServer().getWorlds()) {
                 effects += w.getName() + ", ";
             }
             effects = effects.substring(0, effects.length());
@@ -180,8 +180,8 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_STORM, plugin.getServer().getWorld(input).getName());
@@ -198,12 +198,12 @@ public class WeatherPrompt extends FixedSetPrompt {
     private class StormDurationPrompt extends NumericPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorEnterDuration");
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             if (input.intValue() < 1) {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
                         + Lang.get("invalidMinimum").replace("<number>", "1"));
@@ -222,7 +222,7 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorThunderTitle") + "\n";
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -241,7 +241,7 @@ public class WeatherPrompt extends FixedSetPrompt {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                             + Lang.get("eventEditorSetDuration") + " (" + Lang.get("noneSet") + ")\n";
                 } else {
-                    int dur = (int) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
+                    final int dur = (int) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                             + Lang.get("eventEditorSetDuration") + " (" + ChatColor.AQUA + MiscUtil.getTime(dur * 1000) 
                             + ChatColor.YELLOW + ")\n";
@@ -255,7 +255,7 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1")) {
                 return new ThunderWorldPrompt();
             } else if (input.equalsIgnoreCase("2")) {
@@ -286,9 +286,9 @@ public class WeatherPrompt extends FixedSetPrompt {
     private class ThunderWorldPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorWorldsTitle") + "\n" + ChatColor.DARK_PURPLE;
-            for (World w : plugin.getServer().getWorlds()) {
+            for (final World w : plugin.getServer().getWorlds()) {
                 effects += w.getName() + ", ";
             }
             effects = effects.substring(0, effects.length());
@@ -296,8 +296,8 @@ public class WeatherPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_THUNDER, plugin.getServer().getWorld(input).getName());
@@ -314,12 +314,12 @@ public class WeatherPrompt extends FixedSetPrompt {
     private class ThunderDurationPrompt extends NumericPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorEnterDuration");
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             if (input.intValue() < 1) {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
                         + Lang.get("invalidMinimum").replace("<number>", "1"));
@@ -334,19 +334,19 @@ public class WeatherPrompt extends FixedSetPrompt {
     public class LightningPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorLightningPrompt");
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
-                Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
-                Block block = selectedLightningLocations.get(player.getUniqueId());
+                final Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
+                final Block block = selectedLightningLocations.get(player.getUniqueId());
                 if (block != null) {
-                    Location loc = block.getLocation();
+                    final Location loc = block.getLocation();
                     LinkedList<String> locs;
                     if (context.getSessionData(CK.E_LIGHTNING) != null) {
                         locs = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
@@ -364,12 +364,12 @@ public class WeatherPrompt extends FixedSetPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_LIGHTNING, null);
-                Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
+                final Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
+                final Map<UUID, Block> selectedLightningLocations = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionMainPrompt(context);

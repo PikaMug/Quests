@@ -49,21 +49,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     private boolean hasRequirement = false;
     private final int size = 11;
     
-    public RequirementsPrompt(ConversationContext context) {
+    public RequirementsPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
         this.classPrefix = getClass().getSimpleName();
     }
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("requirementsTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -108,7 +111,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -153,15 +157,16 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(ConversationContext context, int number) {
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 if (context.getSessionData(CK.REQ_MONEY) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
+                    final int moneyReq = (Integer) context.getSessionData(CK.REQ_MONEY);
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
                             + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
                             : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
@@ -181,7 +186,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -193,8 +198,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
-                for (String s : perms) {
+                final List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
+                for (final String s : perms) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 return text;
@@ -204,8 +209,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
-                for (String s : qs) {
+                final List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST);
+                for (final String s : qs) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 return text;
@@ -215,8 +220,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
-                for (String s : qs) {
+                final List<String> qs = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
+                for (final String s : qs) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                 }
                 return text;
@@ -227,9 +232,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
-                    List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
-                    for (String s : skills) {
+                    final List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
+                    final List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
+                    for (final String s : skills) {
                         text += ChatColor.GRAY + "     - " + ChatColor.DARK_GREEN + s + ChatColor.RESET 
                                 + ChatColor.YELLOW + " " + Lang.get("mcMMOLevel") + " " + ChatColor.GREEN 
                                 + amounts.get(skills.indexOf(s)) + "\n";
@@ -264,8 +269,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-                for (String s : customReqs) {
+                final LinkedList<String> customReqs = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                for (final String s : customReqs) {
                     text += ChatColor.RESET + "" + ChatColor.DARK_PURPLE + "  - " + ChatColor.LIGHT_PURPLE + s + "\n";
                  }
                 return text;
@@ -279,7 +284,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else {
                 String text = "\n";
-                LinkedList<String> overrides = new LinkedList<String>();
+                final LinkedList<String> overrides = new LinkedList<String>();
                 overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
                 for (int i = 0; i < overrides.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + overrides.get(i) + "\n";
@@ -295,13 +300,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
         if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
             if (input.equalsIgnoreCase(Lang.get("clear"))) {
                 context.setSessionData(CK.REQ_FAIL_MESSAGE, null);
             } else {
-                LinkedList<String> overrides = new LinkedList<String>();
+                final LinkedList<String> overrides = new LinkedList<String>();
                 if (context.getSessionData(CK.REQ_FAIL_MESSAGE) != null) {
                     overrides.addAll((List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE));
                 }
@@ -312,7 +317,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
         checkRequirement(context);
         
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
@@ -326,7 +331,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -376,7 +381,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public boolean checkRequirement(ConversationContext context) {
+    public boolean checkRequirement(final ConversationContext context) {
         if (context.getSessionData(CK.REQ_MONEY) != null 
                 || context.getSessionData(CK.REQ_QUEST_POINTS) != null
                 || context.getSessionData(CK.REQ_ITEMS) != null
@@ -395,23 +400,23 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsMoneyPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsMoneyPrompt(ConversationContext context) {
+        public RequirementsMoneyPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("rewMoneyPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = getQueryText(context);
@@ -426,18 +431,18 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i > 0) {
                         context.setSessionData(CK.REQ_MONEY, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
                         return new RequirementsMoneyPrompt(context);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
                     return new RequirementsMoneyPrompt(context);
@@ -452,41 +457,41 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsQuestPointsPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsQuestPointsPrompt(ConversationContext context) {
+        public RequirementsQuestPointsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("rewQuestPointsPrompt").replace("<points>", Lang.get("questPoints"));
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
         
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i > 0) {
                         context.setSessionData(CK.REQ_QUEST_POINTS, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
                         return new RequirementsQuestPointsPrompt(context);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
                     return new RequirementsQuestPointsPrompt(context);
@@ -503,29 +508,29 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         
         private final boolean isRequiredQuest;
 
-        public RequirementsQuestListPrompt(ConversationContext context, boolean isRequired) {
+        public RequirementsQuestListPrompt(final ConversationContext context, final boolean isRequired) {
             super(context);
             this.isRequiredQuest = isRequired;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("reqQuestListTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqQuestPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n" + ChatColor.DARK_PURPLE;
             boolean none = true;
-            for (Quest q : plugin.getQuests()) {
+            for (final Quest q : plugin.getQuests()) {
                 text += q.getName() + ", ";
                 none = false;
             }
@@ -540,12 +545,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                String[] args = input.split(Lang.get("charSemi"));
-                LinkedList<String> questNames = new LinkedList<String>();
-                for (String s : args) {
+                final String[] args = input.split(Lang.get("charSemi"));
+                final LinkedList<String> questNames = new LinkedList<String>();
+                for (final String s : args) {
                     if (plugin.getQuest(s) == null) {
                         String text = Lang.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
@@ -561,7 +566,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 Collections.sort(questNames, new Comparator<String>() {
 
                     @Override
-                    public int compare(String one, String two) {
+                    public int compare(final String one, final String two) {
                         return one.compareTo(two);
                     }
                 });
@@ -583,21 +588,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsItemListPrompt extends QuestsEditorNumericPrompt {
         
-        public RequirementsItemListPrompt(ConversationContext context) {
+        public RequirementsItemListPrompt(final ConversationContext context) {
             super(context);
         }
 
         private final int size = 4;
 
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("itemRequirementsTitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.BLUE;
@@ -616,7 +624,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -635,12 +644,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getAdditionalText(ConversationContext context, int number) {
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
                     String text = "\n";
-                    for (ItemStack is : getItems(context)) {
+                    for (final ItemStack is : getItems(context)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -654,7 +664,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
                     } else {
                         String text = "\n";
-                        for (Boolean b : getRemoveItems(context)) {
+                        for (final Boolean b : getRemoveItems(context)) {
                             text += ChatColor.GRAY + "     - " + ChatColor.AQUA
                                     + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
                         }
@@ -670,15 +680,15 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                    List<ItemStack> itemReqs = getItems(context);
+                    final List<ItemStack> itemReqs = getItems(context);
                     itemReqs.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 } else {
-                    LinkedList<ItemStack> itemReqs = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> itemReqs = new LinkedList<ItemStack>();
                     itemReqs.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 }
@@ -686,7 +696,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            QuestsEditorPostOpenNumericPromptEvent event
+            final QuestsEditorPostOpenNumericPromptEvent event
                     = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
@@ -700,7 +710,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, RequirementsItemListPrompt.this);
@@ -741,46 +751,46 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @SuppressWarnings("unchecked")
-        private List<ItemStack> getItems(ConversationContext context) {
+        private List<ItemStack> getItems(final ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
         }
 
         @SuppressWarnings("unchecked")
-        private List<Boolean> getRemoveItems(ConversationContext context) {
+        private List<Boolean> getRemoveItems(final ConversationContext context) {
             return (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
         }
     }
 
     public class RemoveItemsPrompt extends QuestsEditorStringPrompt {
         
-        public RemoveItemsPrompt(ConversationContext context) {
+        public RemoveItemsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqRemoveItemsPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                String[] args = input.split(" ");
-                LinkedList<Boolean> booleans = new LinkedList<Boolean>();
-                for (String s : args) {
+                final String[] args = input.split(" ");
+                final LinkedList<Boolean> booleans = new LinkedList<Boolean>();
+                for (final String s : args) {
                     if (input.startsWith("t") || s.equalsIgnoreCase(Lang.get("true")) 
                             || s.equalsIgnoreCase(Lang.get("yesWord"))) {
                         booleans.add(true);
@@ -800,34 +810,34 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsPermissionsPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsPermissionsPrompt(ConversationContext context) {
+        public RequirementsPermissionsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqPermissionsPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                String[] args = input.split(" ");
-                LinkedList<String> permissions = new LinkedList<String>();
+                final String[] args = input.split(" ");
+                final LinkedList<String> permissions = new LinkedList<String>();
                 permissions.addAll(Arrays.asList(args));
                 context.setSessionData(CK.REQ_PERMISSION, permissions);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -839,30 +849,30 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class CustomRequirementsPrompt extends QuestsEditorStringPrompt {
         
-        public CustomRequirementsPrompt(ConversationContext context) {
+        public CustomRequirementsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("customRequirementsTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqCustomPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             if (plugin.getCustomRequirements().isEmpty()) {
                 text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
             } else {
-                for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     text += ChatColor.DARK_PURPLE + "  - " + cr.getName() + "\n";
                 }
             }
@@ -871,12 +881,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 CustomRequirement found = null;
                 // Check if we have a custom requirement with the specified name
-                for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(input)) {
                         found = cr;
                         break;
@@ -884,7 +894,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (found == null) {
                     // No? Check again, but with locale sensitivity
-                    for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                         if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;
                             break;
@@ -894,8 +904,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (found != null) {
                     if (context.getSessionData(CK.REQ_CUSTOM) != null) {
                         // The custom requirement may already have been added, so let's check that
-                        LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-                        LinkedList<Map<String, Object>> datamapList 
+                        final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                        final LinkedList<Map<String, Object>> datamapList 
                                 = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
                         if (list.contains(found.getName()) == false) {
                             // Hasn't been added yet, so let's do it
@@ -910,9 +920,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         }
                     } else {
                         // The custom requirement hasn't been added yet, so let's do it
-                        LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
+                        final LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
                         datamapList.add(found.getData());
-                        LinkedList<String> list = new LinkedList<String>();
+                        final LinkedList<String> list = new LinkedList<String>();
                         list.add(found.getName());
                         context.setSessionData(CK.REQ_CUSTOM, list);
                         context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
@@ -940,21 +950,21 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.AQUA + "- ";
-            LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-            LinkedList<Map<String, Object>> datamapList
+            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+            final LinkedList<Map<String, Object>> datamapList
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            String reqName = list.getLast();
-            Map<String, Object> datamap = datamapList.getLast();
+            final String reqName = list.getLast();
+            final Map<String, Object> datamap = datamapList.getLast();
             text += reqName + " -\n";
             int index = 1;
-            LinkedList<String> datamapKeys = new LinkedList<String>();
-            for (String key : datamap.keySet()) {
+            final LinkedList<String> datamapKeys = new LinkedList<String>();
+            for (final String key : datamap.keySet()) {
                 datamapKeys.add(key);
             }
             Collections.sort(datamapKeys);
-            for (String dataKey : datamapKeys) {
+            for (final String dataKey : datamapKeys) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + dataKey;
                 if (datamap.get(dataKey) != null) {
@@ -969,27 +979,28 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             @SuppressWarnings("unchecked")
+            final
             LinkedList<Map<String, Object>> datamapList 
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            Map<String, Object> datamap = datamapList.getLast();
+            final Map<String, Object> datamap = datamapList.getLast();
             int numInput;
             try {
                 numInput = Integer.parseInt(input);
-            } catch (NumberFormatException nfe) {
+            } catch (final NumberFormatException nfe) {
                 return new RequirementCustomDataListPrompt();
             }
             if (numInput < 1 || numInput > datamap.size() + 1) {
                 return new RequirementCustomDataListPrompt();
             }
             if (numInput < datamap.size() + 1) {
-                LinkedList<String> datamapKeys = new LinkedList<String>();
-                for (String key : datamap.keySet()) {
+                final LinkedList<String> datamapKeys = new LinkedList<String>();
+                for (final String key : datamap.keySet()) {
                     datamapKeys.add(key);
                 }
                 Collections.sort(datamapKeys);
-                String selectedKey = datamapKeys.get(numInput - 1);
+                final String selectedKey = datamapKeys.get(numInput - 1);
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
                 return new RequirementCustomDataPrompt();
             } else {
@@ -1006,10 +1017,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
     private class RequirementCustomDataPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = "";
-            String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
+            final String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
             @SuppressWarnings("unchecked")
+            final
             Map<String, String> descriptions 
                     = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
@@ -1022,11 +1034,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             @SuppressWarnings("unchecked")
+            final
             LinkedList<Map<String, Object>> datamapList 
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            Map<String, Object> datamap = datamapList.getLast();
+            final Map<String, Object> datamap = datamapList.getLast();
             datamap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
             context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
             return new RequirementCustomDataListPrompt();
@@ -1035,21 +1048,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsMcMMOListPrompt extends QuestsEditorNumericPrompt {
 
-        public RequirementsMcMMOListPrompt(ConversationContext context) {
+        public RequirementsMcMMOListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("mcMMORequirementsTitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -1061,7 +1077,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("reqSetSkills");
@@ -1074,15 +1091,16 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (String skill : (LinkedList<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS)) {
+                    for (final String skill : (LinkedList<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + skill + "\n";
                     }
                     return text;
@@ -1092,7 +1110,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (int i : (LinkedList<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS)) {
+                    for (final int i : (LinkedList<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
                     return text;
@@ -1105,8 +1123,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1118,7 +1136,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new McMMOSkillsPrompt(context);
@@ -1134,27 +1152,27 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class McMMOSkillsPrompt extends QuestsEditorStringPrompt {
         
-        public McMMOSkillsPrompt(ConversationContext context) {
+        public McMMOSkillsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("skillListTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("rewMcMMOPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String skillList = ChatColor.DARK_GREEN + getTitle(context) + "\n";
-            SkillType[] skills = SkillType.values();
+            final SkillType[] skills = SkillType.values();
             for (int i = 0; i < skills.length; i++) {
                 if (i == (skills.length - 1)) {
                     skillList += ChatColor.GREEN + skills[i].getName() + "\n";
@@ -1166,12 +1184,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                LinkedList<String> skills = new LinkedList<String>();
-                for (String s : input.split(" ")) {
-                    String formatted = MiscUtil.getCapitalized(s);
+                final LinkedList<String> skills = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
+                    final String formatted = MiscUtil.getCapitalized(s);
                     if (Quests.getMcMMOSkill(formatted) != null) {
                         skills.add(formatted);
                     } else if (skills.contains(formatted)) {
@@ -1199,38 +1217,38 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class McMMOAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public McMMOAmountsPrompt(ConversationContext context) {
+        public McMMOAmountsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqMcMMOAmountsPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (String s : input.split(" ")) {
+                final LinkedList<Integer> amounts = new LinkedList<Integer>();
+                for (final String s : input.split(" ")) {
                     try {
-                        int i = Integer.parseInt(s);
+                        final int i = Integer.parseInt(s);
                         amounts.add(i);
-                    } catch (NumberFormatException nfe) {
+                    } catch (final NumberFormatException nfe) {
                         String text = Lang.get("reqNotANumber");
                         text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
@@ -1252,21 +1270,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class RequirementsHeroesListPrompt extends QuestsEditorNumericPrompt {
 
-        public RequirementsHeroesListPrompt(ConversationContext context) {
+        public RequirementsHeroesListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("heroesRequirementsTitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -1278,7 +1299,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("reqHeroesSetPrimary");
@@ -1291,7 +1313,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getAdditionalText(ConversationContext context, int number) {
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) == null) {
@@ -1315,8 +1338,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1327,7 +1350,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             return text;
         }
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new HeroesPrimaryPrompt(context);
@@ -1343,28 +1366,28 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class HeroesPrimaryPrompt extends QuestsEditorStringPrompt {
         
-        public HeroesPrimaryPrompt(ConversationContext context) {
+        public HeroesPrimaryPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("heroesPrimaryTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqHeroesPrimaryPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_PURPLE + getTitle(context) + "\n";
-            LinkedList<String> list = new LinkedList<String>();
-            for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
+            final LinkedList<String> list = new LinkedList<String>();
+            for (final HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
                 if (hc.isPrimary()) {
                     list.add(hc.getName());
                 }
@@ -1373,7 +1396,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.GRAY + "(" + Lang.get("none") + ")\n";
             } else {
                 Collections.sort(list);
-                for (String s : list) {
+                for (final String s : list) {
                     text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
                 }
             }
@@ -1382,10 +1405,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
+                final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
                     if (hc.isPrimary()) {
                         context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, hc.getName());
@@ -1412,28 +1435,28 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
     public class HeroesSecondaryPrompt extends QuestsEditorStringPrompt {
         
-        public HeroesSecondaryPrompt(ConversationContext context) {
+        public HeroesSecondaryPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("heroesSecondaryTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("reqHeroesSecondaryPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_PURPLE + getTitle(context) + "\n";
-            LinkedList<String> list = new LinkedList<String>();
-            for (HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
+            final LinkedList<String> list = new LinkedList<String>();
+            for (final HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
                 if (hc.isSecondary()) {
                     list.add(hc.getName());
                 }
@@ -1442,7 +1465,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.GRAY + "(" + Lang.get("none") + ")\n";
             } else {
                 Collections.sort(list);
-                for (String s : list) {
+                for (final String s : list) {
                     text += ChatColor.DARK_PURPLE + "- " + ChatColor.LIGHT_PURPLE + s + "\n";
                 }
             }
@@ -1451,10 +1474,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
+                final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
                     if (hc.isSecondary()) {
                         context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, hc.getName());

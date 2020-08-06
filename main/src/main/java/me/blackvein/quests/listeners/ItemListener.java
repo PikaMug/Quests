@@ -34,18 +34,18 @@ public class ItemListener implements Listener {
     
     private final Quests plugin;
     
-    public ItemListener(Quests plugin) {
+    public ItemListener(final Quests plugin) {
         this.plugin = plugin;
     }
     
     @EventHandler
-    public void onCraftItem(CraftItemEvent evt) {
+    public void onCraftItem(final CraftItemEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
             final Player player = (Player) evt.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                for (Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
@@ -55,7 +55,7 @@ public class ItemListener implements Listener {
                         quester.craftItem(quest, craftedItem);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "craftItem", (Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, "craftItem", (final Quester q) -> {
                         q.craftItem(quest, craftedItem);
                         return null;
                     });
@@ -65,12 +65,12 @@ public class ItemListener implements Listener {
     }
     
     @SuppressWarnings("deprecation")
-    private ItemStack getCraftedItem(CraftItemEvent evt) {
+    private ItemStack getCraftedItem(final CraftItemEvent evt) {
         if (evt.isShiftClick()) {
             final ItemStack recipeResult = evt.getRecipe().getResult();
             final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
             int leastIngredient = 1;
-            for (ItemStack item : evt.getInventory().getMatrix()) {
+            for (final ItemStack item : evt.getInventory().getMatrix()) {
                 if (item != null && !item.getType().equals(Material.AIR)) {
                     leastIngredient = item.getAmount() * resultAmt;
                 }
@@ -81,7 +81,7 @@ public class ItemListener implements Listener {
     }
     
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent evt) {
+    public void onInventoryClick(final InventoryClickEvent evt) {
         if (evt.getWhoClicked() instanceof Player) {
             final Player player = (Player) evt.getWhoClicked();
             if (evt.getInventory().getType() == InventoryType.FURNACE
@@ -89,7 +89,7 @@ public class ItemListener implements Listener {
                     || evt.getInventory().getType().name().equals("SMOKER")) {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    for (Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             return;
                         }
@@ -99,7 +99,7 @@ public class ItemListener implements Listener {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, "smeltItem", (Quester q) -> {
+                        quester.dispatchMultiplayerEverything(quest, "smeltItem", (final Quester q) -> {
                             q.smeltItem(quest, evt.getCurrentItem());
                             return null;
                         });
@@ -108,7 +108,7 @@ public class ItemListener implements Listener {
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    for (Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             return;
                         }
@@ -118,7 +118,7 @@ public class ItemListener implements Listener {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, "brewItem", (Quester q) -> {
+                        quester.dispatchMultiplayerEverything(quest, "brewItem", (final Quester q) -> {
                             q.brewItem(quest, evt.getCurrentItem());
                             return null;
                         });
@@ -129,24 +129,24 @@ public class ItemListener implements Listener {
     }
     
     @EventHandler
-    public void onEnchantItem(EnchantItemEvent evt) {
+    public void onEnchantItem(final EnchantItemEvent evt) {
         final Player player = evt.getEnchanter();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            for (Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
-                    for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
+                    for (final Enchantment e : evt.getEnchantsToAdd().keySet()) {
                         quester.enchantItem(quest, e, evt.getItem().getType());
                     }
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, "enchantItem", (Quester q) -> {
-                    for (Enchantment e : evt.getEnchantsToAdd().keySet()) {
+                quester.dispatchMultiplayerEverything(quest, "enchantItem", (final Quester q) -> {
+                    for (final Enchantment e : evt.getEnchantsToAdd().keySet()) {
                         q.enchantItem(quest, e, evt.getItem().getType());
                     }
                     return null;
@@ -157,13 +157,13 @@ public class ItemListener implements Listener {
     
     
     @EventHandler
-    public void onConsumeItem(PlayerItemConsumeEvent evt) {
+    public void onConsumeItem(final PlayerItemConsumeEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack consumedItem = evt.getItem().clone();
             consumedItem.setAmount(1);
             final Player player = evt.getPlayer();
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            for (Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
@@ -173,7 +173,7 @@ public class ItemListener implements Listener {
                     quester.consumeItem(quest, consumedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, "consumeItem", (Quester q) -> {
+                quester.dispatchMultiplayerEverything(quest, "consumeItem", (final Quester q) -> {
                     quester.consumeItem(quest, consumedItem);
                     return null;
                 });

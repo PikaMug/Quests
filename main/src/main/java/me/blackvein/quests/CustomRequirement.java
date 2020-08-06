@@ -22,8 +22,8 @@ public abstract class CustomRequirement {
     private String name = null;
     private String author = null;
     private String display = null;
-    private Map<String, Object> data = new HashMap<String, Object>();
-    private Map<String, String> descriptions = new HashMap<String, String>();
+    private final Map<String, Object> data = new HashMap<String, Object>();
+    private final Map<String, String> descriptions = new HashMap<String, String>();
 
     public abstract boolean testRequirement(Player p, Map<String, Object> m);
 
@@ -31,7 +31,7 @@ public abstract class CustomRequirement {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -39,7 +39,7 @@ public abstract class CustomRequirement {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(final String author) {
         this.author = author;
     }
     
@@ -47,8 +47,8 @@ public abstract class CustomRequirement {
         return display;
     }
     
-    public void setDisplay(String display) {
-        display = name;
+    public void setDisplay(final String display) {
+        this.display = display;
     }
 
     public Map<String, Object> getData() {
@@ -64,7 +64,7 @@ public abstract class CustomRequirement {
      * @param description Description of expected input
      * @param defaultValue Value to be used if input is not received
      */
-    public void addStringPrompt(String title, String description, Object defaultValue) {
+    public void addStringPrompt(final String title, final String description, final Object defaultValue) {
         data.put(title, defaultValue);
         descriptions.put(title, description);
     }

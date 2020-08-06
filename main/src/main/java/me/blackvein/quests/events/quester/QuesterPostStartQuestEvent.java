@@ -22,9 +22,9 @@ import me.blackvein.quests.Quester;
  */
 public class QuesterPostStartQuestEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Quest quest;
+    private final Quest quest;
     
-    public QuesterPostStartQuestEvent(Quester quester, Quest quest) {
+    public QuesterPostStartQuestEvent(final Quester quester, final Quest quest) {
         super(quester);
         this.quest = quest;
     }
@@ -38,6 +38,7 @@ public class QuesterPostStartQuestEvent extends QuesterEvent {
         return quest;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

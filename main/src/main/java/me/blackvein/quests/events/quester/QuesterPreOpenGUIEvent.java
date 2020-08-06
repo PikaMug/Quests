@@ -26,11 +26,11 @@ import net.citizensnpcs.api.npc.NPC;
  */
 public class QuesterPreOpenGUIEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private NPC npc;
+    private final NPC npc;
     LinkedList<Quest> quests;
     private boolean cancel = false;
     
-    public QuesterPreOpenGUIEvent(Quester quester, NPC npc, LinkedList<Quest> quests) {
+    public QuesterPreOpenGUIEvent(final Quester quester, final NPC npc, final LinkedList<Quest> quests) {
         super(quester);
         this.npc = npc;
         this.quests = quests;
@@ -60,10 +60,11 @@ public class QuesterPreOpenGUIEvent extends QuesterEvent implements Cancellable 
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

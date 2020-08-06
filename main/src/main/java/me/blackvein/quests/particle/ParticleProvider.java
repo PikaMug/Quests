@@ -13,6 +13,7 @@
 package me.blackvein.quests.particle;
 
 import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -24,8 +25,8 @@ public abstract class ParticleProvider {
 
     static {
         try {
-            String packageName = ParticleProvider.class.getPackage().getName();
-            String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            final String packageName = ParticleProvider.class.getPackage().getName();
+            final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             if (internalsName.startsWith("v1_8_R")) {
                 loaded = (ParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName)
                         .newInstance();
@@ -67,16 +68,16 @@ public abstract class ParticleProvider {
      *                   packets such as block crack or particle colour on redstone /
      *                   firework particles.
      */
-    public static void sendToPlayer(Player player, Location location, String particleId, float offsetX, float offsetY,
-            float offsetZ, float speed, int count, int[] data) {
+    public static void sendToPlayer(final Player player, final Location location, final String particleId, final float offsetX, final float offsetY,
+            final float offsetZ, final float speed, final int count, final int[] data) {
         Object particle;
-        PreBuiltParticle pbp = PreBuiltParticle.fromIdentifier(particleId);
+        final PreBuiltParticle pbp = PreBuiltParticle.fromIdentifier(particleId);
         if (pbp != null) {
             particle = loaded.getParticleMap().get(pbp);
         } else {
             try {
                 particle = Particle.valueOf(particleId);
-            } catch (IllegalArgumentException e2) {
+            } catch (final IllegalArgumentException e2) {
                 return; // Fail silently
             }
         }
@@ -93,10 +94,10 @@ public abstract class ParticleProvider {
      * @param particleId
      *                   The particle identifier.
      */
-    public static void sendToPlayer(Player player, Location location, String particleId) {
-        PreBuiltParticle particle = PreBuiltParticle.fromIdentifier(particleId);
+    public static void sendToPlayer(final Player player, final Location location, final String particleId) {
+        final PreBuiltParticle particle = PreBuiltParticle.fromIdentifier(particleId);
         if (particle != null) {
-            Location pos = location.clone();
+            final Location pos = location.clone();
             if (particle.getVector() != null) {
                 pos.add(particle.getVector());
             }
@@ -104,9 +105,9 @@ public abstract class ParticleProvider {
         } else {
             try {
                 loaded.spawnParticle(player, location, Particle.valueOf(particleId), 0, 0, 0, 1, 3, null);
-            } catch (NoClassDefFoundError e1) {
+            } catch (final NoClassDefFoundError e1) {
                 Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
-            } catch (IllegalArgumentException exception) {
+            } catch (final IllegalArgumentException exception) {
                 // Fail silently
             }
         }
@@ -122,8 +123,8 @@ public abstract class ParticleProvider {
      * @param particle
      *                 The pre-built particle.
      */
-    public static void sendToPlayer(Player player, Location location, PreBuiltParticle particle) {
-        Location pos = location.clone();
+    public static void sendToPlayer(final Player player, final Location location, final PreBuiltParticle particle) {
+        final Location pos = location.clone();
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
         }

@@ -15,6 +15,13 @@ package me.blackvein.quests.convo.quests.objectives;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -26,18 +33,11 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-
 public class ItemsPrompt extends QuestsEditorNumericPrompt {
     private final int stageNum;
     private final String pref;
 
-    public ItemsPrompt(int stageNum, ConversationContext context) {
+    public ItemsPrompt(final int stageNum, final ConversationContext context) {
         super(context);
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
@@ -45,15 +45,18 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     private final int size = 6;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("stageEditorItems");
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
             case 2:
@@ -68,7 +71,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
             return ChatColor.YELLOW + Lang.get("stageEditorCraftItems");
@@ -87,15 +91,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(ConversationContext context, int number) {
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -107,7 +112,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -119,9 +124,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
-                LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
-                LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
+                final LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
+                final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
+                final LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
                 for (int i = 0; i < enchants.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
                             + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA 
@@ -135,7 +140,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -147,7 +152,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
@@ -163,15 +168,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         // Check/add newly made item
         if (context.getSessionData("newItem") != null) {
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
-                List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
+                final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                 items.add((ItemStack) context.getSessionData("tempStack"));
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
             } else if (context.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
-                List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
+                final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                 items.add((ItemStack) context.getSessionData("tempStack"));
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
             }
@@ -180,7 +185,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         context.setSessionData(pref, Boolean.TRUE);
         
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -192,7 +197,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
             return new ItemsCraftListPrompt(context);
@@ -207,7 +212,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         case 6:
             try {
                 return new StageMainPrompt(stageNum, context);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
@@ -218,21 +223,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     public class ItemsCraftListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsCraftListPrompt(ConversationContext context) {
+        public ItemsCraftListPrompt(final ConversationContext context) {
             super(context);
         }
 
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorCraftItems");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -245,7 +253,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -258,15 +267,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -281,15 +291,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
-                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
                 } else {
-                    LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
                 }
@@ -297,7 +307,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
@@ -309,7 +319,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, ItemsCraftListPrompt.this);
@@ -327,21 +337,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     public class ItemsSmeltListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsSmeltListPrompt(ConversationContext context) {
+        public ItemsSmeltListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorSmeltItems");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -354,7 +367,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -367,15 +381,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_SMELT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -390,15 +405,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
-                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
                 } else {
-                    LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
                 }
@@ -406,7 +421,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
@@ -418,7 +433,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, ItemsSmeltListPrompt.this);
@@ -436,21 +451,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
     public class ItemsEnchantListPrompt extends QuestsEditorNumericPrompt {
 
-        public ItemsEnchantListPrompt(ConversationContext context) {
+        public ItemsEnchantListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 5;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorEnchantItems");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -465,7 +483,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetEnchantments");
@@ -482,15 +501,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES)) {
+                    for (final String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
                     return text;
@@ -500,7 +520,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES)) {
+                    for (final String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
                     }
                     return text;
@@ -510,7 +530,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (int i : (List<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS)) {
+                    for (final int i : (List<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
                     }
                     return text;
@@ -524,8 +544,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
@@ -538,7 +558,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemEnchantTypesPrompt(context);
@@ -585,24 +605,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
     public class ItemEnchantTypesPrompt extends QuestsEditorStringPrompt {
 
-        public ItemEnchantTypesPrompt(ConversationContext context) {
+        public ItemEnchantTypesPrompt(final ConversationContext context) {
             super(context);
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorEnchantments");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("stageEditorEnchantTypePrompt");
         }
 
         @SuppressWarnings("deprecation")
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + getTitle(context)
@@ -619,10 +639,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> enchTypes = new LinkedList<String>();
-                for (String s : input.split(" ")) {
+                final LinkedList<String> enchTypes = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
                     if (ItemUtil.getEnchantmentFromProperName(s) != null) {
                         if (enchTypes.contains(s) == false) {
                             enchTypes.add(s);
@@ -644,34 +664,34 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
     public class ItemEnchantItemsPrompt extends QuestsEditorStringPrompt {
 
-        public ItemEnchantItemsPrompt(ConversationContext context) {
+        public ItemEnchantItemsPrompt(final ConversationContext context) {
             super(context);
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("stageEditorItemNamesPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                String[] args = input.split(" ");
-                LinkedList<String> names = new LinkedList<String>();
-                for (String s : args) {
+                final String[] args = input.split(" ");
+                final LinkedList<String> names = new LinkedList<String>();
+                for (final String s : args) {
                     try {
                         if (Material.matchMaterial(s) != null) {
                             names.add(s);
@@ -680,7 +700,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                                     + Lang.get("stageEditorInvalidItemName"));
                             return new ItemEnchantItemsPrompt(context);
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
                         return new ItemEnchantItemsPrompt(context);
@@ -694,34 +714,34 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
     public class ItemEnchantAmountsPrompt extends QuestsEditorStringPrompt {
 
-        public ItemEnchantAmountsPrompt(ConversationContext context) {
+        public ItemEnchantAmountsPrompt(final ConversationContext context) {
             super(context);
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("stageEditorEnchantAmountsPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                String[] args = input.split(" ");
-                LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (String s : args) {
+                final String[] args = input.split(" ");
+                final LinkedList<Integer> amounts = new LinkedList<Integer>();
+                for (final String s : args) {
                     try {
                         if (Integer.parseInt(s) > 0) {
                             amounts.add(Integer.parseInt(s));
@@ -730,7 +750,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                                     .replace("<number>", "1"));
                             return new ItemEnchantAmountsPrompt(context);
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorNotListofNumbers"));
                         return new ItemEnchantAmountsPrompt(context);
@@ -744,21 +764,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     public class ItemsBrewListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsBrewListPrompt(ConversationContext context) {
+        public ItemsBrewListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorBrewPotions");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -771,7 +794,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -784,15 +808,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -807,15 +832,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
-                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_BREW_ITEMS, items);
                 } else {
-                    LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_BREW_ITEMS, items);
                 }
@@ -823,7 +848,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
@@ -835,7 +860,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, ItemsBrewListPrompt.this);
@@ -853,21 +878,24 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     public class ItemsConsumeListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsConsumeListPrompt(ConversationContext context) {
+        public ItemsConsumeListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorConsumeItems");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -880,7 +908,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -893,15 +922,16 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(ConversationContext context, int number) {
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -916,15 +946,15 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null) {
-                    List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
                 } else {
-                    LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
                 }
@@ -932,7 +962,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
@@ -944,7 +974,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, ItemsConsumeListPrompt.this);

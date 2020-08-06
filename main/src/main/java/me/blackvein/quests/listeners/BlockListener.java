@@ -35,19 +35,19 @@ public class BlockListener implements Listener {
     
     private final Quests plugin;
     
-    public BlockListener(Quests plugin) {
+    public BlockListener(final Quests plugin) {
         this.plugin = plugin;
     }
     
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH) // Because HIGHEST conflicts with AutoSell by extendedclip
-    public void onBlockBreak(BlockBreakEvent evt) {
+    public void onBlockBreak(final BlockBreakEvent evt) {
         final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(player.getUniqueId());
-            for (Quest quest : plugin.getQuests()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
@@ -59,7 +59,7 @@ public class BlockListener implements Listener {
                             quester.breakBlock(quest, blockItemStack);
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, "breakBlock", (Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, "breakBlock", (final Quester q) -> {
                         if (!player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                             q.breakBlock(quest, blockItemStack);
                         }
@@ -67,18 +67,18 @@ public class BlockListener implements Listener {
                     });
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective("placeBlock")) {
-                        for (ItemStack is : quester.getQuestData(quest).blocksPlaced) {
+                        for (final ItemStack is : quester.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
+                                final int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
                                 is.setAmount(is.getAmount() - 1);
                                 quester.getQuestData(quest).blocksPlaced.set(index, is);
                             }
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
-                        for (ItemStack is : q.getQuestData(quest).blocksPlaced) {
+                    quester.dispatchMultiplayerEverything(quest, "placeBlock", (final Quester q) -> {
+                        for (final ItemStack is : q.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
+                                final int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
                                 is.setAmount(is.getAmount() - 1);
                                 q.getQuestData(quest).blocksPlaced.set(index, is);
                             }
@@ -91,7 +91,7 @@ public class BlockListener implements Listener {
                             quester.cutBlock(quest, blockItemStack);
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, "cutBlock", (Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, "cutBlock", (final Quester q) -> {
                         if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                             q.cutBlock(quest, blockItemStack);
                         }
@@ -104,13 +104,13 @@ public class BlockListener implements Listener {
     
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler
-    public void onBlockDamage(BlockDamageEvent evt) {
+    public void onBlockDamage(final BlockDamageEvent evt) {
         final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(player.getUniqueId());
-            for (Quest quest : plugin.getQuests()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
@@ -120,7 +120,7 @@ public class BlockListener implements Listener {
                     quester.damageBlock(quest, blockItemStack);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+                quester.dispatchMultiplayerEverything(quest, "placeBlock", (final Quester q) -> {
                     q.placeBlock(quest, blockItemStack);
                     return null;
                 });
@@ -130,13 +130,13 @@ public class BlockListener implements Listener {
     
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockPlace(BlockPlaceEvent evt) {
+    public void onBlockPlace(final BlockPlaceEvent evt) {
         final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            Quester quester = plugin.getQuester(player.getUniqueId());
-            for (Quest quest : plugin.getQuests()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
@@ -147,7 +147,7 @@ public class BlockListener implements Listener {
                         quester.placeBlock(quest, blockItemStack);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "placeBlock", (Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, "placeBlock", (final Quester q) -> {
                         q.placeBlock(quest, blockItemStack);
                         return null;
                     });
@@ -158,11 +158,11 @@ public class BlockListener implements Listener {
     
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler
-    public void onBlockUse(PlayerInteractEvent evt) {
+    public void onBlockUse(final PlayerInteractEvent evt) {
         EquipmentSlot e = null;
         try {
             e = evt.getHand();
-        } catch (NoSuchMethodError err) {
+        } catch (final NoSuchMethodError err) {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
@@ -173,7 +173,7 @@ public class BlockListener implements Listener {
                     if (evt.isCancelled() == false) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
-                        for (Quest quest : plugin.getQuests()) {
+                        for (final Quest quest : plugin.getQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 return;
                             }
@@ -183,7 +183,7 @@ public class BlockListener implements Listener {
                                 quester.useBlock(quest, blockItemStack);
                             }
                             
-                            quester.dispatchMultiplayerEverything(quest, "useBlock", (Quester q) -> {
+                            quester.dispatchMultiplayerEverything(quest, "useBlock", (final Quester q) -> {
                                 q.useBlock(quest, blockItemStack);
                                 return null;
                             });

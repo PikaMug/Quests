@@ -33,27 +33,27 @@ public class DenizenAPI_1_0_9 {
     private static DenizenAPI api = quests.getDependencies().getDenizenApi();
     
     @Nullable
-    public static boolean containsScript(String input) {
+    public static boolean containsScript(final String input) {
         if (api.scriptRegistry == null || api.containsScriptMethod == null) return false;
         boolean script = false;
         try {
             script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
         }
         return script;
     }
     
     @Nullable
-    public static String getScriptContainerName(String input) {
+    public static String getScriptContainerName(final String input) {
         if (api.scriptRegistry == null || api.scriptContainer == null) return null;
         String name = null;
         Object instance;
         try {
-            Constructor<?> constructor = api.scriptRegistry.getConstructor(YamlConfiguration.class, String.class);
+            final Constructor<?> constructor = api.scriptRegistry.getConstructor(YamlConfiguration.class, String.class);
             instance = constructor.newInstance(null, input);
             name = (String)instance.getClass().getMethod("getName").invoke(api.scriptContainer);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptContainer#getName", e);
         }
         return name;
@@ -66,57 +66,57 @@ public class DenizenAPI_1_0_9 {
         Set<String> names = null;
         try {
             names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
         }
         return names;
     }
     
     @Nullable
-    public static Object getScriptContainerAs(String scriptName) {
+    public static Object getScriptContainerAs(final String scriptName) {
         if (api.scriptRegistry == null || api.taskScriptContainer == null) return null;
         Object container = null;
         try {
             container = api.getScriptContainerAsMethod.invoke(api.scriptRegistry, scriptName, api.taskScriptContainer);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen #getScriptContainerAs", e);
         }
         return container;
     }
     
     @Nullable
-    public static Object mirrorBukkitPlayer(Player player) {
+    public static Object mirrorBukkitPlayer(final Player player) {
         if (api.dPlayer == null || api.mirrorBukkitPlayerMethod == null) return null;
         Object dp = null;
         try {
             dp = api.mirrorBukkitPlayerMethod.invoke(api.dPlayer, player);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
         }
         return dp;
     }
     
     @Nullable
-    public static Object mirrorCitizensNPC(NPC npc) {
+    public static Object mirrorCitizensNPC(final NPC npc) {
         if (api.dNPC == null || api.mirrorCitizensNPCMethod == null) return null;
         Object dp = null;
         try {
             dp = api.mirrorCitizensNPCMethod.invoke(api.dNPC, npc);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen dNPC#mirrorCitizensNPC", e);
         }
         return dp;
     }
     
     @Nullable
-    public static void runTaskScript(String scriptName, Player player) {
+    public static void runTaskScript(final String scriptName, final Player player) {
         if (api.scriptRegistry == null || api.bukkitScriptEntryData == null || api.scriptEntryData == null) return;
         try {
-            Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
-            Object tsc = getScriptContainerAs(scriptName);
-            Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
+            final Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
+            final Object tsc = getScriptContainerAs(scriptName);
+            final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
             runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
         }
     }

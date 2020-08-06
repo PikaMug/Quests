@@ -37,12 +37,12 @@ public class DenizenAPI_1_1_0 {
     private static DenizenAPI api = quests.getDependencies().getDenizenApi();
     
     @Nullable
-    public static boolean containsScript(String input) {
+    public static boolean containsScript(final String input) {
         return ScriptRegistry.containsScript(input);
     }
     
     @Nullable
-    public static String getScriptContainerName(String input) {
+    public static String getScriptContainerName(final String input) {
         return ScriptRegistry.getScriptContainer(input).getName();
     }
     
@@ -53,35 +53,35 @@ public class DenizenAPI_1_1_0 {
         Set<String> names = null;
         try {
             names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
         }
         return names;
     }
     
     @Nullable
-    public static Object getScriptContainerAs(String scriptName) {
+    public static Object getScriptContainerAs(final String scriptName) {
         return ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
     }
     
     @Nullable
-    public static Object mirrorBukkitPlayer(Player player) {
+    public static Object mirrorBukkitPlayer(final Player player) {
         return PlayerTag.mirrorBukkitPlayer(player);
     }
     
     @Nullable
-    public static Object mirrorCitizensNPC(NPC npc) {
+    public static Object mirrorCitizensNPC(final NPC npc) {
         return NPCTag.mirrorCitizensNPC(npc);
     }
     
     @Nullable
-    public static void runTaskScript(String scriptName, Player player) {
+    public static void runTaskScript(final String scriptName, final Player player) {
         try {
-            Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
-            Object tsc = getScriptContainerAs(scriptName);
-            Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
+            final Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
+            final Object tsc = getScriptContainerAs(scriptName);
+            final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
             runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
         }
     }

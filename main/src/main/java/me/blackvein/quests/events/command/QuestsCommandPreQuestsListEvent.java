@@ -25,7 +25,7 @@ public class QuestsCommandPreQuestsListEvent extends QuestsCommandEvent implemen
     private final int page;
     private boolean cancel = false;
 
-    public QuestsCommandPreQuestsListEvent(Quester quester, int page) {
+    public QuestsCommandPreQuestsListEvent(final Quester quester, final int page) {
         super(quester);
         this.page = page;
     }
@@ -36,7 +36,7 @@ public class QuestsCommandPreQuestsListEvent extends QuestsCommandEvent implemen
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
 

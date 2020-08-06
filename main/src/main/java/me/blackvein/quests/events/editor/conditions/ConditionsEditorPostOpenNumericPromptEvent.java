@@ -15,38 +15,16 @@ package me.blackvein.quests.events.editor.conditions;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 
 public class ConditionsEditorPostOpenNumericPromptEvent extends ConditionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private ConditionFactory factory;
-    private ConditionsEditorNumericPrompt prompt;
+    private final ConditionsEditorNumericPrompt prompt;
     
-    public ConditionsEditorPostOpenNumericPromptEvent(ConversationContext context, ConditionsEditorNumericPrompt prompt) {
+    public ConditionsEditorPostOpenNumericPromptEvent(final ConversationContext context, final ConditionsEditorNumericPrompt prompt) {
         super(context, prompt);
         this.context = context;
-        this.factory = ((Quests)context.getPlugin()).getConditionFactory();
         this.prompt = prompt;
-    }
-    
-    /**
-     * Returns the context involved in this event
-     * 
-     * @return ConversationContext which is involved in this event
-     */
-    public ConversationContext getConversationContext() {
-        return context;
-    }
-
-    /**
-     * Returns the factory involved in this event
-     * 
-     * @return ConditionFactory which is involved in this event
-     */
-    public ConditionFactory getConditionFactory() {
-        return factory;
     }
     
     /**
@@ -54,6 +32,7 @@ public class ConditionsEditorPostOpenNumericPromptEvent extends ConditionsEditor
      * 
      * @return Prompt which is involved in this event
      */
+    @Override
     public ConditionsEditorNumericPrompt getPrompt() {
         return prompt;
     }

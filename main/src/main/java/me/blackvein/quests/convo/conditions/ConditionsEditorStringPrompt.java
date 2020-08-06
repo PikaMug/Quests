@@ -19,7 +19,7 @@ import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 
 public abstract class ConditionsEditorStringPrompt extends QuestsStringPrompt {
-    private ConversationContext context;
+    private final ConversationContext context;
     private ConditionFactory factory;
     
     public ConditionsEditorStringPrompt(final ConversationContext context) {
@@ -35,6 +35,7 @@ public abstract class ConditionsEditorStringPrompt extends QuestsStringPrompt {
         this.factory = factory;
     }
     
+    @Override
     public String getName() {
         return getClass().getSimpleName();
     }

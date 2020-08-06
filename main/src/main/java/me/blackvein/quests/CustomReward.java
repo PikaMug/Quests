@@ -22,8 +22,8 @@ public abstract class CustomReward {
     private String name = null;
     private String author = null;
     private String display = null;
-    private Map<String, Object> data = new HashMap<String, Object>();
-    private Map<String, String> descriptions = new HashMap<String, String>();
+    private final Map<String, Object> data = new HashMap<String, Object>();
+    private final Map<String, String> descriptions = new HashMap<String, String>();
 
     public abstract void giveReward(Player p, Map<String, Object> m);
 
@@ -31,7 +31,7 @@ public abstract class CustomReward {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -39,7 +39,7 @@ public abstract class CustomReward {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(final String author) {
         this.author = author;
     }
     
@@ -47,13 +47,14 @@ public abstract class CustomReward {
         return display;
     }
     
-    public void setDisplay(String display) {
+    public void setDisplay(final String display) {
         this.display = display;
     }
     
     /**
      * @deprecated Use {@link #getDisplay()}
      */
+    @Deprecated
     public String getRewardName() {
         return display;
     }
@@ -61,7 +62,8 @@ public abstract class CustomReward {
     /**
      * @deprecated Use {@link #setDisplay(String)}
      */
-    public void setRewardName(String name) {
+    @Deprecated
+    public void setRewardName(final String name) {
         display = name;
     }
     
@@ -78,7 +80,7 @@ public abstract class CustomReward {
      * @param description Description of expected input
      * @param defaultValue Value to be used if input is not received
      */
-    public void addStringPrompt(String title, String description, Object defaultValue) {
+    public void addStringPrompt(final String title, final String description, final Object defaultValue) {
         data.put(title, defaultValue);
         descriptions.put(title, description);
     }

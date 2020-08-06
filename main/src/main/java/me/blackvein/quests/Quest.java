@@ -56,15 +56,15 @@ public class Quest {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private LinkedList<Stage> orderedStages = new LinkedList<Stage>();
+    private final LinkedList<Stage> orderedStages = new LinkedList<Stage>();
     protected NPC npcStart;
     protected Location blockStart;
     protected String regionStart = null;
     protected Action initialAction;
-    private Requirements reqs = new Requirements();
-    private Planner pln = new Planner();
-    private Rewards rews = new Rewards();
-    private Options opts = new Options();
+    private final Requirements reqs = new Requirements();
+    private final Planner pln = new Planner();
+    private final Rewards rews = new Rewards();
+    private final Options opts = new Options();
     
     public String getId() {
         return id;
@@ -74,7 +74,7 @@ public class Quest {
         return name;
     }
     
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
     
@@ -82,7 +82,7 @@ public class Quest {
         return description;
     }
     
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
     
@@ -90,7 +90,7 @@ public class Quest {
         return finished;
     }
     
-    public void setFinished(String finished) {
+    public void setFinished(final String finished) {
         this.finished = finished;
     }
     
@@ -98,7 +98,7 @@ public class Quest {
         return regionStart;
     }
     
-    public void setRegionStart(String regionStart) {
+    public void setRegionStart(final String regionStart) {
         this.regionStart = regionStart;
     }
     
@@ -106,14 +106,14 @@ public class Quest {
         return guiDisplay;
     }
     
-    public void setGUIDisplay(ItemStack guiDisplay) {
+    public void setGUIDisplay(final ItemStack guiDisplay) {
         this.guiDisplay = guiDisplay;
     }
     
-    public Stage getStage(int index) {
+    public Stage getStage(final int index) {
         try {
             return orderedStages.get(index);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
@@ -126,7 +126,7 @@ public class Quest {
         return npcStart;
     }
     
-    public void setNpcStart(NPC npcStart) {
+    public void setNpcStart(final NPC npcStart) {
         this.npcStart = npcStart;
     }
     
@@ -134,7 +134,7 @@ public class Quest {
         return blockStart;
     }
     
-    public void setBlockStart(Location blockStart) {
+    public void setBlockStart(final Location blockStart) {
         this.blockStart = blockStart;
     }
     
@@ -142,7 +142,7 @@ public class Quest {
         return initialAction;
     }
     
-    public void setInitialAction(Action initialAction) {
+    public void setInitialAction(final Action initialAction) {
         this.initialAction = initialAction;
     }
     
@@ -168,13 +168,13 @@ public class Quest {
      * @param quester Player to force
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
-    public void nextStage(Quester quester, boolean allowSharedProgress) {
-        Stage currentStage = quester.getCurrentStage(this);
+    public void nextStage(final Quester quester, final boolean allowSharedProgress) {
+        final Stage currentStage = quester.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
             return;
         }
-        String stageCompleteMessage = currentStage.completeMessage;
+        final String stageCompleteMessage = currentStage.completeMessage;
         if (stageCompleteMessage != null) {
             if (quester.getOfflinePlayer().isOnline()) {
                 quester.getPlayer().sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageCompleteMessage, 
@@ -204,8 +204,8 @@ public class Quest {
             
             // Multiplayer
             if (opts.getShareProgressLevel() == 3) {
-                List<Quester> mq = quester.getMultiplayerQuesters(this);
-                for (Quester qq : mq) {
+                final List<Quester> mq = quester.getMultiplayerQuesters(this);
+                for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
                         nextStage(qq, allowSharedProgress);
                     }
@@ -224,17 +224,17 @@ public class Quest {
      * @param stage Stage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
-    public void setStage(Quester quester, int stage) throws IndexOutOfBoundsException {
-        OfflinePlayer player = quester.getOfflinePlayer();
+    public void setStage(final Quester quester, final int stage) throws IndexOutOfBoundsException {
+        final OfflinePlayer player = quester.getOfflinePlayer();
         if (orderedStages.size() - 1 < stage) {
-            String msg = "Tried to set invalid stage number of " + stage + " for quest " + getName() + " on " 
+            final String msg = "Tried to set invalid stage number of " + stage + " for quest " + getName() + " on " 
                     + player.getName();
             throw new IndexOutOfBoundsException(msg);
         }
-        Stage currentStage = quester.getCurrentStage(this);
-        Stage nextStage = getStage(stage);
+        final Stage currentStage = quester.getCurrentStage(this);
+        final Stage nextStage = getStage(stage);
         if (player.isOnline()) {
-            QuesterPreChangeStageEvent preEvent = new QuesterPreChangeStageEvent(quester, this, currentStage, nextStage);
+            final QuesterPreChangeStageEvent preEvent = new QuesterPreChangeStageEvent(quester, this, currentStage, nextStage);
             plugin.getServer().getPluginManager().callEvent(preEvent);
             if (preEvent.isCancelled()) {
                 return;
@@ -251,19 +251,19 @@ public class Quest {
         }
         updateCompass(quester, nextStage);
         if (player.isOnline()) {
-            Player p = quester.getPlayer();
+            final Player p = quester.getPlayer();
             String msg = Lang.get(p, "questObjectivesTitle");
             msg = msg.replace("<quest>", name);
             p.sendMessage(ChatColor.GOLD + msg);
             plugin.showObjectives(this, quester, false);
-            String stageStartMessage = quester.getCurrentStage(this).startMessage;
+            final String stageStartMessage = quester.getCurrentStage(this).startMessage;
             if (stageStartMessage != null) {
                 p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, this, p));
             }
         }
         quester.updateJournal();
         if (player.isOnline()) {
-            QuesterPostChangeStageEvent postEvent = new QuesterPostChangeStageEvent(quester, this, currentStage, nextStage);
+            final QuesterPostChangeStageEvent postEvent = new QuesterPostChangeStageEvent(quester, this, currentStage, nextStage);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
     }
@@ -277,7 +277,7 @@ public class Quest {
      * @param stage The stage to process for targets
      * @return true if successful
      */
-    public boolean updateCompass(Quester quester, Stage stage) {
+    public boolean updateCompass(final Quester quester, final Stage stage) {
         if (quester == null) {
             return false;
         }
@@ -298,7 +298,7 @@ public class Quest {
         } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
             targetLocation = stage.locationsToReach.getFirst();
         } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-            NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
+            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
                     .getFirst());
             targetLocation = npc.getStoredLocation();
         }
@@ -318,7 +318,7 @@ public class Quest {
      * @param quester The quester to check
      * @return true if all Requirements have been met
      */
-    public boolean testRequirements(Quester quester) {
+    public boolean testRequirements(final Quester quester) {
         return testRequirements(quester.getOfflinePlayer());
     }
     
@@ -330,8 +330,8 @@ public class Quest {
      * @param player The player to check
      * @return true if all Requirements have been met
      */
-    protected boolean testRequirements(OfflinePlayer player) {
-        Quester quester = plugin.getQuester(player.getUniqueId());
+    protected boolean testRequirements(final OfflinePlayer player) {
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (reqs.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
             if (plugin.getDependencies().getVaultEconomy().getBalance(player) < reqs.getMoney()) {
                 return false;
@@ -343,14 +343,14 @@ public class Quest {
         if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
             return false;
         }
-        for (String q : reqs.getBlockQuests()) {
-            Quest questObject = new Quest();
+        for (final String q : reqs.getBlockQuests()) {
+            final Quest questObject = new Quest();
             questObject.name = q;
             if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
                 return false;
             }
         }
-        for (String s : reqs.getMcmmoSkills()) {
+        for (final String s : reqs.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
             final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
             if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) < lvl) {
@@ -370,11 +370,11 @@ public class Quest {
             }
         }
         if (player.isOnline()) {
-            Player p = (Player)player;
-            PlayerInventory inventory = p.getInventory();
+            final Player p = (Player)player;
+            final PlayerInventory inventory = p.getInventory();
             int num = 0;
-            for (ItemStack is : reqs.getItems()) {
-                for (ItemStack stack : inventory.getContents()) {
+            for (final ItemStack is : reqs.getItems()) {
+                for (final ItemStack stack : inventory.getContents()) {
                     if (stack != null) {
                         if (ItemUtil.compareItems(is, stack, true) == 0) {
                             num += stack.getAmount();
@@ -386,14 +386,14 @@ public class Quest {
                 }
                 num = 0;
             }
-            for (String s : reqs.getPermissions()) {
+            for (final String s : reqs.getPermissions()) {
                 if (p.hasPermission(s) == false) {
                     return false;
                 }
             }
-            for (String s : reqs.getCustomRequirements().keySet()) {
+            for (final String s : reqs.getCustomRequirements().keySet()) {
                 CustomRequirement found = null;
-                for (CustomRequirement cr : plugin.getCustomRequirements()) {
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(s)) {
                         found = cr;
                         break;
@@ -418,10 +418,10 @@ public class Quest {
      * @param q The quester finishing this quest
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(Quester q) {
-        OfflinePlayer player = q.getOfflinePlayer();
+    public void completeQuest(final Quester q) {
+        final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
-            QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
+            final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
             plugin.getServer().getPluginManager().callEvent(preEvent);
             if (preEvent.isCancelled()) {
                 return;
@@ -431,14 +431,14 @@ public class Quest {
         if (!q.completedQuests.contains(name)) {
             q.completedQuests.add(name);
         }
-        for (Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
+        for (final Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
                 q.timers.remove(entry.getKey());
             }
         }
         if (player.isOnline()) {
-            Player p = (Player)player;
+            final Player p = (Player)player;
             final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA + finished, this, p);
             Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
@@ -464,11 +464,11 @@ public class Quest {
             issuedReward = true;
         }
         if (player.isOnline()) {
-            Player p = (Player)player;
-            for (ItemStack i : rews.getItems()) {
+            final Player p = (Player)player;
+            for (final ItemStack i : rews.getItems()) {
                 try {
                     InventoryUtil.addItem(p, i);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                             + player.getName() + " upon completion of quest " + name);
                     p.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
@@ -477,7 +477,7 @@ public class Quest {
                 issuedReward = true;
             }
         }
-        for (String s : rews.getCommands()) {
+        for (final String s : rews.getCommands()) {
             String temp = s.replace("<player>", player.getName());
             if (plugin.getDependencies().getPlaceholderApi() != null && player.isOnline()) {
                 temp = PlaceholderAPI.setPlaceholders((Player)player, temp);
@@ -498,7 +498,7 @@ public class Quest {
         }
         for (int i = 0; i < rews.getPermissions().size(); i++) {
             if (plugin.getDependencies().getVaultPermission() != null) {
-                String perm = rews.getPermissions().get(i);
+                final String perm = rews.getPermissions().get(i);
                 String world = null;
                 if (i < rews.getPermissionWorlds().size()) {
                     world = rews.getPermissionWorlds().get(i);
@@ -511,25 +511,25 @@ public class Quest {
             }
             issuedReward = true;
         }
-        for (String s : rews.getMcmmoSkills()) {
+        for (final String s : rews.getMcmmoSkills()) {
             UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), 
                     rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)));
             issuedReward = true;
         }
         if (player.isOnline()) {
-            for (String s : rews.getHeroesClasses()) {
-                Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
+            for (final String s : rews.getHeroesClasses()) {
+                final Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
                 hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), 
                         plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
                 issuedReward = true;
             }
         }
-        LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
+        final LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
         int phatLootExp = 0;
-        LinkedList<String> phatLootMessages = new LinkedList<String>();
-        for (String s : rews.getPhatLoots()) {
-            LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
+        final LinkedList<String> phatLootMessages = new LinkedList<String>();
+        for (final String s : rews.getPhatLoots()) {
+            final LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
             if (lb.getExp() > 0) {
                 phatLootExp += lb.getExp();
                 if (player.isOnline()) {
@@ -545,11 +545,11 @@ public class Quest {
             if (lb.getItemList().isEmpty() == false) {
                 phatLootItems.addAll(lb.getItemList());
                 if (player.isOnline()) {
-                    Player p = (Player)player;
-                    for (ItemStack is : lb.getItemList()) {
+                    final Player p = (Player)player;
+                    for (final ItemStack is : lb.getItemList()) {
                         try {
                             InventoryUtil.addItem(p, is);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " + p.getName() 
                                     + " upon completion of quest " + name);
                             p.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
@@ -559,7 +559,7 @@ public class Quest {
                 }
             }
             if (lb.getCommandList().isEmpty() == false && player.isOnline()) {
-                for (CommandLoot cl : lb.getCommandList()) {
+                for (final CommandLoot cl : lb.getCommandList()) {
                     cl.execute((Player)player);
                 }
             }
@@ -582,7 +582,7 @@ public class Quest {
         
         // Inform player
         if (player.isOnline()) {
-            Player p = (Player)player;
+            final Player p = (Player)player;
             p.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>", ChatColor.YELLOW + name
                     + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
@@ -596,7 +596,7 @@ public class Quest {
             if (!issuedReward) {
                 p.sendMessage(ChatColor.GRAY + "- (" + Lang.get("none") + ")");
             } else if (!rews.getDetailsOverride().isEmpty()) {
-                for (String s: rews.getDetailsOverride()) {
+                for (final String s: rews.getDetailsOverride()) {
                     String message = ChatColor.DARK_GREEN + ConfigUtil.parseString(
                             ChatColor.translateAlternateColorCodes('&', s));
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
@@ -609,7 +609,7 @@ public class Quest {
                     p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " " 
                             + Lang.get(p, "questPoints"));
                 }
-                for (ItemStack i : rews.getItems()) {
+                for (final ItemStack i : rews.getItems()) {
                     String text = "error";
                     if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
@@ -621,11 +621,11 @@ public class Quest {
                             try {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
                                     text +=  ChatColor.GRAY + " " + Lang.get(p, "with") + ChatColor.DARK_PURPLE;
-                                    for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
                                         text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
                                     }
                                 }
-                            } catch (Throwable tr) {
+                            } catch (final Throwable tr) {
                                 // Do nothing, hasItemFlag() not introduced until 1.8.6
                             }
                             text += ChatColor.GRAY + " x " + i.getAmount();
@@ -637,7 +637,7 @@ public class Quest {
                         } else {
                             text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY
                                     + " " + Lang.get(p, "with");
-                            for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                            for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
                                 text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
                             }
                             text += ChatColor.GRAY + " x " + i.getAmount();
@@ -650,11 +650,11 @@ public class Quest {
                             try {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
                                     text += ChatColor.GRAY + " " + Lang.get(p, "with");
-                                    for (Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
                                         text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
                                     }
                                 }
-                            } catch (Throwable tr) {
+                            } catch (final Throwable tr) {
                                 // Do nothing, hasItemFlag() not introduced until 1.8.6
                             }
                             text += ChatColor.GRAY + " x " + i.getAmount();
@@ -662,7 +662,7 @@ public class Quest {
                     }
                     p.sendMessage(text);
                 }
-                for (ItemStack i : phatLootItems) {
+                for (final ItemStack i : phatLootItems) {
                     if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
                             p.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
@@ -699,13 +699,13 @@ public class Quest {
                             + plugin.getDependencies().getCurrency(false));
                 }
                 if (rews.getExp() > 0 || phatLootExp > 0) {
-                    int tot = rews.getExp() + phatLootExp;
+                    final int tot = rews.getExp() + phatLootExp;
                     p.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " 
                             + Lang.get(p, "experience"));
                 }
                 if (rews.getCommands().isEmpty() == false) {
                     int index = 0;
-                    for (String s : rews.getCommands()) {
+                    for (final String s : rews.getCommands()) {
                         if (rews.getCommandsOverrideDisplay().isEmpty() == false && rews.getCommandsOverrideDisplay().size() 
                                 > index) {
                             if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
@@ -720,7 +720,7 @@ public class Quest {
                 }
                 if (rews.getPermissions().isEmpty() == false) {
                     int index = 0;
-                    for (String s : rews.getPermissions()) {
+                    for (final String s : rews.getPermissions()) {
                         if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
                             p.sendMessage("- " + ChatColor.DARK_GREEN + s + " (" + rews.getPermissionWorlds().get(index)
                                     + ")");
@@ -732,37 +732,37 @@ public class Quest {
                     }
                 }
                 if (rews.getMcmmoSkills().isEmpty() == false) {
-                    for (String s : rews.getMcmmoSkills()) {
+                    for (final String s : rews.getMcmmoSkills()) {
                         p.sendMessage("- " + ChatColor.DARK_GREEN 
                                 + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
                                 + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
                 if (rews.getHeroesClasses().isEmpty() == false) {
-                    for (String s : rews.getHeroesClasses()) {
+                    for (final String s : rews.getHeroesClasses()) {
                         p.sendMessage("- " + ChatColor.AQUA 
                                 + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE 
                                 + s + " " + Lang.get(p, "experience"));
                     }
                 }
                 if (phatLootMessages.isEmpty() == false) {
-                    for (String s : phatLootMessages) {
+                    for (final String s : phatLootMessages) {
                         p.sendMessage("- " + s);
                     }
                 }
-                for (String s : rews.getCustomRewards().keySet()) {
+                for (final String s : rews.getCustomRewards().keySet()) {
                     CustomReward found = null;
-                    for (CustomReward cr : plugin.getCustomRewards()) {
+                    for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getName().equalsIgnoreCase(s)) {
                             found = cr;
                             break;
                         }
                     }
                     if (found != null) {
-                        Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
+                        final Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
                         String message = found.getDisplay();
                         if (message != null) {
-                            for (String key : datamap.keySet()) {
+                            for (final String key : datamap.keySet()) {
                                 message = message.replace("%" + key + "%", datamap.get(key).toString());
                             }
                             p.sendMessage("- " + ChatColor.GOLD + message);
@@ -785,14 +785,14 @@ public class Quest {
         q.updateJournal();
         q.findCompassTarget();
         if (player.isOnline()) {
-            QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
+            final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
         
         // Multiplayer
         if (opts.getShareProgressLevel() == 4) {
-            List<Quester> mq = q.getMultiplayerQuesters(this);
-            for (Quester qq : mq) {
+            final List<Quester> mq = q.getMultiplayerQuesters(this);
+            for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
                     completeQuest(qq);
                 }
@@ -806,14 +806,14 @@ public class Quest {
      * @param quester The quester to be ejected
      */
     @SuppressWarnings("deprecation")
-    public void failQuest(Quester quester) {
-        QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(quester, this);
+    public void failQuest(final Quester quester) {
+        final QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
-        Player player = quester.getPlayer();
-        String[] messages = {
+        final Player player = quester.getPlayer();
+        final String[] messages = {
                 ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name),
                 ChatColor.RED + Lang.get(player, "questFailed")
         };
@@ -821,7 +821,7 @@ public class Quest {
         if (player.isOnline()) {
             player.updateInventory();
         }
-        QuesterPostFailQuestEvent postEvent = new QuesterPostFailQuestEvent(quester, this);
+        final QuesterPostFailQuestEvent postEvent = new QuesterPostFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
@@ -831,7 +831,7 @@ public class Quest {
      * @param quester The quester to check
      * @return true if quester is in region
      */
-    public boolean isInRegion(Quester quester) {
+    public boolean isInRegion(final Quester quester) {
         return isInRegion(quester.getPlayer());
     }
 
@@ -841,7 +841,7 @@ public class Quest {
      * @param player The player to check
      * @return true if player is in region
      */
-    private boolean isInRegion(Player player) {
+    private boolean isInRegion(final Player player) {
         if (regionStart == null) {
             return false;
         }

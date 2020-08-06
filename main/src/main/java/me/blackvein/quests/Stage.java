@@ -51,12 +51,13 @@ public class Stage {
         private static final long serialVersionUID = -2774443496142382127L;
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
+                final
                 LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (Integer i : this) {
-                    Integer other = otherList.get(this.indexOf(i));
+                for (final Integer i : this) {
+                    final Integer other = otherList.get(this.indexOf(i));
                     if (!other.equals(i)) {
                         return false;
                     }
@@ -71,12 +72,13 @@ public class Stage {
         private static final long serialVersionUID = -4086855121042524435L;
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
+                final
                 LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (Integer i : this) {
-                    Integer other = otherList.get(this.indexOf(i));
+                for (final Integer i : this) {
+                    final Integer other = otherList.get(this.indexOf(i));
                     if (!other.equals(i)) {
                         return false;
                     }
@@ -90,12 +92,13 @@ public class Stage {
         private static final long serialVersionUID = 7705964814014176415L;
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
+                final
                 LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (Integer i : this) {
-                    Integer other = otherList.get(this.indexOf(i));
+                for (final Integer i : this) {
+                    final Integer other = otherList.get(this.indexOf(i));
                     if (!other.equals(i)) {
                         return false;
                     }
@@ -140,7 +143,7 @@ public class Stage {
         return blocksToBreak;
     }
 
-    public void setBlocksToBreak(LinkedList<ItemStack> blocksToBreak) {
+    public void setBlocksToBreak(final LinkedList<ItemStack> blocksToBreak) {
         this.blocksToBreak = blocksToBreak;
     }
 
@@ -148,7 +151,7 @@ public class Stage {
         return blocksToDamage;
     }
 
-    public void setBlocksToDamage(LinkedList<ItemStack> blocksToDamage) {
+    public void setBlocksToDamage(final LinkedList<ItemStack> blocksToDamage) {
         this.blocksToDamage = blocksToDamage;
     }
 
@@ -156,7 +159,7 @@ public class Stage {
         return blocksToPlace;
     }
 
-    public void setBlocksToPlace(LinkedList<ItemStack> blocksToPlace) {
+    public void setBlocksToPlace(final LinkedList<ItemStack> blocksToPlace) {
         this.blocksToPlace = blocksToPlace;
     }
 
@@ -164,7 +167,7 @@ public class Stage {
         return blocksToUse;
     }
 
-    public void setBlocksToUse(LinkedList<ItemStack> blocksToUse) {
+    public void setBlocksToUse(final LinkedList<ItemStack> blocksToUse) {
         this.blocksToUse = blocksToUse;
     }
 
@@ -172,7 +175,7 @@ public class Stage {
         return blocksToCut;
     }
 
-    public void setBlocksToCut(LinkedList<ItemStack> blocksToCut) {
+    public void setBlocksToCut(final LinkedList<ItemStack> blocksToCut) {
         this.blocksToCut = blocksToCut;
     }
     
@@ -180,7 +183,7 @@ public class Stage {
         return cowsToMilk;
     }
 
-    public void setCowsToMilk(Integer cowsToMilk) {
+    public void setCowsToMilk(final Integer cowsToMilk) {
         this.cowsToMilk = cowsToMilk;
     }
 
@@ -188,7 +191,7 @@ public class Stage {
         return fishToCatch;
     }
 
-    public void setFishToCatch(Integer fishToCatch) {
+    public void setFishToCatch(final Integer fishToCatch) {
         this.fishToCatch = fishToCatch;
     }
 
@@ -196,7 +199,7 @@ public class Stage {
         return playersToKill;
     }
 
-    public void setPlayersToKill(Integer playersToKill) {
+    public void setPlayersToKill(final Integer playersToKill) {
         this.playersToKill = playersToKill;
     }
     
@@ -204,7 +207,7 @@ public class Stage {
         return itemsToCraft;
     }
 
-    public void setItemsToCraft(LinkedList<ItemStack> itemsToCraft) {
+    public void setItemsToCraft(final LinkedList<ItemStack> itemsToCraft) {
         this.itemsToCraft = itemsToCraft;
     }
     
@@ -212,7 +215,7 @@ public class Stage {
         return itemsToSmelt;
     }
 
-    public void setItemsToSmelt(LinkedList<ItemStack> itemsToSmelt) {
+    public void setItemsToSmelt(final LinkedList<ItemStack> itemsToSmelt) {
         this.itemsToSmelt = itemsToSmelt;
     }
 
@@ -221,7 +224,7 @@ public class Stage {
     }
 
     public void setItemsToEnchant(
-            Map<Map<Enchantment, Material>, Integer> itemsToEnchant) {
+            final Map<Map<Enchantment, Material>, Integer> itemsToEnchant) {
         this.itemsToEnchant = itemsToEnchant;
     }
     
@@ -229,7 +232,7 @@ public class Stage {
         return itemsToBrew;
     }
 
-    public void setItemsToBrew(LinkedList<ItemStack> itemsToBrew) {
+    public void setItemsToBrew(final LinkedList<ItemStack> itemsToBrew) {
         this.itemsToBrew = itemsToBrew;
     }
     
@@ -237,7 +240,7 @@ public class Stage {
         return itemsToBrew;
     }
 
-    public void setItemsToConsume(LinkedList<ItemStack> itemsToBrew) {
+    public void setItemsToConsume(final LinkedList<ItemStack> itemsToBrew) {
         this.itemsToBrew = itemsToBrew;
     }
 
@@ -245,7 +248,7 @@ public class Stage {
         return itemsToDeliver;
     }
 
-    public void setItemsToDeliver(LinkedList<ItemStack> itemsToDeliver) {
+    public void setItemsToDeliver(final LinkedList<ItemStack> itemsToDeliver) {
         this.itemsToDeliver = itemsToDeliver;
     }
 
@@ -253,7 +256,7 @@ public class Stage {
         return itemDeliveryTargets;
     }
 
-    public void setItemDeliveryTargets(LinkedList<Integer> itemDeliveryTargets) {
+    public void setItemDeliveryTargets(final LinkedList<Integer> itemDeliveryTargets) {
         this.itemDeliveryTargets = itemDeliveryTargets;
     }
 
@@ -261,7 +264,7 @@ public class Stage {
         return deliverMessages;
     }
 
-    public void setDeliverMessages(LinkedList<String> deliverMessages) {
+    public void setDeliverMessages(final LinkedList<String> deliverMessages) {
         this.deliverMessages = deliverMessages;
     }
 
@@ -269,7 +272,7 @@ public class Stage {
         return citizensToInteract;
     }
 
-    public void setCitizensToInteract(LinkedList<Integer> citizensToInteract) {
+    public void setCitizensToInteract(final LinkedList<Integer> citizensToInteract) {
         this.citizensToInteract = citizensToInteract;
     }
 
@@ -277,7 +280,7 @@ public class Stage {
         return citizensToKill;
     }
 
-    public void setCitizensToKill(LinkedList<Integer> citizensToKill) {
+    public void setCitizensToKill(final LinkedList<Integer> citizensToKill) {
         this.citizensToKill = citizensToKill;
     }
 
@@ -285,7 +288,7 @@ public class Stage {
         return citizenNumToKill;
     }
 
-    public void setCitizenNumToKill(LinkedList<Integer> citizenNumToKill) {
+    public void setCitizenNumToKill(final LinkedList<Integer> citizenNumToKill) {
         this.citizenNumToKill = citizenNumToKill;
     }
 
@@ -293,7 +296,7 @@ public class Stage {
         return mobsToKill;
     }
 
-    public void setMobsToKill(LinkedList<EntityType> mobsToKill) {
+    public void setMobsToKill(final LinkedList<EntityType> mobsToKill) {
         this.mobsToKill = mobsToKill;
     }
 
@@ -301,7 +304,7 @@ public class Stage {
         return mobNumToKill;
     }
 
-    public void setMobNumToKill(LinkedList<Integer> mobNumToKill) {
+    public void setMobNumToKill(final LinkedList<Integer> mobNumToKill) {
         this.mobNumToKill = mobNumToKill;
     }
 
@@ -309,7 +312,7 @@ public class Stage {
         return locationsToKillWithin;
     }
 
-    public void setLocationsToKillWithin(LinkedList<Location> locationsToKillWithin) {
+    public void setLocationsToKillWithin(final LinkedList<Location> locationsToKillWithin) {
         this.locationsToKillWithin = locationsToKillWithin;
     }
 
@@ -317,7 +320,7 @@ public class Stage {
         return radiiToKillWithin;
     }
 
-    public void setRadiiToKillWithin(LinkedList<Integer> radiiToKillWithin) {
+    public void setRadiiToKillWithin(final LinkedList<Integer> radiiToKillWithin) {
         this.radiiToKillWithin = radiiToKillWithin;
     }
     
@@ -325,7 +328,7 @@ public class Stage {
         return killNames;
     }
 
-    public void setKillNames(LinkedList<String> killNames) {
+    public void setKillNames(final LinkedList<String> killNames) {
         this.killNames = killNames;
     }
 
@@ -333,7 +336,7 @@ public class Stage {
         return locationsToReach;
     }
 
-    public void setLocationsToReach(LinkedList<Location> locationsToReach) {
+    public void setLocationsToReach(final LinkedList<Location> locationsToReach) {
         this.locationsToReach = locationsToReach;
     }
 
@@ -341,7 +344,7 @@ public class Stage {
         return radiiToReachWithin;
     }
 
-    public void setRadiiToReachWithin(LinkedList<Integer> radiiToReachWithin) {
+    public void setRadiiToReachWithin(final LinkedList<Integer> radiiToReachWithin) {
         this.radiiToReachWithin = radiiToReachWithin;
     }
 
@@ -349,7 +352,7 @@ public class Stage {
         return worldsToReachWithin;
     }
 
-    public void setWorldsToReachWithin(LinkedList<World> worldsToReachWithin) {
+    public void setWorldsToReachWithin(final LinkedList<World> worldsToReachWithin) {
         this.worldsToReachWithin = worldsToReachWithin;
     }
 
@@ -357,7 +360,7 @@ public class Stage {
         return locationNames;
     }
 
-    public void setLocationNames(LinkedList<String> locationNames) {
+    public void setLocationNames(final LinkedList<String> locationNames) {
         this.locationNames = locationNames;
     }
 
@@ -365,7 +368,7 @@ public class Stage {
         return mobsToTame;
     }
 
-    public void setMobsToTame(Map<EntityType, Integer> mobsToTame) {
+    public void setMobsToTame(final Map<EntityType, Integer> mobsToTame) {
         this.mobsToTame = mobsToTame;
     }
 
@@ -373,7 +376,7 @@ public class Stage {
         return sheepToShear;
     }
 
-    public void setSheepToShear(Map<DyeColor, Integer> sheepToShear) {
+    public void setSheepToShear(final Map<DyeColor, Integer> sheepToShear) {
         this.sheepToShear = sheepToShear;
     }
 
@@ -381,7 +384,7 @@ public class Stage {
         return passwordDisplays;
     }
 
-    public void setPasswordDisplays(LinkedList<String> passwordDisplays) {
+    public void setPasswordDisplays(final LinkedList<String> passwordDisplays) {
         this.passwordDisplays = passwordDisplays;
     }
 
@@ -389,7 +392,7 @@ public class Stage {
         return passwordPhrases;
     }
 
-    public void setPasswordPhrases(LinkedList<LinkedList<String>> passwordPhrases) {
+    public void setPasswordPhrases(final LinkedList<LinkedList<String>> passwordPhrases) {
         this.passwordPhrases = passwordPhrases;
     }
 
@@ -397,7 +400,7 @@ public class Stage {
         return script;
     }
 
-    public void setScript(String script) {
+    public void setScript(final String script) {
         this.script = script;
     }
 
@@ -405,7 +408,7 @@ public class Stage {
         return startAction;
     }
 
-    public void setStartAction(Action startAction) {
+    public void setStartAction(final Action startAction) {
         this.startAction = startAction;
     }
 
@@ -413,7 +416,7 @@ public class Stage {
         return deathAction;
     }
 
-    public void setDeathAction(Action deathAction) {
+    public void setDeathAction(final Action deathAction) {
         this.deathAction = deathAction;
     }
 
@@ -421,7 +424,7 @@ public class Stage {
         return chatActions;
     }
 
-    public void setChatActions(Map<String, Action> chatActions) {
+    public void setChatActions(final Map<String, Action> chatActions) {
         this.chatActions = chatActions;
     }
 
@@ -429,7 +432,7 @@ public class Stage {
         return commandActions;
     }
 
-    public void setCommandActions(Map<String, Action> commandActions) {
+    public void setCommandActions(final Map<String, Action> commandActions) {
         this.commandActions = commandActions;
     }
 
@@ -437,7 +440,7 @@ public class Stage {
         return disconnectAction;
     }
 
-    public void setDisconnectAction(Action disconnectAction) {
+    public void setDisconnectAction(final Action disconnectAction) {
         this.disconnectAction = disconnectAction;
     }
 
@@ -445,7 +448,7 @@ public class Stage {
         return finishAction;
     }
 
-    public void setFinishAction(Action finishAction) {
+    public void setFinishAction(final Action finishAction) {
         this.finishAction = finishAction;
     }
     
@@ -453,7 +456,7 @@ public class Stage {
         return condition;
     }
     
-    public void setCondition(Condition condition) {
+    public void setCondition(final Condition condition) {
         this.condition = condition;
     }
 
@@ -461,7 +464,7 @@ public class Stage {
         return delay;
     }
 
-    public void setDelay(long delay) {
+    public void setDelay(final long delay) {
         this.delay = delay;
     }
 
@@ -469,7 +472,7 @@ public class Stage {
         return delayMessage;
     }
 
-    public void setDelayMessage(String delayMessage) {
+    public void setDelayMessage(final String delayMessage) {
         this.delayMessage = delayMessage;
     }
 
@@ -477,7 +480,7 @@ public class Stage {
         return completeMessage;
     }
 
-    public void setCompleteMessage(String completeMessage) {
+    public void setCompleteMessage(final String completeMessage) {
         this.completeMessage = completeMessage;
     }
 
@@ -485,7 +488,7 @@ public class Stage {
         return startMessage;
     }
 
-    public void setStartMessage(String startMessage) {
+    public void setStartMessage(final String startMessage) {
         this.startMessage = startMessage;
     }
 
@@ -493,7 +496,7 @@ public class Stage {
         return objectiveOverrides;
     }
 
-    public void setObjectiveOverrides(LinkedList<String> objectiveOverrides) {
+    public void setObjectiveOverrides(final LinkedList<String> objectiveOverrides) {
         this.objectiveOverrides = objectiveOverrides;
     }
     
@@ -556,7 +559,7 @@ public class Stage {
      * @param type The type of objective to check for
      * @return true if stage contains specified objective
      */
-    public boolean containsObjective(String type) {
+    public boolean containsObjective(final String type) {
         if (type.equalsIgnoreCase("breakBlock")) {
             return !blocksToBreak.isEmpty();
         } else if (type.equalsIgnoreCase("damageBlock")) {

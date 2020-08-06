@@ -21,12 +21,12 @@ import me.blackvein.quests.util.Lang;
 
 public class ActionTimer extends BukkitRunnable {
 
-    private Quester quester;
-    private Quest quest;
-    private int time;
-    private boolean last;
+    private final Quester quester;
+    private final Quest quest;
+    private final int time;
+    private final boolean last;
 
-    public ActionTimer(Quester quester, Quest quest, int time, boolean last) {
+    public ActionTimer(final Quester quester, final Quest quest, final int time, final boolean last) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;

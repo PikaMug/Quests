@@ -31,12 +31,12 @@ import net.citizensnpcs.api.npc.NPC;
 public class DenizenAPI_1_1_1 {
     
     @Nullable
-    public static boolean containsScript(String input) {
+    public static boolean containsScript(final String input) {
         return ScriptRegistry.containsScript(input);
     }
     
     @Nullable
-    public static String getScriptContainerName(String input) {
+    public static String getScriptContainerName(final String input) {
         return ScriptRegistry.getScriptContainer(input).getName();
     }
     
@@ -46,25 +46,25 @@ public class DenizenAPI_1_1_1 {
     }
     
     @Nullable
-    public static Object getScriptContainerAs(String scriptName) {
+    public static Object getScriptContainerAs(final String scriptName) {
         return ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
     }
     
     @Nullable
-    public static Object mirrorBukkitPlayer(Player player) {
+    public static Object mirrorBukkitPlayer(final Player player) {
         return PlayerTag.mirrorBukkitPlayer(player);
     }
     
     @Nullable
-    public static Object mirrorCitizensNPC(NPC npc) {
+    public static Object mirrorCitizensNPC(final NPC npc) {
         return NPCTag.mirrorCitizensNPC(npc);
     }
     
     @Nullable
-    public static void runTaskScript(String scriptName, Player player) {
-        TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-        BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
-        ScriptQueue queue = new InstantQueue(taskScript.getName())
+    public static void runTaskScript(final String scriptName, final Player player) {
+        final TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
+        final BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
+        final ScriptQueue queue = new InstantQueue(taskScript.getName())
                 .addEntries(taskScript.getBaseEntries(entryData.clone()));
         queue.start();
     }

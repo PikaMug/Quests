@@ -19,7 +19,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 
 public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
-    private ConversationContext context;
+    private final ConversationContext context;
     private QuestFactory factory;
     
     public QuestsEditorStringPrompt(final ConversationContext context) {
@@ -35,6 +35,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
         this.factory = factory;
     }
     
+    @Override
     public String getName() {
         return getClass().getSimpleName();
     }

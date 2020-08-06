@@ -15,38 +15,16 @@ package me.blackvein.quests.events.editor.conditions;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 
 public class ConditionsEditorPostOpenStringPromptEvent extends ConditionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private ConditionFactory factory;
-    private ConditionsEditorStringPrompt prompt;
+    private final ConditionsEditorStringPrompt prompt;
 
-    public ConditionsEditorPostOpenStringPromptEvent(ConversationContext context, ConditionsEditorStringPrompt prompt) {
+    public ConditionsEditorPostOpenStringPromptEvent(final ConversationContext context, final ConditionsEditorStringPrompt prompt) {
         super(context, prompt);
         this.context = context;
-        this.factory = ((Quests)context.getPlugin()).getConditionFactory();
         this.prompt = prompt;
-    }
-    
-    /**
-     * Returns the context involved in this event
-     * 
-     * @return ConversationContext which is involved in this event
-     */
-    public ConversationContext getConversationContext() {
-        return context;
-    }
-
-    /**
-     * Returns the factory involved in this event
-     * 
-     * @return ConditionFactory which is involved in this event
-     */
-    public ConditionFactory getConditionFactory() {
-        return factory;
     }
     
     /**
@@ -54,6 +32,7 @@ public class ConditionsEditorPostOpenStringPromptEvent extends ConditionsEditorE
      * 
      * @return Prompt which is involved in this event
      */
+    @Override
     public ConditionsEditorStringPrompt getPrompt() {
         return prompt;
     }

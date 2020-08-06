@@ -18,18 +18,20 @@ public class QuestFormatException extends Exception {
     private final String message;
     private final String questId;
 
-    public QuestFormatException(String message, String questId) {
+    public QuestFormatException(final String message, final String questId) {
         super(message + ", see quest of ID " + questId);
         this.message = message + ", see quest of ID " + questId;
         this.questId = questId;
     }
+    
     /**
      * Create a new instance of this class with the afflicted.
      * 
      * @deprecated Use {@link#QuestFormatException(String, String)}
      * @param quest The quest that an invalid value was set within.
      */
-    public QuestFormatException(String questId) {
+    @Deprecated
+    public QuestFormatException(final String questId) {
         this.message = "Failed to load quest of ID " + questId;
         this.questId = questId;
     }
@@ -39,6 +41,7 @@ public class QuestFormatException extends Exception {
      * 
      * @return The message.
      */
+    @Override
     public String getMessage() {
         return message;
     }

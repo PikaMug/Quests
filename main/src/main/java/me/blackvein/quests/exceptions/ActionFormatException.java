@@ -18,7 +18,7 @@ public class ActionFormatException extends Exception {
     private final String message;
     private final String actionId;
 
-    public ActionFormatException(String message, String actionId) {
+    public ActionFormatException(final String message, final String actionId) {
         super(message + ", see action of ID " + actionId);
         this.message = message + ", see action of ID " + actionId;
         this.actionId = actionId;
@@ -29,6 +29,7 @@ public class ActionFormatException extends Exception {
      * 
      * @return The message.
      */
+    @Override
     public String getMessage() {
         return message;
     }

@@ -35,21 +35,24 @@ import me.blackvein.quests.util.MiscUtil;
 
 public class WorldPrompt extends QuestsEditorNumericPrompt {
     
-    public WorldPrompt(ConversationContext context) {
+    public WorldPrompt(final ConversationContext context) {
         super(context);
     }
     
     private final int size = 3;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("conditionEditorWorld");
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
             case 2:
@@ -61,7 +64,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
             return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinWorld");
@@ -74,15 +78,16 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(ConversationContext context, int number) {
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
             if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                for (String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD)) {
+                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD)) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
                 }
                 return text;
@@ -92,7 +97,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                for (String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME)) {
+                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME)) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
                 }
                 return text;
@@ -105,8 +110,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -118,7 +123,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
             return new WorldsPrompt(context);
@@ -127,7 +132,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         case 3:
             try {
                 return new ConditionMainPrompt(context);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
@@ -138,27 +143,27 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     
     public class WorldsPrompt extends QuestsEditorStringPrompt {
         
-        public WorldsPrompt(ConversationContext context) {
+        public WorldsPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("conditionEditorWorldsTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("conditionEditorWorldsPrompt");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String worlds = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            List<World> worldArr = Bukkit.getWorlds();
+            final List<World> worldArr = Bukkit.getWorlds();
             for (int i = 0; i < worldArr.size(); i++) {
                 if (i < (worldArr.size() - 1)) {
                     worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + ", ";
@@ -170,11 +175,11 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> worlds = new LinkedList<String>();
-                for (String s : input.split(" ")) {
+                final LinkedList<String> worlds = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
                     if (Bukkit.getWorld(s) != null) {
                         worlds.add(s);
                     } else {
@@ -191,27 +196,27 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     
     public class BiomesPrompt extends QuestsEditorStringPrompt {
         
-        public BiomesPrompt(ConversationContext context) {
+        public BiomesPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("conditionEditorBiomesTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("conditionEditorBiomesPrompt");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String biomes = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            LinkedList<Biome> biomeArr = new LinkedList<Biome>(Arrays.asList(Biome.values()));
+            final LinkedList<Biome> biomeArr = new LinkedList<Biome>(Arrays.asList(Biome.values()));
             for (int i = 0; i < biomeArr.size(); i++) {
                 if (i < (biomeArr.size() - 1)) {
                     biomes += MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()) + ", ";
@@ -223,11 +228,11 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> biomes = new LinkedList<String>();
-                for (String s : input.split(" ")) {
+                final LinkedList<String> biomes = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
                     if (MiscUtil.getProperBiome(s) != null) {
                         biomes.add(s);
                     } else {

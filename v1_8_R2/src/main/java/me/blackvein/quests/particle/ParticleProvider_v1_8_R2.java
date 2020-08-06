@@ -14,11 +14,13 @@ package me.blackvein.quests.particle;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.server.v1_8_R2.EnumParticle;
-import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
+
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import net.minecraft.server.v1_8_R2.EnumParticle;
+import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 
 public class ParticleProvider_v1_8_R2 extends ParticleProvider {
 
@@ -45,9 +47,9 @@ public class ParticleProvider_v1_8_R2 extends ParticleProvider {
     }
 
     @Override
-    void spawnParticle(Player player, Location location, Object particle, float offsetX, float offsetY, float offsetZ,
-            float speed, int count, int[] data) {
-        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles((EnumParticle) particle, false,
+    void spawnParticle(final Player player, final Location location, final Object particle, final float offsetX,
+            final float offsetY, final float offsetZ, final float speed, final int count, final int[] data) {
+        final PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles((EnumParticle) particle, false,
                 (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ,
                 speed, count, data);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);

@@ -24,7 +24,7 @@ public class QuestsCommandPreQuestsJournalEvent extends QuestsCommandEvent imple
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
 
-    public QuestsCommandPreQuestsJournalEvent(Quester quester) {
+    public QuestsCommandPreQuestsJournalEvent(final Quester quester) {
         super(quester);
     }
     
@@ -34,7 +34,7 @@ public class QuestsCommandPreQuestsJournalEvent extends QuestsCommandEvent imple
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
 

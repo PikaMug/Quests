@@ -30,15 +30,15 @@ public class InventoryUtil {
      * @param item Item with amount to add
      * @throws NullPointerException if item is null
      */
-    public static void addItem(Player player, ItemStack item) throws NullPointerException {
+    public static void addItem(final Player player, final ItemStack item) throws NullPointerException {
         if (item == null) {
             throw new NullPointerException("Null item while trying to add to inventory of " + player.getName());
         }
-        PlayerInventory inv = player.getInventory();
-        HashMap<Integer, ItemStack> leftovers = inv.addItem(item);
+        final PlayerInventory inv = player.getInventory();
+        final HashMap<Integer, ItemStack> leftovers = inv.addItem(item);
         if (leftovers != null) {
             if (leftovers.isEmpty() == false) {
-                for (ItemStack leftover : leftovers.values()) {
+                for (final ItemStack leftover : leftovers.values()) {
                     player.getWorld().dropItem(player.getLocation(), leftover);
                 }
             }
@@ -52,12 +52,12 @@ public class InventoryUtil {
      * @param item Item with amount to remove
      * @return true if successful
      */
-    public static boolean removeItem(Inventory inventory, ItemStack item) {
-        int amount = item.getAmount();
-        HashMap<Integer, ? extends ItemStack> allItems = inventory.all(item.getType());
-        HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+    public static boolean removeItem(final Inventory inventory, final ItemStack item) {
+        final int amount = item.getAmount();
+        final HashMap<Integer, ? extends ItemStack> allItems = inventory.all(item.getType());
+        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
         int foundAmount = 0;
-        for (Map.Entry<Integer, ? extends ItemStack> items : allItems.entrySet()) {
+        for (final Map.Entry<Integer, ? extends ItemStack> items : allItems.entrySet()) {
             if (ItemUtil.compareItems(item, items.getValue(), true) == 0) {
                 if (items.getValue().getAmount() >= amount - foundAmount) {
                     removeFrom.put(items.getKey(), amount - foundAmount);
@@ -72,8 +72,8 @@ public class InventoryUtil {
             }
         }
         if (foundAmount == amount) {
-            for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
-                ItemStack i = inventory.getItem(toRemove.getKey());
+            for (final Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
+                final ItemStack i = inventory.getItem(toRemove.getKey());
                 if (i.getAmount() - toRemove.getValue() <= 0) {
                     inventory.clear(toRemove.getKey());
                 } else {
@@ -93,14 +93,14 @@ public class InventoryUtil {
      * @param item Item with amount to remove
      * @return true if successful
      */
-    public static boolean stripItem(EntityEquipment equipment, ItemStack item) {
-        int amount = item.getAmount();
-        ItemStack[] allItems = equipment.getArmorContents();
-        HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+    public static boolean stripItem(final EntityEquipment equipment, final ItemStack item) {
+        final int amount = item.getAmount();
+        final ItemStack[] allItems = equipment.getArmorContents();
+        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
         int foundAmount = 0;
         
         int index = 0;
-        for (ItemStack i : allItems) {
+        for (final ItemStack i : allItems) {
             if (i == null) {
                 index++;
                 continue;
@@ -120,8 +120,8 @@ public class InventoryUtil {
             index++;
         }
         if (foundAmount == amount) {
-            for (Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
-                ItemStack i = allItems[toRemove.getKey()];
+            for (final Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
+                final ItemStack i = allItems[toRemove.getKey()];
                 if (i.getAmount() - toRemove.getValue() <= 0) {
                     allItems[toRemove.getKey()] = null;
                 } else {

@@ -20,7 +20,7 @@ import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 
 public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt {
-    private ConversationContext context;
+    private final ConversationContext context;
     private ConditionFactory factory;
     
     public ConditionsEditorNumericPrompt(final ConversationContext context) {
@@ -36,6 +36,7 @@ public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt 
         this.factory = factory;
     }
     
+    @Override
     public String getName() {
         return getClass().getSimpleName();
     }

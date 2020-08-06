@@ -15,47 +15,16 @@ package me.blackvein.quests.events.editor.actions;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 
 public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private ActionFactory factory;
-    private ActionsEditorStringPrompt prompt;
+    private final ActionsEditorStringPrompt prompt;
 
-    public ActionsEditorPostOpenStringPromptEvent(ConversationContext context, ActionsEditorStringPrompt prompt) {
+    public ActionsEditorPostOpenStringPromptEvent(final ConversationContext context, final ActionsEditorStringPrompt prompt) {
         super(context, prompt);
         this.context = context;
-        this.factory = ((Quests)context.getPlugin()).getActionFactory();
         this.prompt = prompt;
-    }
-    
-    @Deprecated
-    public ActionsEditorPostOpenStringPromptEvent(ConversationContext context, ActionFactory factory, 
-            ActionsEditorStringPrompt prompt) {
-        super(context, factory, prompt);
-        this.context = context;
-        this.factory = factory;
-        this.prompt = prompt;
-    }
-    
-    /**
-     * Returns the context involved in this event
-     * 
-     * @return ConversationContext which is involved in this event
-     */
-    public ConversationContext getConversationContext() {
-        return context;
-    }
-
-    /**
-     * Returns the factory involved in this event
-     * 
-     * @return ActionFactory which is involved in this event
-     */
-    public ActionFactory getActionFactory() {
-        return factory;
     }
     
     /**
@@ -63,6 +32,7 @@ public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
      * 
      * @return Prompt which is involved in this event
      */
+    @Override
     public ActionsEditorStringPrompt getPrompt() {
         return prompt;
     }

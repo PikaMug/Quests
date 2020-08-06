@@ -26,8 +26,8 @@ import me.blackvein.quests.events.QuestsEvent;
 public abstract class ConditionsEditorEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     protected ConversationContext context;
-    protected ConditionFactory factory;
-    protected Prompt prompt;
+    private final ConditionFactory factory;
+    private final Prompt prompt;
     
     public ConditionsEditorEvent(final ConversationContext context, final Prompt prompt) {
         this.context = context;
@@ -35,7 +35,7 @@ public abstract class ConditionsEditorEvent extends QuestsEvent {
         this.prompt = prompt;
     }
     
-    public ConditionsEditorEvent(final ConversationContext context, final Prompt prompt, boolean async) {
+    public ConditionsEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
         super(async);
         this.context = context;
         this.factory = ((Quests)context.getPlugin()).getConditionFactory();

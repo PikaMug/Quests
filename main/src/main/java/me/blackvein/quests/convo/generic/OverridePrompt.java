@@ -21,10 +21,10 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPrompt
 
 public class OverridePrompt extends QuestsEditorStringPrompt {
     private final Prompt oldPrompt;
-    private String promptText;
-    private String classPrefix;
+    private final String promptText;
+    private final String classPrefix;
     
-    public OverridePrompt(ConversationContext context, Prompt old, String promptText) {
+    public OverridePrompt(final ConversationContext context, final Prompt old, final String promptText) {
         super(context);
         oldPrompt = old;
         classPrefix = old.getClass().getSimpleName();
@@ -38,26 +38,26 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     }
     
     @Override
-    public String getTitle(ConversationContext context) {
+    public String getTitle(final ConversationContext context) {
         return null;
     }
     
     @Override
-    public String getQueryText(ConversationContext context) {
+    public String getQueryText(final ConversationContext context) {
         return promptText;
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-        String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+        final String text = ChatColor.YELLOW + getQueryText(context) + "\n";
         return text;
     }
 
     @Override
-    public Prompt acceptInput(ConversationContext context, String input) {
+    public Prompt acceptInput(final ConversationContext context, final String input) {
         context.setSessionData(classPrefix + "-override", input);
         return oldPrompt;
     }
@@ -67,17 +67,17 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         private Prompt oldPrompt;
         private String promptText = "Enter input";
         
-        public Builder context(ConversationContext context) {
+        public Builder context(final ConversationContext context) {
             this.context = context;
             return this;
         }
         
-        public Builder source(Prompt prompt) {
+        public Builder source(final Prompt prompt) {
             this.oldPrompt = prompt;
             return this;
         }
 
-        public Builder promptText(String text) {
+        public Builder promptText(final String text) {
             this.promptText = text;
             return this;
         }

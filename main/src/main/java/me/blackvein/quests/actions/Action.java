@@ -35,7 +35,7 @@ import me.blackvein.quests.util.Lang;
 
 public class Action {
 
-    private Quests plugin;
+    private final Quests plugin;
     private String name = "";
     protected String message = null;
     protected boolean clearInv = false;
@@ -54,9 +54,10 @@ public class Action {
         private static final long serialVersionUID = -761974607799449780L;
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
+                final
                 LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
                 if (size() != other.size()) {
                     return false;
@@ -88,7 +89,7 @@ public class Action {
         return name;
     }
     
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -96,7 +97,7 @@ public class Action {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 
@@ -104,7 +105,7 @@ public class Action {
         return clearInv;
     }
 
-    public void setClearInv(boolean clearInv) {
+    public void setClearInv(final boolean clearInv) {
         this.clearInv = clearInv;
     }
 
@@ -112,7 +113,7 @@ public class Action {
         return failQuest;
     }
 
-    public void setFailQuest(boolean failQuest) {
+    public void setFailQuest(final boolean failQuest) {
         this.failQuest = failQuest;
     }
 
@@ -120,7 +121,7 @@ public class Action {
         return explosions;
     }
 
-    public void setExplosions(LinkedList<Location> explosions) {
+    public void setExplosions(final LinkedList<Location> explosions) {
         this.explosions = explosions;
     }
 
@@ -128,7 +129,7 @@ public class Action {
         return effects;
     }
 
-    public void setEffects(Map<Location, Effect> effects) {
+    public void setEffects(final Map<Location, Effect> effects) {
         this.effects = effects;
     }
 
@@ -136,7 +137,7 @@ public class Action {
         return items;
     }
 
-    public void setItems(LinkedList<ItemStack> items) {
+    public void setItems(final LinkedList<ItemStack> items) {
         this.items = items;
     }
 
@@ -144,7 +145,7 @@ public class Action {
         return stormWorld;
     }
 
-    public void setStormWorld(World stormWorld) {
+    public void setStormWorld(final World stormWorld) {
         this.stormWorld = stormWorld;
     }
 
@@ -152,7 +153,7 @@ public class Action {
         return stormDuration;
     }
 
-    public void setStormDuration(int stormDuration) {
+    public void setStormDuration(final int stormDuration) {
         this.stormDuration = stormDuration;
     }
 
@@ -160,7 +161,7 @@ public class Action {
         return thunderWorld;
     }
 
-    public void setThunderWorld(World thunderWorld) {
+    public void setThunderWorld(final World thunderWorld) {
         this.thunderWorld = thunderWorld;
     }
 
@@ -168,7 +169,7 @@ public class Action {
         return thunderDuration;
     }
 
-    public void setThunderDuration(int thunderDuration) {
+    public void setThunderDuration(final int thunderDuration) {
         this.thunderDuration = thunderDuration;
     }
 
@@ -176,7 +177,7 @@ public class Action {
         return timer;
     }
 
-    public void setTimer(int timer) {
+    public void setTimer(final int timer) {
         this.timer = timer;
     }
 
@@ -184,7 +185,7 @@ public class Action {
         return cancelTimer;
     }
 
-    public void setCancelTimer(boolean cancelTimer) {
+    public void setCancelTimer(final boolean cancelTimer) {
         this.cancelTimer = cancelTimer;
     }
 
@@ -192,7 +193,7 @@ public class Action {
         return mobSpawns;
     }
 
-    public void setMobSpawns(LinkedList<QuestMob> mobSpawns) {
+    public void setMobSpawns(final LinkedList<QuestMob> mobSpawns) {
         this.mobSpawns = mobSpawns;
     }
 
@@ -200,7 +201,7 @@ public class Action {
         return lightningStrikes;
     }
 
-    public void setLightningStrikes(LinkedList<Location> lightningStrikes) {
+    public void setLightningStrikes(final LinkedList<Location> lightningStrikes) {
         this.lightningStrikes = lightningStrikes;
     }
 
@@ -208,7 +209,7 @@ public class Action {
         return commands;
     }
 
-    public void setCommands(LinkedList<String> commands) {
+    public void setCommands(final LinkedList<String> commands) {
         this.commands = commands;
     }
 
@@ -216,7 +217,7 @@ public class Action {
         return potionEffects;
     }
 
-    public void setPotionEffects(LinkedList<PotionEffect> potionEffects) {
+    public void setPotionEffects(final LinkedList<PotionEffect> potionEffects) {
         this.potionEffects = potionEffects;
     }
 
@@ -224,7 +225,7 @@ public class Action {
         return hunger;
     }
 
-    public void setHunger(int hunger) {
+    public void setHunger(final int hunger) {
         this.hunger = hunger;
     }
 
@@ -232,7 +233,7 @@ public class Action {
         return saturation;
     }
 
-    public void setSaturation(int saturation) {
+    public void setSaturation(final int saturation) {
         this.saturation = saturation;
     }
 
@@ -240,7 +241,7 @@ public class Action {
         return health;
     }
 
-    public void setHealth(float health) {
+    public void setHealth(final float health) {
         this.health = health;
     }
 
@@ -248,7 +249,7 @@ public class Action {
         return teleport;
     }
 
-    public void setTeleport(Location teleport) {
+    public void setTeleport(final Location teleport) {
         this.teleport = teleport;
     }
 
@@ -256,7 +257,7 @@ public class Action {
         return book;
     }
 
-    public void setBook(String book) {
+    public void setBook(final String book) {
         this.book = book;
     }
     
@@ -264,12 +265,12 @@ public class Action {
         return book;
     }
 
-    public void setDenizenScript(String scriptName) {
+    public void setDenizenScript(final String scriptName) {
         this.denizenScript = scriptName;
     }
 
-    public void fire(Quester quester, Quest quest) {
-        Player player = quester.getPlayer();
+    public void fire(final Quester quester, final Quest quest) {
+        final Player player = quester.getPlayer();
         if (message != null) {
             player.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
         }
@@ -277,20 +278,20 @@ public class Action {
             player.getInventory().clear();
         }
         if (explosions.isEmpty() == false) {
-            for (Location l : explosions) {
+            for (final Location l : explosions) {
                 l.getWorld().createExplosion(l, 4F, false);
             }
         }
         if (effects.isEmpty() == false) {
-            for (Location l : effects.keySet()) {
+            for (final Location l : effects.keySet()) {
                 l.getWorld().playEffect(l, effects.get(l), 1);
             }
         }
         if (items.isEmpty() == false) {
-            for (ItemStack is : items) {
+            for (final ItemStack is : items) {
                 try {
                     InventoryUtil.addItem(player, is);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     plugin.getLogger().severe("Unable to add null item to inventory of " 
                             + player.getName() + " during quest " + quest.getName() + " event " + name);
                     player.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
@@ -307,23 +308,23 @@ public class Action {
             thunderWorld.setThunderDuration(thunderDuration);
         }
         if (mobSpawns.isEmpty() == false) {
-            for (QuestMob questMob : mobSpawns) {
+            for (final QuestMob questMob : mobSpawns) {
                 questMob.spawn();
             }
         }
         if (lightningStrikes.isEmpty() == false) {
-            for (Location l : lightningStrikes) {
+            for (final Location l : lightningStrikes) {
                 l.getWorld().strikeLightning(l);
             }
         }
         if (commands.isEmpty() == false) {
-            for (String s : commands) {
+            for (final String s : commands) {
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), 
                         s.replace("<player>", quester.getPlayer().getName()));
             }
         }
         if (potionEffects.isEmpty() == false) {
-            for (PotionEffect p : potionEffects) {
+            for (final PotionEffect p : potionEffects) {
                 player.addPotionEffect(p);
             }
         }
@@ -391,7 +392,7 @@ public class Action {
                     .runTaskLater(plugin, timer*20).getTaskId(), quest);
         }
         if (cancelTimer) {
-            for (Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
+            for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
                 if (entry.getValue().getName().equals(quest.getName())) {
                     plugin.getServer().getScheduler().cancelTask(entry.getKey());
                     quester.getTimers().remove(entry.getKey());

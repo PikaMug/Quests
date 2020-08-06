@@ -29,18 +29,18 @@ public class Planner {
         if (start == null) {
             return -1;
         }
-        Calendar cal = Calendar.getInstance();
-        String[] s = start.split(":");
+        final Calendar cal = Calendar.getInstance();
+        final String[] s = start.split(":");
         cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
                 Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-        TimeZone tz = TimeZone.getTimeZone(s[6]);
+        final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();
     }
     public boolean hasStart() {
         return start != null;
     }
-    public void setStart(String start) {
+    public void setStart(final String start) {
         this.start = start;
     }
     public String getEnd() {
@@ -50,18 +50,18 @@ public class Planner {
         if (end == null) {
             return -1;
         }
-        Calendar cal = Calendar.getInstance();
-        String[] s = end.split(":");
+        final Calendar cal = Calendar.getInstance();
+        final String[] s = end.split(":");
         cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
                 Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
-        TimeZone tz = TimeZone.getTimeZone(s[6]);
+        final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();
     }
     public boolean hasEnd() {
         return end != null;
     }
-    public void setEnd(String end) {
+    public void setEnd(final String end) {
         this.end = end;
     }
     public long getRepeat() {
@@ -70,7 +70,7 @@ public class Planner {
     public boolean hasRepeat() {
         return repeat != -1;
     }
-    public void setRepeat(long repeat) {
+    public void setRepeat(final long repeat) {
         this.repeat = repeat;
     }
     public long getCooldown() {
@@ -79,13 +79,13 @@ public class Planner {
     public boolean hasCooldown() {
         return cooldown != -1;
     }
-    public void setCooldown(long cooldown) {
+    public void setCooldown(final long cooldown) {
         this.cooldown = cooldown;
     }
     public boolean getOverride() {
         return override;
     }
-    public void setOverride(boolean override) {
+    public void setOverride(final boolean override) {
         this.override = override;
     }
 }

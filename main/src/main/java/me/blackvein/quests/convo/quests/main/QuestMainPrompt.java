@@ -57,24 +57,27 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public QuestMainPrompt(ConversationContext context) {
+    public QuestMainPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
 
     private final int size = 15;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + "" + ChatColor.GRAY 
                 + (context.getSessionData(CK.Q_ID) != null ? " (" + Lang.get("id") + ":" 
                 + context.getSessionData(CK.Q_ID) + ")": "");
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -111,7 +114,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + Lang.get("questEditorName");
@@ -170,7 +174,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getAdditionalText(ConversationContext context, int number) {
+    @Override
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             return "";
@@ -194,7 +199,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.Q_START_BLOCK) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
+                final Location l = (Location) context.getSessionData(CK.Q_START_BLOCK);
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + l.getWorld().getName() + ", " + l.getBlockX() + ", " 
                         + l.getBlockY() + ", " + l.getBlockZ() + ChatColor.RESET + ChatColor.GRAY + ")";
             }
@@ -241,8 +246,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA)
@@ -255,7 +260,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new QuestNamePrompt(context);
@@ -270,7 +275,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMainPrompt(context);
             }
         case 5:
-            Map<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+            final Map<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
             blockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getQuestFactory().setSelectedBlockStarts(blockStarts);
             return new QuestBlockStartPrompt(context);
@@ -309,32 +314,32 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestNamePrompt extends QuestsEditorStringPrompt {
 
-        public QuestNamePrompt(ConversationContext context) {
+        public QuestNamePrompt(final ConversationContext context) {
             super(context);
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterQuestName");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         String s = null;
                         if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -346,7 +351,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                         }
                     }
                 }
-                List<String> questNames = plugin.getQuestFactory().getNamesOfQuestsBeingEdited();
+                final List<String> questNames = plugin.getQuestFactory().getNamesOfQuestsBeingEdited();
                 if (questNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new QuestNamePrompt(context);
@@ -355,7 +360,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new QuestNamePrompt(context);
                 }
-                questNames.remove((String) context.getSessionData(CK.Q_NAME));
+                questNames.remove(context.getSessionData(CK.Q_NAME));
                 context.setSessionData(CK.Q_NAME, input);
                 questNames.add(input);
                 plugin.getQuestFactory().setNamesOfQuestsBeingEdited(questNames);
@@ -366,30 +371,30 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestAskMessagePrompt extends QuestsEditorStringPrompt {
         
-        public QuestAskMessagePrompt(ConversationContext context) {
+        public QuestAskMessagePrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterAskMessage");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (input.startsWith("++")) {
                     if (context.getSessionData(CK.Q_ASK_MESSAGE) != null) {
@@ -406,30 +411,30 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestFinishMessagePrompt extends QuestsEditorStringPrompt {
         
-        public QuestFinishMessagePrompt(ConversationContext context) {
+        public QuestFinishMessagePrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterFinishMessage");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (input.startsWith("++")) {
                     if (context.getSessionData(CK.Q_FINISH_MESSAGE) != null) {
@@ -446,26 +451,26 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestNPCStartPrompt extends QuestsEditorStringPrompt {
         
-        public QuestNPCStartPrompt(ConversationContext context) {
+        public QuestNPCStartPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterNPCStart");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+            final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
             selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             return ChatColor.YELLOW + getQueryText(context) + "\n" 
@@ -473,23 +478,23 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i > -1) {
                         if (CitizensAPI.getNPCRegistry().getById(i) == null) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
                             return new QuestNPCStartPrompt(context);
                         }
                         context.setSessionData(CK.Q_START_NPC, i);
-                        Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                        final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                         selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                         return new QuestMainPrompt(context);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
                             + Lang.get("reqNotANumber").replace("<input>", input));
                     return new QuestNPCStartPrompt(context);
@@ -497,7 +502,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.Q_START_NPC, null);
             }
-            Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+            final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
             selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             return new QuestMainPrompt(context);
@@ -506,37 +511,37 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestBlockStartPrompt extends QuestsEditorStringPrompt {
         
-        public QuestBlockStartPrompt(ConversationContext context) {
+        public QuestBlockStartPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterBlockStart");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdDone")) || input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
-                    Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
-                    Block block = selectedBlockStarts.get(player.getUniqueId());
+                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final Block block = selectedBlockStarts.get(player.getUniqueId());
                     if (block != null) {
-                        Location loc = block.getLocation();
+                        final Location loc = block.getLocation();
                         context.setSessionData(CK.Q_START_BLOCK, loc);
                         selectedBlockStarts.remove(player.getUniqueId());
                     } else {
@@ -544,13 +549,13 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                         return new QuestBlockStartPrompt(context);
                     }
                 } else {
-                    Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
                     selectedBlockStarts.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
                 return new QuestMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
                 selectedBlockStarts.remove(player.getUniqueId());
                 plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 context.setSessionData(CK.Q_START_BLOCK, null);
@@ -562,31 +567,31 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestRegionPrompt extends QuestsEditorStringPrompt {
         
-        public QuestRegionPrompt(ConversationContext context) {
+        public QuestRegionPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("questRegionTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questWGPrompt");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + getTitle(context) + "\n";
             boolean any = false;
-            for (World world : plugin.getServer().getWorlds()) {
-                WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                RegionManager rm = api.getRegionManager(world);
-                for (String region : rm.getRegions().keySet()) {
+            for (final World world : plugin.getServer().getWorlds()) {
+                final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+                final RegionManager rm = api.getRegionManager(world);
+                for (final String region : rm.getRegions().keySet()) {
                     any = true;
                     text += ChatColor.GREEN + region + ", ";
                 }
@@ -601,16 +606,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 String found = null;
                 boolean done = false;
-                for (World world : plugin.getServer().getWorlds()) {
-                    WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                    RegionManager rm = api.getRegionManager(world);
-                    for (String region : rm.getRegions().keySet()) {
+                for (final World world : plugin.getServer().getWorlds()) {
+                    final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+                    final RegionManager rm = api.getRegionManager(world);
+                    for (final String region : rm.getRegions().keySet()) {
                         if (region.equalsIgnoreCase(input)) {
                             found = region;
                             done = true;
@@ -642,27 +647,27 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestInitialActionPrompt extends QuestsEditorStringPrompt {
         
-        public QuestInitialActionPrompt(ConversationContext context) {
+        public QuestInitialActionPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("eventTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorEnterInitialEvent");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.AQUA + getTitle(context) + "\n";
             if (plugin.getActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (Action e : plugin.getActions()) {
+                for (final Action e : plugin.getActions()) {
                     text += ChatColor.GREEN + "- " + e.getName() + "\n";
                 }
             }
@@ -670,11 +675,11 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                Action a = plugin.getAction(input);
+                final Action a = plugin.getAction(input);
                 if (a != null) {
                     context.setSessionData(CK.Q_INITIAL_EVENT, a.getName());
                     return new QuestMainPrompt(context);
@@ -696,22 +701,25 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         
         private final Quests plugin;
         
-        public QuestGuiDisplayPrompt(ConversationContext context) {
+        public QuestGuiDisplayPrompt(final ConversationContext context) {
             super(context);
             this.plugin = (Quests)context.getPlugin();
         }
         
         private final int size = 3;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("questGUITitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.BLUE;
@@ -724,7 +732,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
@@ -737,19 +746,20 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getAdditionalText(ConversationContext context, int number) {
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
             return null;
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             if (context.getSessionData("tempStack") != null) {
-                ItemStack stack = (ItemStack) context.getSessionData("tempStack");
+                final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
                 boolean failed = false;
-                for (Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
                             String error = Lang.get("questGUIError");
@@ -767,7 +777,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
-                ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
+                final ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);
                 text += " " + ChatColor.RESET + ItemUtil.getDisplayString(stack) + "\n";
             } else {
                 text += " " + ChatColor.GRAY + "(" + Lang.get("noneSet") + ")\n";
@@ -780,7 +790,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, QuestGuiDisplayPrompt.this);
@@ -798,7 +808,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestSavePrompt extends QuestsEditorStringPrompt {
         
-        public QuestSavePrompt(ConversationContext context) {
+        public QuestSavePrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -808,11 +818,12 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return null;
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN;
@@ -823,7 +834,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN + Lang.get("yesWord");
@@ -834,14 +845,15 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getQueryText(ConversationContext context) {
+        @Override
+        public String getQueryText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
                     + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?";
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = getQueryText(context) + "\n";
@@ -853,7 +865,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedAskMessage"));
@@ -865,7 +877,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedStages"));
                     return new QuestMainPrompt(context);
                 }
-                FileConfiguration data = new YamlConfiguration();
+                final FileConfiguration data = new YamlConfiguration();
                 try {
                     data.load(new File(plugin.getDataFolder(), "quests.yml"));
                     ConfigurationSection questSection = data.getConfigurationSection("quests");
@@ -893,9 +905,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.GREEN
                             + Lang.get("questEditorSaved").replace("<command>", "/questadmin " 
                             + Lang.get("COMMAND_QUESTADMIN_RELOAD")));
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
-                } catch (InvalidConfigurationException e) {
+                } catch (final InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
                 return Prompt.END_OF_CONVERSATION;
@@ -909,7 +921,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
     public class QuestExitPrompt extends QuestsEditorStringPrompt {
         
-        public QuestExitPrompt(ConversationContext context) {
+        public QuestExitPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -919,11 +931,12 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return null;
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN;
@@ -934,7 +947,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN + Lang.get("yesWord");
@@ -945,13 +958,14 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
-        public String getQueryText(ConversationContext context) {
+        @Override
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("confirmDelete");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.YELLOW + getQueryText(context) + "\n";
@@ -963,7 +977,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + Lang.get("exited"));
                 return Prompt.END_OF_CONVERSATION;

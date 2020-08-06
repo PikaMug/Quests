@@ -39,91 +39,91 @@ public class Rewards {
     public int getMoney() {
         return money;
     }
-    public void setMoney(int money) {
+    public void setMoney(final int money) {
         this.money = money;
     }
     public int getQuestPoints() {
         return questPoints;
     }
-    public void setQuestPoints(int questPoints) {
+    public void setQuestPoints(final int questPoints) {
         this.questPoints = questPoints;
     }
     public int getExp() {
         return exp;
     }
-    public void setExp(int exp) {
+    public void setExp(final int exp) {
         this.exp = exp;
     }
     public List<String> getCommands() {
         return commands;
     }
-    public void setCommands(List<String> commands) {
+    public void setCommands(final List<String> commands) {
         this.commands = commands;
     }
     public List<String> getCommandsOverrideDisplay() {
         return commandsOverrideDisplay;
     }
-    public void setCommandsOverrideDisplay(List<String> commandsOverrideDisplay) {
+    public void setCommandsOverrideDisplay(final List<String> commandsOverrideDisplay) {
         this.commandsOverrideDisplay = commandsOverrideDisplay;
     }
     public List<String> getPermissions() {
         return permissions;
     }
-    public void setPermissions(List<String> permissions) {
+    public void setPermissions(final List<String> permissions) {
         this.permissions = permissions;
     }
     public List<String> getPermissionWorlds() {
         return permissionWorlds;
     }
-    public void setPermissionWorlds(List<String> worldNames) {
+    public void setPermissionWorlds(final List<String> worldNames) {
         this.permissionWorlds = worldNames;
     }
     public List<ItemStack> getItems() {
         return items;
     }
-    public void setItems(List<ItemStack> items) {
+    public void setItems(final List<ItemStack> items) {
         this.items = items;
     }
     public List<String> getMcmmoSkills() {
         return mcmmoSkills;
     }
-    public void setMcmmoSkills(List<String> mcmmoSkills) {
+    public void setMcmmoSkills(final List<String> mcmmoSkills) {
         this.mcmmoSkills = mcmmoSkills;
     }
     public List<Integer> getMcmmoAmounts() {
         return mcmmoAmounts;
     }
-    public void setMcmmoAmounts(List<Integer> mcmmoAmounts) {
+    public void setMcmmoAmounts(final List<Integer> mcmmoAmounts) {
         this.mcmmoAmounts = mcmmoAmounts;
     }
     public List<String> getHeroesClasses() {
         return heroesClasses;
     }
-    public void setHeroesClasses(List<String> heroesClasses) {
+    public void setHeroesClasses(final List<String> heroesClasses) {
         this.heroesClasses = heroesClasses;
     }
     public List<Double> getHeroesAmounts() {
         return heroesAmounts;
     }
-    public void setHeroesAmounts(List<Double> heroesAmounts) {
+    public void setHeroesAmounts(final List<Double> heroesAmounts) {
         this.heroesAmounts = heroesAmounts;
     }
     public List<String> getPhatLoots() {
         return phatLoots;
     }
-    public void setPhatLoots(List<String> phatLoots) {
+    public void setPhatLoots(final List<String> phatLoots) {
         this.phatLoots = phatLoots;
     }
     public Map<String, Map<String, Object>> getCustomRewards() {
         return customRewards;
     }
-    protected void setCustomRewards(Map<String, Map<String, Object>> customRewards) {
+    protected void setCustomRewards(final Map<String, Map<String, Object>> customRewards) {
         this.customRewards = customRewards;
     }
     public List<String> getDetailsOverride() {
         return detailsOverride;
     }
-    public void setDetailsOverride(List<String> detailsOverride) {
+    public void setDetailsOverride(final List<String> detailsOverride) {
         this.detailsOverride = detailsOverride;
     }
 }

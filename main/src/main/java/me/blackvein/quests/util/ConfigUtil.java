@@ -36,11 +36,11 @@ public class ConfigUtil {
      * @param clazz The class to compare against
      * @return false if list is null or list object does not match
      */
-    public static boolean checkList(List<?> list, Class<?> clazz) {
+    public static boolean checkList(final List<?> list, final Class<?> clazz) {
         if (list == null) {
             return false;
         }
-        for (Object o : list) {
+        for (final Object o : list) {
             if (clazz.isAssignableFrom(o.getClass()) == false) {
                 return false;
             }
@@ -48,21 +48,21 @@ public class ConfigUtil {
         return true;
     }
     
-    public static Location getLocation(String arg) {
-        String[] info = arg.split(" ");
+    public static Location getLocation(final String arg) {
+        final String[] info = arg.split(" ");
         
         if (info.length < 4) {
             return null;
         }
         
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         int index = 0;
-        int xIndex = info.length -3;
-        int yIndex = info.length -2;
-        int zIndex = info.length -1;
+        final int xIndex = info.length -3;
+        final int yIndex = info.length -2;
+        final int zIndex = info.length -1;
         
         while (index < xIndex) {
-            String s = info[index];
+            final String s = info[index];
             if (index == 0) {
                 sb.append(s);
             } else {
@@ -71,7 +71,7 @@ public class ConfigUtil {
             index++;
         }
         
-        String world = sb.toString();
+        final String world = sb.toString();
         
         double x;
         double y;
@@ -80,7 +80,7 @@ public class ConfigUtil {
             x = Double.parseDouble(info[xIndex]);
             y = Double.parseDouble(info[yIndex]);
             z = Double.parseDouble(info[zIndex]);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Bukkit.getLogger().severe("Please inform Quests developer location was wrong for "
                     + world + " " + info[xIndex] + " " + info[yIndex] + " " + info[zIndex] + " ");
             return null;
@@ -89,15 +89,15 @@ public class ConfigUtil {
             Bukkit.getLogger().severe("Quests could not locate world " + world + ", is it loaded?");
             return null;
         }
-        Location finalLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z);
+        final Location finalLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z);
         return finalLocation;
     }
 
-    public static String getLocationInfo(Location loc) {
+    public static String getLocationInfo(final Location loc) {
         return loc.getWorld().getName() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ();
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(String s, Quest quest, Player player) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -112,7 +112,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(String s, Quest quest) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -124,7 +124,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
 
-    public static String[] parseStringWithPossibleLineBreaks(String s, NPC npc) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final NPC npc) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             parsed = parsed.replace("<npc>", npc.getName());
@@ -132,7 +132,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String parseString(String s, Quest quest) {
+    public static String parseString(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -144,7 +144,7 @@ public class ConfigUtil {
         return parsed;
     }
     
-    public static String parseString(String s, Quest quest, Player player) {
+    public static String parseString(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s, quest);
         if (Dependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
@@ -152,7 +152,7 @@ public class ConfigUtil {
         return parsed;
     }
 
-    public static String parseString(String s, NPC npc) {
+    public static String parseString(final String s, final NPC npc) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             parsed = parsed.replace("<npc>", npc.getName());
@@ -160,7 +160,7 @@ public class ConfigUtil {
         return parsed;
     }
     
-    public static String parseString(String s) {
+    public static String parseString(final String s) {
         String parsed = s;
         parsed = parsed.replace("<black>", ChatColor.BLACK.toString());
         parsed = parsed.replace("<darkblue>", ChatColor.DARK_BLUE.toString());

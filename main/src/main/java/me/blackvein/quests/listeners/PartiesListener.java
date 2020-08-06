@@ -28,7 +28,7 @@ import me.blackvein.quests.util.Lang;
 public class PartiesListener implements Listener {
     
     @EventHandler
-    public void onPartyCreate(BukkitPartiesPartyPostCreateEvent event) {
+    public void onPartyCreate(final BukkitPartiesPartyPostCreateEvent event) {
         if (event.getCreator() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID());
             if (p != null) {
@@ -40,7 +40,7 @@ public class PartiesListener implements Listener {
     }
     
     @EventHandler
-    public void onPartyDeleteEvent(BukkitPartiesPartyPostDeleteEvent event) {
+    public void onPartyDeleteEvent(final BukkitPartiesPartyPostDeleteEvent event) {
         if (event.getCommandSender() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCommandSender().getPlayerUUID());
             if (p != null) {
@@ -52,7 +52,7 @@ public class PartiesListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerJoinEvent(BukkitPartiesPlayerPostJoinEvent event) {
+    public void onPlayerJoinEvent(final BukkitPartiesPlayerPostJoinEvent event) {
         if (event.isInvited() && event.getInviter() != null) {
             final Player i = Bukkit.getServer().getPlayer(event.getInviter());
             if (i != null) {
@@ -70,7 +70,7 @@ public class PartiesListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerLeaveEvent(BukkitPartiesPlayerPostLeaveEvent event) {
+    public void onPlayerLeaveEvent(final BukkitPartiesPlayerPostLeaveEvent event) {
         if (event.isKicked() && event.getKicker() != null) {
             final Player k = Bukkit.getServer().getPlayer(event.getKicker().getPlayerUUID());
             if (k != null) {

@@ -38,14 +38,14 @@ public class EffectPrompt extends FixedSetPrompt {
     
     private final Quests plugin;
     
-    public EffectPrompt(ConversationContext context) {
+    public EffectPrompt(final ConversationContext context) {
         super("1", "2", "3");
         this.plugin = (Quests)context.getPlugin();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEffect") + " -\n";
         if (context.getSessionData(CK.E_EFFECTS) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -53,9 +53,9 @@ public class EffectPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetEffects") + "\n";
-            LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
-            LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
-            for (String effect : effects) {
+            final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
+            final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
+            for (final String effect : effects) {
                 text += ChatColor.GRAY + "    - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " 
                         + ChatColor.DARK_AQUA + locations.get(effects.indexOf(effect)) + "\n";
             }
@@ -66,8 +66,8 @@ public class EffectPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetExplosions") + "\n";
-            LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
-            for (String loc : locations) {
+            final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
+            for (final String loc : locations) {
                 text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
             }
         }
@@ -77,11 +77,11 @@ public class EffectPrompt extends FixedSetPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
         if (input.equalsIgnoreCase("1")) {
             return new SoundEffectListPrompt();
         } else if (input.equalsIgnoreCase("2")) {
-            Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+            final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
             selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
             return new ExplosionPrompt();
@@ -96,7 +96,7 @@ public class EffectPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEffects") + " -\n";
             if (context.getSessionData(CK.E_EFFECTS) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -110,7 +110,7 @@ public class EffectPrompt extends FixedSetPrompt {
             } else {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("eventEditorAddEffect") + "\n";
-                for (String s : getEffects(context)) {
+                for (final String s : getEffects(context)) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) == null) {
@@ -119,7 +119,7 @@ public class EffectPrompt extends FixedSetPrompt {
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                             + Lang.get("eventEditorAddEffectLocation") + "\n";
-                    for (String s : getEffectLocations(context)) {
+                    for (final String s : getEffectLocations(context)) {
                         text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                     }
                 }
@@ -132,7 +132,7 @@ public class EffectPrompt extends FixedSetPrompt {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1")) {
                 return new SoundEffectPrompt();
             } else if (input.equalsIgnoreCase("2")) {
@@ -140,7 +140,7 @@ public class EffectPrompt extends FixedSetPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustAddEffects"));
                     return new SoundEffectListPrompt();
                 } else {
-                    Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                     return new SoundEffectLocationPrompt();
@@ -174,12 +174,12 @@ public class EffectPrompt extends FixedSetPrompt {
         }
 
         @SuppressWarnings("unchecked")
-        private List<String> getEffects(ConversationContext context) {
+        private List<String> getEffects(final ConversationContext context) {
             return (List<String>) context.getSessionData(CK.E_EFFECTS);
         }
 
         @SuppressWarnings("unchecked")
-        private List<String> getEffectLocations(ConversationContext context) {
+        private List<String> getEffectLocations(final ConversationContext context) {
             return (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
         }
     }
@@ -187,11 +187,11 @@ public class EffectPrompt extends FixedSetPrompt {
     private class SoundEffectPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
-            Effect[] vals = Effect.values();
+            final Effect[] vals = Effect.values();
             for (int i = 0; i < vals.length; i++) {
-                Effect eff = vals[i];
+                final Effect eff = vals[i];
                 if (i < (vals.length - 1)) {
                     effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + ", ";
                 } else {
@@ -204,8 +204,8 @@ public class EffectPrompt extends FixedSetPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (MiscUtil.getProperEffect(input) != null) {
                     LinkedList<String> effects;
@@ -216,7 +216,7 @@ public class EffectPrompt extends FixedSetPrompt {
                     }
                     effects.add(input.toUpperCase());
                     context.setSessionData(CK.E_EFFECTS, effects);
-                    Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                     return new SoundEffectListPrompt();
@@ -226,7 +226,7 @@ public class EffectPrompt extends FixedSetPrompt {
                     return new SoundEffectPrompt();
                 }
             } else {
-                Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 return new SoundEffectListPrompt();
@@ -237,19 +237,19 @@ public class EffectPrompt extends FixedSetPrompt {
     private class SoundEffectLocationPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorEffectLocationPrompt");
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
-                Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                Block block = selectedEffectLocations.get(player.getUniqueId());
+                final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                final Block block = selectedEffectLocations.get(player.getUniqueId());
                 if (block != null) {
-                    Location loc = block.getLocation();
+                    final Location loc = block.getLocation();
                     LinkedList<String> locs;
                     if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
                         locs = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
@@ -265,7 +265,7 @@ public class EffectPrompt extends FixedSetPrompt {
                 }
                 return new SoundEffectListPrompt();
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 return new SoundEffectListPrompt();
@@ -278,19 +278,19 @@ public class EffectPrompt extends FixedSetPrompt {
     public class ExplosionPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorExplosionPrompt");
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
-                Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
-                Block block = selectedExplosionLocations.get(player.getUniqueId());
+                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final Block block = selectedExplosionLocations.get(player.getUniqueId());
                 if (block != null) {
-                    Location loc = block.getLocation();
+                    final Location loc = block.getLocation();
                     LinkedList<String> locs;
                     if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
                         locs = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
@@ -308,12 +308,12 @@ public class EffectPrompt extends FixedSetPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_EXPLOSIONS, null);
-                Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);

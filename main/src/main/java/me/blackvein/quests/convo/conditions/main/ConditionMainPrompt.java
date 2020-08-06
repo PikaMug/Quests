@@ -36,22 +36,25 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public ConditionMainPrompt(ConversationContext context) {
+    public ConditionMainPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
 
     private final int size = 6;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("condition") + ": " + context.getSessionData(CK.C_NAME);
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -67,7 +70,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + Lang.get("conditionEditorSetName");
@@ -86,7 +90,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
     }
     
-    public String getAdditionalText(ConversationContext context, int number) {
+    @Override
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -106,8 +111,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
@@ -120,7 +125,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     }
 
     @Override
-    public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    public Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new ConditionNamePrompt();
@@ -129,7 +134,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 3:
             return new WorldPrompt(context);
         case 4:
-            String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
+            final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
             } else {
@@ -152,20 +157,20 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     private class ConditionNamePrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("conditionEditorEnterName");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Condition c : plugin.getConditions()) {
+                for (final Condition c : plugin.getConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionNamePrompt();
                     }
                 }
-                List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
+                final List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
                 if (actionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new ConditionNamePrompt();
@@ -174,7 +179,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new ConditionNamePrompt();
                 }
-                actionNames.remove((String) context.getSessionData(CK.C_NAME));
+                actionNames.remove(context.getSessionData(CK.C_NAME));
                 context.setSessionData(CK.C_NAME, input);
                 actionNames.add(input);
                 plugin.getConditionFactory().setNamesOfConditionsBeingEdited(actionNames);
@@ -188,11 +193,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         String modName = null;
         LinkedList<String> modified = new LinkedList<String>();
 
-        public ConditionSavePrompt(String modifiedName) {
+        public ConditionSavePrompt(final String modifiedName) {
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (Quest q : plugin.getQuests()) {
-                    for (Stage s : q.getStages()) {
+                for (final Quest q : plugin.getQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());
@@ -205,12 +210,12 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
                     + context.getSessionData(CK.C_NAME) + ChatColor.YELLOW + "\"?\n";
             if (modified.isEmpty() == false) {
                 text += ChatColor.RED + Lang.get("conditionEditorModifiedNote") + "\n";
-                for (String s : modified) {
+                for (final String s : modified) {
                     text += ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s + "\n";
                 }
                 text += ChatColor.RED + Lang.get("conditionEditorForcedToQuit") + "\n";
@@ -219,7 +224,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getConditionFactory().saveCondition(context);
                 return new ConditionMenuPrompt(context);
@@ -234,15 +239,15 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     private class ConditionExitPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
+        public String getPromptText(final ConversationContext context) {
+            final String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
                     + Lang.get("yesWord") + "\n" + ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET 
                     + ChatColor.RED + " - " + Lang.get("noWord");
             return ChatColor.YELLOW + Lang.get("confirmDelete") + "\n" + text;
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + Lang.get("exited"));
                 plugin.getConditionFactory().clearData(context);

@@ -21,30 +21,29 @@ import de.erethon.dungeonsxl.api.event.group.GroupCreateEvent;
 import de.erethon.dungeonsxl.api.event.group.GroupDisbandEvent;
 import de.erethon.dungeonsxl.api.event.group.GroupPlayerJoinEvent;
 import de.erethon.dungeonsxl.api.event.group.GroupPlayerLeaveEvent;
-
 import me.blackvein.quests.util.Lang;
 
 public class DungeonsListener implements Listener {
     
     @EventHandler
-    public void onGroupCreate(GroupCreateEvent event) {
+    public void onGroupCreate(final GroupCreateEvent event) {
         if (Lang.get("questDungeonsCreate").length() > 0) {
             event.getCreator().sendMessage(ChatColor.YELLOW + Lang.get("questDungeonsCreate"));
         }
     }
     
     @EventHandler
-    public void onGroupDisbandEvent(GroupDisbandEvent event) {
+    public void onGroupDisbandEvent(final GroupDisbandEvent event) {
         if (Lang.get("questDungeonsDisband").length() > 0) {
             event.getDisbander().sendMessage(ChatColor.RED + Lang.get("questDungeonsDisband"));
         }
     }
     
     @EventHandler
-    public void onPlayerJoinEvent(GroupPlayerJoinEvent event) {
+    public void onPlayerJoinEvent(final GroupPlayerJoinEvent event) {
         if (event.getGroup() != null && event.getPlayer() != null) {
-            Player i = event.getGroup().getLeader();
-            Player p = event.getPlayer().getPlayer();
+            final Player i = event.getGroup().getLeader();
+            final Player p = event.getPlayer().getPlayer();
             if (i != null && p != null) {
                 if (Lang.get("questDungeonsInvite").length() > 0) {
                     i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite")
@@ -58,10 +57,10 @@ public class DungeonsListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerLeaveEvent(GroupPlayerLeaveEvent event) {
+    public void onPlayerLeaveEvent(final GroupPlayerLeaveEvent event) {
         if (event.getGroup() != null && event.getPlayer() != null) {
-            Player k = event.getGroup().getLeader();
-            Player p = event.getPlayer().getPlayer();
+            final Player k = event.getGroup().getLeader();
+            final Player p = event.getPlayer().getPlayer();
             if (k != null && p != null) {
                 if (Lang.get("questDungeonsKicked").length() > 0) {
                     k.sendMessage(ChatColor.RED + Lang.get(k, "questDungeonsKicked").replace("<player>", k.getName()));

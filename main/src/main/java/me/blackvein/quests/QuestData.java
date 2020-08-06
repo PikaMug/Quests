@@ -29,11 +29,11 @@ public class QuestData {
     private final Quester quester;
     private boolean doJournalUpdate = true;
 
-    public QuestData(Quester quester) {
+    public QuestData(final Quester quester) {
         this.quester = quester;
     }
 
-    public void setDoJournalUpdate(boolean b) {
+    public void setDoJournalUpdate(final boolean b) {
         doJournalUpdate = b;
     }
 
@@ -42,24 +42,24 @@ public class QuestData {
         private static final long serialVersionUID = -4211891633163257743L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -73,8 +73,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -86,24 +86,24 @@ public class QuestData {
         private static final long serialVersionUID = -6071822509475270168L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -117,8 +117,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -130,24 +130,24 @@ public class QuestData {
         private static final long serialVersionUID = 4226366446050903433L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -161,8 +161,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -174,24 +174,24 @@ public class QuestData {
         private static final long serialVersionUID = -9057864863810306890L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -205,8 +205,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -218,24 +218,24 @@ public class QuestData {
         private static final long serialVersionUID = -8204359763290995080L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -249,8 +249,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -262,16 +262,16 @@ public class QuestData {
         private static final long serialVersionUID = 2774356294049526105L;
 
         @Override
-        public Integer put(ItemStack key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final ItemStack key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -285,7 +285,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -297,16 +297,16 @@ public class QuestData {
         private static final long serialVersionUID = 2774356235274526106L;
 
         @Override
-        public Integer put(ItemStack key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final ItemStack key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -320,7 +320,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -333,16 +333,16 @@ public class QuestData {
         private static final long serialVersionUID = 416869352279205852L;
 
         @Override
-        public Integer put(Map<Enchantment, Material> key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final Map<Enchantment, Material> key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -356,7 +356,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends Map<Enchantment, Material>, ? extends Integer> m) {
+        public void putAll(final Map<? extends Map<Enchantment, Material>, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -368,16 +368,16 @@ public class QuestData {
         private static final long serialVersionUID = 2774356235274526107L;
 
         @Override
-        public Integer put(ItemStack key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final ItemStack key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -391,7 +391,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -403,16 +403,16 @@ public class QuestData {
         private static final long serialVersionUID = -5475073316902757883L;
 
         @Override
-        public Integer put(ItemStack key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final ItemStack key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -426,7 +426,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends ItemStack, ? extends Integer> m) {
+        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -438,24 +438,24 @@ public class QuestData {
         private static final long serialVersionUID = 2712497347022734646L;
 
         @Override
-        public ItemStack set(int index, ItemStack key) {
-            ItemStack data = super.set(index, key);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean add(ItemStack key) {
-            boolean data = super.add(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public boolean remove(Object key) {
-            boolean i = super.remove(key);
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -469,8 +469,8 @@ public class QuestData {
         }
 
         @Override
-        public boolean addAll(Collection<? extends ItemStack> m) {
-            boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -482,31 +482,31 @@ public class QuestData {
         private static final long serialVersionUID = 8178007458817522183L;
 
         @Override
-        public boolean add(EntityType e) {
-            boolean b = super.add(e);
+        public boolean add(final EntityType e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, EntityType element) {
+        public void add(final int index, final EntityType element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends EntityType> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends EntityType> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends EntityType> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends EntityType> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -520,24 +520,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public EntityType remove(int index) {
-            EntityType s = super.remove(index);
+        public EntityType remove(final int index) {
+            final EntityType s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public EntityType set(int index, EntityType element) {
-            EntityType s = super.set(index, element);
+        public EntityType set(final int index, final EntityType element) {
+            final EntityType s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -549,31 +549,31 @@ public class QuestData {
         private static final long serialVersionUID = 2228385647091499176L;
 
         @Override
-        public boolean add(Integer e) {
-            boolean b = super.add(e);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Integer element) {
+        public void add(final int index, final Integer element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Integer> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Integer> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -587,24 +587,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Integer remove(int index) {
-            Integer s = super.remove(index);
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Integer set(int index, Integer element) {
-            Integer s = super.set(index, element);
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -616,31 +616,31 @@ public class QuestData {
         private static final long serialVersionUID = 557285564460615021L;
 
         @Override
-        public boolean add(Location e) {
-            boolean b = super.add(e);
+        public boolean add(final Location e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Location element) {
+        public void add(final int index, final Location element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Location> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Location> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Location> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Location> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -654,24 +654,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Location remove(int index) {
-            Location s = super.remove(index);
+        public Location remove(final int index) {
+            final Location s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Location set(int index, Location element) {
-            Location s = super.set(index, element);
+        public Location set(final int index, final Location element) {
+            final Location s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -683,31 +683,31 @@ public class QuestData {
         private static final long serialVersionUID = 1973115869697752181L;
 
         @Override
-        public boolean add(Integer e) {
-            boolean b = super.add(e);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Integer element) {
+        public void add(final int index, final Integer element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Integer> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Integer> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -721,24 +721,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Integer remove(int index) {
-            Integer s = super.remove(index);
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Integer set(int index, Integer element) {
-            Integer s = super.set(index, element);
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -750,16 +750,16 @@ public class QuestData {
         private static final long serialVersionUID = 2447610341508300847L;
 
         @Override
-        public Boolean put(Integer key, Boolean val) {
-            Boolean data = super.put(key, val);
+        public Boolean put(final Integer key, final Boolean val) {
+            final Boolean data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Boolean remove(Object key) {
-            Boolean i = super.remove(key);
+        public Boolean remove(final Object key) {
+            final Boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -773,7 +773,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends Integer, ? extends Boolean> m) {
+        public void putAll(final Map<? extends Integer, ? extends Boolean> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -785,31 +785,31 @@ public class QuestData {
         private static final long serialVersionUID = -6054581494356961482L;
 
         @Override
-        public boolean add(Integer e) {
-            boolean b = super.add(e);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Integer element) {
+        public void add(final int index, final Integer element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Integer> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Integer> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -823,24 +823,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Integer remove(int index) {
-            Integer s = super.remove(index);
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Integer set(int index, Integer element) {
-            Integer s = super.set(index, element);
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -852,31 +852,31 @@ public class QuestData {
         private static final long serialVersionUID = 1849192351499071688L;
 
         @Override
-        public boolean add(Integer e) {
-            boolean b = super.add(e);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Integer element) {
+        public void add(final int index, final Integer element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Integer> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Integer> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -890,24 +890,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Integer remove(int index) {
-            Integer s = super.remove(index);
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Integer set(int index, Integer element) {
-            Integer s = super.set(index, element);
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -919,31 +919,31 @@ public class QuestData {
         private static final long serialVersionUID = 2875034788869133862L;
 
         @Override
-        public boolean add(Location e) {
-            boolean b = super.add(e);
+        public boolean add(final Location e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Location element) {
+        public void add(final int index, final Location element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Location> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Location> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Location> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Location> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -957,24 +957,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Location remove(int index) {
-            Location s = super.remove(index);
+        public Location remove(final int index) {
+            final Location s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Location set(int index, Location element) {
-            Location s = super.set(index, element);
+        public Location set(final int index, final Location element) {
+            final Location s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -986,31 +986,31 @@ public class QuestData {
         private static final long serialVersionUID = -8802305642082466541L;
 
         @Override
-        public boolean add(Boolean e) {
-            boolean b = super.add(e);
+        public boolean add(final Boolean e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Boolean element) {
+        public void add(final int index, final Boolean element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Boolean> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Boolean> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -1024,24 +1024,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Boolean remove(int index) {
-            Boolean s = super.remove(index);
+        public Boolean remove(final int index) {
+            final Boolean s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Boolean set(int index, Boolean element) {
-            Boolean s = super.set(index, element);
+        public Boolean set(final int index, final Boolean element) {
+            final Boolean s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -1053,31 +1053,31 @@ public class QuestData {
         private static final long serialVersionUID = 6027656509740406846L;
 
         @Override
-        public boolean add(Integer e) {
-            boolean b = super.add(e);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public void add(int index, Integer element) {
+        public void add(final int index, final Integer element) {
             super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(Collection<? extends Integer> c) {
-            boolean b = super.addAll(c);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends Integer> c) {
-            boolean b = super.addAll(index, c);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
@@ -1091,24 +1091,24 @@ public class QuestData {
         }
 
         @Override
-        public boolean remove(Object o) {
-            boolean b = super.remove(o);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
             return b;
         }
 
         @Override
-        public Integer remove(int index) {
-            Integer s = super.remove(index);
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
         }
 
         @Override
-        public Integer set(int index, Integer element) {
-            Integer s = super.set(index, element);
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -1120,16 +1120,16 @@ public class QuestData {
         private static final long serialVersionUID = 3851959471748032699L;
 
         @Override
-        public Integer put(EntityType key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final EntityType key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -1143,7 +1143,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends EntityType, ? extends Integer> m) {
+        public void putAll(final Map<? extends EntityType, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -1155,16 +1155,16 @@ public class QuestData {
         private static final long serialVersionUID = -6016463677133534885L;
 
         @Override
-        public Integer put(DyeColor key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final DyeColor key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -1178,7 +1178,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends DyeColor, ? extends Integer> m) {
+        public void putAll(final Map<? extends DyeColor, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -1190,16 +1190,16 @@ public class QuestData {
         private static final long serialVersionUID = -4297290041298491402L;
 
         @Override
-        public Boolean put(String key, Boolean val) {
-            Boolean data = super.put(key, val);
+        public Boolean put(final String key, final Boolean val) {
+            final Boolean data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Boolean remove(Object key) {
-            Boolean i = super.remove(key);
+        public Boolean remove(final Object key) {
+            final Boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -1213,7 +1213,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends String, ? extends Boolean> m) {
+        public void putAll(final Map<? extends String, ? extends Boolean> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -1225,16 +1225,16 @@ public class QuestData {
         private static final long serialVersionUID = -2148775183072606256L;
 
         @Override
-        public Integer put(String key, Integer val) {
-            Integer data = super.put(key, val);
+        public Integer put(final String key, final Integer val) {
+            final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(Object key) {
-            Integer i = super.remove(key);
+        public Integer remove(final Object key) {
+            final Integer i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -1248,7 +1248,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends String, ? extends Integer> m) {
+        public void putAll(final Map<? extends String, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -1260,16 +1260,16 @@ public class QuestData {
         private static final long serialVersionUID = 7106048037834965123L;
 
         @Override
-        public Boolean put(String key, Boolean val) {
-            Boolean data = super.put(key, val);
+        public Boolean put(final String key, final Boolean val) {
+            final Boolean data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Boolean remove(Object key) {
-            Boolean i = super.remove(key);
+        public Boolean remove(final Object key) {
+            final Boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -1283,7 +1283,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(Map<? extends String, ? extends Boolean> m) {
+        public void putAll(final Map<? extends String, ? extends Boolean> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -1301,7 +1301,7 @@ public class QuestData {
         return cowsMilked;
     }
     
-    public void setCowsMilked(int cowsMilked) {
+    public void setCowsMilked(final int cowsMilked) {
         this.cowsMilked = cowsMilked;
         if (doJournalUpdate)
             quester.updateJournal();
@@ -1311,7 +1311,7 @@ public class QuestData {
         return fishCaught;
     }
     
-    public void setFishCaught(int fishCaught) {
+    public void setFishCaught(final int fishCaught) {
         this.fishCaught = fishCaught;
         if (doJournalUpdate)
             quester.updateJournal();
@@ -1321,7 +1321,7 @@ public class QuestData {
         return playersKilled;
     }
     
-    public void setPlayersKilled(int playersKilled) {
+    public void setPlayersKilled(final int playersKilled) {
         this.playersKilled = playersKilled;
         if (doJournalUpdate)
             quester.updateJournal();
@@ -1331,7 +1331,7 @@ public class QuestData {
         return delayStartTime;
     }
     
-    public void setDelayStartTime(long delayStartTime) {
+    public void setDelayStartTime(final long delayStartTime) {
         this.delayStartTime = delayStartTime;
         if (doJournalUpdate)
             quester.updateJournal();
@@ -1341,7 +1341,7 @@ public class QuestData {
         return delayTimeLeft;
     }
     
-    public void setDelayTimeLeft(long delayTimeLeft) {
+    public void setDelayTimeLeft(final long delayTimeLeft) {
         this.delayTimeLeft = delayTimeLeft;
         if (doJournalUpdate)
             quester.updateJournal();
@@ -1351,7 +1351,7 @@ public class QuestData {
         return delayOver;
     }
     
-    public void setDelayOver(boolean delayOver) {
+    public void setDelayOver(final boolean delayOver) {
         this.delayOver = delayOver;
         if (doJournalUpdate)
             quester.updateJournal();

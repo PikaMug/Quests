@@ -27,21 +27,21 @@ public class NpcEffectThread implements Runnable {
 
     final Quests plugin;
 
-    public NpcEffectThread(Quests quests) {
+    public NpcEffectThread(final Quests quests) {
         plugin = quests;
     }
 
     @Override
     public void run() {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            Quester quester = plugin.getQuester(player.getUniqueId());
-            List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
+        for (final Player player : plugin.getServer().getOnlinePlayers()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
             if (nearby.isEmpty() == false) {
-                for (Entity e : nearby) {
+                for (final Entity e : nearby) {
                     if (plugin.getDependencies().getCitizens() != null 
                             && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
-                            NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
+                            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
                             if (plugin.hasQuest(npc, quester)) {
                                 showEffect(player, npc, plugin.getSettings().getEffect());
                             } else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
@@ -60,16 +60,16 @@ public class NpcEffectThread implements Runnable {
      * @param npc Target NPC to place the effect above
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
      */
-    public void showEffect(Player player, NPC npc, String effectType) {
+    public void showEffect(final Player player, final NPC npc, final String effectType) {
         if (player == null || npc == null || npc.getEntity() == null) {
             return;
         }
         if (plugin.getDependencies().getCitizens() != null) {
-            Location eyeLoc = npc.getEntity().getLocation();
+            final Location eyeLoc = npc.getEntity().getLocation();
             eyeLoc.setY(eyeLoc.getY() + 2);
             try {
                 ParticleProvider.sendToPlayer(player, eyeLoc, effectType.toUpperCase());
-            } catch (NoClassDefFoundError e) {
+            } catch (final NoClassDefFoundError e) {
                 // Unsupported Minecraft version
             }
         }

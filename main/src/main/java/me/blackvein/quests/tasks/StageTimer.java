@@ -18,11 +18,11 @@ import me.blackvein.quests.Quests;
 
 public class StageTimer implements Runnable {
 
-    private Quester quester;
-    private Quests plugin;
-    private Quest quest;
+    private final Quester quester;
+    private final Quests plugin;
+    private final Quest quest;
 
-    public StageTimer(Quests plugin, Quester quester, Quest quest) {
+    public StageTimer(final Quests plugin, final Quester quester, final Quest quest) {
         this.quester = quester;
         this.quest = quest;
         this.plugin = plugin;
@@ -46,7 +46,7 @@ public class StageTimer implements Runnable {
                 }
                 quest.completeQuest(quester);
             } else {
-                int stageNum = quester.getCurrentQuests().get(quest) + 1;
+                final int stageNum = quester.getCurrentQuests().get(quest) + 1;
                 /*Stage currentStage = quester.getCurrentStage(quest);
                 quester.hardQuit(quest);
                 if (currentStage.getScript() != null) {
@@ -75,7 +75,7 @@ public class StageTimer implements Runnable {
                 }*/
                 try {
                     quest.setStage(quester, stageNum);
-                } catch (IndexOutOfBoundsException e) {
+                } catch (final IndexOutOfBoundsException e) {
                     plugin.getLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
                             + stageNum + " after delay");
                 }

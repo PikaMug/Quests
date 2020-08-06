@@ -32,17 +32,17 @@ public class WorldGuardAPI_7_0_0 {
     }
     
     @Nullable
-    public static RegionManager getRegionManager(World world) {
+    public static RegionManager getRegionManager(final World world) {
         return WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
     }
     
     @Nullable
-    public static ApplicableRegionSet getApplicableRegions(World world, Location location) {
+    public static ApplicableRegionSet getApplicableRegions(final World world, final Location location) {
         return getRegionManager(world).getApplicableRegions(BukkitAdapter.asBlockVector(location));
     }
     
     @Nullable
-    public static List<String> getApplicableRegionsIDs(World world, Location location) {
+    public static List<String> getApplicableRegionsIDs(final World world, final Location location) {
         return getRegionManager(world).getApplicableRegionsIDs(BukkitAdapter.asBlockVector(location));
     }
 }

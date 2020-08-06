@@ -18,7 +18,7 @@ public class ConditionFormatException extends Exception {
     private final String message;
     private final String conditionId;
 
-    public ConditionFormatException(String message, String conditionId) {
+    public ConditionFormatException(final String message, final String conditionId) {
         super(message + ", see condition of ID " + conditionId);
         this.message = message + ", see condition of ID " + conditionId;
         this.conditionId = conditionId;
@@ -29,6 +29,7 @@ public class ConditionFormatException extends Exception {
      * 
      * @return The message.
      */
+    @Override
     public String getMessage() {
         return message;
     }

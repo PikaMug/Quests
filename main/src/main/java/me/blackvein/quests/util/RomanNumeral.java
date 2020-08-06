@@ -34,8 +34,8 @@ public class RomanNumeral {
         map.put(1, "I");
     }
 
-    public final static String getNumeral(int number) {
-        int l =  map.floorKey(number);
+    public final static String getNumeral(final int number) {
+        final int l =  map.floorKey(number);
         if ( number == l ) {
             return map.get(number);
         }

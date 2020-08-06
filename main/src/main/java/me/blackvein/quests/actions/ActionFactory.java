@@ -60,7 +60,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
     private List<String> editingActionNames = new LinkedList<String>();
 
-    public ActionFactory(Quests plugin) {
+    public ActionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
@@ -74,7 +74,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public void setSelectedExplosionLocations(
-            Map<UUID, Block> selectedExplosionLocations) {
+            final Map<UUID, Block> selectedExplosionLocations) {
         this.selectedExplosionLocations = selectedExplosionLocations;
     }
 
@@ -82,7 +82,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         return selectedEffectLocations;
     }
 
-    public void setSelectedEffectLocations(Map<UUID, Block> selectedEffectLocations) {
+    public void setSelectedEffectLocations(final Map<UUID, Block> selectedEffectLocations) {
         this.selectedEffectLocations = selectedEffectLocations;
     }
 
@@ -90,7 +90,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         return selectedMobLocations;
     }
 
-    public void setSelectedMobLocations(Map<UUID, Block> selectedMobLocations) {
+    public void setSelectedMobLocations(final Map<UUID, Block> selectedMobLocations) {
         this.selectedMobLocations = selectedMobLocations;
     }
 
@@ -99,7 +99,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public void setSelectedLightningLocations(
-            Map<UUID, Block> selectedLightningLocations) {
+            final Map<UUID, Block> selectedLightningLocations) {
         this.selectedLightningLocations = selectedLightningLocations;
     }
 
@@ -108,7 +108,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public void setSelectedTeleportLocations(
-            Map<UUID, Block> selectedTeleportLocations) {
+            final Map<UUID, Block> selectedTeleportLocations) {
         this.selectedTeleportLocations = selectedTeleportLocations;
     }
 
@@ -120,13 +120,13 @@ public class ActionFactory implements ConversationAbandonedListener {
         return editingActionNames;
     }
     
-    public void setNamesOfActionsBeingEdited(List<String> actionNames) {
+    public void setNamesOfActionsBeingEdited(final List<String> actionNames) {
         this.editingActionNames = actionNames;
     }
 
     @Override
-    public void conversationAbandoned(ConversationAbandonedEvent abandonedEvent) {
-        Player player = (Player) abandonedEvent.getContext().getForWhom();
+    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
+        final Player player = (Player) abandonedEvent.getContext().getForWhom();
         selectedExplosionLocations.remove(player.getUniqueId());
         selectedEffectLocations.remove(player.getUniqueId());
         selectedMobLocations.remove(player.getUniqueId());
@@ -134,11 +134,11 @@ public class ActionFactory implements ConversationAbandonedListener {
         selectedTeleportLocations.remove(player.getUniqueId());
     }
     
-    public Prompt returnToMenu(ConversationContext context) {
+    public Prompt returnToMenu(final ConversationContext context) {
         return new ActionMainPrompt(context);
     }
     
-    public void loadData(Action event, ConversationContext context) {
+    public void loadData(final Action event, final ConversationContext context) {
         if (event.message != null) {
             context.setSessionData(CK.E_MESSAGE, event.message);
         }
@@ -153,54 +153,54 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
         }
         if (event.items != null && event.items.isEmpty() == false) {
-            LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
             items.addAll(event.items);
             context.setSessionData(CK.E_ITEMS, items);
         }
         if (event.explosions != null && event.explosions.isEmpty() == false) {
-            LinkedList<String> locs = new LinkedList<String>();
-            for (Location loc : event.explosions) {
+            final LinkedList<String> locs = new LinkedList<String>();
+            for (final Location loc : event.explosions) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_EXPLOSIONS, locs);
         }
         if (event.effects != null && event.effects.isEmpty() == false) {
-            LinkedList<String> locs = new LinkedList<String>();
-            LinkedList<String> effs = new LinkedList<String>();
-            for (Entry<Location, Effect> e : event.effects.entrySet()) {
-                locs.add(ConfigUtil.getLocationInfo((Location) e.getKey()));
-                effs.add(((Effect) e.getValue()).toString());
+            final LinkedList<String> locs = new LinkedList<String>();
+            final LinkedList<String> effs = new LinkedList<String>();
+            for (final Entry<Location, Effect> e : event.effects.entrySet()) {
+                locs.add(ConfigUtil.getLocationInfo(e.getKey()));
+                effs.add(e.getValue().toString());
             }
             context.setSessionData(CK.E_EFFECTS, effs);
             context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
         }
         if (event.stormWorld != null) {
             context.setSessionData(CK.E_WORLD_STORM, event.stormWorld.getName());
-            context.setSessionData(CK.E_WORLD_STORM_DURATION, (int) event.stormDuration);
+            context.setSessionData(CK.E_WORLD_STORM_DURATION, event.stormDuration);
         }
         if (event.thunderWorld != null) {
             context.setSessionData(CK.E_WORLD_THUNDER, event.thunderWorld.getName());
-            context.setSessionData(CK.E_WORLD_THUNDER_DURATION, (int) event.thunderDuration);
+            context.setSessionData(CK.E_WORLD_THUNDER_DURATION, event.thunderDuration);
         }
         if (event.mobSpawns != null && event.mobSpawns.isEmpty() == false) {
-            LinkedList<String> questMobs = new LinkedList<String>();
-            for (QuestMob questMob : event.mobSpawns) {
+            final LinkedList<String> questMobs = new LinkedList<String>();
+            for (final QuestMob questMob : event.mobSpawns) {
                 questMobs.add(questMob.serialize());
             }
             context.setSessionData(CK.E_MOB_TYPES, questMobs);
         }
         if (event.lightningStrikes != null && event.lightningStrikes.isEmpty() == false) {
-            LinkedList<String> locs = new LinkedList<String>();
-            for (Location loc : event.lightningStrikes) {
+            final LinkedList<String> locs = new LinkedList<String>();
+            for (final Location loc : event.lightningStrikes) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_LIGHTNING, locs);
         }
         if (event.potionEffects != null && event.potionEffects.isEmpty() == false) {
-            LinkedList<String> types = new LinkedList<String>();
-            LinkedList<Long> durations = new LinkedList<Long>();
-            LinkedList<Integer> mags = new LinkedList<Integer>();
-            for (PotionEffect pe : event.potionEffects) {
+            final LinkedList<String> types = new LinkedList<String>();
+            final LinkedList<Long> durations = new LinkedList<Long>();
+            final LinkedList<Integer> mags = new LinkedList<Integer>();
+            for (final PotionEffect pe : event.potionEffects) {
                 types.add(pe.getType().getName());
                 durations.add((long) pe.getDuration());
                 mags.add(pe.getAmplifier());
@@ -210,13 +210,13 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.E_POTION_STRENGHT, mags);
         }
         if (event.hunger > -1) {
-            context.setSessionData(CK.E_HUNGER, (Integer) event.hunger);
+            context.setSessionData(CK.E_HUNGER, event.hunger);
         }
         if (event.saturation > -1) {
-            context.setSessionData(CK.E_SATURATION, (Integer) event.saturation);
+            context.setSessionData(CK.E_SATURATION, event.saturation);
         }
         if (event.health > -1) {
-            context.setSessionData(CK.E_HEALTH, (Float) event.health);
+            context.setSessionData(CK.E_HEALTH, event.health);
         }
         if (event.teleport != null) {
             context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(event.teleport));
@@ -232,7 +232,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
     }
 
-    public void clearData(ConversationContext context) {
+    public void clearData(final ConversationContext context) {
         context.setSessionData(CK.E_OLD_EVENT, null);
         context.setSessionData(CK.E_NAME, null);
         context.setSessionData(CK.E_MESSAGE, null);
@@ -261,23 +261,23 @@ public class ActionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.E_CANCEL_TIMER, null);
     }
 
-    public void deleteAction(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
-        File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
+    public void deleteAction(final ConversationContext context) {
+        final YamlConfiguration data = new YamlConfiguration();
+        final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
             data.load(actionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         }
-        String action = (String) context.getSessionData(CK.ED_EVENT_DELETE);
+        final String action = (String) context.getSessionData(CK.ED_EVENT_DELETE);
         String key = "actions";
         ConfigurationSection sec = data.getConfigurationSection(key);
         if (sec == null) {
@@ -287,12 +287,13 @@ public class ActionFactory implements ConversationAbandonedListener {
         sec.set(action, null);
         try {
             data.save(actionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            public void execute(Boolean response) {
+        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            @Override
+            public void execute(final Boolean response) {
                 if (!response) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
                 }
@@ -300,8 +301,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorDeleted"));
-        for (Quester q : plugin.getQuesters()) {
-            for (Quest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -309,17 +310,17 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     @SuppressWarnings("unchecked")
-    public void saveAction(ConversationContext context) {
-        YamlConfiguration data = new YamlConfiguration();
-        File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
+    public void saveAction(final ConversationContext context) {
+        final YamlConfiguration data = new YamlConfiguration();
+        final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
             data.load(actionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
@@ -333,54 +334,54 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
         if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
             data.set(key + "." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
-            LinkedList<Action> temp = plugin.getActions();
+            final LinkedList<Action> temp = plugin.getActions();
             temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
             plugin.setActions(temp);
         }
-        ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
-        editingActionNames.remove((String) context.getSessionData(CK.E_NAME));
+        final ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
+        editingActionNames.remove(context.getSessionData(CK.E_NAME));
         if (context.getSessionData(CK.E_MESSAGE) != null) {
-            section.set("message", (String) context.getSessionData(CK.E_MESSAGE));
+            section.set("message", context.getSessionData(CK.E_MESSAGE));
         }
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) != null) {
-            String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
+            final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("clear-inventory", true);
             }
         }
         if (context.getSessionData(CK.E_FAIL_QUEST) != null) {
-            String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
+            final String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("fail-quest", true);
             }
         }
         if (context.getSessionData(CK.E_ITEMS) != null) {
-            section.set("items", (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS));
+            section.set("items", context.getSessionData(CK.E_ITEMS));
         }
         if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
-            section.set("explosions", (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS));
+            section.set("explosions", context.getSessionData(CK.E_EXPLOSIONS));
         }
         if (context.getSessionData(CK.E_EFFECTS) != null) {
-            section.set("effects", (LinkedList<String>) context.getSessionData(CK.E_EFFECTS));
-            section.set("effect-locations", (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS));
+            section.set("effects", context.getSessionData(CK.E_EFFECTS));
+            section.set("effect-locations", context.getSessionData(CK.E_EFFECTS_LOCATIONS));
         }
         if (context.getSessionData(CK.E_WORLD_STORM) != null) {
-            section.set("storm-world", (String) context.getSessionData(CK.E_WORLD_STORM));
-            section.set("storm-duration", (Integer) context.getSessionData(CK.E_WORLD_STORM_DURATION));
+            section.set("storm-world", context.getSessionData(CK.E_WORLD_STORM));
+            section.set("storm-duration", context.getSessionData(CK.E_WORLD_STORM_DURATION));
         }
         if (context.getSessionData(CK.E_WORLD_THUNDER) != null) {
-            section.set("thunder-world", (String) context.getSessionData(CK.E_WORLD_THUNDER));
-            section.set("thunder-duration", (Integer) context.getSessionData(CK.E_WORLD_THUNDER_DURATION));
+            section.set("thunder-world", context.getSessionData(CK.E_WORLD_THUNDER));
+            section.set("thunder-duration", context.getSessionData(CK.E_WORLD_THUNDER_DURATION));
         }
         try {
             if (context.getSessionData(CK.E_MOB_TYPES) != null) {
                 int count = 0;
-                for (String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)) {
+                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)) {
                     ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
                     if (ss == null) {
                         ss = section.createSection("mob-spawns." + count);
                     }
-                    QuestMob questMob = QuestMob.fromString(s);
+                    final QuestMob questMob = QuestMob.fromString(s);
                     if (questMob == null) {
                         continue;
                     }
@@ -401,55 +402,56 @@ public class ActionFactory implements ConversationAbandonedListener {
                     count++;
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         if (context.getSessionData(CK.E_LIGHTNING) != null) {
-            section.set("lightning-strikes", (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING));
+            section.set("lightning-strikes", context.getSessionData(CK.E_LIGHTNING));
         }
         if (context.getSessionData(CK.E_COMMANDS) != null) {
-            LinkedList<String> commands = (LinkedList<String>) context.getSessionData(CK.E_COMMANDS);
+            final LinkedList<String> commands = (LinkedList<String>) context.getSessionData(CK.E_COMMANDS);
             if (commands.isEmpty() == false) {
                 section.set("commands", commands);
             }
         }
         if (context.getSessionData(CK.E_POTION_TYPES) != null) {
-            section.set("potion-effect-types", (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES));
-            section.set("potion-effect-durations", (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS));
-            section.set("potion-effect-amplifiers", (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT));
+            section.set("potion-effect-types", context.getSessionData(CK.E_POTION_TYPES));
+            section.set("potion-effect-durations", context.getSessionData(CK.E_POTION_DURATIONS));
+            section.set("potion-effect-amplifiers", context.getSessionData(CK.E_POTION_STRENGHT));
         }
         if (context.getSessionData(CK.E_HUNGER) != null) {
-            section.set("hunger", (Integer) context.getSessionData(CK.E_HUNGER));
+            section.set("hunger", context.getSessionData(CK.E_HUNGER));
         }
         if (context.getSessionData(CK.E_SATURATION) != null) {
-            section.set("saturation", (Integer) context.getSessionData(CK.E_SATURATION));
+            section.set("saturation", context.getSessionData(CK.E_SATURATION));
         }
         if (context.getSessionData(CK.E_HEALTH) != null) {
-            section.set("health", (Integer) context.getSessionData(CK.E_HEALTH));
+            section.set("health", context.getSessionData(CK.E_HEALTH));
         }
         if (context.getSessionData(CK.E_TELEPORT) != null) {
-            section.set("teleport-location", (String) context.getSessionData(CK.E_TELEPORT));
+            section.set("teleport-location", context.getSessionData(CK.E_TELEPORT));
         }
         if (context.getSessionData(CK.E_TIMER) != null && (int) context.getSessionData(CK.E_TIMER) > 0) {
-            section.set("timer", (Integer) context.getSessionData(CK.E_TIMER));
+            section.set("timer", context.getSessionData(CK.E_TIMER));
         }
         if (context.getSessionData(CK.E_CANCEL_TIMER) != null) {
-            String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
+            final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("cancel-timer", true);
             }
         }
         if (context.getSessionData(CK.E_DENIZEN) != null) {
-            section.set("denizen-script", (String) context.getSessionData(CK.E_DENIZEN));
+            section.set("denizen-script", context.getSessionData(CK.E_DENIZEN));
         }
         try {
             data.save(actionsFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            public void execute(Boolean response) {
+        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
+            @Override
+            public void execute(final Boolean response) {
                 if (!response) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
                 }
@@ -457,8 +459,8 @@ public class ActionFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorSaved"));
-        for (Quester q : plugin.getQuesters()) {
-            for (Quest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }

@@ -13,12 +13,12 @@
 package me.blackvein.quests;
 
 public class DenizenTrigger {
-    private Quests plugin;
+    private final Quests plugin;
     
-    public DenizenTrigger(Quests plugin) {
+    public DenizenTrigger(final Quests plugin) {
         this.plugin = plugin;
     }
-    public boolean runDenizenScript(String scriptName, Quester quester) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester) {
         if (scriptName == null) {
             return false;
         }

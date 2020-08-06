@@ -29,7 +29,7 @@ public class TimerPrompt extends FixedSetPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         String text = ChatColor.GOLD + "- " + Lang.get("eventEditorTimer") + " -\n";
         if (context.getSessionData(CK.E_TIMER) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -51,11 +51,11 @@ public class TimerPrompt extends FixedSetPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
         if (input.equalsIgnoreCase("1")) {
             return new FailTimerPrompt();
         } else if (input.equalsIgnoreCase("2")) {
-            String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
+            final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
             } else {

@@ -24,7 +24,7 @@ public class Options {
         return allowCommands;
     }
     
-    public void setAllowCommands(boolean allowCommands) {
+    public void setAllowCommands(final boolean allowCommands) {
         this.allowCommands = allowCommands;
     }
     
@@ -32,7 +32,7 @@ public class Options {
         return allowQuitting;
     }
     
-    public void setAllowQuitting(boolean allowQuitting) {
+    public void setAllowQuitting(final boolean allowQuitting) {
         this.allowQuitting = allowQuitting;
     }
     
@@ -40,7 +40,7 @@ public class Options {
         return useDungeonsXLPlugin;
     }
     
-    public void setUseDungeonsXLPlugin(boolean useDungeonsXLPlugin) {
+    public void setUseDungeonsXLPlugin(final boolean useDungeonsXLPlugin) {
         this.useDungeonsXLPlugin = useDungeonsXLPlugin;
     }
     
@@ -48,7 +48,7 @@ public class Options {
         return usePartiesPlugin;
     }
     
-    public void setUsePartiesPlugin(boolean usePartiesPlugin) {
+    public void setUsePartiesPlugin(final boolean usePartiesPlugin) {
         this.usePartiesPlugin = usePartiesPlugin;
     }
     
@@ -56,7 +56,7 @@ public class Options {
         return shareProgressLevel;
     }
     
-    public void setShareProgressLevel(int shareProgressLevel) {
+    public void setShareProgressLevel(final int shareProgressLevel) {
         this.shareProgressLevel = shareProgressLevel;
     }
     
@@ -64,7 +64,7 @@ public class Options {
         return requireSameQuest;
     }
     
-    public void setRequireSameQuest(boolean requireSameQuest) {
+    public void setRequireSameQuest(final boolean requireSameQuest) {
         this.requireSameQuest = requireSameQuest;
     }
 }

@@ -22,7 +22,7 @@ public class StageFormatException extends Exception {
     private final int stage;
     
     
-    public StageFormatException(String message, Quest quest, int stage) {
+    public StageFormatException(final String message, final Quest quest, final int stage) {
         super(message + ", see quest " + quest.getName() + " stage " + stage);
         this.message = message + ", see quest " + quest.getName() + " stage " + stage;
         this.quest = quest;
@@ -36,7 +36,8 @@ public class StageFormatException extends Exception {
      * @param quest The quest that an invalid stage id was set within.
      * @param stage The invalid stage id that was set.
      */
-    public StageFormatException(Quest quest, int stage) {
+    @Deprecated
+    public StageFormatException(final Quest quest, final int stage) {
         this.message = "Failed to load quest " + quest.getName() + " stage " + stage;
         this.quest = quest;
         this.stage = stage;
@@ -47,6 +48,7 @@ public class StageFormatException extends Exception {
      * 
      * @return The message.
      */
+    @Override
     public String getMessage() {
         return message;
     }

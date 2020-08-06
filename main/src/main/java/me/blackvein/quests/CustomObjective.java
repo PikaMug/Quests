@@ -25,12 +25,12 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class CustomObjective implements Listener {
 
-    private Quests plugin = Quests.getPlugin(Quests.class);
+    private final Quests plugin = Quests.getPlugin(Quests.class);
     private String name = null;
     private String author = null;
     private String display = "Progress: %count%";
-    private LinkedList<Entry<String, Object>> data = new LinkedList<Entry<String, Object>>();
-    private Map<String, String> descriptions = new HashMap<String, String>();
+    private final LinkedList<Entry<String, Object>> data = new LinkedList<Entry<String, Object>>();
+    private final Map<String, String> descriptions = new HashMap<String, String>();
     private String countPrompt = "Enter number";
     private boolean showCount = true;
     private int count = 1;
@@ -39,7 +39,7 @@ public abstract class CustomObjective implements Listener {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -47,7 +47,7 @@ public abstract class CustomObjective implements Listener {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(final String author) {
         this.author = author;
     }
     
@@ -55,7 +55,7 @@ public abstract class CustomObjective implements Listener {
         return display;
     }
 
-    public void setDisplay(String display) {
+    public void setDisplay(final String display) {
         this.display = display;
     }
         
@@ -72,8 +72,8 @@ public abstract class CustomObjective implements Listener {
      * @param description Description of expected input
      * @param defaultValue Value to be used if input is not received
      */
-    public void addStringPrompt(String title, String description, Object defaultValue) {
-        Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(title, defaultValue);
+    public void addStringPrompt(final String title, final String description, final Object defaultValue) {
+        final Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(title, defaultValue);
         data.add(prompt);
         descriptions.put(title, description);
     }
@@ -86,7 +86,7 @@ public abstract class CustomObjective implements Listener {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(final int count) {
         this.count = count;
     }
 
@@ -94,7 +94,7 @@ public abstract class CustomObjective implements Listener {
         return countPrompt;
     }
 
-    public void setCountPrompt(String countPrompt) {
+    public void setCountPrompt(final String countPrompt) {
         this.countPrompt = countPrompt;
     }
     
@@ -110,28 +110,28 @@ public abstract class CustomObjective implements Listener {
      * 
      * @param showCount
      */
-    public void setShowCount(boolean showCount) {
+    public void setShowCount(final boolean showCount) {
         this.showCount = showCount;
     }
     
-    public Map<String, Object> getDataForPlayer(Player player, CustomObjective customObj, Quest quest) {
-        Quester quester = plugin.getQuester(player.getUniqueId());
+    public Map<String, Object> getDataForPlayer(final Player player, final CustomObjective customObj, final Quest quest) {
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
-            Stage currentStage = quester.getCurrentStage(quest);
+            final Stage currentStage = quester.getCurrentStage(quest);
             if (currentStage == null) {
                 return null;
             }
             CustomObjective found = null;
-            for (me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
+            for (final me.blackvein.quests.CustomObjective co : currentStage.customObjectives) {
                 if (co.getName().equals(customObj.getName())) {
                     found = co;
                     break;
                 }
             }
             if (found != null) {
-                Map<String, Object> m = new HashMap<String, Object>();
-                for (Entry<String, Object> datamap : found.getData()) {
-                    for (Entry<String, Object> e : currentStage.customObjectiveData) {
+                final Map<String, Object> m = new HashMap<String, Object>();
+                for (final Entry<String, Object> datamap : found.getData()) {
+                    for (final Entry<String, Object> e : currentStage.customObjectiveData) {
                         if (e.getKey().equals(datamap.getKey())) {
                             m.put(e.getKey(), e.getValue());
                         }
@@ -145,12 +145,12 @@ public abstract class CustomObjective implements Listener {
         return null;
     }
 
-    public void incrementObjective(Player player, CustomObjective obj, int count, Quest quest) {
-        Quester quester = plugin.getQuester(player.getUniqueId());
+    public void incrementObjective(final Player player, final CustomObjective obj, final int count, final Quest quest) {
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             // Check if the player has Quest with objective
             boolean hasQuest = false;
-            for (CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+            for (final CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
                 if (co.getName().equals(obj.getName())) {
                     hasQuest = true;
                     break;
@@ -158,7 +158,7 @@ public abstract class CustomObjective implements Listener {
             }
             if (hasQuest && quester.hasCustomObjective(quest, obj.getName())) {
                 if (quester.getQuestData(quest).customObjectiveCounts.containsKey(obj.getName())) {
-                    int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
+                    final int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
                     plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
                             .put(obj.getName(), old + count);
                 } else {
@@ -173,13 +173,13 @@ public abstract class CustomObjective implements Listener {
                     }
                 }
                 if (index > -1) {
-                    int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
+                    final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
                     if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= goal) {
                         quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 
                                 new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
                         
                         // Multiplayer
-                        quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (Quester q) -> {
+                        quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
                             q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
                                     quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
                             q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 

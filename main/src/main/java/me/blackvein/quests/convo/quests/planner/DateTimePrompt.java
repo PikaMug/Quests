@@ -18,6 +18,10 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -25,15 +29,11 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPrompt
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 public class DateTimePrompt extends QuestsEditorNumericPrompt {
     private final Prompt oldPrompt;
     private String source = "";
 
-    public DateTimePrompt(ConversationContext context, Prompt old, String origin) {
+    public DateTimePrompt(final ConversationContext context, final Prompt old, final String origin) {
         super(context);
         oldPrompt = old;
         source = origin;
@@ -41,19 +41,21 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     private final int size = 10;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("dateTimeTitle");
     }
     
-    public String getDataText(ConversationContext context) {
+    public String getDataText(final ConversationContext context) {
         String dateData = "";
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        final Calendar cal = Calendar.getInstance();
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         
         cal.set((Integer) context.getSessionData("tempYear"), (Integer) context.getSessionData("tempMonth"), 
                 (Integer) context.getSessionData("tempDay"), (Integer) context.getSessionData("tempHour"), 
@@ -62,18 +64,19 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
         cal.setTimeZone(TimeZone.getTimeZone((String) context.getSessionData("tempZone")));
-        String[] iso = Lang.getISO().split("-");
-        Locale loc = new Locale(iso[0], iso[1]);
-        Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
-        String[] sep = String.valueOf(hour).replace("-", "").split("\\.");
-        DecimalFormat zoneFormat = new DecimalFormat("00");
+        final String[] iso = Lang.getISO().split("-");
+        final Locale loc = new Locale(iso[0], iso[1]);
+        final Double hour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
+        final String[] sep = String.valueOf(hour).replace("-", "").split("\\.");
+        final DecimalFormat zoneFormat = new DecimalFormat("00");
         dateData += ChatColor.LIGHT_PURPLE + "UTC" + (hour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) 
                 + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
                 + cal.getTimeZone().getDisplayName(loc) + ")";
         return dateData;
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
         case 0:
             return ChatColor.YELLOW;
@@ -94,7 +97,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 0:
             return ChatColor.GOLD + Lang.get("dateCreateLoadTime");
@@ -121,7 +125,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public String getAdditionalText(ConversationContext context, int number) {
+    @Override
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch(number) {
         case 0:
             return "";
@@ -157,7 +162,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             }
         case 7:
             if (context.getSessionData("tempZone") != null) {
-                TimeZone tz = TimeZone.getTimeZone((String) context.getSessionData("tempZone"));
+                final TimeZone tz = TimeZone.getTimeZone((String) context.getSessionData("tempZone"));
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + tz.getDisplayName(false, TimeZone.SHORT) 
                         + ChatColor.GRAY + ")";
             }
@@ -170,8 +175,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getPromptText(ConversationContext context) {
-        QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
     
         String text = ChatColor.AQUA + getTitle(context) + "\n";
@@ -189,10 +194,10 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 0:
-            Calendar cal = Calendar.getInstance();
+            final Calendar cal = Calendar.getInstance();
             context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
             context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
             context.setSessionData("tempYear", cal.get(Calendar.YEAR));
@@ -229,14 +234,14 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
                     && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
                     && context.getSessionData("tempZone") != null) {
-                int day = (Integer) context.getSessionData("tempDay");
-                int month = (Integer) context.getSessionData("tempMonth");
-                int year = (Integer) context.getSessionData("tempYear");
-                int hour = (Integer) context.getSessionData("tempHour");
-                int minute = (Integer) context.getSessionData("tempMinute");
-                int second = (Integer) context.getSessionData("tempSecond");
-                String zone = (String) context.getSessionData("tempZone");
-                String date = day + ":" + month + ":" + year + ":"
+                final int day = (Integer) context.getSessionData("tempDay");
+                final int month = (Integer) context.getSessionData("tempMonth");
+                final int year = (Integer) context.getSessionData("tempYear");
+                final int hour = (Integer) context.getSessionData("tempHour");
+                final int minute = (Integer) context.getSessionData("tempMinute");
+                final int second = (Integer) context.getSessionData("tempSecond");
+                final String zone = (String) context.getSessionData("tempZone");
+                final String date = day + ":" + month + ":" + year + ":"
                         + hour + ":" + minute + ":" + second + ":" + zone;
                 if (source != null) {
                     if (source.equals("start")) {
@@ -269,33 +274,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class DayPrompt extends QuestsEditorStringPrompt {
         
-        public DayPrompt(ConversationContext context) {
+        public DayPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterDay");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 31) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "31"));
@@ -304,7 +309,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempDay", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new DayPrompt(context);
                 }
@@ -316,33 +321,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class MonthPrompt extends QuestsEditorStringPrompt {
         
-        public MonthPrompt(ConversationContext context) {
+        public MonthPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterYear");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 12) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "12"));
@@ -351,7 +356,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempMonth", Integer.parseInt(input) - 1);
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new MonthPrompt(context);
                 }
@@ -363,33 +368,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class YearPrompt extends QuestsEditorStringPrompt {
         
-        public YearPrompt(ConversationContext context) {
+        public YearPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterYear");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 1000 || amt > 9999) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1000").replace("<greatest>", "9999"));
@@ -398,7 +403,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempYear", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new YearPrompt(context);
                 }
@@ -410,33 +415,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class HourPrompt extends QuestsEditorStringPrompt {
         
-        public HourPrompt(ConversationContext context) {
+        public HourPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterHour");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 23) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "23"));
@@ -445,7 +450,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempHour", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new HourPrompt(context);
                 }
@@ -457,33 +462,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class MinutePrompt extends QuestsEditorStringPrompt {
         
-        public MinutePrompt(ConversationContext context) {
+        public MinutePrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterMinute");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
@@ -492,7 +497,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempMinute", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new MinutePrompt(context);
                 }
@@ -504,33 +509,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class SecondPrompt extends QuestsEditorStringPrompt {
         
-        public SecondPrompt(ConversationContext context) {
+        public SecondPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterSecond");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int amt = Integer.parseInt(input);
+                    final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
@@ -539,7 +544,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempSecond", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new SecondPrompt(context);
                 }
@@ -551,39 +556,39 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public class OffsetPrompt extends QuestsEditorStringPrompt {
         
-        public OffsetPrompt(ConversationContext context) {
+        public OffsetPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterOffset");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    double amt = Double.parseDouble(input.replace("UTC", "").replace(":", "."));
+                    final double amt = Double.parseDouble(input.replace("UTC", "").replace(":", "."));
                     if (amt < -12.0 || amt > 14.0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                             .replace("<least>", "-12:00").replace("<greatest>", "14:00"));
                         return new OffsetPrompt(context);
                     } else {
-                        String[] t = TimeZone.getAvailableIDs((int) Math.round(amt * 60.0 * 60.0 * 1000.0));
+                        final String[] t = TimeZone.getAvailableIDs((int) Math.round(amt * 60.0 * 60.0 * 1000.0));
                         if (t.length > 1) {
                             return new ZonePrompt(context, t);
                         } else if (t.length > 0) {
@@ -593,7 +598,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         }    
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                     return new OffsetPrompt(context);
                 }
@@ -607,28 +612,28 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         
         String[] zones;
         
-        public ZonePrompt(ConversationContext context, String[] timezones) {
+        public ZonePrompt(final ConversationContext context, final String[] timezones) {
             super(context);
             zones = timezones;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("timeZoneTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("dateCreateEnterZone");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            for (String z : zones) {
+            for (final String z : zones) {
                 text += ChatColor.GREEN + z + ", ";
             }
             text = text.substring(0, text.length() - 2);
@@ -636,9 +641,9 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (String z : zones) {
+                for (final String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
                         context.setSessionData("tempZone", z);
                         return new DateTimePrompt(context, oldPrompt, source);

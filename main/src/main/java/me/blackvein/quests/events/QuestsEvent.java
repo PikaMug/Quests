@@ -21,10 +21,11 @@ public abstract class QuestsEvent extends Event {
     public QuestsEvent() {
     }
     
-    public QuestsEvent(boolean async) {
+    public QuestsEvent(final boolean async) {
         super(async);
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

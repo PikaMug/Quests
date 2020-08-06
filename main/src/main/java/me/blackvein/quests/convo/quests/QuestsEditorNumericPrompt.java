@@ -20,7 +20,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 
 public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
-    private ConversationContext context;
+    private final ConversationContext context;
     private QuestFactory factory;
     
     public QuestsEditorNumericPrompt(final ConversationContext context) {
@@ -36,6 +36,7 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
         this.factory = factory;
     }
     
+    @Override
     public String getName() {
         return getClass().getSimpleName();
     }

@@ -23,10 +23,10 @@ import me.blackvein.quests.Quester;
  */
 public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Quest quest;
+    private final Quest quest;
     private boolean cancel = false;
     
-    public QuesterPreCompleteQuestEvent(Quester quester, Quest quest) {
+    public QuesterPreCompleteQuestEvent(final Quester quester, final Quest quest) {
         super(quester);
         this.quest = quest;
     }
@@ -46,10 +46,11 @@ public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancel
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

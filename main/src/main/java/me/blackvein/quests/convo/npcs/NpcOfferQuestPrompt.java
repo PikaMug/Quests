@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -31,15 +30,15 @@ public class NpcOfferQuestPrompt extends StringPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
-        Quests plugin = (Quests)context.getPlugin();
-        Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
-        String npc = (String) context.getSessionData("npc");
-        String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
+    public String getPromptText(final ConversationContext context) {
+        final Quests plugin = (Quests)context.getPlugin();
+        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        final String npc = (String) context.getSessionData("npc");
+        final String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
         String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
-            Quest quest = quests.get(i - 1);
+            final Quest quest = quests.get(i - 1);
             if (quester.getCompletedQuests().contains(quest.getName())) {
                 menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" 
                         + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" 
@@ -57,14 +56,14 @@ public class NpcOfferQuestPrompt extends StringPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Prompt acceptInput(ConversationContext context, String input) {
-        Quests plugin = (Quests)context.getPlugin();
-        Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+    public Prompt acceptInput(final ConversationContext context, final String input) {
+        final Quests plugin = (Quests)context.getPlugin();
+        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // Continue
         }
         if (input.equalsIgnoreCase(Lang.get("cancel")) || numInput == (quests.size() + 1)) {
@@ -72,14 +71,14 @@ public class NpcOfferQuestPrompt extends StringPrompt {
             return Prompt.END_OF_CONVERSATION;
         } else {
             Quest q = null;
-            for (Quest quest : quests) {
+            for (final Quest quest : quests) {
                 if (quest.getName().equalsIgnoreCase(input)) {
                     q = quest;
                     break;
                 }
             }
             if (q == null) {
-                for (Quest quest : quests) {
+                for (final Quest quest : quests) {
                     if (numInput == (quests.indexOf(quest) + 1)) {
                         q = quest;
                         break;
@@ -87,7 +86,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                 }
             }
             if (q == null) {
-                for (Quest quest : quests) {
+                for (final Quest quest : quests) {
                     if (quest.getName().toLowerCase().contains(input.toLowerCase())) {
                         q = quest;
                         break;
@@ -98,16 +97,16 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new NpcOfferQuestPrompt();
             } else {
-                Player player = quester.getPlayer();
+                final Player player = quester.getPlayer();
                 if (quester.canAcceptOffer(q, true)) {
                     quester.setQuestToTake(q.getName());
-                    for (String msg : extracted(plugin, quester).split("<br>")) {
+                    for (final String msg : extracted(plugin, quester).split("<br>")) {
                         player.sendMessage(msg);
                     }
                     if (!plugin.getSettings().canAskConfirmation()) {
                         quester.takeQuest(q, false);
                     } else {
-                        plugin.getConversationFactory().buildConversation((Conversable) player).begin();
+                        plugin.getConversationFactory().buildConversation(player).begin();
                     }
                 }
                 /*Player player = quester.getPlayer();

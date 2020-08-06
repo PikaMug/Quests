@@ -34,7 +34,7 @@ public enum PreBuiltParticle {
     private int count;
     private Vector vector;
 
-    PreBuiltParticle(String identifier, float offsetX, float offsetY, float offsetZ, float speed, int count) {
+    PreBuiltParticle(final String identifier, final float offsetX, final float offsetY, final float offsetZ, final float speed, final int count) {
         this.identifier = identifier;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -43,8 +43,8 @@ public enum PreBuiltParticle {
         this.count = count;
     }
 
-    PreBuiltParticle(String identifier, float offsetX, float offsetY, float offsetZ, float speed, int count,
-            Vector vector) {
+    PreBuiltParticle(final String identifier, final float offsetX, final float offsetY, final float offsetZ, final float speed, final int count,
+            final Vector vector) {
         this(identifier, offsetX, offsetY, offsetZ, speed, count);
         this.vector = vector;
     }
@@ -88,10 +88,10 @@ public enum PreBuiltParticle {
      * @param identifier the identifier
      * @return the PreBuiltParticle represented by the specified identifier
      */
-    public static PreBuiltParticle fromIdentifier(String identifier) {
+    public static PreBuiltParticle fromIdentifier(final String identifier) {
         try {
             return valueOf(identifier);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return null;
         }
     }

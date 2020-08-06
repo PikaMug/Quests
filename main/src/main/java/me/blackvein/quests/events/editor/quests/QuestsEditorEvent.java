@@ -26,8 +26,8 @@ import me.blackvein.quests.events.QuestsEvent;
 public abstract class QuestsEditorEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     protected ConversationContext context;
-    protected QuestFactory factory;
-    protected Prompt prompt;
+    private final QuestFactory factory;
+    private final Prompt prompt;
     
     public QuestsEditorEvent(final ConversationContext context, final Prompt prompt) {
         this.context = context;
@@ -35,26 +35,10 @@ public abstract class QuestsEditorEvent extends QuestsEvent {
         this.prompt = prompt;
     }
     
-    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt, boolean async) {
+    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
         super(async);
         this.context = context;
         this.factory = ((Quests)context.getPlugin()).getQuestFactory();
-        this.prompt = prompt;
-    }
-    
-    @Deprecated
-    public QuestsEditorEvent(final ConversationContext context, QuestFactory factory, final Prompt prompt) {
-        this.context = context;
-        this.factory = factory;
-        this.prompt = prompt;
-    }
-    
-    @Deprecated
-    public QuestsEditorEvent(final ConversationContext context, QuestFactory factory, final Prompt prompt, 
-            boolean async) {
-        super(async);
-        this.context = context;
-        this.factory = factory;
         this.prompt = prompt;
     }
     

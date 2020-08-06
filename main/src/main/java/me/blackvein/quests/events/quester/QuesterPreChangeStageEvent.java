@@ -24,12 +24,12 @@ import me.blackvein.quests.Stage;
  */
 public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Quest quest;
-    private Stage current;
-    private Stage next;
+    private final Quest quest;
+    private final Stage current;
+    private final Stage next;
     private boolean cancel = false;;
     
-    public QuesterPreChangeStageEvent(Quester quester, Quest quest, Stage current, Stage next) {
+    public QuesterPreChangeStageEvent(final Quester quester, final Quest quest, final Stage current, final Stage next) {
         super(quester);
         this.quest = quest;
         this.current = current;
@@ -59,10 +59,11 @@ public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancella
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

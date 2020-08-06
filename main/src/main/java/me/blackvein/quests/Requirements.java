@@ -37,79 +37,79 @@ public class Requirements {
     public int getMoney() {
         return money;
     }
-    public void setMoney(int money) {
+    public void setMoney(final int money) {
         this.money = money;
     }
     public int getQuestPoints() {
         return questPoints;
     }
-    public void setQuestPoints(int questPoints) {
+    public void setQuestPoints(final int questPoints) {
         this.questPoints = questPoints;
     }
     public List<ItemStack> getItems() {
         return items;
     }
-    public void setItems(List<ItemStack> items) {
+    public void setItems(final List<ItemStack> items) {
         this.items = items;
     }
     public List<Boolean> getRemoveItems() {
         return removeItems;
     }
-    public void setRemoveItems(List<Boolean> removeItems) {
+    public void setRemoveItems(final List<Boolean> removeItems) {
         this.removeItems = removeItems;
     }
     public List<String> getNeededQuests() {
         return neededQuests;
     }
-    public void setNeededQuests(List<String> neededQuests) {
+    public void setNeededQuests(final List<String> neededQuests) {
         this.neededQuests = neededQuests;
     }
     public List<String> getBlockQuests() {
         return blockQuests;
     }
-    public void setBlockQuests(List<String> blockQuests) {
+    public void setBlockQuests(final List<String> blockQuests) {
         this.blockQuests = blockQuests;
     }
     public List<String> getPermissions() {
         return permissions;
     }
-    public void setPermissions(List<String> permissions) {
+    public void setPermissions(final List<String> permissions) {
         this.permissions = permissions;
     }
     public List<String> getMcmmoSkills() {
         return mcmmoSkills;
     }
-    public void setMcmmoSkills(List<String> mcmmoSkills) {
+    public void setMcmmoSkills(final List<String> mcmmoSkills) {
         this.mcmmoSkills = mcmmoSkills;
     }
     public List<Integer> getMcmmoAmounts() {
         return mcmmoAmounts;
     }
-    public void setMcmmoAmounts(List<Integer> mcmmoAmounts) {
+    public void setMcmmoAmounts(final List<Integer> mcmmoAmounts) {
         this.mcmmoAmounts = mcmmoAmounts;
     }
     public String getHeroesPrimaryClass() {
         return heroesPrimaryClass;
     }
-    public void setHeroesPrimaryClass(String heroesPrimaryClass) {
+    public void setHeroesPrimaryClass(final String heroesPrimaryClass) {
         this.heroesPrimaryClass = heroesPrimaryClass;
     }
     public String getHeroesSecondaryClass() {
         return heroesSecondaryClass;
     }
-    public void setHeroesSecondaryClass(String heroesSecondaryClass) {
+    public void setHeroesSecondaryClass(final String heroesSecondaryClass) {
         this.heroesSecondaryClass = heroesSecondaryClass;
     }
     public Map<String, Map<String, Object>> getCustomRequirements() {
         return customRequirements;
     }
-    protected void setCustomRequirements(Map<String, Map<String, Object>> customRequirements) {
+    protected void setCustomRequirements(final Map<String, Map<String, Object>> customRequirements) {
         this.customRequirements = customRequirements;
     }
     public List<String> getDetailsOverride() {
         return detailsOverride;
     }
-    public void setDetailsOverride(List<String> detailsOverride) {
+    public void setDetailsOverride(final List<String> detailsOverride) {
         this.detailsOverride = detailsOverride;
     }
 }

@@ -36,7 +36,7 @@ public class QuestMob {
     public QuestMob(){
     }
 
-    public QuestMob(EntityType entityType, Location spawnLocation, int spawnAmounts) {
+    public QuestMob(final EntityType entityType, final Location spawnLocation, final int spawnAmounts) {
         this.entityType = entityType;
         this.spawnLocation = spawnLocation;
         this.spawnAmounts = spawnAmounts;
@@ -46,7 +46,7 @@ public class QuestMob {
         return name;
     }
     
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
     
@@ -54,7 +54,7 @@ public class QuestMob {
         return entityType;
     }
     
-    public void setType(EntityType entityType) {
+    public void setType(final EntityType entityType) {
         this.entityType = entityType;
     }
 
@@ -62,7 +62,7 @@ public class QuestMob {
         return spawnLocation;
     }
     
-    public void setSpawnLocation(Location spawnLocation) {
+    public void setSpawnLocation(final Location spawnLocation) {
         this.spawnLocation = spawnLocation;
     }
 
@@ -70,7 +70,7 @@ public class QuestMob {
         return spawnAmounts;
     }
 
-    public void setSpawnAmounts(int spawnAmounts) {
+    public void setSpawnAmounts(final int spawnAmounts) {
         this.spawnAmounts = spawnAmounts;
     }
 
@@ -78,7 +78,7 @@ public class QuestMob {
         return inventory;
     }
 
-    public void setInventory(ItemStack[] inventory) {
+    public void setInventory(final ItemStack[] inventory) {
         this.inventory = inventory;
     }
 
@@ -86,45 +86,45 @@ public class QuestMob {
         return dropChances;
     }
 
-    public void setDropChances(Float[] dropChances) {
+    public void setDropChances(final Float[] dropChances) {
         this.dropChances = dropChances;
     }
 
-    public void setHelmet(ItemStack helmet, float dropChance) {
+    public void setHelmet(final ItemStack helmet, final float dropChance) {
         inventory[4] = helmet;
         dropChances[4] = dropChance;
     }
 
-    public void setChest(ItemStack chest, float dropChance) {
+    public void setChest(final ItemStack chest, final float dropChance) {
         inventory[3] = chest;
         dropChances[3] = dropChance;
     }
 
-    public void setLeggings(ItemStack leggings, float dropChance) {
+    public void setLeggings(final ItemStack leggings, final float dropChance) {
         inventory[2] = leggings;
         dropChances[2] = dropChance;
     }
 
-    public void setBoots(ItemStack boots, float dropChance) {
+    public void setBoots(final ItemStack boots, final float dropChance) {
         inventory[1] = boots;
         dropChances[1] = dropChance;
     }
 
-    public void setHeldItem(ItemStack heldItem, float dropChance) {
+    public void setHeldItem(final ItemStack heldItem, final float dropChance) {
         inventory[0] = heldItem;
         dropChances[0] = dropChance;
     }
 
     @SuppressWarnings("deprecation")
     public void spawn() {
-        World world = spawnLocation.getWorld();
+        final World world = spawnLocation.getWorld();
         for (int i = 0; i < spawnAmounts; i++) {
-            LivingEntity entity = (LivingEntity) world.spawnEntity(spawnLocation, entityType);
+            final LivingEntity entity = (LivingEntity) world.spawnEntity(spawnLocation, entityType);
             if (name != null) {
                 entity.setCustomName(name);
                 entity.setCustomNameVisible(true);
             }
-            EntityEquipment eq = entity.getEquipment();
+            final EntityEquipment eq = entity.getEquipment();
             eq.setItemInHand(inventory[0]);
             eq.setBoots(inventory[1]);
             eq.setLeggings(inventory[2]);
@@ -183,15 +183,15 @@ public class QuestMob {
         return string;
     }
 
-    public static QuestMob fromString(String str) {
+    public static QuestMob fromString(final String str) {
         String name = null;
         EntityType entityType = null;
         Location loc = null;
         Integer amounts = null;
-        ItemStack[] inventory = new ItemStack[5];
-        Float[] dropChances = new Float[5];
-        String[] args = str.split("::");
-        for (String string : args) {
+        final ItemStack[] inventory = new ItemStack[5];
+        final Float[] dropChances = new Float[5];
+        final String[] args = str.split("::");
+        for (final String string : args) {
             if (string.startsWith("type-")) {
                 entityType = MiscUtil.getProperMobType(string.substring(5));
             } else if (string.startsWith("name-")) {
@@ -205,7 +205,7 @@ public class QuestMob {
             } else if (string.startsWith("hand_drop-")) {
                 try {
                     dropChances[0] = Float.parseFloat(string.substring(10));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     Bukkit.getLogger().info("Drop chance for hand was required, but left empty."
                             + " Setting to 1.0");
                     dropChances[0] = 1.0f;
@@ -215,7 +215,7 @@ public class QuestMob {
             } else if (string.startsWith("boots_drop-")) {
                 try {
                     dropChances[1] = Float.parseFloat(string.substring(11));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     Bukkit.getLogger().info("Drop chance for boots was required, but left empty."
                             + " Setting to 1.0");
                     dropChances[1] = 1.0f;
@@ -225,7 +225,7 @@ public class QuestMob {
             } else if (string.startsWith("leggings_drop-")) {
                 try {
                     dropChances[2] = Float.parseFloat(string.substring(14));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     Bukkit.getLogger().info("Drop chance for leggings was required, but left empty."
                             + " Setting to 1.0");
                     dropChances[2] = 1.0f;
@@ -235,7 +235,7 @@ public class QuestMob {
             } else if (string.startsWith("chest_drop-")) {
                 try {
                     dropChances[3] = Float.parseFloat(string.substring(11));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     Bukkit.getLogger().info("Drop chance for chest was required, but left empty."
                             + " Setting to 1.0");
                     dropChances[3] = 1.0f;
@@ -245,14 +245,14 @@ public class QuestMob {
             } else if (string.startsWith("helmet_drop-")) {
                 try {
                     dropChances[4] = Float.parseFloat(string.substring(12));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     Bukkit.getLogger().info("Drop chance for helmet was required, but left empty."
                             + " Setting to 1.0");
                     dropChances[4] = 1.0f;
                 }
             }
         }
-        QuestMob qm = new QuestMob(entityType, loc, amounts);
+        final QuestMob qm = new QuestMob(entityType, loc, amounts);
         qm.setName(name);
         qm.inventory = inventory;
         qm.dropChances = dropChances;

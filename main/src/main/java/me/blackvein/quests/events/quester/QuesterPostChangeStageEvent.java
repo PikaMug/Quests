@@ -23,11 +23,11 @@ import me.blackvein.quests.Stage;
  */
 public class QuesterPostChangeStageEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Quest quest;
-    private Stage current;
-    private Stage next;
+    private final Quest quest;
+    private final Stage current;
+    private final Stage next;
     
-    public QuesterPostChangeStageEvent(Quester quester, Quest quest, Stage current, Stage next) {
+    public QuesterPostChangeStageEvent(final Quester quester, final Quest quest, final Stage current, final Stage next) {
         super(quester);
         this.quest = quest;
         this.current = current;
@@ -51,6 +51,7 @@ public class QuesterPostChangeStageEvent extends QuesterEvent {
         return next;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

@@ -51,22 +51,25 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public ActionMainPrompt(ConversationContext context) {
+    public ActionMainPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
 
     private final int size = 10;
     
+    @Override
     public int getSize() {
         return size;
     }
     
-    public String getTitle(ConversationContext context) {
+    @Override
+    public String getTitle(final ConversationContext context) {
         return Lang.get("event") + ": " + context.getSessionData(CK.E_NAME);
     }
     
-    public ChatColor getNumberColor(ConversationContext context, int number) {
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -91,7 +94,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public String getSelectionText(ConversationContext context, int number) {
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + Lang.get("eventEditorSetName");
@@ -122,8 +126,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
+    @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(ConversationContext context, int number) {
+    public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -135,10 +140,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_MOB_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
                 String text = "\n";
-                for (String s : types) {
-                    QuestMob qm = QuestMob.fromString(s);
+                for (final String s : types) {
+                    final QuestMob qm = QuestMob.fromString(s);
                     text += ChatColor.GRAY + "     - " + ChatColor.AQUA + qm.getType().name() 
                             + ((qm.getName() != null) ? " (" + qm.getName() + ")" : "") + ChatColor.GRAY + " x " 
                             + ChatColor.DARK_AQUA + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " 
@@ -171,8 +176,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
-        ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+    public String getPromptText(final ConversationContext context) {
+        final ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
@@ -185,7 +190,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+    public Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new ActionNamePrompt(context);
@@ -202,7 +207,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 7:
             return new ActionDenizenPrompt(context);
         case 8:
-            String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
+            final String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
             } else {
@@ -224,38 +229,38 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     public class ActionNamePrompt extends ActionsEditorStringPrompt {
 
-        public ActionNamePrompt(ConversationContext context) {
+        public ActionNamePrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorEnterEventName");
         }
         
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (Action a : plugin.getActions()) {
+                for (final Action a : plugin.getActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
                     }
                 }
-                List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
+                final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new ActionNamePrompt(context);
@@ -264,7 +269,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new ActionNamePrompt(context);
                 }
-                actionNames.remove((String) context.getSessionData(CK.E_NAME));
+                actionNames.remove(context.getSessionData(CK.E_NAME));
                 context.setSessionData(CK.E_NAME, input);
                 actionNames.add(input);
                 plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
@@ -275,22 +280,24 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobListPrompt extends ActionsEditorNumericPrompt {
         
-        public ActionMobListPrompt(ConversationContext context) {
+        public ActionMobListPrompt(final ConversationContext context) {
             super(context);
         }
         
         private final int size = 3;
 
+        @Override
         public int getSize() {
             return size;
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("eventEditorMobSpawnsTitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.BLUE;
@@ -303,7 +310,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("eventEditorAddMobTypes");
@@ -316,15 +324,17 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         }
         
-        public String getAdditionalText(ConversationContext context, int number) {
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 if (context.getSessionData(CK.E_MOB_TYPES) != null) {
                     @SuppressWarnings("unchecked")
+                    final
                     LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
                     String text = "\n";
                     for (int i = 0; i < types.size(); i++) {
-                        QuestMob qm = QuestMob.fromString(types.get(i));
+                        final QuestMob qm = QuestMob.fromString(types.get(i));
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + qm.getType().name() 
                                 + ((qm.getName() != null) ? " (" + qm.getName() + ")" : "") + " x " 
                                 + qm.getSpawnAmounts() + ChatColor.GRAY + " -> " + ChatColor.GREEN 
@@ -341,8 +351,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenNumericPromptEvent event
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
@@ -355,7 +365,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        public Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new ActionMobPrompt(context, 0, null);
@@ -377,7 +387,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private Integer itemIndex = -1;
         private final Integer mobIndex;
 
-        public ActionMobPrompt(ConversationContext context, int mobIndex, QuestMob questMob) {
+        public ActionMobPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -385,15 +395,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         
         private final int size = 16;
         
+        @Override
         public int getSize() {
             return size;
         }
         
-        public String getTitle(ConversationContext context) {
+        @Override
+        public String getTitle(final ConversationContext context) {
             return Lang.get("eventEditorAddMobTypesTitle");
         }
         
-        public ChatColor getNumberColor(ConversationContext context, int number) {
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -419,7 +432,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         }
         
-        public String getSelectionText(ConversationContext context, int number) {
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + Lang.get("eventEditorSetMobName");
@@ -458,7 +472,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         }
         
-        public String getAdditionalText(ConversationContext context, int number) {
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
                 return "(" + (questMob.getName() == null ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getName()) 
@@ -511,7 +526,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             if (questMob == null) {
                 questMob = new QuestMob();
             }
@@ -525,7 +540,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            ActionsEditorPostOpenNumericPromptEvent event
+            final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
@@ -539,14 +554,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        public Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new ActionMobNamePrompt(context, mobIndex, questMob);
             case 2:
                 return new ActionMobTypePrompt(context, mobIndex, questMob);
             case 3:
-                Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                 selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                 return new ActionMobLocationPrompt(context, mobIndex, questMob);
@@ -590,11 +605,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 }
                 if (context.getSessionData(CK.E_MOB_TYPES) == null 
                         || ((LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)).isEmpty()) {
-                    LinkedList<String> list = new LinkedList<String>();
+                    final LinkedList<String> list = new LinkedList<String>();
                     list.add(questMob.serialize());
                     context.setSessionData(CK.E_MOB_TYPES, list);
                 } else {
-                    LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                    final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
                     if (mobIndex < list.size()) {
                         list.set(mobIndex, questMob.serialize());
                     } else {
@@ -616,32 +631,32 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final QuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobNamePrompt(ConversationContext context, int mobIndex, QuestMob questMob) {
+        public ActionMobNamePrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorSetMobNamePrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 return new ActionMobPrompt(context, mobIndex, questMob);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -660,25 +675,25 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final QuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobTypePrompt(ConversationContext context, int mobIndex, QuestMob questMob) {
+        public ActionMobTypePrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("eventEditorMobsTitle");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorSetMobTypesPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String mobs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
@@ -698,8 +713,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (MiscUtil.getProperMobType(input) != null) {
                     questMob.setType(MiscUtil.getProperMobType(input));
@@ -718,43 +733,43 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final QuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobAmountPrompt(ConversationContext context, int mobIndex, QuestMob questMob) {
+        public ActionMobAmountPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorSetMobAmountsPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i < 1) {
                         player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
                         return new ActionMobAmountPrompt(context, mobIndex, questMob);
                     }
                     questMob.setSpawnAmounts(i);
                     return new ActionMobPrompt(context, mobIndex, questMob);
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
                     return new ActionMobAmountPrompt(context, mobIndex, questMob);
                 }
@@ -768,38 +783,38 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final QuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobLocationPrompt(ConversationContext context, int mobIndex, QuestMob questMob) {
+        public ActionMobLocationPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorSetMobLocationPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
-                Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
-                Block block = selectedMobLocations.get(player.getUniqueId());
+                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                final Block block = selectedMobLocations.get(player.getUniqueId());
                 if (block != null) {
-                    Location loc = block.getLocation();
+                    final Location loc = block.getLocation();
                     questMob.setSpawnLocation(loc);
                     selectedMobLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
@@ -809,7 +824,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 }
                 return new ActionMobPrompt(context, mobIndex, questMob);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                 selectedMobLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                 return new ActionMobPrompt(context, mobIndex, questMob);
@@ -825,7 +840,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final Integer mobIndex;
         private final Integer invIndex;
 
-        public ActionMobDropPrompt(ConversationContext context, int invIndex, int mobIndex, QuestMob questMob) {
+        public ActionMobDropPrompt(final ConversationContext context, final int invIndex, final int mobIndex, final QuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -833,32 +848,32 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("eventEditorSetDropChance");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             float chance;
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 return new ActionMobPrompt(context, mobIndex, questMob);
             }
             try {
                 chance = Float.parseFloat(input);
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
                 return new ActionMobDropPrompt(context, invIndex, mobIndex, questMob);
@@ -868,7 +883,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
                 return new ActionMobDropPrompt(context, invIndex, mobIndex, questMob);
             }
-            Float[] temp = questMob.getDropChances();
+            final Float[] temp = questMob.getDropChances();
             temp[invIndex] = chance;
             questMob.setDropChances(temp);
             return new ActionMobPrompt(context, mobIndex, questMob);
@@ -877,35 +892,35 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     public class ActionDenizenPrompt extends ActionsEditorStringPrompt {
         
-        public ActionDenizenPrompt(ConversationContext context) {
+        public ActionDenizenPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorDenizenScript");
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("stageEditorScriptPrompt");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.DARK_AQUA + "- " + getTitle(context) + " -\n";
-            for (String s : plugin.getDependencies().getDenizenApi().getScriptNames()) {
+            for (final String s : plugin.getDependencies().getDenizenApi().getScriptNames()) {
                 text += ChatColor.AQUA + "- " + s + "\n";
             }
             return text + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 if (plugin.getDependencies().getDenizenApi().containsScript(input)) {
@@ -930,12 +945,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         String modName = null;
         LinkedList<String> modified = new LinkedList<String>();
 
-        public ActionSavePrompt(ConversationContext context, String modifiedName) {
+        public ActionSavePrompt(final ConversationContext context, final String modifiedName) {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (Quest q : plugin.getQuests()) {
-                    for (Stage s : q.getStages()) {
+                for (final Quest q : plugin.getQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());
@@ -948,25 +963,25 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("questEditorSave");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.YELLOW + getQueryText(context) + " \"" + ChatColor.AQUA 
                     + context.getSessionData(CK.E_NAME) + ChatColor.YELLOW + "\"?\n";
             if (modified.isEmpty() == false) {
                 text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
-                for (String s : modified) {
+                for (final String s : modified) {
                     text += ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s + "\n";
                 }
                 text += ChatColor.RED + Lang.get("eventEditorForcedToQuit") + "\n";
@@ -975,7 +990,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getActionFactory().saveAction(context);
                 return new ActionMenuPrompt(context);
@@ -989,33 +1004,33 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     public class ActionExitPrompt extends ActionsEditorStringPrompt {
         
-        public ActionExitPrompt(ConversationContext context) {
+        public ActionExitPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
-        public String getTitle(ConversationContext context) {
+        public String getTitle(final ConversationContext context) {
             return null;
         }
 
         @Override
-        public String getQueryText(ConversationContext context) {
+        public String getQueryText(final ConversationContext context) {
             return Lang.get("confirmDelete");
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
+            final String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
                     + Lang.get("yesWord") + "\n" + ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET 
                     + ChatColor.RED + " - " + Lang.get("noWord");
             return ChatColor.YELLOW + getQueryText(context) + "\n" + text;
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + Lang.get("exited"));
                 plugin.getActionFactory().clearData(context);

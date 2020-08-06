@@ -57,7 +57,7 @@ public class ItemUtil {
      * -8 if stack Written Book data is unequal
      * -9 if stack Potion type is unequal
      */
-    public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
+    public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount) {
         if (one == null || two == null) {
             return 1;
         }
@@ -92,20 +92,20 @@ public class ItemUtil {
                 return -4;
             }
             try {
-                ItemMeta test = one.getItemMeta();
+                final ItemMeta test = one.getItemMeta();
                 test.setUnbreakable(true);
                 // We're on 1.11+ so check ItemFlags
-                for (ItemFlag flag : ItemFlag.values()) {
+                for (final ItemFlag flag : ItemFlag.values()) {
                     if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
                         return -7;
                     }
                 }
-            } catch (Throwable tr) {
+            } catch (final Throwable tr) {
                 // We're below 1.11 so don't check ItemFlags
             }
             if (one.getType().equals(Material.WRITTEN_BOOK)) {
-                BookMeta bmeta1 = (BookMeta) one.getItemMeta();
-                BookMeta bmeta2 = (BookMeta) two.getItemMeta();
+                final BookMeta bmeta1 = (BookMeta) one.getItemMeta();
+                final BookMeta bmeta2 = (BookMeta) two.getItemMeta();
                 if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
                     if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
                         if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
@@ -119,8 +119,8 @@ public class ItemUtil {
                     // Bukkit version is 1.9+
                     if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) 
                             || one.getType().equals(Material.SPLASH_POTION)) {
-                        PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
-                        PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
+                        final PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+                        final PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
                         if (pmeta1.getBasePotionData().getType()
                                 .equals(pmeta2.getBasePotionData().getType()) == false) {
                             return -9;
@@ -132,8 +132,8 @@ public class ItemUtil {
         if (Material.getMaterial("LINGERING_POTION") == null) {
             if (one.getType().equals(Material.POTION)) {
                 // Bukkit version is below 1.9
-                Potion pot1 = new Potion(one.getDurability());
-                Potion pot2 = new Potion(two.getDurability());
+                final Potion pot1 = new Potion(one.getDurability());
+                final Potion pot2 = new Potion(two.getDurability());
                 if (pot1.getType() == null || pot2.getType() == null) {
                     return -9;
                 }
@@ -146,8 +146,8 @@ public class ItemUtil {
             return -5;
         }
         if (one.getType().equals(Material.ENCHANTED_BOOK)) {
-            EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
-            EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
+            final EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
+            final EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
             if (esmeta1.hasStoredEnchants() && esmeta2.hasStoredEnchants() == false) {
                 return -6;
             }
@@ -178,7 +178,7 @@ public class ItemUtil {
      * -8 if stack Written Book data is unequal
      * -9 if stack Potion type is unequal
      */
-    public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount, boolean ignoreDurability) {
+    public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, final boolean ignoreDurability) {
         if (one == null || two == null) {
             return 1;
         }
@@ -213,20 +213,20 @@ public class ItemUtil {
                 return -4;
             }
             try {
-                ItemMeta test = one.getItemMeta();
+                final ItemMeta test = one.getItemMeta();
                 test.setUnbreakable(true);
                 // We're on 1.11+ so check ItemFlags
-                for (ItemFlag flag : ItemFlag.values()) {
+                for (final ItemFlag flag : ItemFlag.values()) {
                     if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
                         return -7;
                     }
                 }
-            } catch (Throwable tr) {
+            } catch (final Throwable tr) {
                 // We're below 1.11 so don't check ItemFlags
             }
             if (one.getType().equals(Material.WRITTEN_BOOK)) {
-                BookMeta bmeta1 = (BookMeta) one.getItemMeta();
-                BookMeta bmeta2 = (BookMeta) two.getItemMeta();
+                final BookMeta bmeta1 = (BookMeta) one.getItemMeta();
+                final BookMeta bmeta2 = (BookMeta) two.getItemMeta();
                 if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
                     if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
                         if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
@@ -240,8 +240,8 @@ public class ItemUtil {
                     // Bukkit version is 1.9+
                     if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) 
                             || one.getType().equals(Material.SPLASH_POTION)) {
-                        PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
-                        PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
+                        final PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
+                        final PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
                         if (pmeta1.getBasePotionData().getType()
                                 .equals(pmeta2.getBasePotionData().getType()) == false) {
                             return -9;
@@ -253,8 +253,8 @@ public class ItemUtil {
         if (Material.getMaterial("LINGERING_POTION") == null) {
             if (one.getType().equals(Material.POTION)) {
                 // Bukkit version is below 1.9
-                Potion pot1 = new Potion(one.getDurability());
-                Potion pot2 = new Potion(two.getDurability());
+                final Potion pot1 = new Potion(one.getDurability());
+                final Potion pot2 = new Potion(two.getDurability());
                 if (pot1.getType() == null || pot2.getType() == null) {
                     return -9;
                 }
@@ -267,8 +267,8 @@ public class ItemUtil {
             return -5;
         }
         if (one.getType().equals(Material.ENCHANTED_BOOK)) {
-            EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
-            EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
+            final EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
+            final EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
             if (esmeta1.hasStoredEnchants() && esmeta2.hasStoredEnchants() == false) {
                 return -6;
             }
@@ -288,16 +288,16 @@ public class ItemUtil {
      * @param durability The data value of the item, default of 0
      * @return ItemStack, or null if invalid format
      */
-    public static ItemStack processItemStack(String material, int amount, short durability) {
+    public static ItemStack processItemStack(final String material, final int amount, final short durability) {
         try {
             return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 Bukkit.getLogger().warning(material + " x " + amount
                         + " is invalid! You may need to update your quests.yml or actions.yml "
                         + "in accordance with https://bit.ly/2BkBNNN");
                 return new ItemStack(Material.matchMaterial(material, true), amount, durability);
-            } catch (Exception e2) {
+            } catch (final Exception e2) {
                 Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
                 e2.printStackTrace();
                 return null;
@@ -315,27 +315,27 @@ public class ItemUtil {
      * @param data formatted string
      * @return ItemStack, or null if invalid format
      */
-    public static ItemStack readItemStack(String data) {
+    public static ItemStack readItemStack(final String data) {
         if (data == null) {
             return null;
         }
         ItemStack stack = null;
-        String[] args = data.split(":");
+        final String[] args = data.split(":");
         String name = null;
         int amount = 0;
         short durability = 0;
-        Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
+        final Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
         String display = null;
-        LinkedList<String> lore = new LinkedList<String>();
-        String[] flags = new String[10];
-        LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
+        final LinkedList<String> lore = new LinkedList<String>();
+        final String[] flags = new String[10];
+        final LinkedHashMap<Enchantment, Integer> stored = new LinkedHashMap<Enchantment, Integer>();
         int potionColor = -1;
-        LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
+        final LinkedHashMap<String, Object> extra = new LinkedHashMap<String, Object>();
         ItemMeta meta = null;
         PotionMeta pmeta = null;
         EnchantmentStorageMeta esmeta = null;
-        for (String targ : args) {
-            String arg = targ.replace("minecraft|", "minecraft:");
+        for (final String targ : args) {
+            final String arg = targ.replace("minecraft|", "minecraft:");
             if (arg.equals("")) {
                 continue;
             }
@@ -346,12 +346,12 @@ public class ItemUtil {
             } else if (arg.startsWith("data-")) {
                 durability = Short.parseShort(arg.substring(5));
             } else if (arg.startsWith("enchantment-")) {
-                String[] temp = arg.substring(12).split(" ");
+                final String[] temp = arg.substring(12).split(" ");
                 try {
-                    String key = Lang.getKey(temp[0]).replace(" ", "");
+                    final String key = Lang.getKey(temp[0]).replace(" ", "");
                     if (!key.equals("NULL")) {
                         // Legacy localized name
-                        Enchantment e = Enchantment.getByName(key.replace("ENCHANTMENT_", ""));
+                        final Enchantment e = Enchantment.getByName(key.replace("ENCHANTMENT_", ""));
                         if (e != null) {
                             enchs.put(e, Integer.parseInt(temp[1]));
                         } else {
@@ -367,7 +367,7 @@ public class ItemUtil {
                                     + " is invalid. Make sure it is spelled correctly");
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name 
                             + " is invalid. Make sure quests.yml is UTF-8 encoded");
                     return null;
@@ -377,34 +377,34 @@ public class ItemUtil {
             } else if (arg.startsWith("lore-")) {
                 lore.add(ChatColor.translateAlternateColorCodes('&', arg.substring(5)));
             } else if (arg.startsWith("ItemFlags-")) {
-                int dash = arg.lastIndexOf('-');
-                String value = arg.substring(dash + 1);
-                String[] mapping = value.replace("[", "").replace("]", "").split(", ");
+                final int dash = arg.lastIndexOf('-');
+                final String value = arg.substring(dash + 1);
+                final String[] mapping = value.replace("[", "").replace("]", "").split(", ");
                 int index = 0;
-                for (String s : mapping) {
+                for (final String s : mapping) {
                     flags[index] = s;
                     index++;
                 }
             } else if (arg.startsWith("stored-enchants")) {
-                int dash = arg.lastIndexOf('-');
-                String value = arg.substring(dash + 1);
-                String[] mapping = value.replace("{", "").replace("}", "").split(", ");
-                for (String s : mapping) {
+                final int dash = arg.lastIndexOf('-');
+                final String value = arg.substring(dash + 1);
+                final String[] mapping = value.replace("{", "").replace("}", "").split(", ");
+                for (final String s : mapping) {
                     if (s.contains("=")) {
-                        String[] keyval = s.split("=");
+                        final String[] keyval = s.split("=");
                         stored.put(Enchantment.getByName(keyval[0]), Integer.valueOf(keyval[1]));
                     }
                 }
             } else if (arg.contains("-")) {
-                int dash = arg.lastIndexOf('-');
-                String key = arg.substring(0, dash);
-                String value = arg.substring(dash + 1);
+                final int dash = arg.lastIndexOf('-');
+                final String key = arg.substring(0, dash);
+                final String value = arg.substring(dash + 1);
                 
                 int i = -1;
                 try {
                     // Num such as book generation
                     i = Integer.valueOf(value);
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     // Do nothing
                 }
                 
@@ -412,15 +412,15 @@ public class ItemUtil {
                     extra.put(key, i);
                 } else if (value.startsWith("[") && value.endsWith("]")) {
                     // List such as book pages
-                    List<String> pages = Arrays.asList(value.split(", "));
+                    final List<String> pages = Arrays.asList(value.split(", "));
                     extra.put(key, pages);
                 } else if (value.startsWith("{") && value.endsWith("}")) {
                     // For nested mappings. Does NOT handle stored enchants, see earlier code
-                    String[] mapping = value.replace("{", "").replace("}", "").split(", ");
-                    Map<String, String> nested = new HashMap<String, String>();
-                    for (String s : mapping) {
+                    final String[] mapping = value.replace("{", "").replace("}", "").split(", ");
+                    final Map<String, String> nested = new HashMap<String, String>();
+                    for (final String s : mapping) {
                         if (s.contains("=")) {
-                            String[] keyval = s.split("=");
+                            final String[] keyval = s.split("=");
                             nested.put(keyval[0], keyval[1]);
                         } else {
                             Bukkit.getLogger().severe("Quests does not know how to handle "
@@ -435,7 +435,7 @@ public class ItemUtil {
                         if (key.equalsIgnoreCase("unbreakable")) {
                             meta.setUnbreakable(true);
                         }
-                    } catch (Throwable tr) {
+                    } catch (final Throwable tr) {
                         // ItemMeta.setUnbrekable() not introduced until 1.11
                         // However, NBT tags could be set by Spigot-only methods, so show error
                         Bukkit.getLogger().info("You are running a version of CraftBukkit"
@@ -447,7 +447,7 @@ public class ItemUtil {
             } else if (arg.startsWith("[") && arg.endsWith("]")) {
                 if (arg.contains("rgb")) {
                     // Custom potion color
-                    String[] mapping = arg.replace("[", "").replace("]", "").split("x");
+                    final String[] mapping = arg.replace("[", "").replace("]", "").split("x");
                     potionColor = Integer.valueOf(mapping[1]);
                 } else {
                     Bukkit.getLogger().severe("Quests does not know how to handle "
@@ -466,16 +466,16 @@ public class ItemUtil {
         meta = stack.getItemMeta();
         if (!extra.isEmpty()) {
             ItemMeta toLoad = null;
-            toLoad = ItemUtil.deserializeItemMeta(meta.getClass(), (Map<String, Object>) extra);
+            toLoad = ItemUtil.deserializeItemMeta(meta.getClass(), extra);
             if (toLoad != null) {
                 meta = toLoad;
             }
         }
         if (!enchs.isEmpty()) {
-            for (Enchantment e : enchs.keySet()) {
+            for (final Enchantment e : enchs.keySet()) {
                 try {
                     meta.addEnchant(e, enchs.get(e), true);
-                } catch (IllegalArgumentException iae) {
+                } catch (final IllegalArgumentException iae) {
                     Bukkit.getLogger().severe("Enchantment on " + name + " cannot be null. Skipping for that quest");
                 }
             }
@@ -486,13 +486,13 @@ public class ItemUtil {
         if (!lore.isEmpty()) {
             meta.setLore(lore);
         }
-        for (String flag : flags) {
+        for (final String flag : flags) {
             if (flag != null && !flag.equals("")) {
                 try {
                     meta.addItemFlags(ItemFlag.valueOf(flag));
-                } catch (NullPointerException npe) {
+                } catch (final NullPointerException npe) {
                     Bukkit.getLogger().severe(flag + " is not a valid ItemFlag");
-                } catch (Throwable tr) {
+                } catch (final Throwable tr) {
                     // ItemMeta.addItemFlags() not introduced until 1.8.3
                     Bukkit.getLogger().info("You are running a version of CraftBukkit"
                             + " for which Quests cannot add the item flag " + flag);
@@ -503,7 +503,7 @@ public class ItemUtil {
             pmeta = (PotionMeta) meta;
             try {
                 pmeta.setColor(Color.fromRGB(potionColor));
-            } catch (Throwable tr) {
+            } catch (final Throwable tr) {
                 // PotionMeta.setColor() not introduced until 1.11 (?)
                 Bukkit.getLogger().info("You are running a version of CraftBukkit"
                         + " for which Quests cannot set the potion color " + potionColor);
@@ -511,7 +511,7 @@ public class ItemUtil {
         }
         if (stack.getType().equals(Material.ENCHANTED_BOOK)) {
             esmeta = (EnchantmentStorageMeta) meta;
-            for (Entry<Enchantment, Integer> e : stored.entrySet()) {
+            for (final Entry<Enchantment, Integer> e : stored.entrySet()) {
                 esmeta.addStoredEnchant(e.getKey(), e.getValue(), true);
             }
             stack.setItemMeta(esmeta);
@@ -530,7 +530,7 @@ public class ItemUtil {
      * @param is ItemStack
      * @return formatted string, or null if invalid stack
      */
-    public static String serializeItemStack(ItemStack is) {
+    public static String serializeItemStack(final ItemStack is) {
         String serial;
         if (is == null) {
             return null;
@@ -541,22 +541,22 @@ public class ItemUtil {
             serial += ":data-" + is.getDurability();
         }
         if (is.getEnchantments().isEmpty() == false) {
-            for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+            for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
                 serial += ":enchantment-" + e.getKey().getName() + " " + e.getValue();
             }
         }
         if (is.hasItemMeta()) {
-            ItemMeta meta = is.getItemMeta();
+            final ItemMeta meta = is.getItemMeta();
             if (meta.hasDisplayName()) {
                 serial += ":displayname-" + meta.getDisplayName();
             }
             if (meta.hasLore()) {
-                for (String s : meta.getLore()) {
+                for (final String s : meta.getLore()) {
                     serial += ":lore-" + s;
                 }
             }
             
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.putAll(meta.serialize());
             
             if (map.containsKey("lore")) {
@@ -565,7 +565,7 @@ public class ItemUtil {
             if (map.containsKey("display-name")) {
                 map.remove("display-name");
             }
-            for (String key : map.keySet()) {
+            for (final String key : map.keySet()) {
                 serial += ":" + key + "-" + map.get(key).toString().replace("minecraft:", "minecraft|");
             }
         }
@@ -578,8 +578,8 @@ public class ItemUtil {
      * @param ItemMeta class, key/value map of metadata
      * @return ItemMeta
      */
-    public static ItemMeta deserializeItemMeta(Class<? extends ItemMeta> itemMetaClass, Map<String, Object> args) {
-        DelegateDeserialization delegate = itemMetaClass.getAnnotation(DelegateDeserialization.class);
+    public static ItemMeta deserializeItemMeta(final Class<? extends ItemMeta> itemMetaClass, final Map<String, Object> args) {
+        final DelegateDeserialization delegate = itemMetaClass.getAnnotation(DelegateDeserialization.class);
         return (ItemMeta) ConfigurationSerialization.deserializeObject(args, delegate.value());
     }
 
@@ -593,7 +593,7 @@ public class ItemUtil {
      * @param is ItemStack to check
      * @return true display or item name, plus durability and amount, plus enchantments
      */
-    public static String getDisplayString(ItemStack is) {
+    public static String getDisplayString(final ItemStack is) {
         String text;
         if (is == null) {
             return null;
@@ -608,7 +608,7 @@ public class ItemUtil {
             }
             if (is.getEnchantments().isEmpty() == false) {
                 text += " " + ChatColor.GRAY + Lang.get("with") + ChatColor.DARK_PURPLE;
-                for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+                for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
                     text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
                 }
             }
@@ -626,7 +626,7 @@ public class ItemUtil {
      * @param is ItemStack to check
      * @return true display or item name, plus durability and amount, if stack is not null
      */
-    public static String getString(ItemStack is) {
+    public static String getString(final ItemStack is) {
         if (is == null) {
             return null;
         }
@@ -650,7 +650,7 @@ public class ItemUtil {
      * @param is ItemStack to check
      * @return true display or item name, if stack is not null
      */
-    public static String getName(ItemStack is) {
+    public static String getName(final ItemStack is) {
         if (is == null) {
             return null;
         }
@@ -669,7 +669,7 @@ public class ItemUtil {
      * @param is ItemStack to check
      * @return true if stack is not null or Material.AIR
      */
-    public static boolean isItem(ItemStack is) {
+    public static boolean isItem(final ItemStack is) {
         if (is == null)
             return false;
         if (is.getType().equals(Material.AIR))
@@ -683,7 +683,7 @@ public class ItemUtil {
      * @param is IemsStack to check
      * @return true if display name equals colored journal title
      */
-    public static boolean isJournal(ItemStack is) {
+    public static boolean isJournal(final ItemStack is) {
         if (is == null)
             return false;
         if (is.hasItemMeta() == false)
@@ -700,12 +700,12 @@ public class ItemUtil {
      * @param itemName any item name, ideally
      * @return cleaned-up string
      */
-    public static String getPrettyItemName(String itemName) {
-        String baseString = Material.matchMaterial(itemName).toString();
-        String[] substrings = baseString.split("_");
+    public static String getPrettyItemName(final String itemName) {
+        final String baseString = Material.matchMaterial(itemName).toString();
+        final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
-        for (String s : substrings) {
+        for (final String s : substrings) {
             prettyString = prettyString.concat(MiscUtil.getCapitalized(s));
             if (size < substrings.length) {
                 prettyString = prettyString.concat(" ");
@@ -721,12 +721,12 @@ public class ItemUtil {
      * @param e Enchantment to get pretty localized name of
      * @return pretty localized name
      */
-    public static String getPrettyEnchantmentName(Enchantment e) {
-        String baseString = e.getName();
-        String[] substrings = baseString.split("_");
+    public static String getPrettyEnchantmentName(final Enchantment e) {
+        final String baseString = e.getName();
+        final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
-        for (String s : substrings) {
+        for (final String s : substrings) {
             prettyString = prettyString.concat(MiscUtil.getCapitalized(s));
             if (size < substrings.length) {
                 prettyString = prettyString.concat(" ");
@@ -744,7 +744,7 @@ public class ItemUtil {
      */
     public static Enchantment getEnchantmentFromProperName(String properName) {
         properName = properName.replace(" ", "").toUpperCase();
-        for (Enchantment e : Enchantment.values()) {
+        for (final Enchantment e : Enchantment.values()) {
             if (e.getName().replace("_", "").equalsIgnoreCase(properName.replace("_", ""))) {
                 return e;
             }
@@ -762,7 +762,8 @@ public class ItemUtil {
      * @param enchant Name to match lang value to
      * @return Enchantment or null if invalid
      */
-    public static Enchantment getEnchantmentFromProperLegacyName(String enchant) {
+    @Deprecated
+    public static Enchantment getEnchantmentFromProperLegacyName(final String enchant) {
         if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
             return Enchantment.ARROW_DAMAGE;
         } else if (enchant.equalsIgnoreCase(Lang.get("ENCHANTMENT_ARROW_FIRE"))) {

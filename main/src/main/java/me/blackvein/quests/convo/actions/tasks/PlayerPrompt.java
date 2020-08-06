@@ -43,14 +43,14 @@ public class PlayerPrompt extends FixedSetPrompt {
     
     private final Quests plugin;
     
-    public PlayerPrompt(ConversationContext context) {
+    public PlayerPrompt(final ConversationContext context) {
         super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
         this.plugin = (Quests)context.getPlugin();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public String getPromptText(final ConversationContext context) {
         String text = ChatColor.GOLD + "- " + Lang.get("eventEditorPlayer") + " -\n";
         if (context.getSessionData(CK.E_MESSAGE) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -72,8 +72,8 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetItems") + "\n";
-            LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
-            for (ItemStack is : items) {
+            final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
+            for (final ItemStack is : items) {
                 if (is != null) {
                     text += ChatColor.GRAY + "    - " + ItemUtil.getString(is) + "\n";
                 }
@@ -85,11 +85,11 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetPotionEffects") + "\n";
-            LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
-            LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
-            LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT);
+            final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
+            final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
+            final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT);
             int index = -1;
-            for (String type : types) {
+            for (final String type : types) {
                 index++;
                 text += ChatColor.GRAY + "    - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
                         + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
@@ -102,7 +102,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetHunger") + ChatColor.AQUA + " (" 
-                    + (Integer) context.getSessionData(CK.E_HUNGER) + ")\n";
+                    + context.getSessionData(CK.E_HUNGER) + ")\n";
         }
         if (context.getSessionData(CK.E_SATURATION) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -110,7 +110,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetSaturation") + ChatColor.AQUA + " (" 
-                    + (Integer) context.getSessionData(CK.E_SATURATION) + ")\n";
+                    + context.getSessionData(CK.E_SATURATION) + ")\n";
         }
         if (context.getSessionData(CK.E_HEALTH) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -118,7 +118,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetHealth") + ChatColor.AQUA + " (" 
-                    + (Integer) context.getSessionData(CK.E_HEALTH) + ")\n";
+                    + context.getSessionData(CK.E_HEALTH) + ")\n";
         }
         if (context.getSessionData(CK.E_TELEPORT) == null) {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -134,7 +134,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else {
             text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                     + Lang.get("eventEditorSetCommands") + "\n";
-            for (String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
+            for (final String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
                 text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
             }
         }
@@ -144,11 +144,11 @@ public class PlayerPrompt extends FixedSetPrompt {
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
         if (input.equalsIgnoreCase("1")) {
             return new MessagePrompt();
         } else if (input.equalsIgnoreCase("2")) {
-            String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
+            final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
             } else {
@@ -166,7 +166,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         } else if (input.equalsIgnoreCase("7")) {
             return new HealthPrompt();
         } else if (input.equalsIgnoreCase("8")) {
-            Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+            final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
             selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
             return new TeleportPrompt();
@@ -179,12 +179,12 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class MessagePrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetMessagePrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 context.setSessionData(CK.E_MESSAGE, input);
@@ -202,15 +202,15 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.E_ITEMS) != null) {
-                    List<ItemStack> items = getItems(context);
+                    final List<ItemStack> items = getItems(context);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.E_ITEMS, items);
                 } else {
-                    LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.E_ITEMS, itemRews);
                 }
@@ -226,7 +226,7 @@ public class PlayerPrompt extends FixedSetPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + Lang.get("done");
             } else {
-                for (ItemStack is : getItems(context)) {
+                for (final ItemStack is : getItems(context)) {
                     text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
                 }
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -240,7 +240,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
 
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1")) {
                 return new ItemStackPrompt(context, ItemListPrompt.this);
             } else if (input.equalsIgnoreCase("2")) {
@@ -254,7 +254,7 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
 
         @SuppressWarnings("unchecked")
-        private List<ItemStack> getItems(ConversationContext context) {
+        private List<ItemStack> getItems(final ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
         }
     }
@@ -267,7 +267,7 @@ public class PlayerPrompt extends FixedSetPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GOLD + Lang.get("eventEditorPotionEffectsTitle") + "\n";
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
@@ -283,7 +283,7 @@ public class PlayerPrompt extends FixedSetPrompt {
             } else {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
                         + Lang.get("eventEditorSetPotionEffectTypes") + "\n";
-                for (String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
+                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
                     text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
                 }
                 if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
@@ -294,7 +294,7 @@ public class PlayerPrompt extends FixedSetPrompt {
                 } else {
                     text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
                             + Lang.get("noneSet") + "\n";
-                    for (Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
+                    for (final Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
                         text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + MiscUtil.getTime(l * 50L) + "\n";
                     }
                     if (context.getSessionData(CK.E_POTION_STRENGHT) == null) {
@@ -303,7 +303,7 @@ public class PlayerPrompt extends FixedSetPrompt {
                     } else {
                         text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
                                 + Lang.get("eventEditorSetPotionMagnitudes") + "\n";
-                        for (int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)) {
+                        for (final int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)) {
                             text += ChatColor.GRAY + "    - " + ChatColor.DARK_PURPLE + i + "\n";
                         }
                     }
@@ -318,7 +318,7 @@ public class PlayerPrompt extends FixedSetPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(ConversationContext context, String input) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1")) {
                 return new PotionTypesPrompt();
             } else if (input.equalsIgnoreCase("2")) {
@@ -379,20 +379,20 @@ public class PlayerPrompt extends FixedSetPrompt {
     private class PotionTypesPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             String effs = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorPotionTypesTitle") + "\n";
-            for (PotionEffectType pet : PotionEffectType.values()) {
+            for (final PotionEffectType pet : PotionEffectType.values()) {
                 effs += (pet != null && pet.getName() != null) ? (ChatColor.DARK_PURPLE + pet.getName() + "\n") : "";
             }
             return effs + ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffectsPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<String> effTypes = new LinkedList<String>();
-                for (String s : input.split(" ")) {
+                final LinkedList<String> effTypes = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
                     if (PotionEffectType.getByName(s.toUpperCase()) != null) {
                         effTypes.add(PotionEffectType.getByName(s.toUpperCase()).getName());
                         context.setSessionData(CK.E_POTION_TYPES, effTypes);
@@ -410,25 +410,25 @@ public class PlayerPrompt extends FixedSetPrompt {
     private class PotionDurationsPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetPotionDurationsPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<Long> effDurations = new LinkedList<Long>();
-                for (String s : input.split(" ")) {
+                final LinkedList<Long> effDurations = new LinkedList<Long>();
+                for (final String s : input.split(" ")) {
                     try {
-                        int i = Integer.parseInt(s);
-                        long l = i * 1000;
+                        final int i = Integer.parseInt(s);
+                        final long l = i * 1000;
                         if (l < 1000) {
                             player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
                             return new PotionDurationsPrompt();
                         }
                         effDurations.add(l / 50L);
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
                         return new PotionDurationsPrompt();
                     }
@@ -442,24 +442,24 @@ public class PlayerPrompt extends FixedSetPrompt {
     private class PotionMagnitudesPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetPotionMagnitudesPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                LinkedList<Integer> magAmounts = new LinkedList<Integer>();
-                for (String s : input.split(" ")) {
+                final LinkedList<Integer> magAmounts = new LinkedList<Integer>();
+                for (final String s : input.split(" ")) {
                     try {
-                        int i = Integer.parseInt(s);
+                        final int i = Integer.parseInt(s);
                         if (i < 1) {
                             player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
                             return new PotionMagnitudesPrompt();
                         }
                         magAmounts.add(i);
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
                         return new PotionMagnitudesPrompt();
                     }
@@ -473,23 +473,23 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class HungerPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetHungerPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new HungerPrompt();
                     } else {
-                        context.setSessionData(CK.E_HUNGER, (Integer) i);
+                        context.setSessionData(CK.E_HUNGER, i);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
                     return new HungerPrompt();
@@ -504,23 +504,23 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class SaturationPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetSaturationPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new SaturationPrompt();
                     } else {
-                        context.setSessionData(CK.E_SATURATION, (Integer) i);
+                        context.setSessionData(CK.E_SATURATION, i);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
                     return new SaturationPrompt();
@@ -535,23 +535,23 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class HealthPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetHealthPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 try {
-                    int i = Integer.parseInt(input);
+                    final int i = Integer.parseInt(input);
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new HealthPrompt();
                     } else {
-                        context.setSessionData(CK.E_HEALTH, (Integer) i);
+                        context.setSessionData(CK.E_HEALTH, i);
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
                     return new HealthPrompt();
@@ -566,18 +566,18 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class TeleportPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
+        public String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get("eventEditorSetTeleportPrompt");
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
-                Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
-                Block block = selectedTeleportLocations.get(player.getUniqueId());
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
-                    Location loc = block.getLocation();
+                    final Location loc = block.getLocation();
                     context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(loc));
                     selectedTeleportLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
@@ -588,12 +588,12 @@ public class PlayerPrompt extends FixedSetPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_TELEPORT, null);
-                Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
@@ -606,17 +606,17 @@ public class PlayerPrompt extends FixedSetPrompt {
     public class CommandsPrompt extends StringPrompt {
 
         @Override
-        public String getPromptText(ConversationContext context) {
-            String text = ChatColor.GOLD + "" + ChatColor.ITALIC + Lang.get("eventEditorCommandsNote");
+        public String getPromptText(final ConversationContext context) {
+            final String text = ChatColor.GOLD + "" + ChatColor.ITALIC + Lang.get("eventEditorCommandsNote");
             return ChatColor.YELLOW + Lang.get("eventEditorSetCommandsPrompt") + "\n" + text;
         }
 
         @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
-                String[] commands = input.split(Lang.get("charSemi"));
-                LinkedList<String> cmdList = new LinkedList<String>();
+                final String[] commands = input.split(Lang.get("charSemi"));
+                final LinkedList<String> cmdList = new LinkedList<String>();
                 cmdList.addAll(Arrays.asList(commands));
                 context.setSessionData(CK.E_COMMANDS, cmdList);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {

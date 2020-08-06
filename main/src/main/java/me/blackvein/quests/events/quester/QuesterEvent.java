@@ -22,13 +22,13 @@ import me.blackvein.quests.events.QuestsEvent;
  */
 public abstract class QuesterEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    protected Quester quester;
+    private final Quester quester;
     
     public QuesterEvent(final Quester quester) {
         this.quester = quester;
     }
     
-    public QuesterEvent(final Quester quester, boolean async) {
+    public QuesterEvent(final Quester quester, final boolean async) {
         super(async);
         this.quester = quester;
 
@@ -43,6 +43,7 @@ public abstract class QuesterEvent extends QuestsEvent {
         return quester;
     }
     
+    @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }

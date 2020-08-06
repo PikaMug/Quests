@@ -21,13 +21,13 @@ public class PlayerMoveThread implements Runnable {
 
     final Quests plugin;
 
-    public PlayerMoveThread(Quests quests) {
+    public PlayerMoveThread(final Quests quests) {
         plugin = quests;
     }
     
     @Override
     public void run() {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (final Player player : plugin.getServer().getOnlinePlayers()) {
             if (plugin.getDependencies().getCitizens() != null) {
                 if (CitizensAPI.getNPCRegistry().isNPC(player)) {
                     return;

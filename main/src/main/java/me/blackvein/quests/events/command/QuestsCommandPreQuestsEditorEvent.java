@@ -24,9 +24,9 @@ import me.blackvein.quests.Quester;
 public class QuestsCommandPreQuestsEditorEvent extends QuestsCommandEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private ConversationContext context;
+    private final ConversationContext context;
     
-    public QuestsCommandPreQuestsEditorEvent(Quester quester, ConversationContext context) {
+    public QuestsCommandPreQuestsEditorEvent(final Quester quester, final ConversationContext context) {
         super(quester);
         this.context = context;
     }
@@ -37,7 +37,7 @@ public class QuestsCommandPreQuestsEditorEvent extends QuestsCommandEvent implem
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.cancel = cancel;
     }
 

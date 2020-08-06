@@ -26,7 +26,7 @@ import me.blackvein.quests.util.MiscUtil;
 public class Condition {
 
     @SuppressWarnings("unused")
-    private Quests plugin;
+    private final Quests plugin;
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
@@ -41,7 +41,7 @@ public class Condition {
         return name;
     }
     
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
     
@@ -49,7 +49,7 @@ public class Condition {
         return failQuest;
     }
 
-    public void setFailQuest(boolean failQuest) {
+    public void setFailQuest(final boolean failQuest) {
         this.failQuest = failQuest;
     }
 
@@ -57,7 +57,7 @@ public class Condition {
         return itemsWhileHoldingMainHand;
     }
 
-    public void setItemsWhileHoldingMainHand(LinkedList<ItemStack> itemsWhileHoldingMainHand) {
+    public void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand) {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
     }
     
@@ -65,7 +65,7 @@ public class Condition {
         return worldsWhileStayingWithin;
     }
     
-    public void setWorldsWhileStayingWithin(LinkedList<String> worldsWhileStayingWithin) {
+    public void setWorldsWhileStayingWithin(final LinkedList<String> worldsWhileStayingWithin) {
         this.worldsWhileStayingWithin = worldsWhileStayingWithin;
     }
     
@@ -73,15 +73,15 @@ public class Condition {
         return biomesWhileStayingWithin;
     }
     
-    public void setBiomesWhileStayingWithin(LinkedList<String> biomesWhileStayingWithin) {
+    public void setBiomesWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
         this.biomesWhileStayingWithin = biomesWhileStayingWithin;
     }
 
     @SuppressWarnings("deprecation")
-    public boolean check(Quester quester, Quest quest) {
+    public boolean check(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
         if (itemsWhileHoldingMainHand.isEmpty() == false) {
-            for (ItemStack is : itemsWhileHoldingMainHand) {
+            for (final ItemStack is : itemsWhileHoldingMainHand) {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
                     return true;
                 } else {
@@ -90,7 +90,7 @@ public class Condition {
                 }
             }
         } else if (worldsWhileStayingWithin.isEmpty() == false) {
-            for (String w : worldsWhileStayingWithin) {
+            for (final String w : worldsWhileStayingWithin) {
                 if (player.getWorld().getName().equalsIgnoreCase(w)) {
                     return true;
                 } else {
@@ -98,7 +98,7 @@ public class Condition {
                 }
             }
         } else if (biomesWhileStayingWithin.isEmpty() == false) {
-            for (String b : biomesWhileStayingWithin) {
+            for (final String b : biomesWhileStayingWithin) {
                 if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
                         .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
                     return true;
