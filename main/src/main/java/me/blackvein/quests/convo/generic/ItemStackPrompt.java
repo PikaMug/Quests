@@ -193,7 +193,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     }
     
     @SuppressWarnings({ "unchecked", "deprecation" })
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input, final ItemStack item) {
+    public Prompt acceptValidatedInput(final ConversationContext context, final Number input, final ItemStack item) {
         switch (input.intValue()) {
         case 0:
             context.setSessionData("tempMeta", null);
