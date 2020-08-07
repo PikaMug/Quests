@@ -187,15 +187,19 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         return text;
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
     @Override
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        return acceptValidatedInput(context, input, null);
+    }
+    
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input, final ItemStack item) {
         switch (input.intValue()) {
         case 0:
             context.setSessionData("tempMeta", null);
             
             final Player player = (Player) context.getForWhom();
-            final ItemStack is = player.getItemInHand();
+            final ItemStack is = item == null ? player.getItemInHand() : item;
             if (is == null || is.getType().equals(Material.AIR)) {
                 player.sendMessage(ChatColor.RED + Lang.get("itemCreateNoItem"));
                 return new ItemStackPrompt(context, oldPrompt);
