@@ -895,7 +895,6 @@ public class PlayerListener implements Listener {
                 if (quester != null) {
                     if (plugin.canUseQuests(uuid)) {
                         for (final Quest quest : plugin.getQuests()) {
-                            // TODO - make sure this can be run asynchronously
                             if (!quester.meetsCondition(quest, false)) {
                                 return;
                             }
@@ -903,12 +902,22 @@ public class PlayerListener implements Listener {
                             if (quester.getCurrentQuests().containsKey(quest)) {
                                 if (quester.getCurrentStage(quest) != null 
                                         && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
-                                    quester.reachLocation(quest, location);
+                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            quester.reachLocation(quest, location);
+                                        }
+                                    });
                                 }
                             }
                             
                             quester.dispatchMultiplayerEverything(quest, "reachLocation", (final Quester q) -> {
-                                q.reachLocation(quest, location);
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        q.reachLocation(quest, location);
+                                    }
+                                });
                                 return null;
                             });
                         }
