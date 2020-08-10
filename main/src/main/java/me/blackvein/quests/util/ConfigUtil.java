@@ -14,6 +14,8 @@
 package me.blackvein.quests.util;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -188,6 +190,17 @@ public class ConfigUtil {
         parsed = parsed.replace("<reset>", ChatColor.RESET.toString());
         parsed = parsed.replace("<br>", "\n");
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
+        
+        Matcher matcher = Pattern.compile("(?i)<#([0-9A-F]{6})>").matcher(parsed);
+        while (matcher.find()) {
+            StringBuilder hex = new StringBuilder();
+            hex.append(ChatColor.COLOR_CHAR + "x");
+            char[] chars = matcher.group(1).toCharArray();
+            for (int index = 0; index < chars.length; index++) {
+                hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
+            }
+            parsed = parsed.replace(matcher.group(), hex.toString());
+        }
         return parsed;
     }
 }
