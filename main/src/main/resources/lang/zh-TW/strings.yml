@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "輸入會發生雷暴天氣的世界名稱，<can
 eventEditorEffects: "事件聲音效果"
 eventEditorAddEffect: "添加特效"
 eventEditorAddEffectLocation: "添加特效發生位置"
-eventEditorNoEffects: "未設定特效"
 eventEditorMustAddEffects: "你必須先添加聲音效果！"
 eventEditorInvalidEffect: "並非有效的聲音效果！"
 eventEditorEffectsCleared: "已清除聲音效果事件。"
