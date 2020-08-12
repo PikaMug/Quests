@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Введите имя мира для Гром в
 eventEditorEffects: "Действие Звуковые эффекты"
 eventEditorAddEffect: "Добавить эффект"
 eventEditorAddEffectLocation: "Добавить новое место"
-eventEditorNoEffects: "Без эффектов"
 eventEditorMustAddEffects: "Сначала необходимо добавить эффекты!"
 eventEditorInvalidEffect: "некорректное название эффекта!"
 eventEditorEffectsCleared: "Действие Звуковые эффекты очищены."
