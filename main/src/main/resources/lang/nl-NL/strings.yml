@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Typ een wereld naam voor het onweer om in voor te
 eventEditorEffects: "Event Effecten"
 eventEditorAddEffect: "Voeg effect toe"
 eventEditorAddEffectLocation: "Voeg effect locatie toe"
-eventEditorNoEffects: "Geen effect gespecificeerd"
 eventEditorMustAddEffects: "Je moet eerst een effect toevoegen!"
 eventEditorInvalidEffect: "dit is niet een geldige effect naam!"
 eventEditorEffectsCleared: "Event effect gecleared."
