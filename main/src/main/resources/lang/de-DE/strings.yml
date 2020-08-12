@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Gib den Weltnamen ein in dem der Donner auftreten
 eventEditorEffects: "Event Effekte"
 eventEditorAddEffect: "Effekt hinzufügen"
 eventEditorAddEffectLocation: "Effekt Koordinaten hinzufügen"
-eventEditorNoEffects: "Keine Effekte gesetzt"
 eventEditorMustAddEffects: "Du musst zuerst Effekte hinzufügen!"
 eventEditorInvalidEffect: "ist kein gültiger Event-Name!"
 eventEditorEffectsCleared: "Ereignis-Effekte gelöscht."
