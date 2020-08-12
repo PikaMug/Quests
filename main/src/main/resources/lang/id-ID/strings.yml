@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Masukkan nama dunia agar guntur terjadi,\n <cance
 eventEditorEffects: "Acara efek"
 eventEditorAddEffect: "Menambahkan efek"
 eventEditorAddEffectLocation: "Menambahkan lokasi efek"
-eventEditorNoEffects: "Tidak ada efek yang di atur"
 eventEditorMustAddEffects: "Kamu harus menambahkan efek dahulu!"
 eventEditorInvalidEffect: "bukan nama efek yang sah!"
 eventEditorEffectsCleared: "Acara efek dibersihkan."
