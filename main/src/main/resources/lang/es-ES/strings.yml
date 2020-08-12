@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Introduzca el nombre de un mundo para que la true
 eventEditorEffects: "Efectos del evento"
 eventEditorAddEffect: "Añadir efecto"
 eventEditorAddEffectLocation: "Añadir ubicación de efecto"
-eventEditorNoEffects: "No hay efectos establecidos"
 eventEditorMustAddEffects: "Primero debes añadir efectos!"
 eventEditorInvalidEffect: "no es un nombre de efecto válido!"
 eventEditorEffectsCleared: "Efectos de Eventos borrados."
