@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Digite um nome de mundo para a tempestade que oco
 eventEditorEffects: "Efeitos de eventos"
 eventEditorAddEffect: "Adicionar efeito"
 eventEditorAddEffectLocation: "Adicionar nova localização"
-eventEditorNoEffects: "Nenhum padrão definido"
 eventEditorMustAddEffects: "Você deve adicionar efeitos primeiro!"
 eventEditorInvalidEffect: "não é um nome de Evento válido!"
 eventEditorEffectsCleared: "Efeitos de evento desmarcados."
