@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Enter a world name for the thunder to occur in, <
 eventEditorEffects: "Toiming Heliefektid"
 eventEditorAddEffect: "Lisa heliefekt"
 eventEditorAddEffectLocation: "Lisa heliefekti asukoht"
-eventEditorNoEffects: "Ühtegi heliefekti pole määratud"
 eventEditorMustAddEffects: "You must add sound effects first!"
 eventEditorInvalidEffect: "ei ole sobiv heliefekti nimi!"
 eventEditorEffectsCleared: "Action sound effects cleared."
