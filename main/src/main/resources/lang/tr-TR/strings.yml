@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Gök gürültüsünün gerçekleşeceği dünyan�
 eventEditorEffects: "Olay Ses Efektleri"
 eventEditorAddEffect: "Ses efekti ekle"
 eventEditorAddEffectLocation: "Ses efekti konumu ekle"
-eventEditorNoEffects: "Hiçbir ses efekti ayarlanmadı"
 eventEditorMustAddEffects: "Önce ses efekti eklemelisin!"
 eventEditorInvalidEffect: "geçerli bir ses efekti ismi değil!"
 eventEditorEffectsCleared: "Olay ses efektleri temizlendi."
