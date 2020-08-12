@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Adja meg a világnevet hogy a mennydörgés bekö
 eventEditorEffects: "Esemény effektek"
 eventEditorAddEffect: "Effekt hozzáadása"
 eventEditorAddEffectLocation: "Effekt hely hozzáadása"
-eventEditorNoEffects: "Nincs effekt beállítva"
 eventEditorMustAddEffects: "Először az effekteket kell hozzáadni!"
 eventEditorInvalidEffect: "nem érvényes effekt név!"
 eventEditorEffectsCleared: "Esemény effektek törölve."
