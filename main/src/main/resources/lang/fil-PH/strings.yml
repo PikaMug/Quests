@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Ilagay ang pangalan ng mundo para sa kidlat upang
 eventEditorEffects: "Epekto ng Kaganapan"
 eventEditorAddEffect: "Magdagdag ng epekto"
 eventEditorAddEffectLocation: "Magdagdag ng epekto ng lokasyon"
-eventEditorNoEffects: "Walang epekto sa takda"
 eventEditorMustAddEffects: "Kailangan mo munang magdagdag ng epekto!"
 eventEditorInvalidEffect: "ito ay hindi wastong pangalan ng epekto!"
 eventEditorEffectsCleared: "Epekto sa Kaganapan ay tapos na."
