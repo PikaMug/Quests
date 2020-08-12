@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Beskriv en verden for stormen til at starte I, <c
 eventEditorEffects: "Action Lyde Effekter"
 eventEditorAddEffect: "Tilføj effekt"
 eventEditorAddEffectLocation: "Tilføj lyd effekt lokation"
-eventEditorNoEffects: "Ingen lyd effekter sat"
 eventEditorMustAddEffects: "Du skal tilføje lyd effekter først!"
 eventEditorInvalidEffect: "er ikke et gyldigt begivenheds navn!"
 eventEditorEffectsCleared: "Action lyd effekt cleared."
