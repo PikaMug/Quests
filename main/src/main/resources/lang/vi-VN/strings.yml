@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Nhập tên thế giới mà sấm sét sẽ xả
 eventEditorEffects: "Hành động các hiệu ứng"
 eventEditorAddEffect: "Thêm hiệu ứng"
 eventEditorAddEffectLocation: "Thêm vị trí hiệu ứng"
-eventEditorNoEffects: "Không có hiệu ứng được thiết lập"
 eventEditorMustAddEffects: "Bạn cần phải thêm hiệu ứng trước tiên!"
 eventEditorInvalidEffect: "không phải là tên hiệu ứng hợp lệ!"
 eventEditorEffectsCleared: "Hành động các hiệu ứng đã được xóa."
