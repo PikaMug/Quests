@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Enter a world name for the thunder to occur in, <
 eventEditorEffects: "Action Sound Effects"
 eventEditorAddEffect: "Add sound effect"
 eventEditorAddEffectLocation: "Add sound effect location"
-eventEditorNoEffects: "No sound effects set"
 eventEditorMustAddEffects: "You must add sound effects first!"
 eventEditorInvalidEffect: "is not a valid sound effect name!"
 eventEditorEffectsCleared: "Action sound effects cleared."
