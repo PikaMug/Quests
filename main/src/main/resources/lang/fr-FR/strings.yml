@@ -341,7 +341,6 @@ eventEditorEnterThunderWorld: "Entrez un nom de monde pour le tonnerre se produi
 eventEditorEffects: "Effets de l’événement"
 eventEditorAddEffect: "Ajouter un effet"
 eventEditorAddEffectLocation: "Ajouter l’emplacement de l’effet"
-eventEditorNoEffects: "Aucun ensemble d’effets"
 eventEditorMustAddEffects: "Vous devez ajouter des effets d’abord !"
 eventEditorInvalidEffect: "n’est pas un nom valide d’effet !"
 eventEditorEffectsCleared: "Effets de l’événement est effacé."
