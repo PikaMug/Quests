@@ -165,7 +165,7 @@ public class CK {
     public static final String E_LIGHTNING = "evtLightningStrikes";
     public static final String E_POTION_TYPES = "evtPotionTypes";
     public static final String E_POTION_DURATIONS = "evtPotionDurations";
-    public static final String E_POTION_STRENGHT = "evtPotionMagnitudes";
+    public static final String E_POTION_STRENGTH = "evtPotionMagnitudes";
     public static final String E_HUNGER = "evtHunger";
     public static final String E_SATURATION = "evtSaturation";
     public static final String E_HEALTH = "evtHealth";

@@ -207,7 +207,7 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
             context.setSessionData(CK.E_POTION_TYPES, types);
             context.setSessionData(CK.E_POTION_DURATIONS, durations);
-            context.setSessionData(CK.E_POTION_STRENGHT, mags);
+            context.setSessionData(CK.E_POTION_STRENGTH, mags);
         }
         if (event.hunger > -1) {
             context.setSessionData(CK.E_HUNGER, event.hunger);
@@ -251,7 +251,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.E_LIGHTNING, null);
         context.setSessionData(CK.E_POTION_TYPES, null);
         context.setSessionData(CK.E_POTION_DURATIONS, null);
-        context.setSessionData(CK.E_POTION_STRENGHT, null);
+        context.setSessionData(CK.E_POTION_STRENGTH, null);
         context.setSessionData(CK.E_HUNGER, null);
         context.setSessionData(CK.E_SATURATION, null);
         context.setSessionData(CK.E_HEALTH, null);
@@ -417,7 +417,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.E_POTION_TYPES) != null) {
             section.set("potion-effect-types", context.getSessionData(CK.E_POTION_TYPES));
             section.set("potion-effect-durations", context.getSessionData(CK.E_POTION_DURATIONS));
-            section.set("potion-effect-amplifiers", context.getSessionData(CK.E_POTION_STRENGHT));
+            section.set("potion-effect-amplifiers", context.getSessionData(CK.E_POTION_STRENGTH));
         }
         if (context.getSessionData(CK.E_HUNGER) != null) {
             section.set("hunger", context.getSessionData(CK.E_HUNGER));

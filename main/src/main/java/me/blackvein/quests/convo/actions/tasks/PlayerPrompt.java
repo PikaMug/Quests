@@ -22,16 +22,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -39,115 +40,186 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 
-public class PlayerPrompt extends FixedSetPrompt {
+public class PlayerPrompt extends ActionsEditorNumericPrompt {
     
     private final Quests plugin;
     
     public PlayerPrompt(final ConversationContext context) {
-        super("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+        super(context);
         this.plugin = (Quests)context.getPlugin();
     }
-
+    
+    private final int size = 10;
+    
+    @Override
+    public int getSize() {
+        return size;
+    }
+    
+    @Override
+    public String getTitle(final ConversationContext context) {
+        return Lang.get("eventEditorPlayer");
+    }
+    
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            return ChatColor.BLUE;
+        case 10:
+            return ChatColor.GREEN;
+        default:
+            return null;
+        }
+    }
+    
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetMessage");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("eventEditorClearInv");
+        case 3:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetItems");
+        case 4:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffects");
+        case 5:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetHunger");
+        case 6:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetSaturation");
+        case 7:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetHealth");
+        case 8:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetTeleport");
+        case 9:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetCommands");
+        case 10:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
+        }
+    }
+    
+    @Override
     @SuppressWarnings("unchecked")
+    public String getAdditionalText(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+            if (context.getSessionData(CK.E_MESSAGE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_MESSAGE) + ChatColor.GRAY + ")";
+            }
+        case 2:
+            return ChatColor.AQUA + "" + context.getSessionData(CK.E_CLEAR_INVENTORY);
+        case 3:
+            if (context.getSessionData(CK.E_ITEMS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
+                for (final ItemStack is : items) {
+                    if (is != null) {
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getString(is) + "\n";
+                    }
+                }
+                return text;
+            }
+        case 4:
+            if (context.getSessionData(CK.E_POTION_TYPES) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
+                final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
+                final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGTH);
+                int index = -1;
+                for (final String type : types) {
+                    index++;
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
+                            + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
+                            + MiscUtil.getTime(durations.get(index) * 50L) + "\n";
+                }
+                return text;
+            }
+        case 5:
+            if (context.getSessionData(CK.E_HUNGER) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_HUNGER) + ChatColor.GRAY 
+                        + ")";
+            }
+        case 6:
+            if (context.getSessionData(CK.E_SATURATION) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_SATURATION) + ChatColor.GRAY 
+                        + ")";
+            }
+        case 7:
+            if (context.getSessionData(CK.E_HEALTH) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_HEALTH) + ChatColor.GRAY 
+                        + ")";
+            }
+        case 8:
+            if (context.getSessionData(CK.E_TELEPORT) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_TELEPORT) + ChatColor.GRAY 
+                        + ")";
+            }
+        case 9:
+            if (context.getSessionData(CK.E_COMMANDS) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                }
+                return text;
+            }
+        case 10:
+            return "";
+        default:
+            return null;
+        }
+    }
+
     @Override
     public String getPromptText(final ConversationContext context) {
-        String text = ChatColor.GOLD + "- " + Lang.get("eventEditorPlayer") + " -\n";
-        if (context.getSessionData(CK.E_MESSAGE) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetMessage") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetMessage") + " (" + ChatColor.AQUA 
-                    + context.getSessionData(CK.E_MESSAGE) + ChatColor.RESET + ChatColor.YELLOW + ")\n";
-        }
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
         }
-        text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                + Lang.get("eventEditorClearInv") + ": " + ChatColor.AQUA 
-                + context.getSessionData(CK.E_CLEAR_INVENTORY) + "\n";
-        if (context.getSessionData(CK.E_ITEMS) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetItems") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetItems") + "\n";
-            final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
-            for (final ItemStack is : items) {
-                if (is != null) {
-                    text += ChatColor.GRAY + "    - " + ItemUtil.getString(is) + "\n";
-                }
-            }
+        
+        final ActionsEditorPostOpenNumericPromptEvent event
+                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        plugin.getServer().getPluginManager().callEvent(event);
+
+        String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+        for (int i = 1; i <= size; i++) {
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
         }
-        if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetPotionEffects") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetPotionEffects") + "\n";
-            final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
-            final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
-            final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT);
-            int index = -1;
-            for (final String type : types) {
-                index++;
-                text += ChatColor.GRAY + "    - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
-                        + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
-                        + MiscUtil.getTime(durations.get(index) * 50L) + "\n";
-            }
-        }
-        if (context.getSessionData(CK.E_HUNGER) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetHunger") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetHunger") + ChatColor.AQUA + " (" 
-                    + context.getSessionData(CK.E_HUNGER) + ")\n";
-        }
-        if (context.getSessionData(CK.E_SATURATION) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetSaturation") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "6" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetSaturation") + ChatColor.AQUA + " (" 
-                    + context.getSessionData(CK.E_SATURATION) + ")\n";
-        }
-        if (context.getSessionData(CK.E_HEALTH) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetHealth") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "7" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetHealth") + ChatColor.AQUA + " (" 
-                    + context.getSessionData(CK.E_HEALTH) + ")\n";
-        }
-        if (context.getSessionData(CK.E_TELEPORT) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetTeleport") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "8" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetTeleport") + ChatColor.AQUA + " (" 
-                    + (String) context.getSessionData(CK.E_TELEPORT) + ")\n";
-        }
-        if (context.getSessionData(CK.E_COMMANDS) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetCommands") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "9" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetCommands") + "\n";
-            for (final String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
-                text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
-            }
-        }
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "10 " + ChatColor.RESET + ChatColor.YELLOW + "- " 
-                + Lang.get("done") + "\n";
         return text;
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
-        if (input.equalsIgnoreCase("1")) {
-            return new MessagePrompt();
-        } else if (input.equalsIgnoreCase("2")) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        switch (input.intValue()) {
+        case 1:
+            return new PlayerMessagePrompt(context);
+        case 2:
             final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
@@ -155,32 +227,49 @@ public class PlayerPrompt extends FixedSetPrompt {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
             }
             return new ActionMainPrompt(context);
-        } else if (input.equalsIgnoreCase("3")) {
-            return new ItemListPrompt();
-        } else if (input.equalsIgnoreCase("4")) {
-            return new PotionEffectPrompt();
-        } else if (input.equalsIgnoreCase("5")) {
-            return new HungerPrompt();
-        } else if (input.equalsIgnoreCase("6")) {
-            return new SaturationPrompt();
-        } else if (input.equalsIgnoreCase("7")) {
-            return new HealthPrompt();
-        } else if (input.equalsIgnoreCase("8")) {
+        case 3:
+            return new PlayerItemListPrompt(context);
+        case 4:
+            return new PlayerPotionEffectPrompt(context);
+        case 5:
+            return new PlayerHungerPrompt(context);
+        case 6:
+            return new PlayerSaturationPrompt(context);
+        case 7:
+            return new PlayerHealthPrompt(context);
+        case 8:
             final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
             selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-            return new TeleportPrompt();
-        } else if (input.equalsIgnoreCase("9")) {
-            return new CommandsPrompt();
+            return new PlayerTeleportPrompt(context);
+        case 9:
+            return new PlayerCommandsPrompt(context);
+        case 10:
+            return new ActionMainPrompt(context);
+        default:
+            return null;
         }
-        return new ActionMainPrompt(context);
     }
     
-    public class MessagePrompt extends StringPrompt {
+    public class PlayerMessagePrompt extends ActionsEditorStringPrompt {
+
+        public PlayerMessagePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetMessagePrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetMessagePrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -195,18 +284,80 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
     }
 
-    public class ItemListPrompt extends FixedSetPrompt {
+    public class PlayerItemListPrompt extends ActionsEditorNumericPrompt {
 
-        public ItemListPrompt() {
-            super("1", "2", "3");
+        public PlayerItemListPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 3;
+        
+        @Override
+        public int getSize() {
+            return size;
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditorGiveItemsTitle");
+        }
+        
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+            case 2:
+                return ChatColor.BLUE;
+            case 3:
+                return ChatColor.GREEN;
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+            case 2:
+                return ChatColor.RED + Lang.get("clear");
+            case 3:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch(number) {
+            case 1:
+                if (context.getSessionData(CK.E_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.E_ITEMS)) {
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+            case 3:
+                return "";
+            default:
+                return null;
+            }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.E_ITEMS) != null) {
-                    final List<ItemStack> items = getItems(context);
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.E_ITEMS, items);
                 } else {
@@ -217,136 +368,177 @@ public class PlayerPrompt extends FixedSetPrompt {
                 context.setSessionData("newItem", null);
                 context.setSessionData("tempStack", null);
             }
-            String text = ChatColor.GOLD + Lang.get("eventEditorGiveItemsTitle") + "\n";
-            if (context.getSessionData(CK.E_ITEMS) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
-            } else {
-                for (final ItemStack is : getItems(context)) {
-                    text += ChatColor.GRAY + "    - " + ItemUtil.getDisplayString(is) + "\n";
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("stageEditorDeliveryAddItem") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("done");
+            
+            final ActionsEditorPostOpenNumericPromptEvent event
+                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new ItemStackPrompt(context, ItemListPrompt.this);
-            } else if (input.equalsIgnoreCase("2")) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new ItemStackPrompt(context, PlayerItemListPrompt.this);
+            case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorItemsCleared"));
                 context.setSessionData(CK.E_ITEMS, null);
-                return new ItemListPrompt();
-            } else if (input.equalsIgnoreCase("3")) {
+                return new PlayerItemListPrompt(context);
+            case 3:
+                return new ActionMainPrompt(context);
+            default:
                 return new ActionMainPrompt(context);
             }
-            return null;
-        }
-
-        @SuppressWarnings("unchecked")
-        private List<ItemStack> getItems(final ConversationContext context) {
-            return (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
         }
     }
     
-    private class PotionEffectPrompt extends FixedSetPrompt {
+    public class PlayerPotionEffectPrompt extends ActionsEditorNumericPrompt {
 
-        public PotionEffectPrompt() {
-            super("1", "2", "3", "4", "5");
+        public PlayerPotionEffectPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 5;
+        
+        @Override
+        public int getSize() {
+            return size;
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditorPotionEffectsTitle");
+        }
+        
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+            case 2:
+            case 3:
+                return ChatColor.BLUE;
+            case 4:
+                return ChatColor.RED;
+            case 5:
+                return ChatColor.GREEN;
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffectTypes");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("eventEditorSetPotionDurations");
+            case 3:
+                return ChatColor.YELLOW + Lang.get("eventEditorSetPotionMagnitudes");
+            case 4:
+                return ChatColor.RED + Lang.get("clear");
+            case 5:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                if (context.getSessionData(CK.E_POTION_TYPES) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (final String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    }
+                    return text;
+                }
+            case 2:
+                if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (final Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_AQUA + MiscUtil.getTime(l * 50L) + "\n";
+                    }
+                    return text;
+                }
+            case 3:
+                if (context.getSessionData(CK.E_POTION_STRENGTH) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (final int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGTH)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_PURPLE + i + "\n";
+                    }
+                    return text;
+                }
+            case 4:
+            case 5:
+                return "";
+            default:
+                return null;
+            }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + Lang.get("eventEditorPotionEffectsTitle") + "\n";
-            if (context.getSessionData(CK.E_POTION_TYPES) == null) {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                        + Lang.get("eventEditorSetPotionEffectTypes") + " (" + Lang.get("noneSet") + ")\n";
-                text += ChatColor.GRAY + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("eventEditorSetPotionDurations") + " " + Lang.get("noneSet") + "\n";
-                text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " " + Lang.get("noneSet")
-                        + "\n";
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("done");
-            } else {
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("eventEditorSetPotionEffectTypes") + "\n";
-                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
-                }
-                if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                            + Lang.get("eventEditorSetPotionDurations") + " (" + Lang.get("noneSet") + ")\n";
-                    text += ChatColor.GRAY + "3 - " + Lang.get("eventEditorSetPotionMagnitudes") + " "
-                            + Lang.get("noneSet") + "\n";
-                } else {
-                    text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                            + Lang.get("noneSet") + "\n";
-                    for (final Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
-                        text += ChatColor.GRAY + "    - " + ChatColor.DARK_AQUA + MiscUtil.getTime(l * 50L) + "\n";
-                    }
-                    if (context.getSessionData(CK.E_POTION_STRENGHT) == null) {
-                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                                + Lang.get("eventEditorSetPotionMagnitudes") + " (" + Lang.get("noneSet") + ")\n";
-                    } else {
-                        text += ChatColor.BLUE + "" + ChatColor.BOLD + "3" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                                + Lang.get("eventEditorSetPotionMagnitudes") + "\n";
-                        for (final int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)) {
-                            text += ChatColor.GRAY + "    - " + ChatColor.DARK_PURPLE + i + "\n";
-                        }
-                    }
-                }
-                text += ChatColor.BLUE + "" + ChatColor.BOLD + "4" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("clear") + "\n";
-                text += ChatColor.GREEN + "" + ChatColor.BOLD + "5" + ChatColor.RESET + ChatColor.YELLOW + " - "
-                        + Lang.get("done");
+            final ActionsEditorPostOpenNumericPromptEvent event
+                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
             }
             return text;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase("1")) {
-                return new PotionTypesPrompt();
-            } else if (input.equalsIgnoreCase("2")) {
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+            switch (input.intValue()) {
+            case 1:
+                return new PlayerPotionTypesPrompt(context);
+            case 2:
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetPotionTypesFirst"));
-                    return new PotionEffectPrompt();
+                    return new PlayerPotionEffectPrompt(context);
                 } else {
-                    return new PotionDurationsPrompt();
+                    return new PlayerPotionDurationsPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase("3")) {
+            case 3:
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
-                    return new PotionEffectPrompt();
+                    return new PlayerPotionEffectPrompt(context);
                 } else if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionDurationsFirst"));
-                    return new PotionEffectPrompt();
+                    return new PlayerPotionEffectPrompt(context);
                 } else {
-                    return new PotionMagnitudesPrompt();
+                    return new PlayerPotionMagnitudesPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase("4")) {
+            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorPotionsCleared"));
                 context.setSessionData(CK.E_POTION_TYPES, null);
                 context.setSessionData(CK.E_POTION_DURATIONS, null);
-                context.setSessionData(CK.E_POTION_STRENGHT, null);
-                return new PotionEffectPrompt();
-            } else if (input.equalsIgnoreCase("5")) {
+                context.setSessionData(CK.E_POTION_STRENGTH, null);
+                return new PlayerPotionEffectPrompt(context);
+            case 5:
                 int one;
                 int two;
                 int three;
@@ -360,8 +552,8 @@ public class PlayerPrompt extends FixedSetPrompt {
                 } else {
                     two = 0;
                 }
-                if (context.getSessionData(CK.E_POTION_STRENGHT) != null) {
-                    three = ((List<Integer>) context.getSessionData(CK.E_POTION_STRENGHT)).size();
+                if (context.getSessionData(CK.E_POTION_STRENGTH) != null) {
+                    three = ((List<Integer>) context.getSessionData(CK.E_POTION_STRENGTH)).size();
                 } else {
                     three = 0;
                 }
@@ -369,22 +561,37 @@ public class PlayerPrompt extends FixedSetPrompt {
                     return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorListSizeMismatch"));
-                    return new PotionEffectPrompt();
+                    return new PlayerPotionEffectPrompt(context);
                 }
+            default:
+                return null;
             }
-            return null;
         }
     }
 
-    private class PotionTypesPrompt extends StringPrompt {
+    public class PlayerPotionTypesPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerPotionTypesPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditorPotionTypesTitle");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetPotionEffectsPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String effs = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorPotionTypesTitle") + "\n";
+            String effs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             for (final PotionEffectType pet : PotionEffectType.values()) {
                 effs += (pet != null && pet.getName() != null) ? (ChatColor.DARK_PURPLE + pet.getName() + "\n") : "";
             }
-            return effs + ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffectsPrompt");
+            return effs + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -399,19 +606,33 @@ public class PlayerPrompt extends FixedSetPrompt {
                     } else {
                         player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                + Lang.get("eventEditorInvalidPotionType"));
-                        return new PotionTypesPrompt();
+                        return new PlayerPotionTypesPrompt(context);
                     }
                 }
             }
-            return new PotionEffectPrompt();
+            return new PlayerPotionEffectPrompt(context);
         }
     }
 
-    private class PotionDurationsPrompt extends StringPrompt {
+    public class PlayerPotionDurationsPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerPotionDurationsPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetPotionDurationsPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetPotionDurationsPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -425,25 +646,39 @@ public class PlayerPrompt extends FixedSetPrompt {
                         final long l = i * 1000;
                         if (l < 1000) {
                             player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new PotionDurationsPrompt();
+                            return new PlayerPotionDurationsPrompt(context);
                         }
                         effDurations.add(l / 50L);
                     } catch (final NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
-                        return new PotionDurationsPrompt();
+                        return new PlayerPotionDurationsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.E_POTION_DURATIONS, effDurations);
             }
-            return new PotionEffectPrompt();
+            return new PlayerPotionEffectPrompt(context);
         }
     }
 
-    private class PotionMagnitudesPrompt extends StringPrompt {
+    public class PlayerPotionMagnitudesPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerPotionMagnitudesPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetPotionMagnitudesPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetPotionMagnitudesPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -456,25 +691,39 @@ public class PlayerPrompt extends FixedSetPrompt {
                         final int i = Integer.parseInt(s);
                         if (i < 1) {
                             player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
-                            return new PotionMagnitudesPrompt();
+                            return new PlayerPotionMagnitudesPrompt(context);
                         }
                         magAmounts.add(i);
                     } catch (final NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
-                        return new PotionMagnitudesPrompt();
+                        return new PlayerPotionMagnitudesPrompt(context);
                     }
                 }
-                context.setSessionData(CK.E_POTION_STRENGHT, magAmounts);
+                context.setSessionData(CK.E_POTION_STRENGTH, magAmounts);
             }
-            return new PotionEffectPrompt();
+            return new PlayerPotionEffectPrompt(context);
         }
     }
     
-    public class HungerPrompt extends StringPrompt {
+    public class PlayerHungerPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerHungerPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetHungerPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetHungerPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -485,14 +734,14 @@ public class PlayerPrompt extends FixedSetPrompt {
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new HungerPrompt();
+                        return new PlayerHungerPrompt(context);
                     } else {
                         context.setSessionData(CK.E_HUNGER, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new HungerPrompt();
+                    return new PlayerHungerPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_HUNGER, null);
@@ -501,11 +750,25 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
     }
 
-    public class SaturationPrompt extends StringPrompt {
+    public class PlayerSaturationPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerSaturationPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetSaturationPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetSaturationPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -516,14 +779,14 @@ public class PlayerPrompt extends FixedSetPrompt {
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new SaturationPrompt();
+                        return new PlayerSaturationPrompt(context);
                     } else {
                         context.setSessionData(CK.E_SATURATION, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new SaturationPrompt();
+                    return new PlayerSaturationPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_SATURATION, null);
@@ -532,11 +795,25 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
     }
 
-    public class HealthPrompt extends StringPrompt {
+    public class PlayerHealthPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerHealthPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetHealthPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetHealthPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -547,14 +824,14 @@ public class PlayerPrompt extends FixedSetPrompt {
                     if (i < 0) {
                         ((Player) context.getForWhom()).sendMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new HealthPrompt();
+                        return new PlayerHealthPrompt(context);
                     } else {
                         context.setSessionData(CK.E_HEALTH, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new HealthPrompt();
+                    return new PlayerHealthPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_HEALTH, null);
@@ -563,11 +840,25 @@ public class PlayerPrompt extends FixedSetPrompt {
         }
     }
     
-    public class TeleportPrompt extends StringPrompt {
+    public class PlayerTeleportPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerTeleportPrompt(final ConversationContext context) {
+            super(context);
+        }
 
         @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetTeleportPrompt");
+        }
+        
+        @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorSetTeleportPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -583,7 +874,7 @@ public class PlayerPrompt extends FixedSetPrompt {
                     plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new TeleportPrompt();
+                    return new PlayerTeleportPrompt(context);
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -598,17 +889,30 @@ public class PlayerPrompt extends FixedSetPrompt {
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
             } else {
-                return new TeleportPrompt();
+                return new PlayerTeleportPrompt(context);
             }
         }
     }
 
-    public class CommandsPrompt extends StringPrompt {
+    public class PlayerCommandsPrompt extends ActionsEditorStringPrompt {
+
+        public PlayerCommandsPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorSetCommandsPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final String text = ChatColor.GOLD + "" + ChatColor.ITALIC + Lang.get("eventEditorCommandsNote");
-            return ChatColor.YELLOW + Lang.get("eventEditorSetCommandsPrompt") + "\n" + text;
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override

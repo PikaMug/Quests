@@ -76,7 +76,7 @@ public class WeatherPrompt extends FixedSetPrompt {
                     + Lang.get("eventEditorSetLightning") + "\n";
             final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
             for (final String loc : locations) {
-                text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
+                text += ChatColor.GRAY + "     - " + ChatColor.AQUA + loc + "\n";
             }
         }
         text += ChatColor.GREEN + "" + ChatColor.BOLD + "4 " + ChatColor.RESET + ChatColor.GREEN + "- " 

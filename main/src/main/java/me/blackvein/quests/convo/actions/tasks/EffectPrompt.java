@@ -23,11 +23,11 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -95,7 +95,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
                 for (final String effect : effects) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " 
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " 
                             + ChatColor.DARK_AQUA + locations.get(effects.indexOf(effect)) + "\n";
                 }
                 return text;
@@ -107,7 +107,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 String text = "\n";
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
                 for (final String loc : locations) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.AQUA + loc + "\n";
+                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + loc + "\n";
                 }
                 return text;
             }
@@ -136,12 +136,12 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new SoundEffectListPrompt(context);
+            return new EffectSoundListPrompt(context);
         case 2:
             final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
             selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
             plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
-            return new ExplosionPrompt();
+            return new EffectExplosionPrompt(context);
         case 3:
             return new ActionMainPrompt(context);
         default:
@@ -149,11 +149,11 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class SoundEffectListPrompt extends ActionsEditorNumericPrompt {
+    public class EffectSoundListPrompt extends ActionsEditorNumericPrompt {
 
         private final Quests plugin;
         
-        public SoundEffectListPrompt(final ConversationContext context) {
+        public EffectSoundListPrompt(final ConversationContext context) {
             super(context);
             this.plugin = (Quests)context.getPlugin();
         }
@@ -210,7 +210,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     String text = "\n";
                     for (final String s : (List<String>) context.getSessionData(CK.E_EFFECTS)) {
-                        text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
                     return text;
                 }
@@ -220,7 +220,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     String text = "\n";
                     for (final String s : (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS)) {
-                        text += ChatColor.GRAY + "    - " + ChatColor.AQUA + s + "\n";
+                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
                     return text;
                 }
@@ -251,22 +251,22 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new SoundEffectPrompt();
+                return new EffectSoundPrompt(context);
             case 2:
                 if (context.getSessionData(CK.E_EFFECTS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustAddEffects"));
-                    return new SoundEffectListPrompt(context);
+                    return new EffectSoundListPrompt(context);
                 } else {
                     final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                    return new SoundEffectLocationPrompt();
+                    return new EffectSoundLocationPrompt(context);
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorEffectsCleared"));
                 context.setSessionData(CK.E_EFFECTS, null);
                 context.setSessionData(CK.E_EFFECTS_LOCATIONS, null);
-                return new SoundEffectListPrompt(context);
+                return new EffectSoundListPrompt(context);
             case 4:
                 int one;
                 int two;
@@ -284,7 +284,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new SoundEffectListPrompt(context);
+                    return new EffectSoundListPrompt(context);
                 }
             default:
                 return null;
@@ -292,11 +292,25 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    private class SoundEffectPrompt extends StringPrompt {
+    public class EffectSoundPrompt extends ActionsEditorStringPrompt {
+
+        public EffectSoundPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditorEffectsTitle");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("effEnterName");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String effects = ChatColor.LIGHT_PURPLE + Lang.get("eventEditorEffectsTitle") + "\n";
+            String effects = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             final Effect[] vals = Effect.values();
             for (int i = 0; i < vals.length; i++) {
                 final Effect eff = vals[i];
@@ -307,7 +321,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 }
                 
             }
-            return effects + ChatColor.YELLOW +  Lang.get("effEnterName");
+            return effects + ChatColor.YELLOW + getQueryText(context);
         }
 
         @SuppressWarnings("unchecked")
@@ -327,26 +341,40 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                    return new SoundEffectListPrompt(context);
+                    return new EffectSoundListPrompt(context);
                 } else {
                     player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidEffect"));
-                    return new SoundEffectPrompt();
+                    return new EffectSoundPrompt(context);
                 }
             } else {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                return new SoundEffectListPrompt(context);
+                return new EffectSoundListPrompt(context);
             }
         }
     }
     
-    private class SoundEffectLocationPrompt extends StringPrompt {
+    public class EffectSoundLocationPrompt extends ActionsEditorStringPrompt {
+
+        public EffectSoundLocationPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorEffectLocationPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorEffectLocationPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @SuppressWarnings("unchecked")
@@ -369,25 +397,39 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new SoundEffectLocationPrompt();
+                    return new EffectSoundLocationPrompt(context);
                 }
-                return new SoundEffectListPrompt(context);
+                return new EffectSoundListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                return new SoundEffectListPrompt(context);
+                return new EffectSoundListPrompt(context);
             } else {
-                return new SoundEffectLocationPrompt();
+                return new EffectSoundLocationPrompt(context);
             }
         }
     }
     
-    public class ExplosionPrompt extends StringPrompt {
+    public class EffectExplosionPrompt extends ActionsEditorStringPrompt {
+
+        public EffectExplosionPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorExplosionPrompt");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("eventEditorExplosionPrompt");
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @SuppressWarnings("unchecked")
@@ -411,7 +453,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new ExplosionPrompt();
+                    return new EffectExplosionPrompt(context);
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -426,7 +468,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);
             } else {
-                return new ExplosionPrompt();
+                return new EffectExplosionPrompt(context);
             }
         }
     }
