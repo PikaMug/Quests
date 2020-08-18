@@ -197,7 +197,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 2:
             return new PlayerPrompt(context);
         case 3:
-            return new TimerPrompt();
+            return new TimerPrompt(context);
         case 4:
             return new EffectPrompt(context);
         case 5:

@@ -30,6 +30,7 @@ import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
@@ -310,6 +311,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String effects = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             final Effect[] vals = Effect.values();
             for (int i = 0; i < vals.length; i++) {
@@ -374,6 +379,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -429,6 +438,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 

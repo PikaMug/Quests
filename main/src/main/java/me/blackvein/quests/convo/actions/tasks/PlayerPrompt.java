@@ -33,6 +33,7 @@ import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -269,6 +270,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -587,6 +592,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String effs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             for (final PotionEffectType pet : PotionEffectType.values()) {
                 effs += (pet != null && pet.getName() != null) ? (ChatColor.DARK_PURPLE + pet.getName() + "\n") : "";
@@ -632,6 +641,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -678,6 +691,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -723,6 +740,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -768,6 +789,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -813,6 +838,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -858,6 +887,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 
@@ -912,6 +945,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             return ChatColor.YELLOW + getQueryText(context);
         }
 

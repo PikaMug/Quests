@@ -14,47 +14,107 @@ package me.blackvein.quests.convo.actions.tasks;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.FixedSetPrompt;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 
-public class TimerPrompt extends FixedSetPrompt {
+public class TimerPrompt extends ActionsEditorNumericPrompt {
     
-    public TimerPrompt() {
-        super("1", "2", "3");
+    private final Quests plugin;
+    
+    public TimerPrompt(final ConversationContext context) {
+        super(context);
+        this.plugin = (Quests)context.getPlugin();
+    }
+    
+    private final int size = 3;
+    
+    @Override
+    public int getSize() {
+        return size;
+    }
+    
+    @Override
+    public String getTitle(final ConversationContext context) {
+        return Lang.get("eventEditorTimer");
+    }
+    
+    @Override
+    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+        case 2:
+            return ChatColor.BLUE;
+        case 3:
+            return ChatColor.GREEN;
+        default:
+            return null;
+        }
+    }
+    
+    @Override
+    public String getSelectionText(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+            return ChatColor.YELLOW + Lang.get("eventEditorSetTimer");
+        case 2:
+            return ChatColor.YELLOW + Lang.get("eventEditorCancelTimer");
+        case 3:
+            return ChatColor.GREEN + Lang.get("done");
+        default:
+            return null;
+        }
+    }
+    
+    @Override
+    public String getAdditionalText(final ConversationContext context, final int number) {
+        switch (number) {
+        case 1:
+            if (context.getSessionData(CK.E_TIMER) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_TIMER) + ChatColor.GRAY + ")";
+            }
+        case 2:
+            return ChatColor.AQUA + "" + context.getSessionData(CK.E_CANCEL_TIMER);
+        case 3:
+            return "";
+        default:
+            return null;
+        }
     }
 
     @Override
     public String getPromptText(final ConversationContext context) {
-        String text = ChatColor.GOLD + "- " + Lang.get("eventEditorTimer") + " -\n";
-        if (context.getSessionData(CK.E_TIMER) == null) {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetTimer") + ChatColor.GRAY + " (" + Lang.get("noneSet") + ")\n";
-        } else {
-            text += ChatColor.BLUE + "" + ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                    + Lang.get("eventEditorSetTimer") + "(" + ChatColor.AQUA + "\"" 
-                    + context.getSessionData(CK.E_TIMER) + "\"" + ChatColor.YELLOW + ")\n";
-        }
         if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
             context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
         }
-        text += ChatColor.BLUE + "" + ChatColor.BOLD + "2" + ChatColor.RESET + ChatColor.YELLOW + " - " 
-                + Lang.get("eventEditorCancelTimer") + ": " + ChatColor.AQUA 
-                + context.getSessionData(CK.E_CANCEL_TIMER) + "\n";
-        text += ChatColor.GREEN + "" + ChatColor.BOLD + "3 " + ChatColor.RESET + ChatColor.YELLOW + "- " 
-                + Lang.get("done") + "\n";
+        
+        final ActionsEditorPostOpenNumericPromptEvent event
+                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        plugin.getServer().getPluginManager().callEvent(event);
+        
+        String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+        for (int i = 1; i <= size; i++) {
+            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+        }
         return text;
     }
-
+    
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final String input) {
-        if (input.equalsIgnoreCase("1")) {
-            return new FailTimerPrompt();
-        } else if (input.equalsIgnoreCase("2")) {
+    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        switch (input.intValue()) {
+        case 1:
+            return new TimerFailPrompt(context);
+        case 2:
             final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
@@ -62,21 +122,49 @@ public class TimerPrompt extends FixedSetPrompt {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
             }
             return new ActionMainPrompt(context);
+        case 3:
+            return new ActionMainPrompt(context);
+        default:
+            return null;
         }
-        return new ActionMainPrompt(context);
     }
     
-    public class FailTimerPrompt extends NumericPrompt {
-
+    public class TimerFailPrompt extends ActionsEditorStringPrompt {
+        
+        public TimerFailPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number number) {
-            context.setSessionData(CK.E_TIMER, number);
-            return new ActionMainPrompt(context);
+        public String getTitle(final ConversationContext context) {
+            return null;
         }
 
         @Override
-        public String getPromptText(final ConversationContext conversationContext) {
-            return ChatColor.YELLOW + Lang.get("eventEditorEnterTimerSeconds");
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorEnterTimerSeconds");
+        }
+
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            try {
+                final Integer i = Integer.parseInt(input);
+                context.setSessionData(CK.E_TIMER, i);
+                return new TimerFailPrompt(context);
+            } catch (final NumberFormatException e) {
+                context.getForWhom().sendRawMessage(ChatColor.RED 
+                        + Lang.get("reqNotANumber").replace("<input>", input));
+                return new ActionMainPrompt(context);
+            }
         }
     }
 }
