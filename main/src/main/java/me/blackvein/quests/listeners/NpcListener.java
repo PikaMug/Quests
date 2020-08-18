@@ -59,8 +59,8 @@ public class NpcListener implements Listener {
             return;
         }
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN + "ID "
-                    + evt.getNPC().getId());
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + Lang.get("id") + ": " 
+                    + ChatColor.DARK_GREEN + evt.getNPC().getId());
             return;
         }
         if (evt.getClicker().isConversing() == false) {
@@ -121,7 +121,6 @@ public class NpcListener implements Listener {
                                                 .replace("<data>", "one item is null"));
                                         break;
                                     case 0:
-                                        // Should never happen
                                         player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference")
                                                 .replace("<data>", "ERROR"));
                                         break;

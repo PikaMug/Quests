@@ -1980,7 +1980,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             List<Integer> npcIdsToTalkTo = new LinkedList<Integer>();
             List<ItemStack> itemsToDeliver= new LinkedList<ItemStack>();
             List<Integer> itemDeliveryTargetIds = new LinkedList<Integer>();
-            final List<String> deliveryMessages = new LinkedList<String>();
+            List<String> deliveryMessages = new LinkedList<String>();
             List<Integer> npcIdsToKill = new LinkedList<Integer>();
             List<Integer> npcAmountsToKill = new LinkedList<Integer>();
             // Legacy Denizen script load
@@ -2449,13 +2449,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     + stageNum + ".items-to-deliver");
                             itemDeliveryTargetIds = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".npc-delivery-ids");
-                            deliveryMessages.addAll(config.getStringList("quests." + questKey + ".stages.ordered." 
-                                    + stageNum + ".delivery-messages"));
+                            deliveryMessages = config.getStringList("quests." + questKey + ".stages.ordered." 
+                                    + stageNum + ".delivery-messages");
                             int index = 0;
                             if (ConfigUtil.checkList(itemsToDeliver, ItemStack.class)) {
                                 for (final ItemStack stack : itemsToDeliver) {
                                     if (stack != null) {
                                         final int npcId = itemDeliveryTargetIds.get(index);
+                                        final String msg = deliveryMessages.size() > index 
+                                                ? deliveryMessages.get(index) 
+                                                : deliveryMessages.get(deliveryMessages.size() - 1);
                                         index++;
                                         if (stack != null) {
                                             if (getDependencies().getCitizens() != null) {
@@ -2463,7 +2466,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                                 if (npc != null) {
                                                     oStage.itemsToDeliver.add(stack);
                                                     oStage.itemDeliveryTargets.add(npcId);
-                                                    oStage.deliverMessages.addAll(deliveryMessages);
+                                                    oStage.deliverMessages.add(msg);
                                                 } else {
                                                     throw new StageFormatException(
                                                             "Citizens not found for npc-delivery-ids", quest, stageNum);
@@ -2479,14 +2482,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     }
                                 }
                             } else {
-                                final List<String> items = config.getStringList("quests." + questKey + ".stages.ordered." 
-                                        + stageNum + ".items-to-deliver");
+                                final List<String> items = config.getStringList("quests." + questKey 
+                                        + ".stages.ordered." + stageNum + ".items-to-deliver");
                                 if (ConfigUtil.checkList(items, String.class)) {
                                     // Legacy
                                     for (final String item : items) {
                                         final ItemStack is = ItemUtil.readItemStack("" + item);
                                         if (index <= itemDeliveryTargetIds.size()) {
                                             final int npcId = itemDeliveryTargetIds.get(index);
+                                            final String msg = deliveryMessages.size() > index 
+                                                    ? deliveryMessages.get(index) 
+                                                    : deliveryMessages.get(deliveryMessages.size() - 1);
                                             index++;
                                             if (is != null) {
                                                 if (getDependencies().getCitizens() != null) {
@@ -2494,16 +2500,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                                     if (npc != null) {
                                                         oStage.itemsToDeliver.add(is);
                                                         oStage.itemDeliveryTargets.add(npcId);
-                                                        oStage.deliverMessages.addAll(deliveryMessages);
+                                                        oStage.deliverMessages.add(msg);
                                                     } else {
                                                         throw new StageFormatException(
-                                                                "npc-delivery-ids has invalid NPC ID of " + npcId, quest, 
-                                                                stageNum);
+                                                                "npc-delivery-ids has invalid NPC ID of " + npcId, 
+                                                                quest, stageNum);
                                                     }
                                                 } else {
                                                     throw new StageFormatException(
-                                                            "Citizens was not found installed for npc-delivery-ids", quest,
-                                                            stageNum);
+                                                            "Citizens was not found installed for npc-delivery-ids", 
+                                                            quest, stageNum);
                                                 }
                                             } else {
                                                 throw new StageFormatException("items-to-deliver has invalid formatting " 
@@ -2566,8 +2572,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".mobs-to-kill")) {
                 if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
                         + ".mobs-to-kill"), String.class)) {
-                    final List<String> mobNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".mobs-to-kill");
+                    final List<String> mobNames = config.getStringList("quests." + questKey + ".stages.ordered." 
+                            + stageNum + ".mobs-to-kill");
                     for (final String mob : mobNames) {
                         final EntityType type = MiscUtil.getProperMobType(mob);
                         if (type != null) {
