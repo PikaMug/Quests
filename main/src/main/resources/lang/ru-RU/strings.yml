@@ -327,7 +327,6 @@ eventEditorInvalidName: "некорректное название предме�
 eventEditorStorm: "Действия Шторм"
 eventEditorSetWorld: "Установить мир"
 eventEditorSetDuration: "Установить длительность"
-eventEditorNoWorld: "(Не установлен мир)"
 eventEditorSetWorldFirst: "Сначала вы должны выбрать мир!"
 eventEditorInvalidWorld: "некорректное название мира!"
 eventEditorMustSetStormDuration: "Вы должны установить продолжительность шторма!"
