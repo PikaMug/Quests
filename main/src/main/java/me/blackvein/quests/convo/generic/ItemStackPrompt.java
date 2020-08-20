@@ -668,7 +668,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private String getItemData(final ConversationContext context) {
+    public String getItemData(final ConversationContext context) {
         if (context.getSessionData("tempName") != null) {
             String item;
             if (context.getSessionData("tempDisplay") == null) {
