@@ -126,12 +126,12 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     @Override
     public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
-        final Player player = (Player) abandonedEvent.getContext().getForWhom();
-        selectedExplosionLocations.remove(player.getUniqueId());
-        selectedEffectLocations.remove(player.getUniqueId());
-        selectedMobLocations.remove(player.getUniqueId());
-        selectedLightningLocations.remove(player.getUniqueId());
-        selectedTeleportLocations.remove(player.getUniqueId());
+        final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
+        selectedExplosionLocations.remove(uuid);
+        selectedEffectLocations.remove(uuid);
+        selectedMobLocations.remove(uuid);
+        selectedLightningLocations.remove(uuid);
+        selectedTeleportLocations.remove(uuid);
     }
     
     public Prompt returnToMenu(final ConversationContext context) {

@@ -136,10 +136,10 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (abandonedEvent.getContext().getSessionData(CK.Q_NAME) != null) {
             editingQuestNames.remove(abandonedEvent.getContext().getSessionData(CK.Q_NAME));
         }
-        final Player player = (Player) abandonedEvent.getContext().getForWhom();
-        selectedBlockStarts.remove(player.getUniqueId());
-        selectedKillLocations.remove(player.getUniqueId());
-        selectedReachLocations.remove(player.getUniqueId());
+        final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
+        selectedBlockStarts.remove(uuid);
+        selectedKillLocations.remove(uuid);
+        selectedReachLocations.remove(uuid);
     }
     
     public Prompt returnToMenu(final ConversationContext context) {
