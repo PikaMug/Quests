@@ -3070,7 +3070,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             try {
                                 effect = Effect.valueOf(s.toUpperCase());
                             } catch (final IllegalArgumentException e) {
-                                throw new ActionFormatException("effect-locations is not a valid effect name",
+                                throw new ActionFormatException(s + " is not a valid effect name",
                                         actionKey);
                             }
                             final Location l = ConfigUtil.getLocation(effectLocs.get(effectList.indexOf(s)));

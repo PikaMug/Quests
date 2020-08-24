@@ -341,7 +341,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     } else {
                         effects = new LinkedList<String>();
                     }
-                    effects.add(input.toUpperCase());
+                    effects.add(MiscUtil.getProperEffect(input).name());
                     context.setSessionData(CK.E_EFFECTS, effects);
                     final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.remove(player.getUniqueId());
