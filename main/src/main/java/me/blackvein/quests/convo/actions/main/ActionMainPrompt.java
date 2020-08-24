@@ -33,7 +33,6 @@ import me.blackvein.quests.Stage;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
-import me.blackvein.quests.convo.actions.menu.ActionMenuPrompt;
 import me.blackvein.quests.convo.actions.tasks.EffectPrompt;
 import me.blackvein.quests.convo.actions.tasks.PlayerPrompt;
 import me.blackvein.quests.convo.actions.tasks.TimerPrompt;
@@ -993,7 +992,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getActionFactory().saveAction(context);
-                return new ActionMenuPrompt(context);
+                return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ActionMainPrompt(context);
             } else {

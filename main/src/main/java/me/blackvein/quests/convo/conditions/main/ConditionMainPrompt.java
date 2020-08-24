@@ -25,7 +25,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
-import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
 import me.blackvein.quests.convo.conditions.tasks.PlayerPrompt;
 import me.blackvein.quests.convo.conditions.tasks.WorldPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
@@ -227,7 +226,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getConditionFactory().saveCondition(context);
-                return new ConditionMenuPrompt(context);
+                return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ConditionMainPrompt(context);
             } else {
