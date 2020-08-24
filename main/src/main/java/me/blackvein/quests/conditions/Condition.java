@@ -85,7 +85,7 @@ public class Condition {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
                     return true;
                 } else {
-                    System.out.println("DEBUG: condition item does not match with code= " 
+                    plugin.getLogger().info("DEBUG: Condition item does not match with code= " 
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
                 }
             }
@@ -94,7 +94,7 @@ public class Condition {
                 if (player.getWorld().getName().equalsIgnoreCase(w)) {
                     return true;
                 } else {
-                    System.out.println("DEBUG: condition world does not match for= " + w);
+                    plugin.getLogger().info("DEBUG: Condition world does not match for= " + w);
                 }
             }
         } else if (biomesWhileStayingWithin.isEmpty() == false) {
@@ -103,7 +103,7 @@ public class Condition {
                         .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
                     return true;
                 } else {
-                    System.out.println("DEBUG: condition biome does not match for= " + MiscUtil.getProperBiome(b));
+                    plugin.getLogger().info("DEBUG: Condition biome does not match for= " + MiscUtil.getProperBiome(b));
                 }
             }
         }
