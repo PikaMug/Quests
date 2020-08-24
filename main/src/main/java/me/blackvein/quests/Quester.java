@@ -4177,4 +4177,19 @@ public class Quester {
         }
         return true;
     }
+    
+    public boolean isSelectingBlock() {
+        final UUID uuid = getPlayer().getUniqueId();
+        if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(uuid)
+                || plugin.getQuestFactory().getSelectedKillLocations().containsKey(uuid)
+                || plugin.getQuestFactory().getSelectedReachLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedExplosionLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedEffectLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedMobLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedLightningLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedTeleportLocations().containsKey(uuid)) {
+                    return true;
+        }
+        return false;
+    }
 }

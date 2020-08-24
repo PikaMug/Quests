@@ -169,6 +169,9 @@ public class BlockListener implements Listener {
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
+                if (quester.isSelectingBlock()) {
+                    return;
+                }
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (evt.isCancelled() == false) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
