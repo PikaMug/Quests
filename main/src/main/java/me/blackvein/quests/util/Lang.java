@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,6 +38,7 @@ public class Lang {
 
     private static String iso = "en-US";
     private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
+    private static Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
     public static String getISO() {
         return iso;
@@ -252,6 +255,16 @@ public class Lang {
                 s = s.replace(token, tokenMap.get(token));
                 s = s.replace(token.toUpperCase(), tokenMap.get(token));
             }
+            final Matcher matcher = hexPattern.matcher(s);
+            while (matcher.find()) {
+                final StringBuilder hex = new StringBuilder();
+                hex.append(ChatColor.COLOR_CHAR + "x");
+                final char[] chars = matcher.group(1).toCharArray();
+                for (int index = 0; index < chars.length; index++) {
+                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
+                }
+                s = s.replace(matcher.group(), hex.toString());
+            }
             return s;
         }
         
@@ -259,13 +272,10 @@ public class Lang {
             if (tokenMap.isEmpty()) {
                 LangToken.init();
             }
-            for (final String token : tokenMap.keySet()) {
-                s = s.replace(token, tokenMap.get(token));
-                s = s.replace(token.toUpperCase(), tokenMap.get(token));
-                if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
-                    if (!Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
-                        s = PlaceholderAPI.setPlaceholders(p, s);
-                    }
+            s = convertString(s);
+            if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
+                if (!Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
+                    s = PlaceholderAPI.setPlaceholders(p, s);
                 }
             }
             return s;

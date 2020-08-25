@@ -29,6 +29,8 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class ConfigUtil {
     
+    private static Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    
     /**
      * Checks whether items in a list are instances of a class<p>
      * 
@@ -191,11 +193,11 @@ public class ConfigUtil {
         parsed = parsed.replace("<br>", "\n");
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
         
-        Matcher matcher = Pattern.compile("(?i)<#([0-9A-F]{6})>").matcher(parsed);
+        final Matcher matcher = hexPattern.matcher(parsed);
         while (matcher.find()) {
-            StringBuilder hex = new StringBuilder();
+            final StringBuilder hex = new StringBuilder();
             hex.append(ChatColor.COLOR_CHAR + "x");
-            char[] chars = matcher.group(1).toCharArray();
+            final char[] chars = matcher.group(1).toCharArray();
             for (int index = 0; index < chars.length; index++) {
                 hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
             }
