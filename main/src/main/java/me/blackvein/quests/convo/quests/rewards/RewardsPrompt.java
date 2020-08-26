@@ -200,8 +200,14 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 String text = "\n";
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                 for (int i = 0; i < items.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
-                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                    if (items.get(i) == null) {
+                        text += ChatColor.RED + "     - null\n";
+                        plugin.getLogger().severe(ChatColor.RED + "Item reward was null while editing quest ID " 
+                                + context.getSessionData(CK.Q_ID));
+                    } else {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                        + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                    }
                 }
                 return text;
             }
