@@ -964,13 +964,13 @@ public class Quester {
                     if (num1 < num2) {
                         String obj = Lang.get(getPlayer(), "enchantItem");
                         obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GREEN);
-                        obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE 
+                        obj = obj.replace("<enchantment>", ChatColor.DARK_AQUA 
                                 + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GREEN);
                         unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + num1 + "/" + num2);
                     } else {
                         String obj = Lang.get(getPlayer(), "enchantItem");
                         obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GRAY);
-                        obj = obj.replace("<enchantment>", ChatColor.LIGHT_PURPLE 
+                        obj = obj.replace("<enchantment>", ChatColor.DARK_AQUA 
                                 + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GRAY);
                         finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
                     }
@@ -1034,7 +1034,7 @@ public class Quester {
                                 .indexOf(e))) {
                             if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
                                 unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " 
-                                        + ChatColor.AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GREEN + ": " 
+                                        + ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GREEN + ": " 
                                         + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
                                         .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
                                         .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
@@ -1051,13 +1051,13 @@ public class Quester {
                         } else {
                             if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
                                 finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " 
-                                        + ChatColor.AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GRAY + ": " 
+                                        + ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GRAY + ": " 
                                         + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
                                         .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
                                         .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
                             } else {
                                 String obj = Lang.get(getPlayer(), "killAtLocation");
-                                obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + MiscUtil.getPrettyMobName(e));
+                                obj = obj.replace("<mob>", ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e));
                                 obj = obj.replace("<location>", getCurrentStage(quest).killNames
                                         .get(getCurrentStage(quest).mobsToKill.indexOf(e)));
                                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " 
