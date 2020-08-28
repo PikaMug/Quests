@@ -805,14 +805,30 @@ public class Quest {
      * 
      * @param quester The quester to be ejected
      */
-    @SuppressWarnings("deprecation")
     public void failQuest(final Quester quester) {
+        failQuest(quester, false);
+    }
+    
+    /**
+     * Force player to quit quest and inform them of their failure
+     * 
+     * @param quester The quester to be ejected
+     * @param ignoreFailAction Whether or not to ignore quest fail Action
+     */
+    @SuppressWarnings("deprecation")
+    public void failQuest(final Quester quester, final boolean ignoreFailAction) {
         final QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
         final Player player = quester.getPlayer();
+        if (!ignoreFailAction) {
+            final Stage stage = quester.getCurrentStage(this);
+            if (stage != null && stage.getFailAction() != null) {
+                quester.getCurrentStage(this).getFailAction().fire(quester, this);
+            }
+        }
         final String[] messages = {
                 ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name),
                 ChatColor.RED + Lang.get(player, "questFailed")

@@ -123,11 +123,12 @@ public class Stage {
     protected LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
     protected String script;
     protected Action startAction = null;
+    protected Action finishAction = null;
+    protected Action failAction = null;
     protected Action deathAction = null;
     protected Map<String, Action> chatActions = new HashMap<String, Action>();
     protected Map<String, Action> commandActions = new HashMap<String, Action>();
     protected Action disconnectAction = null;
-    protected Action finishAction = null;
     protected Condition condition = null;
     protected long delay = -1;
     protected String delayMessage = null;
@@ -411,6 +412,22 @@ public class Stage {
     public void setStartAction(final Action startAction) {
         this.startAction = startAction;
     }
+    
+    public Action getFinishAction() {
+        return finishAction;
+    }
+
+    public void setFinishAction(final Action finishAction) {
+        this.finishAction = finishAction;
+    }
+    
+    public Action getFailAction() {
+        return failAction;
+    }
+
+    public void setFailAction(final Action failAction) {
+        this.failAction = failAction;
+    }
 
     public Action getDeathAction() {
         return deathAction;
@@ -442,14 +459,6 @@ public class Stage {
 
     public void setDisconnectAction(final Action disconnectAction) {
         this.disconnectAction = disconnectAction;
-    }
-
-    public Action getFinishAction() {
-        return finishAction;
-    }
-
-    public void setFinishAction(final Action finishAction) {
-        this.finishAction = finishAction;
     }
     
     public Condition getCondition() {

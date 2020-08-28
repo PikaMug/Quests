@@ -2861,6 +2861,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     throw new StageFormatException("finish-event failed to load", quest, stageNum);
                 }
             }
+            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".fail-event")) {
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".fail-event"));
+                if (action != null) {
+                    oStage.failAction = action;
+                } else {
+                    throw new StageFormatException("fail-event failed to load", quest, stageNum);
+                }
+            }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".death-event")) {
                 final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum 
                         + ".death-event"));

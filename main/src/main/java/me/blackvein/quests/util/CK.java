@@ -92,6 +92,7 @@ public class CK {
     public static final String S_SHEAR_AMOUNTS = "shearAmounts";
     public static final String S_START_EVENT = "startEvent";
     public static final String S_FINISH_EVENT = "finishEvent";
+    public static final String S_FAIL_EVENT = "failEvent";
     public static final String S_CHAT_EVENTS = "chatEvents";
     public static final String S_CHAT_EVENT_TRIGGERS = "chatEventTriggers";
     public static final String S_CHAT_TEMP_EVENT = "chatTempEvent";

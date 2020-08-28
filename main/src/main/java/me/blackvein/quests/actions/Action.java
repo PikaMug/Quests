@@ -351,7 +351,7 @@ public class Action {
             }
         }
         if (failQuest == true) {
-            quest.failQuest(quester);
+            quest.failQuest(quester, true);
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + Lang.get(player, "timerStart")

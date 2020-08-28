@@ -493,6 +493,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (stage.getFinishAction() != null) {
                 context.setSessionData(pref + CK.S_FINISH_EVENT, stage.getFinishAction().getName());
             }
+            if (stage.getFailAction() != null) {
+                context.setSessionData(pref + CK.S_FAIL_EVENT, stage.getFailAction().getName());
+            }
             if (stage.getDeathAction() != null) {
                 context.setSessionData(pref + CK.S_DEATH_EVENT, stage.getDeathAction().getName());
             }
@@ -816,6 +819,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? context.getSessionData(pref + CK.S_START_EVENT) : null);
             stage.set("finish-event", context.getSessionData(pref + CK.S_FINISH_EVENT) != null 
                     ? context.getSessionData(pref + CK.S_FINISH_EVENT) : null);
+            stage.set("fail-event", context.getSessionData(pref + CK.S_FAIL_EVENT) != null 
+                    ? context.getSessionData(pref + CK.S_FAIL_EVENT) : null);
             stage.set("death-event", context.getSessionData(pref + CK.S_DEATH_EVENT) != null 
                     ? context.getSessionData(pref + CK.S_DEATH_EVENT) : null);
             stage.set("disconnect-event", context.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null 

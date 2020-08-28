@@ -37,7 +37,7 @@ public class ActionTimer extends BukkitRunnable {
     public void run() {
         quester.removeTimer(getTaskId());
         if (last) {
-            quest.failQuest(quester);
+            quest.failQuest(quester, false);
             quester.updateJournal();
         } else {
             quester.getPlayer().sendMessage(ChatColor.GREEN + Lang.get(quester.getPlayer(), "timerMessage")
