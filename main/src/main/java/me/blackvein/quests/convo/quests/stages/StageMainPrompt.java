@@ -526,7 +526,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new StageMainPrompt(stageNum, context);
             }
         case 16:
-            return new DeletePrompt(context);
+            return new StageDeletePrompt(context);
         case 17:
             return new StageMenuPrompt(context);
         default:
@@ -2068,53 +2068,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             }
         }
     }
-
-    // TODO - should be a Numeric prompt
-    public class DeletePrompt extends QuestsEditorStringPrompt {
-        
-        public DeletePrompt(final ConversationContext context) {
-            super(context);
-        }
-
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("confirmDelete");
-        }
-
-        @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + " - " + ChatColor.GREEN
-                    + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + " - " + ChatColor.RED 
-                    + Lang.get("noWord");
-            return ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW + Lang.get("stageEditorStage") 
-                    + " " + stageNum + ChatColor.RED + ")\n" + ChatColor.GOLD + "(" 
-                    + Lang.get("stageEditorConfirmStageNote") + ")\n" + text;
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("Yes")) {
-                new StageMenuPrompt(context).deleteStage(context, stageNum);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDeleteSucces"));
-                return new StageMenuPrompt(context);
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("No")) {
-                return new StageMainPrompt(stageNum, context);
-            } else {
-                player.sendMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new DeletePrompt(context);
-            }
-        }
-    }
+    
 
     public class StartMessagePrompt extends QuestsEditorStringPrompt {
         
@@ -2194,6 +2148,81 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new StageMainPrompt(stageNum, context);
             } else {
                 return new StageMainPrompt(stageNum, context);
+            }
+        }
+    }
+
+    public class StageDeletePrompt extends QuestsEditorStringPrompt {
+        
+        public StageDeletePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        public final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+        
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN;
+            case 2:
+                return ChatColor.RED;
+            default:
+                return null;
+            }
+        }
+        
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN + Lang.get("yesWord");
+            case 2:
+                return ChatColor.RED + Lang.get("noWord");
+            default:
+                return null;
+            }
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("confirmDelete");
+        }
+
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.YELLOW + getQueryText(context) + " (" + ChatColor.RED + Lang.get("stageEditorStage") 
+            + " " + stageNum + ChatColor.YELLOW + ")\n" + ChatColor.GOLD + "(" 
+            + Lang.get("stageEditorConfirmStageNote") + ")\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + "\n";
+            }
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                new StageMenuPrompt(context).deleteStage(context, stageNum);
+                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDeleteSucces"));
+                return new StageMenuPrompt(context);
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                return new StageMainPrompt(stageNum, context);
+            } else {
+                player.sendMessage(ChatColor.RED + Lang.get("invalidOption"));
+                return new StageDeletePrompt(context);
             }
         }
     }

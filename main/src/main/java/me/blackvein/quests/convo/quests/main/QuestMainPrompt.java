@@ -847,16 +847,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get("questEditorSave") + " \"" + ChatColor.AQUA 
-                    + context.getSessionData(CK.Q_NAME) + ChatColor.YELLOW + "\"?";
+            return Lang.get("questEditorSave");
         }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
             for (int i = 1; i <= size; i++) {
                 text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
                         + getSelectionText(context, i) + "\n";
@@ -965,7 +965,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.YELLOW + getQueryText(context) + "\n";

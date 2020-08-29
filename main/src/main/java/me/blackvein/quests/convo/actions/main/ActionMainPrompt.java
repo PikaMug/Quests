@@ -244,7 +244,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -961,9 +962,37 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         }
         
+        private final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
+        
         @Override
         public String getTitle(final ConversationContext context) {
             return null;
+        }
+        
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN;
+            case 2:
+                return ChatColor.RED;
+            default:
+                return null;
+            }
+        }
+        
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN + Lang.get("yesWord");
+            case 2:
+                return ChatColor.RED + Lang.get("noWord");
+            default:
+                return null;
+            }
         }
 
         @Override
@@ -976,8 +1005,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.YELLOW + getQueryText(context) + " \"" + ChatColor.AQUA 
-                    + context.getSessionData(CK.E_NAME) + ChatColor.YELLOW + "\"?\n";
+            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
             if (modified.isEmpty() == false) {
                 text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
                 for (final String s : modified) {
@@ -985,7 +1013,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 }
                 text += ChatColor.RED + Lang.get("eventEditorForcedToQuit") + "\n";
             }
-            return text + ChatColor.GREEN + "1 - " + Lang.get("yesWord") + "\n" + "2 - " + Lang.get("noWord");
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + "\n";
+            }
+            return text;
         }
 
         @Override
@@ -1006,10 +1038,38 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public ActionExitPrompt(final ConversationContext context) {
             super(context);
         }
+        
+        private final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
 
         @Override
         public String getTitle(final ConversationContext context) {
             return null;
+        }
+        
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN;
+            case 2:
+                return ChatColor.RED;
+            default:
+                return null;
+            }
+        }
+        
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN + Lang.get("yesWord");
+            case 2:
+                return ChatColor.RED + Lang.get("noWord");
+            default:
+                return null;
+            }
         }
 
         @Override
@@ -1019,13 +1079,16 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            final String text = ChatColor.GREEN + "" +  ChatColor.BOLD + "1" + ChatColor.RESET + ChatColor.GREEN + " - " 
-                    + Lang.get("yesWord") + "\n" + ChatColor.RED + "" +  ChatColor.BOLD + "2" + ChatColor.RESET 
-                    + ChatColor.RED + " - " + Lang.get("noWord");
-            return ChatColor.YELLOW + getQueryText(context) + "\n" + text;
+            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + "\n";
+            }
+            return text;
         }
 
         @Override
