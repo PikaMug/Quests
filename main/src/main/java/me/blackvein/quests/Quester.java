@@ -3822,9 +3822,11 @@ public class Quester {
     }
     
     public boolean canUseCompass() {
-        if (!getPlayer().hasPermission("worldedit.navigation.jumpto")) {
-            if (getPlayer().hasPermission("quests.compass")) {
-                return true;
+        if (getPlayer() != null) {
+            if (!getPlayer().hasPermission("worldedit.navigation.jumpto")) {
+                if (getPlayer().hasPermission("quests.compass")) {
+                    return true;
+                }
             }
         }
         return false;
