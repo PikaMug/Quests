@@ -441,6 +441,7 @@ public class Quester {
      * @param q The quest to start
      * @param ignoreReqs Whether to ignore Requirements
      */
+    @SuppressWarnings("deprecation")
     public void takeQuest(final Quest q, final boolean ignoreReqs) {
         if (q == null) {
             return;
@@ -552,10 +553,13 @@ public class Quester {
                 }
                 if (player.isOnline()) {
                     final Player p = getPlayer();
+                    final ItemStack[] original = p.getInventory().getContents().clone();
                     for (final ItemStack is : reqs.getItems()) {
                         if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is)) == true) {
                             if (InventoryUtil.removeItem(p.getInventory(), is) == false) {
                                 if (InventoryUtil.stripItem(p.getEquipment(), is) == false) {
+                                    p.getInventory().setContents(original);
+                                    p.updateInventory();
                                     p.sendMessage(Lang.get(p, "requirementsItemFail"));
                                     hardQuit(q);
                                     return;
