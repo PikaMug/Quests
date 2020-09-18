@@ -2489,6 +2489,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     for (final String item : items) {
                                         final ItemStack is = ItemUtil.readItemStack("" + item);
                                         if (index <= itemDeliveryTargetIds.size()) {
+                                            if (itemDeliveryTargetIds.size() != deliveryMessages.size()) {
+                                                throw new StageFormatException(
+                                                        "delivery-messages must be same size as items-to-deliver",
+                                                        quest, stageNum);
+                                            }
                                             final int npcId = itemDeliveryTargetIds.get(index);
                                             final String msg = deliveryMessages.size() > index 
                                                     ? deliveryMessages.get(index) 
@@ -2512,8 +2517,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                                             quest, stageNum);
                                                 }
                                             } else {
-                                                throw new StageFormatException("items-to-deliver has invalid formatting " 
-                                                        + item, quest, stageNum);
+                                                throw new StageFormatException(
+                                                        "items-to-deliver has invalid formatting " + item, quest, 
+                                                        stageNum);
                                             }
                                         } else {
                                             throw new StageFormatException("items-to-deliver is missing target IDs"
