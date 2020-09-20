@@ -325,14 +325,18 @@ public class PlayerListener implements Listener {
                                                 }
                                             }
                                             quester.setQuestToTake(q.getName());
-                                            final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
-                                                    + quester.getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" 
-                                                    + ChatColor.RESET + plugin.getQuest(quester.getQuestToTake())
-                                                    .getDescription() + "\n";
-                                            for (final String msg : s.split("<br>")) {
-                                                player.sendMessage(msg);
+                                            if (!plugin.getSettings().canAskConfirmation()) {
+                                                quester.takeQuest(q, false);
+                                            } else {
+                                                final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
+                                                        + quester.getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" 
+                                                        + ChatColor.RESET + plugin.getQuest(quester.getQuestToTake())
+                                                        .getDescription() + "\n";
+                                                for (final String msg : s.split("<br>")) {
+                                                    player.sendMessage(msg);
+                                                }
+                                                plugin.getConversationFactory().buildConversation(player).begin();
                                             }
-                                            plugin.getConversationFactory().buildConversation(player).begin();
                                         }
                                         break;
                                     }
