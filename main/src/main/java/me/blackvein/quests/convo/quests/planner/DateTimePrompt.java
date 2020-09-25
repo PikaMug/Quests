@@ -137,8 +137,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             }
         case 2:
             if (context.getSessionData("tempMonth") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempMonth") 
-                        + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA 
+                        + ((Integer) context.getSessionData("tempMonth") + 1) + ChatColor.GRAY + ")";
             }
         case 3:
             if (context.getSessionData("tempYear") != null) {
