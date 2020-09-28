@@ -1193,7 +1193,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 fromOrder++;
                 for (final Quest q : subQuests) {
-                    player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    if (quester.canAcceptOffer(q, false)) {
+                        player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    } else {
+                        player.sendMessage(ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
+                    }
                     fromOrder++;
                 }
                 final int numPages = (int) Math.ceil(((double) available.size()) / ((double) rows));
@@ -1216,7 +1220,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 fromOrder++;
                 for (final Quest q : subQuests) {
-                    player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    if (quester.canAcceptOffer(q, false)) {
+                        player.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    } else {
+                        player.sendMessage(ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
+                    }
                     fromOrder++;
                 }
                 final int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
