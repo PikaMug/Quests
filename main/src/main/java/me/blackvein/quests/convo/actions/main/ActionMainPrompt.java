@@ -76,6 +76,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 4:
         case 5:
         case 6:
+            return ChatColor.BLUE;
         case 7:
             if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY;

@@ -753,7 +753,24 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (s.startsWith("/")) {
                         s = s.substring(1);
                     }
-                    commands.add(s);
+                    switch (s.trim().split(" ")[0].toLowerCase()) {
+                    case "*":
+                    case "op":
+                    case "deop":
+                    case "stop":
+                    case "reload":
+                    case "timings":
+                    case "pardon":
+                    case "pardon-ip":
+                    case "ban":
+                    case "ban-ip":
+                    case "whitelist":
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
+                                + ChatColor.DARK_RED + " (" + s.trim() + ")");
+                        continue;
+                    default:
+                        commands.add(s.trim());
+                    }
                 }
                 context.setSessionData(CK.REW_COMMAND, commands.isEmpty() ? null : commands);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
