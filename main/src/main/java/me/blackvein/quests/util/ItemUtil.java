@@ -125,6 +125,12 @@ public class ItemUtil {
                                 .equals(pmeta2.getBasePotionData().getType()) == false) {
                             return -9;
                         }
+                        if (pmeta1.getBasePotionData().isExtended() != pmeta2.getBasePotionData().isExtended()) {
+                            return -9;
+                        }
+                        if (pmeta1.getBasePotionData().isUpgraded() != pmeta2.getBasePotionData().isUpgraded()) {
+                            return -9;
+                        }
                     }
                 }
             }
