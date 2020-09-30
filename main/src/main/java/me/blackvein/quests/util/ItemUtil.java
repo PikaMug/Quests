@@ -58,110 +58,7 @@ public class ItemUtil {
      * -9 if stack Potion type is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount) {
-        if (one == null || two == null) {
-            return 1;
-        }
-        if (one.getType().name().equals(two.getType().name()) == false) {
-            return -1;
-        } else if ((one.getAmount() != two.getAmount()) && ignoreAmount == false) {
-            return -2;
-        } else if (one.getDurability() != two.getDurability()) {
-            if (one.getDurability() < 999 && two.getDurability() < 999) { // wildcard value
-                return -3;
-            }
-        }
-        if (one.hasItemMeta() || two.hasItemMeta()) {
-            if (one.hasItemMeta() && two.hasItemMeta() == false) {
-                return -4;
-            } else if (one.hasItemMeta() == false && two.hasItemMeta()) {
-                return -4;
-            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() == false) {
-                return -4;
-            } else if (one.getItemMeta().hasDisplayName() == false && two.getItemMeta().hasDisplayName()) {
-                return -4;
-            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() == false) {
-                return -4;
-            } else if (one.getItemMeta().hasLore() == false && two.getItemMeta().hasLore()) {
-                return -4;
-            } else if (one.getItemMeta().hasDisplayName() && two.getItemMeta().hasDisplayName() 
-                    && ChatColor.stripColor(one.getItemMeta().getDisplayName())
-                    .equals(ChatColor.stripColor(two.getItemMeta().getDisplayName())) == false) {
-                return -4;
-            } else if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore() 
-                    && one.getItemMeta().getLore().equals(two.getItemMeta().getLore()) == false) {
-                return -4;
-            }
-            try {
-                final ItemMeta test = one.getItemMeta();
-                test.setUnbreakable(true);
-                // We're on 1.11+ so check ItemFlags
-                for (final ItemFlag flag : ItemFlag.values()) {
-                    if (one.getItemMeta().hasItemFlag(flag) == false && two.getItemMeta().hasItemFlag(flag)) {
-                        return -7;
-                    }
-                }
-            } catch (final Throwable tr) {
-                // We're below 1.11 so don't check ItemFlags
-            }
-            if (one.getType().equals(Material.WRITTEN_BOOK)) {
-                final BookMeta bmeta1 = (BookMeta) one.getItemMeta();
-                final BookMeta bmeta2 = (BookMeta) two.getItemMeta();
-                if (bmeta1.getTitle().equals(bmeta2.getTitle()) == false) {
-                    if (bmeta1.getAuthor().equals(bmeta2.getAuthor()) == false) {
-                        if (bmeta1.getPages().equals(bmeta2.getPages()) == false) {
-                            return -8;
-                        }
-                    }
-                }
-            }
-            if (one.getItemMeta() instanceof PotionMeta) {
-                if (Material.getMaterial("LINGERING_POTION") != null) {
-                    // Bukkit version is 1.9+
-                    if (one.getType().equals(Material.POTION) || one.getType().equals(Material.LINGERING_POTION) 
-                            || one.getType().equals(Material.SPLASH_POTION)) {
-                        final PotionMeta pmeta1 = (PotionMeta) one.getItemMeta();
-                        final PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
-                        if (pmeta1.getBasePotionData().getType()
-                                .equals(pmeta2.getBasePotionData().getType()) == false) {
-                            return -9;
-                        }
-                        if (pmeta1.getBasePotionData().isExtended() != pmeta2.getBasePotionData().isExtended()) {
-                            return -9;
-                        }
-                        if (pmeta1.getBasePotionData().isUpgraded() != pmeta2.getBasePotionData().isUpgraded()) {
-                            return -9;
-                        }
-                    }
-                }
-            }
-        }
-        if (Material.getMaterial("LINGERING_POTION") == null) {
-            if (one.getType().equals(Material.POTION)) {
-                // Bukkit version is below 1.9
-                final Potion pot1 = new Potion(one.getDurability());
-                final Potion pot2 = new Potion(two.getDurability());
-                if (pot1.getType() == null || pot2.getType() == null) {
-                    return -9;
-                }
-                if (!pot1.getType().equals(pot2.getType())) {
-                    return -9;
-                }
-            }
-        }
-        if (one.getEnchantments().equals(two.getEnchantments()) == false) {
-            return -5;
-        }
-        if (one.getType().equals(Material.ENCHANTED_BOOK)) {
-            final EnchantmentStorageMeta esmeta1 = (EnchantmentStorageMeta) one.getItemMeta();
-            final EnchantmentStorageMeta esmeta2 = (EnchantmentStorageMeta) two.getItemMeta();
-            if (esmeta1.hasStoredEnchants() && esmeta2.hasStoredEnchants() == false) {
-                return -6;
-            }
-            if (esmeta1.getStoredEnchants().equals(esmeta2.getStoredEnchants()) == false) {
-                return -6;
-            }
-        }
-        return 0;
+        return compareItems(one, two, ignoreAmount, false);
     }
     
     /**
@@ -184,7 +81,8 @@ public class ItemUtil {
      * -8 if stack Written Book data is unequal
      * -9 if stack Potion type is unequal
      */
-    public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, final boolean ignoreDurability) {
+    public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, 
+            final boolean ignoreDurability) {
         if (one == null || two == null) {
             return 1;
         }
@@ -250,6 +148,12 @@ public class ItemUtil {
                         final PotionMeta pmeta2 = (PotionMeta) two.getItemMeta();
                         if (pmeta1.getBasePotionData().getType()
                                 .equals(pmeta2.getBasePotionData().getType()) == false) {
+                            return -9;
+                        }
+                        if (pmeta1.getBasePotionData().isExtended() != pmeta2.getBasePotionData().isExtended()) {
+                            return -9;
+                        }
+                        if (pmeta1.getBasePotionData().isUpgraded() != pmeta2.getBasePotionData().isUpgraded()) {
                             return -9;
                         }
                     }
