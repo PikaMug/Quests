@@ -38,10 +38,10 @@ public class ConfigUtil {
      * 
      * @param list The list to check objects of
      * @param clazz The class to compare against
-     * @return false if list is null or list object does not match
+     * @return false if arg is null or list object does not match
      */
     public static boolean checkList(final List<?> list, final Class<?> clazz) {
-        if (list == null) {
+        if (list == null || clazz == null) {
             return false;
         }
         for (final Object o : list) {
