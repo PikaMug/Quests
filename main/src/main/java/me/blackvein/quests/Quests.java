@@ -1305,27 +1305,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Get Quester from player UUID
      * 
      * @param id Player UUID
-     * @return Quester, or null if not found
+     * @return Quester, or null if UUID is null
      */
     public Quester getQuester(final UUID id) {
-        Quester quester = null;
+        if (id == null) {
+            return null;
+        }
         for (final Quester q: questers) {
             if (q != null && q.getUUID().equals(id)) {
-                quester = q;
+                return q;
             }
         }
-        if (quester == null) {
-            quester = new Quester(this);
-            quester.setUUID(id);
-            if (depends.getCitizens() != null) {
-                if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
-                    return quester;
-                }
+        final Quester quester = new Quester(this);
+        quester.setUUID(id);
+        if (depends.getCitizens() != null) {
+            if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
+                return quester;
             }
-            questers.add(quester);
-            if (!quester.loadData()) {
-                questers.remove(quester);
-            }
+        }
+        questers.add(quester);
+        if (!quester.loadData()) {
+            questers.remove(quester);
         }
         return quester;
     }
