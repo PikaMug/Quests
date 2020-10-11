@@ -28,6 +28,7 @@ public class Settings {
     private boolean allowPranks = true;
     private boolean askConfirmation = true;
     private int consoleLogging = 1;
+    private boolean disableCommandFeedback = true;
     private boolean genFilesOnJoin = true;
     private boolean ignoreLockedQuests = false;
     private int killDelay = 0;
@@ -81,6 +82,12 @@ public class Settings {
     }
     public void setConsoleLogging(final int consoleLogging) {
         this.consoleLogging = consoleLogging;
+    }
+    public boolean canDisableCommandFeedback() {
+        return disableCommandFeedback;
+    }
+    public void setDisableCommandFeedback(final boolean disableCommandFeedback) {
+        this.disableCommandFeedback = disableCommandFeedback;
     }
     public boolean canGenFilesOnJoin() {
         return genFilesOnJoin;

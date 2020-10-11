@@ -562,6 +562,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
                 loadModules();
+                if (getSettings().canDisableCommandFeedback()) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
+                }
                 loading = false;
             }
         }, ticks);
