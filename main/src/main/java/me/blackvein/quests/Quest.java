@@ -462,6 +462,10 @@ public class Quest {
         if (rews.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
             plugin.getDependencies().getVaultEconomy().depositPlayer(player, rews.getMoney());
             issuedReward = true;
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getMoney() 
+                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural());
+            }
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
@@ -475,6 +479,10 @@ public class Quest {
                             + "Please contact an administrator.");
                 }
                 issuedReward = true;
+                if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().info(player.getUniqueId() + " was rewarded " + i.getType().name() + " x " 
+                            + i.getAmount());
+                }
             }
         }
         for (final String s : rews.getCommands()) {
@@ -495,6 +503,9 @@ public class Quest {
                 });
             }
             issuedReward = true;
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded command " + s);
+            }
         }
         for (int i = 0; i < rews.getPermissions().size(); i++) {
             if (plugin.getDependencies().getVaultPermission() != null) {
@@ -508,20 +519,29 @@ public class Quest {
                 } else {
                     plugin.getDependencies().getVaultPermission().playerAdd(world, player, perm);
                 }
+                if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().info(player.getUniqueId() + " was rewarded permission " + perm);
+                }
+                issuedReward = true;
             }
-            issuedReward = true;
         }
         for (final String s : rews.getMcmmoSkills()) {
-            UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), 
-                    rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)));
+            final int levels = rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s));
+            UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), levels);
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
+            }
             issuedReward = true;
         }
         if (player.isOnline()) {
             for (final String s : rews.getHeroesClasses()) {
                 final Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
-                hero.addExp(rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)), 
-                        plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
+                final double expChange = rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s));
+                hero.addExp(expChange, plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
+                if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + expChange);
+                }
                 issuedReward = true;
             }
         }
@@ -566,18 +586,33 @@ public class Quest {
             if (lb.getMessageList().isEmpty() == false) {
                 phatLootMessages.addAll(lb.getMessageList());
             }
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded loot " + s);
+            }
             issuedReward = true;
         }
         if (rews.getExp() > 0 && player.isOnline()) {
             ((Player)player).giveExp(rews.getExp());
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rews.getExp());
+            }
             issuedReward = true;
         }
         if (rews.getQuestPoints() > 0) {
             q.questPoints += rews.getQuestPoints();
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() 
+                        + Lang.get("questPoints"));
+            }
             issuedReward = true;
         }
         if (rews.getCustomRewards().isEmpty() == false) {
             issuedReward = true;
+            if (plugin.getSettings().getConsoleLogging() > 2) {
+                for (final String s : rews.getCustomRewards().keySet()) {
+                    plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
+                }
+            }
         }
         
         // Inform player
