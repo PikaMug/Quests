@@ -587,9 +587,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " deleted quest " + quest);
+            plugin.getLogger().info(identifier + " deleted quest " + quest);
         }
     }
 
@@ -632,9 +632,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         savePlanner(context, section);
         saveOptions(context, section);
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " saved quest " + (String) context.getSessionData(CK.Q_NAME));
+            plugin.getLogger().info(identifier + " saved quest " + (String) context.getSessionData(CK.Q_NAME));
         }
     }
     

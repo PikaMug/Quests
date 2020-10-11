@@ -302,9 +302,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorDeleted"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " deleted action " + action);
+            plugin.getLogger().info(identifier + " deleted action " + action);
         }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
@@ -465,9 +465,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorSaved"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " saved action " + (String) context.getSessionData(CK.E_NAME));
+            plugin.getLogger().info(identifier + " saved action " + (String) context.getSessionData(CK.E_NAME));
         }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {

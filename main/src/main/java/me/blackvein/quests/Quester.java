@@ -539,6 +539,9 @@ public class Quester {
             addEmptiesFor(q, 0);
             try {
                 currentQuests.put(q, 0);
+                if (plugin.getSettings().getConsoleLogging() > 1) {
+                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + q.getName());
+                }
             } catch (final NullPointerException npe) {
                 plugin.getLogger().severe("Unable to add quest" + q.getName() + " for player " + player.getName()
                         + ". Consider resetting player data or report on Github");
@@ -671,6 +674,9 @@ public class Quester {
             return;
         }
         hardQuit(quest);
+        if (plugin.getSettings().getConsoleLogging() > 1) {
+            plugin.getLogger().info(getPlayer().getUniqueId() + " quit quest " + quest.getName());
+        }
         for (final String message : messages) {
             if (message != null && !message.equals("") && getPlayer().isOnline()) {
                 getPlayer().sendMessage(message);

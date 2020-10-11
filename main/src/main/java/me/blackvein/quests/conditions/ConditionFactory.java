@@ -144,9 +144,9 @@ public class ConditionFactory implements ConversationAbandonedListener {
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorDeleted"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " deleted condition " + condition);
+            plugin.getLogger().info(identifier + " deleted condition " + condition);
         }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
@@ -215,9 +215,9 @@ public class ConditionFactory implements ConversationAbandonedListener {
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorSaved"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String name = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(name + " saved condition " + (String) context.getSessionData(CK.C_NAME));
+            plugin.getLogger().info(identifier + " saved condition " + (String) context.getSessionData(CK.C_NAME));
         }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
