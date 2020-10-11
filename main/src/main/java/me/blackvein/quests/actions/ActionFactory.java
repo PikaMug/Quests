@@ -268,12 +268,12 @@ public class ActionFactory implements ConversationAbandonedListener {
             data.load(actionsFile);
         } catch (final IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         }
@@ -288,7 +288,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         try {
             data.save(actionsFile);
         } catch (final IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
@@ -300,7 +300,12 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
         };
         plugin.reload(callback);
-        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorDeleted"));
+        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorDeleted"));
+        if (plugin.getSettings().getConsoleLogging() > 0) {
+            final String name = context.getForWhom() instanceof Player ? 
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(name + " deleted action " + action);
+        }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
@@ -317,12 +322,12 @@ public class ActionFactory implements ConversationAbandonedListener {
             data.load(actionsFile);
         } catch (final IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         }
@@ -446,7 +451,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         try {
             data.save(actionsFile);
         } catch (final IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
@@ -458,7 +463,12 @@ public class ActionFactory implements ConversationAbandonedListener {
             }
         };
         plugin.reload(callback);
-        ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("eventEditorSaved"));
+        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorSaved"));
+        if (plugin.getSettings().getConsoleLogging() > 0) {
+            final String name = context.getForWhom() instanceof Player ? 
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(name + " saved action " + (String) context.getSessionData(CK.E_NAME));
+        }
         for (final Quester q : plugin.getQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);

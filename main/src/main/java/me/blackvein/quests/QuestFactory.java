@@ -553,12 +553,12 @@ public class QuestFactory implements ConversationAbandonedListener {
             data.load(questsFile);
         } catch (final IOException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<quest>", questsFile.getName()));
             return;
         } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<quest>", questsFile.getName()));
             return;
         }
@@ -573,7 +573,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         try {
             data.save(questsFile);
         } catch (final IOException e) {
-            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
@@ -586,6 +586,11 @@ public class QuestFactory implements ConversationAbandonedListener {
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
+        if (plugin.getSettings().getConsoleLogging() > 0) {
+            final String name = context.getForWhom() instanceof Player ? 
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(name + " deleted quest " + quest);
+        }
     }
 
     public void saveQuest(final ConversationContext context, final ConfigurationSection section) {
@@ -626,6 +631,11 @@ public class QuestFactory implements ConversationAbandonedListener {
         saveRewards(context, section);
         savePlanner(context, section);
         saveOptions(context, section);
+        if (plugin.getSettings().getConsoleLogging() > 0) {
+            final String name = context.getForWhom() instanceof Player ? 
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(name + " saved quest " + (String) context.getSessionData(CK.Q_NAME));
+        }
     }
     
     @SuppressWarnings("unchecked")

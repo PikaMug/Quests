@@ -5,6 +5,7 @@ allow-command-quests-with-npcs: false
 allow-pranks: true
 allow-quitting: true
 ask-confirmation: true
+console-logging: 1
 generate-files-on-join: true
 ignore-locked-quests: false
 kill-delay: 600
