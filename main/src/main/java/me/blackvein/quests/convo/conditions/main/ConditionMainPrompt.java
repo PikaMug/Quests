@@ -25,6 +25,7 @@ import me.blackvein.quests.Stage;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
+import me.blackvein.quests.convo.conditions.tasks.EntityPrompt;
 import me.blackvein.quests.convo.conditions.tasks.PlayerPrompt;
 import me.blackvein.quests.convo.conditions.tasks.WorldPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
@@ -60,10 +61,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 2:
         case 3:
         case 4:
-            return ChatColor.BLUE;
         case 5:
-            return ChatColor.GREEN;
+            return ChatColor.BLUE;
         case 6:
+            return ChatColor.GREEN;
+        case 7:
             return ChatColor.RED;
         default:
             return null;
@@ -76,14 +78,16 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("conditionEditorSetName");
         case 2:
-            return ChatColor.GOLD + Lang.get("eventEditorPlayer");
+            return ChatColor.GOLD + Lang.get("conditionEditorEntity");
         case 3:
-            return ChatColor.GOLD + Lang.get("conditionEditorWorld");
+            return ChatColor.GOLD + Lang.get("eventEditorPlayer");
         case 4:
-            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
+            return ChatColor.GOLD + Lang.get("conditionEditorWorld");
         case 5:
-            return ChatColor.GREEN + Lang.get("save");
+            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
         case 6:
+            return ChatColor.GREEN + Lang.get("save");
+        case 7:
             return ChatColor.RED + Lang.get("exit");
         default:
             return null;
@@ -96,14 +100,15 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 1:
         case 2:
         case 3:
-            return "";
         case 4:
+            return "";
+        case 5:
             if (context.getSessionData(CK.C_FAIL_QUEST) == null) {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
             }
             return "" + ChatColor.AQUA + context.getSessionData(CK.C_FAIL_QUEST);
-        case 5:
         case 6:
+        case 7:
             return "";
         default:
             return null;
@@ -130,10 +135,12 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 1:
             return new ConditionNamePrompt(context);
         case 2:
-            return new PlayerPrompt(context);
+            return new EntityPrompt(context);
         case 3:
-            return new WorldPrompt(context);
+            return new PlayerPrompt(context);
         case 4:
+            return new WorldPrompt(context);
+        case 5:
             final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
@@ -141,13 +148,13 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
             }
             return new ConditionMainPrompt(context);
-        case 5:
+        case 6:
             if (context.getSessionData(CK.C_OLD_CONDITION) != null) {
                 return new ConditionSavePrompt(context, (String) context.getSessionData(CK.C_OLD_CONDITION));
             } else {
                 return new ConditionSavePrompt(context, null);
             }
-        case 6:
+        case 7:
             return new ConditionExitPrompt(context);
         default:
             return new ConditionMainPrompt(context);

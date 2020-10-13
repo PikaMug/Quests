@@ -12,17 +12,14 @@
 
 package me.blackvein.quests.convo.conditions.tasks;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Vehicle;
 
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -33,13 +30,13 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
-public class WorldPrompt extends QuestsEditorNumericPrompt {
+public class EntityPrompt extends QuestsEditorNumericPrompt {
     
-    public WorldPrompt(final ConversationContext context) {
+    public EntityPrompt(final ConversationContext context) {
         super(context);
     }
     
-    private final int size = 3;
+    private final int size = 2;
     
     @Override
     public int getSize() {
@@ -48,16 +45,15 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("conditionEditorWorld");
+        return Lang.get("conditionEditorEntity");
     }
     
     @Override
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
-            case 2:
                 return ChatColor.BLUE;
-            case 3:
+            case 2:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -68,10 +64,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinWorld");
+            return ChatColor.YELLOW + Lang.get("conditionEditorRideEntity");
         case 2:
-            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinBiome");
-        case 3:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -83,26 +77,16 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) == null) {
+            if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_RIDING_ENTITY)) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + MiscUtil.getProperMobType(s) + "\n";
                 }
                 return text;
             }
         case 2:
-            if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) == null) {
-                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-            } else {
-                String text = "\n";
-                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
-                }
-                return text;
-            }
-        case 3:
             return "";
         default:
             return null;
@@ -126,10 +110,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new WorldsPrompt(context);
+            return new EntitiesPrompt(context);
         case 2:
-            return new BiomesPrompt(context);
-        case 3:
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
@@ -137,24 +119,24 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new WorldPrompt(context);
+            return new EntityPrompt(context);
         }
     }
     
-    public class WorldsPrompt extends QuestsEditorStringPrompt {
+    public class EntitiesPrompt extends QuestsEditorStringPrompt {
         
-        public WorldsPrompt(final ConversationContext context) {
+        public EntitiesPrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("conditionEditorWorldsTitle");
+            return Lang.get("conditionEditorEntitiesTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("conditionEditorWorldsPrompt");
+            return Lang.get("conditionEditorEntitiesPrompt");
         }
         
         @Override
@@ -162,87 +144,42 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String worlds = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final List<World> worldArr = Bukkit.getWorlds();
-            for (int i = 0; i < worldArr.size(); i++) {
-                if (i < (worldArr.size() - 1)) {
-                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + ", ";
-                } else {
-                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + "\n";
+            String entities = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            final EntityType[] mobArr = EntityType.values();
+            for (int i = 0; i < mobArr.length; i++) {
+                final EntityType type = mobArr[i];
+                if (type.getEntityClass() == null || !Vehicle.class.isAssignableFrom(type.getEntityClass())) {
+                    continue;
                 }
+                entities += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + ", ";
             }
-            return worlds + ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> worlds = new LinkedList<String>();
-                for (final String s : input.split(" ")) {
-                    if (Bukkit.getWorld(s) != null) {
-                        worlds.add(s);
-                    } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("conditionEditorInvalidWorld"));
-                        return new WorldsPrompt(context);
-                    }
-                }
-                context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
-            }
-            return new WorldPrompt(context);
-        }
-    }
-    
-    public class BiomesPrompt extends QuestsEditorStringPrompt {
-        
-        public BiomesPrompt(final ConversationContext context) {
-            super(context);
-        }
-
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return Lang.get("conditionEditorBiomesTitle");
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("conditionEditorBiomesPrompt");
-        }
-        
-        @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
-            String biomes = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final LinkedList<Biome> biomeArr = new LinkedList<Biome>(Arrays.asList(Biome.values()));
-            for (int i = 0; i < biomeArr.size(); i++) {
-                if (i < (biomeArr.size() - 1)) {
-                    biomes += MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()) + ", ";
-                } else {
-                    biomes += MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()) + "\n";
-                }
-            }
-            return biomes + ChatColor.YELLOW + getQueryText(context);
+            entities = entities.substring(0, entities.length() - 2) + "\n";
+            return entities + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> biomes = new LinkedList<String>();
+                final LinkedList<String> mobTypes = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
-                    if (MiscUtil.getProperBiome(s) != null) {
-                        biomes.add(s);
+                    if (MiscUtil.getProperMobType(s) != null) {
+                        final EntityType type = MiscUtil.getProperMobType(s);
+                        if (type.getEntityClass() != null && Vehicle.class.isAssignableFrom(type.getEntityClass())) {
+                            mobTypes.add(s);
+                            context.setSessionData(CK.C_WHILE_RIDING_ENTITY, mobTypes);
+                        } else {
+                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                                    + Lang.get("stageEditorInvalidMob"));
+                            return new EntitiesPrompt(context);
+                        }
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("conditionEditorInvalidBiome"));
-                        return new BiomesPrompt(context);
+                                + Lang.get("stageEditorInvalidMob"));
+                        return new EntitiesPrompt(context);
                     }
                 }
-                context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
             }
-            return new WorldPrompt(context);
+            return new EntityPrompt(context);
         }
     }
 }

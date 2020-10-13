@@ -3362,6 +3362,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 throw new ConditionFormatException("fail-quest is not a true/false value", conditionKey);
             }
         }
+        if (data.contains(conditionKey + "ride-entity")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "ride-entity"), String.class)) {
+                final LinkedList<String> entities = new LinkedList<String>();
+                for (final String s : data.getStringList(conditionKey + "ride-entity")) {
+                    final EntityType e = MiscUtil.getProperMobType(s);
+                    if (e == null) {
+                        throw new ConditionFormatException("ride-entity is not a valid entity type",
+                                conditionKey);
+                    }
+                    entities.add(s);
+                }
+                condition.setEntitiesWhileRiding(entities);
+            } else {
+                throw new ConditionFormatException("ride-entity is not a list of entity types", conditionKey);
+            }
+        }
         if (data.contains(conditionKey + "hold-main-hand")) {
             final LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
             @SuppressWarnings("unchecked")

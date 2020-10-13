@@ -79,6 +79,12 @@ public class ConditionFactory implements ConversationAbandonedListener {
         } else {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
         }
+        if (condition.getEntitiesWhileRiding() != null 
+                && condition.getEntitiesWhileRiding().isEmpty() == false) {
+            final LinkedList<String> entities = new LinkedList<String>();
+            entities.addAll(condition.getEntitiesWhileRiding());
+            context.setSessionData(CK.C_WHILE_RIDING_ENTITY, entities);
+        }
         if (condition.getItemsWhileHoldingMainHand() != null 
                 && condition.getItemsWhileHoldingMainHand().isEmpty() == false) {
             final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -103,6 +109,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_OLD_CONDITION, null);
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
+        context.setSessionData(CK.C_WHILE_RIDING_ENTITY, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
@@ -185,6 +192,10 @@ public class ConditionFactory implements ConversationAbandonedListener {
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("fail-quest", true);
             }
+        }
+        if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) != null) {
+            section.set("ride-entity", 
+                    context.getSessionData(CK.C_WHILE_RIDING_ENTITY));
         }
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", 

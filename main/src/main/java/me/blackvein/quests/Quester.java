@@ -598,22 +598,28 @@ public class Quester {
                 final Condition c = stage.getCondition();
                 if (c != null) {
                     p.sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions") + ":");
-                    if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
+                    if (!c.getEntitiesWhileRiding().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorRideEntity");
+                        for (final String e : c.getEntitiesWhileRiding()) {
+                            msg += ChatColor.AQUA + "\n   \u2515 " + e;
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
                         for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
-                            msg += ChatColor.AQUA + "\n   - " + ItemUtil.getPrettyItemName(is.getType().name());
+                            msg += ChatColor.AQUA + "\n   \u2515 " + ItemUtil.getPrettyItemName(is.getType().name());
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
                     } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorStayWithinWorld");
                         for (final String w : c.getWorldsWhileStayingWithin()) {
-                            msg += ChatColor.AQUA + "\n   - " + w;
+                            msg += ChatColor.AQUA + "\n   \u2515 " + w;
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
                     } else if (!c.getBiomesWhileStayingWithin().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorStayWithinBiome");
                         for (final String b : c.getBiomesWhileStayingWithin()) {
-                            msg += ChatColor.AQUA + "\n   - " + MiscUtil.snakeCaseToUpperCamelCase(b);
+                            msg += ChatColor.AQUA + "\n   \u2515 " + MiscUtil.snakeCaseToUpperCamelCase(b);
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
                     }

@@ -29,6 +29,7 @@ public class Condition {
     private final Quests plugin;
     private String name = "";
     private boolean failQuest = false;
+    private LinkedList<String> entitiesWhileRiding = new LinkedList<String>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
@@ -51,6 +52,14 @@ public class Condition {
 
     public void setFailQuest(final boolean failQuest) {
         this.failQuest = failQuest;
+    }
+    
+    public LinkedList<String> getEntitiesWhileRiding() {
+        return entitiesWhileRiding;
+    }
+    
+    public void setEntitiesWhileRiding(final LinkedList<String> entitiesWhileRiding) {
+        this.entitiesWhileRiding = entitiesWhileRiding;
     }
 
     public LinkedList<ItemStack> getItemsWhileHoldingMainHand() {
@@ -80,29 +89,37 @@ public class Condition {
     @SuppressWarnings("deprecation")
     public boolean check(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
-        if (itemsWhileHoldingMainHand.isEmpty() == false) {
+        if (!entitiesWhileRiding.isEmpty()) {
+            for (final String e : entitiesWhileRiding) {
+                if (player.isInsideVehicle() && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
+                    return true;
+                } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().info("DEBUG: Condition entity does not match for= " + e);
+                }
+            }
+        } else if (!itemsWhileHoldingMainHand.isEmpty()) {
             for (final ItemStack is : itemsWhileHoldingMainHand) {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
                     return true;
-                } else {
+                } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition item does not match with code= " 
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
                 }
             }
-        } else if (worldsWhileStayingWithin.isEmpty() == false) {
+        } else if (!worldsWhileStayingWithin.isEmpty()) {
             for (final String w : worldsWhileStayingWithin) {
                 if (player.getWorld().getName().equalsIgnoreCase(w)) {
                     return true;
-                } else {
+                } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition world does not match for= " + w);
                 }
             }
-        } else if (biomesWhileStayingWithin.isEmpty() == false) {
+        } else if (!biomesWhileStayingWithin.isEmpty()) {
             for (final String b : biomesWhileStayingWithin) {
                 if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
                         .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
                     return true;
-                } else {
+                } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition biome does not match for= " + MiscUtil.getProperBiome(b));
                 }
             }
