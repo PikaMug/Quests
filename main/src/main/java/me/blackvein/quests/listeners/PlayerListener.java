@@ -452,7 +452,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (quester.getCurrentQuests().isEmpty() == false) {
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                    if (!quest.getOptions().getAllowCommands()) {
+                    if (!quest.getOptions().canAllowCommands()) {
                         if (!evt.getMessage().startsWith("/quest")) {
                             evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "optCommandsDenied")
                                     .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));

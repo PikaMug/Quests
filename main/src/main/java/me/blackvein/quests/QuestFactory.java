@@ -267,12 +267,13 @@ public class QuestFactory implements ConversationAbandonedListener {
         }
         context.setSessionData(CK.PLN_OVERRIDE, pln.getOverride());
         final Options opt = q.getOptions();
-        context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.getAllowCommands());
-        context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.getAllowQuitting());
-        context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.getUseDungeonsXLPlugin());
-        context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.getUsePartiesPlugin());
+        context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
+        context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
+        context.setSessionData(CK.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
+        context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
+        context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        context.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.getRequireSameQuest());
+        context.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.canRequireSameQuest());
         // Stages (Objectives)
         int index = 1;
         for (final Stage stage : q.getStages()) {
@@ -938,6 +939,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (Boolean) context.getSessionData(CK.OPT_ALLOW_COMMANDS) : null);
         opts.set("allow-quitting", context.getSessionData(CK.OPT_ALLOW_QUITTING) != null 
                 ? (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING) : null);
+        opts.set("ignore-silk-touch", context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) != null 
+                ? (Boolean) context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) : null);
         opts.set("use-dungeonsxl-plugin", context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null 
                 ? (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) : null);
         opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null 

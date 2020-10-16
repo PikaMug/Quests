@@ -13,6 +13,7 @@
 
 package me.blackvein.quests.listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.util.Lang;
 
 public class BlockListener implements Listener {
     
@@ -52,16 +54,23 @@ public class BlockListener implements Listener {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
-                    
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective("breakBlock")) {
-                        if (!player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+                        if (quest.getOptions().canIgnoreSilkTouch() 
+                                && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+                            player.sendMessage(ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
+                                    .replace("<quest>", quest.getName()));
+                        } else {
                             quester.breakBlock(quest, blockItemStack);
                         }
                     }
                     quester.dispatchMultiplayerEverything(quest, "breakBlock", (final Quester q) -> {
-                        if (!player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
-                            q.breakBlock(quest, blockItemStack);
+                        if (quest.getOptions().canIgnoreSilkTouch() 
+                                && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+                            player.sendMessage(ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
+                                    .replace("<quest>", quest.getName()));
+                        } else {
+                            quester.breakBlock(quest, blockItemStack);
                         }
                         return null;
                     });

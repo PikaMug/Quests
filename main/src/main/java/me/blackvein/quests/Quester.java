@@ -3983,7 +3983,7 @@ public class Quester {
                             return;
                         }
                         if (this.getCurrentStage(quest).containsObjective(objectiveType)
-                                || !quest.getOptions().getRequireSameQuest()) {
+                                || !quest.getOptions().canRequireSameQuest()) {
                             fun.apply(q);
                         }
                     }
@@ -4016,7 +4016,7 @@ public class Quester {
                     return;
                 }
                 if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
-                        || !quest.getOptions().getRequireSameQuest()) {
+                        || !quest.getOptions().canRequireSameQuest()) {
                     fun.apply(q);
                 }
             }
@@ -4035,7 +4035,7 @@ public class Quester {
         }
         final List<Quester> mq = new LinkedList<Quester>();
         if (plugin.getDependencies().getPartiesApi() != null) {
-            if (quest.getOptions().getUsePartiesPlugin()) {
+            if (quest.getOptions().canUsePartiesPlugin()) {
                 final Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies()
                         .getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
                 if (party != null) {
@@ -4049,7 +4049,7 @@ public class Quester {
             }
         }
         if (plugin.getDependencies().getDungeonsApi() != null) {
-            if (quest.getOptions().getUseDungeonsXLPlugin()) {
+            if (quest.getOptions().canUseDungeonsXLPlugin()) {
                 final DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
                 if (group != null) {
                     for (final UUID id : group.getMembers()) {

@@ -282,7 +282,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
 
-        private final int size = 3;
+        private final int size = 4;
         
         @Override
         public int getSize() {
@@ -298,10 +298,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.BLUE;
             case 2:
-                return ChatColor.BLUE;
             case 3:
+                return ChatColor.BLUE;
+            case 4:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -316,6 +316,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("optAllowQuitting");
             case 3:
+                return ChatColor.YELLOW + Lang.get("optIgnoreSilkTouch");
+            case 4:
                 return ChatColor.YELLOW + Lang.get("done");
             default:
                 return null;
@@ -327,7 +329,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (number) {
             case 1:
                 if (context.getSessionData(CK.OPT_ALLOW_COMMANDS) == null) {
-                    final boolean defaultOpt = new Options().getAllowCommands();
+                    final boolean defaultOpt = new Options().canAllowCommands();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                         + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                         + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
@@ -339,17 +341,29 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(CK.OPT_ALLOW_QUITTING) == null) {
-                    final boolean defaultOpt = new Options().getAllowQuitting();
+                    final boolean defaultOpt = new Options().canAllowQuitting();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
-                   final boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
+                    final boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING);
                     return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN
                             + Lang.get(String.valueOf(quittingOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(quittingOpt))) + ChatColor.GRAY + ")";
                 }
             case 3:
+                if (context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) == null) {
+                    final boolean defaultOpt = new Options().canIgnoreSilkTouch();
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
+                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                            + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                } else {
+                    final boolean quittingOpt = (Boolean) context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH);
+                    return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN
+                            + Lang.get(String.valueOf(quittingOpt)) : ChatColor.RED 
+                            + Lang.get(String.valueOf(quittingOpt))) + ChatColor.GRAY + ")";
+                }
+            case 4:
                 return "";
             default:
                 return null;
@@ -381,6 +395,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 tempPrompt = new OptionsGeneralPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
             case 3:
+                tempKey = CK.OPT_IGNORE_SILK_TOUCH;
+                tempPrompt = new OptionsGeneralPrompt(context);
+                return new OptionsTrueFalsePrompt(context);
+            case 4:
                 tempKey = null;
                 tempPrompt = null;
                 try {
@@ -453,7 +471,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (number) {
             case 1:
                 if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) == null) {
-                    final boolean defaultOpt = new Options().getUseDungeonsXLPlugin();
+                    final boolean defaultOpt = new Options().canUseDungeonsXLPlugin();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
@@ -465,7 +483,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) == null) {
-                    final boolean defaultOpt = new Options().getUsePartiesPlugin();
+                    final boolean defaultOpt = new Options().canUsePartiesPlugin();
                     return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                            + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
@@ -485,7 +503,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 4:
                 if (context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) == null) {
-                    final boolean defaultOpt = new Options().getRequireSameQuest();
+                    final boolean defaultOpt = new Options().canRequireSameQuest();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";

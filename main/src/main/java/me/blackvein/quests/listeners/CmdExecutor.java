@@ -735,7 +735,7 @@ public class CmdExecutor implements CommandExecutor {
             if (quester.getCurrentQuests().isEmpty() == false) {
                 final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
-                    if (quest.getOptions().getAllowQuitting()) {
+                    if (quest.getOptions().canAllowQuitting()) {
                         final QuestQuitEvent event = new QuestQuitEvent(quest, quester);
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) {

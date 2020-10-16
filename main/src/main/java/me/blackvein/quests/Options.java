@@ -15,12 +15,13 @@ package me.blackvein.quests;
 public class Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
+    private boolean ignoreSilkTouch = true;
     private boolean useDungeonsXLPlugin = false;
     private boolean usePartiesPlugin = true;
     private int shareProgressLevel = 1;
     private boolean requireSameQuest = true;
     
-    public boolean getAllowCommands() {
+    public boolean canAllowCommands() {
         return allowCommands;
     }
     
@@ -28,7 +29,7 @@ public class Options {
         this.allowCommands = allowCommands;
     }
     
-    public boolean getAllowQuitting() {
+    public boolean canAllowQuitting() {
         return allowQuitting;
     }
     
@@ -36,7 +37,15 @@ public class Options {
         this.allowQuitting = allowQuitting;
     }
     
-    public boolean getUseDungeonsXLPlugin() {
+    public boolean canIgnoreSilkTouch() {
+        return ignoreSilkTouch;
+    }
+    
+    public void setIgnoreSilkTouch(final boolean ignoreSilkTouch) {
+        this.ignoreSilkTouch = ignoreSilkTouch;
+    }
+    
+    public boolean canUseDungeonsXLPlugin() {
         return useDungeonsXLPlugin;
     }
     
@@ -44,7 +53,7 @@ public class Options {
         this.useDungeonsXLPlugin = useDungeonsXLPlugin;
     }
     
-    public boolean getUsePartiesPlugin() {
+    public boolean canUsePartiesPlugin() {
         return usePartiesPlugin;
     }
     
@@ -60,7 +69,7 @@ public class Options {
         this.shareProgressLevel = shareProgressLevel;
     }
     
-    public boolean getRequireSameQuest() {
+    public boolean canRequireSameQuest() {
         return requireSameQuest;
     }
     
