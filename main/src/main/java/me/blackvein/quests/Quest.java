@@ -486,7 +486,7 @@ public class Quest {
             }
         }
         for (final String s : rews.getCommands()) {
-            String temp = s.replace("<player>", player.getName()).replace("%player%", player.getName());
+            String temp = s.replace("<player>", player.getName());
             if (plugin.getDependencies().getPlaceholderApi() != null && player.isOnline()) {
                 temp = PlaceholderAPI.setPlaceholders((Player)player, temp);
             }
