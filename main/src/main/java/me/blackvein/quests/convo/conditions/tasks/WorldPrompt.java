@@ -166,9 +166,9 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             final List<World> worldArr = Bukkit.getWorlds();
             for (int i = 0; i < worldArr.size(); i++) {
                 if (i < (worldArr.size() - 1)) {
-                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + ", ";
+                    worlds += worldArr.get(i).getName() + ", ";
                 } else {
-                    worlds += MiscUtil.snakeCaseToUpperCamelCase(worldArr.get(i).getName()) + "\n";
+                    worlds += worldArr.get(i).getName() + "\n";
                 }
             }
             return worlds + ChatColor.YELLOW + getQueryText(context);

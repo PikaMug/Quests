@@ -85,6 +85,12 @@ public class ConditionFactory implements ConversationAbandonedListener {
             entities.addAll(condition.getEntitiesWhileRiding());
             context.setSessionData(CK.C_WHILE_RIDING_ENTITY, entities);
         }
+        if (condition.getPermissions() != null
+                && condition.getPermissions().isEmpty() == false) {
+            final LinkedList<String> permissions = new LinkedList<String>();
+            permissions.addAll(condition.getPermissions());
+            context.setSessionData(CK.C_WHILE_PERMISSION, permissions);
+        }
         if (condition.getItemsWhileHoldingMainHand() != null 
                 && condition.getItemsWhileHoldingMainHand().isEmpty() == false) {
             final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -110,6 +116,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
         context.setSessionData(CK.C_WHILE_RIDING_ENTITY, null);
+        context.setSessionData(CK.C_WHILE_PERMISSION, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
@@ -196,6 +203,10 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) != null) {
             section.set("ride-entity", 
                     context.getSessionData(CK.C_WHILE_RIDING_ENTITY));
+        }
+        if (context.getSessionData(CK.C_WHILE_PERMISSION) != null) {
+            section.set("permission", 
+                    context.getSessionData(CK.C_WHILE_PERMISSION));
         }
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", 

@@ -23,7 +23,9 @@ import org.bukkit.inventory.ItemStack;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -34,7 +36,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         super(context);
     }
     
-    private final int size = 2;
+    private final int size = 3;
     
     @Override
     public int getSize() {
@@ -50,8 +52,9 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
-                return ChatColor.BLUE;
             case 2:
+                return ChatColor.BLUE;
+            case 3:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -62,8 +65,10 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Lang.get("conditionEditorItemsInMainHand");
+            return ChatColor.YELLOW + Lang.get("conditionEditorPermissions");
         case 2:
+            return ChatColor.YELLOW + Lang.get("conditionEditorItemsInMainHand");
+        case 3:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -75,18 +80,30 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
+            if (context.getSessionData(CK.C_WHILE_PERMISSION) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "\n";
+                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_PERMISSION)) {
+                    // We replace the standard period character to prevent clickable links
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s.replace(".", "\uFF0E") + "\n";
+                }
+                return text;
+            }
+        case 2:
             if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
+                final LinkedList<ItemStack> items 
+                        = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                 for (int i = 0; i < items.size(); i++) {
                     text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
                             + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
                 return text;
             }
-        case 2:
+        case 3:
             return "";
         default:
             return null;
@@ -122,8 +139,10 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new ItemsInMainHandListPrompt(context);
+            return new PermissionsPrompt(context);
         case 2:
+            return new ItemsInMainHandListPrompt(context);
+        case 3:
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
@@ -131,6 +150,44 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
+            return new PlayerPrompt(context);
+        }
+    }
+    
+    public class PermissionsPrompt extends QuestsEditorStringPrompt {
+        
+        public PermissionsPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorPermissionsPrompt");
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                final LinkedList<String> permissions = new LinkedList<String>();
+                for (final String s : input.split(" ")) {
+                    permissions.add(s.trim());
+                }
+                context.setSessionData(CK.C_WHILE_PERMISSION, permissions);
+            }
             return new PlayerPrompt(context);
         }
     }

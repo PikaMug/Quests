@@ -3381,6 +3381,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 throw new ConditionFormatException("ride-entity is not a list of entity types", conditionKey);
             }
         }
+        if (data.contains(conditionKey + "permission")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "permission"), String.class)) {
+                final LinkedList<String> permissions = new LinkedList<String>();
+                permissions.addAll(data.getStringList(conditionKey + "permission"));
+                condition.setPermissions(permissions);
+            } else {
+                throw new ConditionFormatException("permission is not a list of permissions", conditionKey);
+            }
+        }
         if (data.contains(conditionKey + "hold-main-hand")) {
             final LinkedList<ItemStack> temp = new LinkedList<ItemStack>();
             @SuppressWarnings("unchecked")

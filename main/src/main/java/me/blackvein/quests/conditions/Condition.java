@@ -25,11 +25,11 @@ import me.blackvein.quests.util.MiscUtil;
 
 public class Condition {
 
-    @SuppressWarnings("unused")
     private final Quests plugin;
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<String> entitiesWhileRiding = new LinkedList<String>();
+    private LinkedList<String> permissions = new LinkedList<String>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
@@ -60,6 +60,14 @@ public class Condition {
     
     public void setEntitiesWhileRiding(final LinkedList<String> entitiesWhileRiding) {
         this.entitiesWhileRiding = entitiesWhileRiding;
+    }
+    
+    public LinkedList<String> getPermissions() {
+        return permissions;
+    }
+    
+    public void setPermissions(final LinkedList<String> permissions) {
+        this.permissions = permissions;
     }
 
     public LinkedList<ItemStack> getItemsWhileHoldingMainHand() {
@@ -94,7 +102,19 @@ public class Condition {
                 if (player.isInsideVehicle() && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition entity does not match for= " + e);
+                    plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
+                }
+            }
+        } else if (!permissions.isEmpty()) {
+            for (final String p : permissions) {
+                if (plugin.getDependencies().isPluginAvailable("Vault")) {
+                    if (plugin.getDependencies().getVaultPermission().has(player, p)) {
+                        return plugin.getDependencies().getVaultPermission().has(player, p);
+                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition permission mismatch for " + player.getName() + ": " + p);
+                    }
+                } else {
+                    plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
                 }
             }
         } else if (!itemsWhileHoldingMainHand.isEmpty()) {
@@ -102,7 +122,7 @@ public class Condition {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition item does not match with code= " 
+                    plugin.getLogger().info("DEBUG: Condition item mismatch for " + player.getName() + ": code "
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
                 }
             }
@@ -111,7 +131,7 @@ public class Condition {
                 if (player.getWorld().getName().equalsIgnoreCase(w)) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition world does not match for= " + w);
+                    plugin.getLogger().info("DEBUG: Condition world mismatch for " + player.getName() + ": " + w);
                 }
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
@@ -120,7 +140,8 @@ public class Condition {
                         .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition biome does not match for= " + MiscUtil.getProperBiome(b));
+                    plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": " 
+                            + MiscUtil.getProperBiome(b));
                 }
             }
         }

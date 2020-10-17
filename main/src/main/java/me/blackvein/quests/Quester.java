@@ -604,6 +604,12 @@ public class Quester {
                             msg += ChatColor.AQUA + "\n   \u2515 " + e;
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getPermissions().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorPermissions");
+                        for (final String e : c.getPermissions()) {
+                            msg += ChatColor.AQUA + "\n   \u2515 " + e;
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg); 
                     } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
                         for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
