@@ -250,7 +250,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 2:
             if (context.getSessionData(stagePrefix + CK.S_CRAFT_ITEMS) == null
                     && context.getSessionData(stagePrefix + CK.S_SMELT_ITEMS) == null 
-                    && context.getSessionData(stagePrefix + CK.S_ENCHANT_TYPES) == null 
+                    && context.getSessionData(stagePrefix + CK.S_ENCHANT_ITEMS) == null 
                     && context.getSessionData(stagePrefix + CK.S_BREW_ITEMS) == null
                     && context.getSessionData(stagePrefix + CK.S_CONSUME_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
@@ -542,7 +542,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 || context.getSessionData(stagePrefix + CK.S_CUT_NAMES) != null
                 || context.getSessionData(stagePrefix + CK.S_CRAFT_ITEMS) != null 
                 || context.getSessionData(stagePrefix + CK.S_SMELT_ITEMS) != null 
-                || context.getSessionData(stagePrefix + CK.S_ENCHANT_TYPES) != null 
+                || context.getSessionData(stagePrefix + CK.S_ENCHANT_ITEMS) != null 
                 || context.getSessionData(stagePrefix + CK.S_BREW_ITEMS) != null
                 || context.getSessionData(stagePrefix + CK.S_CONSUME_ITEMS) != null
                 || context.getSessionData(stagePrefix + CK.S_DELIVERY_NPCS) != null 

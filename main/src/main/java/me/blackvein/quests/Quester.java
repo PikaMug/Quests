@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -933,10 +932,10 @@ public class Quester {
             }
             final int amt = is.getAmount();
             if (crafted < amt) {
-                final String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "craftItem").replace("<item>", ItemUtil.getName(is));
                 unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + crafted + "/" + amt);
             } else {
-                final String obj = Lang.get(getPlayer(), "craft") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "craftItem").replace("<item>", ItemUtil.getName(is));
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + crafted + "/" + amt);
             }
         }
@@ -947,56 +946,25 @@ public class Quester {
             }
             final int amt = is.getAmount();
             if (smelted < amt) {
-                final String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "smeltItem").replace("<item>", ItemUtil.getName(is));
                 unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + smelted + "/" + amt);
             } else {
-                final String obj = Lang.get(getPlayer(), "smelt") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "smeltItem").replace("<item>", ItemUtil.getName(is));
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + smelted + "/" + amt);
             }
         }
-        Map<Enchantment, Material> set;
-        Map<Enchantment, Material> set2;
-        Set<Enchantment> enchantSet;
-        Set<Enchantment> enchantSet2;
-        Collection<Material> matSet;
-        Enchantment enchantment = null;
-        Enchantment enchantment2 = null;
-        Material mat = null;
-        int num1;
-        int num2;
-        for (final Entry<Map<Enchantment, Material>, Integer> e : getCurrentStage(quest).itemsToEnchant.entrySet()) {
-            for (final Entry<Map<Enchantment, Material>, Integer> e2 : getQuestData(quest).itemsEnchanted.entrySet()) {
-                set = e2.getKey();
-                set2 = e.getKey();
-                enchantSet = set.keySet();
-                enchantSet2 = set2.keySet();
-                for (final Object o : enchantSet.toArray()) {
-                    enchantment = (Enchantment) o;
-                }
-                for (final Object o : enchantSet2.toArray()) {
-                    enchantment2 = (Enchantment) o;
-                }
-                num1 = e2.getValue();
-                num2 = e.getValue();
-                matSet = set.values();
-                for (final Object o : matSet.toArray()) {
-                    mat = (Material) o;
-                }
-                if (enchantment2 == enchantment) {
-                    if (num1 < num2) {
-                        String obj = Lang.get(getPlayer(), "enchantItem");
-                        obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GREEN);
-                        obj = obj.replace("<enchantment>", ChatColor.DARK_AQUA 
-                                + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GREEN);
-                        unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + num1 + "/" + num2);
-                    } else {
-                        String obj = Lang.get(getPlayer(), "enchantItem");
-                        obj = obj.replace("<item>", ItemUtil.getName(new ItemStack(mat)) + ChatColor.GRAY);
-                        obj = obj.replace("<enchantment>", ChatColor.DARK_AQUA 
-                                + ItemUtil.getPrettyEnchantmentName(enchantment) + ChatColor.GRAY);
-                        finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + num1 + "/" + num2);
-                    }
-                }
+        for (final ItemStack is : getCurrentStage(quest).itemsToEnchant) {
+            int enchanted = 0;
+            if (getQuestData(quest).itemsEnchanted.containsKey(is)) {
+                enchanted = getQuestData(quest).itemsEnchanted.get(is);
+            }
+            final int amt = is.getAmount();
+            if (enchanted < amt) {
+                final String obj = Lang.get(getPlayer(), "enchItem").replace("<item>", ItemUtil.getName(is));
+                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + enchanted + "/" + amt);
+            } else {
+                final String obj = Lang.get(getPlayer(), "enchItem").replace("<item>", ItemUtil.getName(is));
+                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + enchanted + "/" + amt);
             }
         }
         for (final ItemStack is : getCurrentStage(quest).itemsToBrew) {
@@ -1006,10 +974,10 @@ public class Quester {
             }
             final int amt = is.getAmount();
             if (brewed < amt) {
-                final String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "brewItem").replace("<item>", ItemUtil.getName(is));
                 unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + brewed + "/" + amt);
             } else {
-                final String obj = Lang.get(getPlayer(), "brew") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "brewItem").replace("<item>", ItemUtil.getName(is));
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + brewed + "/" + amt);
             }
         }
@@ -1020,10 +988,10 @@ public class Quester {
             }
             final int amt = is.getAmount();
             if (consumed < amt) {
-                final String obj = Lang.get(getPlayer(), "consume") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "consumeItem").replace("<item>", ItemUtil.getName(is));
                 unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + consumed + "/" + amt);
             } else {
-                final String obj = Lang.get(getPlayer(), "consume") + " " + ItemUtil.getName(is);
+                final String obj = Lang.get(getPlayer(), "consumeItem").replace("<item>", ItemUtil.getName(is));
                 finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + consumed + "/" + amt);
             }
         }
@@ -1842,37 +1810,48 @@ public class Quester {
      * Mark item as enchanted if Quester has such an objective
      * 
      * @param quest The quest for which the item is being enchanted
-     * @param e The enchantment to be applied
-     * @param m The item being enchanted
+     * @param i The item being enchanted
      */
-    public void enchantItem(final Quest quest, final Enchantment e, final Material m) {
-        for (final Entry<Map<Enchantment, Material>, Integer> entry : getQuestData(quest).itemsEnchanted.entrySet()) {
-            if (entry.getKey().containsKey(e) && entry.getKey().containsValue(m)) {
-                for (final Entry<Map<Enchantment, Material>, Integer> entry2 : getCurrentStage(quest).itemsToEnchant
-                        .entrySet()) {
-                    if (entry2.getKey().containsKey(e) && entry2.getKey().containsValue(m)) {
-                        if (entry.getValue() < entry2.getValue()) {
-                            final Integer num = entry.getValue() + 1;
-                            getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
-                            if (num.equals(entry2.getValue())) {
-                                final ItemStack finalToEnchant = new ItemStack(m, entry.getValue());
-                                
-                                finishObjective(quest, "enchantItem", new ItemStack(m, 1), finalToEnchant, e, null, 
-                                        null, null, null, null, null, null);
-                                
-                                // Multiplayer
-                                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                                    q.getQuestData(quest).itemsEnchanted.put(entry.getKey(), num);
-                                    q.finishObjective(quest, "enchantItem", new ItemStack(m, 1), finalToEnchant, null, 
-                                            null, null, null, null, null, null, null);
-                                    return null;
-                                });
-                            }
-                        }
-                        break;
-                    }
-                }
+    public void enchantItem(final Quest quest, final ItemStack i) {
+        final Player player = getPlayer();
+        ItemStack found = null;
+        for (final ItemStack is : getQuestData(quest).itemsEnchanted.keySet()) {
+            if (ItemUtil.compareItems(i, is, true) == 0) {
+                found = is;
                 break;
+            }
+        }
+        if (found != null) {
+            final int amount = getQuestData(quest).itemsEnchanted.get(found);
+            if (getCurrentStage(quest).itemsToEnchant.indexOf(found) < 0) {
+                plugin.getLogger().severe("Index out of bounds while enchanting " + found.getType() + " x " 
+                        + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
+                        + i.getAmount() + " already enchanted. List amount reports value of " + amount 
+                        + ". Please report this error on Github!");
+                player.sendMessage(ChatColor.RED 
+                        + "Quests had a problem enchanting your item, please contact an administrator!");
+                return;
+            }
+            final int req = getCurrentStage(quest).itemsToEnchant.get(getCurrentStage(quest).itemsToEnchant
+                    .indexOf(found)).getAmount();
+            final Material m = i.getType();
+            if (amount < req) {
+                if ((i.getAmount() + amount) >= req) {
+                    getQuestData(quest).itemsEnchanted.put(found, req);
+                    finishObjective(quest, "enchItem", new ItemStack(m, 1), found, null, null, null, null, null, null, 
+                            null, null);
+                    
+                    // Multiplayer
+                    final ItemStack finalFound = found;
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsEnchanted.put(finalFound, req);
+                        q.finishObjective(quest, "enchItem", new ItemStack(m, 1), finalFound, null, null, null, null, 
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    getQuestData(quest).itemsEnchanted.put(found, (amount + i.getAmount()));
+                }
             }
         }
     }
@@ -2500,8 +2479,8 @@ public class Quester {
             }
         } else if (objective.equalsIgnoreCase("craftItem")) {
             final ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craft") + " <item> "
-                    + is.getAmount() + "/" + is.getAmount();
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craftItem") 
+                    + " " + is.getAmount() + "/" + is.getAmount();
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2510,8 +2489,8 @@ public class Quester {
             }
         } else if (objective.equalsIgnoreCase("smeltItem")) {
             final ItemStack is = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smelt") + " <item> "
-                    + is.getAmount() + "/" + is.getAmount();
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smeltItem") 
+                    + " " + is.getAmount() + "/" + is.getAmount();
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2519,27 +2498,19 @@ public class Quester {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         } else if (objective.equalsIgnoreCase("enchantItem")) {
-            final String obj = Lang.get(p, "enchantItem");
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-            final Map<Enchantment, Integer> ench = new HashMap<Enchantment, Integer>();
-            ench.put(enchantment, enchantment.getStartLevel());
-            for (final Map<Enchantment, Material> map : getCurrentStage(quest).itemsToEnchant.keySet()) {
-                if (map.containsKey(enchantment)) {
-                    message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-                    break;
-                }
-            }
+            final ItemStack is = getCurrentStage(quest).itemsToEnchant.get(getCurrentStage(quest).itemsToEnchant.indexOf(goal));
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "enchItem") 
+                    + " " + is.getAmount() + "/" + is.getAmount();
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), ench);
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
             } else {
-                p.sendMessage(message.replace("<item>", ItemUtil.getName(increment))
-                        .replace("<enchantment>", enchantment.getName()));
+                p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         } else if (objective.equalsIgnoreCase("brewItem")) {
             final ItemStack is = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brew") + " <item> "
-                    + is.getAmount() + "/" + is.getAmount();
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brewItem") 
+                    + " " + is.getAmount() + "/" + is.getAmount();
             if (plugin.getSettings().canTranslateNames() && goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null, 
@@ -2550,8 +2521,8 @@ public class Quester {
         } else if (objective.equalsIgnoreCase("consumeItem")) {
             final ItemStack is = getCurrentStage(quest).itemsToConsume.get(getCurrentStage(quest).itemsToConsume
                     .indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consume") 
-                    + " <item> " + is.getAmount() + "/" + is.getAmount();
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consumeItem") 
+                    + " " + is.getAmount() + "/" + is.getAmount();
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2742,9 +2713,8 @@ public class Quester {
             }
         }
         if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
-            for (final Entry<Map<Enchantment, Material>, Integer> e : quest.getStage(stage).itemsToEnchant.entrySet()) {
-                final Map<Enchantment, Material> map = e.getKey();
-                data.itemsEnchanted.put(map, 0);
+            for (final ItemStack is : quest.getStage(stage).itemsToEnchant) {
+                data.itemsEnchanted.put(is, 0);
             }
         }
         if (quest.getStage(stage).itemsToBrew.isEmpty() == false) {
@@ -2989,20 +2959,11 @@ public class Quester {
                     questSec.set("item-smelt-amounts", smeltAmounts);
                 }
                 if (questData.itemsEnchanted.isEmpty() == false) {
-                    final LinkedList<String> enchantments = new LinkedList<String>();
-                    final LinkedList<String> itemNames = new LinkedList<String>();
-                    final LinkedList<Integer> enchAmounts = new LinkedList<Integer>();
-                    for (final Entry<Map<Enchantment, Material>, Integer> e : questData.itemsEnchanted.entrySet()) {
-                        final Map<Enchantment, Material> enchMap = e.getKey();
-                        enchAmounts.add(questData.itemsEnchanted.get(enchMap));
-                        for (final Entry<Enchantment, Material> e2 : enchMap.entrySet()) {
-                            enchantments.add(ItemUtil.getPrettyEnchantmentName(e2.getKey()));
-                            itemNames.add(e2.getValue().name());
-                        }
+                    final LinkedList<Integer> enchantAmounts = new LinkedList<Integer>();
+                    for (final Entry<ItemStack, Integer> e : questData.itemsEnchanted.entrySet()) {
+                        enchantAmounts.add(e.getValue());
                     }
-                    questSec.set("enchantments", enchantments);
-                    questSec.set("enchantment-item-names", itemNames);
-                    questSec.set("times-enchanted", enchAmounts);
+                    questSec.set("item-enchant-amounts", enchantAmounts);
                 }
                 if (questData.itemsBrewed.isEmpty() == false) {
                     final LinkedList<Integer> brewAmounts = new LinkedList<Integer>();
@@ -3412,22 +3373,13 @@ public class Quester {
                         }
                     }
                 }
-                if (questSec.contains("enchantments")) {
-                    final LinkedList<Enchantment> enchantments = new LinkedList<Enchantment>();
-                    final LinkedList<Material> materials = new LinkedList<Material>();
-                    final LinkedList<Integer> amounts = new LinkedList<Integer>();
-                    final List<String> enchantNames = questSec.getStringList("enchantments");
-                    final List<String> names = questSec.getStringList("enchantment-item-names");
-                    final List<Integer> times = questSec.getIntegerList("times-enchanted");
-                    for (final String s : enchantNames) {
-                        enchantments.add(ItemUtil.getEnchantmentFromProperName(s));
-                        materials.add(Material.matchMaterial(names.get(enchantNames.indexOf(s))));
-                        amounts.add(times.get(enchantNames.indexOf(s)));
-                    }
-                    for (final Enchantment e : enchantments) {
-                        final Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
-                        map.put(e, materials.get(enchantments.indexOf(e)));
-                        getQuestData(quest).itemsEnchanted.put(map, amounts.get(enchantments.indexOf(e)));
+                if (questSec.contains("item-enchant-amounts")) {
+                    final List<Integer> enchantAmounts = questSec.getIntegerList("item-enchant-amounts");
+                    for (int i = 0; i < enchantAmounts.size(); i++) {
+                        if (i < getCurrentStage(quest).itemsToEnchant.size()) {
+                            getQuestData(quest).itemsEnchanted.put(getCurrentStage(quest).itemsToEnchant
+                                    .get(i), enchantAmounts.get(i));
+                        }
                     }
                 }
                 if (questSec.contains("item-brew-amounts")) {

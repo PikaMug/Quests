@@ -14,7 +14,6 @@
 package me.blackvein.quests.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -130,9 +129,10 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onEnchantItem(final EnchantItemEvent evt) {
-        final Player player = evt.getEnchanter();
-        if (plugin.canUseQuests(player.getUniqueId())) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+        if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
+            final ItemStack enchantedItem = evt.getItem().clone();
+            enchantedItem.setAmount(1);
+            final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
@@ -140,15 +140,11 @@ public class ItemListener implements Listener {
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective("enchantItem")) {
-                    for (final Enchantment e : evt.getEnchantsToAdd().keySet()) {
-                        quester.enchantItem(quest, e, evt.getItem().getType());
-                    }
+                    quester.enchantItem(quest, enchantedItem);
                 }
                 
                 quester.dispatchMultiplayerEverything(quest, "enchantItem", (final Quester q) -> {
-                    for (final Enchantment e : evt.getEnchantsToAdd().keySet()) {
-                        q.enchantItem(quest, e, evt.getItem().getType());
-                    }
+                    quester.enchantItem(quest, enchantedItem);
                     return null;
                 });
             }
@@ -161,8 +157,7 @@ public class ItemListener implements Listener {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final ItemStack consumedItem = evt.getItem().clone();
             consumedItem.setAmount(1);
-            final Player player = evt.getPlayer();
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;

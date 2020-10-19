@@ -158,10 +158,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
                         + CK.S_CUT_DURABILITY));
                 context.setSessionData(newPref + CK.S_CRAFT_ITEMS, context.getSessionData(pref + CK.S_CRAFT_ITEMS));
                 context.setSessionData(newPref + CK.S_SMELT_ITEMS, context.getSessionData(pref + CK.S_SMELT_ITEMS));
-                context.setSessionData(newPref + CK.S_ENCHANT_TYPES, context.getSessionData(pref + CK.S_ENCHANT_TYPES));
-                context.setSessionData(newPref + CK.S_ENCHANT_NAMES, context.getSessionData(pref + CK.S_ENCHANT_NAMES));
-                context.setSessionData(newPref + CK.S_ENCHANT_AMOUNTS, context.getSessionData(pref 
-                        + CK.S_ENCHANT_AMOUNTS));
+                context.setSessionData(newPref + CK.S_ENCHANT_ITEMS, context.getSessionData(pref + CK.S_ENCHANT_ITEMS));
                 context.setSessionData(newPref + CK.S_BREW_ITEMS, context.getSessionData(pref + CK.S_BREW_ITEMS));
                 context.setSessionData(newPref + CK.S_FISH, context.getSessionData(pref + CK.S_FISH));
                 context.setSessionData(newPref + CK.S_PLAYER_KILL, context.getSessionData(pref + CK.S_PLAYER_KILL));
@@ -242,12 +239,10 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
             context.setSessionData(pref + CK.S_CUT_DURABILITY, null);
             context.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
             context.setSessionData(pref + CK.S_SMELT_ITEMS, null);
-            context.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
-            context.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
+            context.setSessionData(pref + CK.S_ENCHANT_ITEMS, null);
             context.setSessionData(pref + CK.S_BREW_ITEMS, null);
             context.setSessionData(pref + CK.S_FISH, null);
             context.setSessionData(pref + CK.S_PLAYER_KILL, null);
-            context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
             context.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
             context.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
             context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);

@@ -19,8 +19,6 @@ import java.util.Map;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -327,13 +325,12 @@ public class QuestData {
         }
     };
     
-    public LinkedHashMap<Map<Enchantment, Material>, Integer> itemsEnchanted 
-            = new LinkedHashMap<Map<Enchantment, Material>, Integer>() {
+    public LinkedHashMap<ItemStack, Integer> itemsEnchanted = new LinkedHashMap<ItemStack, Integer>() {
 
         private static final long serialVersionUID = 416869352279205852L;
 
         @Override
-        public Integer put(final Map<Enchantment, Material> key, final Integer val) {
+        public Integer put(final ItemStack key, final Integer val) {
             final Integer data = super.put(key, val);
             if (doJournalUpdate)
                 quester.updateJournal();
@@ -356,7 +353,7 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(final Map<? extends Map<Enchantment, Material>, ? extends Integer> m) {
+        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
             super.putAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();

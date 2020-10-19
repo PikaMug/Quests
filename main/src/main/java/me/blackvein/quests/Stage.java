@@ -20,9 +20,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,8 +39,7 @@ public class Stage {
     protected Integer playersToKill;
     protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
-    protected Map<Map<Enchantment, Material>, Integer> itemsToEnchant 
-            = new HashMap<Map<Enchantment, Material>, Integer>();
+    protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToConsume = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
@@ -220,12 +217,11 @@ public class Stage {
         this.itemsToSmelt = itemsToSmelt;
     }
 
-    public Map<Map<Enchantment, Material>, Integer> getItemsToEnchant() {
+    public LinkedList<ItemStack> getItemsToEnchant() {
         return itemsToEnchant;
     }
 
-    public void setItemsToEnchant(
-            final Map<Map<Enchantment, Material>, Integer> itemsToEnchant) {
+    public void setItemsToEnchant(final LinkedList<ItemStack> itemsToEnchant) {
         this.itemsToEnchant = itemsToEnchant;
     }
     

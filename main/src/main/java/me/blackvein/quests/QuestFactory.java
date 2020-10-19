@@ -26,7 +26,6 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -37,7 +36,6 @@ import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +46,6 @@ import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
@@ -360,19 +357,11 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
             }
             if (!stage.getItemsToEnchant().isEmpty()) {
-                final LinkedList<String> enchants = new LinkedList<String>();
-                final LinkedList<String> names = new LinkedList<String>();
-                final LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (final Entry<Map<Enchantment, Material>, Integer> e : stage.getItemsToEnchant().entrySet()) {
-                    amounts.add(e.getValue());
-                    for (final Entry<Enchantment, Material> e2 : e.getKey().entrySet()) {
-                        names.add(e2.getValue().name());
-                        enchants.add(ItemUtil.getPrettyEnchantmentName(e2.getKey()));
-                    }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                for (final ItemStack is : stage.getItemsToEnchant()) {
+                    items.add(is);
                 }
-                context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchants);
-                context.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
-                context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
             }
             if (!stage.getItemsToBrew().isEmpty()) {
                 final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
@@ -725,12 +714,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS) : null);
             stage.set("items-to-smelt", context.getSessionData(pref + CK.S_SMELT_ITEMS) != null 
                     ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS) : null);
-            stage.set("enchantments", context.getSessionData(pref + CK.S_ENCHANT_TYPES) != null 
-                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES) : null);
-            stage.set("enchantment-item-names", context.getSessionData(pref + CK.S_ENCHANT_NAMES) != null 
-                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_NAMES) : null);
-            stage.set("enchantment-amounts", context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) != null 
-                    ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) : null);
+            stage.set("items-to-enchant", context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null 
+                    ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS) : null);
             stage.set("items-to-brew", context.getSessionData(pref + CK.S_BREW_ITEMS) != null 
                     ? (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS) : null);
             stage.set("items-to-consume", context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null 

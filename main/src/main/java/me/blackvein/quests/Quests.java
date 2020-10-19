@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -824,8 +823,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "craft") + " <item>" 
-                        + color + ": " + crafted + "/" + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "craftItem") + color + ": " + crafted + "/" 
+                        + is.getAmount();
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -843,8 +842,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "smelt") + " <item>" 
-                        + color + ": " + smelted + "/" + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "smeltItem") + color + ": " + smelted + "/" 
+                        + is.getAmount();
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -855,50 +854,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
-        Map<Enchantment, Material> set;
-        Map<Enchantment, Material> set2;
-        Set<Enchantment> enchantSet;
-        Set<Enchantment> enchantSet2;
-        Collection<Material> matSet;
-        Enchantment enchantment = null;
-        Enchantment enchantment2 = null;
-        Material mat = null;
-        int num1;
-        int num2;
-        for (final Entry<Map<Enchantment, Material>, Integer> e : stage.itemsToEnchant.entrySet()) {
-            for (final Entry<Map<Enchantment, Material>, Integer> e2 : data.itemsEnchanted.entrySet()) {
-                set = e2.getKey();
-                set2 = e.getKey();
-                enchantSet = set.keySet();
-                enchantSet2 = set2.keySet();
-                for (final Object o : enchantSet.toArray()) {
-                    enchantment = (Enchantment) o;
-                }
-                for (final Object o : enchantSet2.toArray()) {
-                    enchantment2 = (Enchantment) o;
-                }
-                num1 = e2.getValue();
-                num2 = e.getValue();
-                matSet = set.values();
-                for (final Object o : matSet.toArray()) {
-                    mat = (Material) o;
-                }
-                if (enchantment2 == enchantment) {
-                    final ChatColor color = num1 < num2 ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "enchantItem")
-                                + color + ": " + num1 + "/" + num2;
-                    if (depends.getPlaceholderApi() != null) {
-                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                    }
-                    final Map<Enchantment, Integer> enchs = new HashMap<Enchantment, Integer>();
-                    enchs.put(enchantment, 1);
-                    if (getSettings().canTranslateNames()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, mat, (short) 0, enchs);
-                    } else {
-                        quester.getPlayer().sendMessage(message
-                                .replace("<item>", ItemUtil.getName(new ItemStack(mat)))
-                                .replace("<enchantment>", enchantment.getName()));
-                    }
+        for (final ItemStack is : stage.itemsToEnchant) {
+            int enchanted = 0;
+            if (data.itemsEnchanted.containsKey(is)) {
+                enchanted = data.itemsEnchanted.get(is);
+            }
+            final int amt = is.getAmount();
+            final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(quester.getPlayer(), "enchItem") + color + ": " + enchanted + "/" 
+                        + is.getAmount();
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateNames()) {
+                if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                    // Bukkit version is 1.9+
+                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                            is.getEnchantments(), is.getItemMeta());
+                } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
+                    // Bukkit version is below 1.9
+                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                            is.getEnchantments());
+                } else {
+                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
                 }
             }
         }
@@ -909,8 +887,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "brew") + " <item>" 
-                        + color + ": " + brewed + "/" + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "brewItem") + color + ": " + brewed + "/" 
+                        + is.getAmount();
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -935,8 +913,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "consume") + " <item>" 
-                        + color + ": " + consumed + "/" + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "consumeItem") + color + ": " + consumed + "/" 
+                        + is.getAmount();
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1986,9 +1964,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final List<String> areaNames = new LinkedList<String>();
             List<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
             List<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
-            final List<Enchantment> enchantments = new LinkedList<Enchantment>();
-            final List<Material> itemsToEnchant = new LinkedList<Material>();
-            List<Integer> amountsToEnchant = new LinkedList<Integer>();
+            List<ItemStack> itemsToEnchant = new LinkedList<ItemStack>();
             List<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
             List<ItemStack> itemsToConsume = new LinkedList<ItemStack>();
             List<Integer> npcIdsToTalkTo = new LinkedList<Integer>();
@@ -2312,50 +2288,84 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
             }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantments")) {
-                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".enchantments"), String.class)) {
-                    for (final String enchant : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".enchantments")) {
-                        final Enchantment e = ItemUtil.getEnchantmentFromProperName(enchant);
-                        if (e != null) {
-                            enchantments.add(e);
+            
+            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-enchant")) {
+                itemsToEnchant = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
+                        + ".items-to-enchant");
+                if (ConfigUtil.checkList(itemsToEnchant, ItemStack.class)) {
+                    for (final ItemStack stack : itemsToEnchant) {
+                        if (stack != null) {
+                            oStage.itemsToEnchant.add(stack);
                         } else {
-                            throw new StageFormatException("enchantments has invalid enchantment " 
-                                    + enchant, quest, stageNum);
+                            throw new StageFormatException("items-to-enchant has invalid formatting " 
+                                    + stack, quest, stageNum);
                         }
                     }
                 } else {
-                    throw new StageFormatException("enchantments is not a list of enchantment names", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-item-names")) {
-                    if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".enchantment-item-names"), String.class)) {
-                        for (final String item : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".enchantment-item-names")) {
-                            if (Material.matchMaterial(item) != null) {
-                                itemsToEnchant.add(Material.matchMaterial(item));
+                    // Legacy
+                    final LinkedList<Material> types = new LinkedList<Material>();
+                    final LinkedList<Enchantment> enchs = new LinkedList<Enchantment>();
+                    final LinkedList<Integer> amts = new LinkedList<Integer>();
+                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantments")) {
+                        if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
+                                + ".enchantments"), String.class)) {
+                            for (final String enchant : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
+                                    + ".enchantments")) {
+                                final Enchantment e = ItemUtil.getEnchantmentFromProperName(enchant);
+                                if (e != null) {
+                                    enchs.add(e);
+                                } else {
+                                    throw new StageFormatException("enchantments has invalid enchantment " 
+                                            + enchant, quest, stageNum);
+                                }
+                            }
+                        } else {
+                            throw new StageFormatException("enchantments is not a list of enchantment names", quest, stageNum);
+                        }
+                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-item-names")) {
+                            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
+                                    + ".enchantment-item-names"), String.class)) {
+                                for (final String item : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
+                                        + ".enchantment-item-names")) {
+                                    if (Material.matchMaterial(item) != null) {
+                                        types.add(Material.matchMaterial(item));
+                                    } else {
+                                        throw new StageFormatException("enchantment-item-names has invalid item name " 
+                                                + item, quest, stageNum);
+                                    }
+                                }
                             } else {
-                                throw new StageFormatException("enchantment-item-names has invalid item name " 
-                                        + item, quest, stageNum);
+                                throw new StageFormatException("enchantment-item-names has invalid item name", quest, stageNum);
+                            }
+                        } else {
+                            throw new StageFormatException("enchantment-item-names is missing", quest, stageNum);
+                        }
+                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-amounts")) {
+                            if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
+                                    + ".enchantment-amounts"), Integer.class)) {
+                                for (final int i : config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
+                                        + ".enchantment-amounts")) {
+                                    amts.add(i);
+                                }
+                            } else {
+                                throw new StageFormatException("enchantment-amounts is not a list of numbers", quest, stageNum);
+                            }
+                        } else {
+                            throw new StageFormatException("enchantment-amounts is missing", quest, stageNum);
+                        }
+                        if (!enchs.isEmpty() && !types.isEmpty() && !amts.isEmpty()) {
+                            for (int i = 0; i < enchs.size(); i++) {
+                                final ItemStack stack = new ItemStack(types.get(i), amts.get(i));
+                                stack.addEnchantment(enchs.get(0), 1);
+                                if (stack != null) {
+                                    oStage.itemsToEnchant.add(stack);
+                                } else {
+                                    throw new StageFormatException("Legacy items-to-enchant has invalid formatting " 
+                                            + stack, quest, stageNum);
+                                }
                             }
                         }
-                    } else {
-                        throw new StageFormatException("enchantment-item-names has invalid item name", quest, stageNum);
                     }
-                } else {
-                    throw new StageFormatException("enchantment-item-names is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-amounts")) {
-                    if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".enchantment-amounts"), Integer.class)) {
-                        amountsToEnchant = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".enchantment-amounts");
-                    } else {
-                        throw new StageFormatException("enchantment-amounts is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("enchantment-amounts is missing", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-brew")) {
@@ -2669,13 +2679,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             oStage.locationsToKillWithin.addAll(locationsToKillWithin);
             oStage.radiiToKillWithin.addAll(radiiToKillWithin);
             oStage.killNames.addAll(areaNames);
-            final Map<Map<Enchantment, Material>, Integer> enchants = new HashMap<Map<Enchantment, Material>, Integer>();
-            for (final Enchantment e : enchantments) {
-                final Map<Enchantment, Material> map = new HashMap<Enchantment, Material>();
-                map.put(e, itemsToEnchant.get(enchantments.indexOf(e)));
-                enchants.put(map, amountsToEnchant.get(enchantments.indexOf(e)));
-            }
-            oStage.itemsToEnchant = enchants;
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".locations-to-reach")) {
                 if (ConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum 
                         + ".locations-to-reach"), String.class)) {

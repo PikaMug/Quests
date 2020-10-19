@@ -16,22 +16,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
 
 public class ItemsPrompt extends QuestsEditorNumericPrompt {
     private final int stageNum;
@@ -120,18 +115,14 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return text;
             }
         case 3:
-            if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+            if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                final LinkedList<String> enchants = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES);
-                final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES);
-                final LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS);
-                for (int i = 0; i < enchants.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getPrettyItemName(names.get(i)) 
-                            + ChatColor.GRAY + " " + Lang.get("with") + " " + ChatColor.AQUA 
-                            + ItemUtil.getPrettyEnchantmentName(ItemUtil.getEnchantmentFromProperName(enchants.get(i))) 
-                            + ChatColor.GRAY + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS);
+                for (int i = 0; i < items.size(); i++) {
+                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
+                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
                 }
                 return text;
             }
@@ -455,7 +446,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
         
-        private final int size = 5;
+        private final int size = 3;
         
         @Override
         public int getSize() {
@@ -471,12 +462,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
-                case 2:
-                case 3:
                     return ChatColor.BLUE;
-                case 4:
+                case 2:
                     return ChatColor.RED;
-                case 5:
+                case 3:
                     return ChatColor.GREEN;
                 default:
                     return null;
@@ -487,14 +476,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + Lang.get("stageEditorSetEnchantments");
+                return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.YELLOW + Lang.get("stageEditorSetItemNames");
-            case 3:
-                return ChatColor.YELLOW + Lang.get("stageEditorSetEnchantAmounts");
-            case 4:
                 return ChatColor.RED + Lang.get("clear");
-            case 5:
+            case 3:
                 return ChatColor.GREEN + Lang.get("done");
             default:
                 return null;
@@ -506,45 +491,41 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) == null) {
+                if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (final String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS)) {
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
                 }
             case 2:
-                if (context.getSessionData(pref + CK.S_ENCHANT_NAMES) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    for (final String s : (List<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + ItemUtil.getPrettyItemName(s) + "\n";
-                    }
-                    return text;
-                }
             case 3:
-                if (context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    String text = "\n";
-                    for (final int i : (List<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
-                    }
-                    return text;
-                }
-            case 4:
-            case 5:
                 return "";
             default:
                 return null;
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
+            // Check/add newly made item
+            if (context.getSessionData("newItem") != null) {
+                if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null) {
+                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS);
+                    items.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
+                } else {
+                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    items.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
+                }
+                context.setSessionData("newItem", null);
+                context.setSessionData("tempStack", null);
+            }
+            
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
@@ -556,209 +537,20 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             return text;
         }
         
-        @SuppressWarnings("unchecked")
         @Override
         protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemEnchantTypesPrompt(context);
+                return new ItemStackPrompt(context, ItemsEnchantListPrompt.this);
             case 2:
-                return new ItemEnchantItemsPrompt(context);
-            case 3:
-                return new ItemEnchantAmountsPrompt(context);
-            case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
-                context.setSessionData(pref + CK.S_ENCHANT_TYPES, null);
-                context.setSessionData(pref + CK.S_ENCHANT_NAMES, null);
-                context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, null);
+                context.setSessionData(pref + CK.S_ENCHANT_ITEMS, null);
                 return new ItemsEnchantListPrompt(context);
-            case 5:
-                int one;
-                int two;
-                int three;
-                if (context.getSessionData(pref + CK.S_ENCHANT_TYPES) != null) {
-                    one = ((List<String>) context.getSessionData(pref + CK.S_ENCHANT_TYPES)).size();
-                } else {
-                    one = 0;
-                }
-                if (context.getSessionData(pref + CK.S_ENCHANT_NAMES) != null) {
-                    two = ((List<String>) context.getSessionData(pref + CK.S_ENCHANT_NAMES)).size();
-                } else {
-                    two = 0;
-                }
-                if (context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS) != null) {
-                    three = ((List<Integer>) context.getSessionData(pref + CK.S_ENCHANT_AMOUNTS)).size();
-                } else {
-                    three = 0;
-                }
-                if (one == two && two == three) {
-                    return new ItemsPrompt(stageNum, context);
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new ItemsEnchantListPrompt(context);
-                }
+            case 3:
+                return new ItemsPrompt(stageNum, context);
             default:
                 return new ItemsPrompt(stageNum, context);
             }
-        }
-    }
-
-    public class ItemEnchantTypesPrompt extends QuestsEditorStringPrompt {
-
-        public ItemEnchantTypesPrompt(final ConversationContext context) {
-            super(context);
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return Lang.get("stageEditorEnchantments");
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("stageEditorEnchantTypePrompt");
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
-            String text = ChatColor.LIGHT_PURPLE + "- " + ChatColor.DARK_PURPLE + getTitle(context)
-                    + ChatColor.LIGHT_PURPLE + " -\n";
-            for (int i = 0; i < Enchantment.values().length; i++) {
-                if (i == Enchantment.values().length - 1) {
-                    text += ChatColor.GREEN + MiscUtil.snakeCaseToUpperCamelCase(Enchantment.values()[i].getName()) + " ";
-                } else {
-                    text += ChatColor.GREEN + MiscUtil.snakeCaseToUpperCamelCase(Enchantment.values()[i].getName()) + ", ";
-                }
-            }
-            text = text.substring(0, text.length() - 1);
-            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> enchTypes = new LinkedList<String>();
-                for (final String s : input.split(" ")) {
-                    if (ItemUtil.getEnchantmentFromProperName(s) != null) {
-                        if (enchTypes.contains(s) == false) {
-                            enchTypes.add(s);
-                        } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + " " + Lang.get("listDuplicate"));
-                            return new ItemEnchantTypesPrompt(context);
-                        }
-                    } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                + Lang.get("stageEditorInvalidEnchantment"));
-                        return new ItemEnchantTypesPrompt(context);
-                    }
-                }
-                context.setSessionData(pref + CK.S_ENCHANT_TYPES, enchTypes);
-            }
-            return new ItemsEnchantListPrompt(context);
-        }
-    }
-
-    public class ItemEnchantItemsPrompt extends QuestsEditorStringPrompt {
-
-        public ItemEnchantItemsPrompt(final ConversationContext context) {
-            super(context);
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("stageEditorItemNamesPrompt");
-        }
-
-        @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
-            return ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final String[] args = input.split(" ");
-                final LinkedList<String> names = new LinkedList<String>();
-                for (final String s : args) {
-                    try {
-                        if (Material.matchMaterial(s) != null) {
-                            names.add(s);
-                        } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                    + Lang.get("stageEditorInvalidItemName"));
-                            return new ItemEnchantItemsPrompt(context);
-                        }
-                    } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
-                        return new ItemEnchantItemsPrompt(context);
-                    }
-                }
-                context.setSessionData(pref + CK.S_ENCHANT_NAMES, names);
-            }
-            return new ItemsEnchantListPrompt(context);
-        }
-    }
-
-    public class ItemEnchantAmountsPrompt extends QuestsEditorStringPrompt {
-
-        public ItemEnchantAmountsPrompt(final ConversationContext context) {
-            super(context);
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("stageEditorEnchantAmountsPrompt");
-        }
-
-        @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
-            return ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final String[] args = input.split(" ");
-                final LinkedList<Integer> amounts = new LinkedList<Integer>();
-                for (final String s : args) {
-                    try {
-                        if (Integer.parseInt(s) > 0) {
-                            amounts.add(Integer.parseInt(s));
-                        } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
-                                    .replace("<number>", "1"));
-                            return new ItemEnchantAmountsPrompt(context);
-                        }
-                    } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
-                        return new ItemEnchantAmountsPrompt(context);
-                    }
-                }
-                context.setSessionData(pref + CK.S_ENCHANT_AMOUNTS, amounts);
-            }
-            return new ItemsEnchantListPrompt(context);
         }
     }
     
