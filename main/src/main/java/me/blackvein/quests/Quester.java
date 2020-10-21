@@ -2979,14 +2979,16 @@ public class Quester {
                     }
                     questSec.set("item-consume-amounts", consumeAmounts);
                 }
-                if (getCurrentStage(quest).cowsToMilk != null) {
-                    questSec.set("cows-milked", questData.getCowsMilked());
-                }
-                if (getCurrentStage(quest).fishToCatch != null) {
-                    questSec.set("fish-caught", questData.getFishCaught());
-                }
-                if (getCurrentStage(quest).playersToKill != null) {
-                    questSec.set("players-killed", questData.getPlayersKilled());
+                if (getCurrentStage(quest) != null) {
+                    if (getCurrentStage(quest).cowsToMilk != null) {
+                        questSec.set("cows-milked", questData.getCowsMilked());
+                    }
+                    if (getCurrentStage(quest).fishToCatch != null) {
+                        questSec.set("fish-caught", questData.getFishCaught());
+                    }
+                    if (getCurrentStage(quest).playersToKill != null) {
+                        questSec.set("players-killed", questData.getPlayersKilled());
+                    }
                 }
                 if (questData.mobsKilled.isEmpty() == false) {
                     final LinkedList<String> mobNames = new LinkedList<String>();
