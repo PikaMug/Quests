@@ -19,10 +19,14 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -301,6 +305,81 @@ public class Quest {
             final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
                     .getFirst());
             targetLocation = npc.getStoredLocation();
+        } else if (stage.playersToKill != null && stage.playersToKill > 0) {
+            final Location source = quester.getPlayer().getLocation();
+            Location nearest = null;
+            double old_distance = 30000000;
+            for (final Player p : source.getWorld().getPlayers()) {
+                if (p.getUniqueId().equals(quester.getUUID())) {
+                    continue;
+                }
+                final double new_distance = p.getLocation().distanceSquared(source);
+                if (new_distance < old_distance) {
+                    nearest = p.getLocation();
+                    old_distance = new_distance;
+                }
+            }
+            if (nearest != null) {
+                targetLocation = nearest;
+            }
+        } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
+            final Location source = quester.getPlayer().getLocation();
+            Location nearest = null;
+            double old_distance = 30000000;
+            final EntityType et = stage.mobsToKill.getFirst();
+            for (final Entity e : source.getWorld().getEntities()) {
+                if (!e.getType().equals(et)) {
+                    continue;
+                }
+                final double new_distance = e.getLocation().distanceSquared(source);
+                if (new_distance < old_distance) {
+                    nearest = e.getLocation();
+                    old_distance = new_distance;
+                }
+            }
+            if (nearest != null) {
+                targetLocation = nearest;
+            }
+        } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
+            final Location source = quester.getPlayer().getLocation();
+            Location nearest = null;
+            double old_distance = 30000000;
+            final EntityType et = stage.mobsToTame.keySet().iterator().next();
+            for (final Entity e : source.getWorld().getEntities()) {
+                if (!e.getType().equals(et)) {
+                    continue;
+                }
+                final double new_distance = e.getLocation().distanceSquared(source);
+                if (new_distance < old_distance) {
+                    nearest = e.getLocation();
+                    old_distance = new_distance;
+                }
+            }
+            if (nearest != null) {
+                targetLocation = nearest;
+            }
+        } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
+            final Location source = quester.getPlayer().getLocation();
+            Location nearest = null;
+            double old_distance = 30000000;
+            final DyeColor dc = stage.sheepToShear.keySet().iterator().next();
+            for (final Entity e : source.getWorld().getEntities()) {
+                if (!e.getType().equals(EntityType.SHEEP)) {
+                    continue;
+                }
+                final Sheep s = (Sheep)e;
+                if (s.getColor().equals(dc)) {
+                    continue;
+                }
+                final double new_distance = e.getLocation().distanceSquared(source);
+                if (new_distance < old_distance) {
+                    nearest = e.getLocation();
+                    old_distance = new_distance;
+                }
+            }
+            if (nearest != null) {
+                targetLocation = nearest;
+            }
         }
         if (targetLocation != null && targetLocation.getWorld() != null) {
             if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
