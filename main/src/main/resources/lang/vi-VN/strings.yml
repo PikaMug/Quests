@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Bạn cần phải thiết lập số lượ
 eventEditorAddSpawnLocation: "Thiết lập vị trí spawn"
 eventEditorMobSpawnsCleared: "Các mob spawn đã được xóa."
 eventEditorMustSetMobLocationFirst: "Bạn cần đặt 1 vị trí spawn trước tiên!"
-eventEditorInvalidMob: "không phải là một tên mob hợp lệ!"
 eventEditorSetMobName: "Thiết lập tên tùy chỉnh cho mob"
 eventEditorSetMobType: "Thiết lập loại mob"
 eventEditorSetMobItemInHand: "Thiết lập item trong tay"
