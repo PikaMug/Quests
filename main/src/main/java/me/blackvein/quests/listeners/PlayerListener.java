@@ -168,19 +168,32 @@ public class PlayerListener implements Listener {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { // If the event is fired by HAND (main hand)
-            if (evt.hasBlock() && ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
-                if (evt.getClickedBlock().getType().name().contains("PORTAL")
-                        && plugin.getSettings().canAllowPranks()) {
-                    evt.setCancelled(true);
-                    evt.getPlayer().sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE 
-                            + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-                    return;
+            if (ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
+                if (evt.hasBlock()) {
+                    if (evt.getClickedBlock().getType().name().equals("LECTERN")) {
+                        evt.setCancelled(true);
+                        evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied")
+                                .replace("<journal>", Lang.get(evt.getPlayer(), "journalTitle")));
+                        return;
+                    }
+                    if (plugin.getSettings().canAllowPranks()
+                            && evt.getClickedBlock().getType().name().contains("PORTAL")) {
+                        evt.setCancelled(true);
+                        evt.getPlayer().sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE 
+                                + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                        return;
+                    }
                 }
-                if (evt.getClickedBlock().getType().name().equals("LECTERN")) {
-                    evt.setCancelled(true);
-                    evt.getPlayer().sendMessage(ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied")
-                            .replace("<journal>", Lang.get(evt.getPlayer(), "journalTitle")));
-                    return;
+                if (plugin.getSettings().canAllowPranks()
+                        && evt.getPlayer().getInventory().getHelmet() != null
+                        && (evt.getPlayer().getInventory().getHelmet().getType().name().equals("PUMPKIN")
+                        || evt.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
+                        if (!evt.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                            evt.getPlayer().sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE 
+                                + "https://www.youtube.com/watch?v=v4IC7qaNr7I");
+                        }
+                        evt.setCancelled(true);
+                        return;
                 }
             }
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
