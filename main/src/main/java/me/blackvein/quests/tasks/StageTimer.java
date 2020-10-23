@@ -47,32 +47,8 @@ public class StageTimer implements Runnable {
                 quest.completeQuest(quester);
             } else {
                 final int stageNum = quester.getCurrentQuests().get(quest) + 1;
-                /*Stage currentStage = quester.getCurrentStage(quest);
-                quester.hardQuit(quest);
-                if (currentStage.getScript() != null) {
-                    plugin.getDependencies().runDenizenScript(currentStage.getScript(), quester);
-                }
-                if (currentStage.getFinishAction() != null) {
-                    currentStage.getFinishAction().fire(quester, quest);
-                }
-                quester.hardStagePut(quest, stageNum);
-                quester.addEmptiesFor(quest, stageNum);*/
                 quester.getQuestData(quest).setDelayStartTime(0);
                 quester.getQuestData(quest).setDelayTimeLeft(-1);
-                /*Action stageStartEvent = quester.getCurrentStage(quest).getStartAction();
-                if (stageStartEvent != null) {
-                    stageStartEvent.fire(quester, quest);
-                }
-                Player player = quester.getPlayer();
-                String msg = Lang.get(player, "questObjectivesTitle");
-                msg = msg.replace("<quest>", quest.getName());
-                player.sendMessage(ChatColor.GOLD + msg);
-                plugin.showObjectives(quest, quester, false);
-                String stageStartMessage = quester.getCurrentStage(quest).getStartMessage();
-                if (stageStartMessage != null) {
-                    quester.getPlayer().sendMessage(ConfigUtil
-                            .parseStringWithPossibleLineBreaks(stageStartMessage, quest));
-                }*/
                 try {
                     quest.setStage(quester, stageNum);
                 } catch (final IndexOutOfBoundsException e) {
