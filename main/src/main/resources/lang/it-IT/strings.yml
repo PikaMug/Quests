@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "È necessario impostare la quantità di crea
 eventEditorAddSpawnLocation: "Imposta la posizione di spawn"
 eventEditorMobSpawnsCleared: "Spawn delle creature cancellati."
 eventEditorMustSetMobLocationFirst: "È necessario impostare una posizione di spawn prima!"
-eventEditorInvalidMob: "non è il nome di una creatura valida!"
 eventEditorSetMobName: "Imposta un nome personalizzato alla creatura"
 eventEditorSetMobType: "Imposta il tipo di creatura"
 eventEditorSetMobItemInHand: "Metti l'oggetto nella mano"
