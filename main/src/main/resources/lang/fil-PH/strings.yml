@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Kailangan mo munang itakda ang halaga ng mob
 eventEditorAddSpawnLocation: "Itakda ang lokasyon ng pagbubuhayan"
 eventEditorMobSpawnsCleared: "Pagkabuhay ng mob ay tapos na."
 eventEditorMustSetMobLocationFirst: "Kailangan mo munang itakda ang lokasyong ng pagbubuhayan!"
-eventEditorInvalidMob: "ito ay hindi wastong pangalan ng mob!"
 eventEditorSetMobName: "Itakda ang pangalan ng kasuotan para sa mob"
 eventEditorSetMobType: "Itakda ang uri ng mob"
 eventEditorSetMobItemInHand: "Itakda ang gamit sa kamay"
