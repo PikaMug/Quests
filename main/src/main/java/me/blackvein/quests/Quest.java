@@ -958,11 +958,36 @@ public class Quest {
     /**
      * Checks if quester is in WorldGuard region start
      * 
+     * @deprecated Use {@link #isInRegion(Quester)}
      * @param quester The quester to check
      * @return true if quester is in region
      */
+    @Deprecated
     public boolean isInRegion(final Quester quester) {
-        return isInRegion(quester.getPlayer());
+        return isInRegionStart(quester);
+    }
+
+    /**
+     * Checks if player is in WorldGuard region start
+     * 
+     * @deprecated Use {@link #isInRegionStart(Player)}
+     * @param player The player to check
+     * @return true if player is in region
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    private boolean isInRegion(final Player player) {
+        return isInRegionStart(player);
+    }
+    
+    /**
+     * Checks if quester is in WorldGuard region start
+     * 
+     * @param quester The quester to check
+     * @return true if quester is in region
+     */
+    public boolean isInRegionStart(final Quester quester) {
+        return isInRegionStart(quester.getPlayer());
     }
 
     /**
@@ -971,7 +996,7 @@ public class Quest {
      * @param player The player to check
      * @return true if player is in region
      */
-    private boolean isInRegion(final Player player) {
+    private boolean isInRegionStart(final Player player) {
         if (regionStart == null) {
             return false;
         }

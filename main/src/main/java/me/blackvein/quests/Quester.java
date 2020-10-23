@@ -627,6 +627,12 @@ public class Quester {
                             msg += ChatColor.AQUA + "\n   \u2515 " + MiscUtil.snakeCaseToUpperCamelCase(b);
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getRegionsWhileStayingWithin().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorStayWithinRegion");
+                        for (final String r : c.getRegionsWhileStayingWithin()) {
+                            msg += ChatColor.AQUA + "\n   \u2515 " + r;
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
                     }
                 }
             }
@@ -4126,7 +4132,7 @@ public class Quester {
             }
             return false;
         } else if (quest.getRegionStart() != null) {
-            if (!quest.isInRegion(this)) {
+            if (!quest.isInRegionStart(this)) {
                 if (giveReason) {
                     String msg = Lang.get(getPlayer(), "questInvalidLocation");
                     msg = msg.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
@@ -4167,6 +4173,17 @@ public class Quester {
                 || plugin.getActionFactory().getSelectedLightningLocations().containsKey(uuid)
                 || plugin.getActionFactory().getSelectedTeleportLocations().containsKey(uuid)) {
                     return true;
+        }
+        return false;
+    }
+    
+    public boolean isInRegion(final String regionID) {
+        if (getPlayer() == null) {
+            return false;
+        }
+        if (plugin.getDependencies().getWorldGuardApi()
+                .getApplicableRegionsIDs(getPlayer().getWorld(), getPlayer().getLocation()).contains(regionID)) {
+            return true;
         }
         return false;
     }

@@ -186,4 +186,5 @@ public class CK {
     public static final String C_WHILE_HOLDING_MAIN_HAND = "conHoldingMainHand";
     public static final String C_WHILE_WITHIN_WORLD = "conWithinWorld";
     public static final String C_WHILE_WITHIN_BIOME = "conWithinBiome";
+    public static final String C_WHILE_WITHIN_REGION = "conWithinRegion";
 }

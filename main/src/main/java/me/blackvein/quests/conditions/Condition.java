@@ -33,6 +33,7 @@ public class Condition {
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
+    private LinkedList<String> regionsWhileStayingWithin = new LinkedList<String>();
 
     public Condition(final Quests plugin) {
         this.plugin = plugin;
@@ -93,6 +94,14 @@ public class Condition {
     public void setBiomesWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
         this.biomesWhileStayingWithin = biomesWhileStayingWithin;
     }
+    
+    public LinkedList<String> getRegionsWhileStayingWithin() {
+        return regionsWhileStayingWithin;
+    }
+    
+    public void setRegionsWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
+        this.regionsWhileStayingWithin = biomesWhileStayingWithin;
+    }
 
     @SuppressWarnings("deprecation")
     public boolean check(final Quester quester, final Quest quest) {
@@ -142,6 +151,14 @@ public class Condition {
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": " 
                             + MiscUtil.getProperBiome(b));
+                }
+            }
+        } else if (!regionsWhileStayingWithin.isEmpty()) {
+            for (final String r : regionsWhileStayingWithin) {
+                if (quester.isInRegion(r)) {
+                    return true;
+                } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
                 }
             }
         }

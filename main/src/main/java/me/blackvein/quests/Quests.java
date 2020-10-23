@@ -3439,6 +3439,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 throw new ConditionFormatException("stay-within-biome is not a list of biomes", conditionKey);
             }
         }
+        if (data.contains(conditionKey + "stay-within-region")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "stay-within-region"), String.class)) {
+                final LinkedList<String> regions = new LinkedList<String>();
+                for (final String s : data.getStringList(conditionKey + "stay-within-region")) {
+                    boolean exists = false;
+                    for (final World world : getServer().getWorlds()) {
+                        if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
+                            if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(s)) {
+                                regions.add(s);
+                                exists = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!exists) {
+                        throw new ConditionFormatException("region has invalid WorldGuard region name", conditionKey);
+                    }
+                }
+                condition.setRegionsWhileStayingWithin(regions);
+            } else {
+                throw new ConditionFormatException("stay-within-region is not a list of regions", conditionKey);
+            }
+        }
         return condition;
     }
     

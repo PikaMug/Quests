@@ -24,22 +24,29 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 
+import com.sk89q.worldguard.protection.managers.RegionManager;
+
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 
 public class WorldPrompt extends QuestsEditorNumericPrompt {
     
+    private final Quests plugin;
+    
     public WorldPrompt(final ConversationContext context) {
         super(context);
+        this.plugin = (Quests)context.getPlugin();
     }
     
-    private final int size = 3;
+    private final int size = 4;
     
     @Override
     public int getSize() {
@@ -56,8 +63,9 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         switch (number) {
             case 1:
             case 2:
-                return ChatColor.BLUE;
             case 3:
+                return ChatColor.BLUE;
+            case 4:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -72,6 +80,12 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinBiome");
         case 3:
+            if (plugin.getDependencies().getWorldGuardApi() != null) {
+                return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinRegion");
+            } else {
+                return ChatColor.GRAY + Lang.get("conditionEditorStayWithinRegion");
+            }
+        case 4:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -103,6 +117,20 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return text;
             }
         case 3:
+            if (plugin.getDependencies().getWorldGuardApi() != null) {
+                if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
+                    String text = "\n";
+                    for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_REGION)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                    }
+                    return text;
+                }
+            } else {
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+            }
+        case 4:
             return "";
         default:
             return null;
@@ -130,6 +158,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new BiomesPrompt(context);
         case 3:
+            return new RegionsPrompt(context);
+        case 4:
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
@@ -241,6 +271,81 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
+            }
+            return new WorldPrompt(context);
+        }
+    }
+    
+    public class RegionsPrompt extends QuestsEditorStringPrompt {
+        
+        public RegionsPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionEditorRegionsTitle");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorRegionsPrompt");
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String regions = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            boolean any = false;
+            for (final World world : plugin.getServer().getWorlds()) {
+                final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+                final RegionManager rm = api.getRegionManager(world);
+                for (final String region : rm.getRegions().keySet()) {
+                    any = true;
+                    regions += ChatColor.GREEN + region + ", ";
+                }
+            }
+            if (any) {
+                regions = regions.substring(0, regions.length() - 2);
+                regions += "\n\n";
+            } else {
+                regions += ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
+            }
+            return regions + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            final Player player = (Player) context.getForWhom();
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                final LinkedList<String> regions = new LinkedList<String>();
+                for (final String r : input.split(" ")) {
+                    boolean found = false;
+                    for (final World world : plugin.getServer().getWorlds()) {
+                        final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+                        final RegionManager rm = api.getRegionManager(world);
+                        for (final String region : rm.getRegions().keySet()) {
+                            if (region.equalsIgnoreCase(r)) {
+                                regions.add(region);
+                                found = true;
+                                break;
+                            }
+                        }
+                        
+                        if (found) {
+                            break;
+                        }
+                    }
+                    if (found = false) {
+                        String error = Lang.get("questWGInvalidRegion");
+                        error = error.replace("<region>", ChatColor.RED + r + ChatColor.YELLOW);
+                        player.sendMessage(ChatColor.YELLOW + error);
+                        return new RegionsPrompt(context);
+                    }
+                }
+                context.setSessionData(CK.C_WHILE_WITHIN_REGION, regions);
             }
             return new WorldPrompt(context);
         }

@@ -124,9 +124,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
         case 4:
-            if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens() != null) {
-                return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
-            } else if (plugin.getDependencies().getCitizens() != null) {
+            if (context.getSessionData(CK.Q_START_NPC) == null || plugin.getDependencies().getCitizens() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
             } else {
                 return ChatColor.GRAY + Lang.get("questEditorNPCStart");
@@ -135,11 +133,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + Lang.get("questEditorBlockStart");
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
-                if (context.getSessionData(CK.Q_REGION) == null) {
-                    return ChatColor.YELLOW + Lang.get("questWGSetRegion");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("questWGSetRegion");
-                }
+                return ChatColor.YELLOW + Lang.get("questWGSetRegion");
             } else {
                 return ChatColor.GRAY + Lang.get("questWGSetRegion");
             }
@@ -147,11 +141,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + Lang.get("questEditorInitialEvent");
         case 8:
             if (plugin.getDependencies().getCitizens() != null) {
-                if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
-                    return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
-                } else {
-                    return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
-                }
+                return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
             } else {
                 return ChatColor.GRAY + Lang.get("questEditorSetGUI");
             }

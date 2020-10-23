@@ -109,6 +109,12 @@ public class ConditionFactory implements ConversationAbandonedListener {
             biomes.addAll(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
         }
+        if (condition.getRegionsWhileStayingWithin() != null 
+                && condition.getRegionsWhileStayingWithin().isEmpty() == false) {
+            final LinkedList<String> regions = new LinkedList<String>();
+            regions.addAll(condition.getRegionsWhileStayingWithin());
+            context.setSessionData(CK.C_WHILE_WITHIN_REGION, regions);
+        }
     }
 
     public void clearData(final ConversationContext context) {
@@ -120,6 +126,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
+        context.setSessionData(CK.C_WHILE_WITHIN_REGION, null);
     }
 
     public void deleteCondition(final ConversationContext context) {
@@ -219,6 +226,10 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) != null) {
             section.set("stay-within-biome", 
                     context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
+        }
+        if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) != null) {
+            section.set("stay-within-region", 
+                    context.getSessionData(CK.C_WHILE_WITHIN_REGION));
         }
         try {
             data.save(conditionsFile);
