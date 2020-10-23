@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Vous devez définir le type de mob tout d’
 eventEditorAddSpawnLocation: "Définir un emplacement d'apparition"
 eventEditorMobSpawnsCleared: "Spawn de mobs effacées."
 eventEditorMustSetMobLocationFirst: "Vous devez définir un emplacement de spawn tout d’abord !"
-eventEditorInvalidMob: "n'est pas un nom de monstre valide !"
 eventEditorSetMobName: "Définir un nom personnalisé pour un mob"
 eventEditorSetMobType: "Définir le type du monstre"
 eventEditorSetMobItemInHand: "Définir l'item en main"
