@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Deves definir um nome e uma quantidade prime
 eventEditorAddSpawnLocation: "Definir um local"
 eventEditorMobSpawnsCleared: "Desova de máfia desmarcada."
 eventEditorMustSetMobLocationFirst: "Você deve definir um local de desova primeiro!"
-eventEditorInvalidMob: "não é um nome válido de um mob!"
 eventEditorSetMobName: "Definir nome personalizado para mob"
 eventEditorSetMobType: "Definir tipos de mob"
 eventEditorSetMobItemInHand: "Sem item na mão"
