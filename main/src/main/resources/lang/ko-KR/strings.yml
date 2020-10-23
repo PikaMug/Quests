@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "먼저 몬스터 양을 설정해야합니�
 eventEditorAddSpawnLocation: "생성 위치 설정"
 eventEditorMobSpawnsCleared: "몬스터 소환 완료."
 eventEditorMustSetMobLocationFirst: "먼저 소환될 위치를 설정해야합니다!"
-eventEditorInvalidMob: "유효한 몬스터 이름이 아닙니다!"
 eventEditorSetMobName: "몬스터에 대한 사용자 정의 이름 설정"
 eventEditorSetMobType: "몬스터 타입 설정"
 eventEditorSetMobItemInHand: "손에 든 아이템 설정"
