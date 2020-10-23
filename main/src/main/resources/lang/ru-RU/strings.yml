@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Вы должны установить ко�
 eventEditorAddSpawnLocation: "Установить местоположение"
 eventEditorMobSpawnsCleared: "Спавны мобов очищены."
 eventEditorMustSetMobLocationFirst: "Сначала вы должны установить местоположение!"
-eventEditorInvalidMob: "неправильное название моба моба!"
 eventEditorSetMobName: "Установите название моба"
 eventEditorSetMobType: "Установите тип моба"
 eventEditorSetMobItemInHand: "Установить предмет в руке"
