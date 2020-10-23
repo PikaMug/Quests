@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Anda harus mengatur jumlah massa terlebih da
 eventEditorAddSpawnLocation: "Tetapkan lokasi bibit"
 eventEditorMobSpawnsCleared: "Massa menumbuhkan dibersihkan."
 eventEditorMustSetMobLocationFirst: "Anda harus menetapkan lokasi menumbuhkan terlebih dahulu!"
-eventEditorInvalidMob: "bukan nama mob yang sah!"
 eventEditorSetMobName: "Tetapkan nama khusus untuk mob"
 eventEditorSetMobType: "Atur tipe mob"
 eventEditorSetMobItemInHand: "Atur item di tangan"
