@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Nejdřív musíš nastavit množství monste
 eventEditorAddSpawnLocation: "Nastavit lokaci spawnu"
 eventEditorMobSpawnsCleared: "Spawn monster vymazán."
 eventEditorMustSetMobLocationFirst: "Musíš nejdřív nastavit lokaci-spawnu!"
-eventEditorInvalidMob: "není platné jméno monstra!"
 eventEditorSetMobName: "Nastavte vlastní jméno pro monstra"
 eventEditorSetMobType: "Nastavit typ monstra"
 eventEditorSetMobItemInHand: "Nastavit předmět do ruky"
