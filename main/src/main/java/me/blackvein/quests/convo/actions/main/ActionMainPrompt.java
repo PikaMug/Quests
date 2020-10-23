@@ -721,7 +721,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     questMob.setType(MiscUtil.getProperMobType(input));
                 } else {
                     player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                            + Lang.get("eventEditorInvalidMob"));
+                            + Lang.get("stageEditorInvalidMob"));
                     return new ActionMobTypePrompt(context, mobIndex, questMob);
                 }
             }
