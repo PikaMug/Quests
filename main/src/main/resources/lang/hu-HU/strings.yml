@@ -348,7 +348,6 @@ eventEditorMustSetMobAmountsFirst: "Először be kell állítani a szörny össz
 eventEditorAddSpawnLocation: "Spawn hely beállítása"
 eventEditorMobSpawnsCleared: "A szörny spawns törölve."
 eventEditorMustSetMobLocationFirst: "Először be kell állítani a spawn-helyet!"
-eventEditorInvalidMob: "nem érvényes szörny név!"
 eventEditorSetMobName: "Egyéni név beállítása a szörny számára"
 eventEditorSetMobType: "Szörny típus beállítása"
 eventEditorSetMobItemInHand: "Elem beállítása a kézben lévőt"
