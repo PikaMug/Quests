@@ -18,7 +18,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
@@ -116,11 +115,11 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         case 2:
             if (player.hasPermission("quests.conditions.edit")) {
                 if (plugin.getConditions().isEmpty()) {
-                    ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToEdit"));
                     return new ConditionMenuPrompt(context);
                 } else {
-                    return new ConditionSelectEditPrompt();
+                    return new ConditionSelectEditPrompt(context);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -129,18 +128,18 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         case 3:
             if (player.hasPermission("quests.conditions.delete")) {
                 if (plugin.getConditions().isEmpty()) {
-                    ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToDelete"));
                     return new ConditionMenuPrompt(context);
                 } else {
-                    return new ConditionSelectDeletePrompt();
+                    return new ConditionSelectDeletePrompt(context);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 4:
-            ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("exited"));
             return Prompt.END_OF_CONVERSATION;
         default:
             return new ConditionMenuPrompt(context);
@@ -148,13 +147,14 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     }
     
     public class ConditionSelectCreatePrompt extends ConditionsEditorStringPrompt {
+        
         public ConditionSelectCreatePrompt(final ConversationContext context) {
             super(context);
         }
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("conditionEditorCreate");
+            return Lang.get("conditionCreateTitle");
         }
         
         @Override
@@ -208,16 +208,30 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         }
     }
 
-    private class ConditionSelectEditPrompt extends StringPrompt {
+    public class ConditionSelectEditPrompt extends ConditionsEditorStringPrompt {
+        
+        public ConditionSelectEditPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionEditTitle");
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorEnterName");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("conditionEditorEdit") + " -\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Condition a : plugin.getConditions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
             }
             text = text.substring(0, text.length() - 2) + "\n";
-            text += ChatColor.YELLOW + Lang.get("conditionEditorEnterName");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -231,24 +245,38 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     plugin.getConditionFactory().loadData(c, context);
                     return new ConditionMainPrompt(context);
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
-                return new ConditionSelectEditPrompt();
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
+                return new ConditionSelectEditPrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);
             }
         }
     }
     
-    private class ConditionSelectDeletePrompt extends StringPrompt {
+    public class ConditionSelectDeletePrompt extends ConditionsEditorStringPrompt {
 
+        public ConditionSelectDeletePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionDeleteTitle");
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorEnterQuestName");
+        }
+        
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("conditionEditorDelete") + " -\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Condition c : plugin.getConditions()) {
                 text += ChatColor.AQUA + c.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("conditionEditorEnterName");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -269,28 +297,42 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     }
                     if (used.isEmpty()) {
                         context.setSessionData(CK.ED_CONDITION_DELETE, c.getName());
-                        return new ConditionConfirmDeletePrompt();
+                        return new ConditionConfirmDeletePrompt(context);
                     } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorInUse") 
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorInUse") 
                         + " \"" + ChatColor.DARK_PURPLE + c.getName() + ChatColor.RED + "\":");
                         for (final String s : used) {
-                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
+                            context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.RED 
                                 + Lang.get("eventEditorMustModifyQuests"));
-                        return new ConditionSelectDeletePrompt();
+                        return new ConditionSelectDeletePrompt(context);
                     }
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
-                return new ConditionSelectDeletePrompt();
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorNotFound"));
+                return new ConditionSelectDeletePrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);
             }
         }
     }
 
-    private class ConditionConfirmDeletePrompt extends StringPrompt {
-
+    public class ConditionConfirmDeletePrompt extends ConditionsEditorStringPrompt {
+        
+        public ConditionConfirmDeletePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("confirmDelete");
+        }
+        
         @Override
         public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
@@ -309,7 +351,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ConditionMenuPrompt(context);
             } else {
-                return new ConditionConfirmDeletePrompt();
+                return new ConditionConfirmDeletePrompt(context);
             }
         }
     }

@@ -203,7 +203,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("questEditTitle");
+            return Lang.get("questEditorEdit");
         }
         
         @Override
@@ -213,11 +213,11 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String s = ChatColor.GOLD + getTitle(context) + "\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Quest q : plugin.getQuests()) {
-                s += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
+                text += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
             }
-            return s + ChatColor.YELLOW + getQueryText(context);
+            return text + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -278,19 +278,19 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.ED_QUEST_DELETE, found.getName());
                         return new QuestConfirmDeletePrompt(context);
                     } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.RED 
                                 + Lang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE 
                                 + context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + "\" " 
                                 + Lang.get("questEditorQuestAsRequirement2"));
                         for (final String s : used) {
-                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
+                            context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.RED 
                                 + Lang.get("questEditorQuestAsRequirement3"));
                         return new QuestSelectDeletePrompt(context);
                     }
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
                 return new QuestSelectDeletePrompt(context);
             } else {
                 return new QuestMenuPrompt(context);

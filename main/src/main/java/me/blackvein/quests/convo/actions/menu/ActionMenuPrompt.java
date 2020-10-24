@@ -18,7 +18,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
@@ -118,11 +117,11 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             if (player.hasPermission("quests.editor.actions.edit") 
                     || player.hasPermission("quests.editor.events.edit")) {
                 if (plugin.getActions().isEmpty()) {
-                    ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToEdit"));
                     return new ActionMenuPrompt(context);
                 } else {
-                    return new ActionSelectEditPrompt();
+                    return new ActionSelectEditPrompt(context);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
@@ -132,18 +131,18 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             if (player.hasPermission("quests.editor.actions.delete") 
                     || player.hasPermission("quests.editor.events.delete")) {
                 if (plugin.getActions().isEmpty()) {
-                    ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW 
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToDelete"));
                     return new ActionMenuPrompt(context);
                 } else {
-                    return new ActionSelectDeletePrompt();
+                    return new ActionSelectDeletePrompt(context);
                 }
             } else {
                 player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 4:
-            ((Player) context.getForWhom()).sendMessage(ChatColor.YELLOW + Lang.get("exited"));
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("exited"));
             return Prompt.END_OF_CONVERSATION;
         default:
             return new ActionMenuPrompt(context);
@@ -157,7 +156,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("eventEditorCreate");
+            return Lang.get("eventCreateTitle");
         }
         
         @Override
@@ -211,16 +210,30 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    private class ActionSelectEditPrompt extends StringPrompt {
+    public class ActionSelectEditPrompt extends ActionsEditorStringPrompt {
+        
+        public ActionSelectEditPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditTitle");
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorEnterEventName");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("eventEditorEdit") + " -\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Action a : plugin.getActions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
             }
             text = text.substring(0, text.length() - 2) + "\n";
-            text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -234,24 +247,38 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().loadData(a, context);
                     return new ActionMainPrompt(context);
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new ActionSelectEditPrompt();
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
+                return new ActionSelectEditPrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
             }
         }
     }
     
-    private class ActionSelectDeletePrompt extends StringPrompt {
+    public class ActionSelectDeletePrompt extends ActionsEditorStringPrompt {
 
+        public ActionSelectDeletePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventDeleteTitle");
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("eventEditorEnterEventName");
+        }
+        
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + "- " + Lang.get("eventEditorDelete") + " -\n";
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Action a : plugin.getActions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ",";
             }
             text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + Lang.get("eventEditorEnterEventName");
+            text += ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -272,35 +299,49 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     }
                     if (used.isEmpty()) {
                         context.setSessionData(CK.ED_EVENT_DELETE, a.getName());
-                        return new ActionConfirmDeletePrompt();
+                        return new ActionConfirmDeletePrompt(context);
                     } else {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") 
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorEventInUse") 
                         + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
                         for (final String s : used) {
-                            ((Player) context.getForWhom()).sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
+                            context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.RED 
                                 + Lang.get("eventEditorMustModifyQuests"));
-                        return new ActionSelectDeletePrompt();
+                        return new ActionSelectDeletePrompt(context);
                     }
                 }
-                ((Player) context.getForWhom()).sendMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
-                return new ActionSelectDeletePrompt();
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorNotFound"));
+                return new ActionSelectDeletePrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
             }
         }
     }
 
-    private class ActionConfirmDeletePrompt extends StringPrompt {
+    public class ActionConfirmDeletePrompt extends ActionsEditorStringPrompt {
+        
+        public ActionConfirmDeletePrompt(final ConversationContext context) {
+            super (context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("confirmDelete");
+        }
 
         @Override
         public String getPromptText(final ConversationContext context) {
             String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-        + Lang.get("yesWord") + "\n";
+                    + Lang.get("yesWord") + "\n";
             text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-        + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
+                    + Lang.get("noWord");
+            return ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW 
                     + (String) context.getSessionData(CK.ED_EVENT_DELETE) + ChatColor.RED + ")\n" + text;
         }
 
@@ -312,7 +353,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 return new ActionMenuPrompt(context);
             } else {
-                return new ActionConfirmDeletePrompt();
+                return new ActionConfirmDeletePrompt(context);
             }
         }
     }
