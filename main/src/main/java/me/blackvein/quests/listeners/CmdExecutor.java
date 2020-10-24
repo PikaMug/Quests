@@ -796,6 +796,7 @@ public class CmdExecutor implements CommandExecutor {
                     cs.sendMessage(ChatColor.YELLOW + "" + num + ". " + q.getName());
                     num++;
                 }
+                return;
             }
             final Player player = (Player)cs;
             if (args.length == 1) {
