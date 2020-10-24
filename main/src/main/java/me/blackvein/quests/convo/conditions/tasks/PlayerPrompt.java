@@ -301,7 +301,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 return new PlayerPrompt(context);
             default:
-                return new PlayerPrompt(context);
+                return new ItemsInMainHandListPrompt(context);
             }
         }
     }

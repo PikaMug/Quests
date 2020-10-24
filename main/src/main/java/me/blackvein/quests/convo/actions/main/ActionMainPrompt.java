@@ -377,7 +377,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 3:
                 return new ActionMainPrompt(context);
             default:
-                return null;
+                return new ActionMobListPrompt(context);
             }
         }
     }

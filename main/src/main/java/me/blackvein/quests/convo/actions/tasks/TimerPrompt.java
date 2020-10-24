@@ -125,7 +125,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         case 3:
             return new ActionMainPrompt(context);
         default:
-            return null;
+            return new TimerPrompt(context);
         }
     }
     

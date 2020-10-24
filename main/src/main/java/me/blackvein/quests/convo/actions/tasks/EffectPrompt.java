@@ -146,7 +146,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         case 3:
             return new ActionMainPrompt(context);
         default:
-            return null;
+            return new EffectPrompt(context);
         }
     }
     
@@ -288,7 +288,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     return new EffectSoundListPrompt(context);
                 }
             default:
-                return null;
+                return new EffectSoundListPrompt(context);
             }
         }
     }

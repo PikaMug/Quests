@@ -248,7 +248,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         case 10:
             return new ActionMainPrompt(context);
         default:
-            return null;
+            return new PlayerPrompt(context);
         }
     }
     
@@ -399,7 +399,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             case 3:
                 return new ActionMainPrompt(context);
             default:
-                return new ActionMainPrompt(context);
+                return new PlayerItemListPrompt(context);
             }
         }
     }
@@ -569,7 +569,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     return new PlayerPotionEffectPrompt(context);
                 }
             default:
-                return null;
+                return new PlayerPotionEffectPrompt(context);
             }
         }
     }

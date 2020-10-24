@@ -154,7 +154,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         case 4:
             return new ActionMainPrompt(context);
         default:
-            return null;
+            return new WeatherPrompt(context);
         }
     }
     
@@ -270,7 +270,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
             case 4:
                 return new ActionMainPrompt(context);
             default:
-                return null;
+                return new StormPrompt(context);
             }
         }
     }
@@ -480,7 +480,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     return new ActionMainPrompt(context);
                 }
             default:
-                return null;
+                return new ThunderPrompt(context);
             }
         }
     }
