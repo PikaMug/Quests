@@ -42,7 +42,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         this.plugin = (Quests)context.getPlugin();
     }
 
-    private final int size = 6;
+    private final int size = 7;
     
     @Override
     public int getSize() {
