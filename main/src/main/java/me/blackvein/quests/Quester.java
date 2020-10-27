@@ -633,6 +633,17 @@ public class Quester {
                             msg += ChatColor.AQUA + "\n   \u2515 " + r;
                         }
                         p.sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getPlaceholdersCheckIdentifier().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorCheckPlaceholder");
+                        int index = 0;
+                        for (final String r : c.getPlaceholdersCheckIdentifier()) {
+                            if (c.getPlaceholdersCheckValue().size() > index) {
+                                msg += ChatColor.AQUA + "\n   \u2515 " + r + ChatColor.GRAY + " = " 
+                                        + ChatColor.AQUA + c.getPlaceholdersCheckValue().get(index);
+                            }
+                            index++;
+                        }
+                        p.sendMessage(ChatColor.YELLOW + msg);
                     }
                 }
             }

@@ -3462,6 +3462,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 throw new ConditionFormatException("stay-within-region is not a list of regions", conditionKey);
             }
         }
+        if (data.contains(conditionKey + "check-placeholder-id")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "check-placeholder-id"), String.class)) {
+                if (data.contains(conditionKey + "check-placeholder-value")) {
+                    if (ConfigUtil.checkList(data.getList(conditionKey + "check-placeholder-value"), String.class)) {
+                        final LinkedList<String> identifiers = new LinkedList<String>();
+                        final LinkedList<String> values = new LinkedList<String>();
+                        identifiers.addAll(data.getStringList(conditionKey + "check-placeholder-id"));
+                        values.addAll(data.getStringList(conditionKey + "check-placeholder-value"));
+                        condition.setPlaceholdersCheckIdentifier(identifiers);
+                        condition.setPlaceholdersCheckValue(values);
+                    } else {
+                        throw new ConditionFormatException("check-placeholder-value is not a list of values", conditionKey);
+                    }
+                }
+            } else {
+                throw new ConditionFormatException("check-placeholder-id is not a list of identifiers", conditionKey);
+            }
+        }
         return condition;
     }
     

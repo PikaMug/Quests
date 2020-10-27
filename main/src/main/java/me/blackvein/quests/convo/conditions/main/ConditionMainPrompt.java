@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo.conditions.main;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         this.plugin = (Quests)context.getPlugin();
     }
 
-    private final int size = 7;
+    private final int size = 8;
     
     @Override
     public int getSize() {
@@ -62,10 +63,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 3:
         case 4:
         case 5:
-            return ChatColor.BLUE;
         case 6:
-            return ChatColor.GREEN;
+            return ChatColor.BLUE;
         case 7:
+            return ChatColor.GREEN;
+        case 8:
             return ChatColor.RED;
         default:
             return null;
@@ -84,10 +86,12 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 4:
             return ChatColor.GOLD + Lang.get("conditionEditorWorld");
         case 5:
-            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
+            return ChatColor.YELLOW + Lang.get("conditionEditorCheckPlaceholder");
         case 6:
-            return ChatColor.GREEN + Lang.get("save");
+            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
         case 7:
+            return ChatColor.GREEN + Lang.get("save");
+        case 8:
             return ChatColor.RED + Lang.get("exit");
         default:
             return null;
@@ -101,14 +105,15 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 2:
         case 3:
         case 4:
-            return "";
         case 5:
+            return "";
+        case 6:
             if (context.getSessionData(CK.C_FAIL_QUEST) == null) {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
             }
             return "" + ChatColor.AQUA + context.getSessionData(CK.C_FAIL_QUEST);
-        case 6:
         case 7:
+        case 8:
             return "";
         default:
             return null;
@@ -141,6 +146,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 4:
             return new WorldPrompt(context);
         case 5:
+            return new ConditionPlaceholderListPrompt(context);
+        case 6:
             final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
@@ -148,13 +155,13 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
             }
             return new ConditionMainPrompt(context);
-        case 6:
+        case 7:
             if (context.getSessionData(CK.C_OLD_CONDITION) != null) {
                 return new ConditionSavePrompt(context, (String) context.getSessionData(CK.C_OLD_CONDITION));
             } else {
                 return new ConditionSavePrompt(context, null);
             }
-        case 7:
+        case 8:
             return new ConditionExitPrompt(context);
         default:
             return new ConditionMainPrompt(context);
@@ -210,6 +217,229 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 plugin.getConditionFactory().setNamesOfConditionsBeingEdited(actionNames);
             }
             return new ConditionMainPrompt(context);
+        }
+    }
+    
+    public class ConditionPlaceholderListPrompt extends ConditionsEditorNumericPrompt {
+
+        public ConditionPlaceholderListPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        private final int size = 4;
+        
+        @Override
+        public int getSize() {
+            return size;
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionEditorPlaceholderTitle");
+        }
+        
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                    return ChatColor.BLUE;
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+        
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch(number) {
+            case 1:
+                return ChatColor.YELLOW + Lang.get("conditionEditorSetPlaceholderId");
+            case 2:
+                return ChatColor.YELLOW + Lang.get("conditionEditorSetPlaceholderVal");
+            case 3:
+                return ChatColor.RED + Lang.get("clear");
+            case 4:
+                return ChatColor.GREEN + Lang.get("done");
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch(number) {
+            case 1:
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        String text = "\n";
+                        for (final String i : (List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID)) {
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        }
+                        return text;
+                    }
+                } else {
+                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+                }
+            case 2:
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        String text = "\n";
+                        for (final String i : (List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL)) {
+                            text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        }
+                        return text;
+                    }
+                } else {
+                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+                }
+            case 3:
+            case 4:
+                return "";
+            default:
+                return null;
+            }
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenNumericPromptEvent event 
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.AQUA + getTitle(context) + "\n";
+            for (int i = 1; i <= size; i++) {
+                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            }
+            return text;
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+            switch(input.intValue()) {
+            case 1:
+                return new ConditionPlaceholderIdentifierPrompt(context);
+            case 2:
+                return new ConditionPlaceholderValuePrompt(context);
+            case 3:
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorPlaceholderCleared"));
+                context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, null);
+                context.setSessionData(CK.C_WHILE_PLACEHOLDER_VAL, null);
+                return new ConditionPlaceholderListPrompt(context);
+            case 4:
+                int one;
+                int two;
+                if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID) != null) {
+                    one = ((List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID)).size();
+                } else {
+                    one = 0;
+                }
+                if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL) != null) {
+                    two = ((List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL)).size();
+                } else {
+                    two = 0;
+                }
+                if (one == two) {
+                    return new ConditionMainPrompt(context);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
+                    return new ConditionPlaceholderListPrompt(context);
+                }
+            default:
+                return new ConditionPlaceholderListPrompt(context);
+            }
+        }
+    }
+    
+    public class ConditionPlaceholderIdentifierPrompt extends ConditionsEditorStringPrompt {
+
+        public ConditionPlaceholderIdentifierPrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorEnterPlaceholderId");
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+           if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                final String[] args = input.split(" ");
+                final List<String> identifiers = new LinkedList<String>();
+                for (String arg : args) { 
+                    if (!arg.trim().startsWith("%")) {
+                        arg = "%" + arg.trim();
+                    }
+                    if (!arg.endsWith("%")) {
+                        arg = arg + "%";
+                    }
+                    identifiers.add(arg);
+                }
+                context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, identifiers);
+            }
+            return new ConditionPlaceholderListPrompt(context);
+        }
+    }
+    
+    public class ConditionPlaceholderValuePrompt extends ConditionsEditorStringPrompt {
+
+        public ConditionPlaceholderValuePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorEnterPlaceholderVal");
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+           if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                final String[] args = input.split(" ");
+                final List<String> values = new LinkedList<String>();
+                values.addAll(Arrays.asList(args));
+                context.setSessionData(CK.C_WHILE_PLACEHOLDER_VAL, values);
+            }
+            return new ConditionPlaceholderListPrompt(context);
         }
     }
 

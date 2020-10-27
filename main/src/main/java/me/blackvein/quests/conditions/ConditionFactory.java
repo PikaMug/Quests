@@ -115,6 +115,18 @@ public class ConditionFactory implements ConversationAbandonedListener {
             regions.addAll(condition.getRegionsWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_REGION, regions);
         }
+        if (condition.getPlaceholdersCheckIdentifier() != null 
+                && condition.getPlaceholdersCheckIdentifier().isEmpty() == false) {
+            final LinkedList<String> identifiers = new LinkedList<String>();
+            identifiers.addAll(condition.getPlaceholdersCheckIdentifier());
+            context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, identifiers);
+        }
+        if (condition.getPlaceholdersCheckValue() != null 
+                && condition.getPlaceholdersCheckValue().isEmpty() == false) {
+            final LinkedList<String> values = new LinkedList<String>();
+            values.addAll(condition.getPlaceholdersCheckValue());
+            context.setSessionData(CK.C_WHILE_PLACEHOLDER_VAL, values);
+        }
     }
 
     public void clearData(final ConversationContext context) {
@@ -127,6 +139,8 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
         context.setSessionData(CK.C_WHILE_WITHIN_REGION, null);
+        context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, null);
+        context.setSessionData(CK.C_WHILE_PLACEHOLDER_VAL, null);
     }
 
     public void deleteCondition(final ConversationContext context) {
@@ -230,6 +244,14 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) != null) {
             section.set("stay-within-region", 
                     context.getSessionData(CK.C_WHILE_WITHIN_REGION));
+        }
+        if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID) != null) {
+            section.set("check-placeholder-id", 
+                    context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID));
+        }
+        if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL) != null) {
+            section.set("check-placeholder-value", 
+                    context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL));
         }
         try {
             data.save(conditionsFile);

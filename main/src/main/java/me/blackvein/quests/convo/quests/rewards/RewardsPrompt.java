@@ -657,7 +657,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(CK.REW_ITEMS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
                     for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REW_ITEMS)) {
@@ -1049,7 +1049,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
                     for (final String s : (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS)) {
@@ -1059,7 +1059,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
                     for (final Integer i : (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS)) {
@@ -1068,6 +1068,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return text;
                 }
             case 3:
+            case 4:
                 return "";
             default:
                 return null;
@@ -1121,7 +1122,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (one == two) {
                     return new RewardsPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewMcMMOListsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
                     return new RewardsMcMMOListPrompt(context);
                 }
             default:
@@ -1289,7 +1290,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
                     for (final String s : (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES)) {
@@ -1299,7 +1300,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
                     for (final Double d : (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS)) {

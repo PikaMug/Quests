@@ -22,6 +22,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Condition {
 
@@ -34,6 +35,8 @@ public class Condition {
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
     private LinkedList<String> regionsWhileStayingWithin = new LinkedList<String>();
+    private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<String>();
+    private LinkedList<String> placeholdersCheckValue = new LinkedList<String>();
 
     public Condition(final Quests plugin) {
         this.plugin = plugin;
@@ -102,6 +105,22 @@ public class Condition {
     public void setRegionsWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
         this.regionsWhileStayingWithin = biomesWhileStayingWithin;
     }
+    
+    public LinkedList<String> getPlaceholdersCheckIdentifier() {
+        return placeholdersCheckIdentifier;
+    }
+    
+    public void setPlaceholdersCheckIdentifier(final LinkedList<String> placeholdersCheckIdentifier) {
+        this.placeholdersCheckIdentifier = placeholdersCheckIdentifier;
+    }
+    
+    public LinkedList<String> getPlaceholdersCheckValue() {
+        return placeholdersCheckValue;
+    }
+    
+    public void setPlaceholdersCheckValue(final LinkedList<String> placeholdersCheckValue) {
+        this.placeholdersCheckValue = placeholdersCheckValue;
+    }
 
     @SuppressWarnings("deprecation")
     public boolean check(final Quester quester, final Quest quest) {
@@ -160,6 +179,21 @@ public class Condition {
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
                 }
+            }
+        } else if (!placeholdersCheckIdentifier.isEmpty()) {
+            int index = 0;
+            for (final String i : placeholdersCheckIdentifier) {
+                if (plugin.getDependencies().isPluginAvailable("PlaceholderAPI")) {
+                    if (placeholdersCheckValue.size() > index &&
+                            placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
+                        return true;
+                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition placeholder mismatch for " + player.getName() + ": " + i);
+                    }
+                } else {
+                    plugin.getLogger().warning("PAPI must be installed for placeholder checks: " + i);
+                }
+                index++;
             }
         }
         return false;

@@ -187,4 +187,6 @@ public class CK {
     public static final String C_WHILE_WITHIN_WORLD = "conWithinWorld";
     public static final String C_WHILE_WITHIN_BIOME = "conWithinBiome";
     public static final String C_WHILE_WITHIN_REGION = "conWithinRegion";
+    public static final String C_WHILE_PLACEHOLDER_ID = "conPlaceholderId";
+    public static final String C_WHILE_PLACEHOLDER_VAL = "conPlaceholderVal";
 }
