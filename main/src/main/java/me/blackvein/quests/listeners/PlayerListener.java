@@ -111,7 +111,7 @@ public class PlayerListener implements Listener {
         final Player player = (Player) evt.getWhoClicked();
         if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
             final ItemStack clicked = evt.getCurrentItem();
-            if (clicked != null) {
+            if (ItemUtil.isItem(clicked)) {
                 for (final Quest quest : plugin.getQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
