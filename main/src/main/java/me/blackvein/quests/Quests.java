@@ -74,6 +74,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.google.common.collect.ImmutableList;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.actions.Action;
@@ -1292,7 +1293,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (id == null) {
             return null;
         }
-        for (final Quester q: questers) {
+        for (final Quester q: ImmutableList.copyOf(questers)) {
             if (q != null && q.getUUID().equals(id)) {
                 return q;
             }
