@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -74,7 +76,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.google.common.collect.ImmutableList;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.actions.Action;
@@ -114,7 +115,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private final List<CustomRequirement> customRequirements = new LinkedList<CustomRequirement>();
     private final List<CustomReward> customRewards = new LinkedList<CustomReward>();
     private final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
-    private LinkedList<Quester> questers = new LinkedList<Quester>();
+    private Collection<Quester> questers = new ConcurrentSkipListSet<Quester>();
     private final LinkedList<Quest> quests = new LinkedList<Quest>();
     private LinkedList<Action> actions = new LinkedList<Action>();
     private LinkedList<Condition> conditions = new LinkedList<Condition>();
@@ -318,12 +319,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         this.conditions = conditions;
     }
     
-    public LinkedList<Quester> getQuesters() {
+    // TODO Experimental start
+    public Collection<Quester> getOfflineQuesters() {
         return questers;
     }
     
-    public void setQuesters(final LinkedList<Quester> questers) {
+    public void setOfflineQuesters(final Collection<Quester> questers) {
         this.questers = questers;
+    }
+    // TODO Experimental end
+    
+    public LinkedList<Quester> getQuesters() {
+        return new LinkedList<>(questers);
+    }
+    
+    public void setQuesters(final LinkedList<Quester> questers) {
+        this.questers = new ConcurrentSkipListSet<>(questers);
     }
     
     public LinkedList<NPC> getQuestNpcs() {
@@ -1293,7 +1304,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (id == null) {
             return null;
         }
-        for (final Quester q: ImmutableList.copyOf(questers)) {
+        for (final Quester q: questers) {
             if (q != null && q.getUUID().equals(id)) {
                 return q;
             }
