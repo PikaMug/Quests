@@ -1304,22 +1304,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (id == null) {
             return null;
         }
-        for (final Quester q: questers) {
+        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
+        for (final Quester q: set) {
             if (q != null && q.getUUID().equals(id)) {
                 return q;
             }
         }
-        final Quester quester = new Quester(this);
-        quester.setUUID(id);
+        final Quester quester = new Quester(this, id);
         if (depends.getCitizens() != null) {
             if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
                 return quester;
             }
         }
-        questers.add(quester);
         if (!quester.loadData()) {
-            questers.remove(quester);
+            set.add(quester);
+        } else {
+            set.remove(quester);
         }
+        setOfflineQuesters(set);
         return quester;
     }
 
@@ -1333,9 +1335,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public LinkedList<Quester> getOnlineQuesters() {
         final LinkedList<Quester> qs = new LinkedList<Quester>();
         for (final Player p : getServer().getOnlinePlayers()) {
-            final Quester quester = new Quester(this);
-            quester.setUUID(p.getUniqueId());
-            if (quester.loadData() == false) {
+            final Quester quester = new Quester(this, p.getUniqueId());
+            if (!quester.loadData()) {
                 quester.saveData();
             }
             qs.add(quester);

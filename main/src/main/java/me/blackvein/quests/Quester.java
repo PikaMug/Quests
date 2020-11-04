@@ -233,6 +233,11 @@ public class Quester {
     public Quester(final Quests plugin) {
         this.plugin = plugin;
     }
+    
+    public Quester(final Quests plugin, final UUID uuid) {
+        this.plugin = plugin;
+        this.id = uuid;
+    }
 
     public UUID getUUID() {
         return id;
@@ -3190,6 +3195,23 @@ public class Quester {
     }
 
     /**
+     * Check whether data file for this Quester exists
+     * 
+     * @return file if exists, otherwise null
+     */
+    public File getDataFile() {
+        File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + id.toString() + ".yml");
+        if (!dataFile.exists()) {
+            final OfflinePlayer p = getOfflinePlayer();
+            dataFile = new File(plugin.getDataFolder(), "data" + File.separator + p.getName() + ".yml");
+            if (!dataFile.exists()) {
+                return null;
+            }
+        }
+        return dataFile;
+    }
+    
+    /**
      * Load data of the Quester from file
      * 
      * @return true if successful
@@ -3198,15 +3220,12 @@ public class Quester {
     public boolean loadData() {
         final FileConfiguration data = new YamlConfiguration();
         try {
-            File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + id.toString() + ".yml");
-            if (dataFile.exists() == false) {
-                final OfflinePlayer p = getOfflinePlayer();
-                dataFile = new File(plugin.getDataFolder(), "data" + File.separator + p.getName() + ".yml");
-                if (dataFile.exists() == false) {
-                    return false;
-                }
+            final File dataFile = getDataFile();
+            if (dataFile != null) {
+                data.load(dataFile);
+            } else {
+                return false;
             }
-            data.load(dataFile);
         } catch (final IOException e) {
             return false;
         } catch (final InvalidConfigurationException e) {
