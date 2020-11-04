@@ -29,7 +29,7 @@ public class MiscUtil {
      * @return Converted time in text
      */
     public static String getTime(final long milliseconds) {
-        String message = "";
+        final StringBuilder sb = new StringBuilder();
         final long days = milliseconds / 86400000;
         final long hours = (milliseconds % 86400000) / 3600000;
         final long minutes = ((milliseconds % 86400000) % 3600000) / 60000;
@@ -37,44 +37,46 @@ public class MiscUtil {
         final long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
         if (days > 0L) {
             if (days == 1L) {
-                message += " 1 " + Lang.get("timeDay") + ",";
+                sb.append(" 1 " + Lang.get("timeDay") + ",");
             } else {
-                message += " " + days + " " + Lang.get("timeDays") + ",";
+                sb.append(" " + days + " " + Lang.get("timeDays") + ",");
             }
         }
         if (hours > 0L) {
             if (hours == 1L) {
-                message += " 1 " + Lang.get("timeHour") + ",";
+                sb.append(" 1 " + Lang.get("timeHour") + ",");
             } else {
-                message += " " + hours + " " + Lang.get("timeHours") + ",";
+                sb.append(" " + hours + " " + Lang.get("timeHours") + ",");
             }
         }
         if (minutes > 0L) {
             if (minutes == 1L) {
-                message += " 1 " + Lang.get("timeMinute") + ",";
+                sb.append(" 1 " + Lang.get("timeMinute") + ",");
             } else {
-                message += " " + minutes + " " + Lang.get("timeMinutes") + ",";
+                sb.append(" " + minutes + " " + Lang.get("timeMinutes") + ",");
             }
         }
         if (seconds > 0L) {
             if (seconds == 1L) {
-                message += " 1 " + Lang.get("timeSecond") + ",";
+                sb.append(" 1 " + Lang.get("timeSecond") + ",");
             } else {
-                message += " " + seconds + " " + Lang.get("timeSeconds") + ",";
+                sb.append(" " + seconds + " " + Lang.get("timeSeconds") + ",");
             }
         } else {
             if (milliSeconds2 > 0L) {
                 if (milliSeconds2 == 1L) {
-                    message += " 1 " + Lang.get("timeMillisecond") + ",";
+                    sb.append(" 1 " + Lang.get("timeMillisecond") + ",");
                 } else {
-                    message += " " + milliSeconds2 + " " + Lang.get("timeMilliseconds") + ",";
+                    sb.append(" " + milliSeconds2 + " " + Lang.get("timeMilliseconds") + ",");
                 }
             }
         }
-        if (message.length() > 0) {
-            message = message.substring(1, message.length() - 1);
+        if (sb.length() > 0) {
+            sb.append(sb.substring(1, sb.length() - 1));
+        } else {
+            sb.append("-1 " + Lang.get("timeSeconds"));
         }
-        return message;
+        return sb.toString();
     }
     
     /**

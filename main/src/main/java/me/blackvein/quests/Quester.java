@@ -463,7 +463,7 @@ public class Quester {
                 if (currentTime < start) {
                     String early = Lang.get("plnTooEarly");
                     early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                    early = early.replace("<time>", ChatColor.DARK_PURPLE
+                    early = early.replace("<time>", ChatColor.RED
                             + MiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
                     p.sendMessage(ChatColor.YELLOW + early);
                     return;
