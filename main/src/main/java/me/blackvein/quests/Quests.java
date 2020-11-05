@@ -578,8 +578,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
                 for (final Player p : getServer().getOnlinePlayers()) {
-                    final Quester quester = new Quester(Quests.this);
-                    quester.setUUID(p.getUniqueId());
+                    final Quester quester = new Quester(Quests.this, p.getUniqueId());
                     if (quester.loadData() == false) {
                         quester.saveData();
                     }
