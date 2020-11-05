@@ -183,7 +183,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted condition " + condition);
         }
-        for (final Quester q : plugin.getQuesters()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
@@ -274,7 +274,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved condition " + (String) context.getSessionData(CK.C_NAME));
         }
-        for (final Quester q : plugin.getQuesters()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }

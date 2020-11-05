@@ -306,7 +306,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted action " + action);
         }
-        for (final Quester q : plugin.getQuesters()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
@@ -469,7 +469,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved action " + (String) context.getSessionData(CK.E_NAME));
         }
-        for (final Quester q : plugin.getQuesters()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }

@@ -319,20 +319,42 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         this.conditions = conditions;
     }
     
-    // TODO Experimental start
+    /**
+     * Gets every Quester that has ever played on this server
+     * 
+     * @return a collection of all Questers
+     */
     public Collection<Quester> getOfflineQuesters() {
         return questers;
     }
     
+    /**
+     * Sets every Quester that has ever played on this server
+     * 
+     * @param questers a collection of Questers
+     */
     public void setOfflineQuesters(final Collection<Quester> questers) {
-        this.questers = questers;
+        this.questers = new ConcurrentSkipListSet<>(questers);
     }
-    // TODO Experimental end
     
+    /**
+     * Gets every Quester that has ever played on this server
+     * 
+     * @deprecated Use {@link #getOfflineQuesters()}
+     * @return a list of all Questers
+     */
+    @Deprecated
     public LinkedList<Quester> getQuesters() {
         return new LinkedList<>(questers);
     }
     
+    /**
+     * Sets every Quester that has ever played on this server
+     * 
+     * @deprecated Use {@link #setOfflineQuesters(Collection)}
+     * @param questers a list of Questers
+     */
+    @Deprecated
     public void setQuesters(final LinkedList<Quester> questers) {
         this.questers = new ConcurrentSkipListSet<>(questers);
     }

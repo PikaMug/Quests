@@ -15,10 +15,10 @@ package me.blackvein.quests.listeners;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -797,9 +797,9 @@ public class PlayerListener implements Listener {
             } else if (plugin.getSettings().canGenFilesOnJoin()) {
                 quester.saveData();
             }
-            final LinkedList<Quester> temp = plugin.getQuesters();
+            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.add(quester);
-            plugin.setQuesters(temp);
+            plugin.setOfflineQuesters(temp);
             for (final String s : quester.getCompletedQuests()) {
                 final Quest q = plugin.getQuest(s);
                 if (q != null) {
@@ -867,14 +867,14 @@ public class PlayerListener implements Listener {
                 temp.remove(evt.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            final LinkedList<Quester> temp = plugin.getQuesters();
+            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             for (final Iterator<Quester> iterator = temp.iterator(); iterator.hasNext();) {
                 final Quester q = iterator.next();
                 if (q.getUUID().equals(quester.getUUID())) {
                     iterator.remove();
                 }
             }
-            plugin.setQuesters(temp);
+            plugin.setOfflineQuesters(temp);
         }
     }
 

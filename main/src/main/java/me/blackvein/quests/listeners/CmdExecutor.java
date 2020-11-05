@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1142,7 +1143,7 @@ public class CmdExecutor implements CommandExecutor {
             }
             cs.sendMessage(ChatColor.YELLOW + Lang.get("settingAllQuestPoints")
                     .replace("<points>", Lang.get("questPoints")));
-            for (final Quester q : plugin.getQuesters()) {
+            for (final Quester q : plugin.getOfflineQuesters()) {
                 q.setQuestPoints(amount);
             }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -1378,13 +1379,13 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final UUID id = target.getUniqueId();
-            final LinkedList<Quester> temp = plugin.getQuesters();
+            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             for(final Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
                 if (itr.next().getUUID().equals(id)) {
                     itr.remove();
                 }
             }
-            plugin.setQuesters(temp);
+            plugin.setOfflineQuesters(temp);
             Quester quester = plugin.getQuester(target.getUniqueId());
             try {
                 quester.hardClear();
@@ -1407,9 +1408,9 @@ public class CmdExecutor implements CommandExecutor {
             quester = new Quester(plugin);
             quester.setUUID(id);
             quester.saveData();
-            final LinkedList<Quester> temp2 = plugin.getQuesters();
+            final ConcurrentSkipListSet<Quester> temp2 = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp2.add(quester);
-            plugin.setQuesters(temp2);
+            plugin.setOfflineQuesters(temp2);
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
