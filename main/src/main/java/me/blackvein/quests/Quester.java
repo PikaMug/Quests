@@ -71,7 +71,7 @@ import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
-public class Quester implements Comparable<UUID> {
+public class Quester implements Comparable<Quester> {
 
     private final Quests plugin;
     public boolean hasJournal = false;
@@ -240,8 +240,8 @@ public class Quester implements Comparable<UUID> {
     }
     
     @Override
-    public int compareTo(final UUID uuid) {
-        return id.compareTo(uuid);
+    public int compareTo(final Quester quester) {
+        return id.compareTo(quester.getUUID());
     }
 
     public UUID getUUID() {
