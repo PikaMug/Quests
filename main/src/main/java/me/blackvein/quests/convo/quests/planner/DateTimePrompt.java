@@ -53,6 +53,14 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     
     public String getDataText(final ConversationContext context) {
         String dateData = "";
+        if (context.getSessionData("tempYear") == null
+                || context.getSessionData("tempMonth") == null
+                || context.getSessionData("tempDay") == null
+                || context.getSessionData("tempHour") == null
+                || context.getSessionData("tempMinute") == null
+                || context.getSessionData("tempSecond") == null) {
+            return dateData;
+        }
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -332,7 +340,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("dateCreateEnterYear");
+            return Lang.get("dateCreateEnterMonth");
         }
 
         @Override
