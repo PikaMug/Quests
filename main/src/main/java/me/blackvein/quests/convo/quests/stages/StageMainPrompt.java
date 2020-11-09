@@ -581,7 +581,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -693,7 +694,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (final String s : (List<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES)) {
+                    for (final String s : (List<String>) context.getSessionData(stagePrefix 
+                            + CK.S_REACH_LOCATIONS_NAMES)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
                     }
                     return text;
@@ -708,7 +710,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -797,7 +800,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -856,7 +860,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -905,7 +910,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -980,7 +986,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (final String display : (List<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS)) {
+                    for (final String display : (List<String>) context.getSessionData(stagePrefix 
+                            + CK.S_PASSWORD_DISPLAYS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + display + "\n";
                     }
                     return text;
@@ -1013,7 +1020,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1086,7 +1094,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context) + "\n";
@@ -1098,7 +1107,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS) != null) {
                     @SuppressWarnings("unchecked")
                     final
-                    List<String> displays = (List<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS);
+                    List<String> displays = (List<String>) context.getSessionData(stagePrefix 
+                            + CK.S_PASSWORD_DISPLAYS);
                     displays.add(input);
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS, displays);
                 } else {
@@ -1130,7 +1140,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context) + "\n";
@@ -1143,7 +1154,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     @SuppressWarnings("unchecked")
                     final
                     LinkedList<LinkedList<String>> phrases 
-                            = (LinkedList<LinkedList<String>>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES);
+                            = (LinkedList<LinkedList<String>>) context.getSessionData(stagePrefix 
+                            + CK.S_PASSWORD_PHRASES);
                     final LinkedList<String> newPhrases = new LinkedList<String>();
                     newPhrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
                     phrases.add(newPhrases);
@@ -1228,43 +1240,44 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(stagePrefix + CK.S_START_EVENT) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix + CK.S_START_EVENT)) 
-                            + ChatColor.YELLOW + ")\n";
+                    return ChatColor.YELLOW + "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix 
+                            + CK.S_START_EVENT)) + ChatColor.YELLOW + ")\n";
                 }
             case 2:
                 if (context.getSessionData(stagePrefix + CK.S_FINISH_EVENT) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix + CK.S_FINISH_EVENT)) 
-                            + ChatColor.YELLOW + ")\n";
+                    return ChatColor.YELLOW + "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix 
+                            + CK.S_FINISH_EVENT)) + ChatColor.YELLOW + ")\n";
                 }
             case 3:
                 if (context.getSessionData(stagePrefix + CK.S_FAIL_EVENT) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix + CK.S_FAIL_EVENT)) 
-                            + ChatColor.YELLOW + ")\n";
+                    return ChatColor.YELLOW + "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix 
+                            + CK.S_FAIL_EVENT)) + ChatColor.YELLOW + ")\n";
                 }  
             case 4:
                 if (context.getSessionData(stagePrefix + CK.S_DEATH_EVENT) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix + CK.S_DEATH_EVENT)) 
-                            + ChatColor.YELLOW + ")\n";
+                    return ChatColor.YELLOW + "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix 
+                            + CK.S_DEATH_EVENT)) + ChatColor.YELLOW + ")\n";
                 }
             case 5:
                 if (context.getSessionData(stagePrefix + CK.S_DISCONNECT_EVENT) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix + CK.S_DISCONNECT_EVENT))
-                            + ChatColor.YELLOW + ")\n";
+                    return ChatColor.YELLOW + "(" + ChatColor.AQUA + ((String) context.getSessionData(stagePrefix 
+                            + CK.S_DISCONNECT_EVENT)) + ChatColor.YELLOW + ")\n";
                 }
             case 6:
                 if (context.getSessionData(stagePrefix + CK.S_CHAT_EVENTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    final LinkedList<String> chatEvents = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CHAT_EVENTS);
+                    final LinkedList<String> chatEvents = (LinkedList<String>) context.getSessionData(stagePrefix 
+                            + CK.S_CHAT_EVENTS);
                     final LinkedList<String> chatEventTriggers 
                             = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CHAT_EVENT_TRIGGERS);
                     for (final String event : chatEvents) {
@@ -1299,7 +1312,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1353,7 +1367,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1417,7 +1432,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1481,7 +1497,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1545,7 +1562,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1609,7 +1627,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1929,7 +1948,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
@@ -1993,7 +2013,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -2046,7 +2067,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -2088,7 +2110,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -2129,7 +2152,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -2198,7 +2222,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.YELLOW + getQueryText(context) + " (" + ChatColor.RED + Lang.get("stageEditorStage") 
@@ -2245,7 +2270,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
@@ -2284,12 +2310,13 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 if (found != null) {
                     if (context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES) != null) {
                         // The custom objective may already have been added, so let's check that
-                        final LinkedList<String> list 
-                                = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES);
-                        final LinkedList<Entry<String, Object>> datamapList = (LinkedList<Entry<String, Object>>) context
-                                .getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA);
-                        final LinkedList<Integer> countList 
-                                = (LinkedList<Integer>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_COUNT);
+                        final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
+                                + CK.S_CUSTOM_OBJECTIVES);
+                        final LinkedList<Entry<String, Object>> datamapList 
+                                = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                                + CK.S_CUSTOM_OBJECTIVES_DATA);
+                        final LinkedList<Integer> countList = (LinkedList<Integer>) context.getSessionData(stagePrefix 
+                                + CK.S_CUSTOM_OBJECTIVES_COUNT);
                         if (list.contains(found.getName()) == false) {
                             // Hasn't been added yet, so let's do it
                             list.add(found.getName());
@@ -2369,7 +2396,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 final LinkedList<Integer> counts 
                         = (LinkedList<Integer>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_COUNT);
                 counts.set(counts.size() - 1, num);
-                final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES);
+                final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
+                        + CK.S_CUSTOM_OBJECTIVES);
                 final String objName = list.getLast();
                 CustomObjective found = null;
                 for (final CustomObjective co : plugin.getCustomObjectives()) {
@@ -2379,7 +2407,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found != null && found.getData().isEmpty() == false) {
-                    context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
+                    context.setSessionData(stagePrefix 
+                            + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found.getDescriptions());
                     return new ObjectiveCustomDataListPrompt();
                 } else {
                     return new StageMainPrompt(stageNum, context);
@@ -2398,9 +2427,11 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             String text = ChatColor.AQUA + "- ";
-            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES);
+            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
+                    + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Entry<String, Object>> datamapList 
-                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA);
+                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                    + CK.S_CUSTOM_OBJECTIVES_DATA);
             final String objName = list.getLast();
             CustomObjective found = null;
             for (final CustomObjective co : plugin.getCustomObjectives()) {
@@ -2435,7 +2466,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES);
+            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
+                    + CK.S_CUSTOM_OBJECTIVES);
             final String objName = list.getLast();
             CustomObjective found = null;
             for (final CustomObjective co : plugin.getCustomObjectives()) {
@@ -2469,7 +2501,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, selectedKey);
                 return new ObjectiveCustomDataPrompt();
             } else {
-                for (final Entry<String, Object> datamap : (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                for (final Entry<String, Object> datamap 
+                        : (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
                         + CK.S_CUSTOM_OBJECTIVES_DATA)) {
                     if (datamap.getValue() == null) {
                         return new ObjectiveCustomDataListPrompt();
@@ -2490,7 +2523,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             @SuppressWarnings("unchecked")
             final
             Map<String, String> descriptions 
-                    = (Map<String, String>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS);
+                    = (Map<String, String>) context.getSessionData(stagePrefix 
+                    + CK.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS);
             if (descriptions.get(temp) != null) {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
@@ -2505,7 +2539,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             @SuppressWarnings("unchecked")
             final
             LinkedList<Entry<String, Object>> datamapList 
-                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA);
+                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                    + CK.S_CUSTOM_OBJECTIVES_DATA);
             final LinkedList<Entry<String, Object>> promptList = new LinkedList<Entry<String, Object>>();
             final String temp = (String) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
             for (final Entry<String, Object> datamap : datamapList) {
