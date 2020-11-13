@@ -37,12 +37,12 @@ public class StageTimer implements Runnable {
             return;
         }
         if (quester.getQuestData(quest).isDelayOver()) {
+            if (quester.getCurrentStage(quest).getFinishAction() != null) {
+                    quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
+            }
             if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
                 if (quester.getCurrentStage(quest).getScript() != null) {
                     plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
-                }
-                if (quester.getCurrentStage(quest).getFinishAction() != null) {
-                    quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
                 }
                 quest.completeQuest(quester);
             } else {
