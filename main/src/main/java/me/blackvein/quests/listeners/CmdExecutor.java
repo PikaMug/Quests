@@ -1380,7 +1380,7 @@ public class CmdExecutor implements CommandExecutor {
             }
             final UUID id = target.getUniqueId();
             final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
-            for(final Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
+            for (final Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
                 if (itr.next().getUUID().equals(id)) {
                     itr.remove();
                 }

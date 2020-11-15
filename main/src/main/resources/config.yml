@@ -19,6 +19,18 @@ npc-effects:
 show-requirements: true
 show-titles: true
 strict-player-movement: 0
+storage-data:
+  address: localhost
+  database: minecraft
+  username: root
+  password: ''
+  table_prefix: 'quests_'
+  pool-settings:
+    max-pool-size: 10
+    min-idle: 10
+    max-lifetime: 1800000
+    connection-timeout: 5000
+storage-method: yaml
 top-limit: 150
 translate-names: true
 translate-subcommands: false

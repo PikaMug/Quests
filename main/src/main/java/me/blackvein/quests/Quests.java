@@ -95,6 +95,8 @@ import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
+import me.blackvein.quests.storage.Storage;
+import me.blackvein.quests.storage.StorageFactory;
 import me.blackvein.quests.tasks.NpcEffectThread;
 import me.blackvein.quests.tasks.PlayerMoveThread;
 import me.blackvein.quests.util.ConfigUtil;
@@ -136,6 +138,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private PartiesListener partiesListener;
     private DenizenTrigger trigger;
     private LocaleQuery localeQuery;
+    private Storage storage;
 
     @Override
     public void onEnable() {
@@ -186,6 +189,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 7 - Save config with any new options
         getConfig().options().copyDefaults(true);
         saveConfig();
+        final StorageFactory storageFactory = new StorageFactory(this);
+        storage = storageFactory.getInstance();
         
         // 8 - Setup commands
         getCommand("quests").setExecutor(cmdExecutor);
@@ -417,6 +422,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     
     public LocaleQuery getLocaleQuery() {
         return localeQuery;
+    }
+    
+    public Storage getStorage() {
+        return storage;
     }
 
     @Override
