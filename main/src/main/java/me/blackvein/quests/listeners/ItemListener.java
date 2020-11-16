@@ -132,6 +132,7 @@ public class ItemListener implements Listener {
         if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
             final ItemStack enchantedItem = evt.getItem().clone();
             enchantedItem.setAmount(1);
+            enchantedItem.addEnchantments(evt.getEnchantsToAdd());
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
