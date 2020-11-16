@@ -3296,13 +3296,13 @@ public class Quester implements Comparable<Quester> {
                     if (stage != null) {
                         quest.updateCompass(this, stage);
                         exists = true;
-                        if (q.equals(quest) == false) {
-                            // TODO - decide whether or not to handle this
-                            /*if (getPlayer() != null && getPlayer().isOnline()) {
+                        // TODO - decide whether or not to handle this
+                        /*if (q.equals(quest) == false) {
+                            if (getPlayer() != null && getPlayer().isOnline()) {
                                 quitQuest(quest, ChatColor.GOLD + Lang.get("questModified")
                                         .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD));
-                            }*/
-                        }
+                            }
+                        }*/
                         break;
                     }
                 }
