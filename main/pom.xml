@@ -14,7 +14,7 @@
     
     <repositories>
         <repository>
-        	<!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL -->
+            <!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -32,10 +32,10 @@
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
         <repository>
-			<id>sk89q-repo</id>
-			<url>http://maven.sk89q.com/repo/</url>
-		</repository>
-		<repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
@@ -75,10 +75,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>com.github.mcMMO-Dev</groupId>
-	        <artifactId>mcMMO-Classic</artifactId>
-	        <version>master-82f97cbe04-1</version>
-	        <scope>provided</scope>
+            <groupId>com.github.mcMMO-Dev</groupId>
+            <artifactId>mcMMO-Classic</artifactId>
+            <version>master-82f97cbe04-1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
@@ -105,17 +105,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>com.github.nicuch</groupId>
-	        <artifactId>CitizensBooks</artifactId>
-	        <version>2.5.5</version>
-	        <scope>provided</scope>
-	    </dependency>
+            <groupId>com.github.nicuch</groupId>
+            <artifactId>CitizensBooks</artifactId>
+            <version>2.5.5</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-	        <groupId>com.github.RednedEpic</groupId>
-	        <artifactId>PhatLoots</artifactId>
-	        <version>-SNAPSHOT</version>
-	        <scope>provided</scope>
-	    </dependency>
+            <groupId>com.github.RednedEpic</groupId>
+            <artifactId>PhatLoots</artifactId>
+            <version>-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
@@ -123,17 +123,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	        <groupId>com.github.DRE2N</groupId>
-	        <artifactId>DungeonsXL</artifactId>
-	        <version>-SNAPSHOT</version>
-	        <scope>provided</scope>
-	    </dependency>
-	    <dependency>
+            <groupId>com.github.DRE2N</groupId>
+            <artifactId>DungeonsXL</artifactId>
+            <version>-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.22</version>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version>
@@ -153,7 +153,7 @@
     
     <build>
         <defaultGoal>clean package install</defaultGoal>
-		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         
         <resources>
             <resource>
@@ -181,36 +181,36 @@
         </resources>
         
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.0</version>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals> 
-					</execution>
-				</executions>
-				
-				<configuration>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals> 
+                    </execution>
+                </executions>
+                
+                <configuration>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
@@ -226,7 +226,7 @@
                         </includes>
                     </artifactSet>
                 </configuration>
-			</plugin>
-		</plugins>
+            </plugin>
+        </plugins>
     </build>
 </project>
