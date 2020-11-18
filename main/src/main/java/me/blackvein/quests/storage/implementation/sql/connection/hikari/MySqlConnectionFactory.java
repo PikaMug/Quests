@@ -37,7 +37,7 @@ public class MySqlConnectionFactory extends HikariConnectionFactory {
     @Override
     protected void configureDatabase(final HikariConfig config, final String address, final String port, 
             final String databaseName, final String username, final String password) {
-        config.setDriverClassName("com.mysql.cj.jdbc.NonRegisteringDriver");
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setJdbcUrl("jdbc:mysql://" + address + ":" + port + "/" + databaseName);
         config.setUsername(username);
         config.setPassword(password);

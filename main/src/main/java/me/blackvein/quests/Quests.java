@@ -244,6 +244,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final Quester quester = getQuester(p.getUniqueId());
             quester.saveData();
         }
+        getLogger().info("Closing storage...");
+        storage.close();
     }
     
     public boolean isLoading() {

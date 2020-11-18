@@ -15,6 +15,8 @@ package me.blackvein.quests.storage.implementation.sql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -62,6 +64,29 @@ public class SqlStorage implements StorageImplementation {
     @Override
     public void init() throws Exception {
         connectionFactory.init(plugin);
+        
+        try (Connection c = connectionFactory.getConnection()) {
+            final String createStatement = "CREATE TABLE IF NOT EXISTS `" + getTableName() 
+                    + "` (`uuid` VARCHAR(36) NOT NULL, "
+                    + "`hasjournal` BOOL NOT NULL, "
+                    + "PRIMARY KEY (`uuid`)"
+                    + ") DEFAULT CHARSET = utf8mb4";
+            try (Statement s = c.createStatement()) {
+                try {
+                    s.execute(createStatement);
+                } catch (final SQLException e) {
+                    if (e.getMessage().contains("Unknown character set")) {
+                        s.execute(createStatement.replace("utf8mb4", "utf8"));
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+        }
+    }
+    
+    protected String getTableName() {
+        return this.statementProcessor.apply("{prefix}players");
     }
     
     @Override
