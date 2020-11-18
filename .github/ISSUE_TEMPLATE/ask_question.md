@@ -11,4 +11,4 @@ labels: question
 
 **Share your question with as much detail as possible?**
 
-**If applicable, which class or method is this in reference to?**
+**If applicable, which Java class or API method does this reference?**
