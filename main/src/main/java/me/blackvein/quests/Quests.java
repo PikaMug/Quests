@@ -1273,12 +1273,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Reload quests, actions, config settings, lang and modules, and player data
      */
     public void reload(final ReloadCallback<Boolean> callback) {
+        loading = true;
         reloadConfig();
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 
             @Override
             public void run() {
-                loading = true;
                 try {
                     for (final Quester quester : questers) {
                         quester.saveData();
@@ -1310,6 +1310,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         });
                     }
                 } catch (final Exception e) {
+                    loading = false;
                     e.printStackTrace();
                     if (callback != null) {
                         Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
