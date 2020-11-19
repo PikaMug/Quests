@@ -36,13 +36,15 @@ public class StorageFactory {
     }
 
     public Set<StorageType> getRequiredTypes() {
-        return ImmutableSet.of(StorageType.parse(plugin.getConfig().getString("storage-method", "yaml"), StorageType.YAML));
+        return ImmutableSet.of(StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"), 
+                StorageType.YAML));
     }
 
     public Storage getInstance() {
         Storage storage;
 
-        final StorageType type = StorageType.parse(plugin.getConfig().getString("storage-method", "yaml"), StorageType.YAML);
+        final StorageType type = StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"), 
+                StorageType.YAML);
         plugin.getLogger().info("Loading storage implementation: " + type.name());
         storage = new Storage(plugin, createNewImplementation(type));
 
@@ -68,7 +70,8 @@ public class StorageFactory {
     }
     
     private StorageCredentials getDatabaseValues(final FileConfiguration fc) {
-        final int maxPoolSize = fc.getInt("storage-data.pool-settings.max-pool-size", fc.getInt("storage-data.pool-size", 10));
+        final int maxPoolSize = fc.getInt("storage-data.pool-settings.max-pool-size", 
+                fc.getInt("storage-data.pool-size", 10));
         final int minIdle = fc.getInt("storage-data.pool-settings.min-idle", maxPoolSize);
         final int maxLifetime = fc.getInt("storage-data.pool-settings.max-lifetime", 1800000);
         final int connectionTimeout = fc.getInt("storage-data.pool-settings.connection-timeout", 5000);

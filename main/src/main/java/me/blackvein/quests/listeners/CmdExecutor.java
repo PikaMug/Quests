@@ -53,6 +53,7 @@ import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -1393,14 +1394,13 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             plugin.setOfflineQuesters(temp);
-            Quester quester = plugin.getQuester(target.getUniqueId());
+            Quester quester = plugin.getQuester(id);
             try {
                 quester.hardClear();
                 quester.saveData();
                 quester.updateJournal();
-                final File dataFolder = new File(plugin.getDataFolder(), "data" + File.separator);
-                final File quest = new File(dataFolder, id + ".yml");
-                quest.delete();
+                final Storage storage = plugin.getStorage();
+                storage.deleteQuesterData(id);
                 String msg = Lang.get("questReset");
                 if (target.getName() != null) {
                     msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);

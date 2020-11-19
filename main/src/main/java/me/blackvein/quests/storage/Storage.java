@@ -105,7 +105,7 @@ public class Storage {
         });
     }
 
-    public CompletableFuture<Void> deletePlayerData(final UUID uniqueId) {
+    public CompletableFuture<Void> deleteQuesterData(final UUID uniqueId) {
         return makeFuture(() -> {
             try {
                 implementation.deleteQuesterData(uniqueId);
