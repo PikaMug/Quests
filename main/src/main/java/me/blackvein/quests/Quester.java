@@ -12,7 +12,6 @@
 
 package me.blackvein.quests;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -75,7 +74,7 @@ public class Quester implements Comparable<Quester> {
     private final Quests plugin;
     public boolean hasJournal = false;
     private UUID id;
-    protected String questToTake;
+    protected String questIdToTake;
     protected int questPoints = 0;
     private String compassTargetQuestId;
     protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
@@ -251,12 +250,12 @@ public class Quester implements Comparable<Quester> {
         this.id = id;
     }
 
-    public String getQuestToTake() {
-        return questToTake;
+    public String getQuestIdToTake() {
+        return questIdToTake;
     }
 
-    public void setQuestToTake(final String questToTake) {
-        this.questToTake = questToTake;
+    public void setQuestToTake(final String questIdToTake) {
+        this.questIdToTake = questIdToTake;
     }
 
     public int getQuestPoints() {
@@ -720,7 +719,7 @@ public class Quester implements Comparable<Quester> {
             }
         }
         saveData();
-        loadData();
+        //loadData();
         updateJournal();
     }
     
@@ -3196,26 +3195,9 @@ public class Quester implements Comparable<Quester> {
         data.set("lastKnownName", representedPlayer.getName());
         return data;
     }
-
-    /**
-     * Get data file for this Quester
-     * 
-     * @return file if exists, otherwise null
-     */
-    public File getDataFile() {
-        File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + id.toString() + ".yml");
-        if (!dataFile.exists()) {
-            final OfflinePlayer p = getOfflinePlayer();
-            dataFile = new File(plugin.getDataFolder(), "data" + File.separator + p.getName() + ".yml");
-            if (!dataFile.exists()) {
-                return null;
-            }
-        }
-        return dataFile;
-    }
     
     /**
-     * Load data of the Quester from file
+     * Load data of the Quester from storage
      * 
      * @return true if successful
      */
@@ -3271,15 +3253,28 @@ public class Quester implements Comparable<Quester> {
             return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).getDelayStartTime());
         }
     }
-
+    
+    /**
+     * Check whether the Quester has base data, indicating they have participated in quests
+     * 
+     * @return false if empty
+     * @deprecated Use {@link #hasBaseData()}
+     */
+    @Deprecated
     public boolean hasData() {
-        if (currentQuests.isEmpty() == false || questData.isEmpty() == false) {
+        return hasBaseData();
+    }
+    
+    /**
+     * Check whether the Quester has base data, indicating they have participated in quests
+     * 
+     * @return false if empty
+     */
+    public boolean hasBaseData() {
+        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
             return true;
         }
-        if (questPoints > 1) {
-            return true;
-        }
-        return completedQuests.isEmpty() == false;
+        return false;
     }
     
     /**
@@ -3705,14 +3700,13 @@ public class Quester implements Comparable<Quester> {
             if (getPlayer() instanceof Conversable) {
                 if (getPlayer().isConversing() == false) {
                     setQuestToTake(quest.getName());
-                    final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + getQuestToTake() + ChatColor.GOLD 
-                            + " -\n" + "\n" + ChatColor.RESET + plugin.getQuest(getQuestToTake()).getDescription() 
-                            + "\n";
+                    final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD 
+                            + " -\n" + "\n" + ChatColor.RESET + quest.getDescription() + "\n";
                     for (final String msg : s.split("<br>")) {
                         getPlayer().sendMessage(msg);
                     }
                     if (!plugin.getSettings().canAskConfirmation()) {
-                        takeQuest(plugin.getQuest(getQuestToTake()), false);
+                        takeQuest(quest, false);
                     } else {
                         plugin.getConversationFactory().buildConversation(getPlayer()).begin();
                     }

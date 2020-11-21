@@ -17,9 +17,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
@@ -28,16 +31,17 @@ import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFactory;
 
 public class SqlStorage implements StorageImplementation {
-    private static final String PLAYER_SELECT = "SELECT id, lastknownname, hasjournal, FROM '{prefix}players' WHERE uuid=?";
-    private static final String PLAYER_SELECT_USERNAME_BY_UUID = "SELECT lastknownname FROM '{prefix}players' WHERE uuid=? LIMIT 1";
-    private static final String PLAYER_UPDATE_USERNAME_FOR_UUID = "UPDATE '{prefix}players' SET lastknownname=? WHERE uuid=?";
+    private static final String PLAYER_SELECT = "SELECT lastknownname, hasjournal, questpoints FROM '{prefix}players' WHERE uuid=?";
+    private static final String PLAYER_SELECT_USERNAME = "SELECT lastknownname FROM '{prefix}players' WHERE uuid=? LIMIT 1";
+    private static final String PLAYER_UPDATE_USERNAME = "UPDATE '{prefix}players' SET lastknownname=? WHERE uuid=?";
     private static final String PLAYER_INSERT = "INSERT INTO '{prefix}players' (uuid, lastknownname, hasjournal, questpoints) "
             + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, lastknownname=lastknownname, hasjournal=hasjournal, questpoints=questpoints";
     private static final String PLAYER_DELETE = "DELETE FROM '{prefix}players' WHERE uuid=?";
     
-    private static final String PLAYER_CURRENT_QUESTS_SELECT_BY_UUID = "SELECT questid FROM '{prefix}player_currentquests' WHERE uuid=?";
-    private static final String PLAYER_CURRENT_QUESTS_INSERT = "INSERT INTO '{prefix}player_currentquests' (uuid, questid) "
-            + "VALUES(?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid";
+    private static final String PLAYER_CURRENT_QUESTS_SELECT_BY_UUID = "SELECT questid, stageNum FROM '{prefix}player_currentquests' WHERE uuid=?";
+    private static final String PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=? AND questId=?";
+    private static final String PLAYER_CURRENT_QUESTS_INSERT = "INSERT INTO '{prefix}player_currentquests' (uuid, questid, stageNum) "
+            + "VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, stageNum=stageNum";
     private static final String PLAYER_CURRENT_QUESTS_DELETE = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=?";
 
     private final Quests plugin;
@@ -85,6 +89,7 @@ public class SqlStorage implements StorageImplementation {
                     + "` (id INT AUTO_INCREMENT NOT NULL,"
                     + "`uuid` VARCHAR(36) NOT NULL, "
                     + "`questid` VARCHAR(100) NOT NULL,"
+                    + "`stageNum` INT NOT NULL,"
                     + "PRIMARY KEY (`id`),"
                     + "UNIQUE KEY (`uuid`, `questid`)"
                     + ") DEFAULT CHARSET = utf8mb4";
@@ -116,10 +121,13 @@ public class SqlStorage implements StorageImplementation {
     
     @Override
     public Quester loadQuesterData(final UUID uniqueId) throws Exception {
-        final Quester quester = new Quester(plugin, uniqueId);
+        final Quester quester = plugin.getQuester(uniqueId);
+        if (quester == null) {
+            return null;
+        }
         try (Connection c = connectionFactory.getConnection()) {
             if (uniqueId != null) {
-                try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_SELECT))) {
+                try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT))) {
                     ps.setString(1, uniqueId.toString());
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
@@ -128,16 +136,7 @@ public class SqlStorage implements StorageImplementation {
                         }
                     }
                 }
-                final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>();
-                try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_CURRENT_QUESTS_SELECT_BY_UUID))) {
-                    ps.setString(1, uniqueId.toString());
-                    try (ResultSet rs = ps.executeQuery()) {
-                        while (rs.next()) {
-                            currentQuests.put(plugin.getQuestById(rs.getString("questid")), 0);
-                        }
-                    }
-                }
-                quester.setCurrentQuests(currentQuests);
+                quester.setCurrentQuests(getQuesterCurrentQuests(uniqueId));
             }
         }
         return quester;
@@ -148,16 +147,19 @@ public class SqlStorage implements StorageImplementation {
         final UUID uniqueId = quester.getUUID();
         final String lastknownname = quester.getOfflinePlayer().getName();
         final String oldlastknownname = getQuesterLastKnownName(uniqueId);
-
+        final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        oldCurrentQuests.removeAll(currentQuests);
+        
         try (final Connection c = connectionFactory.getConnection()) {
             if (oldlastknownname != null && !lastknownname.equals(oldlastknownname)) {
-                try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_UPDATE_USERNAME_FOR_UUID))) {
+                try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_UPDATE_USERNAME))) {
                     ps.setString(1, lastknownname);
                     ps.setString(2, uniqueId.toString());
                     ps.execute();
                 }
             } else {
-                try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_INSERT))) {
+                try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
                     ps.setString(1, uniqueId.toString());
                     ps.setString(2, lastknownname);
                     ps.setBoolean(3, quester.hasJournal);
@@ -165,11 +167,23 @@ public class SqlStorage implements StorageImplementation {
                     ps.execute();
                 }
             }
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
-                    ps.setString(1, uniqueId.toString());
-                    ps.setString(2, quest.getId());
-                    ps.execute();
+            
+            if (!oldCurrentQuests.isEmpty()) {
+                for (final String questId : oldCurrentQuests) {
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, questId);
+                        ps.execute();
+                    }
+                }
+            } else {
+                for (final Entry<Quest, Integer> entry : quester.getCurrentQuests().entrySet()) {
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, entry.getKey().getId());
+                        ps.setInt(3, entry.getValue());
+                        ps.execute();
+                    }
                 }
             }
         }
@@ -178,11 +192,11 @@ public class SqlStorage implements StorageImplementation {
     @Override
     public void deleteQuesterData(final UUID uniqueId) throws Exception {
         try (Connection c = connectionFactory.getConnection()) {
-            try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_DELETE))) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_DELETE))) {
                 ps.setString(1, uniqueId.toString());
                 ps.execute();
             }
-            try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_CURRENT_QUESTS_DELETE))) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_DELETE))) {
                 ps.setString(1, uniqueId.toString());
                 ps.execute();
             }
@@ -192,7 +206,7 @@ public class SqlStorage implements StorageImplementation {
     @Override
     public String getQuesterLastKnownName(final UUID uniqueId) throws Exception {
         try (Connection c = connectionFactory.getConnection()) {
-            try (PreparedStatement ps = c.prepareStatement(this.statementProcessor.apply(PLAYER_SELECT_USERNAME_BY_UUID))) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT_USERNAME))) {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -202,5 +216,20 @@ public class SqlStorage implements StorageImplementation {
             }
         }
         return null;
+    }
+    
+    public ConcurrentHashMap<Quest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>();
+        try (Connection c = connectionFactory.getConnection()) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_SELECT_BY_UUID))) {
+                ps.setString(1, uniqueId.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        currentQuests.put(plugin.getQuestById(rs.getString("questid")), rs.getInt("stageNum"));
+                    }
+                }
+            }
+        }
+        return currentQuests;
     }
 }

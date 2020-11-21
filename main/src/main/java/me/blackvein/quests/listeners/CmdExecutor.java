@@ -783,6 +783,7 @@ public class CmdExecutor implements CommandExecutor {
                                 return;
                             }
                         }
+                        //quester.setQuestToTake(questToFind);
                         quester.offerQuest(questToFind, true);
                     } else {
                         player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));

@@ -171,8 +171,8 @@ public class NpcOfferQuestPrompt extends StringPrompt {
     }
 
     private String extracted(final Quests plugin, final Quester quester) {
+        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
-                quester.getQuestToTake(), ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.getQuestToTake())
-                .getDescription());
+                quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }
 }

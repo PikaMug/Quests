@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -65,7 +66,6 @@ public class SeparatedYamlStorage implements StorageImplementation {
     @Override
     public void close() {
         // TODO Auto-generated method stub
-        
     }
     
     @SuppressWarnings("deprecation")
@@ -79,7 +79,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             quester = new Quester(plugin, uniqueId);
         }
         try {
-            final File dataFile = quester.getDataFile();
+            final File dataFile = getDataFile(quester);
             if (dataFile != null) {
                 data.load(dataFile);
             } else {
@@ -494,5 +494,22 @@ public class SeparatedYamlStorage implements StorageImplementation {
             quester = new Quester(plugin, uniqueId);
         }
         return data.getString("lastKnownName");
+    }
+    
+    /**
+     * Get data file for this Quester
+     * 
+     * @return file if exists, otherwise null
+     */
+    public File getDataFile(final Quester quester) {
+        File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID().toString() + ".yml");
+        if (!dataFile.exists()) {
+            final OfflinePlayer p = quester.getOfflinePlayer();
+            dataFile = new File(plugin.getDataFolder(), "data" + File.separator + p.getName() + ".yml");
+            if (!dataFile.exists()) {
+                return null;
+            }
+        }
+        return dataFile;
     }
 }

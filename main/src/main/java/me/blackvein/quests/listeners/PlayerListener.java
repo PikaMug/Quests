@@ -13,7 +13,6 @@
 
 package me.blackvein.quests.listeners;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -341,10 +340,10 @@ public class PlayerListener implements Listener {
                                             if (!plugin.getSettings().canAskConfirmation()) {
                                                 quester.takeQuest(q, false);
                                             } else {
+                                                final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
-                                                        + quester.getQuestToTake() + ChatColor.GOLD + " -\n" + "\n" 
-                                                        + ChatColor.RESET + plugin.getQuest(quester.getQuestToTake())
-                                                        .getDescription() + "\n";
+                                                        + quest.getName() + ChatColor.GOLD + " -\n" + "\n" 
+                                                        + ChatColor.RESET + quest.getDescription() + "\n";
                                                 for (final String msg : s.split("<br>")) {
                                                     player.sendMessage(msg);
                                                 }
@@ -790,16 +789,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = new Quester(plugin);
-            quester.setUUID(evt.getPlayer().getUniqueId());
-            if (new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID() + ".yml").exists()) {
-                quester.loadData();
-            } else if (plugin.getSettings().canGenFilesOnJoin()) {
+            final Quester quester = new Quester(plugin, evt.getPlayer().getUniqueId());
+            if (!quester.loadData() && plugin.getSettings().canGenFilesOnJoin()) {
                 quester.saveData();
             }
-            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
+            /*final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.add(quester);
-            plugin.setOfflineQuesters(temp);
+            plugin.setOfflineQuesters(temp);*/
             for (final String s : quester.getCompletedQuests()) {
                 final Quest q = plugin.getQuest(s);
                 if (q != null) {
@@ -858,10 +854,14 @@ public class PlayerListener implements Listener {
                     quester.removeTimer(timerId);
                 }
             }
-
-            if (quester.hasData()) {
+            if (!plugin.getSettings().canGenFilesOnJoin()) {
+                if (quester.hasBaseData()) {
+                    quester.saveData();
+                }
+            } else {
                 quester.saveData();
             }
+            
             if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer().getUniqueId())) {
                 final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
                 temp.remove(evt.getPlayer().getUniqueId());

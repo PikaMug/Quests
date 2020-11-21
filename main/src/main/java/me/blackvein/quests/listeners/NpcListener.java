@@ -395,8 +395,8 @@ public class NpcListener implements Listener {
     }
 
     private String extracted(final Quester quester) {
+        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
-                quester.getQuestToTake(), ChatColor.GOLD, ChatColor.RESET, plugin.getQuest(quester.getQuestToTake())
-                .getDescription());
+                quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }
 }

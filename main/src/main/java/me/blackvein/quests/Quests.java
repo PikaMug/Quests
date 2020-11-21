@@ -467,15 +467,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         player.sendMessage(ChatColor.RED + Lang.get(player, "questSaveError"));
                     }
                 }
-                final String questToTake = quester.questToTake;
+                final String questIdToTake = quester.questIdToTake;
                 try {
-                    if (getQuest(questToTake) == null) {
-                        getLogger().info(player.getName() + " attempted to take quest \"" + questToTake 
+                    if (getQuestById(questIdToTake) == null) {
+                        getLogger().info(player.getName() + " attempted to take quest ID \"" + questIdToTake 
                                 + "\" but something went wrong");
                         player.sendMessage(ChatColor.RED 
                                 + "Something went wrong! Please report issue to an administrator.");
                     } else {
-                        getQuester(player.getUniqueId()).takeQuest(getQuest(questToTake), false);
+                        getQuester(player.getUniqueId()).takeQuest(getQuestById(questIdToTake), false);
                     }
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -1349,13 +1349,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 return quester;
             }
         }
-        if (!quester.loadData()) {
+        /*if (!quester.loadData()) {
             set.add(quester);
         } else {
             set.remove(quester);
-        }
-        setOfflineQuesters(set);
-        return quester;
+        }*/
+        final Quester q = new Quester(this, id);
+        questers.add(q);
+        return q;
     }
 
     /**
