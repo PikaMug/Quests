@@ -254,7 +254,7 @@ public class Quester implements Comparable<Quester> {
         return questIdToTake;
     }
 
-    public void setQuestToTake(final String questIdToTake) {
+    public void setQuestIdToTake(final String questIdToTake) {
         this.questIdToTake = questIdToTake;
     }
 
@@ -3699,7 +3699,7 @@ public class Quester implements Comparable<Quester> {
         if (canAcceptOffer(quest, giveReason)) {
             if (getPlayer() instanceof Conversable) {
                 if (getPlayer().isConversing() == false) {
-                    setQuestToTake(quest.getName());
+                    setQuestIdToTake(quest.getId());
                     final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD 
                             + " -\n" + "\n" + ChatColor.RESET + quest.getDescription() + "\n";
                     for (final String msg : s.split("<br>")) {

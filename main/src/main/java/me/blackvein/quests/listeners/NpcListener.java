@@ -228,7 +228,7 @@ public class NpcListener implements Listener {
                     if (npcQuests.isEmpty() == false && npcQuests.size() == 1) {
                         final Quest q = npcQuests.get(0);
                         if (quester.canAcceptOffer(q, true)) {
-                            quester.setQuestToTake(q.getName());
+                            quester.setQuestIdToTake(q.getId());
                             if (!plugin.getSettings().canAskConfirmation()) {
                                 quester.takeQuest(q, false);
                             } else {

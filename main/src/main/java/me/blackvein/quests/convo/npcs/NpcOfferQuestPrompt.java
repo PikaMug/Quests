@@ -99,7 +99,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
             } else {
                 final Player player = quester.getPlayer();
                 if (quester.canAcceptOffer(q, true)) {
-                    quester.setQuestToTake(q.getName());
+                    quester.setQuestIdToTake(q.getId());
                     for (final String msg : extracted(plugin, quester).split("<br>")) {
                         player.sendMessage(msg);
                     }

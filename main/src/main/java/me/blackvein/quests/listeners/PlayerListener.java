@@ -336,7 +336,7 @@ public class PlayerListener implements Listener {
                                                     return;
                                                 }
                                             }
-                                            quester.setQuestToTake(q.getName());
+                                            quester.setQuestIdToTake(q.getId());
                                             if (!plugin.getSettings().canAskConfirmation()) {
                                                 quester.takeQuest(q, false);
                                             } else {
