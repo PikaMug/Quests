@@ -465,27 +465,27 @@ public class CmdExecutor implements CommandExecutor {
                         }
                     }
                     if (reqs.getNeededQuests().isEmpty() == false) {
-                        for (final String s : reqs.getNeededQuests()) {
-                            if (quester.getCompletedQuests().contains(s)) {
+                        for (final Quest quest : reqs.getNeededQuests()) {
+                            if (quester.getCompletedQuests().contains(quest)) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Lang.get("complete") + " " 
-                                        + ChatColor.ITALIC + s);
+                                        + ChatColor.ITALIC + quest.getName());
                             } else {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + Lang.get("complete") + " " 
-                                        + ChatColor.ITALIC + s);
+                                        + ChatColor.ITALIC + quest.getName());
                             }
                         }
                     }
                     if (reqs.getBlockQuests().isEmpty() == false) {
-                        for (final String s : reqs.getBlockQuests()) {
-                            if (quester.getCompletedQuests().contains(s)) {
+                        for (final Quest quest : reqs.getBlockQuests()) {
+                            if (quester.getCompletedQuests().contains(quest)) {
                                 String msg = Lang.get("haveCompleted");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE + s 
-                                        + ChatColor.RED);
+                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE 
+                                        + quest.getName() + ChatColor.RED);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
                                 String msg = Lang.get("cannotComplete");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE + s 
-                                        + ChatColor.GREEN);
+                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE 
+                                        + quest.getName() + ChatColor.GREEN);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
                             }
                         }
@@ -665,13 +665,13 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.DARK_PURPLE + Lang.get("none"));
             } else {
                 final StringBuilder completed = new StringBuilder(" ");
-                for (final String s : quester.getCompletedQuests()) {
+                for (final Quest q : quester.getCompletedQuests()) {
                     
-                    completed.append(ChatColor.DARK_PURPLE + s);
-                    if (quester.getAmountsCompleted().containsKey(s) && quester.getAmountsCompleted().get(s) > 1) {
-                        completed.append(ChatColor.LIGHT_PURPLE + " (x" + quester.getAmountsCompleted().get(s) + ")");
+                    completed.append(ChatColor.DARK_PURPLE + q.getName());
+                    if (quester.getAmountsCompleted().containsKey(q) && quester.getAmountsCompleted().get(q) > 1) {
+                        completed.append(ChatColor.LIGHT_PURPLE + " (x" + quester.getAmountsCompleted().get(q) + ")");
                     }
-                    if (quester.getCompletedQuests().indexOf(s) < (quester.getCompletedQuests().size() - 1)) {
+                    if (quester.getCompletedQuests().indexOf(q) < (quester.getCompletedQuests().size() - 1)) {
                         completed.append(", ");
                     }
                 }

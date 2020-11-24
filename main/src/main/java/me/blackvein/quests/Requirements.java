@@ -24,8 +24,8 @@ public class Requirements {
     private int questPoints = 0;
     private List<ItemStack> items = new LinkedList<ItemStack>();
     private List<Boolean> removeItems = new LinkedList<Boolean>();
-    private List<String> neededQuests = new LinkedList<String>();
-    private List<String> blockQuests = new LinkedList<String>();
+    private List<Quest> neededQuests = new LinkedList<Quest>();
+    private List<Quest> blockQuests = new LinkedList<Quest>();
     private List<String> permissions = new LinkedList<String>();
     private List<String> mcmmoSkills = new LinkedList<String>();
     private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
@@ -58,16 +58,16 @@ public class Requirements {
     public void setRemoveItems(final List<Boolean> removeItems) {
         this.removeItems = removeItems;
     }
-    public List<String> getNeededQuests() {
+    public List<Quest> getNeededQuests() {
         return neededQuests;
     }
-    public void setNeededQuests(final List<String> neededQuests) {
+    public void setNeededQuests(final List<Quest> neededQuests) {
         this.neededQuests = neededQuests;
     }
-    public List<String> getBlockQuests() {
+    public List<Quest> getBlockQuests() {
         return blockQuests;
     }
-    public void setBlockQuests(final List<String> blockQuests) {
+    public void setBlockQuests(final List<Quest> blockQuests) {
         this.blockQuests = blockQuests;
     }
     public List<String> getPermissions() {

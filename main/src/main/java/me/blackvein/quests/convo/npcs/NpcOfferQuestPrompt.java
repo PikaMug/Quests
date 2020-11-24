@@ -39,7 +39,7 @@ public class NpcOfferQuestPrompt extends StringPrompt {
         String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
             final Quest quest = quests.get(i - 1);
-            if (quester.getCompletedQuests().contains(quest.getName())) {
+            if (quester.getCompletedQuests().contains(quest)) {
                 menu += ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "" + i + ". " + ChatColor.RESET + "" 
                         + ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName() + ChatColor.RESET + "" 
                         + ChatColor.GREEN + " " + Lang.get("redoCompleted") + "\n";

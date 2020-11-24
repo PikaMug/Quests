@@ -316,7 +316,7 @@ public class PlayerListener implements Listener {
                                                     .valueOf(plugin.getSettings().getMaxQuests()));
                                             player.sendMessage(ChatColor.YELLOW + msg);
                                         } else {
-                                            if (quester.getCompletedQuests().contains(q.getName())) {
+                                            if (quester.getCompletedQuests().contains(q)) {
                                                 if (q.getPlanner().getCooldown() > -1 
                                                         && (quester.getCooldownDifference(q)) > 0) {
                                                     String early = Lang.get(player, "questTooEarly");
@@ -327,7 +327,7 @@ public class PlayerListener implements Listener {
                                                             + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + early);
                                                     return;
-                                                } else if (quester.getCompletedQuests().contains(q.getName()) 
+                                                } else if (quester.getCompletedQuests().contains(q) 
                                                         && q.getPlanner().getCooldown() < 0) {
                                                     String completed = Lang.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
@@ -796,12 +796,10 @@ public class PlayerListener implements Listener {
             /*final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.add(quester);
             plugin.setOfflineQuesters(temp);*/
-            for (final String s : quester.getCompletedQuests()) {
-                final Quest q = plugin.getQuest(s);
+            for (final Quest q : quester.getCompletedQuests()) {
                 if (q != null) {
-                    if (quester.getCompletedTimes().containsKey(q.getName()) == false 
-                            && q.getPlanner().getCooldown() > -1) {
-                        quester.getCompletedTimes().put(q.getName(), System.currentTimeMillis());
+                    if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
+                        quester.getCompletedTimes().put(q, System.currentTimeMillis());
                     }
                 }
             }
@@ -809,8 +807,7 @@ public class PlayerListener implements Listener {
                 quester.checkQuest(quest);
             }
             for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.getCurrentStage(quest).getDelay() > -1 
-                        && quester.getQuestData(quest).isDelayOver() == false) {
+                if (quester.getCurrentStage(quest).getDelay() > -1 && !quester.getQuestData(quest).isDelayOver()) {
                     quester.startStageTimer(quest);
                 }
             }

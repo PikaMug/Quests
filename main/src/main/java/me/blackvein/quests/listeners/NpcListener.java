@@ -208,7 +208,7 @@ public class NpcListener implements Listener {
                             continue;
                         if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
                             if (plugin.getSettings().canIgnoreLockedQuests() 
-                                    && (quester.getCompletedQuests().contains(q.getName()) == false 
+                                    && (quester.getCompletedQuests().contains(q) == false 
                                     || q.getPlanner().getCooldown() > -1)) {
                                 if (q.testRequirements(quester)) {
                                     npcQuests.add(q);
@@ -216,7 +216,7 @@ public class NpcListener implements Listener {
                                         hasAtLeastOneGUI = true;
                                     }
                                 }
-                            } else if (quester.getCompletedQuests().contains(q.getName()) == false 
+                            } else if (quester.getCompletedQuests().contains(q) == false 
                                     || q.getPlanner().getCooldown() > -1) {
                                 npcQuests.add(q);
                                 if (q.getGUIDisplay() != null) {

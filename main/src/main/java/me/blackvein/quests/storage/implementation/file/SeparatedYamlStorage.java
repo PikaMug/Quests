@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,25 +92,20 @@ public class SeparatedYamlStorage implements StorageImplementation {
             return null;
         }
         if (data.contains("completedRedoableQuests")) {
-            final List<String> redoNames = data.getStringList("completedRedoableQuests");
-            final List<Long> redoTimes = data.getLongList("completedQuestTimes");
-            for (final String s : redoNames) {
-                for (final Quest q : plugin.getQuests()) {
-                    if (q.getName().equalsIgnoreCase(s)) {
-                        final Map<String, Long> completedTimes = quester.getCompletedTimes();
-                        completedTimes.put(q.getName(), redoTimes.get(redoNames.indexOf(s)));
-                        quester.setCompletedTimes(completedTimes);
-                        break;
-                    }
-                }
+            final List<String> questNames = data.getStringList("completedRedoableQuests");
+            final List<Long> questTimes = data.getLongList("completedQuestTimes");
+            for (int i = 0; i < questNames.size(); i++) {
+                final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
+                completedTimes.put(plugin.getQuest(questNames.get(i)), questTimes.get(i));
+                quester.setCompletedTimes(completedTimes);
             }
         }
         if (data.contains("amountsCompletedQuests")) {
-            final List<String> list1 = data.getStringList("amountsCompletedQuests");
-            final List<Integer> list2 = data.getIntegerList("amountsCompleted");
-            for (int i = 0; i < list1.size(); i++) {
-                final Map<String, Integer> amountsCompleted = quester.getAmountsCompleted();
-                amountsCompleted.put(list1.get(i), list2.get(i));
+            final List<String> questNames = data.getStringList("amountsCompletedQuests");
+            final List<Integer> questAmts = data.getIntegerList("amountsCompleted");
+            for (int i = 0; i < questNames.size(); i++) {
+                final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
+                amountsCompleted.put(plugin.getQuest(questNames.get(i)), questAmts.get(i));
                 quester.setAmountsCompleted(amountsCompleted);
             }
         }
@@ -123,9 +117,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {
                     if (q.getName().equalsIgnoreCase(s)) {
-                        if (!quester.getCompletedQuests().contains(q.getName())) {
-                            final LinkedList<String> completedQuests = quester.getCompletedQuests();
-                            completedQuests.add(q.getName());
+                        if (!quester.getCompletedQuests().contains(q)) {
+                            final LinkedList<Quest> completedQuests = quester.getCompletedQuests();
+                            completedQuests.add(q);
                             quester.setCompletedQuests(completedQuests);
                         }
                         break;
@@ -133,7 +127,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
             }
         } else {
-            quester.setCompletedQuests(new LinkedList<String>());
+            quester.setCompletedQuests(new LinkedList<Quest>());
         }
         if (data.isString("currentQuests") == false) {
             final List<String> questNames = data.getStringList("currentQuests");

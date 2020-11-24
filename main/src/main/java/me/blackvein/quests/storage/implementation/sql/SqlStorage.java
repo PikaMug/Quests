@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -39,13 +40,24 @@ public class SqlStorage implements StorageImplementation {
     private static final String PLAYER_DELETE = "DELETE FROM '{prefix}players' WHERE uuid=?";
     
     private static final String PLAYER_CURRENT_QUESTS_SELECT_BY_UUID = "SELECT questid, stageNum FROM '{prefix}player_currentquests' WHERE uuid=?";
-    private static final String PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=? AND questId=?";
+    private static final String PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=? AND questid=?";
     private static final String PLAYER_CURRENT_QUESTS_INSERT = "INSERT INTO '{prefix}player_currentquests' (uuid, questid, stageNum) "
             + "VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, stageNum=stageNum";
     private static final String PLAYER_CURRENT_QUESTS_DELETE = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=?";
+    
+    private static final String PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID = "SELECT questid FROM '{prefix}player_completedquests' WHERE uuid=?";
+    private static final String PLAYER_COMPLETED_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_completedquests' WHERE uuid=? AND questid=?";
+    private static final String PLAYER_COMPLETED_QUESTS_INSERT = "INSERT INTO '{prefix}player_completedquests' (uuid, questid) "
+            + "VALUES(?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid";
+    private static final String PLAYER_COMPLETED_QUESTS_DELETE = "DELETE FROM '{prefix}player_completedquests' WHERE uuid=?";
+    
+    private static final String PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID = "SELECT questid, time, amount FROM '{prefix}player_redoablequests' WHERE uuid=?";
+    private static final String PLAYER_REDOABLE_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_redoablequests' WHERE uuid=? AND questid=?";
+    private static final String PLAYER_REDOABLE_QUESTS_INSERT = "INSERT INTO '{prefix}player_redoablequests' (uuid, questid, time, amount) "
+            + "VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, time=time, amount=amount";
+    private static final String PLAYER_REDOABLE_QUESTS_DELETE = "DELETE FROM '{prefix}player_redoablequests' WHERE uuid=?";
 
     private final Quests plugin;
-    
     private final ConnectionFactory connectionFactory;
     private final Function<String, String> statementProcessor;
 
@@ -78,14 +90,15 @@ public class SqlStorage implements StorageImplementation {
         connectionFactory.init(plugin);
         
         try (Connection c = connectionFactory.getConnection()) {
-            final String cs = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}players") 
+            final String[] queries = new String[4];
+            queries[0] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}players") 
                     + "` (`uuid` VARCHAR(36) NOT NULL, "
                     + "`lastknownname` VARCHAR(16) NOT NULL, "
                     + "`hasjournal` BOOL NOT NULL, "
                     + "`questpoints` BIGINT NOT NULL, "
                     + "PRIMARY KEY (`uuid`)"
                     + ") DEFAULT CHARSET = utf8mb4";
-            final String cs2 = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}player_currentquests")
+            queries[1] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}player_currentquests")
                     + "` (id INT AUTO_INCREMENT NOT NULL,"
                     + "`uuid` VARCHAR(36) NOT NULL, "
                     + "`questid` VARCHAR(100) NOT NULL,"
@@ -93,16 +106,32 @@ public class SqlStorage implements StorageImplementation {
                     + "PRIMARY KEY (`id`),"
                     + "UNIQUE KEY (`uuid`, `questid`)"
                     + ") DEFAULT CHARSET = utf8mb4";
+            queries[2] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}player_completedquests")
+                    + "` (id INT AUTO_INCREMENT NOT NULL,"
+                    + "`uuid` VARCHAR(36) NOT NULL, "
+                    + "`questid` VARCHAR(100) NOT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "UNIQUE KEY (`uuid`, `questid`)"
+                    + ") DEFAULT CHARSET = utf8mb4";
+            queries[3] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}player_redoablequests")
+                    + "` (id INT AUTO_INCREMENT NOT NULL,"
+                    + "`uuid` VARCHAR(36) NOT NULL, "
+                    + "`questid` VARCHAR(100) NOT NULL,"
+                    + "`time` BIGINT NOT NULL,"
+                    + "`amount` INT NOT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "UNIQUE KEY (`uuid`, `questid`)"
+                    + ") DEFAULT CHARSET = utf8mb4";
             try (Statement s = c.createStatement()) {
-                try {
-                    s.execute(cs);
-                    s.execute(cs2);
-                } catch (final SQLException e) {
-                    if (e.getMessage().contains("Unknown character set")) {
-                        s.execute(cs.replace("utf8mb4", "utf8"));
-                        s.execute(cs2.replace("utf8mb4", "utf8"));
-                    } else {
-                        throw e;
+                for (final String query : queries) {
+                    try {
+                        s.execute(query);
+                    } catch (final SQLException e) {
+                        if (e.getMessage().contains("Unknown character set")) {
+                            s.execute(query.replace("utf8mb4", "utf8"));
+                        } else {
+                            throw e;
+                        }
                     }
                 }
             }
@@ -137,6 +166,9 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
                 quester.setCurrentQuests(getQuesterCurrentQuests(uniqueId));
+                quester.setCompletedQuests(getQuesterCompletedQuests(uniqueId));
+                quester.setCompletedTimes(getQuesterCompletedTimes(uniqueId));
+                quester.setAmountsCompleted(getQuesterAmountsCompleted(uniqueId));
             }
         }
         return quester;
@@ -150,6 +182,12 @@ public class SqlStorage implements StorageImplementation {
         final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
+        final Set<String> completedQuests = quester.getCompletedQuests().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(Quest::getId).collect(Collectors.toSet());
+        oldCompletedQuests.removeAll(completedQuests);
+        final Set<String> redoableQuests = quester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        oldRedoableQuests.removeAll(redoableQuests);
         
         try (final Connection c = connectionFactory.getConnection()) {
             if (oldlastknownname != null && !lastknownname.equals(oldlastknownname)) {
@@ -186,6 +224,46 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             }
+            
+            if (!oldCompletedQuests.isEmpty()) {
+                for (final String questId : oldCompletedQuests) {
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, questId);
+                        ps.execute();
+                    }
+                }
+            } else {
+                for (final Quest quest : quester.getCompletedQuests()) {
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_INSERT))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, quest.getId());
+                        ps.execute();
+                    }
+                }
+            }
+            
+            if (!oldRedoableQuests.isEmpty()) {
+                for (final String questId : oldRedoableQuests) {
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, questId);
+                        ps.execute();
+                    }
+                }
+            } else {
+                for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
+                    final int amount = quester.getAmountsCompleted().get(entry.getKey());
+                    try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
+                        //System.out.println("Attempting to update with amount of " + amount);
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, entry.getKey().getId());
+                        ps.setLong(3, entry.getValue());
+                        ps.setInt(4, amount);
+                        ps.execute();
+                    }
+                }
+            }
         }
     }
 
@@ -197,6 +275,14 @@ public class SqlStorage implements StorageImplementation {
                 ps.execute();
             }
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_DELETE))) {
+                ps.setString(1, uniqueId.toString());
+                ps.execute();
+            }
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_DELETE))) {
+                ps.setString(1, uniqueId.toString());
+                ps.execute();
+            }
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_DELETE))) {
                 ps.setString(1, uniqueId.toString());
                 ps.execute();
             }
@@ -231,5 +317,50 @@ public class SqlStorage implements StorageImplementation {
             }
         }
         return currentQuests;
+    }
+    
+    public LinkedList<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
+        final LinkedList<Quest> completedQuests = new LinkedList<Quest>();
+        try (Connection c = connectionFactory.getConnection()) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
+                ps.setString(1, uniqueId.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        completedQuests.add(plugin.getQuestById(rs.getString("questid")));
+                    }
+                }
+            }
+        }
+        return completedQuests;
+    }
+    
+    public ConcurrentHashMap<Quest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<Quest, Long>();
+        try (Connection c = connectionFactory.getConnection()) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
+                ps.setString(1, uniqueId.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        completedTimes.put(plugin.getQuestById(rs.getString("questid")), rs.getLong("time"));
+                    }
+                }
+            }
+        }
+        return completedTimes;
+    }
+    
+    public ConcurrentHashMap<Quest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>();
+        try (Connection c = connectionFactory.getConnection()) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
+                ps.setString(1, uniqueId.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        amountsCompleted.put(plugin.getQuestById(rs.getString("questid")), rs.getInt("amount"));
+                    }
+                }
+            }
+        }
+        return amountsCompleted;
     }
 }

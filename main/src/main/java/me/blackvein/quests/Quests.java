@@ -1195,7 +1195,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (getSettings().canIgnoreLockedQuests()) {
             final LinkedList<Quest> available = new LinkedList<Quest>();
             for (final Quest q : quests) {
-                if (quester.getCompletedQuests().contains(q.getName()) == false) {
+                if (!quester.getCompletedQuests().contains(q)) {
                     if (q.testRequirements(player)) {
                         available.add(q);
                     }
@@ -1793,14 +1793,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 final List<String> names = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<String> temp = new LinkedList<String>();
+                final List<Quest> temp = new LinkedList<Quest>();
                 for (final String name : names) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(name);
+                            temp.add(getQuest(name));
                             done = true;
                             break;
                         }
@@ -1824,14 +1824,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 final List<String> names = config.getStringList("quests." + questKey + ".requirements.quests");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<String> temp = new LinkedList<String>();
+                final List<Quest> temp = new LinkedList<Quest>();
                 for (final String name : names) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(name);
+                            temp.add(getQuest(name));
                             done = true;
                             break;
                         }
@@ -3946,11 +3946,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     public boolean hasQuest(final NPC npc, final Quester quester) {
         for (final Quest q : quests) {
-            if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == false) {
+            if (q.npcStart != null && !quester.completedQuests.contains(q)) {
                 if (q.npcStart.getId() == npc.getId()) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
-                    if (ignoreLockedQuests == false || ignoreLockedQuests == true 
-                            && q.testRequirements(quester) == true) {
+                    if (!ignoreLockedQuests || ignoreLockedQuests && q.testRequirements(quester)) {
                         return true;
                     }
                 }
@@ -3969,7 +3968,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     public boolean hasCompletedQuest(final NPC npc, final Quester quester) {
         for (final Quest q : quests) {
-            if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == true) {
+            if (q.npcStart != null && quester.completedQuests.contains(q) == true) {
                 if (q.npcStart.getId() == npc.getId()) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
                     if (ignoreLockedQuests == false || ignoreLockedQuests == true 
@@ -3991,7 +3990,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     public boolean hasCompletedRedoableQuest(final NPC npc, final Quester quester) {
         for (final Quest q : quests) {
-            if (q.npcStart != null && quester.completedQuests.contains(q.getName()) == true 
+            if (q.npcStart != null && quester.completedQuests.contains(q) == true 
                     && q.getPlanner().getCooldown() > -1) {
                 if (q.npcStart.getId() == npc.getId()) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();

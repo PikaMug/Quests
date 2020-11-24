@@ -15,7 +15,6 @@ package me.blackvein.quests;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,32 +107,32 @@ public class Quester implements Comparable<Quester> {
             updateJournal();
         }
     };
-    protected LinkedList<String> completedQuests = new LinkedList<String>() {
+    protected LinkedList<Quest> completedQuests = new LinkedList<Quest>() {
 
         private static final long serialVersionUID = -269110128568487000L;
 
         @Override
-        public boolean add(final String e) {
+        public boolean add(final Quest e) {
             final boolean b = super.add(e);
             updateJournal();
             return b;
         }
 
         @Override
-        public void add(final int index, final String element) {
+        public void add(final int index, final Quest element) {
             super.add(index, element);
             updateJournal();
         }
 
         @Override
-        public boolean addAll(final Collection<? extends String> c) {
+        public boolean addAll(final Collection<? extends Quest> c) {
             final boolean b = super.addAll(c);
             updateJournal();
             return b;
         }
 
         @Override
-        public boolean addAll(final int index, final Collection<? extends String> c) {
+        public boolean addAll(final int index, final Collection<? extends Quest> c) {
             final boolean b = super.addAll(index, c);
             updateJournal();
             return b;
@@ -153,26 +152,26 @@ public class Quester implements Comparable<Quester> {
         }
 
         @Override
-        public String remove(final int index) {
-            final String s = super.remove(index);
+        public Quest remove(final int index) {
+            final Quest s = super.remove(index);
             updateJournal();
             return s;
         }
 
         @Override
-        public String set(final int index, final String element) {
-            final String s = super.set(index, element);
+        public Quest set(final int index, final Quest element) {
+            final Quest s = super.set(index, element);
             updateJournal();
             return s;
         }
     };
-    protected Map<String, Long> completedTimes = new HashMap<String, Long>();
-    protected Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
+    protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<Quest, Long>();
+    protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 5475202358792520975L;
 
         @Override
-        public Integer put(final String key, final Integer val) {
+        public Integer put(final Quest key, final Integer val) {
             final Integer data = super.put(key, val);
             updateJournal();
             return data;
@@ -192,12 +191,12 @@ public class Quester implements Comparable<Quester> {
         }
 
         @Override
-        public void putAll(final Map<? extends String, ? extends Integer> m) {
+        public void putAll(final Map<? extends Quest, ? extends Integer> m) {
             super.putAll(m);
             updateJournal();
         }
     };
-    protected Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
+    protected ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<Quest, QuestData>() {
 
         private static final long serialVersionUID = -4607112433003926066L;
 
@@ -304,35 +303,35 @@ public class Quester implements Comparable<Quester> {
         this.currentQuests = currentQuests;
     }
 
-    public LinkedList<String> getCompletedQuests() {
+    public LinkedList<Quest> getCompletedQuests() {
         return completedQuests;
     }
 
-    public void setCompletedQuests(final LinkedList<String> completedQuests) {
+    public void setCompletedQuests(final LinkedList<Quest> completedQuests) {
         this.completedQuests = completedQuests;
     }
 
-    public Map<String, Long> getCompletedTimes() {
+    public ConcurrentHashMap<Quest, Long> getCompletedTimes() {
         return completedTimes;
     }
 
-    public void setCompletedTimes(final Map<String, Long> completedTimes) {
+    public void setCompletedTimes(final ConcurrentHashMap<Quest, Long> completedTimes) {
         this.completedTimes = completedTimes;
     }
 
-    public Map<String, Integer> getAmountsCompleted() {
+    public ConcurrentHashMap<Quest, Integer> getAmountsCompleted() {
         return amountsCompleted;
     }
 
-    public void setAmountsCompleted(final Map<String, Integer> amountsCompleted) {
+    public void setAmountsCompleted(final ConcurrentHashMap<Quest, Integer> amountsCompleted) {
         this.amountsCompleted = amountsCompleted;
     }
 
-    public Map<Quest, QuestData> getQuestData() {
+    public ConcurrentHashMap<Quest, QuestData> getQuestData() {
         return questData;
     }
 
-    public void setQuestData(final Map<Quest, QuestData> questData) {
+    public void setQuestData(final ConcurrentHashMap<Quest, QuestData> questData) {
         this.questData = questData;
     }
 
@@ -502,8 +501,8 @@ public class Quester implements Comparable<Quester> {
                     
                     // Get last completed time
                     long completedTime = 0L;
-                    if (getCompletedTimes().containsKey(q.getName())) {
-                        completedTime = getCompletedTimes().get(q.getName());
+                    if (getCompletedTimes().containsKey(q)) {
+                        completedTime = getCompletedTimes().get(q);
                     }
                     long completedEnd = 0L;
                     
@@ -764,18 +763,16 @@ public class Quester implements Comparable<Quester> {
                 finishedRequirements.add(ChatColor.GRAY + "" + reqs.getQuestPoints() + " " + Lang.get("questPoints"));
             }
         }
-        for (final String name : reqs.getNeededQuests()) {
-            if (getCompletedQuests().contains(name)) {
-                finishedRequirements.add(ChatColor.GREEN + name);
+        for (final Quest q : reqs.getNeededQuests()) {
+            if (getCompletedQuests().contains(q)) {
+                finishedRequirements.add(ChatColor.GREEN + q.getName());
             } else {
-                unfinishedRequirements.add(ChatColor.GRAY + name);
+                unfinishedRequirements.add(ChatColor.GRAY + q.getName());
             }
         }
-        for (final String name : reqs.getBlockQuests()) {
-            final Quest questObject = new Quest();
-            questObject.setName(name);
-            if (completedQuests.contains(name) || currentQuests.containsKey(questObject)) {
-                requirements.add(ChatColor.RED + name);
+        for (final Quest q : reqs.getBlockQuests()) {
+            if (completedQuests.contains(q) || currentQuests.containsKey(q)) {
+                requirements.add(ChatColor.RED + quest.getName());
             }
         }
         for (final String s : reqs.getMcmmoSkills()) {
@@ -2849,11 +2846,11 @@ public class Quester implements Comparable<Quester> {
     public long getCompletionDifference(final Quest quest) {
         final long currentTime = System.currentTimeMillis();
         long lastTime;
-        if (completedTimes.containsKey(quest.getName()) == false) {
+        if (completedTimes.containsKey(quest) == false) {
             lastTime = System.currentTimeMillis();
-            completedTimes.put(quest.getName(), System.currentTimeMillis());
+            completedTimes.put(quest, System.currentTimeMillis());
         } else {
-            lastTime = completedTimes.get(quest.getName());
+            lastTime = completedTimes.get(quest);
         }
         return currentTime - lastTime;
     }
@@ -3155,9 +3152,12 @@ public class Quester implements Comparable<Quester> {
             data.set("completed-Quests", "none");
         } else {
             final List<String> noDupe = new ArrayList<String>();
-            for (final String s : completedQuests)
-                if (!noDupe.contains(s))
-                    noDupe.add(s);
+            for (final Quest q : completedQuests) {
+                // TODO use quest IDs instead
+                if (!noDupe.contains(q.getName())) {
+                    noDupe.add(q.getName());
+                }
+            }
             final String[] completed = new String[noDupe.size()];
             int index = 0;
             for (final String s : noDupe) {
@@ -3167,24 +3167,26 @@ public class Quester implements Comparable<Quester> {
             data.set("completed-Quests", completed);
         }
         if (completedTimes.isEmpty() == false) {
-            final List<String> questTimeNames = new LinkedList<String>();
+            final List<String> questNames = new LinkedList<String>();
             final List<Long> questTimes = new LinkedList<Long>();
-            for (final String s : completedTimes.keySet()) {
-                questTimeNames.add(s);
-                questTimes.add(completedTimes.get(s));
+            for (final Entry<Quest, Long> entry : completedTimes.entrySet()) {
+                // TODO use quest IDs instead
+                questNames.add(entry.getKey().getName());
+                questTimes.add(entry.getValue());
             }
-            data.set("completedRedoableQuests", questTimeNames);
+            data.set("completedRedoableQuests", questNames);
             data.set("completedQuestTimes", questTimes);
         }
         if (amountsCompleted.isEmpty() == false) {
-            final List<String> list1 = new LinkedList<String>();
-            final List<Integer> list2 = new LinkedList<Integer>();
-            for (final Entry<String, Integer> entry : amountsCompleted.entrySet()) {
-                list1.add(entry.getKey());
-                list2.add(entry.getValue());
+            final List<String> questNames = new LinkedList<String>();
+            final List<Integer> questAmts = new LinkedList<Integer>();
+            for (final Entry<Quest, Integer> entry : amountsCompleted.entrySet()) {
+                // TODO use quest IDs instead
+                questNames.add(entry.getKey().getName());
+                questAmts.add(entry.getValue());
             }
-            data.set("amountsCompletedQuests", list1);
-            data.set("amountsCompleted", list2);
+            data.set("amountsCompletedQuests", questNames);
+            data.set("amountsCompleted", questAmts);
         }
         // #getPlayer is faster
         OfflinePlayer representedPlayer = getPlayer();
@@ -3338,7 +3340,7 @@ public class Quester implements Comparable<Quester> {
                 }
                 final ItemStack display = quest.guiDisplay;
                 final ItemMeta meta = display.getItemMeta();
-                if (completedQuests.contains(quest.getName())) {
+                if (completedQuests.contains(quest)) {
                     meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName()
                             + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
                 } else {
@@ -3400,7 +3402,7 @@ public class Quester implements Comparable<Quester> {
      */
     public void hardRemove(final Quest quest) {
         try {
-            completedQuests.remove(quest.getName());
+            completedQuests.remove(quest);
         } catch (final Exception ex) {
             ex.printStackTrace();
         }
@@ -3744,7 +3746,7 @@ public class Quester implements Comparable<Quester> {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(quest.getName()) && quest.getPlanner().getCooldown() < 0) {
+        } else if (getCompletedQuests().contains(quest) && quest.getPlanner().getCooldown() < 0) {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "questAlreadyCompleted");
                 msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
@@ -3770,7 +3772,7 @@ public class Quester implements Comparable<Quester> {
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(quest.getName()) && getRemainingCooldown(quest) > 0 
+        } else if (getCompletedQuests().contains(quest) && getRemainingCooldown(quest) > 0 
                 && !quest.getPlanner().getOverride()) {
             if (giveReason) {
                 String msg = Lang.get(getPlayer(), "questTooEarly");

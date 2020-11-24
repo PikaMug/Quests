@@ -422,10 +422,8 @@ public class Quest {
         if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
             return false;
         }
-        for (final String q : reqs.getBlockQuests()) {
-            final Quest questObject = new Quest();
-            questObject.name = q;
-            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(questObject)) {
+        for (final Quest q : reqs.getBlockQuests()) {
+            if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(q)) {
                 return false;
             }
         }
@@ -507,8 +505,8 @@ public class Quest {
             }
         }
         q.hardQuit(this);
-        if (!q.completedQuests.contains(name)) {
-            q.completedQuests.add(name);
+        if (!q.completedQuests.contains(this)) {
+            q.completedQuests.add(this);
         }
         for (final Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
@@ -528,11 +526,11 @@ public class Quest {
             }, 40);
         }
         if (pln.getCooldown() > -1) {
-            q.completedTimes.put(this.name, System.currentTimeMillis());
-            if (q.amountsCompleted.containsKey(this.name)) {
-                q.amountsCompleted.put(this.name, q.amountsCompleted.get(this.name) + 1);
+            q.completedTimes.put(this, System.currentTimeMillis());
+            if (q.amountsCompleted.containsKey(this)) {
+                q.amountsCompleted.put(this, q.amountsCompleted.get(this) + 1);
             } else {
-                q.amountsCompleted.put(this.name, 1);
+                q.amountsCompleted.put(this, 1);
             }
         }
         
