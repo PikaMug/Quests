@@ -36,13 +36,13 @@ public class SqlStorage implements StorageImplementation {
     private static final String PLAYER_SELECT_USERNAME = "SELECT lastknownname FROM '{prefix}players' WHERE uuid=? LIMIT 1";
     private static final String PLAYER_UPDATE_USERNAME = "UPDATE '{prefix}players' SET lastknownname=? WHERE uuid=?";
     private static final String PLAYER_INSERT = "INSERT INTO '{prefix}players' (uuid, lastknownname, hasjournal, questpoints) "
-            + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, lastknownname=lastknownname, hasjournal=hasjournal, questpoints=questpoints";
+            + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, lastknownname=VALUES(lastknownname), hasjournal=VALUES(hasjournal), questpoints=VALUES(questpoints)";
     private static final String PLAYER_DELETE = "DELETE FROM '{prefix}players' WHERE uuid=?";
     
     private static final String PLAYER_CURRENT_QUESTS_SELECT_BY_UUID = "SELECT questid, stageNum FROM '{prefix}player_currentquests' WHERE uuid=?";
     private static final String PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=? AND questid=?";
     private static final String PLAYER_CURRENT_QUESTS_INSERT = "INSERT INTO '{prefix}player_currentquests' (uuid, questid, stageNum) "
-            + "VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, stageNum=stageNum";
+            + "VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, stageNum=VALUES(stageNum)";
     private static final String PLAYER_CURRENT_QUESTS_DELETE = "DELETE FROM '{prefix}player_currentquests' WHERE uuid=?";
     
     private static final String PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID = "SELECT questid FROM '{prefix}player_completedquests' WHERE uuid=?";
@@ -51,10 +51,10 @@ public class SqlStorage implements StorageImplementation {
             + "VALUES(?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid";
     private static final String PLAYER_COMPLETED_QUESTS_DELETE = "DELETE FROM '{prefix}player_completedquests' WHERE uuid=?";
     
-    private static final String PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID = "SELECT questid, time, amount FROM '{prefix}player_redoablequests' WHERE uuid=?";
+    private static final String PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID = "SELECT questid, lasttime, amount FROM '{prefix}player_redoablequests' WHERE uuid=?";
     private static final String PLAYER_REDOABLE_QUESTS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_redoablequests' WHERE uuid=? AND questid=?";
-    private static final String PLAYER_REDOABLE_QUESTS_INSERT = "INSERT INTO '{prefix}player_redoablequests' (uuid, questid, time, amount) "
-            + "VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, time=time, amount=amount";
+    private static final String PLAYER_REDOABLE_QUESTS_INSERT = "INSERT INTO '{prefix}player_redoablequests' (uuid, questid, lasttime, amount) "
+            + "VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, questid=questid, lasttime=VALUES(lasttime), amount=VALUES(amount)";
     private static final String PLAYER_REDOABLE_QUESTS_DELETE = "DELETE FROM '{prefix}player_redoablequests' WHERE uuid=?";
 
     private final Quests plugin;
@@ -117,7 +117,7 @@ public class SqlStorage implements StorageImplementation {
                     + "` (id INT AUTO_INCREMENT NOT NULL,"
                     + "`uuid` VARCHAR(36) NOT NULL, "
                     + "`questid` VARCHAR(100) NOT NULL,"
-                    + "`time` BIGINT NOT NULL,"
+                    + "`lasttime` BIGINT NOT NULL,"
                     + "`amount` INT NOT NULL,"
                     + "PRIMARY KEY (`id`),"
                     + "UNIQUE KEY (`uuid`, `questid`)"
@@ -255,7 +255,7 @@ public class SqlStorage implements StorageImplementation {
                 for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
                     final int amount = quester.getAmountsCompleted().get(entry.getKey());
                     try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
-                        //System.out.println("Attempting to update with amount of " + amount);
+                        System.out.println("Attempting to update with amount of " + amount);
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
                         ps.setLong(3, entry.getValue());
@@ -341,7 +341,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        completedTimes.put(plugin.getQuestById(rs.getString("questid")), rs.getLong("time"));
+                        completedTimes.put(plugin.getQuestById(rs.getString("questid")), rs.getLong("lasttime"));
                     }
                 }
             }
