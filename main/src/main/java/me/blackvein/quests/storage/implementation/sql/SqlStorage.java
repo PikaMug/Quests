@@ -32,11 +32,11 @@ import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFactory;
 
 public class SqlStorage implements StorageImplementation {
-    private static final String PLAYER_SELECT = "SELECT lastknownname, hasjournal, questpoints FROM '{prefix}players' WHERE uuid=?";
+    private static final String PLAYER_SELECT = "SELECT lastknownname, questpoints FROM '{prefix}players' WHERE uuid=?";
     private static final String PLAYER_SELECT_USERNAME = "SELECT lastknownname FROM '{prefix}players' WHERE uuid=? LIMIT 1";
     private static final String PLAYER_UPDATE_USERNAME = "UPDATE '{prefix}players' SET lastknownname=? WHERE uuid=?";
-    private static final String PLAYER_INSERT = "INSERT INTO '{prefix}players' (uuid, lastknownname, hasjournal, questpoints) "
-            + "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, lastknownname=VALUES(lastknownname), hasjournal=VALUES(hasjournal), questpoints=VALUES(questpoints)";
+    private static final String PLAYER_INSERT = "INSERT INTO '{prefix}players' (uuid, lastknownname, questpoints) "
+            + "VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE uuid=uuid, lastknownname=VALUES(lastknownname), questpoints=VALUES(questpoints)";
     private static final String PLAYER_DELETE = "DELETE FROM '{prefix}players' WHERE uuid=?";
     
     private static final String PLAYER_CURRENT_QUESTS_SELECT_BY_UUID = "SELECT questid, stageNum FROM '{prefix}player_currentquests' WHERE uuid=?";
@@ -94,7 +94,6 @@ public class SqlStorage implements StorageImplementation {
             queries[0] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}players") 
                     + "` (`uuid` VARCHAR(36) NOT NULL, "
                     + "`lastknownname` VARCHAR(16) NOT NULL, "
-                    + "`hasjournal` BOOL NOT NULL, "
                     + "`questpoints` BIGINT NOT NULL, "
                     + "PRIMARY KEY (`uuid`)"
                     + ") DEFAULT CHARSET = utf8mb4";
@@ -160,7 +159,6 @@ public class SqlStorage implements StorageImplementation {
                     ps.setString(1, uniqueId.toString());
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
-                            quester.hasJournal = rs.getBoolean("hasjournal");
                             quester.setQuestPoints(rs.getInt("questpoints"));
                         }
                     }
@@ -200,8 +198,7 @@ public class SqlStorage implements StorageImplementation {
                 try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
                     ps.setString(1, uniqueId.toString());
                     ps.setString(2, lastknownname);
-                    ps.setBoolean(3, quester.hasJournal);
-                    ps.setInt(4, quester.getQuestPoints());
+                    ps.setInt(3, quester.getQuestPoints());
                     ps.execute();
                 }
             }

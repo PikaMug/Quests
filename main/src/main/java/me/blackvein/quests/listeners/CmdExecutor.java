@@ -41,7 +41,6 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
@@ -53,6 +52,7 @@ import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
 import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -691,40 +691,26 @@ public class CmdExecutor implements CommandExecutor {
             }
             
             final Inventory inv = player.getInventory();
-            if (quester.hasJournal) {
-                final ItemStack[] arr = inv.getContents();
-                for (int i = 0; i < arr.length; i++) {
-                    if (arr[i] != null) {
-                        if (ItemUtil.isJournal(arr[i])) {
-                            inv.setItem(i, null);
-                        }
-                    }
-                }
+            final int index = quester.getJournalIndex();
+            if (index != -1) {
+                inv.setItem(index, null);
                 player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalPutAway")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
-                quester.hasJournal = false;
             } else if (player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) {
-                final ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
-                final ItemMeta meta = stack.getItemMeta();
-                meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
-                stack.setItemMeta(meta);
-                player.setItemInHand(stack);
+                final QuestJournal journal = new QuestJournal(quester);
+                player.setItemInHand(journal.toItemStack());
                 player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
-                quester.hasJournal = true;
-                quester.updateJournal();
+                //quester.updateJournal();
             } else if (inv.firstEmpty() != -1) {
                 final ItemStack[] arr = inv.getContents();
                 for (int i = 0; i < arr.length; i++) {
                     if (arr[i] == null) {
-                        final ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
-                        final ItemMeta meta = stack.getItemMeta();
-                        meta.setDisplayName(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
-                        stack.setItemMeta(meta);
-                        inv.setItem(i, stack);
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken"));
-                        quester.hasJournal = true;
-                        quester.updateJournal();
+                        final QuestJournal journal = new QuestJournal(quester);
+                        inv.setItem(i, journal.toItemStack());
+                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                                .replace("<journal>", Lang.get(player, "journalTitle")));
+                        //quester.updateJournal();
                         break;
                     }
                 }

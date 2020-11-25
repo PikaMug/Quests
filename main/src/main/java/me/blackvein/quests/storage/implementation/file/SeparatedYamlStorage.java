@@ -112,7 +112,6 @@ public class SeparatedYamlStorage implements StorageImplementation {
         int questPoints = quester.getQuestPoints();
         questPoints = data.getInt("quest-points");
         quester.setQuestPoints(questPoints);
-        quester.hasJournal = data.getBoolean("hasJournal");
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {

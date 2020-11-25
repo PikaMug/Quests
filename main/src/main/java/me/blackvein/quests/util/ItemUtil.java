@@ -590,7 +590,7 @@ public class ItemUtil {
     /**
      * Checks whether an ItemStack is a Quest Journal based on book title
      * 
-     * @param is IemsStack to check
+     * @param is ItemStack to check
      * @return true if display name equals colored journal title
      */
     public static boolean isJournal(final ItemStack is) {

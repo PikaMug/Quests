@@ -43,7 +43,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
 
@@ -57,6 +56,7 @@ import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreOpenGUIEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
+import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.tasks.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
@@ -71,7 +71,6 @@ import net.citizensnpcs.api.npc.NPC;
 public class Quester implements Comparable<Quester> {
 
     private final Quests plugin;
-    public boolean hasJournal = false;
     private UUID id;
     protected String questIdToTake;
     protected int questPoints = 0;
@@ -356,11 +355,39 @@ public class Quester implements Comparable<Quester> {
         }
         return new QuestData(this);
     }
+    
+    public boolean hasJournal() {
+        return getJournal() != null;
+    }
+    
+    public ItemStack getJournal() {
+        if (getPlayer() == null || !getPlayer().isOnline()) {
+            return null;
+        }
+        for (final ItemStack is : getPlayer().getInventory().getContents()) {
+            if (ItemUtil.isJournal(is)) {
+                return is;
+            }
+        }
+        return null;
+    }
+    
+    public int getJournalIndex() {
+        if (getPlayer() == null || !getPlayer().isOnline()) {
+            return -1;
+        }
+        final ItemStack[] arr = getPlayer().getInventory().getContents();
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != null) {
+                if (ItemUtil.isJournal(arr[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 
     public void updateJournal() {
-        if (!hasJournal) {
-            return;
-        } 
         if (getPlayer() == null) {
             return;
         }
@@ -368,76 +395,10 @@ public class Quester implements Comparable<Quester> {
             plugin.getLogger().info("Could not update Quests Journal for " + getPlayer().getName() + " while offline");
             return;
         }
-        final Inventory inv = getPlayer().getInventory();
-        final ItemStack[] arr = inv.getContents();
-        int index = -1;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] != null) {
-                if (ItemUtil.isJournal(arr[i])) {
-                    index = i;
-                    break;
-                }
-            }
-        }
+        final int index = getJournalIndex();
         if (index != -1) {
-            final String title = Lang.get(getPlayer(), "journalTitle");
-            final ItemStack stack = new ItemStack(Material.WRITTEN_BOOK, 1);
-            final ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(ChatColor.LIGHT_PURPLE + title);
-            final BookMeta book = (BookMeta) meta;
-            book.setTitle(ChatColor.LIGHT_PURPLE + title);
-            book.setAuthor(getPlayer().getName());
-            if (currentQuests.isEmpty()) {
-                book.addPage(ChatColor.DARK_RED + Lang.get(getPlayer(), "journalNoQuests").replace("<journal>", title));
-            } else {
-                int currentLength = 0;
-                int currentLines = 0;
-                String page = "";
-                final List<Quest> sortedList = currentQuests.keySet().stream()
-                        .sorted(Comparator.comparing(Quest::getName))
-                        .collect(Collectors.toList());
-                for (final Quest quest : sortedList) {
-                    if ((currentLength + quest.getName().length() > 240) || (currentLines 
-                            + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) 
-                            : ((quest.getName().length() / 19) + 1))) > 13) {
-                        book.addPage(page);
-                        page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.getName() + "\n";
-                        currentLength = quest.getName().length();
-                        currentLines = (quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19) 
-                                : (quest.getName().length() + 1);
-                    } else {
-                        page += ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + quest.getName() + "\n";
-                        currentLength += quest.getName().length();
-                        currentLines += (quest.getName().length() / 19);
-                    }
-                    if (getCurrentObjectives(quest, false) != null) {
-                        for (final String obj : getCurrentObjectives(quest, false)) {
-                            // Length/Line check
-                            if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19) 
-                                    == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
-                                book.addPage(page);
-                                page = obj + "\n";
-                                currentLength = obj.length();
-                                currentLines = (obj.length() % 19) == 0 ? (obj.length() / 19) : (obj.length() + 1);
-                            } else {
-                                page += obj + "\n";
-                                currentLength += obj.length();
-                                currentLines += (obj.length() / 19);
-                            }
-                        }
-                    } else {
-                        plugin.getLogger().severe("Quest Journal: objectives were null for " + quest.getName());
-                    }
-                    if (currentLines < 13)
-                        page += "\n";
-                    book.addPage(page);
-                    page = "";
-                    currentLines = 0;
-                    currentLength = 0;
-                }
-            }
-            stack.setItemMeta(book);
-            inv.setItem(index, stack);
+            final QuestJournal journal = new QuestJournal(this);
+            getPlayer().getInventory().setItem(index, journal.toItemStack());
         }
     }
     
@@ -3193,7 +3154,6 @@ public class Quester implements Comparable<Quester> {
         if (representedPlayer == null) {
             representedPlayer = getOfflinePlayer();
         }
-        data.set("hasJournal", hasJournal);
         data.set("lastKnownName", representedPlayer.getName());
         return data;
     }

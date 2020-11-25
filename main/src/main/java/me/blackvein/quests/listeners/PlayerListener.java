@@ -685,9 +685,7 @@ public class PlayerListener implements Listener {
             }
         }
         if (found != null) {
-            final Quester quester = plugin.getQuester(target.getUniqueId());
             evt.getDrops().remove(found);
-            quester.hasJournal = false;
         }
     }
     
@@ -815,7 +813,7 @@ public class PlayerListener implements Listener {
 
                 @Override
                 public void run() {
-                    if (quester.hasJournal) {
+                    if (quester.hasJournal()) {
                         quester.updateJournal();
                     }
                     if (quester.canUseCompass()) {
