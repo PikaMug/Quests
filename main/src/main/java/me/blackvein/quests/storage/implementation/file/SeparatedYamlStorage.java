@@ -112,9 +112,8 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 quester.setAmountsCompleted(amountsCompleted);
             }
         }
-        int questPoints = quester.getQuestPoints();
-        questPoints = data.getInt("quest-points");
-        quester.setQuestPoints(questPoints);
+        quester.setLastKnownName(data.getString("lastKnownName"));
+        quester.setQuestPoints(data.getInt("quest-points"));
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {
@@ -482,14 +481,13 @@ public class SeparatedYamlStorage implements StorageImplementation {
 
     @Override
     public String getQuesterLastKnownName(final UUID uniqueId) throws Exception {
-        final FileConfiguration data = new YamlConfiguration();
         Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {
             quester = new Quester(plugin, uniqueId);
         }
-        return data.getString("lastKnownName");
+        return quester.getLastKnownName();
     }
     
     @Override

@@ -73,6 +73,7 @@ public class Quester implements Comparable<Quester> {
     private final Quests plugin;
     private UUID id;
     protected String questIdToTake;
+    private String lastKnownName;
     protected int questPoints = 0;
     private String compassTargetQuestId;
     protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
@@ -255,7 +256,15 @@ public class Quester implements Comparable<Quester> {
     public void setQuestIdToTake(final String questIdToTake) {
         this.questIdToTake = questIdToTake;
     }
+    
+    public String getLastKnownName() {
+        return lastKnownName;
+    }
 
+    public void setLastKnownName(final String lastKnownName) {
+        this.lastKnownName = lastKnownName;
+    }
+    
     public int getQuestPoints() {
         return questPoints;
     }

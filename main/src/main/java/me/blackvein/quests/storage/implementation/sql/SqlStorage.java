@@ -162,6 +162,7 @@ public class SqlStorage implements StorageImplementation {
                     ps.setString(1, uniqueId.toString());
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
+                            quester.setLastKnownName(rs.getString("lastKnownName"));
                             quester.setQuestPoints(rs.getInt("questpoints"));
                         }
                     }
@@ -178,7 +179,7 @@ public class SqlStorage implements StorageImplementation {
     @Override
     public void saveQuesterData(final Quester quester) throws Exception {
         final UUID uniqueId = quester.getUUID();
-        final String lastknownname = quester.getOfflinePlayer().getName();
+        final String lastknownname = quester.getLastKnownName();
         final String oldlastknownname = getQuesterLastKnownName(uniqueId);
         final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
