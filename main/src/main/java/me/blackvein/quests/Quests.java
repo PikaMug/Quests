@@ -48,6 +48,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandExecutor;
@@ -327,21 +328,35 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Gets every Quester that has ever played on this server
+     * Get Quester from player UUID
      * 
-     * @return a collection of all Questers
+     * @param id Player UUID
+     * @return Quester, or null if UUID is null
      */
-    public Collection<Quester> getOfflineQuesters() {
-        return questers;
-    }
-    
-    /**
-     * Sets every Quester that has ever played on this server
-     * 
-     * @param questers a collection of Questers
-     */
-    public void setOfflineQuesters(final Collection<Quester> questers) {
-        this.questers = new ConcurrentSkipListSet<>(questers);
+    public Quester getQuester(final UUID id) {
+        if (id == null) {
+            return null;
+        }
+        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
+        for (final Quester q: set) {
+            if (q != null && q.getUUID().equals(id)) {
+                return q;
+            }
+        }
+        final Quester quester = new Quester(this, id);
+        if (depends.getCitizens() != null) {
+            if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
+                return quester;
+            }
+        }
+        /*if (!quester.loadData()) {
+            set.add(quester);
+        } else {
+            set.remove(quester);
+        }*/
+        final Quester q = new Quester(this, id);
+        questers.add(q);
+        return q;
     }
     
     /**
@@ -363,6 +378,41 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     @Deprecated
     public void setQuesters(final LinkedList<Quester> questers) {
+        this.questers = new ConcurrentSkipListSet<>(questers);
+    }
+
+    /**
+     * Get every online Quester playing on this server
+     * 
+     * @return a collection of all online Questers
+     */
+    public Collection<Quester> getOnlineQuesters() {
+        final Collection<Quester> questers = new ConcurrentSkipListSet<Quester>();;
+        for (final Quester q : getOfflineQuesters()) {
+            if (q.getOfflinePlayer().isOnline()) {
+                // Workaround for issues with the compass on fast join
+                q.findCompassTarget();
+                questers.add(q);
+            }
+        }
+        return questers;
+    }
+    
+    /**
+     * Gets every Quester that has ever played on this server
+     * 
+     * @return a collection of all Questers
+     */
+    public Collection<Quester> getOfflineQuesters() {
+        return questers;
+    }
+    
+    /**
+     * Sets every Quester that has ever played on this server
+     * 
+     * @param questers a collection of Questers
+     */
+    public void setOfflineQuesters(final Collection<Quester> questers) {
         this.questers = new ConcurrentSkipListSet<>(questers);
     }
     
@@ -588,13 +638,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 loadConditions();
                 getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
-                for (final Player p : getServer().getOnlinePlayers()) {
+                for (final OfflinePlayer p : getServer().getOfflinePlayers()) {
                     final Quester quester = new Quester(Quests.this, p.getUniqueId());
                     if (quester.loadData() == false) {
                         quester.saveData();
                     }
-                    // Workaround for issues with the compass on fast join
-                    quester.findCompassTarget();
+                    if (p.isOnline()) {
+                        // Workaround for issues with the compass on fast join
+                        quester.findCompassTarget();
+                    }
                     questers.add(quester);
                 }
                 if (depends.getCitizens() != null) {
@@ -1325,59 +1377,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 loading = false;
             }
         });
-    }
-
-    /**
-     * Get Quester from player UUID
-     * 
-     * @param id Player UUID
-     * @return Quester, or null if UUID is null
-     */
-    public Quester getQuester(final UUID id) {
-        if (id == null) {
-            return null;
-        }
-        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
-        for (final Quester q: set) {
-            if (q != null && q.getUUID().equals(id)) {
-                return q;
-            }
-        }
-        final Quester quester = new Quester(this, id);
-        if (depends.getCitizens() != null) {
-            if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
-                return quester;
-            }
-        }
-        /*if (!quester.loadData()) {
-            set.add(quester);
-        } else {
-            set.remove(quester);
-        }*/
-        final Quester q = new Quester(this, id);
-        questers.add(q);
-        return q;
-    }
-
-    /**
-     * Get a list of all online Questers
-     * 
-     * @deprecated Use {@link Bukkit#getOnlinePlayers()} and then {@link #getQuester(UUID)}
-     * @return list of online Questers
-     */
-    @Deprecated
-    public LinkedList<Quester> getOnlineQuesters() {
-        final LinkedList<Quester> qs = new LinkedList<Quester>();
-        for (final Player p : getServer().getOnlinePlayers()) {
-            final Quester quester = new Quester(this, p.getUniqueId());
-            if (!quester.loadData()) {
-                quester.saveData();
-            }
-            qs.add(quester);
-            // Workaround for issues with the compass on fast join
-            quester.findCompassTarget();
-        }
-        return qs;
     }
 
     /**

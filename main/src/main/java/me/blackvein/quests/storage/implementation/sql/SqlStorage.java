@@ -17,11 +17,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFacto
 
 public class SqlStorage implements StorageImplementation {
     private static final String PLAYER_SELECT = "SELECT lastknownname, questpoints FROM '{prefix}players' WHERE uuid=?";
+    private static final String PLAYER_SELECT_UUID = "SELECT DISTINCT uuid FROM '{prefix}players'";
     private static final String PLAYER_SELECT_USERNAME = "SELECT lastknownname FROM '{prefix}players' WHERE uuid=? LIMIT 1";
     private static final String PLAYER_UPDATE_USERNAME = "UPDATE '{prefix}players' SET lastknownname=? WHERE uuid=?";
     private static final String PLAYER_INSERT = "INSERT INTO '{prefix}players' (uuid, lastknownname, questpoints) "
@@ -252,7 +255,6 @@ public class SqlStorage implements StorageImplementation {
                 for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
                     final int amount = quester.getAmountsCompleted().get(entry.getKey());
                     try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
-                        System.out.println("Attempting to update with amount of " + amount);
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
                         ps.setLong(3, entry.getValue());
@@ -359,5 +361,28 @@ public class SqlStorage implements StorageImplementation {
             }
         }
         return amountsCompleted;
+    }
+
+    @Override
+    public Collection<UUID> getSavedUniqueIds() throws Exception {
+        final Collection<UUID> ids = new ConcurrentSkipListSet<UUID>();
+        try (Connection c = connectionFactory.getConnection()) {
+            try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT_UUID))) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        UUID id = null;
+                        try {
+                            id = UUID.fromString(rs.getString("uuid"));
+                        } catch (final IllegalArgumentException e) {
+                            continue;
+                        }
+                        if (id != null) {
+                            ids.add(id);
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
     }
 }

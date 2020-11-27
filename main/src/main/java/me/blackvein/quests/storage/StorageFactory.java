@@ -52,7 +52,7 @@ public class StorageFactory {
         return storage;
     }
 
-    private StorageImplementation createNewImplementation(final StorageType method) {
+    public StorageImplementation createNewImplementation(final StorageType method) {
         switch (method) {
             case CUSTOM:
                 return CustomStorageProviders.getProvider().provide(plugin);

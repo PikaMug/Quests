@@ -13,11 +13,14 @@
 package me.blackvein.quests.storage.implementation.file;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -487,6 +490,38 @@ public class SeparatedYamlStorage implements StorageImplementation {
             quester = new Quester(plugin, uniqueId);
         }
         return data.getString("lastKnownName");
+    }
+    
+    @Override
+    public Collection<UUID> getSavedUniqueIds() throws Exception {
+        final Collection<UUID> ids = new ConcurrentSkipListSet<UUID>();
+        final File folder = new File(directoryPath);
+        if (!folder.exists()) {
+            return ids;
+        }
+        final File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".yml");
+            }
+        });
+        
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                System.out.println("File " + listOfFiles[i].getName());
+                final String name = listOfFiles[i].getName().substring(0, listOfFiles[i].getName().lastIndexOf("."));
+                UUID id = null;
+                try {
+                    id = UUID.fromString(name);
+                } catch (final IllegalArgumentException e) {
+                    continue;
+                }
+                if (id != null) {
+                    ids.add(id);
+                }
+            }
+        }
+        return ids;
     }
     
     /**

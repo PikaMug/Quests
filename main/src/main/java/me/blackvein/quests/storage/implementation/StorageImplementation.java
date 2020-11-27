@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.storage.implementation;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import me.blackvein.quests.Quester;
@@ -33,4 +34,6 @@ public interface StorageImplementation {
     void deleteQuesterData(UUID uniqueId) throws Exception;
 
     String getQuesterLastKnownName(UUID uniqueId) throws Exception;
+    
+    Collection<UUID> getSavedUniqueIds() throws Exception;
 }
