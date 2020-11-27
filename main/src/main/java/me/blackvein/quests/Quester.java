@@ -76,6 +76,7 @@ public class Quester implements Comparable<Quester> {
     private String lastKnownName;
     protected int questPoints = 0;
     private String compassTargetQuestId;
+    private long lastNotifiedCondition = 0L;
     protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
@@ -3774,8 +3775,11 @@ public class Quester implements Comparable<Quester> {
                 }
                 hardQuit(quest);
             } else if (giveReason) {
-                getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
-                        .replace("<quest>", quest.getName()));
+                if (System.currentTimeMillis() - lastNotifiedCondition > 5000) {
+                    getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
+                            .replace("<quest>", quest.getName()));
+                    lastNotifiedCondition = System.currentTimeMillis();
+                }
             }
             return false;
         }

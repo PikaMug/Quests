@@ -178,9 +178,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 10:
             if (!hasObjective) {
-                return ChatColor.GRAY + Lang.get("stageEditorConditions") + ChatColor.RED + " BETA";
+                return ChatColor.GRAY + Lang.get("stageEditorConditions");
             } else {
-                return ChatColor.AQUA + Lang.get("stageEditorConditions") + ChatColor.RED + " BETA";
+                return ChatColor.AQUA + Lang.get("stageEditorConditions");
             }
         case 11:
             if (!hasObjective) {
