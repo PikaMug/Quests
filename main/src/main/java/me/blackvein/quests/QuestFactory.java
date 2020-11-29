@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -175,10 +176,12 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
         }
         if (reqs.getNeededQuests().isEmpty() == false) {
-            context.setSessionData(CK.REQ_QUEST, reqs.getNeededQuests());
+            final List<String> names = reqs.getNeededQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            context.setSessionData(CK.REQ_QUEST, names);
         }
         if (reqs.getBlockQuests().isEmpty() == false) {
-            context.setSessionData(CK.REQ_QUEST_BLOCK, reqs.getBlockQuests());
+            final List<String> names = reqs.getBlockQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            context.setSessionData(CK.REQ_QUEST_BLOCK, names);
         }
         if (reqs.getMcmmoSkills().isEmpty() == false) {
             context.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
