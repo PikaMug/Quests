@@ -97,51 +97,53 @@ public class SeparatedYamlStorage implements StorageImplementation {
         if (data.contains("completedRedoableQuests")) {
             final List<String> questNames = data.getStringList("completedRedoableQuests");
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
+            final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
             for (int i = 0; i < questNames.size(); i++) {
-                final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
-                completedTimes.put(plugin.getQuest(questNames.get(i)), questTimes.get(i));
-                quester.setCompletedTimes(completedTimes);
+                if (plugin.getQuest(questNames.get(i)) != null) {
+                    completedTimes.put(plugin.getQuest(questNames.get(i)), questTimes.get(i));
+                }
             }
+            quester.setCompletedTimes(completedTimes);
         }
         if (data.contains("amountsCompletedQuests")) {
             final List<String> questNames = data.getStringList("amountsCompletedQuests");
             final List<Integer> questAmts = data.getIntegerList("amountsCompleted");
+            final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questNames.size(); i++) {
-                final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
-                amountsCompleted.put(plugin.getQuest(questNames.get(i)), questAmts.get(i));
-                quester.setAmountsCompleted(amountsCompleted);
+                if (plugin.getQuest(questNames.get(i)) != null) {
+                    amountsCompleted.put(plugin.getQuest(questNames.get(i)), questAmts.get(i));
+                }
             }
+            quester.setAmountsCompleted(amountsCompleted);
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
+        final LinkedList<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {
                     if (q.getName().equalsIgnoreCase(s)) {
                         if (!quester.getCompletedQuests().contains(q)) {
-                            final LinkedList<Quest> completedQuests = quester.getCompletedQuests();
                             completedQuests.add(q);
-                            quester.setCompletedQuests(completedQuests);
                         }
                         break;
                     }
                 }
             }
-        } else {
-            quester.setCompletedQuests(new LinkedList<Quest>());
         }
+        quester.setCompletedQuests(completedQuests);
         if (data.isString("currentQuests") == false) {
             final List<String> questNames = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             // These appear to differ sometimes? That seems bad.
             final int maxSize = Math.min(questNames.size(), questStages.size());
+            final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
                 if (plugin.getQuest(questNames.get(i)) != null) {
-                    final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
                     currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
-                    quester.setCurrentQuests(currentQuests);
                 }
             }
+            quester.setCurrentQuests(currentQuests);
             final ConfigurationSection dataSec = data.getConfigurationSection("questData");
             if (dataSec == null || dataSec.getKeys(false).isEmpty()) {
                 return null;
@@ -506,7 +508,6 @@ public class SeparatedYamlStorage implements StorageImplementation {
         
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                System.out.println("File " + listOfFiles[i].getName());
                 final String name = listOfFiles[i].getName().substring(0, listOfFiles[i].getName().lastIndexOf("."));
                 UUID id = null;
                 try {
