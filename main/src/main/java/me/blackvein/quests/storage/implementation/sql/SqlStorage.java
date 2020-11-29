@@ -179,8 +179,8 @@ public class SqlStorage implements StorageImplementation {
     @Override
     public void saveQuesterData(final Quester quester) throws Exception {
         final UUID uniqueId = quester.getUUID();
-        final String lastknownname = quester.getLastKnownName();
-        final String oldlastknownname = getQuesterLastKnownName(uniqueId);
+        final String lastKnownName = quester.getLastKnownName();
+        final String oldLastKnownName = getQuesterLastKnownName(uniqueId);
         final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
@@ -192,16 +192,16 @@ public class SqlStorage implements StorageImplementation {
         oldRedoableQuests.removeAll(redoableQuests);
         
         try (final Connection c = connectionFactory.getConnection()) {
-            if (oldlastknownname != null && !lastknownname.equals(oldlastknownname)) {
+            if (oldLastKnownName != null && lastKnownName != null && !lastKnownName.equals(oldLastKnownName)) {
                 try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_UPDATE_USERNAME))) {
-                    ps.setString(1, lastknownname);
+                    ps.setString(1, lastKnownName);
                     ps.setString(2, uniqueId.toString());
                     ps.execute();
                 }
             } else {
                 try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
                     ps.setString(1, uniqueId.toString());
-                    ps.setString(2, lastknownname);
+                    ps.setString(2, lastKnownName);
                     ps.setInt(3, quester.getQuestPoints());
                     ps.execute();
                 }
