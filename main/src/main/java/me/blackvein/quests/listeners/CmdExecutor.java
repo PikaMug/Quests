@@ -1399,8 +1399,7 @@ public class CmdExecutor implements CommandExecutor {
             } catch (final Exception e) {
                 plugin.getLogger().info("Data file does not exist for " + id.toString());
             }
-            quester = new Quester(plugin);
-            quester.setUUID(id);
+            quester = new Quester(plugin, id);
             quester.saveData();
             final ConcurrentSkipListSet<Quester> temp2 = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp2.add(quester);

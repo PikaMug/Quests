@@ -228,6 +228,10 @@ public class Quester implements Comparable<Quester> {
         }
     };
     
+    /**
+     * @deprecated Use {@link #Quester(Quests, UUID)}
+     */
+    @Deprecated
     public Quester(final Quests plugin) {
         this.plugin = plugin;
     }
@@ -235,6 +239,7 @@ public class Quester implements Comparable<Quester> {
     public Quester(final Quests plugin, final UUID uuid) {
         this.plugin = plugin;
         this.id = uuid;
+        this.lastKnownName = Bukkit.getOfflinePlayer(uuid).getName();
     }
     
     @Override
