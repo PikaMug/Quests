@@ -39,10 +39,10 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
 
@@ -781,15 +781,14 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (player.isOnline()) {
-            final PlayerInventory inventory = getPlayer().getInventory();
+            final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
+            fakeInv.setContents(getPlayer().getInventory().getContents().clone());
+            
             int num = 0;
             for (final ItemStack is : reqs.getItems()) {
-                for (final ItemStack stack : inventory.getContents()) {
-                    if (stack != null) {
-                        if (ItemUtil.compareItems(is, stack, true) == 0) {
-                            num += stack.getAmount();
-                        }
-                    }
+                if (InventoryUtil.canRemoveItem(fakeInv, is)) {
+                    InventoryUtil.removeItem(fakeInv, is);
+                    num += is.getAmount();
                 }
                 if (num >= is.getAmount()) {
                     finishedRequirements.add(ChatColor.GREEN + "" + is.getAmount() + " " + ItemUtil.getName(is));
@@ -798,6 +797,7 @@ public class Quester implements Comparable<Quester> {
                 }
                 num = 0;
             }
+            
             for (final String perm :reqs.getPermissions()) {
                 if (getPlayer().hasPermission(perm)) {
                     finishedRequirements.add(ChatColor.GREEN + Lang.get("permissionDisplay") + " " + perm);

@@ -27,9 +27,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.codisimus.plugins.phatloots.loot.CommandLoot;
@@ -448,20 +449,14 @@ public class Quest {
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
-            final PlayerInventory inventory = p.getInventory();
-            int num = 0;
+            final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
+            fakeInv.setContents(p.getInventory().getContents().clone());
             for (final ItemStack is : reqs.getItems()) {
-                for (final ItemStack stack : inventory.getContents()) {
-                    if (stack != null) {
-                        if (ItemUtil.compareItems(is, stack, true) == 0) {
-                            num += stack.getAmount();
-                        }
-                    }
-                }
-                if (num < is.getAmount()) {
+                if (InventoryUtil.canRemoveItem(fakeInv, is)) {
+                    InventoryUtil.removeItem(fakeInv, is);
+                } else {
                     return false;
                 }
-                num = 0;
             }
             for (final String s : reqs.getPermissions()) {
                 if (p.hasPermission(s) == false) {

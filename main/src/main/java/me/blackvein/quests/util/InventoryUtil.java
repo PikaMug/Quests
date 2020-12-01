@@ -46,6 +46,38 @@ public class InventoryUtil {
     }
     
     /**
+     * Whether an item can be removed from player's inventory.
+     * 
+     * @param inventory Inventory to check
+     * @param item Item with amount for removal
+     * @return true if possible
+     */
+    public static boolean canRemoveItem(final Inventory inventory, final ItemStack item) {
+        final int amount = item.getAmount();
+        final HashMap<Integer, ? extends ItemStack> allItems = inventory.all(item.getType());
+        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+        int foundAmount = 0;
+        for (final Map.Entry<Integer, ? extends ItemStack> items : allItems.entrySet()) {
+            if (ItemUtil.compareItems(item, items.getValue(), true) == 0) {
+                if (items.getValue().getAmount() >= amount - foundAmount) {
+                    removeFrom.put(items.getKey(), amount - foundAmount);
+                    foundAmount = amount;
+                } else {
+                    foundAmount += items.getValue().getAmount();
+                    removeFrom.put(items.getKey(), items.getValue().getAmount());
+                }
+                if (foundAmount >= amount) {
+                    break;
+                }
+            }
+        }
+        if (foundAmount == amount) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * Removes item from player's inventory.
      * 
      * @param inventory Inventory to remove from
