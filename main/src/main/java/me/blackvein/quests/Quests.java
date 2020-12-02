@@ -636,6 +636,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
             @Override
             public void run() {
+                if (!pullQuestsFromSQLAndOverwriteFile()) {
+                    getLogger().severe("Something went wrong with pulling quests from MySQL!");
+                }
                 loadQuests();
                 loadActions();
                 loadConditions();
@@ -1348,6 +1351,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
+                    if (!pullQuestsFromSQLAndOverwriteFile()) {
+                        getLogger().severe("Something went wrong with pulling quests from MySQL!");
+                    }
                     loadQuests();
                     loadActions();
                     loadConditions();
@@ -4092,23 +4098,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * @return True if the Data was successfully written to new Files
      */
     public boolean pullQuestsFromSQLAndOverwriteFile() {
+        boolean success = true;
         for (SqlStorage.SQL_TYPE type : SqlStorage.SQL_TYPE.values()) {
-            FileConfiguration confg = this.pullQuestsFromSQL(type);
-            File file = new File(this.getDataFolder(), type.toString().toLowerCase() + ".yml");
-            try {
-                if (file.exists()) {
-                    if (file.delete()) {
-                        file.createNewFile();
-                    }
-                }
-
-                confg.save(file);
-                return true;
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if (!this.pullQuestsFromSQLAndOverwriteFile(type)) {
+                success = false;
+                getLogger().severe("Problems with pulling the " + type.toString().toLowerCase() + ".yml from MySQL!");
             }
         }
-        return false;
+        return success;
     }
 
 }
