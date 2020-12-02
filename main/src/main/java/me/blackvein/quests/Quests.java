@@ -4054,7 +4054,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Pulling the Quest FileConfiguration from MySQL
      *
      * @param type Specify the Quest FileConfiguration you want to get
-     * @return
+     * @return FileConfiguration or null if MySQL has no entries
      */
     public FileConfiguration pullQuestsFromSQL(SqlStorage.SQL_TYPE type) {
         try {
@@ -4075,6 +4075,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     public boolean pullQuestsFromSQLAndOverwriteFile(SqlStorage.SQL_TYPE type) {
         FileConfiguration confg = this.pullQuestsFromSQL(SqlStorage.SQL_TYPE.QUESTS);
+        if(confg == null){
+            return false;
+        }
         File file = new File(this.getDataFolder(), SqlStorage.SQL_TYPE.QUESTS.toString().toLowerCase() + ".yml");
         try {
             if (file.exists()) {
