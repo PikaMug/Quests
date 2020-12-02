@@ -1331,14 +1331,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     /**
-     * Reload quests, actions, config settings, lang and modules, and player
-     * data after pushing Quests to MySQL
+     * Pushing the Quests manually to MySQL
      */
     public void pushQuestChangesToMySQL(final ReloadCallback<Boolean> callback) {
-        if (!pullQuestsFromSQLAndOverwriteFile()) {
-            getLogger().severe("Something went wrong with pulling quests from MySQL!");
-        }
-        this.reload(callback);
+        this.pushQuestsToSQL();
     }
 
     /**
@@ -1362,6 +1358,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
+                    if (!pullQuestsFromSQLAndOverwriteFile()) {
+                        getLogger().severe("Something went wrong with pulling quests from MySQL!");
+                    }
                     loadQuests();
                     loadActions();
                     loadConditions();

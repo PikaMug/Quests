@@ -958,15 +958,15 @@ public class CmdExecutor implements CommandExecutor {
             final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
                 @Override
                 public void execute(final Boolean response) {
-                    if (response) {
-                        cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
-                        String msg = Lang.get("numQuestsLoaded");
-                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
-                                + ChatColor.GOLD);
-                        cs.sendMessage(ChatColor.GOLD + msg);
-                    } else {
-                        cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
-                    }
+//                    if (response) {
+//                        cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
+//                        String msg = Lang.get("numQuestsLoaded");
+//                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
+//                                + ChatColor.GOLD);
+//                        cs.sendMessage(ChatColor.GOLD + msg);
+//                    } else {
+//                        cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
+//                    }
                 }
             };
             plugin.pushQuestChangesToMySQL(callback);
