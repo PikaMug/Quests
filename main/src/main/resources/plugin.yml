@@ -79,6 +79,7 @@ permissions:
       quests.admin.remove: true
       quests.admin.reload: true
       quests.admin.drop: true
+      quests.admin.pushmysql: true
   quests.admin:
     description: Display administrator help
     default: op
@@ -120,6 +121,9 @@ permissions:
     default: op
   quests.admin.reload:
     description: Safely reload the plugin
+    default: op
+  quests.admin.pushmysql:
+    description: Safely reload the plugin and pushing quests to MySQL
     default: op
   quests.admin.drop:
     description: Ability to drop the Quests Journal

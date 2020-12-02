@@ -1332,6 +1332,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     /**
      * Reload quests, actions, config settings, lang and modules, and player
+     * data after pushing Quests to MySQL
+     */
+    public void pushQuestChangesToMySQL(final ReloadCallback<Boolean> callback) {
+        if (!pullQuestsFromSQLAndOverwriteFile()) {
+            getLogger().severe("Something went wrong with pulling quests from MySQL!");
+        }
+        this.reload(callback);
+    }
+
+    /**
+     * Reload quests, actions, config settings, lang and modules, and player
      * data
      */
     public void reload(final ReloadCallback<Boolean> callback) {
@@ -1351,9 +1362,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
-                    if (!pullQuestsFromSQLAndOverwriteFile()) {
-                        getLogger().severe("Something went wrong with pulling quests from MySQL!");
-                    }
                     loadQuests();
                     loadActions();
                     loadConditions();
@@ -4075,7 +4083,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     public boolean pullQuestsFromSQLAndOverwriteFile(SqlStorage.SQL_TYPE type) {
         FileConfiguration confg = this.pullQuestsFromSQL(SqlStorage.SQL_TYPE.QUESTS);
-        if(confg == null){
+        if (confg == null) {
             return false;
         }
         File file = new File(this.getDataFolder(), SqlStorage.SQL_TYPE.QUESTS.toString().toLowerCase() + ".yml");
