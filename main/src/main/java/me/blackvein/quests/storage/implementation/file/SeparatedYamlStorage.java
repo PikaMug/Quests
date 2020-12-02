@@ -37,6 +37,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
+import me.blackvein.quests.storage.implementation.sql.SqlStorage;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.MiscUtil;
 
@@ -538,5 +539,15 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
         }
         return dataFile;
+    }
+
+    @Override
+    public void saveQuests(SqlStorage.SQL_TYPE type, FileConfiguration confg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public FileConfiguration getQuests(SqlStorage.SQL_TYPE type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
