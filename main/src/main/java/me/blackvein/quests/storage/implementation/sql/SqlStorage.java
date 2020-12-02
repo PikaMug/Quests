@@ -145,7 +145,7 @@ public class SqlStorage implements StorageImplementation {
         connectionFactory.init(plugin);
 
         try (Connection c = connectionFactory.getConnection()) {
-            final String[] queries = new String[4];
+            final String[] queries = new String[5];
             queries[0] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}players")
                     + "` (`uuid` VARCHAR(36) NOT NULL, "
                     + "`lastknownname` VARCHAR(16) NOT NULL, "
@@ -175,6 +175,11 @@ public class SqlStorage implements StorageImplementation {
                     + "`amount` INT NOT NULL,"
                     + "PRIMARY KEY (`id`),"
                     + "UNIQUE KEY (`uuid`, `questid`)"
+                    + ") DEFAULT CHARSET = utf8mb4";
+            queries[4] = "CREATE TABLE IF NOT EXISTS `" + statementProcessor.apply("{prefix}quests")
+                    + "` (`type` VARCHAR(50) NOT NULL, "
+                    + "`content` TEXT NOT NULL,"
+                    + "PRIMARY KEY (`type`)"
                     + ") DEFAULT CHARSET = utf8mb4";
             try (Statement s = c.createStatement()) {
                 for (final String query : queries) {
