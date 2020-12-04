@@ -32,6 +32,7 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,8 +66,14 @@ public class ActionFactory implements ConversationAbandonedListener {
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new ActionMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
-                .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
-                .addConversationAbandonedListener(this);
+                .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
+    }
+    
+    public class LineBreakPrefix implements ConversationPrefix {
+        @Override
+        public String getPrefix(final ConversationContext context) {
+            return "\n";
+        }
     }
     
     public Map<UUID, Block> getSelectedExplosionLocations() {
@@ -126,12 +133,14 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     @Override
     public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
-        final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
-        selectedExplosionLocations.remove(uuid);
-        selectedEffectLocations.remove(uuid);
-        selectedMobLocations.remove(uuid);
-        selectedLightningLocations.remove(uuid);
-        selectedTeleportLocations.remove(uuid);
+        if (abandonedEvent.getContext().getForWhom() instanceof Player) {
+            final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
+            selectedExplosionLocations.remove(uuid);
+            selectedEffectLocations.remove(uuid);
+            selectedMobLocations.remove(uuid);
+            selectedLightningLocations.remove(uuid);
+            selectedTeleportLocations.remove(uuid);
+        }
     }
     
     public Prompt returnToMenu(final ConversationContext context) {

@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
@@ -92,28 +92,28 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     public String getPromptText(final ConversationContext context) {
         final ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
-        String text = ChatColor.GOLD + getTitle(context) + "\n";
+        String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i);
         }
         return text;
     }
 
     @Override
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
-        final Player player = (Player) context.getForWhom();
+        final CommandSender cs = (CommandSender) context.getForWhom();
         switch (input.intValue()) {
         case 1:
-            if (player.hasPermission("quests.conditions.create")) {
+            if (cs.hasPermission("quests.conditions.create")) {
                 context.setSessionData(CK.C_OLD_CONDITION, "");
                 return new ConditionSelectCreatePrompt(context);
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 2:
-            if (player.hasPermission("quests.conditions.edit")) {
+            if (cs.hasPermission("quests.conditions.edit")) {
                 if (plugin.getConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToEdit"));
@@ -122,11 +122,11 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     return new ConditionSelectEditPrompt(context);
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 3:
-            if (player.hasPermission("quests.conditions.delete")) {
+            if (cs.hasPermission("quests.conditions.delete")) {
                 if (plugin.getConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToDelete"));
@@ -135,7 +135,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     return new ConditionSelectDeletePrompt(context);
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 4:

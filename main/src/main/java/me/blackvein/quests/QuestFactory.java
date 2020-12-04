@@ -36,6 +36,7 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -65,8 +66,14 @@ public class QuestFactory implements ConversationAbandonedListener {
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
-                .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
-                .addConversationAbandonedListener(this);
+                .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
+    }
+    
+    public class LineBreakPrefix implements ConversationPrefix {
+        @Override
+        public String getPrefix(final ConversationContext context) {
+            return "\n";
+        }
     }
 
     public Map<UUID, Block> getSelectedBlockStarts() {
@@ -134,10 +141,12 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (abandonedEvent.getContext().getSessionData(CK.Q_NAME) != null) {
             editingQuestNames.remove(abandonedEvent.getContext().getSessionData(CK.Q_NAME));
         }
-        final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
-        selectedBlockStarts.remove(uuid);
-        selectedKillLocations.remove(uuid);
-        selectedReachLocations.remove(uuid);
+        if (abandonedEvent.getContext().getForWhom() instanceof Player) {
+            final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
+            selectedBlockStarts.remove(uuid);
+            selectedKillLocations.remove(uuid);
+            selectedReachLocations.remove(uuid);
+        }
     }
     
     public Prompt returnToMenu(final ConversationContext context) {

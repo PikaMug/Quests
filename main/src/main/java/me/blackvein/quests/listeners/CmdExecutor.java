@@ -268,23 +268,11 @@ public class CmdExecutor implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("top") || args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
             questsTop(cs, args);
         } else if (args[0].equalsIgnoreCase("editor") || args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-                return true;
-            }
             questsEditor(cs);
         } else if (args[0].startsWith("action") || args[0].startsWith("event") 
                 || args[0].startsWith(Lang.get("COMMAND_EVENTS_EDITOR"))) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-                return true;
-            }
             questsActions(cs);
         } else if (args[0].startsWith("condition") || args[0].startsWith(Lang.get("COMMAND_CONDITIONS_EDITOR"))) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-                return true;
-            }
             questsConditions(cs);
         } else if (args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
             questsInfo(cs);

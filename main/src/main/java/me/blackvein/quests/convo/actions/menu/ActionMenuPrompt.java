@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
@@ -92,30 +92,30 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     public String getPromptText(final ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
-        String text = ChatColor.GOLD + getTitle(context) + "\n";
+        String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i);
         }
         return text;
     }
 
     @Override
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
-        final Player player = (Player) context.getForWhom();
+        final CommandSender cs = (CommandSender) context.getForWhom();
         switch (input.intValue()) {
         case 1:
-            if (player.hasPermission("quests.editor.actions.create") 
-                    || player.hasPermission("quests.editor.events.create")) {
+            if (cs.hasPermission("quests.editor.actions.create") 
+                    || cs.hasPermission("quests.editor.events.create")) {
                 context.setSessionData(CK.E_OLD_EVENT, "");
                 return new ActionSelectCreatePrompt(context);
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 2:
-            if (player.hasPermission("quests.editor.actions.edit") 
-                    || player.hasPermission("quests.editor.events.edit")) {
+            if (cs.hasPermission("quests.editor.actions.edit") 
+                    || cs.hasPermission("quests.editor.events.edit")) {
                 if (plugin.getActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToEdit"));
@@ -124,12 +124,12 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     return new ActionSelectEditPrompt(context);
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 3:
-            if (player.hasPermission("quests.editor.actions.delete") 
-                    || player.hasPermission("quests.editor.events.delete")) {
+            if (cs.hasPermission("quests.editor.actions.delete") 
+                    || cs.hasPermission("quests.editor.events.delete")) {
                 if (plugin.getActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToDelete"));
@@ -138,7 +138,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     return new ActionSelectDeletePrompt(context);
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 4:

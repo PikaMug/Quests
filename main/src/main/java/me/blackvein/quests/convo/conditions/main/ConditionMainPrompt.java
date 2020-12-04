@@ -126,10 +126,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
-                + ChatColor.GOLD + " -\n";
+                + ChatColor.GOLD + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -509,17 +509,17 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context);
             if (modified.isEmpty() == false) {
-                text += ChatColor.RED + Lang.get("conditionEditorModifiedNote") + "\n";
+                text += "\n" + ChatColor.RED + Lang.get("conditionEditorModifiedNote");
                 for (final String s : modified) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s + "\n";
+                    text += "\n" + ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s;
                 }
-                text += ChatColor.RED + Lang.get("conditionEditorForcedToQuit") + "\n";
+                text += "\n" + ChatColor.RED + Lang.get("conditionEditorForcedToQuit");
             }
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i);
             }
             return text;
         }
@@ -587,10 +587,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context);
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i);
             }
             return text;
         }

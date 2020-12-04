@@ -192,11 +192,11 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                 && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
                 && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
                 && context.getSessionData("tempZone") != null) {
-            text += getDataText(context) + "\n";
+            text += getDataText(context);
         }
         for (int i = 0; i <= size - 1; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }

@@ -52,8 +52,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-        final String text = ChatColor.YELLOW + getQueryText(context) + "\n";
-        return text;
+        return ChatColor.YELLOW + getQueryText(context);
     }
 
     @Override

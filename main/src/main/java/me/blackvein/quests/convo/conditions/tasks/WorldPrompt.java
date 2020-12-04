@@ -22,7 +22,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
@@ -142,10 +141,10 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+        String text = ChatColor.AQUA + "- " + getTitle(context) + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -206,14 +205,13 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> worlds = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
                     if (Bukkit.getWorld(s) != null) {
                         worlds.add(s);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("conditionEditorInvalidWorld"));
                         return new WorldsPrompt(context);
                     }
@@ -308,17 +306,15 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             if (any) {
-                regions = regions.substring(0, regions.length() - 2);
-                regions += "\n\n";
+                regions = regions.substring(0, regions.length() - 2) + "\n";
             } else {
-                regions += ChatColor.GRAY + "(" + Lang.get("none") + ")\n\n";
+                regions += ChatColor.GRAY + "(" + Lang.get("none") + ")\n";
             }
             return regions + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> regions = new LinkedList<String>();
                 for (final String r : input.split(" ")) {
@@ -341,7 +337,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                     if (found = false) {
                         String error = Lang.get("questWGInvalidRegion");
                         error = error.replace("<region>", ChatColor.RED + r + ChatColor.YELLOW);
-                        player.sendMessage(ChatColor.YELLOW + error);
+                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + error);
                         return new RegionsPrompt(context);
                     }
                 }

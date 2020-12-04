@@ -25,6 +25,7 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -49,8 +50,14 @@ public class ConditionFactory implements ConversationAbandonedListener {
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new ConditionMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
-                .thatExcludesNonPlayersWithMessage("Console may not perform this operation!")
-                .addConversationAbandonedListener(this);
+                .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
+    }
+    
+    public class LineBreakPrefix implements ConversationPrefix {
+        @Override
+        public String getPrefix(final ConversationContext context) {
+            return "\n";
+        }
     }
 
     public ConversationFactory getConversationFactory() {
