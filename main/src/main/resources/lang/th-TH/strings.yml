@@ -663,7 +663,7 @@ shearSheep: "ตัดขนแกะสี <color>"
 goTo: "Go to <location>"
 completed: "เสร็จแล้ว"
 redoCompleted: "(เสร็จแล้ว)"
-consoleError: "This command may only be performed in-game."
+consoleError: "This operation may only be performed in-game."
 noActiveQuest: "You do not currently have any active quests."
 speakTo: 'Start: Speak to <npc>'
 mustSpeakTo: "You must speak to <npc> to start this quest."
