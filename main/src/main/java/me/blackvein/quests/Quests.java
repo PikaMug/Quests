@@ -1334,12 +1334,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     for (final Quester quester : questers) {
                         quester.saveData();
                     }
-                    quests.clear();
-                    actions.clear();
-                    conditions.clear();
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
+                    quests.clear();
+                    actions.clear();
+                    conditions.clear();
                     loadQuests();
                     loadActions();
                     loadConditions();

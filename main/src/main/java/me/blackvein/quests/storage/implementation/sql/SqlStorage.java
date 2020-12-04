@@ -311,7 +311,10 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        currentQuests.put(plugin.getQuestById(rs.getString("questid")), rs.getInt("stageNum"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
+                        if (quest != null) {
+                            currentQuests.put(quest, rs.getInt("stageNum"));
+                        }
                     }
                 }
             }
@@ -326,7 +329,10 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        completedQuests.add(plugin.getQuestById(rs.getString("questid")));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
+                        if (quest != null) {
+                            completedQuests.add(quest);
+                        }
                     }
                 }
             }
@@ -341,7 +347,10 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        completedTimes.put(plugin.getQuestById(rs.getString("questid")), rs.getLong("lasttime"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
+                        if (quest != null) {
+                            completedTimes.put(quest, rs.getLong("lasttime"));
+                        }
                     }
                 }
             }
@@ -356,7 +365,10 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        amountsCompleted.put(plugin.getQuestById(rs.getString("questid")), rs.getInt("amount"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
+                        if (quest != null) {
+                            amountsCompleted.put(quest, rs.getInt("amount"));
+                        }
                     }
                 }
             }
