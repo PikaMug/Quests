@@ -239,7 +239,11 @@ public class Quester implements Comparable<Quester> {
     public Quester(final Quests plugin, final UUID uuid) {
         this.plugin = plugin;
         this.id = uuid;
-        this.lastKnownName = Bukkit.getOfflinePlayer(uuid).getName();
+        if (getPlayer() != null) {
+            this.lastKnownName = getPlayer().getName();
+        } else {
+            this.lastKnownName = getOfflinePlayer().getName();
+        }
     }
     
     @Override
@@ -365,8 +369,10 @@ public class Quester implements Comparable<Quester> {
     }
 
     public QuestData getQuestData(final Quest quest) {
-        if (questData.containsKey(quest)) {
-            return questData.get(quest);
+        for (final Quest q : questData.keySet()) {
+            if (q.getId().equals(quest.getId())) {
+                return questData.get(q);
+            }
         }
         return new QuestData(this);
     }

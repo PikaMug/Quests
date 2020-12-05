@@ -48,7 +48,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandExecutor;
@@ -637,15 +636,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 loadConditions();
                 getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
-                for (final OfflinePlayer p : getServer().getOfflinePlayers()) {
-                    final Quester quester = new Quester(Quests.this, p.getUniqueId());
+                for (final Player p : getServer().getOnlinePlayers()) {
+                    final Quester quester =  new Quester(Quests.this, p.getUniqueId());
                     if (quester.loadData() == false) {
                         quester.saveData();
                     }
-                    if (p.isOnline()) {
-                        // Workaround for issues with the compass on fast join
-                        quester.findCompassTarget();
-                    }
+                    // Workaround for issues with the compass on fast join
+                    quester.findCompassTarget();
                     questers.add(quester);
                 }
                 if (depends.getCitizens() != null) {
@@ -1346,6 +1343,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     for (final Quester quester : questers) {
                         quester.loadData();
                         for (final Quest q : quester.currentQuests.keySet()) {
+                            System.out.println("current quest is : " + q.getName());
                             quester.checkQuest(q);
                         }
                     }
