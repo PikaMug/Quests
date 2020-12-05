@@ -83,8 +83,13 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 2:
         case 3:
         case 4:
-        case 5:
             return ChatColor.BLUE;
+        case 5:
+            if (context.getForWhom() instanceof Player) {
+                return ChatColor.BLUE;
+            } else {
+                return ChatColor.GRAY;
+            }
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 return ChatColor.BLUE;
@@ -131,9 +136,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 5:
             if (context.getForWhom() instanceof Player) {
-                return ChatColor.GRAY + Lang.get("questEditorBlockStart");
-            } else {
                 return ChatColor.YELLOW + Lang.get("questEditorBlockStart");
+            } else {
+                return ChatColor.GRAY + Lang.get("questEditorBlockStart");
             }
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {

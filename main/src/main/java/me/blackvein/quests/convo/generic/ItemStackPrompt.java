@@ -160,7 +160,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         if (context.getSessionData("tempName") != null) {
             final String stackData = getItemData(context);
             if (stackData != null) {
-                text += stackData;
+                text += "\n" + stackData;
                 if (context.getSessionData("tempMeta") != null) {
                     final LinkedHashMap<String, Object> map 
                             = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
