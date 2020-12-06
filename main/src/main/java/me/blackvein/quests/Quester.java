@@ -746,15 +746,19 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final Quest q : reqs.getNeededQuests()) {
-            if (getCompletedQuests().contains(q)) {
-                finishedRequirements.add(ChatColor.GREEN + q.getName());
-            } else {
-                unfinishedRequirements.add(ChatColor.GRAY + q.getName());
+            if (q != null) {
+                if (getCompletedQuests().contains(q)) {
+                    finishedRequirements.add(ChatColor.GREEN + q.getName());
+                } else {
+                    unfinishedRequirements.add(ChatColor.GRAY + q.getName());
+                }
             }
         }
         for (final Quest q : reqs.getBlockQuests()) {
-            if (completedQuests.contains(q) || currentQuests.containsKey(q)) {
-                requirements.add(ChatColor.RED + quest.getName());
+            if (q != null) {
+                if (completedQuests.contains(q) || currentQuests.containsKey(q)) {
+                    requirements.add(ChatColor.RED + quest.getName());
+                }
             }
         }
         for (final String s : reqs.getMcmmoSkills()) {
