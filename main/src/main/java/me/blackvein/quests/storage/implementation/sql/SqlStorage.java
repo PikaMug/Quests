@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -322,8 +321,8 @@ public class SqlStorage implements StorageImplementation {
         return currentQuests;
     }
     
-    public LinkedList<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
-        final LinkedList<Quest> completedQuests = new LinkedList<Quest>();
+    public ConcurrentSkipListSet<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
+        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<Quest>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());

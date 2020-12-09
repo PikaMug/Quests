@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -108,7 +109,7 @@ public class Quester implements Comparable<Quester> {
             updateJournal();
         }
     };
-    protected LinkedList<Quest> completedQuests = new LinkedList<Quest>() {
+    protected ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<Quest>() {
 
         private static final long serialVersionUID = -269110128568487000L;
 
@@ -119,12 +120,12 @@ public class Quester implements Comparable<Quester> {
             return b;
         }
 
-        @Override
+        /*@Override
         public void add(final int index, final Quest element) {
             super.add(index, element);
             updateJournal();
-        }
-
+        }*/
+        
         @Override
         public boolean addAll(final Collection<? extends Quest> c) {
             final boolean b = super.addAll(c);
@@ -132,12 +133,12 @@ public class Quester implements Comparable<Quester> {
             return b;
         }
 
-        @Override
+        /*@Override
         public boolean addAll(final int index, final Collection<? extends Quest> c) {
             final boolean b = super.addAll(index, c);
             updateJournal();
             return b;
-        }
+        }*/
 
         @Override
         public void clear() {
@@ -151,8 +152,15 @@ public class Quester implements Comparable<Quester> {
             updateJournal();
             return b;
         }
-
+        
         @Override
+        public boolean removeAll(final Collection<?> c) {
+            final boolean b = super.removeAll(c);
+            updateJournal();
+            return b;
+        }
+
+        /*@Override
         public Quest remove(final int index) {
             final Quest s = super.remove(index);
             updateJournal();
@@ -164,7 +172,7 @@ public class Quester implements Comparable<Quester> {
             final Quest s = super.set(index, element);
             updateJournal();
             return s;
-        }
+        }*/
     };
     protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<Quest, Long>();
     protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
@@ -321,11 +329,11 @@ public class Quester implements Comparable<Quester> {
         this.currentQuests = currentQuests;
     }
 
-    public LinkedList<Quest> getCompletedQuests() {
+    public ConcurrentSkipListSet<Quest> getCompletedQuests() {
         return completedQuests;
     }
 
-    public void setCompletedQuests(final LinkedList<Quest> completedQuests) {
+    public void setCompletedQuests(final ConcurrentSkipListSet<Quest> completedQuests) {
         this.completedQuests = completedQuests;
     }
 

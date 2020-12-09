@@ -53,7 +53,7 @@ import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
-public class Quest {
+public class Quest implements Comparable<Quest> {
 
     protected Quests plugin;
     protected String id;
@@ -70,6 +70,11 @@ public class Quest {
     private final Planner pln = new Planner();
     private final Rewards rews = new Rewards();
     private final Options opts = new Options();
+
+    @Override
+    public int compareTo(final Quest quest) {
+        return id.compareTo(quest.getId());
+    }
     
     public String getId() {
         return id;

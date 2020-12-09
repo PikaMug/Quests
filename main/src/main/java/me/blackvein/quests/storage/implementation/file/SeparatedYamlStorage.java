@@ -118,7 +118,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final LinkedList<Quest> completedQuests = quester.getCompletedQuests();
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {
