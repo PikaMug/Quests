@@ -1796,7 +1796,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(getQuest(name));
+                            if (getQuest(name) != null) {
+                                temp.add(getQuest(name));
+                            } else {
+                                throw new QuestFormatException("Requirement quest-blocks has unknown quest name " 
+                                        + failedQuest, questKey);
+                            }
                             done = true;
                             break;
                         }
@@ -1827,7 +1832,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(getQuest(name));
+                            if (getQuest(name) != null) {
+                                temp.add(getQuest(name));
+                            } else {
+                                throw new QuestFormatException("Requirement quests has unknown quest name " 
+                                        + failedQuest, questKey);
+                            }
                             done = true;
                             break;
                         }
@@ -1840,7 +1850,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 reqs.setNeededQuests(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quests has invalid quest name " + failedQuest, questKey);
+                    throw new QuestFormatException("Requirement quests has invalid quest name " 
+                            + failedQuest, questKey);
                 }
             } else {
                 throw new QuestFormatException("Requirement quests is not a list of quest names", questKey);
