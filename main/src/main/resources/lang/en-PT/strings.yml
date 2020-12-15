@@ -663,7 +663,7 @@ shearSheep: "Shear <color> Sheep: <count>"
 goTo: "Go t' <location>"
 completed: "Completed"
 redoCompleted: "(Completed)"
-consoleError: "This command may only be performed in-game, ye bilge-drinkin' swab."
+consoleError: "This operation may only be performed in-game, ye bilge-drinkin' swab."
 noActiveQuest: "Ye do nah currently 'ave any active Quests."
 speakTo: 'Start: Speak t'' <npc>'
 mustSpeakTo: "Ye must speak t' <npc> t' start this Quest."
