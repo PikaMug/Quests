@@ -827,8 +827,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "break") + " <item>" 
-                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "break");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -844,8 +849,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "damage") + " <item>" 
-                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "damage");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -861,8 +871,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksPlaced) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "place") + " <item>" 
-                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "place");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -878,8 +893,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksUsed) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "use") + " <item>" 
-                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "use");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -895,8 +915,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksCut) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "cut") + " <item>" 
-                                + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "cut");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -915,8 +940,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "craftItem") + color + ": " + crafted + "/" 
-                        + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "craftItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
+            } else {
+                message += color + ": " + crafted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -934,8 +963,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "smeltItem") + color + ": " + smelted + "/" 
-                        + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "smeltItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
+            } else {
+                message += color + ": " + smelted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -953,8 +986,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "enchItem") + color + ": " + enchanted + "/" 
-                        + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "enchItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
+            } else {
+                message += color + ": " + enchanted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -979,8 +1016,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "brewItem") + color + ": " + brewed + "/" 
-                        + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "brewItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
+            } else {
+                message += color + ": " + brewed + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1005,8 +1046,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "consumeItem") + color + ": " + consumed + "/" 
-                        + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "consumeItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
+            } else {
+                message += color + ": " + consumed + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1019,8 +1064,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.cowsToMilk != null) {
             final ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "milkCow")
-                        + color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            String message = color + Lang.get(quester.getPlayer(), "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.cowsToMilk);
+            } else {
+                message += color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1028,8 +1077,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.fishToCatch != null) {
             final ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "catchFish")
-                        + color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+            String message = color + Lang.get(quester.getPlayer(), "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.fishToCatch);
+            } else {
+                message += color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1045,16 +1098,28 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
                         String message = "";
                         if (stage.locationsToKillWithin.isEmpty()) {
-                            message = color + Lang.get(quester.getPlayer(), "kill") + " " 
-                                    + ChatColor.AQUA + "<mob>" + color + ": " 
-                                    + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) 
-                                    + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            message = color + Lang.get(quester.getPlayer(), "kill");
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                message += ChatColor.AQUA + "<mob>" + color + ": "
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
                         } else {
-                            message = color + Lang.get(quester.getPlayer(), "killAtLocation") + color + ": " 
-                                    + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
-                                    + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            message = color + Lang.get(quester.getPlayer(), "killAtLocation");
                             message = message.replace("<location>", 
                                     stage.killNames.get(stage.mobsToKill.indexOf(e)));
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                message += color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
                         }
                         if (depends.getPlaceholderApi() != null) {
                             message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
@@ -1070,8 +1135,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.playersToKill != null) {
             final ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "killPlayer")
-                        + color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+            String message = color + Lang.get(quester.getPlayer(), "killPlayer");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/" + stage.playersToKill);
+            } else {
+                message += color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1087,9 +1156,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final Integer npc = stage.itemDeliveryTargets.get(index);
             index++;
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "deliver")
-                        + color + ": " + delivered + "/" + toDeliver;
-            message = message.replace("<npc>", depends.getNPCName(npc));
+            String message = color + Lang.get(quester.getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
+            } else {
+                message += color + ": " + delivered + "/" + toDeliver;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1104,8 +1176,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
                 if (e.getKey().equals(n)) {
                     final ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "talkTo");
-                    message = message.replace("<npc>", depends.getNPCName(n));
+                    String message = color + Lang.get(quester.getPlayer(), "talkTo")
+                            .replace("<npc>", depends.getNPCName(n));
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -1121,9 +1193,20 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
                                 < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + Lang.get(quester.getPlayer(), "kill") + " " + depends.getNPCName(n) 
-                                    + color + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                        String message = color + Lang.get(quester.getPlayer(), "kill");
+                        if (message.contains("<mob>")) {
+                            message = message.replace("<mob>", depends.getNPCName(n));
+                        } else {
+                            message += " " + depends.getNPCName(n);
+                        }
+                        if (message.contains("<count>")) {
+                            message = message.replace("<count>", "" + color 
+                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)));
+                        } else {
+                            message += color + ": " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
                                     + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+                        }
                         if (depends.getPlaceholderApi() != null) {
                             message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                         }
@@ -1136,8 +1219,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final Entry<EntityType, Integer> e2 : data.mobsTamed.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
                     final ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    final String message = color + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>" 
-                                + color + ": " + e2.getValue() + "/" + e.getValue();
+                    String message = color + Lang.get(quester.getPlayer(), "tame");
+                    if (!message.contains("<mob>")) {
+                        message += " <mob>";
+                    }
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
+                    } else {
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
                     if (getSettings().canTranslateNames()) {
                         localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
                     } else {
@@ -1151,10 +1241,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final Entry<DyeColor, Integer> e2 : data.sheepSheared.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
                     final ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "shearSheep") 
-                                + color + ": " + e2.getValue() + "/" + e.getValue();
+                    String message = color + Lang.get(quester.getPlayer(), "shearSheep");
                     message = message.replace("<color>", 
                             MiscUtil.getPrettyDyeColorName(MiscUtil.getProperDyeColor(e.getKey().name())));
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
+                    } else {
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
                     quester.getPlayer().sendMessage(message);
                 }
             }
