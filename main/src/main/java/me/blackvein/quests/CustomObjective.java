@@ -23,6 +23,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
+import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
+
 public abstract class CustomObjective implements Listener {
 
     private final Quests plugin = Quests.getPlugin(Quests.class);
@@ -173,20 +177,29 @@ public abstract class CustomObjective implements Listener {
                     }
                 }
                 if (index > -1) {
+                    final ObjectiveType type = ObjectiveType.CUSTOM;
+                    final QuesterPreUpdateObjectiveEvent preEvent 
+                            = new QuesterPreUpdateObjectiveEvent(quester, quest, type);
+                    plugin.getServer().getPluginManager().callEvent(preEvent);
+                    
                     final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
                     if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= goal) {
-                        quester.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 
+                        quester.finishObjective(quest, type, new ItemStack(Material.AIR, 1), 
                                 new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
                         
                         // Multiplayer
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
                             q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
                                     quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
-                            q.finishObjective(quest, "customObj", new ItemStack(Material.AIR, 1), 
+                            q.finishObjective(quest, type, new ItemStack(Material.AIR, 1), 
                                     new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
                             return null;
                         });
                     }
+                    
+                    final QuesterPostUpdateObjectiveEvent postEvent 
+                            = new QuesterPostUpdateObjectiveEvent(quester, quest, type);
+                    plugin.getServer().getPluginManager().callEvent(postEvent);
                 }
             }
         }

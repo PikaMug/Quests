@@ -39,7 +39,7 @@ public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancella
     /**
      * Returns the quest involved in this event
      * 
-     * @return Quest who is involved in this event
+     * @return Quest which is involved in this event
      */
     public Quest getQuest() {
         return quest;
