@@ -65,6 +65,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
+import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -392,17 +393,18 @@ public class PlayerListener implements Listener {
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
+                final ObjectiveType type = ObjectiveType.MILK_COW;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("milkCow")) {
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.milkCow(quest);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "milkCow", (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                         q.milkCow(quest);
                         return null;
                     });
@@ -445,15 +447,16 @@ public class PlayerListener implements Listener {
                             }
                         }
                     }
-                    if (quester.getCurrentStage(quest).containsObjective("password")) {
+                    final ObjectiveType type = ObjectiveType.PASSWORD;
+                    if (quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.sayPassword(quest, evt);
                     }
+                    
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
+                        q.sayPassword(quest, evt);
+                        return null;
+                    });
                 }
-                
-                quester.dispatchMultiplayerEverything(quest, "password", (final Quester q) -> {
-                    q.sayPassword(quest, evt);
-                    return null;
-                });
             }
         }
     }
@@ -505,17 +508,18 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Sheep sheep = (Sheep) evt.getEntity();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
+                final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("shearSheep")) {
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.shearSheep(quest, sheep.getColor());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "shearSheep", (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                         q.shearSheep(quest, sheep.getColor());
                         return null;
                     });
@@ -530,17 +534,18 @@ public class PlayerListener implements Listener {
             final Player player = (Player) evt.getOwner();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
+                final ObjectiveType type = ObjectiveType.TAME_MOB;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("tameMob")) {
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.tameMob(quest, evt.getEntityType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "tameMob", (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                         q.tameMob(quest, evt.getEntityType());
                         return null;
                     });
@@ -596,33 +601,35 @@ public class PlayerListener implements Listener {
         if (damager instanceof Player) {
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
+                final ObjectiveType type = ObjectiveType.KILL_NPC;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("killNPC")) {
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "killNPC", (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                         q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                         return null;
                     });
                 }
             } else {
+                final ObjectiveType type = ObjectiveType.KILL_MOB;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         return;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective("killMob")) {
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.killMob(quest, target.getLocation(), target.getType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, "killMob", (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                         q.killMob(quest, target.getLocation(), target.getType());
                         return null;
                     });
@@ -713,17 +720,18 @@ public class PlayerListener implements Listener {
                 }
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
+            final ObjectiveType type = ObjectiveType.KILL_PLAYER;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective("killPlayer")) {
+                        && quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.killPlayer(quest, (Player)target);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, "killPlayer", (final Quester q) -> {
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                     q.killPlayer(quest, (Player)target);
                     return null;
                 });
@@ -736,18 +744,19 @@ public class PlayerListener implements Listener {
         final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
+            final ObjectiveType type = ObjectiveType.CATCH_FISH;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     return;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective("catchFish") 
+                        && quester.getCurrentStage(quest).containsObjective(type) 
                         && evt.getState().equals(State.CAUGHT_FISH)) {
                     quester.catchFish(quest);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, "catchFish", (final Quester q) -> {
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                     q.catchFish(quest);
                     return null;
                 });
@@ -906,6 +915,7 @@ public class PlayerListener implements Listener {
                 final Quester quester = plugin.getQuester(uuid);
                 if (quester != null) {
                     if (plugin.canUseQuests(uuid)) {
+                        final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         for (final Quest quest : plugin.getQuests()) {
                             if (!quester.meetsCondition(quest, false)) {
                                 return;
@@ -913,7 +923,7 @@ public class PlayerListener implements Listener {
                             
                             if (quester.getCurrentQuests().containsKey(quest)) {
                                 if (quester.getCurrentStage(quest) != null 
-                                        && quester.getCurrentStage(quest).containsObjective("reachLocation")) {
+                                        && quester.getCurrentStage(quest).containsObjective(type)) {
                                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                                         @Override
                                         public void run() {
@@ -923,7 +933,7 @@ public class PlayerListener implements Listener {
                                 }
                             }
                             
-                            quester.dispatchMultiplayerEverything(quest, "reachLocation", (final Quester q) -> {
+                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
                                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                                     @Override
                                     public void run() {

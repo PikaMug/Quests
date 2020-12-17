@@ -177,28 +177,30 @@ public abstract class CustomObjective implements Listener {
                     }
                 }
                 if (index > -1) {
+                    final int progress = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
+                    final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
+                    
                     final ObjectiveType type = ObjectiveType.CUSTOM;
                     final QuesterPreUpdateObjectiveEvent preEvent 
-                            = new QuesterPreUpdateObjectiveEvent(quester, quest, type);
+                            = new QuesterPreUpdateObjectiveEvent(quester, quest, new Objective(type, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(preEvent);
                     
-                    final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
-                    if (quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()) >= goal) {
-                        quester.finishObjective(quest, type, new ItemStack(Material.AIR, 1), 
-                                new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
+                    if (progress >= goal) {
+                        quester.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, null, obj);
                         
                         // Multiplayer
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
                             q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
                                     quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
-                            q.finishObjective(quest, type, new ItemStack(Material.AIR, 1), 
-                                    new ItemStack(Material.AIR, goal), null, null, null, null, null, null, null, obj);
+                            q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                    new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, null, obj);
                             return null;
                         });
                     }
                     
                     final QuesterPostUpdateObjectiveEvent postEvent 
-                            = new QuesterPostUpdateObjectiveEvent(quester, quest, type);
+                            = new QuesterPostUpdateObjectiveEvent(quester, quest, new Objective(type, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(postEvent);
                 }
             }

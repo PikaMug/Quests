@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.enums.ObjectiveType;
 
 public class Stage {
 
@@ -554,59 +555,72 @@ public class Stage {
     }
     
     /**
-     * Check if stage has the specified objective<p>
+     * Check if stage has the specified type of objective<p>
      * 
      * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
      * cutBlock, craftItem, smeltItem, enchantItem, brewItem, milkCow, catchFish,
      * killMob, deliverItem, killPlayer, talkToNPC, killNPC, tameMob,
      * shearSheep, password, reachLocation
      * 
+     * @deprecated Use {@link #containsObjective(ObjectiveType)}
+     * 
      * @param type The type of objective to check for
      * @return true if stage contains specified objective
      */
+    @Deprecated
     public boolean containsObjective(final String type) {
-        if (type.equalsIgnoreCase("breakBlock")) {
+        return containsObjective(ObjectiveType.fromName(type));
+    }
+    
+    /**
+     * Check if stage has the specified type of objective<p>
+     * 
+     * @param type The type of objective to check for
+     * @return true if stage contains specified objective
+     */
+    public boolean containsObjective(final ObjectiveType type) {
+        if (type.equals(ObjectiveType.BREAK_BLOCK)) {
             return !blocksToBreak.isEmpty();
-        } else if (type.equalsIgnoreCase("damageBlock")) {
+        } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
             return !blocksToDamage.isEmpty();
-        } else if (type.equalsIgnoreCase("placeBlock")) {
+        } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
             return !blocksToPlace.isEmpty();
-        } else if (type.equalsIgnoreCase("useBlock")) {
+        } else if (type.equals(ObjectiveType.USE_BLOCK)) {
             return !blocksToUse.isEmpty();
-        } else if (type.equalsIgnoreCase("cutBlock")) {
+        } else if (type.equals(ObjectiveType.CUT_BLOCK)) {
             return !blocksToCut.isEmpty();
-        } else if (type.equalsIgnoreCase("craftItem")) {
+        } else if (type.equals(ObjectiveType.CRAFT_ITEM)) {
             return !itemsToCraft.isEmpty();
-        } else if (type.equalsIgnoreCase("smeltItem")) {
+        } else if (type.equals(ObjectiveType.SMELT_ITEM)) {
             return !itemsToSmelt.isEmpty();
-        } else if (type.equalsIgnoreCase("enchantItem")) {
+        } else if (type.equals(ObjectiveType.ENCHANT_ITEM)) {
             return !itemsToEnchant.isEmpty();
-        } else if (type.equalsIgnoreCase("brewItem")) {
+        } else if (type.equals(ObjectiveType.BREW_ITEM)) {
             return !itemsToBrew.isEmpty();
-        } else if (type.equalsIgnoreCase("consumeItem")) {
+        } else if (type.equals(ObjectiveType.CONSUME_ITEM)) {
             return !itemsToConsume.isEmpty();
-        } else if (type.equalsIgnoreCase("milkCow")) {
-            return cowsToMilk != null;
-        } else if (type.equalsIgnoreCase("catchFish")) {
-            return fishToCatch != null;
-        } else if (type.equalsIgnoreCase("killMob")) {
-            return !mobsToKill.isEmpty();
-        } else if (type.equalsIgnoreCase("deliverItem")) {
+        } else if (type.equals(ObjectiveType.DELIVER_ITEM)) {
             return !itemsToDeliver.isEmpty();
-        } else if (type.equalsIgnoreCase("killPlayer")) {
+        } else if (type.equals(ObjectiveType.MILK_COW)) {
+            return cowsToMilk != null;
+        } else if (type.equals(ObjectiveType.CATCH_FISH)) {
+            return fishToCatch != null;
+        } else if (type.equals(ObjectiveType.KILL_MOB)) {
+            return !mobsToKill.isEmpty();
+        } else if (type.equals(ObjectiveType.KILL_PLAYER)) {
             return playersToKill != null;
-        } else if (type.equalsIgnoreCase("talkToNPC")) {
+        } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
             return !citizensToInteract.isEmpty();
-        } else if (type.equalsIgnoreCase("killNPC")) {
+        } else if (type.equals(ObjectiveType.KILL_NPC)) {
             return !citizensToKill.isEmpty();
-        } else if (type.equalsIgnoreCase("tameMob")) {
+        } else if (type.equals(ObjectiveType.TAME_MOB)) {
             return !mobsToTame.isEmpty();
-        } else if (type.equalsIgnoreCase("shearSheep")) {
+        } else if (type.equals(ObjectiveType.SHEAR_SHEEP)) {
             return !sheepToShear.isEmpty();
-        } else if (type.equalsIgnoreCase("password")) {
-            return !passwordPhrases.isEmpty();
-        } else if (type.equalsIgnoreCase("reachLocation")) {
+        } else if (type.equals(ObjectiveType.REACH_LOCATION)) {
             return !locationsToReach.isEmpty();
+        } else if (type.equals(ObjectiveType.PASSWORD)) {
+            return !passwordPhrases.isEmpty();
         } else {
             return false;
         }

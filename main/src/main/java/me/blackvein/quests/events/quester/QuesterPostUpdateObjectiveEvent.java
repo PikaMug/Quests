@@ -15,9 +15,9 @@ package me.blackvein.quests.events.quester;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import me.blackvein.quests.Objective;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
-import me.blackvein.quests.enums.ObjectiveType;
 
 /**
  * Called after a quester progresses an objective
@@ -25,13 +25,13 @@ import me.blackvein.quests.enums.ObjectiveType;
 public class QuesterPostUpdateObjectiveEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Quest quest;
-    private final ObjectiveType type;
+    private final Objective objective;
     private boolean cancel = false;
     
-    public QuesterPostUpdateObjectiveEvent(final Quester quester, final Quest quest, final ObjectiveType type) {
+    public QuesterPostUpdateObjectiveEvent(final Quester quester, final Quest quest, final Objective objective) {
         super(quester);
         this.quest = quest;
-        this.type = type;
+        this.objective = objective;
     }
     
     /**
@@ -44,12 +44,12 @@ public class QuesterPostUpdateObjectiveEvent extends QuesterEvent implements Can
     }
     
     /**
-     * Returns the type of objective involved in this event
+     * Returns the objective involved in this event
      * 
-     * @return Type which is involved in this event
+     * @return Objective which is involved in this event
      */
-    public ObjectiveType getObjectiveType() {
-        return type;
+    public Objective getObjective() {
+        return objective;
     }
 
     @Override
