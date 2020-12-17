@@ -28,10 +28,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import me.blackvein.quests.Objective;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
+import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
+import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 
 public class BlockListener implements Listener {
@@ -82,18 +86,56 @@ public class BlockListener implements Listener {
                             && quester.getCurrentStage(quest).containsObjective(placeType)) {
                         for (final ItemStack is : quester.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
+                                ItemStack toPlace = new ItemStack(is.getType(), 64);
+                                for (final ItemStack stack : quester.getCurrentStage(quest).getBlocksToPlace()) {
+                                    if (ItemUtil.compareItems(is, stack, true) == 0) {
+                                        toPlace = stack;
+                                    }
+                                }
+                                
+                                final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
+                                final QuesterPreUpdateObjectiveEvent preEvent 
+                                        = new QuesterPreUpdateObjectiveEvent(quester, quest, 
+                                        new Objective(type, is.getAmount(), toPlace.getAmount()));
+                                plugin.getServer().getPluginManager().callEvent(preEvent);
+                                
                                 final int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
-                                is.setAmount(is.getAmount() - 1);
+                                final int newAmount = is.getAmount() - 1;
+                                is.setAmount(newAmount);
                                 quester.getQuestData(quest).blocksPlaced.set(index, is);
+                                
+                                final QuesterPostUpdateObjectiveEvent postEvent 
+                                        = new QuesterPostUpdateObjectiveEvent(quester, quest, 
+                                        new Objective(type, newAmount, toPlace.getAmount()));
+                                plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
                         }
                     }
                     quester.dispatchMultiplayerEverything(quest, placeType, (final Quester q) -> {
                         for (final ItemStack is : q.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
+                                ItemStack toPlace = new ItemStack(is.getType(), 64);
+                                for (final ItemStack stack : quester.getCurrentStage(quest).getBlocksToPlace()) {
+                                    if (ItemUtil.compareItems(is, stack, true) == 0) {
+                                        toPlace = stack;
+                                    }
+                                }
+                                
+                                final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
+                                final QuesterPreUpdateObjectiveEvent preEvent 
+                                        = new QuesterPreUpdateObjectiveEvent(quester, quest, 
+                                        new Objective(type, is.getAmount(), toPlace.getAmount()));
+                                plugin.getServer().getPluginManager().callEvent(preEvent);
+                                
                                 final int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
-                                is.setAmount(is.getAmount() - 1);
+                                final int newAmount = is.getAmount() - 1;
+                                is.setAmount(newAmount);
                                 q.getQuestData(quest).blocksPlaced.set(index, is);
+                                
+                                final QuesterPostUpdateObjectiveEvent postEvent 
+                                        = new QuesterPostUpdateObjectiveEvent(quester, quest, 
+                                                    new Objective(type, newAmount, toPlace.getAmount()));
+                                plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
                         }
                         return null;
