@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/rGH2MEh.png" alt="Logo" align="right">
+<img src="https://i.imgur.com/reQIzd0.png" alt="Logo" align="right">
 <div align="center">
   <h1>Quests</h1>
   An easy-to-use, open-source plugin for the creation and completion of quests on Minecraft servers. Players can take on multiple quests simultaneously, completing them for stellar rewards and unlockables. From placing blocks on mountain tops to slaying a hundred Skeletons on Halloween, the combinations are only limited by your imagination!
