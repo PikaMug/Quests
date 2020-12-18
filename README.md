@@ -1,4 +1,4 @@
-<img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e9/Book_and_Quill_JE2_BE2.png" alt="Logo" align="right">
+<img src="https://i.imgur.com/rGH2MEh.png" alt="Logo" align="right">
 <div align="center">
 <h1>Quests</h1>
 <h3>An easy-to-use, open-source plugin for the creation and completion of quests on Bukkit, Spigot, and Paper servers.</h3>
