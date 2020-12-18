@@ -1,8 +1,8 @@
 <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e9/Book_and_Quill_JE2_BE2.png" alt="Logo" align="right">
 <div align="center">
-  <h1>Quests</h1>
-  <h3>An easy-to-use, open-source plugin for the creation and completion of quests on Bukkit, Spigot, and Paper servers.</h3>
-  <h4>This work depends on contributions from coders like you!</h4>
+<h1>Quests</h1>
+<h3>An easy-to-use, open-source plugin for the creation and completion of quests on Bukkit, Spigot, and Paper servers.</h3>
+This work depends on contributions from coders like you!
 
 [![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests)
