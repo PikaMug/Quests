@@ -3573,7 +3573,6 @@ public class Quester implements Comparable<Quester> {
                     final Stage stage = getCurrentStage(quest);
                     if (stage != null) {
                         quest.updateCompass(this, stage);
-                        exists = true;
                         // TODO - decide whether or not to handle this
                         /*if (q.equals(quest) == false) {
                             if (getPlayer() != null && getPlayer().isOnline()) {
@@ -3581,8 +3580,9 @@ public class Quester implements Comparable<Quester> {
                                         .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD));
                             }
                         }*/
-                        break;
                     }
+                    exists = true;
+                    break;
                 }
             }
             if (!exists) {
