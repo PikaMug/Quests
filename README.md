@@ -1,8 +1,9 @@
 <img src="https://i.imgur.com/rGH2MEh.png" alt="Logo" align="right">
 <div align="center">
-<h1>Quests</h1>
-<h3>An easy-to-use, open-source plugin for the creation and completion of quests on Bukkit, Spigot, and Paper servers.</h3>
-This work depends on contributions from coders like you!
+  <h1>Quests</h1>
+  <h3>An easy-to-use, open-source plugin for the creation and completion of quests on Bukkit, Spigot, and Paper servers.</h3>
+  <br>
+  This work depends on contributions from coders like you!
 
 [![Discord](https://discordapp.com/api/guilds/506992958894243860/widget.png?style=shield)](https://discordapp.com/invite/d56CQ6e)
 [![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/)
