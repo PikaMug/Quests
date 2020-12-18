@@ -2166,7 +2166,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int breakIndex = 0;
             for (final String s : breakNames) {
                 ItemStack is;
-                if (breakDurability.get(breakIndex) != -1) {
+                if (breakIndex < breakDurability.size() && breakDurability.get(breakIndex) != -1) {
                     is = ItemUtil.processItemStack(s, breakAmounts.get(breakIndex), breakDurability.get(breakIndex));
                 } else {
                     // Legacy
@@ -2216,7 +2216,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int damageIndex = 0;
             for (final String s : damageNames) {
                 ItemStack is;
-                if (damageDurability.get(damageIndex) != -1) {
+                if (damageIndex < damageDurability.size() && damageDurability.get(damageIndex) != -1) {
                     is = ItemUtil.processItemStack(s, damageAmounts.get(damageIndex), 
                             damageDurability.get(damageIndex));
                 } else {
@@ -2265,7 +2265,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int placeIndex = 0;
             for (final String s : placeNames) {
                 ItemStack is;
-                if (placeDurability.get(placeIndex) != -1) {
+                if (placeIndex < placeDurability.size() && placeDurability.get(placeIndex) != -1) {
                     is = ItemUtil.processItemStack(s, placeAmounts.get(placeIndex), placeDurability.get(placeIndex));
                 } else {
                     // Legacy
@@ -2313,7 +2313,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int useIndex = 0;
             for (final String s : useNames) {
                 ItemStack is;
-                if (useDurability.get(useIndex) != -1) {
+                if (useIndex < useDurability.size() && useDurability.get(useIndex) != -1) {
                     is = ItemUtil.processItemStack(s, useAmounts.get(useIndex), useDurability.get(useIndex));
                 } else {
                     // Legacy
@@ -2361,7 +2361,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int cutIndex = 0;
             for (final String s : cutNames) {
                 ItemStack is;
-                if (cutDurability.get(cutIndex) != -1) {
+                if (cutIndex < cutDurability.size() && cutDurability.get(cutIndex) != -1) {
                     is = ItemUtil.processItemStack(s, cutAmounts.get(cutIndex), cutDurability.get(cutIndex));
                 } else {
                     // Legacy
