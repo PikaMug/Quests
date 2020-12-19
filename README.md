@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/reQIzd0.png" alt="Logo" align="right">
 <div align="center">
-  <h4>An extensive questing system</h4>
+  <h1>An extensive questing system</h1>
   <h3>Quests is the easy-to-use, open-source plugin for the creation and execution of quests on Minecraft servers. Players can take on multiple quests simultaneously, completing them for stellar rewards and unlockables.</h3>
 
 [![Discord](https://discordapp.com/api/guilds/506992958894243860/widget.png?style=shield)](https://discordapp.com/invite/d56CQ6e)
