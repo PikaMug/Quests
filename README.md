@@ -1,7 +1,6 @@
 <img src="https://i.imgur.com/reQIzd0.png" alt="Logo" align="right">
 <div align="center">
-  <h1>Quests</h1>
-  <h3>The easy-to-use, open-source plugin for the creation and execution of quests on Minecraft servers. Players can take on multiple quests simultaneously, completing them for stellar rewards and unlockables.</h3>
+  <h3>Quests is the easy-to-use, open-source plugin for the creation and execution of quests on Minecraft servers. Players can take on multiple quests simultaneously, completing them for stellar rewards and unlockables.</h3>
 
 [![Discord](https://discordapp.com/api/guilds/506992958894243860/widget.png?style=shield)](https://discordapp.com/invite/d56CQ6e)
 [![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/)
