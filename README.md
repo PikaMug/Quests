@@ -23,7 +23,7 @@ Compile
 
 Requires Java 8 and Maven: https://github.com/PikaMug/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
 
-Localization
+Translate
 ---
 
-Help translate Quests into your language: https://crowdin.com/project/translate-quests
+Help localize Quests into your language: https://crowdin.com/project/translate-quests
