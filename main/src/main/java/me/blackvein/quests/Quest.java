@@ -491,11 +491,21 @@ public class Quest implements Comparable<Quest> {
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
-     * 
+     *
      * @param q The quester finishing this quest
      */
-    @SuppressWarnings("deprecation")
     public void completeQuest(final Quester q) {
+        completeQuest(q, true);
+    }
+    
+    /**
+     * Proceed to finish this quest, issuing applicable rewards
+     * 
+     * @param q The quester finishing this quest
+     * @param allowMultiplayer Allow multiplayer sharing
+     */
+    @SuppressWarnings("deprecation")
+    public void completeQuest(final Quester q, boolean allowMultiplayer) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
             final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
@@ -902,11 +912,11 @@ public class Quest implements Comparable<Quest> {
         }
         
         // Multiplayer
-        if (opts.getShareProgressLevel() == 4) {
+        if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
             final List<Quester> mq = q.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
-                    completeQuest(qq);
+                    completeQuest(qq, false);
                 }
             }
         }

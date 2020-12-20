@@ -12,6 +12,8 @@
 
 package me.blackvein.quests.listeners;
 
+import com.alessiodp.parties.api.enums.JoinCause;
+import com.alessiodp.parties.api.enums.LeaveCause;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -53,25 +55,23 @@ public class PartiesListener implements Listener {
     
     @EventHandler
     public void onPlayerJoinEvent(final BukkitPartiesPlayerPostJoinEvent event) {
-        if (event.isInvited() && event.getInviter() != null) {
-            final Player i = Bukkit.getServer().getPlayer(event.getInviter());
+        final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
+        if (p != null && event.getCause() == JoinCause.INVITE && event.getInviter() != null) {
+            final Player i = Bukkit.getServer().getPlayer(event.getInviter().getPlayerUUID());
             if (i != null) {
                 if (Lang.get("questPartiesInvite").length() > 0) {
-                    i.sendMessage(ChatColor.GREEN + Lang.get(i, "questPartiesInvite").replace("<player>", i.getName()));
+                    i.sendMessage(ChatColor.GREEN + Lang.get(i, "questPartiesInvite").replace("<player>", p.getName()));
                 }
-            }
-        }
-        final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null) {
-            if (Lang.get("questPartiesJoin").length() > 0) {
-                p.sendMessage(ChatColor.GREEN + Lang.get(p, "questPartiesJoin").replace("<player>", p.getName()));
+                if (Lang.get("questPartiesJoin").length() > 0) {
+                    p.sendMessage(ChatColor.GREEN + Lang.get(p, "questPartiesJoin").replace("<player>", i.getName()));
+                }
             }
         }
     }
     
     @EventHandler
     public void onPlayerLeaveEvent(final BukkitPartiesPlayerPostLeaveEvent event) {
-        if (event.isKicked() && event.getKicker() != null) {
+        if (event.getCause() == LeaveCause.KICK && event.getKicker() != null) {
             final Player k = Bukkit.getServer().getPlayer(event.getKicker().getPlayerUUID());
             if (k != null) {
                 if (Lang.get("questPartiesKicked").length() > 0) {

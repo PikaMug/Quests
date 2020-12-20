@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -3948,15 +3949,18 @@ public class Quester implements Comparable<Quester> {
         final List<Quester> mq = new LinkedList<Quester>();
         if (plugin.getDependencies().getPartiesApi() != null) {
             if (quest.getOptions().canUsePartiesPlugin()) {
-                final Party party = plugin.getDependencies().getPartiesApi().getParty(plugin.getDependencies()
-                        .getPartiesApi().getPartyPlayer(getUUID()).getPartyName());
-                if (party != null) {
-                    for (final UUID id : party.getMembers()) {
-                        if (!id.equals(getUUID())) {
-                            mq.add(plugin.getQuester(id));
+                final PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID());
+                if (partyPlayer != null && partyPlayer.getPartyId() != null) {
+                    final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
+                    if (party != null) {
+                        for (final UUID id : party.getMembers()) {
+                            if (!id.equals(getUUID())) {
+                                mq.add(plugin.getQuester(id));
+                            }
                         }
+                        System.out.println("Multiplayer returning " + mq.size());
+                        return mq;
                     }
-                    return mq;
                 }
             }
         }
