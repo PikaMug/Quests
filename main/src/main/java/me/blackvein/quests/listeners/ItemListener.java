@@ -154,7 +154,7 @@ public class ItemListener implements Listener {
                 }
                 
                 quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    quester.enchantItem(quest, enchantedItem);
+                    q.enchantItem(quest, enchantedItem);
                     return null;
                 });
             }
@@ -180,7 +180,7 @@ public class ItemListener implements Listener {
                 }
                 
                 quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    quester.consumeItem(quest, consumedItem);
+                    q.consumeItem(quest, consumedItem);
                     return null;
                 });
             }

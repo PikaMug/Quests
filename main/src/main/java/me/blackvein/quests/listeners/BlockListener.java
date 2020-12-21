@@ -78,7 +78,7 @@ public class BlockListener implements Listener {
                             player.sendMessage(ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
                                     .replace("<quest>", quest.getName()));
                         } else {
-                            quester.breakBlock(quest, blockItemStack);
+                            q.breakBlock(quest, blockItemStack);
                         }
                         return null;
                     });
@@ -123,7 +123,7 @@ public class BlockListener implements Listener {
                                 
                                 final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
                                 final QuesterPreUpdateObjectiveEvent preEvent 
-                                        = new QuesterPreUpdateObjectiveEvent(quester, quest, 
+                                        = new QuesterPreUpdateObjectiveEvent(q, quest,
                                         new Objective(type, is.getAmount(), toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(preEvent);
                                 
@@ -133,7 +133,7 @@ public class BlockListener implements Listener {
                                 q.getQuestData(quest).blocksPlaced.set(index, is);
                                 
                                 final QuesterPostUpdateObjectiveEvent postEvent 
-                                        = new QuesterPostUpdateObjectiveEvent(quester, quest, 
+                                        = new QuesterPostUpdateObjectiveEvent(q, quest,
                                                     new Objective(type, newAmount, toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
