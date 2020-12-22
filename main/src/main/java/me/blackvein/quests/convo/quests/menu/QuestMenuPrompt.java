@@ -203,7 +203,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("questEditorEdit");
+            return Lang.get("questEditTitle");
         }
         
         @Override
@@ -217,7 +217,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             for (final Quest q : plugin.getQuests()) {
                 text += "\n" + ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName();
             }
-            return text + ChatColor.YELLOW + getQueryText(context);
+            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
@@ -253,7 +253,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + getTitle(context);
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Quest quest : plugin.getQuests()) {
                 text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";
             }

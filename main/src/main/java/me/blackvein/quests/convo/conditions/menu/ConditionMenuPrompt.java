@@ -266,7 +266,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("conditionEditorEnterQuestName");
+            return Lang.get("conditionEditorEnterName");
         }
         
         @Override
