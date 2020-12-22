@@ -2179,6 +2179,9 @@ public class Quester implements Comparable<Quester> {
         }
         
         final int index = questData.mobsKilled.indexOf(e);
+        if (index == -1) {
+            return;
+        }
         final int mobsKilled = questData.mobNumKilled.get(index);
         final int mobsToKill = currentStage.mobNumToKill.get(index);
         if (questData.locationsToKillWithin.isEmpty() == false) {
