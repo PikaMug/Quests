@@ -215,8 +215,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
-        if (depends.getCitizens() != null) {
-            getServer().getPluginManager().registerEvents(npcListener, this);
+        if (depends.getCitizens() != null) { // #getCitizens takes care of registering npcListener
             if (settings.canNpcEffects()) {
                 getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
             }
