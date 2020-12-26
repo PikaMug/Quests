@@ -56,8 +56,8 @@ public class ItemListener implements Listener {
                         quester.craftItem(quest, craftedItem);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.craftItem(quest, craftedItem);
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.craftItem(cq, craftedItem);
                         return null;
                     });
                 }
@@ -101,8 +101,8 @@ public class ItemListener implements Listener {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                            q.smeltItem(quest, evt.getCurrentItem());
+                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            q.smeltItem(cq, evt.getCurrentItem());
                             return null;
                         });
                     }
@@ -121,8 +121,8 @@ public class ItemListener implements Listener {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                            q.brewItem(quest, evt.getCurrentItem());
+                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            q.brewItem(cq, evt.getCurrentItem());
                             return null;
                         });
                     }
@@ -153,8 +153,8 @@ public class ItemListener implements Listener {
                     quester.enchantItem(quest, enchantedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.enchantItem(quest, enchantedItem);
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    q.enchantItem(cq, enchantedItem);
                     return null;
                 });
             }
@@ -179,8 +179,8 @@ public class ItemListener implements Listener {
                     quester.consumeItem(quest, consumedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.consumeItem(quest, consumedItem);
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    q.consumeItem(cq, consumedItem);
                     return null;
                 });
             }

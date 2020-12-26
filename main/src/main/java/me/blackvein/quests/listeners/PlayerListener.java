@@ -404,8 +404,8 @@ public class PlayerListener implements Listener {
                         quester.milkCow(quest);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.milkCow(quest);
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.milkCow(cq);
                         return null;
                     });
                 }
@@ -452,8 +452,8 @@ public class PlayerListener implements Listener {
                         quester.sayPassword(quest, evt);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.sayPassword(quest, evt);
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.sayPassword(cq, evt);
                         return null;
                     });
                 }
@@ -519,8 +519,8 @@ public class PlayerListener implements Listener {
                         quester.shearSheep(quest, sheep.getColor());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.shearSheep(quest, sheep.getColor());
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.shearSheep(cq, sheep.getColor());
                         return null;
                     });
                 }
@@ -545,8 +545,8 @@ public class PlayerListener implements Listener {
                         quester.tameMob(quest, evt.getEntityType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.tameMob(quest, evt.getEntityType());
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.tameMob(cq, evt.getEntityType());
                         return null;
                     });
                 }
@@ -612,8 +612,8 @@ public class PlayerListener implements Listener {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.killNPC(cq, CitizensAPI.getNPCRegistry().getNPC(target));
                         return null;
                     });
                 }
@@ -629,8 +629,8 @@ public class PlayerListener implements Listener {
                         quester.killMob(quest, target.getLocation(), target.getType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.killMob(quest, target.getLocation(), target.getType());
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.killMob(cq, target.getLocation(), target.getType());
                         return null;
                     });
                 }
@@ -731,8 +731,8 @@ public class PlayerListener implements Listener {
                     quester.killPlayer(quest, (Player)target);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.killPlayer(quest, (Player)target);
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    q.killPlayer(cq, (Player)target);
                     return null;
                 });
             }
@@ -756,8 +756,8 @@ public class PlayerListener implements Listener {
                     quester.catchFish(quest);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.catchFish(quest);
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    q.catchFish(cq);
                     return null;
                 });
             }
@@ -933,11 +933,11 @@ public class PlayerListener implements Listener {
                                 }
                             }
                             
-                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
+                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
                                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                                     @Override
                                     public void run() {
-                                        q.reachLocation(quest, location);
+                                        q.reachLocation(cq, location);
                                     }
                                 });
                                 return null;

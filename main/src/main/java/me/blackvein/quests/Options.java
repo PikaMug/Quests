@@ -21,7 +21,7 @@ public class Options {
     private boolean partiesHandleOfflinePlayers = false;
     private long partiesDistance = 0;
     private int shareProgressLevel = 1;
-    private boolean requireSameQuest = true;
+    private boolean shareOnlySameQuest = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -87,11 +87,11 @@ public class Options {
         this.shareProgressLevel = shareProgressLevel;
     }
     
-    public boolean canRequireSameQuest() {
-        return requireSameQuest;
+    public boolean canShareOnlySameQuest() {
+        return shareOnlySameQuest;
     }
     
-    public void setRequireSameQuest(final boolean requireSameQuest) {
-        this.requireSameQuest = requireSameQuest;
+    public void setShareOnlySameQuest(final boolean shareOnlySameQuest) {
+        this.shareOnlySameQuest = shareOnlySameQuest;
     }
 }

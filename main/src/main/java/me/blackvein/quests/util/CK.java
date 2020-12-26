@@ -149,7 +149,7 @@ public class CK {
     public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
-    public static final String OPT_REQUIRE_SAME_QUEST = "requireSameQuestOpt";
+    public static final String OPT_SHARE_ONLY_SAME_QUEST = "shareOnlySameQuestOpt";
     // Actions
     public static final String E_OLD_EVENT = "oldEvent";
     public static final String E_NAME = "evtName";

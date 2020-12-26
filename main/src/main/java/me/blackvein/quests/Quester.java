@@ -24,6 +24,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -1410,14 +1411,14 @@ public class Quester implements Comparable<Quester> {
                 getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
                 if (broken.getAmount() == toBreak.getAmount()) {
                     finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null, null);
-                    
+    
                     // Multiplayer
                     final ItemStack finalBroken = broken;
                     final ItemStack finalToBreak = toBreak;
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken
                                 .indexOf(finalBroken), newBroken);
-                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null, null,
                                 null, null);
                         return null;
                     });
@@ -3863,13 +3864,13 @@ public class Quester implements Comparable<Quester> {
      * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
      * killNPC, tameMob, shearSheep, password, reachLocation
      * 
-     * @deprecated Use {@link #dispatchMultiplayerEverything(Quest, ObjectiveType, Function)}
+     * @deprecated Use {@link #dispatchMultiplayerEverything(Quest, ObjectiveType, BiFunction)}
      *
      * @param objectiveType The type of objective to progress
      * @param fun The function to execute, the event call
      */
     @Deprecated
-    public void dispatchMultiplayerEverything(final Quest quest, final String objectiveType, final Function<Quester, Void> fun) {
+    public void dispatchMultiplayerEverything(final Quest quest, final String objectiveType, final BiFunction<Quester, Quest, Void> fun) {
         dispatchMultiplayerEverything(quest, ObjectiveType.fromName(objectiveType), fun);
     }
     
@@ -3879,7 +3880,7 @@ public class Quester implements Comparable<Quester> {
      * @param type The type of objective to progress
      * @param fun The function to execute, the event call
      */
-    public void dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final Function<Quester, Void> fun) {
+    public void dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final BiFunction<Quester, Quest, Void> fun) {
         if (quest == null) {
             return;
         }
@@ -3891,19 +3892,18 @@ public class Quester implements Comparable<Quester> {
                 }
                 for (final Quester q : mq) {
                     if (q == null) {
-                        return;
+                        continue;
                     }
-                    if (q.getCurrentStage(quest) == null) {
-                        return;
-                    }
-                    if (q.getCurrentStage(quest).containsObjective(type)) {
-                        if (this.getCurrentStage(quest) == null) {
-                            return;
+                    if (quest.getOptions().canShareOnlySameQuest()) {
+                        if (q.getCurrentStage(quest) != null) {
+                            fun.apply(q, quest);
                         }
-                        if (this.getCurrentStage(quest).containsObjective(type)
-                                || !quest.getOptions().canRequireSameQuest()) {
-                            fun.apply(q);
-                        }
+                    } else {
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                            if (otherQuest.getStage(i).containsObjective(type)) {
+                                fun.apply(q, otherQuest);
+                            }
+                        });
                     }
                 }
             }
@@ -3933,8 +3933,9 @@ public class Quester implements Comparable<Quester> {
                 if (q == null) {
                     return;
                 }
-                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))
-                        || !quest.getOptions().canRequireSameQuest()) {
+                // Share only same quest is not necessary here
+                // The function must be applied to the same quest
+                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
                     fun.apply(q);
                 }
             }

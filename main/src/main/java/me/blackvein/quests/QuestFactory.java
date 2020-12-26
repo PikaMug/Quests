@@ -285,7 +285,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        context.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.canRequireSameQuest());
+        context.setSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST, opt.canShareOnlySameQuest());
         // Stages (Objectives)
         int index = 1;
         for (final Stage stage : q.getStages()) {
@@ -949,8 +949,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
         opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 
                 ? (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
-        opts.set("require-same-quest", context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) != null 
-                ? (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) : null);
+        opts.set("share-only-same-quest", context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST) != null
+                ? (Boolean) context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }
