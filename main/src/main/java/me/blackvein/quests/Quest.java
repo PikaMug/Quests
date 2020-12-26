@@ -688,7 +688,7 @@ public class Quest implements Comparable<Quest> {
         if (rews.getQuestPoints() > 0) {
             q.questPoints += rews.getQuestPoints();
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() 
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() + " "
                         + Lang.get("questPoints"));
             }
             issuedReward = true;
