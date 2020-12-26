@@ -3957,12 +3957,27 @@ public class Quester implements Comparable<Quester> {
                 if (partyPlayer != null && partyPlayer.getPartyId() != null) {
                     final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
                     if (party != null) {
-                        for (final UUID id : party.getMembers()) {
-                            if (!id.equals(getUUID())) {
-                                mq.add(plugin.getQuester(id));
+                        long distanceSquared = quest.getOptions().getPartiesDistance() * quest.getOptions().getPartiesDistance();
+                        boolean offlinePlayers = quest.getOptions().canPartiesHandleOfflinePlayers();
+                        if (offlinePlayers) {
+                            for (final UUID id : party.getMembers()) {
+                                if (!id.equals(getUUID())) {
+                                    mq.add(plugin.getQuester(id));
+                                }
+                            }
+                        } else {
+                            for (final PartyPlayer pp : party.getOnlineMembers(true)) {
+                                if (!pp.getPlayerUUID().equals(getUUID())) {
+                                    if (distanceSquared > 0) {
+                                        Player player = Bukkit.getPlayer(pp.getPlayerUUID());
+                                        if (player != null && distanceSquared <= getPlayer().getLocation().distanceSquared(player.getLocation()))
+                                            mq.add(plugin.getQuester(pp.getPlayerUUID()));
+                                    } else
+                                        mq.add(plugin.getQuester(pp.getPlayerUUID()));
+                                }
                             }
                         }
-                        System.out.println("Multiplayer returning " + mq.size());
+                        
                         return mq;
                     }
                 }
