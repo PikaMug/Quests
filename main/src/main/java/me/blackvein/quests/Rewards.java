@@ -32,6 +32,7 @@ public class Rewards {
     private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
     private List<String> heroesClasses = new LinkedList<String>();
     private List<Double> heroesAmounts = new LinkedList<Double>();
+    private int partiesExperience = 0;
     private List<String> phatLoots = new LinkedList<String>();
     private Map<String, Map<String, Object>> customRewards = new HashMap<String, Map<String, Object>>();
     private List<String> detailsOverride = new LinkedList<String>();
@@ -107,6 +108,12 @@ public class Rewards {
     }
     public void setHeroesAmounts(final List<Double> heroesAmounts) {
         this.heroesAmounts = heroesAmounts;
+    }
+    public int getPartiesExperience() {
+        return partiesExperience;
+    }
+    public void setPartiesExperience(int partiesExperience) {
+        this.partiesExperience = partiesExperience;
     }
     public List<String> getPhatLoots() {
         return phatLoots;

@@ -129,6 +129,7 @@ public class CK {
     public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
     public static final String REW_HEROES_CLASSES = "heroesClassRews";
     public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
+    public static final String REW_PARTIES_EXPERIENCE = "partiesExperienceRews";
     public static final String REW_PHAT_LOOTS = "phatLootRews";
     public static final String REW_CUSTOM = "customRews";
     public static final String REW_CUSTOM_DATA = "customRewData";

@@ -251,6 +251,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
             context.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
         }
+        if (rews.getPartiesExperience() != 0) {
+            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPhatLoots());
+        }
         if (rews.getPhatLoots().isEmpty() == false) {
             context.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
         }
@@ -892,6 +895,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES) : null);
         rews.set("heroes-exp-amounts", context.getSessionData(CK.REW_HEROES_AMOUNTS) != null 
                 ? (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS) : null);
+        rews.set("parties-experience", context.getSessionData(CK.REW_PARTIES_EXPERIENCE) != null
+                ? (Integer) context.getSessionData(CK.REW_PARTIES_EXPERIENCE) : null);
         rews.set("phat-loots", context.getSessionData(CK.REW_PHAT_LOOTS) != null 
                 ? (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS) : null);
         final LinkedList<String> customRews = context.getSessionData(CK.REW_CUSTOM) != null 

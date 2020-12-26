@@ -1782,6 +1782,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
         }
+        if (depends.isPluginAvailable("Parties")) {
+            if (config.contains("quests." + questKey + ".rewards.parties-experience")) {
+                if (config.getInt("quests." + questKey + ".rewards.parties-experience", -999) != -999) {
+                    rews.setPartiesExperience(config.getInt("quests." + questKey + ".rewards.parties-experience"));
+                } else {
+                    throw new QuestFormatException("Reward Parties experience is not a number", questKey);
+                }
+            }
+        }
         if (depends.isPluginAvailable("PhatLoots")) {
             if (config.contains("quests." + questKey + ".rewards.phat-loots")) {
                 if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.phat-loots"), String.class)) {
@@ -2064,6 +2073,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
             opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
+        }
+        if (config.contains("quests." + questKey + ".options.parties.handle-offline-players")) {
+            opts.setPartiesHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.parties.handle-offline-players"));
+        }
+        if (config.contains("quests." + questKey + ".options.parties.distance")) {
+            opts.setPartiesDistance(config.getLong("quests." + questKey + ".options.parties.distance"));
         }
         if (config.contains("quests." + questKey + ".options.share-progress-level")) {
             opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
