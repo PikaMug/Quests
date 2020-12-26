@@ -588,7 +588,7 @@ public class Quester implements Comparable<Quester> {
                                 + offlinePlayer.getName() + " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest")
                                 + " " + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
                         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title " 
-                                + offlinePlayer.getName() + " subtitle " + "{\"text\":\"" + q.getName() 
+                                + offlinePlayer.getName() + " subtitle " + "{\"text\":\"" + q.getName()
                                 + "\",\"color\":\"yellow\"}");
                     }
                 }
@@ -616,7 +616,7 @@ public class Quester implements Comparable<Quester> {
                         for (final String e : c.getPermissions()) {
                             msg += ChatColor.AQUA + "\n   \u2515 " + e;
                         }
-                        sendMessage(ChatColor.YELLOW + msg); 
+                        sendMessage(ChatColor.YELLOW + msg);
                     } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
                         String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
                         for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
@@ -1422,7 +1422,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken
                                 .indexOf(finalBroken), newBroken);
-                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null,
                                 null, null);
                         return null;
                     });
@@ -2552,13 +2552,13 @@ public class Quester implements Comparable<Quester> {
         if (mobsTamed < mobsToTame) {
             getQuestData(quest).mobsTamed.put(entity, newMobsToTame);
             if (newMobsToTame >= mobsToTame) {
-                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToTame)), entity, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).mobsTamed.put(entity, getQuestData(quest).mobsTamed.get(entity));
-                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, mobsToTame)), entity, null, null, null, null, null, null);
                     return null;
                 });
@@ -2592,13 +2592,13 @@ public class Quester implements Comparable<Quester> {
         if (sheepSheared < sheepToShear) {
             getQuestData(quest).sheepSheared.put(color, newSheepSheared);
             if (newSheepSheared >= sheepToShear) {
-                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
-                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
                     return null;
                 });
@@ -2619,7 +2619,7 @@ public class Quester implements Comparable<Quester> {
     public void sayPassword(final Quest quest, final AsyncPlayerChatEvent evt) {
         final ObjectiveType type = ObjectiveType.PASSWORD;
         plugin.getServer().getScheduler().runTask(plugin, () -> {
-            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
                     new Objective(type, 1, 1));
             plugin.getServer().getPluginManager().callEvent(preEvent);
             
@@ -2634,13 +2634,13 @@ public class Quester implements Comparable<Quester> {
                         getQuestData(quest).passwordsSaid.put(display, true);
                         done = true;
                         plugin.getServer().getScheduler().runTask(plugin, () -> {
-                            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                                     new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
                             
                             // Multiplayer
                             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                                 q.getQuestData(quest).passwordsSaid.put(display, true);
-                                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                                         new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
                                 return null;
                             });
@@ -2654,7 +2654,7 @@ public class Quester implements Comparable<Quester> {
             }
             
             if (done) {
-                final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
                         new Objective(type, 1, 1));
                 plugin.getServer().getPluginManager().callEvent(postEvent);
             }
@@ -2877,7 +2877,7 @@ public class Quester implements Comparable<Quester> {
                 // Legacy
                 message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
             }
-            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
+            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
             } else {
@@ -2907,7 +2907,7 @@ public class Quester implements Comparable<Quester> {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
                 // Legacy
-                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" 
+                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/"
                         + goal.getAmount();
             }
             if (plugin.getSettings().canTranslateNames()) {
@@ -2934,7 +2934,7 @@ public class Quester implements Comparable<Quester> {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
                 // Legacy
-                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" 
+                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/"
                         + goal.getAmount();
             }
             sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc.getId())));
@@ -3685,7 +3685,7 @@ public class Quester implements Comparable<Quester> {
                 }
             }
             if (!exists) {
-                sendMessage(ChatColor.RED + Lang.get("questNotExist").replace("<quest>", ChatColor.DARK_PURPLE 
+                sendMessage(ChatColor.RED + Lang.get("questNotExist").replace("<quest>", ChatColor.DARK_PURPLE
                         + quest.getName() + ChatColor.RED));
             }
         }
@@ -4145,7 +4145,7 @@ public class Quester implements Comparable<Quester> {
         if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests() 
                 > 0) {
             if (giveReason) {
-                final String msg = Lang.get(getPlayer(), "questMaxAllowed").replace("<number>", 
+                final String msg = Lang.get(getPlayer(), "questMaxAllowed").replace("<number>",
                         String.valueOf(plugin.getSettings().getMaxQuests()));
                 sendMessage(ChatColor.YELLOW + msg);
             }
@@ -4170,14 +4170,14 @@ public class Quester implements Comparable<Quester> {
                 getPlayer().getLocation().getWorld().getName())
                 && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) > 6.0) {
             if (giveReason) {
-                final String msg = Lang.get(getPlayer(), "mustSpeakTo").replace("<npc>", ChatColor.DARK_PURPLE 
+                final String msg = Lang.get(getPlayer(), "mustSpeakTo").replace("<npc>", ChatColor.DARK_PURPLE
                         + quest.getNpcStart().getName() + ChatColor.YELLOW);
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
         } else if (quest.getBlockStart() != null) {
             if (giveReason) {
-                final String msg = Lang.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE 
+                final String msg = Lang.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE
                         + quest.getName() + ChatColor.YELLOW);
                 sendMessage(ChatColor.YELLOW + msg);
             }
@@ -4185,8 +4185,8 @@ public class Quester implements Comparable<Quester> {
         } else if (getCompletedQuests().contains(quest) && getRemainingCooldown(quest) > 0 
                 && !quest.getPlanner().getOverride()) {
             if (giveReason) {
-                final String msg = Lang.get(getPlayer(), "questTooEarly").replace("<quest>", ChatColor.AQUA 
-                        + quest.getName()+ ChatColor.YELLOW).replace("<time>", ChatColor.DARK_PURPLE 
+                final String msg = Lang.get(getPlayer(), "questTooEarly").replace("<quest>", ChatColor.AQUA
+                        + quest.getName()+ ChatColor.YELLOW).replace("<time>", ChatColor.DARK_PURPLE
                         + MiscUtil.getTime(getRemainingCooldown(quest)) + ChatColor.YELLOW);
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
@@ -4194,7 +4194,7 @@ public class Quester implements Comparable<Quester> {
         } else if (quest.getRegionStart() != null) {
             if (!quest.isInRegionStart(this)) {
                 if (giveReason) {
-                    final String msg = Lang.get(getPlayer(), "questInvalidLocation").replace("<quest>", ChatColor.AQUA 
+                    final String msg = Lang.get(getPlayer(), "questInvalidLocation").replace("<quest>", ChatColor.AQUA
                             + quest.getName() + ChatColor.YELLOW);
                     getPlayer().sendMessage(ChatColor.YELLOW + msg);
                 }
