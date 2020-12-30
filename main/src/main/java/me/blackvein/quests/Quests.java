@@ -652,12 +652,87 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
                 loadModules();
+                importQuests();
                 if (getSettings().canDisableCommandFeedback()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
                 }
                 loading = false;
             }
         }, ticks);
+    }
+    
+    private void importQuests() {
+        final File f = new File(this.getDataFolder(), "import");
+        if (f.exists() && f.isDirectory()) {
+            final File[] imports = f.listFiles();
+            if (imports != null) {
+                for (final File file : imports) {
+                    if (file.isDirectory() == false && file.getName().endsWith(".yml")) {
+                        importQuest(file);
+                    }
+                }
+            }
+        } else {
+            f.mkdir();
+        }
+    }
+    
+    private void importQuest(final File file) {
+        FileConfiguration config = null;
+        try {
+            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        if (config != null) {
+            final ConfigurationSection questsSection = config.getConfigurationSection("quests");
+            if (questsSection == null) {
+                getLogger().severe("Missing \'quests\' section marker, canceled import of file " + file.getName());
+                return;
+            }
+            int count = 0;
+            for (final String questKey : questsSection.getKeys(false)) {
+                try {
+                    for (final Quest oq : getQuests()) {
+                        if (oq.getId().equals(questKey)) {
+                            throw new QuestFormatException("id already exists", questKey);
+                        }
+                    }
+                    final Quest quest = loadQuest(config, questKey);
+                    if (config.contains("quests." + questKey + ".requirements")) {
+                        loadQuestRequirements(config, questsSection, quest, questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".planner")) {
+                        loadQuestPlanner(config, questsSection, quest, questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".options")) {
+                        loadQuestOptions(config, questsSection, quest, questKey);
+                    }
+                    quest.plugin = this;
+                    loadQuestStages(quest, config, questKey);
+                    loadQuestRewards(config, quest, questKey);
+                    quests.add(quest);
+                    count++;
+                } catch (final QuestFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final StageFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final ActionFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final ConditionFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+            }
+            if (count > 0) {
+                getLogger().info("Imported " + count + " Quests from " + file.getName());
+            }
+        } else {
+            getLogger().severe("Unable to import quest file " + file.getName());
+        }
     }
     
     /**
@@ -1437,12 +1512,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     for (final Quester quester : questers) {
                         quester.loadData();
                         for (final Quest q : quester.currentQuests.keySet()) {
-                            System.out.println("current quest is : " + q.getName());
                             quester.checkQuest(q);
                         }
                     }
                     loadModules();
-                    
+                    importQuests();
                     if (callback != null) {
                         Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
                             
@@ -1474,7 +1548,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Load quests from file
      */
     public void loadQuests() {
-        boolean failedToLoad;
         boolean needsSaving = false;
         FileConfiguration config = null;
         final File file = new File(this.getDataFolder(), "quests.yml");
@@ -1497,105 +1570,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    final Quest quest = new Quest();
-                    failedToLoad = false;
-                    quest.id = questKey;
-                    if (config.contains("quests." + questKey + ".name")) {
-                        quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
-                    } else {
-                        throw new QuestFormatException("name is missing", questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".ask-message")) {
-                        quest.description = ConfigUtil.parseString(config.getString("quests." + questKey 
-                                + ".ask-message"), quest);
-                    } else {
-                        throw new QuestFormatException("ask-message is missing", questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".finish-message")) {
-                        quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey 
-                                + ".finish-message"), quest);
-                    } else {
-                        throw new QuestFormatException("finish-message is missing", questKey);
-                    }
-                    if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
-                        if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
-                                != null) {
-                            quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                                    + ".npc-giver-id"));
-                            questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                                    + ".npc-giver-id")));
-                        } else {
-                            throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".block-start")) {
-                        final Location location = ConfigUtil.getLocation(config.getString("quests." + questKey 
-                                + ".block-start"));
-                        if (location != null) {
-                            quest.blockStart = location;
-                        } else {
-                            throw new QuestFormatException("block-start has invalid location format", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".region")
-                            && getDependencies().getWorldGuardApi() != null) {
-                        final String region = config.getString("quests." + questKey + ".region");
-                        boolean exists = false;
-                        for (final World world : getServer().getWorlds()) {
-                            if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
-                                if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
-                                    quest.regionStart = region;
-                                    exists = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!exists) {
-                            throw new QuestFormatException("region has invalid WorldGuard region name", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".gui-display")) {
-                        ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
-                        if (stack == null) {
-                            // Legacy
-                            final String item = config.getString("quests." + questKey + ".gui-display");
-                            try {
-                                stack = ItemUtil.readItemStack(item);
-                            } catch (final Exception e) {
-                                throw new QuestFormatException("items has invalid formatting for " + item, questKey);
-                            }
-                        }
-                        if (stack != null) {
-                            quest.guiDisplay = stack;
-                        } else {
-                            throw new QuestFormatException("gui-display has invalid item format", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".redo-delay")) {
-                        // Legacy
-                        if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
-                            quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000);
-                        } else {
-                            throw new QuestFormatException("redo-delay is not a number", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".action")) {
-                        final Action act = loadAction(config.getString("quests." + questKey + ".action"));
-                        if (act != null) {
-                            quest.initialAction = act;
-                        } else {
-                            throw new QuestFormatException("action failed to load", questKey);
-                        }
-                    } else if (config.contains("quests." + questKey + ".event")) {
-                        Action action = null;
-                                
-                        action = loadAction(config.getString("quests." + questKey + ".event"));
-                        if (action != null) {
-                            quest.initialAction = action;
-                        } else {
-                            throw new QuestFormatException("action failed to load", questKey);
-                        }
-                    }
+                    final Quest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -1617,9 +1592,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             e.printStackTrace();
                         }
                     }
-                    if (failedToLoad == true) {
-                        getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
-                    }
                 } catch (final QuestFormatException e) {
                     e.printStackTrace();
                     continue;
@@ -1639,6 +1611,107 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
+    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
+            ActionFormatException {
+        final Quest quest = new Quest();
+        quest.id = questKey;
+        if (config.contains("quests." + questKey + ".name")) {
+            quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
+        } else {
+            throw new QuestFormatException("name is missing", questKey);
+        }
+        if (config.contains("quests." + questKey + ".ask-message")) {
+            quest.description = ConfigUtil.parseString(config.getString("quests." + questKey 
+                    + ".ask-message"), quest);
+        } else {
+            throw new QuestFormatException("ask-message is missing", questKey);
+        }
+        if (config.contains("quests." + questKey + ".finish-message")) {
+            quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey 
+                    + ".finish-message"), quest);
+        } else {
+            throw new QuestFormatException("finish-message is missing", questKey);
+        }
+        if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
+            if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
+                    != null) {
+                quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
+                        + ".npc-giver-id"));
+                questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
+                        + ".npc-giver-id")));
+            } else {
+                throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".block-start")) {
+            final Location location = ConfigUtil.getLocation(config.getString("quests." + questKey 
+                    + ".block-start"));
+            if (location != null) {
+                quest.blockStart = location;
+            } else {
+                throw new QuestFormatException("block-start has invalid location format", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".region")
+                && getDependencies().getWorldGuardApi() != null) {
+            final String region = config.getString("quests." + questKey + ".region");
+            boolean exists = false;
+            for (final World world : getServer().getWorlds()) {
+                if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
+                    if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
+                        quest.regionStart = region;
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (!exists) {
+                throw new QuestFormatException("region has invalid WorldGuard region name", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".gui-display")) {
+            ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
+            if (stack == null) {
+                // Legacy
+                final String item = config.getString("quests." + questKey + ".gui-display");
+                try {
+                    stack = ItemUtil.readItemStack(item);
+                } catch (final Exception e) {
+                    throw new QuestFormatException("items has invalid formatting for " + item, questKey);
+                }
+            }
+            if (stack != null) {
+                quest.guiDisplay = stack;
+            } else {
+                throw new QuestFormatException("gui-display has invalid item format", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".redo-delay")) {
+            // Legacy
+            if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
+                quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000);
+            } else {
+                throw new QuestFormatException("redo-delay is not a number", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".action")) {
+            final Action action = loadAction(config.getString("quests." + questKey + ".action"));
+            if (action != null) {
+                quest.initialAction = action;
+            } else {
+                throw new QuestFormatException("action failed to load", questKey);
+            }
+        } else if (config.contains("quests." + questKey + ".event")) {
+            final Action action = loadAction(config.getString("quests." + questKey + ".event"));
+            if (action != null) {
+                quest.initialAction = action;
+            } else {
+                throw new QuestFormatException("action failed to load", questKey);
+            }
+        }
+        return quest;
+    }
+    
     @SuppressWarnings("unchecked")
     private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey) throws QuestFormatException {
         final Rewards rews = quest.getRewards();
