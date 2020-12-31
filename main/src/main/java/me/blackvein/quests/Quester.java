@@ -385,7 +385,9 @@ public class Quester implements Comparable<Quester> {
                 return questData.get(q);
             }
         }
-        addEmptiesFor(quest, currentQuests.get(quest));
+        if (currentQuests.get(quest) != null) {
+            addEmptiesFor(quest, currentQuests.get(quest));
+        }
         return new QuestData(this);
     }
     
