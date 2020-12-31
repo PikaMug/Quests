@@ -1976,7 +1976,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                 temp.add(getQuest(name));
                             } else {
                                 throw new QuestFormatException("Requirement quest-blocks has unknown quest name " 
-                                        + failedQuest, questKey);
+                                        + name + ", place it earlier in file so it loads first", questKey);
                             }
                             done = true;
                             break;
@@ -2012,7 +2012,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                 temp.add(getQuest(name));
                             } else {
                                 throw new QuestFormatException("Requirement quests has unknown quest name " 
-                                        + failedQuest, questKey);
+                                        + name + ", place it earlier in file so it loads first", questKey);
                             }
                             done = true;
                             break;
