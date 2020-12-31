@@ -3167,13 +3167,13 @@ public class Quester implements Comparable<Quester> {
     public FileConfiguration getBaseData() {
         final FileConfiguration data = new YamlConfiguration();
         if (currentQuests.isEmpty() == false) {
-            final ArrayList<String> questNames = new ArrayList<String>();
+            final ArrayList<String> questIds = new ArrayList<String>();
             final ArrayList<Integer> questStages = new ArrayList<Integer>();
             for (final Quest quest : currentQuests.keySet()) {
-                questNames.add(quest.getName());
+                questIds.add(quest.getId());
                 questStages.add(currentQuests.get(quest));
             }
-            data.set("currentQuests", questNames);
+            data.set("currentQuests", questIds);
             data.set("currentStages", questStages);
             data.set("quest-points", questPoints);
             final ConfigurationSection dataSec = data.createSection("questData");
@@ -3437,41 +3437,27 @@ public class Quester implements Comparable<Quester> {
         if (completedQuests.isEmpty()) {
             data.set("completed-Quests", "none");
         } else {
-            final List<String> noDupe = new ArrayList<String>();
-            for (final Quest q : completedQuests) {
-                // TODO use quest IDs instead
-                if (!noDupe.contains(q.getName())) {
-                    noDupe.add(q.getName());
-                }
-            }
-            final String[] completed = new String[noDupe.size()];
-            int index = 0;
-            for (final String s : noDupe) {
-                completed[index] = s;
-                index++;
-            }
-            data.set("completed-Quests", completed);
+            final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
+            data.set("completed-Quests", questIds);
         }
         if (completedTimes.isEmpty() == false) {
-            final List<String> questNames = new LinkedList<String>();
+            final List<String> questIds = new LinkedList<String>();
             final List<Long> questTimes = new LinkedList<Long>();
             for (final Entry<Quest, Long> entry : completedTimes.entrySet()) {
-                // TODO use quest IDs instead
-                questNames.add(entry.getKey().getName());
+                questIds.add(entry.getKey().getId());
                 questTimes.add(entry.getValue());
             }
-            data.set("completedRedoableQuests", questNames);
+            data.set("completedRedoableQuests", questIds);
             data.set("completedQuestTimes", questTimes);
         }
         if (amountsCompleted.isEmpty() == false) {
-            final List<String> questNames = new LinkedList<String>();
+            final List<String> questIds = new LinkedList<String>();
             final List<Integer> questAmts = new LinkedList<Integer>();
             for (final Entry<Quest, Integer> entry : amountsCompleted.entrySet()) {
-                // TODO use quest IDs instead
-                questNames.add(entry.getKey().getName());
+                questIds.add(entry.getKey().getId());
                 questAmts.add(entry.getValue());
             }
-            data.set("amountsCompletedQuests", questNames);
+            data.set("amountsCompletedQuests", questIds);
             data.set("amountsCompleted", questAmts);
         }
         // #getPlayer is faster
