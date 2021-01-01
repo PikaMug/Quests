@@ -2615,45 +2615,47 @@ public class Quester implements Comparable<Quester> {
      */
     public void sayPassword(final Quest quest, final AsyncPlayerChatEvent evt) {
         final ObjectiveType type = ObjectiveType.PASSWORD;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, 1, 1));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        boolean done = false;
-        for (final LinkedList<String> passes : getCurrentStage(quest).passwordPhrases) {
-            done = false;
-            for (final String pass : passes) {
-                if (pass.equalsIgnoreCase(evt.getMessage())) {
-                    evt.setCancelled(true);
-                    final String display = getCurrentStage(quest).passwordDisplays.get(getCurrentStage(quest)
-                            .passwordPhrases.indexOf(passes));
-                    getQuestData(quest).passwordsSaid.put(display, true);
-                    done = true;
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                        finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                new ItemStack(Material.AIR, 1)), null, null, null, null, null, null, display, null);
-                        
-                        // Multiplayer
-                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                            q.getQuestData(quest).passwordsSaid.put(display, true);
-                            q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, 1, 1));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+            
+            boolean done = false;
+            for (final LinkedList<String> passes : getCurrentStage(quest).passwordPhrases) {
+                done = false;
+                for (final String pass : passes) {
+                    if (pass.equalsIgnoreCase(evt.getMessage())) {
+                        evt.setCancelled(true);
+                        final String display = getCurrentStage(quest).passwordDisplays.get(getCurrentStage(quest)
+                                .passwordPhrases.indexOf(passes));
+                        getQuestData(quest).passwordsSaid.put(display, true);
+                        done = true;
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                                     new ItemStack(Material.AIR, 1)), null, null, null, null, null, null, display, null);
-                            return null;
+                            
+                            // Multiplayer
+                            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                                q.getQuestData(quest).passwordsSaid.put(display, true);
+                                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                        new ItemStack(Material.AIR, 1)), null, null, null, null, null, null, display, null);
+                                return null;
+                            });
                         });
-                    });
+                        break;
+                    }
+                }
+                if (done) {
                     break;
                 }
             }
+            
             if (done) {
-                break;
+                final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                        new Objective(type, 1, 1));
+                plugin.getServer().getPluginManager().callEvent(postEvent);
             }
-        }
-        
-        if (done) {
-            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                    new Objective(type, 1, 1));
-            plugin.getServer().getPluginManager().callEvent(postEvent);
-        }
+        });
     }
     
     /**
