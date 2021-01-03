@@ -88,10 +88,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         
         String text = ChatColor.DARK_GREEN + getTitle(context)
                 .replace((String) context.getSessionData(CK.Q_NAME), ChatColor.AQUA 
-                + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN) + "\n";
+                + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i);
         }
         return text;
     }
@@ -375,10 +375,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - "
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - "
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -525,10 +525,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.DARK_GREEN + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }

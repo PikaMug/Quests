@@ -96,34 +96,46 @@ public class SeparatedYamlStorage implements StorageImplementation {
             return null;
         }
         if (data.contains("completedRedoableQuests")) {
-            final List<String> questNames = data.getStringList("completedRedoableQuests");
+            final List<String> questIds = data.getStringList("completedRedoableQuests");
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
             final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
-            for (int i = 0; i < questNames.size(); i++) {
-                if (plugin.getQuest(questNames.get(i)) != null) {
-                    completedTimes.put(plugin.getQuest(questNames.get(i)), questTimes.get(i));
+            for (int i = 0; i < questIds.size(); i++) {
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    completedTimes.put(plugin.getQuestById(questIds.get(i)), questTimes.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
+                    // Legacy
+                    completedTimes.put(plugin.getQuest(questIds.get(i)), questTimes.get(i));
                 }
             }
             quester.setCompletedTimes(completedTimes);
         }
         if (data.contains("amountsCompletedQuests")) {
-            final List<String> questNames = data.getStringList("amountsCompletedQuests");
+            final List<String> questIds = data.getStringList("amountsCompletedQuests");
             final List<Integer> questAmts = data.getIntegerList("amountsCompleted");
             final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
-            for (int i = 0; i < questNames.size(); i++) {
-                if (plugin.getQuest(questNames.get(i)) != null) {
-                    amountsCompleted.put(plugin.getQuest(questNames.get(i)), questAmts.get(i));
+            for (int i = 0; i < questIds.size(); i++) {
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmts.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
+                    // Legacy
+                    amountsCompleted.put(plugin.getQuest(questIds.get(i)), questAmts.get(i));
                 }
             }
             quester.setAmountsCompleted(amountsCompleted);
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final LinkedList<Quest> completedQuests = quester.getCompletedQuests();
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getQuests()) {
-                    if (q.getName().equalsIgnoreCase(s)) {
+                    if (q.getId().equals(s)) {
+                        if (!quester.getCompletedQuests().contains(q)) {
+                            completedQuests.add(q);
+                        }
+                        break;
+                    } else if (q.getName().equalsIgnoreCase(s)) {
+                        // Legacy
                         if (!quester.getCompletedQuests().contains(q)) {
                             completedQuests.add(q);
                         }
@@ -134,14 +146,16 @@ public class SeparatedYamlStorage implements StorageImplementation {
         }
         quester.setCompletedQuests(completedQuests);
         if (data.isString("currentQuests") == false) {
-            final List<String> questNames = data.getStringList("currentQuests");
+            final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
-            // These appear to differ sometimes? That seems bad.
-            final int maxSize = Math.min(questNames.size(), questStages.size());
+            final int maxSize = Math.min(questIds.size(), questStages.size());
             final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
-                if (plugin.getQuest(questNames.get(i)) != null) {
-                    currentQuests.put(plugin.getQuest(questNames.get(i)), questStages.get(i));
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    currentQuests.put(plugin.getQuestById(questIds.get(i)), questStages.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
+                    // Legacy
+                    currentQuests.put(plugin.getQuest(questIds.get(i)), questStages.get(i));
                 }
             }
             quester.setCurrentQuests(currentQuests);

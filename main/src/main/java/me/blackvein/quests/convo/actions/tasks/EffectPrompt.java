@@ -125,10 +125,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -139,10 +139,15 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return new EffectSoundListPrompt(context);
         case 2:
-            final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
-            selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-            plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
-            return new EffectExplosionPrompt(context);
+            if (context.getForWhom() instanceof Player) {
+                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
+                return new EffectExplosionPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                return new EffectPrompt(context);
+            }
         case 3:
             return new ActionMainPrompt(context);
         default:
@@ -239,10 +244,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
     
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -258,10 +263,15 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustAddEffects"));
                     return new EffectSoundListPrompt(context);
                 } else {
-                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                    selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-                    plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                    return new EffectSoundLocationPrompt(context);
+                    if (context.getForWhom() instanceof Player) {
+                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                        plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
+                        return new EffectSoundLocationPrompt(context);
+                    } else {
+                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                        return new EffectSoundListPrompt(context);
+                    }
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorEffectsCleared"));
@@ -332,7 +342,6 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (MiscUtil.getProperEffect(input) != null) {
                     LinkedList<String> effects;
@@ -343,19 +352,23 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     }
                     effects.add(MiscUtil.getProperEffect(input).name());
                     context.setSessionData(CK.E_EFFECTS, effects);
-                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                    selectedEffectLocations.remove(player.getUniqueId());
-                    plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
+                    if (context.getForWhom() instanceof Player) {
+                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                        selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
+                        plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
+                    }
                     return new EffectSoundListPrompt(context);
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidEffect"));
                     return new EffectSoundPrompt(context);
                 }
             } else {
-                final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                selectedEffectLocations.remove(player.getUniqueId());
-                plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
+                if (context.getForWhom() instanceof Player) {
+                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                    selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
+                    plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
+                }
                 return new EffectSoundListPrompt(context);
             }
         }

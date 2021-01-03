@@ -207,10 +207,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -239,10 +239,15 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         case 7:
             return new PlayerHealthPrompt(context);
         case 8:
-            final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
-            selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-            plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-            return new PlayerTeleportPrompt(context);
+            if (context.getForWhom() instanceof Player) {
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
+                return new PlayerTeleportPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                return new PlayerPrompt(context);
+            }
         case 9:
             return new PlayerCommandsPrompt(context);
         case 10:
@@ -379,10 +384,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            String text = ChatColor.GOLD + getTitle(context);
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -504,10 +509,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            String text = ChatColor.GOLD + getTitle(context);
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }

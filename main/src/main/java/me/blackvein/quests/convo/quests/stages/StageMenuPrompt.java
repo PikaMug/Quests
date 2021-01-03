@@ -82,10 +82,10 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
+        String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -";
         for (int i = 1; i <= (getStages(context) + size); i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i);
         }
         return text;
     }

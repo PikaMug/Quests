@@ -179,10 +179,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
+        String text = ChatColor.AQUA + "- " + getTitle(context) + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -301,10 +301,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -415,10 +415,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -529,10 +529,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -643,10 +643,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }
@@ -757,10 +757,10 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -\n";
+            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
             }
             return text;
         }

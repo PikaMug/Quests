@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
@@ -90,37 +90,37 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     public String getPromptText(final ConversationContext context) {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
-        String text = ChatColor.GOLD + getTitle(context) + "\n";
+        String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i);
         }
         return text;
     }
 
     @Override
     protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
-        final Player player = (Player) context.getForWhom();
+        final CommandSender cs = (CommandSender) context.getForWhom();
         switch (input.intValue()) {
         case 1:
-            if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.create")) {
+            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.create")) {
                 return new QuestSelectCreatePrompt(context);
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new QuestMenuPrompt(context);
             }
         case 2:
-            if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.edit")) {
+            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.edit")) {
                 return new QuestSelectEditPrompt(context);
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new QuestMenuPrompt(context);
             }
         case 3:
-            if (player.hasPermission("quests.editor.*") || player.hasPermission("quests.editor.delete")) {
+            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.delete")) {
                 return new QuestSelectDeletePrompt(context);
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new QuestMenuPrompt(context);
             }
         case 4:
@@ -203,7 +203,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("questEditorEdit");
+            return Lang.get("questEditTitle");
         }
         
         @Override
@@ -213,11 +213,11 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            String text = ChatColor.GOLD + getTitle(context);
             for (final Quest q : plugin.getQuests()) {
-                text += ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName() + "\n";
+                text += "\n" + ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName();
             }
-            return text + ChatColor.YELLOW + getQueryText(context);
+            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override

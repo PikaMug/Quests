@@ -47,7 +47,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandExecutor;
@@ -218,8 +217,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
-        if (depends.getCitizens() != null) {
-            getServer().getPluginManager().registerEvents(npcListener, this);
+        if (depends.getCitizens() != null) { // #getCitizens takes care of registering npcListener
             if (settings.canNpcEffects()) {
                 getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
             }
@@ -644,15 +642,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 loadConditions();
                 getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
-                for (final OfflinePlayer p : getServer().getOfflinePlayers()) {
-                    final Quester quester = new Quester(Quests.this, p.getUniqueId());
+                for (final Player p : getServer().getOnlinePlayers()) {
+                    final Quester quester =  new Quester(Quests.this, p.getUniqueId());
                     if (quester.loadData() == false) {
                         quester.saveData();
                     }
-                    if (p.isOnline()) {
-                        // Workaround for issues with the compass on fast join
-                        quester.findCompassTarget();
-                    }
+                    // Workaround for issues with the compass on fast join
+                    quester.findCompassTarget();
                     questers.add(quester);
                 }
                 if (depends.getCitizens() != null) {
@@ -663,12 +659,87 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                 }
                 loadModules();
+                importQuests();
                 if (getSettings().canDisableCommandFeedback()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
                 }
                 loading = false;
             }
         }, ticks);
+    }
+    
+    private void importQuests() {
+        final File f = new File(this.getDataFolder(), "import");
+        if (f.exists() && f.isDirectory()) {
+            final File[] imports = f.listFiles();
+            if (imports != null) {
+                for (final File file : imports) {
+                    if (file.isDirectory() == false && file.getName().endsWith(".yml")) {
+                        importQuest(file);
+                    }
+                }
+            }
+        } else {
+            f.mkdir();
+        }
+    }
+    
+    private void importQuest(final File file) {
+        FileConfiguration config = null;
+        try {
+            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        if (config != null) {
+            final ConfigurationSection questsSection = config.getConfigurationSection("quests");
+            if (questsSection == null) {
+                getLogger().severe("Missing \'quests\' section marker, canceled import of file " + file.getName());
+                return;
+            }
+            int count = 0;
+            for (final String questKey : questsSection.getKeys(false)) {
+                try {
+                    for (final Quest oq : getQuests()) {
+                        if (oq.getId().equals(questKey)) {
+                            throw new QuestFormatException("id already exists", questKey);
+                        }
+                    }
+                    final Quest quest = loadQuest(config, questKey);
+                    if (config.contains("quests." + questKey + ".requirements")) {
+                        loadQuestRequirements(config, questsSection, quest, questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".planner")) {
+                        loadQuestPlanner(config, questsSection, quest, questKey);
+                    }
+                    if (config.contains("quests." + questKey + ".options")) {
+                        loadQuestOptions(config, questsSection, quest, questKey);
+                    }
+                    quest.plugin = this;
+                    loadQuestStages(quest, config, questKey);
+                    loadQuestRewards(config, quest, questKey);
+                    quests.add(quest);
+                    count++;
+                } catch (final QuestFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final StageFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final ActionFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final ConditionFormatException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+            }
+            if (count > 0) {
+                getLogger().info("Imported " + count + " Quests from " + file.getName());
+            }
+        } else {
+            getLogger().severe("Unable to import quest file " + file.getName());
+        }
     }
 
     /**
@@ -840,8 +911,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "break") + " <item>"
-                            + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "break");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -857,8 +933,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "damage") + " <item>"
-                            + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "damage");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -874,8 +955,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksPlaced) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "place") + " <item>"
-                            + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "place");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -891,8 +977,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksUsed) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "use") + " <item>"
-                            + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "use");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -908,8 +999,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final ItemStack e2 : data.blocksCut) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "cut") + " <item>"
-                            + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    String message = color + Lang.get(quester.getPlayer(), "cut");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
+                    }
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -928,8 +1024,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "craftItem") + color + ": " + crafted + "/"
-                    + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "craftItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += color + ": " + crafted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -947,8 +1048,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "smeltItem") + color + ": " + smelted + "/"
-                    + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "smeltItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += color + ": " + smelted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -966,8 +1072,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "enchItem") + color + ": " + enchanted + "/"
-                    + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "enchItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += color + ": " + enchanted + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -992,8 +1103,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "brewItem") + color + ": " + brewed + "/"
-                    + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "brewItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += color + ": " + brewed + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1018,8 +1134,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             final int amt = is.getAmount();
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "consumeItem") + color + ": " + consumed + "/"
-                    + is.getAmount();
+            String message = color + Lang.get(quester.getPlayer(), "consumeItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += color + ": " + consumed + "/" + is.getAmount();
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1032,8 +1153,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.cowsToMilk != null) {
             final ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "milkCow")
-                    + color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            String message = color + Lang.get(quester.getPlayer(), "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.cowsToMilk);
+            } else {
+                // Legacy
+                message += color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1041,8 +1167,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.fishToCatch != null) {
             final ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "catchFish")
-                    + color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+            String message = color + Lang.get(quester.getPlayer(), "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.fishToCatch);
+            } else {
+                // Legacy
+                message += color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1058,16 +1189,29 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
                         String message = "";
                         if (stage.locationsToKillWithin.isEmpty()) {
-                            message = color + Lang.get(quester.getPlayer(), "kill") + " "
-                                    + ChatColor.AQUA + "<mob>" + color + ": "
-                                    + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2)))
-                                    + "/" + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            message = color + Lang.get(quester.getPlayer(), "kill");
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                // Legacy
+                                message += ChatColor.AQUA + " <mob>" + color + ": "
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
                         } else {
-                            message = color + Lang.get(quester.getPlayer(), "killAtLocation") + color + ": "
-                                    + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/"
-                                    + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                            message = message.replace("<location>",
+                            message = color + Lang.get(quester.getPlayer(), "killAtLocation");
+                            message = message.replace("<location>", 
                                     stage.killNames.get(stage.mobsToKill.indexOf(e)));
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                message += color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
                         }
                         if (depends.getPlaceholderApi() != null) {
                             message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
@@ -1083,8 +1227,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (stage.playersToKill != null) {
             final ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "killPlayer")
-                    + color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+            String message = color + Lang.get(quester.getPlayer(), "killPlayer");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/" + stage.playersToKill);
+            } else {
+                // Legacy
+                message += color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1100,9 +1249,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final Integer npc = stage.itemDeliveryTargets.get(index);
             index++;
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(quester.getPlayer(), "deliver")
-                    + color + ": " + delivered + "/" + toDeliver;
-            message = message.replace("<npc>", depends.getNPCName(npc));
+            String message = color + Lang.get(quester.getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
+            } else {
+                // Legacy
+                message += color + ": " + delivered + "/" + toDeliver;
+            }
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1117,8 +1270,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             for (final Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
                 if (e.getKey().equals(n)) {
                     final ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "talkTo");
-                    message = message.replace("<npc>", depends.getNPCName(n));
+                    String message = color + Lang.get(quester.getPlayer(), "talkTo")
+                            .replace("<npc>", depends.getNPCName(n));
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
@@ -1134,9 +1287,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2))
                                 < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false
                                 ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + Lang.get(quester.getPlayer(), "kill") + " " + depends.getNPCName(n)
-                                + color + " " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/"
-                                + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+                        String message = color + Lang.get(quester.getPlayer(), "kill");
+                        if (message.contains("<mob>")) {
+                            message = message.replace("<mob>", depends.getNPCName(n));
+                        } else {
+                            message += " " + depends.getNPCName(n);
+                        }
+                        if (message.contains("<count>")) {
+                            message = message.replace("<count>", "" + color 
+                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)));
+                        } else {
+                            // Legacy
+                            message += color + ": " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+                        }
                         if (depends.getPlaceholderApi() != null) {
                             message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                         }
@@ -1148,9 +1313,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (final Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
             for (final Entry<EntityType, Integer> e2 : data.mobsTamed.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    final ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    final String message = color + Lang.get(quester.getPlayer(), "tame") + " " + "<mob>"
-                            + color + ": " + e2.getValue() + "/" + e.getValue();
+                    final ChatColor color = e2.getValue() < e.getValue() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(quester.getPlayer(), "tame");
+                    if (!message.contains("<mob>")) {
+                        message += " <mob>";
+                    }
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
+                    } else {
+                        // Legacy
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
                     if (getSettings().canTranslateNames()) {
                         localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
                     } else {
@@ -1163,11 +1336,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (final Entry<DyeColor, Integer> e : stage.sheepToShear.entrySet()) {
             for (final Entry<DyeColor, Integer> e2 : data.sheepSheared.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    final ChatColor color = e2.getValue() < e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(quester.getPlayer(), "shearSheep")
-                            + color + ": " + e2.getValue() + "/" + e.getValue();
-                    message = message.replace("<color>",
-                            MiscUtil.getPrettyDyeColorName(MiscUtil.getProperDyeColor(e.getKey().name())));
+                    final ChatColor color = e2.getValue() < e.getValue() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(quester.getPlayer(), "shearSheep");
+                    message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(e.getKey()));
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
+                    } else {
+                        // Legacy
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
                     quester.getPlayer().sendMessage(message);
                 }
             }
@@ -1352,12 +1529,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     for (final Quester quester : questers) {
                         quester.saveData();
                     }
-                    quests.clear();
-                    actions.clear();
-                    conditions.clear();
                     Lang.clear();
                     settings.init();
                     Lang.init(Quests.this);
+                    quests.clear();
+                    actions.clear();
+                    conditions.clear();
                     if (!pullQuestsFromSQLAndOverwriteFile()) {
                         getLogger().severe("Something went wrong with pulling quests from MySQL!");
                     }
@@ -1371,7 +1548,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         }
                     }
                     loadModules();
-
+                    importQuests();
                     if (callback != null) {
                         Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
 
@@ -1403,7 +1580,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Load quests from file
      */
     public void loadQuests() {
-        boolean failedToLoad;
         boolean needsSaving = false;
         FileConfiguration config = null;
         final File file = new File(this.getDataFolder(), "quests.yml");
@@ -1426,105 +1602,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    final Quest quest = new Quest();
-                    failedToLoad = false;
-                    quest.id = questKey;
-                    if (config.contains("quests." + questKey + ".name")) {
-                        quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
-                    } else {
-                        throw new QuestFormatException("name is missing", questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".ask-message")) {
-                        quest.description = ConfigUtil.parseString(config.getString("quests." + questKey
-                                + ".ask-message"), quest);
-                    } else {
-                        throw new QuestFormatException("ask-message is missing", questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".finish-message")) {
-                        quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey
-                                + ".finish-message"), quest);
-                    } else {
-                        throw new QuestFormatException("finish-message is missing", questKey);
-                    }
-                    if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
-                        if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id"))
-                                != null) {
-                            quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey
-                                    + ".npc-giver-id"));
-                            questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey
-                                    + ".npc-giver-id")));
-                        } else {
-                            throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".block-start")) {
-                        final Location location = ConfigUtil.getLocation(config.getString("quests." + questKey
-                                + ".block-start"));
-                        if (location != null) {
-                            quest.blockStart = location;
-                        } else {
-                            throw new QuestFormatException("block-start has invalid location format", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".region")
-                            && getDependencies().getWorldGuardApi() != null) {
-                        final String region = config.getString("quests." + questKey + ".region");
-                        boolean exists = false;
-                        for (final World world : getServer().getWorlds()) {
-                            if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
-                                if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
-                                    quest.regionStart = region;
-                                    exists = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!exists) {
-                            throw new QuestFormatException("region has invalid WorldGuard region name", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".gui-display")) {
-                        ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
-                        if (stack == null) {
-                            // Legacy
-                            final String item = config.getString("quests." + questKey + ".gui-display");
-                            try {
-                                stack = ItemUtil.readItemStack(item);
-                            } catch (final Exception e) {
-                                throw new QuestFormatException("items has invalid formatting for " + item, questKey);
-                            }
-                        }
-                        if (stack != null) {
-                            quest.guiDisplay = stack;
-                        } else {
-                            throw new QuestFormatException("gui-display has invalid item format", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".redo-delay")) {
-                        // Legacy
-                        if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
-                            quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000);
-                        } else {
-                            throw new QuestFormatException("redo-delay is not a number", questKey);
-                        }
-                    }
-                    if (config.contains("quests." + questKey + ".action")) {
-                        final Action act = loadAction(config.getString("quests." + questKey + ".action"));
-                        if (act != null) {
-                            quest.initialAction = act;
-                        } else {
-                            throw new QuestFormatException("action failed to load", questKey);
-                        }
-                    } else if (config.contains("quests." + questKey + ".event")) {
-                        Action action = null;
-
-                        action = loadAction(config.getString("quests." + questKey + ".event"));
-                        if (action != null) {
-                            quest.initialAction = action;
-                        } else {
-                            throw new QuestFormatException("action failed to load", questKey);
-                        }
-                    }
+                    final Quest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -1546,9 +1624,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             e.printStackTrace();
                         }
                     }
-                    if (failedToLoad == true) {
-                        getLogger().log(Level.SEVERE, "Failed to load Quest \"" + questKey + "\". Skipping.");
-                    }
                 } catch (final QuestFormatException e) {
                     e.printStackTrace();
                     continue;
@@ -1568,6 +1643,107 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
+    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
+            ActionFormatException {
+        final Quest quest = new Quest();
+        quest.id = questKey;
+        if (config.contains("quests." + questKey + ".name")) {
+            quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
+        } else {
+            throw new QuestFormatException("name is missing", questKey);
+        }
+        if (config.contains("quests." + questKey + ".ask-message")) {
+            quest.description = ConfigUtil.parseString(config.getString("quests." + questKey 
+                    + ".ask-message"), quest);
+        } else {
+            throw new QuestFormatException("ask-message is missing", questKey);
+        }
+        if (config.contains("quests." + questKey + ".finish-message")) {
+            quest.finished = ConfigUtil.parseString(config.getString("quests." + questKey 
+                    + ".finish-message"), quest);
+        } else {
+            throw new QuestFormatException("finish-message is missing", questKey);
+        }
+        if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
+            if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
+                    != null) {
+                quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
+                        + ".npc-giver-id"));
+                questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
+                        + ".npc-giver-id")));
+            } else {
+                throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".block-start")) {
+            final Location location = ConfigUtil.getLocation(config.getString("quests." + questKey 
+                    + ".block-start"));
+            if (location != null) {
+                quest.blockStart = location;
+            } else {
+                throw new QuestFormatException("block-start has invalid location format", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".region")
+                && getDependencies().getWorldGuardApi() != null) {
+            final String region = config.getString("quests." + questKey + ".region");
+            boolean exists = false;
+            for (final World world : getServer().getWorlds()) {
+                if (getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
+                    if (getDependencies().getWorldGuardApi().getRegionManager(world).hasRegion(region)) {
+                        quest.regionStart = region;
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (!exists) {
+                throw new QuestFormatException("region has invalid WorldGuard region name", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".gui-display")) {
+            ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
+            if (stack == null) {
+                // Legacy
+                final String item = config.getString("quests." + questKey + ".gui-display");
+                try {
+                    stack = ItemUtil.readItemStack(item);
+                } catch (final Exception e) {
+                    throw new QuestFormatException("items has invalid formatting for " + item, questKey);
+                }
+            }
+            if (stack != null) {
+                quest.guiDisplay = stack;
+            } else {
+                throw new QuestFormatException("gui-display has invalid item format", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".redo-delay")) {
+            // Legacy
+            if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
+                quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000);
+            } else {
+                throw new QuestFormatException("redo-delay is not a number", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".action")) {
+            final Action action = loadAction(config.getString("quests." + questKey + ".action"));
+            if (action != null) {
+                quest.initialAction = action;
+            } else {
+                throw new QuestFormatException("action failed to load", questKey);
+            }
+        } else if (config.contains("quests." + questKey + ".event")) {
+            final Action action = loadAction(config.getString("quests." + questKey + ".event"));
+            if (action != null) {
+                quest.initialAction = action;
+            } else {
+                throw new QuestFormatException("action failed to load", questKey);
+            }
+        }
+        return quest;
+    }
+    
     @SuppressWarnings("unchecked")
     private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey) throws QuestFormatException {
         final Rewards rews = quest.getRewards();
@@ -1819,7 +1995,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(getQuest(name));
+                            if (getQuest(name) != null) {
+                                temp.add(getQuest(name));
+                            } else {
+                                throw new QuestFormatException("Requirement quest-blocks has unknown quest name " 
+                                        + name + ", place it earlier in file so it loads first", questKey);
+                            }
                             done = true;
                             break;
                         }
@@ -1850,7 +2031,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final String name2 = config.getString("quests." + id + ".name");
                         if (name2.equalsIgnoreCase(name)
                                 || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                            temp.add(getQuest(name));
+                            if (getQuest(name) != null) {
+                                temp.add(getQuest(name));
+                            } else {
+                                throw new QuestFormatException("Requirement quests has unknown quest name " 
+                                        + name + ", place it earlier in file so it loads first", questKey);
+                            }
                             done = true;
                             break;
                         }
@@ -1863,7 +2049,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 reqs.setNeededQuests(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quests has invalid quest name " + failedQuest, questKey);
+                    throw new QuestFormatException("Requirement quests has invalid quest name " 
+                            + failedQuest, questKey);
                 }
             } else {
                 throw new QuestFormatException("Requirement quests is not a list of quest names", questKey);
@@ -2084,7 +2271,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int breakIndex = 0;
             for (final String s : breakNames) {
                 ItemStack is;
-                if (breakDurability.get(breakIndex) != -1) {
+                if (breakIndex < breakDurability.size() && breakDurability.get(breakIndex) != -1) {
                     is = ItemUtil.processItemStack(s, breakAmounts.get(breakIndex), breakDurability.get(breakIndex));
                 } else {
                     // Legacy
@@ -2134,8 +2321,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int damageIndex = 0;
             for (final String s : damageNames) {
                 ItemStack is;
-                if (damageDurability.get(damageIndex) != -1) {
-                    is = ItemUtil.processItemStack(s, damageAmounts.get(damageIndex),
+                if (damageIndex < damageDurability.size() && damageDurability.get(damageIndex) != -1) {
+                    is = ItemUtil.processItemStack(s, damageAmounts.get(damageIndex), 
                             damageDurability.get(damageIndex));
                 } else {
                     // Legacy
@@ -2183,7 +2370,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int placeIndex = 0;
             for (final String s : placeNames) {
                 ItemStack is;
-                if (placeDurability.get(placeIndex) != -1) {
+                if (placeIndex < placeDurability.size() && placeDurability.get(placeIndex) != -1) {
                     is = ItemUtil.processItemStack(s, placeAmounts.get(placeIndex), placeDurability.get(placeIndex));
                 } else {
                     // Legacy
@@ -2231,7 +2418,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int useIndex = 0;
             for (final String s : useNames) {
                 ItemStack is;
-                if (useDurability.get(useIndex) != -1) {
+                if (useIndex < useDurability.size() && useDurability.get(useIndex) != -1) {
                     is = ItemUtil.processItemStack(s, useAmounts.get(useIndex), useDurability.get(useIndex));
                 } else {
                     // Legacy
@@ -2279,7 +2466,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int cutIndex = 0;
             for (final String s : cutNames) {
                 ItemStack is;
-                if (cutDurability.get(cutIndex) != -1) {
+                if (cutIndex < cutDurability.size() && cutDurability.get(cutIndex) != -1) {
                     is = ItemUtil.processItemStack(s, cutAmounts.get(cutIndex), cutDurability.get(cutIndex));
                 } else {
                     // Legacy
@@ -4081,11 +4268,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * @return True if the Data was successfully written to a new File
      */
     public boolean pullQuestsFromSQLAndOverwriteFile(SqlStorage.SQL_TYPE type) {
-        FileConfiguration confg = this.pullQuestsFromSQL(SqlStorage.SQL_TYPE.QUESTS);
+        FileConfiguration confg = this.pullQuestsFromSQL(type);
         if (confg == null) {
             return false;
         }
-        File file = new File(this.getDataFolder(), SqlStorage.SQL_TYPE.QUESTS.toString().toLowerCase() + ".yml");
+        File file = new File(this.getDataFolder(), type.toString().toLowerCase() + ".yml");
         try {
             if (file.exists()) {
                 if (file.delete()) {

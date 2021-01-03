@@ -34,6 +34,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.RomanNumeral;
@@ -68,7 +69,8 @@ public class NpcListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             boolean delivery = false;
             for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.getCurrentStage(quest).containsObjective("deliverItem") && player.getItemInHand() != null) {
+                if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM) 
+                        && player.getItemInHand() != null) {
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
                     final LinkedList<Integer> matches = new LinkedList<Integer>();
@@ -191,7 +193,7 @@ public class NpcListener implements Listener {
             if (plugin.getQuestNpcs().contains(evt.getNPC()) && delivery == false) {
                 boolean hasObjective = false;
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                    if (quester.getCurrentStage(quest).containsObjective("talkToNPC")) {
+                    if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
                         if (quester.getQuestData(quest) != null 
                                 && quester.getQuestData(quest).citizensInteracted.containsKey(evt.getNPC().getId()) 
                                 && quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId()) == false) {
@@ -255,74 +257,6 @@ public class NpcListener implements Listener {
                     } else if (npcQuests.isEmpty()) {
                         evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
                     }
-                        
-                      /*if (!quester.getCompletedQuests().contains(q.getName())) {
-                            if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
-                                    || plugin.getSettings().getMaxQuests() < 1) {
-                                quester.setQuestToTake(q.getName());
-                                if (!plugin.getSettings().canAskConfirmation()) {
-                                    quester.takeQuest(q, false);
-                                } else {
-                                    if (q.getGUIDisplay() != null) {
-                                        quester.showGUIDisplay(evt.getNPC(), npcQuests);
-                                    } else {
-                                        for (String msg : extracted(quester).split("<br>")) {
-                                            player.sendMessage(msg);
-                                        }
-                                        plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-                                    }
-                                }
-                            } else if (quester.getCurrentQuests().containsKey(q) == false) {
-                                String msg = Lang.get(player, "questMaxAllowed");
-                                msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-                                player.sendMessage(ChatColor.YELLOW + msg);
-                            }
-                        } else if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
-                                || plugin.getSettings().getMaxQuests() < 1) {
-                            if (quester.getCooldownDifference(q) > 0) {
-                                String early = Lang.get(player, "questTooEarly");
-                                early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                                early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                        + MiscUtil.getTime(quester.getCooldownDifference(q)) + ChatColor.YELLOW);
-                                player.sendMessage(ChatColor.YELLOW + early);
-                            } else if (q.getPlanner().getCooldown() < 0) {
-                                String completed = Lang.get(player, "questAlreadyCompleted");
-                                completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() 
-                                        + ChatColor.YELLOW);
-                                player.sendMessage(ChatColor.YELLOW + completed);
-                            } else {
-                                quester.setQuestToTake(q.getName());
-                                if (!plugin.getSettings().canAskConfirmation()) {
-                                    quester.takeQuest(q, false);
-                                } else {
-                                    if (q.getGUIDisplay() != null) {
-                                        quester.showGUIDisplay(evt.getNPC(), npcQuests);
-                                    } else {
-                                        for (String msg : extracted(quester).split("<br>")) {
-                                            player.sendMessage(msg);
-                                        }
-                                        plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-                                    }
-                                }
-                            }
-                        } else if (quester.getCurrentQuests().containsKey(q) == false) {
-                            String msg = Lang.get(player, "questMaxAllowed");
-                            msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-                            player.sendMessage(ChatColor.YELLOW + msg);
-                        }
-                    } else if (npcQuests.isEmpty() == false && npcQuests.size() > 1) {
-                            if (hasAtLeastOneGUI) {
-                                quester.showGUIDisplay(evt.getNPC(), npcQuests);
-                            } else {
-                                Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
-                                c.getContext().setSessionData("npcQuests", npcQuests);
-                                c.getContext().setSessionData("npc", evt.getNPC().getName());
-                                c.begin();
-                            }
-                            return;
-                    } else if (npcQuests.isEmpty()) {
-                        evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
-                    }*/
                 }
             }
         }
@@ -355,6 +289,7 @@ public class NpcListener implements Listener {
                     = (EntityDamageByEntityEvent) evt.getNPC().getEntity().getLastDamageCause();
             final Entity damager = damageEvent.getDamager();
             if (damager != null) {
+                final ObjectiveType type = ObjectiveType.KILL_NPC;
                 if (damager instanceof Projectile) {
                     if (evt.getNPC().getEntity().getLastDamageCause().getEntity() instanceof Player) {
                         final Player player = (Player) evt.getNPC().getEntity().getLastDamageCause().getEntity();
@@ -367,7 +302,7 @@ public class NpcListener implements Listener {
                         if (okay) {
                             final Quester quester = plugin.getQuester(player.getUniqueId());
                             for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                                if (quester.getCurrentStage(quest).containsObjective("killNPC")) {
+                                if (quester.getCurrentStage(quest).containsObjective(type)) {
                                     quester.killNPC(quest, evt.getNPC());
                                 }
                             }
@@ -384,7 +319,7 @@ public class NpcListener implements Listener {
                         final Player player = (Player) damager;
                         final Quester quester = plugin.getQuester(player.getUniqueId());
                         for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                            if (quester.getCurrentStage(quest).containsObjective("killNPC")) {
+                            if (quester.getCurrentStage(quest).containsObjective(type)) {
                                 quester.killNPC(quest, evt.getNPC());
                             }
                         }

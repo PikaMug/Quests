@@ -127,6 +127,7 @@ public class Dependencies {
         if (citizens == null && isPluginAvailable("Citizens")) {
             try {
                 citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+                plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
                 plugin.getLogger().info("Successfully linked Quests with Citizens " 
                         + citizens.getDescription().getVersion());
             } catch (final Exception e) {

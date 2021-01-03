@@ -160,10 +160,10 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
                 .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
-                + ChatColor.DARK_AQUA) + "\n";
+                + ChatColor.DARK_AQUA);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -228,8 +228,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             }
             long delay;
             try {
-                final int i = Integer.parseInt(input);
-                delay = i * 1000;
+                final long l = Long.parseLong(input);
+                delay = l * 1000;
                 if (delay < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
                 } else {
@@ -279,8 +279,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             }
             long delay;
             try {
-                final int i = Integer.parseInt(input);
-                delay = i * 1000;
+                final long l = Long.parseLong(input);
+                delay = l * 1000;
                 if (delay < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
                 } else {
@@ -369,7 +369,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
     private String getPrettyDate(final String formattedDate) {
         final Calendar cal = Calendar.getInstance();
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/MM");
         final SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
         final String[] date = formattedDate.split(":");
         final int day = Integer.valueOf(date[0]);

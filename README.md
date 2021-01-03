@@ -1,19 +1,30 @@
-# Quests [![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests) [![Discord](https://discordapp.com/api/guilds/506992958894243860/widget.png?style=shield)](https://discordapp.com/invite/d56CQ6e)
+<img src="https://i.imgur.com/reQIzd0.png" alt="Logo" align="right">
+<div align="center">
+  <h1>An extensive questing system</h1>
+  <h3>Quests is the easy-to-use, open-source plugin for the creation and execution of quests on Minecraft servers. Players can take on multiple quests simultaneously, completing them for stellar rewards and unlockables.</h3>
 
-Quests plugin for Spigot. This work depends on contributions from coders like you!
+[![Discord](https://img.shields.io/discord/506992958894243860)](https://discordapp.com/invite/d56CQ6e)
+[![Spigot](https://img.shields.io/spiget/downloads/3711)](https://www.spigotmc.org/resources/quests.3711/)
+[![Build Status](https://ci.codemc.org/job/PikaMug/job/Quests/badge/icon)](https://ci.codemc.org/job/PikaMug/job/Quests/)
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/translate-quests/localized.svg)](https://crowdin.com/project/translate-quests)
+</div>
 
-## Download
+Download
+---
 
-Distributed exclusively through Spigot: https://www.spigotmc.org/resources/quests.3711/
+Distributed exclusively through SpigotMC: https://www.spigotmc.org/resources/quests.3711/
 
-## Usage
+Usage
+---
 
 Documentation can be found in the Wiki: https://github.com/PikaMug/Quests/wiki
 
-## Compile
+Compile
+---
 
 Requires Java 8 and Maven: https://github.com/PikaMug/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
 
-## Localization
+Translate
+---
 
-Help translate Quests into your language: https://crowdin.com/project/translate-quests
+Help localize Quests into your language: https://crowdin.com/project/translate-quests

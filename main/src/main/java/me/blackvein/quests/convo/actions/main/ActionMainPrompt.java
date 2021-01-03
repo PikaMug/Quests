@@ -181,10 +181,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         plugin.getServer().getPluginManager().callEvent(event);
         
         String text = ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": " + ChatColor.AQUA) 
-                + ChatColor.GOLD + " -\n";
+                + ChatColor.GOLD + " -";
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -1006,17 +1006,17 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context);
             if (modified.isEmpty() == false) {
-                text += ChatColor.RED + Lang.get("eventEditorModifiedNote") + "\n";
+                text += "\n" + ChatColor.RED + Lang.get("eventEditorModifiedNote");
                 for (final String s : modified) {
-                    text += ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s + "\n";
+                    text += "\n" + ChatColor.GRAY + "    - " + ChatColor.DARK_RED + s;
                 }
-                text += ChatColor.RED + Lang.get("eventEditorForcedToQuit") + "\n";
+                text += "\n" + ChatColor.RED + Lang.get("eventEditorForcedToQuit");
             }
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i);
             }
             return text;
         }
@@ -1084,10 +1084,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.YELLOW + getQueryText(context) + "\n";
+            String text = ChatColor.YELLOW + getQueryText(context);
             for (int i = 1; i <= size; i++) {
-                text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + "\n";
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i);
             }
             return text;
         }

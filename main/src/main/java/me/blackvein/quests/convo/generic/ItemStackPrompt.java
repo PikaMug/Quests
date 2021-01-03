@@ -156,33 +156,38 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.GOLD + getTitle(context) + "\n";
+        String text = ChatColor.GOLD + getTitle(context);
         if (context.getSessionData("tempName") != null) {
             final String stackData = getItemData(context);
             if (stackData != null) {
-                text += stackData;
+                text += "\n" + stackData;
                 if (context.getSessionData("tempMeta") != null) {
-                    final LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
+                    final LinkedHashMap<String, Object> map 
+                            = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
                     if (!map.isEmpty()) {
                         for (final String key : map.keySet()) {
                             if (key.equals("pages")) {
                                 final List<String> pages = (List<String>) map.get(key);
-                                text += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + pages.size() 
-                                        + "\n";
+                                text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" 
+                                + pages.size();
                             } else {
-                                text += ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" + map.get(key) 
-                                        + "\n";
+                                text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" 
+                            + map.get(key);
                             }
                         }
                     }
                 }
             }
-        } else {
+        } /*else {
             text += "\n";
+        }*/
+        int start = 0;
+        if (!(context.getForWhom() instanceof Player)) {
+            start = 1;
         }
-        for (int i = 0; i <= size-1; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+        for (int i = start; i <= size-1; i++) {
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
@@ -196,49 +201,54 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     public Prompt acceptValidatedInput(final ConversationContext context, final Number input, final ItemStack item) {
         switch (input.intValue()) {
         case 0:
-            context.setSessionData("tempMeta", null);
-            
-            final Player player = (Player) context.getForWhom();
-            final ItemStack is = item == null ? player.getItemInHand() : item;
-            if (is == null || is.getType().equals(Material.AIR)) {
-                player.sendMessage(ChatColor.RED + Lang.get("itemCreateNoItem"));
-                return new ItemStackPrompt(context, oldPrompt);
+            if (context.getForWhom() instanceof Player) {
+                context.setSessionData("tempMeta", null);
+                
+                final Player player = (Player) context.getForWhom();
+                final ItemStack is = item == null ? player.getItemInHand() : item;
+                if (is == null || is.getType().equals(Material.AIR)) {
+                    player.sendMessage(ChatColor.RED + Lang.get("itemCreateNoItem"));
+                    return new ItemStackPrompt(context, oldPrompt);
+                } else {
+                    context.setSessionData("tempName", is.getType().name());
+                    context.setSessionData("tempAmount", is.getAmount());
+                    context.setSessionData("tempData", null);
+                    context.setSessionData("tempEnchantments", null);
+                    context.setSessionData("tempDisplay", null);
+                    context.setSessionData("tempLore", null);
+                    if (is.getDurability() != 0) {
+                        context.setSessionData("tempData", is.getDurability());
+                    }
+                    if (is.getEnchantments() != null && is.getEnchantments().isEmpty() == false) {
+                        context.setSessionData("tempEnchantments", new HashMap<Enchantment, Integer>(is.getEnchantments()));
+                    }
+                    if (is.hasItemMeta()) {
+                        final ItemMeta meta = is.getItemMeta();
+                        if (meta.hasDisplayName()) {
+                            final String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
+                            context.setSessionData("tempDisplay", display);
+                        }
+                        if (meta.hasLore()) {
+                            final LinkedList<String> lore = new LinkedList<String>();
+                            lore.addAll(meta.getLore());
+                            context.setSessionData("tempLore", lore);
+                        }
+                        final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+                        map.putAll(meta.serialize());
+                        if (map.containsKey("lore")) {
+                            map.remove("lore");
+                        }
+                        if (map.containsKey("display-name")) {
+                            map.remove("display-name");
+                        }
+                        if (map != null && !map.isEmpty()) {
+                            context.setSessionData("tempMeta", map);
+                        }
+                    }
+                    return new ItemStackPrompt(context, oldPrompt);
+                }
             } else {
-                context.setSessionData("tempName", is.getType().name());
-                context.setSessionData("tempAmount", is.getAmount());
-                context.setSessionData("tempData", null);
-                context.setSessionData("tempEnchantments", null);
-                context.setSessionData("tempDisplay", null);
-                context.setSessionData("tempLore", null);
-                if (is.getDurability() != 0) {
-                    context.setSessionData("tempData", is.getDurability());
-                }
-                if (is.getEnchantments() != null && is.getEnchantments().isEmpty() == false) {
-                    context.setSessionData("tempEnchantments", new HashMap<Enchantment, Integer>(is.getEnchantments()));
-                }
-                if (is.hasItemMeta()) {
-                    final ItemMeta meta = is.getItemMeta();
-                    if (meta.hasDisplayName()) {
-                        final String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
-                        context.setSessionData("tempDisplay", display);
-                    }
-                    if (meta.hasLore()) {
-                        final LinkedList<String> lore = new LinkedList<String>();
-                        lore.addAll(meta.getLore());
-                        context.setSessionData("tempLore", lore);
-                    }
-                    final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-                    map.putAll(meta.serialize());
-                    if (map.containsKey("lore")) {
-                        map.remove("lore");
-                    }
-                    if (map.containsKey("display-name")) {
-                        map.remove("display-name");
-                    }
-                    if (map != null && !map.isEmpty()) {
-                        context.setSessionData("tempMeta", map);
-                    }
-                }
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 1:
@@ -333,7 +343,6 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     meta = ItemUtil.deserializeItemMeta(meta.getClass(), 
                             (Map<String, Object>) context.getSessionData("tempMeta"));
                 }
-                
                 if (enchs != null) {
                     for (final Entry<Enchantment, Integer> e : enchs.entrySet()) {
                         meta.addEnchant(e.getKey(), e.getValue(), true);

@@ -322,10 +322,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         
         String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
                 .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
-                + ChatColor.DARK_AQUA) + "\n";
+                + ChatColor.DARK_AQUA);
         for (int i = 1; i <= size; i++) {
-            text += getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i) + "\n";
+            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
         }
         return text;
     }
