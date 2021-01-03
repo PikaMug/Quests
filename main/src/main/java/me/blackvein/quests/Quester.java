@@ -2107,7 +2107,7 @@ public class Quester implements Comparable<Quester> {
         if (cowsMilked < cowsToMilk) {
             getQuestData(quest).setCowsMilked(newCowsMilked);
             
-            if (cowsMilked == cowsToMilk) {
+            if (newCowsMilked >= cowsToMilk) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null, null);
                 
@@ -2144,7 +2144,7 @@ public class Quester implements Comparable<Quester> {
         if (fishCaught < fishToCatch) {
             getQuestData(quest).setFishCaught(newFishCaught);
             
-            if (fishCaught == fishToCatch) {
+            if (newFishCaught >= fishToCatch) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null, null);
                 
@@ -2214,7 +2214,7 @@ public class Quester implements Comparable<Quester> {
         final int newMobsKilled = mobsKilled + 1;
         if (mobsKilled < mobsToKill) {
             questData.mobNumKilled.set(index, newMobsKilled);
-            if (newMobsKilled == mobsToKill) {
+            if (newMobsKilled >= mobsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToKill)), null, e, null, 
                         null, null, null, null, null);
@@ -2253,7 +2253,7 @@ public class Quester implements Comparable<Quester> {
         final int newPlayersKilled = playersKilled + 1;
         if (playersKilled < playersToKill) {
             getQuestData(quest).setPlayersKilled(newPlayersKilled);
-            if (playersKilled == playersToKill) {
+            if (newPlayersKilled >= playersToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null, null);
                 
@@ -2421,7 +2421,7 @@ public class Quester implements Comparable<Quester> {
         final int newNpcsKilled = getQuestData(quest).citizenNumKilled.get(index) + 1;
         if (npcsKilled < npcsToKill) {
             getQuestData(quest).citizenNumKilled.set(index, newNpcsKilled);
-            if (npcsKilled == npcsToKill) {
+            if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, npcsToKill)), null, null, null, n, null, null, null, null);
                 
@@ -2550,18 +2550,20 @@ public class Quester implements Comparable<Quester> {
         plugin.getServer().getPluginManager().callEvent(preEvent);
         
         final int newMobsToTame = getQuestData(quest).mobsTamed.get(entity) + 1;
-        if (mobsTamed == mobsToTame) {
+        if (mobsTamed < mobsToTame) {
             getQuestData(quest).mobsTamed.put(entity, newMobsToTame);
-            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                    new ItemStack(Material.AIR, mobsToTame)), null, entity, null, null, null, null, null, null);
-            
-            // Multiplayer
-            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                q.getQuestData(quest).mobsTamed.put(entity, getQuestData(quest).mobsTamed.get(entity));
-                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+            if (newMobsToTame >= mobsToTame) {
+                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, mobsToTame)), null, entity, null, null, null, null, null, null);
-                return null;
-            });
+                
+                // Multiplayer
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                    q.getQuestData(quest).mobsTamed.put(entity, getQuestData(quest).mobsTamed.get(entity));
+                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                            new ItemStack(Material.AIR, mobsToTame)), null, entity, null, null, null, null, null, null);
+                    return null;
+                });
+            }
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2588,18 +2590,20 @@ public class Quester implements Comparable<Quester> {
         plugin.getServer().getPluginManager().callEvent(preEvent);
         
         final int newSheepSheared = getQuestData(quest).sheepSheared.get(color) + 1;
-        if (sheepSheared == sheepToShear) {
+        if (sheepSheared < sheepToShear) {
             getQuestData(quest).sheepSheared.put(color, newSheepSheared);
-            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                    new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, null, color, null, null);
-            
-            // Multiplayer
-            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
-                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+            if (newSheepSheared >= sheepToShear) {
+                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, null, color, null, null);
-                return null;
-            });
+                
+                // Multiplayer
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                    q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
+                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                            new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, null, color, null, null);
+                    return null;
+                });
+            }
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
