@@ -2709,8 +2709,13 @@ public class Quester implements Comparable<Quester> {
             final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass;
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.BREAK_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break") + " <item>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
@@ -2718,9 +2723,13 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage") 
-                    + " <item>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
@@ -2728,8 +2737,13 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place") + " <item>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
@@ -2737,8 +2751,13 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.USE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use") + " <item>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
@@ -2746,8 +2765,13 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.CUT_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut") + " <item>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
@@ -2756,8 +2780,13 @@ public class Quester implements Comparable<Quester> {
             }
         } else if (type.equals(ObjectiveType.CRAFT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craftItem") 
-                    + " " + is.getAmount() + "/" + is.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craftItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2766,8 +2795,13 @@ public class Quester implements Comparable<Quester> {
             }
         } else if (type.equals(ObjectiveType.SMELT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smeltItem") 
-                    + " " + is.getAmount() + "/" + is.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smeltItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2776,8 +2810,13 @@ public class Quester implements Comparable<Quester> {
             }
         } else if (type.equals(ObjectiveType.ENCHANT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToEnchant.get(getCurrentStage(quest).itemsToEnchant.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "enchItem") 
-                    + " " + is.getAmount() + "/" + is.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "enchItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2786,8 +2825,13 @@ public class Quester implements Comparable<Quester> {
             }
         } else if (type.equals(ObjectiveType.BREW_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brewItem") 
-                    + " " + is.getAmount() + "/" + is.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brewItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null, 
@@ -2798,8 +2842,13 @@ public class Quester implements Comparable<Quester> {
         } else if (type.equals(ObjectiveType.CONSUME_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToConsume.get(getCurrentStage(quest).itemsToConsume
                     .indexOf(goal));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consumeItem") 
-                    + " " + is.getAmount() + "/" + is.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consumeItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
@@ -2807,12 +2856,17 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         } else if (type.equals(ObjectiveType.DELIVER_ITEM)) {
-            String obj = Lang.get(p, "deliver");
-            obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(getCurrentStage(quest).itemDeliveryTargets
-                    .get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             final ItemStack is = getCurrentStage(quest).itemsToDeliver.get(getCurrentStage(quest).itemsToDeliver
                     .indexOf(goal));
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "deliver")
+                    .replace("<npc>", plugin.getDependencies().getNPCName(getCurrentStage(quest).itemDeliveryTargets
+                    .get(getCurrentStage(quest).itemsToDeliver.indexOf(goal))));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
                 plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
@@ -2820,16 +2874,32 @@ public class Quester implements Comparable<Quester> {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         } else if (type.equals(ObjectiveType.MILK_COW)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "milkCow") + " ";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.CATCH_FISH)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish") + " ";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_MOB)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " <mob>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" 
+                        + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames()) {
                 plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
             } else {
@@ -2837,31 +2907,52 @@ public class Quester implements Comparable<Quester> {
             }
         } else if (type.equals(ObjectiveType.KILL_PLAYER)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "killPlayer");
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            String obj = Lang.get(p, "talkTo");
-            obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(npc.getId()));
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
+            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "talkTo")
+                    .replace("<npc>", plugin.getDependencies().getNPCName(npc.getId()));
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill") + " " 
-                    + npc.getName();
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
-            p.sendMessage(message);
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" 
+                        + goal.getAmount();
+            }
+            p.sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc.getId())));
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame") + " <mob>";
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame");
+            if (!message.contains("<mob>")) {
+                message += " <mob>";
+            }
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             if (plugin.getSettings().canTranslateNames()) {
                 plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
             } else {
                 p.sendMessage(message.replace("<mob>", MiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }
         } else if (type.equals(ObjectiveType.SHEAR_SHEEP)) {
-            String obj = Lang.get(p, "shearSheep");
-            obj = obj.replace("<color>", color.name().toLowerCase());
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
-            message = message + " " + goal.getAmount() + "/" + goal.getAmount();
+            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "shearSheep");
+            message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(color));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
+            } else {
+                // Legacy
+                message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
+            }
             p.sendMessage(message);
         } else if (type.equals(ObjectiveType.REACH_LOCATION)) {
             String obj = Lang.get(p, "goTo");
