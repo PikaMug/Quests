@@ -69,6 +69,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -1409,7 +1410,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksBroken.contains(broken)) {
                 getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
                 if (broken.getAmount() == toBreak.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalBroken = broken;
@@ -1417,7 +1418,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken
                                 .indexOf(finalBroken), newBroken);
-                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null, 
                                 null, null);
                         return null;
                     });
@@ -1497,7 +1498,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksDamaged.contains(damaged)) {
                 getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
                 if (damaged.getAmount() == toDamage.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toDamage), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toDamage), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalDamaged = damaged;
@@ -1505,7 +1506,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged
                                 .indexOf(finalDamaged), newDamaged);
-                        q.finishObjective(quest, new Objective(type, m, finalToDamage), null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToDamage), null, null, null, null, null, 
                                 null, null);
                         return null;
                     });
@@ -1584,7 +1585,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksPlaced.contains(placed)) {
                 getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newPlaced);
                 if (placed.getAmount() == toPlace.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toPlace), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toPlace), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalPlaced = placed;
@@ -1592,7 +1593,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced
                                 .indexOf(finalPlaced), newPlaced);
-                        q.finishObjective(quest, new Objective(type, m, finalToPlace), null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToPlace), null, null, null, null, null, 
                                 null, null);
                         return null;
                     });
@@ -1671,7 +1672,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksUsed.contains(used)) {
                 getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
                 if (used.getAmount() == toUse.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toUse), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toUse), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalUsed = used;
@@ -1679,7 +1680,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed
                                 .indexOf(finalUsed), newUsed);
-                        q.finishObjective(quest, new Objective(type, m, finalToUse), null, null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToUse), null, null, null, null, null, null, 
                                 null);
                         return null;
                     });
@@ -1758,14 +1759,14 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksCut.contains(cut)) {
                 getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
                 if (cut.getAmount() == toCut.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toCut), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toCut), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalCut = cut;
                     final ItemStack finalToCut = toCut;
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(finalCut), newCut);
-                        q.finishObjective(quest, new Objective(type, m, finalToCut), null, null, null, null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, m, finalToCut), null, null, null, null, null, null, 
                                 null);
                         return null;
                     });
@@ -1820,14 +1821,14 @@ public class Quester implements Comparable<Quester> {
             final Material m = i.getType();
             if (newAmount >= req) {
                 getQuestData(quest).itemsCrafted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, null, 
+                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
                         null, null);
                 
                 // Multiplayer
                 final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).itemsCrafted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, null, 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, 
                             null, null, null, null);
                     return null;
                 });
@@ -1882,14 +1883,14 @@ public class Quester implements Comparable<Quester> {
             final Material m = i.getType();
             if (newAmount >= req) {
                 getQuestData(quest).itemsSmelted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, null, 
+                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
                         null, null);
                 
                 // Multiplayer
                 final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).itemsSmelted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, null, 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, 
                             null, null, null, null);
                     return null;
                 });
@@ -1913,9 +1914,16 @@ public class Quester implements Comparable<Quester> {
         final Player player = getPlayer();
         ItemStack found = null;
         for (final ItemStack is : getQuestData(quest).itemsEnchanted.keySet()) {
-            if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
+            if (!is.getEnchantments().isEmpty()) {
+                if (ItemUtil.compareItems(i, is, true) == 0) {
+                    found = is;
+                    break;
+                }
+            } else {
+                if (ItemUtil.compareItems(i, is, true) == -4) {
+                    found = is;
+                    break;
+                }
             }
         }
         if (found == null) {
@@ -1944,14 +1952,14 @@ public class Quester implements Comparable<Quester> {
             final Material m = i.getType();
             if (newAmount >= req) {
                 getQuestData(quest).itemsEnchanted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, null, 
+                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
                         null, null);
                 
                 // Multiplayer
                 final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).itemsEnchanted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, null, 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, 
                             null, null, null, null);
                     return null;
                 });
@@ -2006,14 +2014,14 @@ public class Quester implements Comparable<Quester> {
             final Material m = i.getType();
             if (newAmount >= req) {
                 getQuestData(quest).itemsBrewed.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, null, 
+                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
                         null, null);
                 
                 // Multiplayer
                 final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).itemsBrewed.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, null, 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, 
                             null, null, null, null);
                     return null;
                 });
@@ -2068,14 +2076,14 @@ public class Quester implements Comparable<Quester> {
             final Material m = i.getType();
             if (newAmount >= req) {
                 getQuestData(quest).itemsConsumed.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, null, 
+                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
                         null, null);
                 
                 // Multiplayer
                 final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).itemsConsumed.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, null, 
+                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null, 
                             null, null, null, null);
                     return null;
                 });
@@ -2109,13 +2117,13 @@ public class Quester implements Comparable<Quester> {
             
             if (newCowsMilked >= cowsToMilk) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null, null);
+                        new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setCowsMilked(cowsToMilk);
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2146,13 +2154,13 @@ public class Quester implements Comparable<Quester> {
             
             if (newFishCaught >= fishToCatch) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null, null);
+                        new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setFishCaught(fishToCatch);
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2216,15 +2224,13 @@ public class Quester implements Comparable<Quester> {
             questData.mobNumKilled.set(index, newMobsKilled);
             if (newMobsKilled >= mobsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, mobsToKill)), null, e, null, 
-                        null, null, null, null, null);
+                        new ItemStack(Material.AIR, mobsToKill)), e, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, currentStage, (final Quester q) -> {
                     q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, mobsToKill)), null, e, 
-                            null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, mobsToKill)), e, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2255,13 +2261,13 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).setPlayersKilled(newPlayersKilled);
             if (newPlayersKilled >= playersToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null, null);
+                        new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled());
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2332,13 +2338,13 @@ public class Quester implements Comparable<Quester> {
                         player.getInventory().setItem(index, null);
                     }
                     player.updateInventory();
-                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null, 
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, 
                             null, null, null);
                     
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, 
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, 
                                 null, null, null, null);
                         return null;
                     });
@@ -2382,13 +2388,13 @@ public class Quester implements Comparable<Quester> {
         if (b != null && !b) {
             getQuestData(quest).citizensInteracted.put(n.getId(), true);
             finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1)), 
-                    null, null, null, n, null, null, null, null);
+                    null, null, n, null, null, null, null);
             
             // Multiplayer
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 q.getQuestData(quest).citizensInteracted.put(n.getId(), true);
                 q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, 1)), null, null, null, n, null, null, null, null);
+                        new ItemStack(Material.AIR, 1)), null, null, n, null, null, null, null);
                 return null;
             });
             
@@ -2423,14 +2429,14 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).citizenNumKilled.set(index, newNpcsKilled);
             if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, npcsToKill)), null, null, null, n, null, null, null, null);
+                        new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled
                             .get(index));
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, npcsToKill)), null, null, null, n, null, null, null, null);
+                            new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
                     return null;
                 });
             }
@@ -2485,13 +2491,13 @@ public class Quester implements Comparable<Quester> {
                                 if (locationsReached <= index) {
                                     getQuestData(quest).hasReached.add(true);
                                     finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1)), null, null, null, null, location, null, 
-                                            null, null);
+                                            new ItemStack(Material.AIR, 1)), null, null, null, location, null, null, 
+                                            null);
                                 } else if (getQuestData(quest).hasReached.get(index) == false) {
                                     getQuestData(quest).hasReached.set(index, true);
                                     finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1)), null, null, null, null, location, null, 
-                                            null, null);
+                                            new ItemStack(Material.AIR, 1)), null, null, null, location, null, null,
+                                            null);
                                 }
                                 
                                 // Multiplayer
@@ -2500,12 +2506,12 @@ public class Quester implements Comparable<Quester> {
                                     if (finalIndex >= getQuestData(quest).hasReached.size()) {
                                         q.getQuestData(quest).hasReached.add(true);
                                         q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                                new ItemStack(Material.AIR, 1)), null, null, null, null, location, null, 
+                                                new ItemStack(Material.AIR, 1)), null, null, null, location, null, 
                                                 null, null);
                                     } else {
                                         q.getQuestData(quest).hasReached.set(finalIndex, true);
                                         q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                                new ItemStack(Material.AIR, 1)), null, null, null, null, location, null, 
+                                                new ItemStack(Material.AIR, 1)), null, null, null, location, null, 
                                                 null, null);
                                     }
                                     return null;
@@ -2554,13 +2560,13 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).mobsTamed.put(entity, newMobsToTame);
             if (newMobsToTame >= mobsToTame) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, mobsToTame)), null, entity, null, null, null, null, null, null);
+                        new ItemStack(Material.AIR, mobsToTame)), entity, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).mobsTamed.put(entity, getQuestData(quest).mobsTamed.get(entity));
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, mobsToTame)), null, entity, null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, mobsToTame)), entity, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2594,13 +2600,13 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).sheepSheared.put(color, newSheepSheared);
             if (newSheepSheared >= sheepToShear) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, null, color, null, null);
+                        new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).sheepSheared.put(color, getQuestData(quest).sheepSheared.get(color));
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, null, color, null, null);
+                            new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
                     return null;
                 });
             }
@@ -2636,13 +2642,13 @@ public class Quester implements Comparable<Quester> {
                         done = true;
                         plugin.getServer().getScheduler().runTask(plugin, () -> {
                             finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                    new ItemStack(Material.AIR, 1)), null, null, null, null, null, null, display, null);
+                                    new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
                             
                             // Multiplayer
                             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                                 q.getQuestData(quest).passwordsSaid.put(display, true);
                                 q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                        new ItemStack(Material.AIR, 1)), null, null, null, null, null, null, display, null);
+                                        new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
                                 return null;
                             });
                         });
@@ -2669,8 +2675,6 @@ public class Quester implements Comparable<Quester> {
      *            Quest containing the objective
      * @param objective
      *            Objective for type, progress and goal
-     * @param enchantment
-     *            Enchantment being applied by user, if any
      * @param mob
      *            Mob being killed or tamed, if any
      * @param extra
@@ -2687,9 +2691,8 @@ public class Quester implements Comparable<Quester> {
      *            Custom objective, if any. See {@link me.blackvein.quests.CustomObjective}
      */
     @SuppressWarnings("deprecation")
-    public void finishObjective(final Quest quest, final Objective objective, final Enchantment enchantment,
-            final EntityType mob, final String extra, final NPC npc, final Location location, final DyeColor color,
-            final String pass, final CustomObjective co) {
+    public void finishObjective(final Quest quest, final Objective objective, final EntityType mob, final String extra,
+            final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
         final ItemStack increment = objective.getItemProgress() != null ? objective.getItemProgress() 
@@ -2817,11 +2820,21 @@ public class Quester implements Comparable<Quester> {
                 // Legacy
                 message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
             }
-            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
-                    && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+            if (plugin.getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), 
+                        goal.getEnchantments(), goal.getItemMeta());
+            } else if (plugin.getSettings().canTranslateNames() && !is.hasItemMeta() 
+                    && Material.getMaterial("LINGERING_POTION") == null) {
+                // Bukkit version is below 1.9
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), 
+                        goal.getEnchantments());
             } else {
-                p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+                for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+                    p.sendMessage(message.replace("<item>", ItemUtil.getName(is))
+                            .replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
+                            .replace("<level>", RomanNumeral.getNumeral(e.getValue())));
+                }
             }
         } else if (type.equals(ObjectiveType.BREW_ITEM)) {
             final ItemStack is = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(goal));
@@ -2832,10 +2845,15 @@ public class Quester implements Comparable<Quester> {
                 // Legacy
                 message += ChatColor.GREEN + ": " + is.getAmount() + "/" + is.getAmount();
             }
-            if (plugin.getSettings().canTranslateNames() && goal.hasItemMeta() 
-                    && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null, 
-                        goal.getItemMeta());
+            if (plugin.getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), 
+                        goal.getEnchantments(), goal.getItemMeta());
+            } else if (plugin.getSettings().canTranslateNames() && !is.hasItemMeta() 
+                    && Material.getMaterial("LINGERING_POTION") == null) {
+                // Bukkit version is below 1.9
+                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), 
+                        goal.getEnchantments());
             } else {
                 p.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
@@ -3030,7 +3048,7 @@ public class Quester implements Comparable<Quester> {
     public void finishObjective(final Quest quest, final String objective, final ItemStack increment, 
             final ItemStack goal, final Enchantment enchantment, final EntityType mob, final String extra, 
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
-        finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), enchantment, mob, extra, npc, 
+        finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc, 
                 location, color, pass, co);
     }
     
