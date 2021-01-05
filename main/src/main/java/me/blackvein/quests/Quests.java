@@ -104,6 +104,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -1072,17 +1073,27 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
-            if (getSettings().canTranslateNames()) {
-                if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    // Bukkit version is 1.9+
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments(), is.getItemMeta());
-                } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
-                    // Bukkit version is below 1.9
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
+            if (getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments(), is.getItemMeta());
+            } else if (getSettings().canTranslateNames() && !is.hasItemMeta() 
+                    && Material.getMaterial("LINGERING_POTION") == null) {
+                // Bukkit version is below 1.9
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                if (is.getEnchantments().isEmpty()) {
+                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is))
+                            .replace("<enchantment>", "")
+                            .replace("<level>", "")
+                            .replaceAll("\\s+", " "));
                 } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+                    for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+                        quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is))
+                                .replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
+                                .replace("<level>", RomanNumeral.getNumeral(e.getValue())));
+                    }
                 }
             }
         }
@@ -1103,18 +1114,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
-            if (getSettings().canTranslateNames()) {
-                if (is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                    // Bukkit version is 1.9+
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments(), is.getItemMeta());
-                } else if (Material.getMaterial("LINGERING_POTION") == null && !is.hasItemMeta() ) {
-                    // Bukkit version is below 1.9
-                    localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                            is.getEnchantments());
-                } else {
-                    quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-                }
+            if (getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments(), is.getItemMeta());
+            } else if (getSettings().canTranslateNames() && !is.hasItemMeta() 
+                    && Material.getMaterial("LINGERING_POTION") == null) {
+                // Bukkit version is below 1.9
+                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                quester.getPlayer().sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
         for (final ItemStack is : stage.itemsToConsume) {

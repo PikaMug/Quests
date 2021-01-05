@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -75,7 +76,8 @@ public class LocaleQuery {
      * but note that most Potions use meta for 1.13+.<p>
      * 
      * Message should contain {@code <item>} string for replacement by
-     * this method (along with applicable {@code <enchantment>} strings).
+     * this method (along with applicable {@code <enchantment>} and/or 
+     * {@code <level>} strings).
      * 
      * @param player The player whom the message is to be sent to
      * @param message The message to be sent to the player
@@ -91,6 +93,7 @@ public class LocaleQuery {
         }
         String matKey = "";
         final String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+        final String[] lvlKeys = enchantments != null ? new String[enchantments.size()] : null;
         if (oldVersion) {
             if (material.isBlock()) {
                 if (durability >= 0 && oldBlocks.containsKey(material.name() + "." + durability)) {
@@ -128,9 +131,10 @@ public class LocaleQuery {
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (final Enchantment e : enchantments.keySet()) {
-                    enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
+                for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
+                    enchKeys[count] = "enchantment." + e.getKey().getName().toLowerCase().replace("_", ".")
                         .replace("environmental", "all").replace("protection", "protect");
+                    lvlKeys[count] = "enchantment.level." + e.getValue();
                     count++;
                 }
             }
@@ -153,8 +157,9 @@ public class LocaleQuery {
             }
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (final Enchantment e : enchantments.keySet()) {
-                    enchKeys[count] = "enchantment." + e.getKey().toString().toLowerCase().replace(":", ".");
+                for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
+                    enchKeys[count] = "enchantment." + e.getKey().getKey().toString().toLowerCase().replace(":", ".");
+                    lvlKeys[count] = "enchantment.level." + e.getValue();
                     count++;
                 }
             }
@@ -163,6 +168,9 @@ public class LocaleQuery {
         if (enchKeys != null && enchKeys.length > 0) {
             for (final String ek : enchKeys) {
                 msg = msg.replace("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+            }
+            for (final String lk : lvlKeys) {
+                msg = msg.replace("<level>", "\",{\"translate\":\"" + lk + "\"},\"");
             }
         }
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
@@ -193,8 +201,8 @@ public class LocaleQuery {
      * Send message with enchantments translated to the client's locale.
      * Map of Enchantment+level is required.
      * 
-     * Message should contain one {@code <enchantment>} string for each
-     * replacement by this method.
+     * Message should contain one {@code <enchantment>} and/or {@code <level>}
+     * string for each replacement by this method.
      * 
      * @param player The player whom the message is to be sent to
      * @param message The message to be sent to the player
@@ -205,20 +213,23 @@ public class LocaleQuery {
             return false;
         }
         final String[] enchKeys = enchantments != null ? new String[enchantments.size()] : null;
+        final String[] lvlKeys = enchantments != null ? new String[enchantments.size()] : null;
         if (oldVersion) {
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (final Enchantment e : enchantments.keySet()) {
-                    enchKeys[count] = "enchantment." + e.getName().toLowerCase().replace("_", ".")
+                for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
+                    enchKeys[count] = "enchantment." + e.getKey().getName().toLowerCase().replace("_", ".")
                         .replace("environmental", "all").replace("protection", "protect");
+                    lvlKeys[count] = "enchantment.level." + e.getValue();
                     count++;
                 }
             }
         } else {
             if (enchantments != null && !enchantments.isEmpty()) {
                 int count = 0;
-                for (final Enchantment e : enchantments.keySet()) {
-                    enchKeys[count] = "enchantment.minecraft." + e.toString().toLowerCase();
+                for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
+                    enchKeys[count] = "enchantment." + e.getKey().getKey().toString().toLowerCase().replace(":", ".");;
+                    lvlKeys[count] = "enchantment.level." + e.getValue();
                     count++;
                 }
             }
@@ -227,6 +238,9 @@ public class LocaleQuery {
         if (enchKeys != null && enchKeys.length > 0) {
             for (final String ek : enchKeys) {
                 msg.replaceFirst("<enchantment>", "\",{\"translate\":\"" + ek + "\"},\"");
+            }
+            for (final String lk : lvlKeys) {
+                msg.replaceFirst("<level>", "\",{\"translate\":\"" + lk + "\"},\"");
             }
         }
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
