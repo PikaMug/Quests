@@ -70,18 +70,13 @@ public class BlockListener implements Listener {
                                     .replace("<quest>", quest.getName()));
                         } else {
                             quester.breakBlock(quest, blockItemStack);
+                            
+                            quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q) -> {
+                                q.breakBlock(quest, blockItemStack);
+                                return null;
+                            });
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q) -> {
-                        if (quest.getOptions().canIgnoreSilkTouch() 
-                                && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
-                            player.sendMessage(ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
-                                    .replace("<quest>", quest.getName()));
-                        } else {
-                            quester.breakBlock(quest, blockItemStack);
-                        }
-                        return null;
-                    });
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(placeType)) {
                         for (final ItemStack is : quester.getQuestData(quest).blocksPlaced) {
@@ -115,7 +110,7 @@ public class BlockListener implements Listener {
                         for (final ItemStack is : q.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                 ItemStack toPlace = new ItemStack(is.getType(), 64);
-                                for (final ItemStack stack : quester.getCurrentStage(quest).getBlocksToPlace()) {
+                                for (final ItemStack stack : q.getCurrentStage(quest).getBlocksToPlace()) {
                                     if (ItemUtil.compareItems(is, stack, true) == 0) {
                                         toPlace = stack;
                                     }
@@ -123,7 +118,7 @@ public class BlockListener implements Listener {
                                 
                                 final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
                                 final QuesterPreUpdateObjectiveEvent preEvent 
-                                        = new QuesterPreUpdateObjectiveEvent(quester, quest, 
+                                        = new QuesterPreUpdateObjectiveEvent(q, quest, 
                                         new Objective(type, is.getAmount(), toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(preEvent);
                                 
@@ -133,7 +128,7 @@ public class BlockListener implements Listener {
                                 q.getQuestData(quest).blocksPlaced.set(index, is);
                                 
                                 final QuesterPostUpdateObjectiveEvent postEvent 
-                                        = new QuesterPostUpdateObjectiveEvent(quester, quest, 
+                                        = new QuesterPostUpdateObjectiveEvent(q, quest, 
                                                     new Objective(type, newAmount, toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
