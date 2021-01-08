@@ -50,6 +50,7 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -743,27 +744,26 @@ public class Quest implements Comparable<Quest> {
                             text += ChatColor.GRAY + " x " + i.getAmount();
                         }
                     } else if (i.getDurability() != 0) {
+                        text = "- " + ChatColor.DARK_GREEN + "<item>:" + i.getDurability();
                         if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY
-                                    + " x " + i.getAmount();
+                            text += ChatColor.GRAY + " x " + i.getAmount();
                         } else {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY
-                                    + " " + Lang.get(p, "with");
-                            for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
+                            text += ChatColor.GRAY + " " + Lang.get(p, "with");
+                            for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
+                                text += " <enchantment> <level>";
                             }
                             text += ChatColor.GRAY + " x " + i.getAmount();
                         }
                     } else {
+                        text = "- " + ChatColor.DARK_GREEN + "<item>";
                         if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount();
+                            text += ChatColor.GRAY + " x " + i.getAmount();
                         } else {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i);
                             try {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
                                     text += ChatColor.GRAY + " " + Lang.get(p, "with");
-                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
+                                    for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
+                                        text += " <enchantment> <level>";
                                     }
                                 }
                             } catch (final Throwable tr) {
@@ -772,7 +772,16 @@ public class Quest implements Comparable<Quest> {
                             text += ChatColor.GRAY + " x " + i.getAmount();
                         }
                     }
-                    p.sendMessage(text);
+                    if (plugin.getSettings().canTranslateNames() && text.contains("<item>")) {
+                        plugin.getLocaleQuery().sendMessage(p, text, i.getType(), i.getDurability(), 
+                                i.getEnchantments());
+                    } else {
+                        for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                            text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()));
+                            text = text.replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue()));
+                        }
+                        p.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
+                    }
                 }
                 for (final ItemStack i : phatLootItems) {
                     if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
@@ -781,8 +790,8 @@ public class Quest implements Comparable<Quest> {
                                     + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
                         } else {
                             p.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " 
-                                    + Lang.get(p, "enchantedItem"));
+                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE 
+                                    + " " + Lang.get(p, "enchantedItem"));
                         }
                     } else if (i.getDurability() != 0) {
                         if (i.getEnchantments().isEmpty()) {
@@ -818,8 +827,8 @@ public class Quest implements Comparable<Quest> {
                 if (rews.getCommands().isEmpty() == false) {
                     int index = 0;
                     for (final String s : rews.getCommands()) {
-                        if (rews.getCommandsOverrideDisplay().isEmpty() == false && rews.getCommandsOverrideDisplay().size() 
-                                > index) {
+                        if (rews.getCommandsOverrideDisplay().isEmpty() == false 
+                                && rews.getCommandsOverrideDisplay().size() > index) {
                             if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
                                 p.sendMessage("- " + ChatColor.DARK_GREEN 
                                         + rews.getCommandsOverrideDisplay().get(index));
