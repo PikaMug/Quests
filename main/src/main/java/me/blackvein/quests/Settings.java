@@ -176,6 +176,7 @@ public class Settings {
         allowPranks = config.getBoolean("allow-pranks", true);
         askConfirmation = config.getBoolean("ask-confirmation", true);
         consoleLogging = config.getInt("console-logging", 1);
+        disableCommandFeedback = config.getBoolean("disable-command-feedback", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
         ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
         killDelay = config.getInt("kill-delay", 600);
