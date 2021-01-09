@@ -566,7 +566,7 @@ overrideCreateSet: "Установить переопределение спис
 overrideCreateEnter: "Введите заменяемый текст, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**КВЕСТ ВЫПОЛНЕН: <quest>**'
-questRewardsTitle: "Награда:"
+questRewardsTitle: "Rewards"
 questFailed: "*ЗАДАНИЕ ПРОВАЛЕНО*"
 questMaxAllowed: "У вас может быть только <number> квеста."
 questAlreadyOn: "Вы уже в этом квесте!"
