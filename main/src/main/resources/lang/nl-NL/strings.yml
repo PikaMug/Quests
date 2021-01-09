@@ -566,7 +566,7 @@ overrideCreateSet: "Stel lijst overschrijven in"
 overrideCreateEnter: "Typ vervangende tekst, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEESTE VOLTOOID: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Beloningen"
 questFailed: "*QUEESTE MISLUKT*"
 questMaxAllowed: "Je kan maar <number> queesten tegelijk hebben."
 questAlreadyOn: "Je hebt deze queeste al!"
