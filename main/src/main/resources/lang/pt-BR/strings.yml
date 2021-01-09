@@ -566,7 +566,7 @@ overrideCreateSet: "Definir substituição da lista de detalhes"
 overrideCreateEnter: "Digite o texto de substituição, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**MISSÃO CONCLUÍDA: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Recompensas"
 questFailed: "*QUEST FALHOU*"
 questMaxAllowed: "Você só pode ter até <number> Missões."
 questAlreadyOn: "Você já está na Quest!"
