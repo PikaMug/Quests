@@ -566,7 +566,7 @@ overrideCreateSet: "Ayrıntı listesini geçersiz kılmayı ayarla"
 overrideCreateEnter: "Yeni metni girin, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**GÖREV TAMAMLANDI: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Ödüller"
 questFailed: "*GÖREV BAŞARISIZ OLDU*"
 questMaxAllowed: "En fazla <number> görev alabilirsin."
 questAlreadyOn: "Zaten o Görevdesin!"
