@@ -566,7 +566,7 @@ overrideCreateSet: "Angiv tilsidesættelse af detaljeringsliste"
 overrideCreateEnter: "Indtast udskiftningstekst, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**MISSON GENNEMFØRT: <quest>**'
-questRewardsTitle: "Belønning:"
+questRewardsTitle: "Rewards"
 questFailed: "*QUEST FEJLEDE*"
 questMaxAllowed: "Du kan kun have <number> Quests aktive."
 questAlreadyOn: "Du er allerede igang med den Quest!"
