@@ -204,9 +204,9 @@ public class CmdExecutor implements CommandExecutor {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
-                                String msg = Lang.get(player, "questObjectivesTitle");
-                                msg = msg.replace("<quest>", q.getName());
-                                player.sendMessage(ChatColor.GOLD + msg);
+                                final String msg = Lang.get(player, "questCommandTitle")
+                                        .replace("<quest>", q.getName());
+                                quester.sendMessage(ChatColor.GOLD + msg);
                                 plugin.showObjectives(q, quester, false);
                             } else {
                                 final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
@@ -214,11 +214,11 @@ public class CmdExecutor implements CommandExecutor {
                                         +  Lang.get(player, "plnTooEarly");
                                 msg = msg.replace("<quest>", q.getName());
                                 msg = msg.replace("<time>", MiscUtil.getTime(time));
-                                player.sendMessage(msg);
+                                quester.sendMessage(msg);
                             }
                         }
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+                        quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
                     }
                 } else {
                     showQuestDetails(cs, args);
