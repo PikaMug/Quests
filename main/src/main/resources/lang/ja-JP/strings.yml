@@ -566,7 +566,7 @@ overrideCreateSet: "Set details list override"
 overrideCreateEnter: "Enter replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**クエスト完了: <quest>**'
-questRewardsTitle: "報酬:"
+questRewardsTitle: "Rewards"
 questFailed: "*クエストに失敗しました*"
 questMaxAllowed: "あなたは<number>個しかクエストを受託できません。"
 questAlreadyOn: "既に受託しています !"

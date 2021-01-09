@@ -566,7 +566,7 @@ overrideCreateSet: "Set details list override"
 overrideCreateEnter: "Enter replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST COMPLETE: <quest>**'
-questRewardsTitle: "Rewards:"
+questRewardsTitle: "Rewards"
 questFailed: "* فشل المسعى*"
 questMaxAllowed: "لديك فقط إلى <number> السعي."
 questAlreadyOn: "انك بالفعل في هذا المسعى!"

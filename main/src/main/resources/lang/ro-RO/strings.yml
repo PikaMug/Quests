@@ -566,7 +566,7 @@ overrideCreateSet: "Set details list override"
 overrideCreateEnter: "Enter replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST COMPLETE: <quest>**'
-questRewardsTitle: "Rewards:"
+questRewardsTitle: "Rewards"
 questFailed: "*QUEST EȘUAT*"
 questMaxAllowed: "Poți avea numai până la <number> Quest-uri."
 questAlreadyOn: "Eşti deja pe acel Quest!"

@@ -566,7 +566,7 @@ overrideCreateSet: "ตั้งค่ารายละเอียด override
 overrideCreateEnter: "ป้อนข้อความ replacement <clear> <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**เควสเสร็จสมบูรณ์: <quest>**'
-questRewardsTitle: "รางวัล:"
+questRewardsTitle: "รางวัล"
 questFailed: "* เควสล้มเหลว *"
 questMaxAllowed: "คุณอาจต้องอัพเควส <number>"
 questAlreadyOn: "คุณมีอยู่แล้วบน Quest ที่"

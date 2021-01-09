@@ -566,7 +566,7 @@ overrideCreateSet: "세부 사항 목록 대체 설정"
 overrideCreateEnter: "대체 텍스트를 입력하십시오 <clear>, <cancel>"
 questObjectivesTitle: "--- (<quest>) ---"
 questCompleteTitle: '** 퀘스트 완료: <quest> **'
-questRewardsTitle: "보상:"
+questRewardsTitle: "보상"
 questFailed: "* 퀘스트 실패 *"
 questMaxAllowed: "단지 <number>퀘스트를 할 수 있습니다."
 questAlreadyOn: "사용자님의 여정이 이미 시작되었습니다!"

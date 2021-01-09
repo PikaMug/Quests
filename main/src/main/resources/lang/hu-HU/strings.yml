@@ -566,7 +566,7 @@ overrideCreateSet: "Részlet lista felülírás beállítása"
 overrideCreateEnter: "Add meg a csereszöveget, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**KÜLDETÉS TELJESÍTVE: <quest>**'
-questRewardsTitle: "Jutalmak:"
+questRewardsTitle: "Jutalmak"
 questFailed: "*KÜLDETÉS SIKERTELEN*"
 questMaxAllowed: "Legfeljebb <number> küldetésed lehet."
 questAlreadyOn: "Már abban a küldetésben vagy!"
