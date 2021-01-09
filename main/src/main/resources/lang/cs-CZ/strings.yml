@@ -566,7 +566,7 @@ overrideCreateSet: "Nastavit přepsání seznamu podrobností"
 overrideCreateEnter: "Zadejte náhradní text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**ÚKOL DOKONČEN: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Odměny"
 questFailed: "*ÚKOL NEÚSPĚŠNÝ*"
 questMaxAllowed: "Můžete mít pouze <number> úkolů."
 questAlreadyOn: "Na tomto úkolu již jste!"
