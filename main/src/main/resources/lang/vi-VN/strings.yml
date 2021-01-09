@@ -566,7 +566,7 @@ overrideCreateSet: "Đặt ghi đè danh sách chi tiết"
 overrideCreateEnter: "Nhập văn bản thay thế, <clear>, <cancel>"
 questObjectivesTitle: "--(<quest>)--"
 questCompleteTitle: '**Nhiệm Vụ Hoàn Thành: <quest>**'
-questRewardsTitle: "Phần thưởng:"
+questRewardsTitle: "Rewards"
 questFailed: "*NHIỆM VỤ THẤT BẠI*"
 questMaxAllowed: "Bạn chỉ có thể nhận tối đa <number> nhiệm vụ."
 questAlreadyOn: "Bạn đã nhận nhiệm vụ này rồi!"
