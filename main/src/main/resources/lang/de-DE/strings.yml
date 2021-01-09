@@ -566,7 +566,7 @@ overrideCreateSet: "Festlegen der Überschreibung der Detailliste"
 overrideCreateEnter: "Geben Sie den Ersatztext ein, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST ABGESCHLOSSEN: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Belohnungen"
 questFailed: "*QUEST FEHLGESCHLAGEN*"
 questMaxAllowed: "Du darfst nur bis zu <number> annehmen."
 questAlreadyOn: "Du bist bereits an dieser Quest dran!"
