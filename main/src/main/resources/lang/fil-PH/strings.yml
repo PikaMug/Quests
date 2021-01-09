@@ -566,7 +566,7 @@ overrideCreateSet: "Itakda ang listahan ng mga detalye nang labis"
 overrideCreateEnter: "Ipasok ang teksto ng kapalit, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**PAGHANAP AY KOMPLETO: <quest>**'
-questRewardsTitle: "Gantimpala:"
+questRewardsTitle: "Gantimpala"
 questFailed: "* NABIGO ANG PAGSUBOK *"
 questMaxAllowed: "Ikaw ay mayroon lamang limang pagsubok\"."
 questAlreadyOn: "Ikaw ay kasalukuyang nasa pagsubok na yan!"

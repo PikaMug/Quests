@@ -566,7 +566,7 @@ overrideCreateSet: "Set details list override"
 overrideCreateEnter: "Enter replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**SUORITETTU TEHTÄVÄ <quest>**'
-questRewardsTitle: "Rewards:"
+questRewardsTitle: "Rewards"
 questFailed: "*TEHTÄVÄ EPÄONNISTUI*"
 questMaxAllowed: "Voit tehdä kerrallaan korkeintaan <number> tehtävää."
 questAlreadyOn: "Olet jo aloittanut tuon tehtävän!"

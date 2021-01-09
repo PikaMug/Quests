@@ -566,7 +566,7 @@ overrideCreateSet: "设置详细信息列表覆盖"
 overrideCreateEnter: "输入替换文本，<clear>，<cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**任务完成： <quest>**'
-questRewardsTitle: "奖励："
+questRewardsTitle: "奖励"
 questFailed: "*任务失败*"
 questMaxAllowed: "您可能只有 <number> 任务。"
 questAlreadyOn: "你已经在做这个任务了！"

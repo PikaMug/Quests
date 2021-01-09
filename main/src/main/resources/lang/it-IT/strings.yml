@@ -566,7 +566,7 @@ overrideCreateSet: "Imposta sovrascrittura lista dettagli"
 overrideCreateEnter: "Inserisci testo da rimpiazzare, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**MISSIONE COMPLETATA: <quest>**'
-questRewardsTitle: "Ricompense:"
+questRewardsTitle: "Ricompense"
 questFailed: "*MISSIONE FALLITA*"
 questMaxAllowed: "Puoi avere fino a <number> missioni."
 questAlreadyOn: "Sei già su questa missione!"

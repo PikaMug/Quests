@@ -566,7 +566,7 @@ overrideCreateSet: "set detial list overide"
 overrideCreateEnter: "entr replacement text, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**QUEST DUN!!1!1!1!: <quest>**'
-questRewardsTitle: "GIFTZ!!!1!1!1:"
+questRewardsTitle: "GIFTZ!!!1!1!1"
 questFailed: "*epic fail*"
 questMaxAllowed: "u can only do <number> quest @ a taim"
 questAlreadyOn: "u r already on dat quest!"
