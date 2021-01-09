@@ -566,7 +566,7 @@ overrideCreateSet: "Establecer anulación de lista de detalles"
 overrideCreateEnter: "Ingrese el texto de reemplazo, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**MISIÓN COMPLETA: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Premios"
 questFailed: "*MISIÓN FALLIDA*"
 questMaxAllowed: "Solo puedes tener un máximo de <number> Misiones."
 questAlreadyOn: "Ya estas haciendo esa Misión!"
