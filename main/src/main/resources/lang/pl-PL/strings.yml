@@ -566,7 +566,7 @@ overrideCreateSet: "Ustaw przesłonięcie listy szczegółów"
 overrideCreateEnter: "Wpisz tekst zastępczy, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**ZADANIE UKOŃCZONE: <quest>**'
-questRewardsTitle: "Nagrody:"
+questRewardsTitle: "Rewards"
 questFailed: "*ZADANIE NIEUDANE*"
 questMaxAllowed: "Maksymalna ilość rozpoczętych zadań to <number>."
 questAlreadyOn: "Już wybrano te zadanie!"
