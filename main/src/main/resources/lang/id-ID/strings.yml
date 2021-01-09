@@ -566,7 +566,7 @@ overrideCreateSet: "Tetapkan timpa daftar detail"
 overrideCreateEnter: "Masukkan teks pengganti, <clear>, <cancel>"
 questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**PENCARIAN LENGKAP: <quest>**'
-questRewardsTitle: "Rewards"
+questRewardsTitle: "Penghargaan"
 questFailed: "*QUEST GAGAL*"
 questMaxAllowed: "Anda hanya dapat memiliki hingga <number> Quests."
 questAlreadyOn: "Anda sudah ada di Quest itu!"
