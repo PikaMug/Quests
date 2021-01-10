@@ -1415,7 +1415,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksBroken.contains(broken)) {
                 getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
                 if (broken.getAmount() == toBreak.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null);
     
                     // Multiplayer
                     final ItemStack finalBroken = broken;
