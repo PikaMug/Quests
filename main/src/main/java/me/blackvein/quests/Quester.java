@@ -3009,7 +3009,7 @@ public class Quester implements Comparable<Quester> {
     /**
      * Complete quest objective
      * 
-     * @deprecated Use {@link #finishObjective(Quest, ObjectiveType, ItemStack, ItemStack, Enchantment, EntityType, 
+     * @deprecated Use {@link #finishObjective(Quest, Objective, EntityType,
      * String, NPC, Location, DyeColor, String, CustomObjective)}
      * 
      * @param quest
