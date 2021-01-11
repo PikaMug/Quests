@@ -487,7 +487,7 @@ optCommandsDenied: "Hindi ka maaaring gumamit ng mga command sa panahon ng <ques
 optUseDungeonsXLPlugin: "Gamitin ang DungeonsXL plugin"
 optUsePartiesPlugin: "Gamitin ang Parties plugin"
 optShareProgressLevel: "Antas ng pagbabahagi ng progreso"
-optShareOnlySameQuest: "Share only with the same quest"
+optShareOnlySameQuest: "Share with the same quest only"
 rewSetMoney: "Itakda ang perang gantimpala"
 rewSetQuestPoints: "Itakda ang gantimpalang puntos ng pagsusulit"
 rewSetItems: "Itakda ang gantimpalang gamit"
