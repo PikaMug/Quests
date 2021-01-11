@@ -25,6 +25,6 @@ actions:
   CancelTimer:
     cancel-timer: true
   RunCommand:
-    message: "<red>Did you mean 'help'?"
+    message: "<red>Answer to life, the universe, and everything?"
     commands:
-    - help
+    - tell <player> 42
