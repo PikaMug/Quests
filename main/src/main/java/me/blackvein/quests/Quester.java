@@ -3986,7 +3986,7 @@ public class Quester implements Comparable<Quester> {
                     if (q == null) {
                         continue;
                     }
-                    if (quest.getOptions().canShareOnlySameQuest()) {
+                    if (quest.getOptions().canShareSameQuestOnly()) {
                         if (q.getCurrentStage(quest) != null) {
                             fun.apply(q, quest);
                         }

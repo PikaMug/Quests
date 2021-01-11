@@ -1881,7 +1881,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 if (config.getInt("quests." + questKey + ".rewards.parties-experience", -999) != -999) {
                     rews.setPartiesExperience(config.getInt("quests." + questKey + ".rewards.parties-experience"));
                 } else {
-                    throw new QuestFormatException("Reward Parties experience is not a number", questKey);
+                    throw new QuestFormatException("Reward parties-experience is not a number", questKey);
                 }
             }
         }
@@ -2177,8 +2177,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".options.share-progress-level")) {
             opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
         }
-        if (config.contains("quests." + questKey + ".options.share-only-same-quest")) {
-            opts.setShareOnlySameQuest(config.getBoolean("quests." + questKey + ".options.share-only-same-quest"));
+        if (config.contains("quests." + questKey + ".options.same-quest-only")) {
+            opts.setShareSameQuestOnly(config.getBoolean("quests." + questKey + ".options.same-quest-only"));
         }
     }
 

@@ -502,13 +502,13 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.GRAY + ")";
                 }
             case 4:
-                if (context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST) == null) {
-                    final boolean defaultOpt = new Options().canShareOnlySameQuest();
+                if (context.getSessionData(CK.OPT_SAME_QUEST_ONLY) == null) {
+                    final boolean defaultOpt = new Options().canShareSameQuestOnly();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
-                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST);
+                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SAME_QUEST_ONLY);
                     return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
@@ -549,7 +549,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsLevelPrompt(context);
             case 4:
-                tempKey = CK.OPT_SHARE_ONLY_SAME_QUEST;
+                tempKey = CK.OPT_SAME_QUEST_ONLY;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
             case 5:
