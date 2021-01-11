@@ -487,7 +487,7 @@ optCommandsDenied: "Nem használhatsz parancsokat a(z) <quest> küldetés közbe
 optUseDungeonsXLPlugin: "DungeonsXL plugin használata"
 optUsePartiesPlugin: "Parties plugin használata"
 optShareProgressLevel: "A haladás megosztásának szintje"
-optShareOnlySameQuest: "Share only with the same quest"
+optShareOnlySameQuest: "Share with the same quest only"
 rewSetMoney: "Pénz jutalom beállítása"
 rewSetQuestPoints: "Küldetés Pontok jutalom beállítása"
 rewSetItems: "Elem jutalmak beállítása"
