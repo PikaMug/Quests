@@ -71,12 +71,14 @@ public class BlockListener implements Listener {
                         } else {
                             quester.breakBlock(quest, blockItemStack);
                             
-                            quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q) -> {
-                                q.breakBlock(quest, blockItemStack);
+                            // Multiplayer
+                            quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q, final Quest cq) -> {
+                                q.breakBlock(cq, blockItemStack);
                                 return null;
                             });
                         }
                     }
+                    
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(placeType)) {
                         for (final ItemStack is : quester.getQuestData(quest).blocksPlaced) {
@@ -106,11 +108,11 @@ public class BlockListener implements Listener {
                             }
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, placeType, (final Quester q) -> {
-                        for (final ItemStack is : q.getQuestData(quest).blocksPlaced) {
+                    quester.dispatchMultiplayerEverything(quest, placeType, (final Quester q, final Quest cq) -> {
+                        for (final ItemStack is : q.getQuestData(cq).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                 ItemStack toPlace = new ItemStack(is.getType(), 64);
-                                for (final ItemStack stack : q.getCurrentStage(quest).getBlocksToPlace()) {
+                                for (final ItemStack stack : quester.getCurrentStage(cq).getBlocksToPlace()) {
                                     if (ItemUtil.compareItems(is, stack, true) == 0) {
                                         toPlace = stack;
                                     }
@@ -118,17 +120,17 @@ public class BlockListener implements Listener {
                                 
                                 final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
                                 final QuesterPreUpdateObjectiveEvent preEvent 
-                                        = new QuesterPreUpdateObjectiveEvent(q, quest, 
+                                        = new QuesterPreUpdateObjectiveEvent(q, cq,
                                         new Objective(type, is.getAmount(), toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(preEvent);
                                 
-                                final int index = q.getQuestData(quest).blocksPlaced.indexOf(is);
+                                final int index = q.getQuestData(cq).blocksPlaced.indexOf(is);
                                 final int newAmount = is.getAmount() - 1;
                                 is.setAmount(newAmount);
-                                q.getQuestData(quest).blocksPlaced.set(index, is);
+                                q.getQuestData(cq).blocksPlaced.set(index, is);
                                 
                                 final QuesterPostUpdateObjectiveEvent postEvent 
-                                        = new QuesterPostUpdateObjectiveEvent(q, quest, 
+                                        = new QuesterPostUpdateObjectiveEvent(q, cq,
                                                     new Objective(type, newAmount, toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
@@ -141,9 +143,9 @@ public class BlockListener implements Listener {
                             quester.cutBlock(quest, blockItemStack);
                         }
                     }
-                    quester.dispatchMultiplayerEverything(quest, cutType, (final Quester q) -> {
+                    quester.dispatchMultiplayerEverything(quest, cutType, (final Quester q, final Quest cq) -> {
                         if (player.getItemInHand().getType().equals(Material.SHEARS)) {
-                            q.cutBlock(quest, blockItemStack);
+                            q.cutBlock(cq, blockItemStack);
                         }
                         return null;
                     });
@@ -171,8 +173,8 @@ public class BlockListener implements Listener {
                     quester.damageBlock(quest, blockItemStack);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.placeBlock(quest, blockItemStack);
+                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    q.placeBlock(cq, blockItemStack);
                     return null;
                 });
             }
@@ -199,8 +201,8 @@ public class BlockListener implements Listener {
                         quester.placeBlock(quest, blockItemStack);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.placeBlock(quest, blockItemStack);
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.placeBlock(cq, blockItemStack);
                         return null;
                     });
                 }
@@ -239,8 +241,8 @@ public class BlockListener implements Listener {
                                 quester.useBlock(quest, blockItemStack);
                             }
                             
-                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                                q.useBlock(quest, blockItemStack);
+                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                                q.useBlock(cq, blockItemStack);
                                 return null;
                             });
                         }

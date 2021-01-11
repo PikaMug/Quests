@@ -47,7 +47,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final String classPrefix;
     private boolean hasReward = false;
-    private final int size = 12;
+    private final int size = 13;
 
     public RewardsPrompt(final ConversationContext context) {
         super(context);
@@ -93,14 +93,20 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             }
         case 9:
-            if (plugin.getDependencies().getPhatLoots() != null) {
+            if (plugin.getDependencies().getPartiesApi() != null) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
             }
         case 10:
-            return ChatColor.BLUE;
+            if (plugin.getDependencies().getPhatLoots() != null) {
+                return ChatColor.BLUE;
+            } else {
+                return ChatColor.GRAY;
+            }
         case 11:
+            return ChatColor.BLUE;
+        case 12:
             if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY;
@@ -110,7 +116,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 12:
+        case 13:
             return ChatColor.GREEN;
         default:
             return null;
@@ -149,20 +155,26 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + Lang.get("rewSetHeroes");
             }
         case 9:
+            if (plugin.getDependencies().getPartiesApi() != null) {
+                return ChatColor.YELLOW + Lang.get("rewSetPartiesExperience");
+            } else {
+                return ChatColor.GRAY + Lang.get("rewSetPartiesExperience");
+            }
+        case 10:
             if (plugin.getDependencies().getPhatLoots() != null) {
                 return ChatColor.YELLOW + Lang.get("rewSetPhat");
             } else {
                 return ChatColor.GRAY + Lang.get("rewSetPhat");
             }
-        case 10:
-            return ChatColor.DARK_PURPLE + Lang.get("rewSetCustom");
         case 11:
+            return ChatColor.DARK_PURPLE + Lang.get("rewSetCustom");
+        case 12:
             if (!hasReward) {
                 return ChatColor.GRAY + Lang.get("overrideCreateSet");
             } else {
                 return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
-        case 12:
+        case 13:
             return ChatColor.YELLOW + Lang.get("done");
         default:
             return null;
@@ -296,6 +308,13 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
         case 9:
+            if (context.getSessionData(CK.REW_PARTIES_EXPERIENCE) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_PARTIES_EXPERIENCE) + " "
+                        + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+            }
+        case 10:
             if (plugin.getDependencies().getPhatLoots() != null) {
                 if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
@@ -310,7 +329,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
-        case 10:
+        case 11:
             if (context.getSessionData(CK.REW_CUSTOM) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
@@ -322,7 +341,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text;
             }
-        case 11:
+        case 12:
             if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -338,7 +357,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text;
             }
-        case 12:
+        case 13:
             return "";
         default:
             return null;
@@ -409,14 +428,16 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return new RewardsPrompt(context);
             }
         case 9:
+            return new RewardsPartiesExperiencePrompt(context);
+        case 10:
             if (plugin.getDependencies().getPhatLoots() != null) {
                 return new RewardsPhatLootsPrompt(context);
             } else {
                 return new RewardsPrompt(context);
             }
-        case 10:
-            return new CustomRewardsPrompt(context);
         case 11:
+            return new CustomRewardsPrompt(context);
+        case 12:
             if (hasReward) {
                 return new OverridePrompt.Builder()
                         .source(this)
@@ -426,7 +447,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new RewardsPrompt(context);
             }
-        case 12:
+        case 13:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
             return new RewardsPrompt(context);
@@ -441,7 +462,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 || context.getSessionData(CK.REW_COMMAND) != null
                 || context.getSessionData(CK.REW_PERMISSION) != null 
                 || context.getSessionData(CK.REW_MCMMO_SKILLS) != null 
-                || context.getSessionData(CK.REW_HEROES_CLASSES) != null 
+                || context.getSessionData(CK.REW_HEROES_CLASSES) != null
+                || context.getSessionData(CK.REW_PARTIES_EXPERIENCE) != null
                 || context.getSessionData(CK.REW_PHAT_LOOTS) != null
                 || context.getSessionData(CK.REW_CUSTOM) != null) {
             hasReward = true;
@@ -1482,6 +1504,55 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return new RewardsHeroesListPrompt(context);
             }
+        }
+    }
+    
+    public class RewardsPartiesExperiencePrompt extends QuestsEditorStringPrompt {
+        
+        public RewardsPartiesExperiencePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("rewPartiesExperiencePrompt");
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+        
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false
+                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i > 0) {
+                        context.setSessionData(CK.REW_PARTIES_EXPERIENCE, i);
+                    } else {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
+                        return new RewardsPartiesExperiencePrompt(context);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new RewardsPartiesExperiencePrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.REW_PARTIES_EXPERIENCE, null);
+                return new RewardsPrompt(context);
+            }
+            return new RewardsPrompt(context);
         }
     }
 

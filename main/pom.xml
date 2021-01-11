@@ -19,11 +19,6 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <!-- Parties -->
-            <id>codemc-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -34,6 +29,11 @@
         <repository>
             <id>sk89q-repo</id>
             <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <!-- Parties -->
+            <id>alessiodp-repo</id>
+            <url>https://repo.alessiodp.com/releases/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>2.6.3</version>
+            <version>3.0.0-rc.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

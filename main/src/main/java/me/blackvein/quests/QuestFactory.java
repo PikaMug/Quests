@@ -251,6 +251,9 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
             context.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
         }
+        if (rews.getPartiesExperience() != 0) {
+            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPhatLoots());
+        }
         if (rews.getPhatLoots().isEmpty() == false) {
             context.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
         }
@@ -282,7 +285,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        context.setSessionData(CK.OPT_REQUIRE_SAME_QUEST, opt.canRequireSameQuest());
+        context.setSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST, opt.canShareOnlySameQuest());
         // Stages (Objectives)
         int index = 1;
         for (final Stage stage : q.getStages()) {
@@ -892,6 +895,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES) : null);
         rews.set("heroes-exp-amounts", context.getSessionData(CK.REW_HEROES_AMOUNTS) != null 
                 ? (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS) : null);
+        rews.set("parties-experience", context.getSessionData(CK.REW_PARTIES_EXPERIENCE) != null
+                ? (Integer) context.getSessionData(CK.REW_PARTIES_EXPERIENCE) : null);
         rews.set("phat-loots", context.getSessionData(CK.REW_PHAT_LOOTS) != null 
                 ? (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS) : null);
         final LinkedList<String> customRews = context.getSessionData(CK.REW_CUSTOM) != null 
@@ -944,8 +949,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
         opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 
                 ? (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
-        opts.set("require-same-quest", context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) != null 
-                ? (Boolean) context.getSessionData(CK.OPT_REQUIRE_SAME_QUEST) : null);
+        opts.set("share-only-same-quest", context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST) != null
+                ? (Boolean) context.getSessionData(CK.OPT_SHARE_ONLY_SAME_QUEST) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }

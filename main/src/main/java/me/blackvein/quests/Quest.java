@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -491,11 +493,21 @@ public class Quest implements Comparable<Quest> {
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
-     * 
+     *
      * @param q The quester finishing this quest
      */
-    @SuppressWarnings("deprecation")
     public void completeQuest(final Quester q) {
+        completeQuest(q, true);
+    }
+    
+    /**
+     * Proceed to finish this quest, issuing applicable rewards
+     * 
+     * @param q The quester finishing this quest
+     * @param allowMultiplayer Allow multiplayer sharing
+     */
+    @SuppressWarnings("deprecation")
+    public void completeQuest(final Quester q, boolean allowMultiplayer) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
             final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
@@ -621,6 +633,19 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
+        if (rews.getPartiesExperience() > 0 && plugin.getDependencies().getPartiesApi() != null) {
+            PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(player.getUniqueId());
+            if (partyPlayer != null && partyPlayer.getPartyId() != null) {
+                Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
+                if (party != null) {
+                    party.giveExperience(rews.getPartiesExperience());
+                    issuedReward = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getPartiesExperience() + " party experience");
+                    }
+                }
+            }
+        }
         final LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
         int phatLootExp = 0;
         final LinkedList<String> phatLootMessages = new LinkedList<String>();
@@ -676,7 +701,7 @@ public class Quest implements Comparable<Quest> {
         if (rews.getQuestPoints() > 0) {
             q.questPoints += rews.getQuestPoints();
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() 
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() + " "
                         + Lang.get("questPoints"));
             }
             issuedReward = true;
@@ -863,6 +888,10 @@ public class Quest implements Comparable<Quest> {
                                 + s + " " + Lang.get(p, "experience"));
                     }
                 }
+                if (rews.getPartiesExperience() > 0) {
+                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getPartiesExperience() + ChatColor.DARK_PURPLE + " "
+                            + Lang.get(p, "partiesExperience"));
+                }
                 if (phatLootMessages.isEmpty() == false) {
                     for (final String s : phatLootMessages) {
                         q.sendMessage("- " + s);
@@ -908,11 +937,11 @@ public class Quest implements Comparable<Quest> {
         }
         
         // Multiplayer
-        if (opts.getShareProgressLevel() == 4) {
+        if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
             final List<Quester> mq = q.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
-                    completeQuest(qq);
+                    completeQuest(qq, false);
                 }
             }
         }
