@@ -28,7 +28,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -50,6 +49,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
 
 import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 
@@ -2244,8 +2244,16 @@ public class Quester implements Comparable<Quester> {
      * @param player The player to be killed
      */
     public void killPlayer(final Quest quest, final Player player) {
-        final int playersKilled = getQuestData(quest).getPlayersKilled();
-        final int playersToKill = getCurrentStage(quest).playersToKill;
+        final QuestData questData = getQuestData(quest);
+        if (questData == null) {
+            return;
+        }
+        final Stage currentStage = getCurrentStage(quest);
+        if (currentStage == null) {
+            return;
+        }
+        final int playersKilled = questData.getPlayersKilled();
+        final int playersToKill = currentStage.playersToKill;
         
         final ObjectiveType type = ObjectiveType.KILL_PLAYER;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
@@ -2254,7 +2262,7 @@ public class Quester implements Comparable<Quester> {
         
         final int newPlayersKilled = playersKilled + 1;
         if (playersKilled < playersToKill) {
-            getQuestData(quest).setPlayersKilled(newPlayersKilled);
+            questData.setPlayersKilled(newPlayersKilled);
             if (newPlayersKilled >= playersToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                         new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
@@ -4000,7 +4008,8 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         } catch (final Exception e) {
-            plugin.getLogger().severe("Error occurred while dispatching " + type.name() + " for " + quest.getName());
+            plugin.getLogger().severe("Error occurred while dispatching " + type.name() + " for quest ID "
+                    + quest.getId());
             e.printStackTrace();
         }
     }
@@ -4051,8 +4060,8 @@ public class Quester implements Comparable<Quester> {
                 if (partyPlayer != null && partyPlayer.getPartyId() != null) {
                     final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
                     if (party != null) {
-                        long distanceSquared = quest.getOptions().getPartiesDistance() * quest.getOptions().getPartiesDistance();
-                        boolean offlinePlayers = quest.getOptions().canPartiesHandleOfflinePlayers();
+                        final long distanceSquared = quest.getOptions().getPartiesDistance() * quest.getOptions().getPartiesDistance();
+                        final boolean offlinePlayers = quest.getOptions().canPartiesHandleOfflinePlayers();
                         if (offlinePlayers) {
                             for (final UUID id : party.getMembers()) {
                                 if (!id.equals(getUUID())) {
@@ -4063,7 +4072,7 @@ public class Quester implements Comparable<Quester> {
                             for (final PartyPlayer pp : party.getOnlineMembers(true)) {
                                 if (!pp.getPlayerUUID().equals(getUUID())) {
                                     if (distanceSquared > 0) {
-                                        Player player = Bukkit.getPlayer(pp.getPlayerUUID());
+                                        final Player player = Bukkit.getPlayer(pp.getPlayerUUID());
                                         if (player != null && distanceSquared >= getPlayer().getLocation().distanceSquared(player.getLocation())) {
                                             mq.add(plugin.getQuester(pp.getPlayerUUID()));
                                         }
