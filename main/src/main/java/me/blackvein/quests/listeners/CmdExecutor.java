@@ -204,7 +204,7 @@ public class CmdExecutor implements CommandExecutor {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
-                                final String msg = Lang.get(player, "questCommandTitle")
+                                final String msg = Lang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
                                 quester.sendMessage(ChatColor.GOLD + msg);
                                 plugin.showObjectives(q, quester, false);
