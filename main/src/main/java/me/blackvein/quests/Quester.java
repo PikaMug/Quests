@@ -2099,8 +2099,20 @@ public class Quester implements Comparable<Quester> {
      * @param quest The quest for which the fish is being caught
      */
     public void milkCow(final Quest quest) {
-        final int cowsMilked = getQuestData(quest).getCowsMilked();
-        final int cowsToMilk = getCurrentStage(quest).cowsToMilk;
+        final QuestData questData = getQuestData(quest);
+        if (questData == null) {
+            return;
+        }
+        final Stage currentStage = getCurrentStage(quest);
+        if (currentStage == null) {
+            return;
+        }
+        if (currentStage.cowsToMilk == null) {
+            return;
+        }
+        
+        final int cowsMilked = questData.getCowsMilked();
+        final int cowsToMilk = currentStage.cowsToMilk;
         
         final ObjectiveType type = ObjectiveType.MILK_COW;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
@@ -2109,7 +2121,7 @@ public class Quester implements Comparable<Quester> {
         
         final int newCowsMilked = cowsMilked + 1;
         if (cowsMilked < cowsToMilk) {
-            getQuestData(quest).setCowsMilked(newCowsMilked);
+            questData.setCowsMilked(newCowsMilked);
             
             if (newCowsMilked >= cowsToMilk) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
@@ -2136,8 +2148,20 @@ public class Quester implements Comparable<Quester> {
      * @param quest The quest for which the fish is being caught
      */
     public void catchFish(final Quest quest) {
-        final int fishCaught = getQuestData(quest).getFishCaught();
-        final int fishToCatch = getCurrentStage(quest).fishToCatch;
+        final QuestData questData = getQuestData(quest);
+        if (questData == null) {
+            return;
+        }
+        final Stage currentStage = getCurrentStage(quest);
+        if (currentStage == null) {
+            return;
+        }
+        if (currentStage.fishToCatch == null) {
+            return;
+        }
+        
+        final int fishCaught = questData.getFishCaught();
+        final int fishToCatch = currentStage.fishToCatch;
         
         final ObjectiveType type = ObjectiveType.CATCH_FISH;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
@@ -2146,7 +2170,7 @@ public class Quester implements Comparable<Quester> {
         
         final int newFishCaught = fishCaught + 1;
         if (fishCaught < fishToCatch) {
-            getQuestData(quest).setFishCaught(newFishCaught);
+            questData.setFishCaught(newFishCaught);
             
             if (newFishCaught >= fishToCatch) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
@@ -2180,6 +2204,9 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         final Stage currentStage = getCurrentStage(quest);
+        if (currentStage.mobsToKill == null) {
+            return;
+        }
         if (currentStage.mobsToKill.contains(e) == false) {
             return;
         }
@@ -2252,6 +2279,10 @@ public class Quester implements Comparable<Quester> {
         if (currentStage == null) {
             return;
         }
+        if (currentStage.playersToKill == null) {
+            return;
+        }
+        
         final int playersKilled = questData.getPlayersKilled();
         final int playersToKill = currentStage.playersToKill;
         
