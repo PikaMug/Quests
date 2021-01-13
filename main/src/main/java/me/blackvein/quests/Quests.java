@@ -102,10 +102,10 @@ import me.blackvein.quests.tasks.PlayerMoveThread;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.localelib.LocaleManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -138,7 +138,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private DungeonsListener dungeonsListener;
     private PartiesListener partiesListener;
     private DenizenTrigger trigger;
-    private LocaleQuery localeQuery;
+    private LocaleManager localeManager;
     private Storage storage;
 
     @Override
@@ -148,8 +148,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
-        localeQuery = new LocaleQuery(this);
-        localeQuery.setBukkitVersion(bukkitVersion);
+        localeManager = new LocaleManager();
         blockListener = new BlockListener(this);
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
@@ -471,8 +470,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return trigger;
     }
     
-    public LocaleQuery getLocaleQuery() {
-        return localeQuery;
+    public LocaleManager getLocaleManager() {
+        return localeManager;
     }
     
     public Storage getStorage() {
@@ -913,7 +912,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
                     if (getSettings().canTranslateNames() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
                     } else {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
@@ -935,7 +934,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
                     if (getSettings().canTranslateNames() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
                     } else {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
@@ -957,7 +956,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
                     if (getSettings().canTranslateNames() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
                     } else {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
@@ -979,7 +978,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
                     if (getSettings().canTranslateNames() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
                     } else {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
@@ -1001,7 +1000,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                     }
                     if (getSettings().canTranslateNames() && !e.hasItemMeta() && !e.getItemMeta().hasDisplayName()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getType(), e.getDurability(), null);
                     } else {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(e)));
                     }
@@ -1026,7 +1025,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
             if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -1050,7 +1049,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
             if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -1075,12 +1074,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             if (getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments(), is.getItemMeta());
             } else if (getSettings().canTranslateNames() && !is.hasItemMeta() 
                     && Material.getMaterial("LINGERING_POTION") == null) {
                 // Bukkit version is below 1.9
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 if (is.getEnchantments().isEmpty()) {
@@ -1116,12 +1115,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             if (getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments(), is.getItemMeta());
             } else if (getSettings().canTranslateNames() && !is.hasItemMeta() 
                     && Material.getMaterial("LINGERING_POTION") == null) {
                 // Bukkit version is below 1.9
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -1145,7 +1144,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
             if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -1217,7 +1216,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                         }
                         if (getSettings().canTranslateNames()) {
-                            localeQuery.sendMessage(quester.getPlayer(), message, e, null);
+                            localeManager.sendMessage(quester.getPlayer(), message, e, null);
                         } else {
                             quester.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(e)));
                         }
@@ -1260,7 +1259,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
             if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                localeQuery.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -1325,7 +1324,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         message += color + ": " + e2.getValue() + "/" + e.getValue();
                     }
                     if (getSettings().canTranslateNames()) {
-                        localeQuery.sendMessage(quester.getPlayer(), message, e.getKey(), null);
+                        localeManager.sendMessage(quester.getPlayer(), message, e.getKey(), null);
                     } else {
                         quester.sendMessage(message.replace("<mob>", 
                                 MiscUtil.getProperMobName(e.getKey())));

@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.alessiodp.parties.api.interfaces.Party;
-import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -34,6 +32,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.codisimus.plugins.phatloots.loot.CommandLoot;
 import com.codisimus.plugins.phatloots.loot.LootBundle;
@@ -507,7 +507,7 @@ public class Quest implements Comparable<Quest> {
      * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final Quester q, boolean allowMultiplayer) {
+    public void completeQuest(final Quester q, final boolean allowMultiplayer) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
             final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
@@ -634,9 +634,9 @@ public class Quest implements Comparable<Quest> {
             }
         }
         if (rews.getPartiesExperience() > 0 && plugin.getDependencies().getPartiesApi() != null) {
-            PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(player.getUniqueId());
+            final PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(player.getUniqueId());
             if (partyPlayer != null && partyPlayer.getPartyId() != null) {
-                Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
+                final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
                 if (party != null) {
                     party.giveExperience(rews.getPartiesExperience());
                     issuedReward = true;
@@ -795,7 +795,7 @@ public class Quest implements Comparable<Quest> {
                         }
                     }
                     if (plugin.getSettings().canTranslateNames() && text.contains("<item>")) {
-                        plugin.getLocaleQuery().sendMessage(p, text, i.getType(), i.getDurability(), 
+                        plugin.getLocaleManager().sendMessage(p, text, i.getType(), i.getDurability(), 
                                 i.getEnchantments());
                     } else {
                         for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {

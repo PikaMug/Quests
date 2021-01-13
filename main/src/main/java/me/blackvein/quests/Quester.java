@@ -69,7 +69,6 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.LocaleQuery;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -1348,7 +1347,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         broken = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         broken = is;
                     }
@@ -1379,7 +1378,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toBreak = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toBreak = is;
                     }
@@ -1455,7 +1454,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         damaged = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         damaged = is;
                     }
@@ -1476,7 +1475,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toDamage = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toDamage = is;
                     }
@@ -1543,7 +1542,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         placed = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         placed = is;
                     }
@@ -1564,7 +1563,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toPlace = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toPlace = is;
                     }
@@ -1630,7 +1629,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         used = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         used = is;
                     }
@@ -1651,7 +1650,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid, so check durability
                     if (m.getDurability() == is.getDurability()) {
                         toUse = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toUse = is;
                     }
@@ -1717,7 +1716,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         cut = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         cut = is;
                     }
@@ -1738,7 +1737,7 @@ public class Quester implements Comparable<Quester> {
                     // Blocks are solid so check for durability
                     if (m.getDurability() == is.getDurability()) {
                         toCut = is;
-                    } else if (!LocaleQuery.isBelow113(plugin.getDetectedBukkitVersion())) {
+                    } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toCut = is;
                     }
@@ -2754,7 +2753,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
@@ -2768,7 +2767,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
@@ -2782,7 +2781,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
@@ -2796,7 +2795,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
@@ -2810,7 +2809,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
@@ -2825,7 +2824,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
@@ -2840,7 +2839,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
@@ -2855,12 +2854,12 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(),
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments(), goal.getItemMeta());
             } else if (plugin.getSettings().canTranslateNames() && !is.hasItemMeta()
                     && Material.getMaterial("LINGERING_POTION") == null) {
                 // Bukkit version is below 1.9
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(),
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments());
             } else {
                 for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
@@ -2880,12 +2879,12 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(),
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments(), goal.getItemMeta());
             } else if (plugin.getSettings().canTranslateNames() && !is.hasItemMeta()
                     && Material.getMaterial("LINGERING_POTION") == null) {
                 // Bukkit version is below 1.9
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(),
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments());
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
@@ -2902,7 +2901,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
@@ -2920,7 +2919,7 @@ public class Quester implements Comparable<Quester> {
             }
             if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLocaleQuery().sendMessage(p, message, is.getType(), is.getDurability(), null);
+                plugin.getLocaleManager().sendMessage(p, message, is.getType(), is.getDurability(), null);
             } else {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
@@ -2952,7 +2951,7 @@ public class Quester implements Comparable<Quester> {
                         + goal.getAmount();
             }
             if (plugin.getSettings().canTranslateNames()) {
-                plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+                plugin.getLocaleManager().sendMessage(p, message, mob, extra);
             } else {
                 sendMessage(message.replace("<mob>", MiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }
@@ -2991,7 +2990,7 @@ public class Quester implements Comparable<Quester> {
                 message += ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
             }
             if (plugin.getSettings().canTranslateNames()) {
-                plugin.getLocaleQuery().sendMessage(p, message, mob, extra);
+                plugin.getLocaleManager().sendMessage(p, message, mob, extra);
             } else {
                 sendMessage(message.replace("<mob>", MiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }

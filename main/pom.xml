@@ -14,7 +14,7 @@
     
     <repositories>
         <repository>
-            <!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL -->
+            <!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL, LocaleLib -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -129,6 +129,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.PikaMug</groupId>
+            <artifactId>LocaleLib</artifactId>
+            <version>-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.22</version>
@@ -224,6 +229,7 @@
                     <artifactSet>
                         <includes>
                             <include>me.*</include>
+                            <include>com.github.PikaMug:LocaleLib</include>
                             <include>com.zaxxer:HikariCP</include>
                             <include>org.slf4j:slf4j-simple</include>
                             <include>org.slf4j:slf4j-api</include>
@@ -231,6 +237,10 @@
                         </includes>
                     </artifactSet>
                     <relocations>
+                        <relocation>
+                            <pattern>me.pikamug.localelib</pattern>
+                            <shadedPattern>me.blackvein.quests.libs.localelib</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
                             <shadedPattern>me.blackvein.quests.libs.hikari</shadedPattern>

@@ -37,7 +37,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.RomanNumeral;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
@@ -110,7 +109,7 @@ public class NpcListener implements Listener {
                                 text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
                                 if (plugin.getSettings().canTranslateNames() && !hasMeta 
                                         && !hand.getItemMeta().hasDisplayName()) {
-                                    plugin.getLocaleQuery().sendMessage(player, Lang
+                                    plugin.getLocaleManager().sendMessage(player, Lang
                                             .get(player, "questInvalidDeliveryItem").replace("<item>", text), hand
                                             .getType(), hand.getDurability(), null);
                                 } else {
@@ -170,16 +169,13 @@ public class NpcListener implements Listener {
                                     if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
                                         final EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();
                                         if (esmeta.hasStoredEnchants()) {
-                                            // TODO translate Roman numerals
                                             for (final Entry<Enchantment, Integer> e : esmeta.getStoredEnchants()
                                                     .entrySet()) {
                                                 final HashMap<Enchantment, Integer> single 
                                                         = new HashMap<Enchantment, Integer>();
                                                 single.put(e.getKey(), e.getValue());
-                                                plugin.getLocaleQuery().sendMessage(player, ChatColor.GRAY + "\u2515 " 
-                                                        + ChatColor.DARK_GREEN 
-                                                        + "<enchantment> " + RomanNumeral.getNumeral(e.getValue()) 
-                                                        + "\n", single);
+                                                plugin.getLocaleManager().sendMessage(player, ChatColor.GRAY + "\u2515 " 
+                                                        + ChatColor.DARK_GREEN + "<enchantment> <level>\n", single);
                                             }
                                         }
                                     }
