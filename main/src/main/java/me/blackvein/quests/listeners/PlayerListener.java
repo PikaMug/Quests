@@ -396,7 +396,7 @@ public class PlayerListener implements Listener {
                 final ObjectiveType type = ObjectiveType.MILK_COW;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -419,7 +419,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest)) {
@@ -511,7 +511,7 @@ public class PlayerListener implements Listener {
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -537,7 +537,7 @@ public class PlayerListener implements Listener {
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -604,7 +604,7 @@ public class PlayerListener implements Listener {
                 final ObjectiveType type = ObjectiveType.KILL_NPC;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -621,7 +621,7 @@ public class PlayerListener implements Listener {
                 final ObjectiveType type = ObjectiveType.KILL_MOB;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -723,7 +723,7 @@ public class PlayerListener implements Listener {
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -747,7 +747,7 @@ public class PlayerListener implements Listener {
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -772,7 +772,7 @@ public class PlayerListener implements Listener {
             quester.findCompassTarget();
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
             }
         }
@@ -918,7 +918,7 @@ public class PlayerListener implements Listener {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         for (final Quest quest : plugin.getQuests()) {
                             if (!quester.meetsCondition(quest, false)) {
-                                return;
+                                continue;
                             }
                             
                             if (quester.getCurrentQuests().containsKey(quest)) {

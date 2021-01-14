@@ -60,7 +60,7 @@ public class BlockListener implements Listener {
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     if (quester.getCurrentQuests().containsKey(quest) 
                             && quester.getCurrentStage(quest).containsObjective(breakType)) {
@@ -165,7 +165,7 @@ public class BlockListener implements Listener {
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -193,7 +193,7 @@ public class BlockListener implements Listener {
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -233,7 +233,7 @@ public class BlockListener implements Listener {
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         for (final Quest quest : plugin.getQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
-                                return;
+                                continue;
                             }
                             
                             if (quester.getCurrentQuests().containsKey(quest) 

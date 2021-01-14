@@ -48,7 +48,7 @@ public class ItemListener implements Listener {
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -93,7 +93,7 @@ public class ItemListener implements Listener {
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
                     for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
-                            return;
+                            continue;
                         }
                         
                         if (quester.getCurrentQuests().containsKey(quest) 
@@ -113,7 +113,7 @@ public class ItemListener implements Listener {
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
-                            return;
+                            continue;
                         }
                         
                         if (quester.getCurrentQuests().containsKey(quest) 
@@ -145,7 +145,7 @@ public class ItemListener implements Listener {
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -171,7 +171,7 @@ public class ItemListener implements Listener {
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
