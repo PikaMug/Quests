@@ -394,10 +394,10 @@ public class PlayerListener implements Listener {
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                final List<Quester> fellows = quester.getQuestersToShareWith();
+                final List<Quester> friends = quester.getQuestersToShareWith();
                 final ObjectiveType type = ObjectiveType.MILK_COW;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.milkCow(quest);
                         return null;
                     });
@@ -410,7 +410,7 @@ public class PlayerListener implements Listener {
     public void onPlayerChat(final AsyncPlayerChatEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             for (final Quest quest : plugin.getQuests()) {
                 
                 if (quester.meetsCondition(quest, true) && quester.getCurrentQuests().containsKey(quest)) {
@@ -441,7 +441,7 @@ public class PlayerListener implements Listener {
                 }
                 
                 final ObjectiveType type = ObjectiveType.PASSWORD;
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.sayPassword(quest, evt);
                     return null;
                 });
@@ -496,10 +496,10 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Sheep sheep = (Sheep) evt.getEntity();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                final List<Quester> fellows = quester.getQuestersToShareWith();
+                final List<Quester> friends = quester.getQuestersToShareWith();
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.shearSheep(quest, sheep.getColor());
                         return null;
                     });
@@ -514,10 +514,10 @@ public class PlayerListener implements Listener {
             final Player player = (Player) evt.getOwner();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                final List<Quester> fellows = quester.getQuestersToShareWith();
+                final List<Quester> friends = quester.getQuestersToShareWith();
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.tameMob(quest, evt.getEntityType());
                         return null;
                     });
@@ -572,11 +572,11 @@ public class PlayerListener implements Listener {
         }
         if (damager instanceof Player) {
             final Quester quester = plugin.getQuester(damager.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 final ObjectiveType type = ObjectiveType.KILL_NPC;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                         return null;
                     });
@@ -584,7 +584,7 @@ public class PlayerListener implements Listener {
             } else {
                 final ObjectiveType type = ObjectiveType.KILL_MOB;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.killMob(quest, target.getLocation(), target.getType());
                         return null;
                     });
@@ -675,10 +675,10 @@ public class PlayerListener implements Listener {
                 }
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
             for (final Quest quest : plugin.getQuests()) {
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.killPlayer(quest, (Player)target);
                     return null;
                 });
@@ -691,10 +691,10 @@ public class PlayerListener implements Listener {
         final Player player = evt.getPlayer();
         if (evt.getState().equals(State.CAUGHT_FISH) && plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
             for (final Quest quest : plugin.getQuests()) {
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.catchFish(quest);
                     return null;
                 });
@@ -853,10 +853,10 @@ public class PlayerListener implements Listener {
                 final Quester quester = plugin.getQuester(uuid);
                 if (quester != null) {
                     if (plugin.canUseQuests(uuid)) {
-                        final List<Quester> fellows = quester.getQuestersToShareWith();
+                        final List<Quester> friends = quester.getQuestersToShareWith();
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         for (final Quest quest : plugin.getQuests()) {
-                            quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                            quest.performQuestWithFriends(quester, friends, type, (q) -> {
                                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                                     @Override
                                     public void run() {

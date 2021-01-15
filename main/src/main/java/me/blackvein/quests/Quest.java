@@ -181,9 +181,8 @@ public class Quest implements Comparable<Quest> {
      * Force player to proceed to the next ordered stage
      * 
      * @param quester Player to force
-     * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
-    public void nextStage(final Quester quester, final boolean allowSharedProgress) {
+    public void nextStage(final Quester quester) {
         final Stage currentStage = quester.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
@@ -1012,8 +1011,14 @@ public class Quest implements Comparable<Quest> {
         return false;
     }
     
-    // wip
-    public void performQuestWithFellows(final Quester quester, final List<Quester> fellows, final ObjectiveType type, Function<Quester, Void> fun) {
+    /**
+     * Perform the quest and do the same for friends
+     * @param quester The main quester
+     * @param friends The friends of quester
+     * @param type Type of quest
+     * @param fun The function to perform to do the quest
+     */
+    public void performQuestWithFriends(final Quester quester, final List<Quester> friends, final ObjectiveType type, Function<Quester, Void> fun) {
         boolean questerCompleted = false;
         if (quester.meetsCondition(this, true)
                 && quester.getCurrentQuests().containsKey(this)
@@ -1024,7 +1029,7 @@ public class Quest implements Comparable<Quest> {
     
         if (this.getOptions().canShareProgress()
                 && (!this.getOptions().canShareOnlySameQuest() || questerCompleted)) {
-            fellows.forEach(q -> {
+            friends.forEach(q -> {
                 if (q.meetsCondition(this, true)
                         && q.getCurrentQuests().containsKey(this)
                         && q.getCurrentStage(this).containsObjective(type)) {

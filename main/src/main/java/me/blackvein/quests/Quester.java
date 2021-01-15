@@ -2844,7 +2844,7 @@ public class Quester implements Comparable<Quester> {
             sendMessage(message);
         }
         if (testComplete(quest)) {
-            quest.nextStage(this, true);
+            quest.nextStage(this);
         }
     }
 
@@ -3788,64 +3788,6 @@ public class Quester implements Comparable<Quester> {
         }
         return playerAmount >= is.getAmount();
     }
-    
-    /**
-     * Dispatch player event to fellow questers<p>
-     * 
-     * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, consumeItem,
-     * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
-     * killNPC, tameMob, shearSheep, password, reachLocation
-     * 
-     * @deprecated Use {@link #dispatchMultiplayerEverything(Quest, ObjectiveType, BiFunction)}
-     *
-     * @param objectiveType The type of objective to progress
-     * @param fun The function to execute, the event call
-     */
-    @Deprecated
-    /*public void dispatchMultiplayerEverything(final Quest quest, final String objectiveType, final BiFunction<Quester, Quest, Void> fun) {
-        dispatchMultiplayerEverything(quest, ObjectiveType.fromName(objectiveType), fun);
-    }*/
-    
-    /**
-     * Dispatch player event to fellow questers<p>
-     *
-     * @param type The type of objective to progress
-     * @param fun The function to execute, the event call
-     */
-    /*public void dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final BiFunction<Quester, Quest, Void> fun) {
-        if (quest == null) {
-            return;
-        }
-        try {
-            if (quest.getOptions().getShareProgressLevel() == 1) {
-                final List<Quester> mq = getMultiplayerQuesters(quest);
-                if (mq == null) {
-                    return;
-                }
-                for (final Quester q : mq) {
-                    if (q == null) {
-                        continue;
-                    }
-                    if (quest.getOptions().canShareSameQuestOnly()) {
-                        if (q.getCurrentStage(quest) != null) {
-                            fun.apply(q, quest);
-                        }
-                    } else {
-                        q.getCurrentQuests().forEach((otherQuest, i) -> {
-                            if (otherQuest.getStage(i).containsObjective(type)) {
-                                fun.apply(q, otherQuest);
-                            }
-                        });
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            plugin.getLogger().severe("Error occurred while dispatching " + type.name() + " for quest ID "
-                    + quest.getId());
-            e.printStackTrace();
-        }
-    }*/
     
     /**
      * Get a list of Questers in a party or group

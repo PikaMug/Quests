@@ -56,13 +56,13 @@ public class BlockListener implements Listener {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType cutType = ObjectiveType.CUT_BLOCK;
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
-                    quest.performQuestWithFellows(quester, fellows, breakType, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, breakType, (q) -> {
                         if (quest.getOptions().canIgnoreSilkTouch()
                                 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                             if (quester.equals(q)) { // Only quester
@@ -75,7 +75,7 @@ public class BlockListener implements Listener {
                         return null;
                     });
     
-                    quest.performQuestWithFellows(quester, fellows, placeType, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, placeType, (q) -> {
                         for (final ItemStack is : q.getQuestData(quest).blocksPlaced) {
                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                 ItemStack toPlace = new ItemStack(is.getType(), 64);
@@ -106,7 +106,7 @@ public class BlockListener implements Listener {
                     });
     
                     if (player.getItemInHand().getType().equals(Material.SHEARS)) {
-                        quest.performQuestWithFellows(quester, fellows, cutType, (q) -> {
+                        quest.performQuestWithFriends(quester, friends, cutType, (q) -> {
                             q.cutBlock(quest, blockItemStack);
                             return null;
                         });
@@ -124,10 +124,10 @@ public class BlockListener implements Listener {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             for (final Quest quest : plugin.getQuests()) {
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.damageBlock(quest, blockItemStack);
                     return null;
                 });
@@ -143,11 +143,11 @@ public class BlockListener implements Listener {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.placeBlock(quest, blockItemStack);
                         return null;
                     });
@@ -176,10 +176,10 @@ public class BlockListener implements Listener {
                     if (evt.isCancelled() == false) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
-                        final List<Quester> fellows = quester.getQuestersToShareWith();
+                        final List<Quester> friends = quester.getQuestersToShareWith();
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         for (final Quest quest : plugin.getQuests()) {
-                            quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                            quest.performQuestWithFriends(quester, friends, type, (q) -> {
                                 q.useBlock(quest, blockItemStack);
                                 return null;
                             });

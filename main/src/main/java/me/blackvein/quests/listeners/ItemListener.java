@@ -47,10 +47,10 @@ public class ItemListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                final List<Quester> fellows = quester.getQuestersToShareWith();
+                final List<Quester> friends = quester.getQuestersToShareWith();
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 for (final Quest quest : plugin.getQuests()) {
-                    quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
                         q.craftItem(quest, craftedItem);
                         return null;
                     });
@@ -84,10 +84,10 @@ public class ItemListener implements Listener {
                     || evt.getInventory().getType().name().equals("SMOKER")) {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    final List<Quester> fellows = quester.getQuestersToShareWith();
+                    final List<Quester> friends = quester.getQuestersToShareWith();
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
                     for (final Quest quest : plugin.getQuests()) {
-                        quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                        quest.performQuestWithFriends(quester, friends, type, (q) -> {
                             q.smeltItem(quest, evt.getCurrentItem());
                             return null;
                         });
@@ -96,10 +96,10 @@ public class ItemListener implements Listener {
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    final List<Quester> fellows = quester.getQuestersToShareWith();
+                    final List<Quester> friends = quester.getQuestersToShareWith();
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     for (final Quest quest : plugin.getQuests()) {
-                        quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                        quest.performQuestWithFriends(quester, friends, type, (q) -> {
                             q.brewItem(quest, evt.getCurrentItem());
                             return null;
                         });
@@ -121,10 +121,10 @@ public class ItemListener implements Listener {
             }
     
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             for (final Quest quest : plugin.getQuests()) {
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.enchantItem(quest, enchantedItem);
                     return null;
                 });
@@ -139,10 +139,10 @@ public class ItemListener implements Listener {
             final ItemStack consumedItem = evt.getItem().clone();
             consumedItem.setAmount(1);
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            final List<Quester> fellows = quester.getQuestersToShareWith();
+            final List<Quester> friends = quester.getQuestersToShareWith();
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
             for (final Quest quest : plugin.getQuests()) {
-                quest.performQuestWithFellows(quester, fellows, type, (q) -> {
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
                     q.consumeItem(quest, consumedItem);
                     return null;
                 });
