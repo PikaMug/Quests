@@ -133,7 +133,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private ItemListener itemListener;
     private NpcListener npcListener;
     private PlayerListener playerListener;
-    private NpcEffectThread effThread;
+    private NpcEffectThread effectThread;
     private PlayerMoveThread moveThread;
     private DungeonsListener dungeonsListener;
     private PartiesListener partiesListener;
@@ -155,7 +155,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         playerListener = new PlayerListener(this);
         dungeonsListener = new DungeonsListener(this);
         partiesListener = new PartiesListener(this);
-        effThread = new NpcEffectThread(this);
+        effectThread = new NpcEffectThread(this);
         moveThread = new PlayerMoveThread(this);
         questFactory = new QuestFactory(this);
         actionFactory = new ActionFactory(this);
@@ -215,11 +215,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
-        if (depends.getCitizens() != null) { // #getCitizens takes care of registering npcListener
-            if (settings.canNpcEffects()) {
-                getServer().getScheduler().scheduleSyncRepeatingTask(this, effThread, 20, 20);
-            }
-        }
+        depends.enableCitizens();
         getServer().getPluginManager().registerEvents(playerListener, this);
         if (settings.getStrictPlayerMovement() > 0) {
             final long ticks = settings.getStrictPlayerMovement() * 20;
@@ -464,6 +460,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     
     public PartiesListener getPartiesListener() {
         return partiesListener;
+    }
+    
+    public NpcEffectThread getNpcEffectThread() {
+        return effectThread;
     }
     
     public DenizenTrigger getDenizenTrigger() {

@@ -124,17 +124,27 @@ public class Dependencies {
     }
     
     public CitizensPlugin getCitizens() {
-        if (citizens == null && isPluginAvailable("Citizens")) {
+        if (citizens == null) {
+            enableCitizens();
+        }
+        return citizens;
+    }
+    
+    public void enableCitizens() {
+        if (isPluginAvailable("Citizens")) {
             try {
                 citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
                 plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
+                if (plugin.getSettings().canNpcEffects()) {
+                    plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
+                            20, 20);
+                }
                 plugin.getLogger().info("Successfully linked Quests with Citizens " 
                         + citizens.getDescription().getVersion());
             } catch (final Exception e) {
                 plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
         }
-        return citizens;
     }
     
     public void disableCitizens() {
