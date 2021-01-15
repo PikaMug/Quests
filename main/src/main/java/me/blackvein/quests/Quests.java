@@ -153,8 +153,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
         playerListener = new PlayerListener(this);
-        dungeonsListener = new DungeonsListener();
-        partiesListener = new PartiesListener();
+        dungeonsListener = new DungeonsListener(this);
+        partiesListener = new PartiesListener(this);
         effectThread = new NpcEffectThread(this);
         moveThread = new PlayerMoveThread(this);
         questFactory = new QuestFactory(this);
@@ -2174,17 +2174,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
             opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
         }
-        if (config.contains("quests." + questKey + ".options.parties.handle-offline-players")) {
-            opts.setPartiesHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.parties.handle-offline-players"));
-        }
-        if (config.contains("quests." + questKey + ".options.parties.distance")) {
-            opts.setPartiesDistance(config.getLong("quests." + questKey + ".options.parties.distance"));
-        }
         if (config.contains("quests." + questKey + ".options.share-progress-level")) {
             opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
         }
-        if (config.contains("quests." + questKey + ".options.same-quest-only")) {
-            opts.setShareSameQuestOnly(config.getBoolean("quests." + questKey + ".options.same-quest-only"));
+        if (config.contains("quests." + questKey + ".options.parties.distance")) {
+            opts.setShareDistance(config.getLong("quests." + questKey + ".options.share-distance"));
+        }
+        if (config.contains("quests." + questKey + ".options.share-only-same-quest")) {
+            opts.setShareOnlySameQuest(config.getBoolean("quests." + questKey + ".options.share-only-same-quest"));
         }
     }
 

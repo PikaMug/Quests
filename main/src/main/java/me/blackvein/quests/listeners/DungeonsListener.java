@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.listeners;
 
+import me.blackvein.quests.Quests;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,24 +25,31 @@ import de.erethon.dungeonsxl.api.event.group.GroupPlayerLeaveEvent;
 import me.blackvein.quests.util.Lang;
 
 public class DungeonsListener implements Listener {
+    private final Quests plugin;
+    
+    public DungeonsListener(final Quests plugin) {
+        this.plugin = plugin;
+    }
     
     @EventHandler
     public void onGroupCreate(final GroupCreateEvent event) {
-        if (Lang.get("questDungeonsCreate").length() > 0) {
+        if (plugin.getDependencies().getDungeonsApi() != null && Lang.get("questDungeonsCreate").length() > 0) {
             event.getCreator().sendMessage(ChatColor.YELLOW + Lang.get("questDungeonsCreate"));
         }
     }
     
     @EventHandler
     public void onGroupDisbandEvent(final GroupDisbandEvent event) {
-        if (Lang.get("questDungeonsDisband").length() > 0) {
+        if (plugin.getDependencies().getDungeonsApi() != null && Lang.get("questDungeonsDisband").length() > 0) {
             event.getDisbander().sendMessage(ChatColor.RED + Lang.get("questDungeonsDisband"));
         }
     }
     
     @EventHandler
     public void onPlayerJoinEvent(final GroupPlayerJoinEvent event) {
-        if (event.getGroup() != null && event.getPlayer() != null) {
+        if (plugin.getDependencies().getDungeonsApi() != null
+                && event.getGroup() != null
+                && event.getPlayer() != null) {
             final Player i = event.getGroup().getLeader();
             final Player p = event.getPlayer().getPlayer();
             if (i != null && p != null) {
@@ -58,7 +66,9 @@ public class DungeonsListener implements Listener {
     
     @EventHandler
     public void onPlayerLeaveEvent(final GroupPlayerLeaveEvent event) {
-        if (event.getGroup() != null && event.getPlayer() != null) {
+        if (plugin.getDependencies().getDungeonsApi() != null
+                && event.getGroup() != null
+                && event.getPlayer() != null) {
             final Player k = event.getGroup().getLeader();
             final Player p = event.getPlayer().getPlayer();
             if (k != null && p != null) {

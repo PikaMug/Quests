@@ -285,7 +285,8 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        context.setSessionData(CK.OPT_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
+        context.setSessionData(CK.OPT_SHARE_DISTANCE, opt.getShareDistance());
+        context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareOnlySameQuest());
         // Stages (Objectives)
         int index = 1;
         for (final Stage stage : q.getStages()) {
@@ -943,14 +944,16 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (Boolean) context.getSessionData(CK.OPT_ALLOW_QUITTING) : null);
         opts.set("ignore-silk-touch", context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) != null 
                 ? (Boolean) context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) : null);
-        opts.set("use-dungeonsxl-plugin", context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null 
+        opts.set("use-dungeonsxl-plugin", context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null
                 ? (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) : null);
-        opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null 
+        opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null
                 ? (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
-        opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 
+        opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null
                 ? (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
-        opts.set("same-quest-only", context.getSessionData(CK.OPT_SAME_QUEST_ONLY) != null
-                ? (Boolean) context.getSessionData(CK.OPT_SAME_QUEST_ONLY) : null);
+        opts.set("share-distance", context.getSessionData(CK.OPT_SHARE_DISTANCE) != null
+                ? (Long) context.getSessionData(CK.OPT_SHARE_DISTANCE) : null);
+        opts.set("share-same-quest-only", context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) != null
+                ? (Boolean) context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }

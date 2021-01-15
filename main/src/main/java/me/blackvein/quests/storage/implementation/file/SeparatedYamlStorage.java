@@ -171,7 +171,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 stage = quester.getCurrentStage(quest);
                 if (stage == null) {
-                    quest.completeQuest(quester);
+                    quest.completeQuest(quester, false);
                     plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + uniqueId + "\" on Quest \"" 
                             + quest.getName() + "\". Quest ended.");
                     continue;

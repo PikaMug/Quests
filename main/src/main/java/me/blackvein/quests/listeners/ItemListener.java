@@ -14,8 +14,10 @@
 package me.blackvein.quests.listeners;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import me.blackvein.quests.util.Friend;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,24 +50,13 @@ public class ItemListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
+                final List<Friend> friends = quester.getFriendsToShareWith();
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
-                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
-                    if (!quester.meetsCondition(quest, true)) {
-                        continue;
-                    }
-                    
-                    if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.craftItem(quest, craftedItem);
-                    }
-                    
-                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.craftItem(cq, craftedItem);
-                        }
+                    quest.performQuestWithFriends(quester, friends, type, (q) -> {
+                        q.craftItem(quest, craftedItem);
                         return null;
-                    }));
+                    });
                 }
             }
         }
@@ -96,47 +87,25 @@ public class ItemListener implements Listener {
                     || evt.getInventory().getType().name().equals("SMOKER")) {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
+                    final List<Friend> friends = quester.getFriendsToShareWith();
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
-                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     for (final Quest quest : plugin.getQuests()) {
-                        if (!quester.meetsCondition(quest, true)) {
-                            continue;
-                        }
-                        
-                        if (quester.getCurrentQuests().containsKey(quest) 
-                                && quester.getCurrentStage(quest).containsObjective(type)) {
-                            quester.smeltItem(quest, evt.getCurrentItem());
-                        }
-                        
-                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                            if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.smeltItem(cq, evt.getCurrentItem());
-                            }
+                        quest.performQuestWithFriends(quester, friends, type, (q) -> {
+                            q.smeltItem(quest, evt.getCurrentItem());
                             return null;
-                        }));
+                        });
                     }
                 }
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
+                    final List<Friend> friends = quester.getFriendsToShareWith();
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
-                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     for (final Quest quest : plugin.getQuests()) {
-                        if (!quester.meetsCondition(quest, true)) {
-                            continue;
-                        }
-                        
-                        if (quester.getCurrentQuests().containsKey(quest) 
-                                && quester.getCurrentStage(quest).containsObjective(type)) {
-                            quester.brewItem(quest, evt.getCurrentItem());
-                        }
-                        
-                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                            if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.brewItem(cq, evt.getCurrentItem());
-                            }
+                        quest.performQuestWithFriends(quester, friends, type, (q) -> {
+                            q.brewItem(quest, evt.getCurrentItem());
                             return null;
-                        }));
+                        });
                     }
                 }
             }
@@ -154,24 +123,13 @@ public class ItemListener implements Listener {
                 // Ignore
             }
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
+            final List<Friend> friends = quester.getFriendsToShareWith();
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
-                if (!quester.meetsCondition(quest, true)) {
-                    continue;
-                }
-                
-                if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective(type)) {
-                    quester.enchantItem(quest, enchantedItem);
-                }
-                
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.enchantItem(cq, enchantedItem);
-                    }
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
+                    q.enchantItem(quest, enchantedItem);
                     return null;
-                }));
+                });
             }
         }
     }
@@ -183,24 +141,13 @@ public class ItemListener implements Listener {
             final ItemStack consumedItem = evt.getItem().clone();
             consumedItem.setAmount(1);
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final List<Friend> friends = quester.getFriendsToShareWith();
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
-                if (!quester.meetsCondition(quest, true)) {
-                    continue;
-                }
-                
-                if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective(type)) {
-                    quester.consumeItem(quest, consumedItem);
-                }
-                
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.consumeItem(cq, consumedItem);
-                    }
+                quest.performQuestWithFriends(quester, friends, type, (q) -> {
+                    q.consumeItem(quest, consumedItem);
                     return null;
-                }));
+                });
             }
         }
     }

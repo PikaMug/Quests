@@ -273,6 +273,44 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    public class OptionsDistancePrompt extends QuestsEditorStringPrompt {
+        public OptionsDistancePrompt(final ConversationContext context) {
+            super(context);
+        }
+        
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+        
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return "Pick sharing distance";
+        }
+        
+        @Override
+        public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+        
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    context.setSessionData(tempKey, i);
+                } catch (final Exception e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                }
+            }
+            return tempPrompt;
+        }
+    }
+    
     public class OptionsGeneralPrompt extends QuestsEditorNumericPrompt {
         public OptionsGeneralPrompt(final ConversationContext context) {
             super(context);
@@ -414,7 +452,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
 
-        private final int size = 5;
+        private final int size = 6;
         
         @Override
         public int getSize() {
@@ -438,6 +476,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 4:
                 return ChatColor.BLUE;
             case 5:
+                return ChatColor.BLUE;
+            case 6:
                 return ChatColor.GREEN;
              default:
                 return null;
@@ -454,8 +494,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 return ChatColor.YELLOW + Lang.get("optShareProgressLevel");
             case 4:
-                return ChatColor.YELLOW + Lang.get("optShareOnlySameQuest");
+                return ChatColor.YELLOW + Lang.get("optShareDistance");
             case 5:
+                return ChatColor.YELLOW + Lang.get("optShareOnlySameQuest");
+            case 6:
                 return ChatColor.YELLOW + Lang.get("done");
              default:
                 return null;
@@ -498,18 +540,26 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.GRAY + ")";
                 }
             case 4:
-                if (context.getSessionData(CK.OPT_SAME_QUEST_ONLY) == null) {
-                    final boolean defaultOpt = new Options().canShareSameQuestOnly();
+                if (context.getSessionData(CK.OPT_SHARE_DISTANCE) == null) {
+                    final long defaultOpt = new Options().getShareDistance();
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.GRAY + ")";
+                } else {
+                    final long shareOpt = (Long) context.getSessionData(CK.OPT_SHARE_DISTANCE);
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.GRAY + ")";
+                }
+            case 5:
+                if (context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) == null) {
+                    final boolean defaultOpt = new Options().canShareOnlySameQuest();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
-                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SAME_QUEST_ONLY);
+                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY);
                     return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                 }
-            case 5:
+            case 6:
                 return "";
             default:
                 return null;
@@ -545,10 +595,14 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsLevelPrompt(context);
             case 4:
-                tempKey = CK.OPT_SAME_QUEST_ONLY;
+                tempKey = CK.OPT_SHARE_DISTANCE;
+                tempPrompt = new OptionsMultiplayerPrompt(context);
+                return new OptionsDistancePrompt(context);
+            case 5:
+                tempKey = CK.OPT_SHARE_SAME_QUEST_ONLY;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
-            case 5:
+            case 6:
                 tempKey = null;
                 tempPrompt = null;
                 try {

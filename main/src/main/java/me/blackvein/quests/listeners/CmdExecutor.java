@@ -1220,7 +1220,7 @@ public class CmdExecutor implements CommandExecutor {
                     msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
                     p.sendMessage(ChatColor.GREEN + msg2);
                 }
-                quest.completeQuest(quester);
+                quest.completeQuest(quester, false);
                 quester.saveData();
             }
         } else {
@@ -1308,7 +1308,7 @@ public class CmdExecutor implements CommandExecutor {
                     msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
                     p.sendMessage(ChatColor.GREEN + msg2);
                 }
-                quest.nextStage(quester, false);
+                quest.nextStage(quester, true);
                 quester.saveData();
             }
         } else {

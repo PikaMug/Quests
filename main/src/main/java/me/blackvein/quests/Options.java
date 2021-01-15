@@ -18,10 +18,9 @@ public class Options {
     private boolean ignoreSilkTouch = true;
     private boolean useDungeonsXLPlugin = false;
     private boolean usePartiesPlugin = true;
-    private boolean partiesHandleOfflinePlayers = false;
-    private long partiesDistance = 0;
     private int shareProgressLevel = 1;
-    private boolean shareSameQuestOnly = true;
+    private long shareDistance = 0;
+    private boolean shareOnlySameQuest = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -63,22 +62,6 @@ public class Options {
         this.usePartiesPlugin = usePartiesPlugin;
     }
     
-    public boolean canPartiesHandleOfflinePlayers() {
-        return partiesHandleOfflinePlayers;
-    }
-    
-    public void setPartiesHandleOfflinePlayers(final boolean partiesHandleOfflinePlayers) {
-        this.partiesHandleOfflinePlayers = partiesHandleOfflinePlayers;
-    }
-    
-    public long getPartiesDistance() {
-        return partiesDistance;
-    }
-    
-    public void setPartiesDistance(final long partiesDistance) {
-        this.partiesDistance = partiesDistance;
-    }
-    
     public int getShareProgressLevel() {
         return shareProgressLevel;
     }
@@ -87,11 +70,19 @@ public class Options {
         this.shareProgressLevel = shareProgressLevel;
     }
     
-    public boolean canShareSameQuestOnly() {
-        return shareSameQuestOnly;
+    public long getShareDistance() {
+        return shareDistance;
     }
     
-    public void setShareSameQuestOnly(final boolean shareSameQuestOnly) {
-        this.shareSameQuestOnly = shareSameQuestOnly;
+    public void setShareDistance(final long shareDistance) {
+        this.shareDistance = shareDistance;
+    }
+    
+    public boolean canShareOnlySameQuest() {
+        return shareOnlySameQuest;
+    }
+    
+    public void setShareOnlySameQuest(final boolean shareOnlySameQuest) {
+        this.shareOnlySameQuest = shareOnlySameQuest;
     }
 }

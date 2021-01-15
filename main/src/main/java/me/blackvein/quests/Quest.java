@@ -16,7 +16,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.util.Friend;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -179,7 +183,6 @@ public class Quest implements Comparable<Quest> {
      * Force player to proceed to the next ordered stage
      * 
      * @param quester Player to force
-     * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
     public void nextStage(final Quester quester, final boolean allowSharedProgress) {
         final Stage currentStage = quester.getCurrentStage(this);
@@ -206,7 +209,7 @@ public class Quest implements Comparable<Quest> {
                 if (currentStage.script != null) {
                     plugin.getDenizenTrigger().runDenizenScript(currentStage.script, quester);
                 }
-                completeQuest(quester);
+                completeQuest(quester, true);
             } else {
                 setStage(quester, quester.currentQuests.get(this) + 1);
             }
@@ -214,16 +217,10 @@ public class Quest implements Comparable<Quest> {
                 quester.getQuestData(this).setDelayStartTime(0);
                 quester.getQuestData(this).setDelayTimeLeft(-1);
             }
-            
+    
             // Multiplayer
-            if (opts.getShareProgressLevel() == 3) {
-                final List<Quester> mq = quester.getMultiplayerQuesters(this);
-                for (final Quester qq : mq) {
-                    if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, allowSharedProgress);
-                    }
-                }
-            }
+            if (allowSharedProgress)
+                performShareStageWithFriends(quester, currentStage);
         } else {
             quester.startStageTimer(this);
         }
@@ -493,21 +490,11 @@ public class Quest implements Comparable<Quest> {
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
-     *
-     * @param q The quester finishing this quest
-     */
-    public void completeQuest(final Quester q) {
-        completeQuest(q, true);
-    }
-    
-    /**
-     * Proceed to finish this quest, issuing applicable rewards
      * 
      * @param q The quester finishing this quest
-     * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final Quester q, final boolean allowMultiplayer) {
+    public void completeQuest(final Quester q, boolean allowSharedProgress) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
             final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
@@ -935,16 +922,10 @@ public class Quest implements Comparable<Quest> {
             final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
+    
         // Multiplayer
-        if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
-            final List<Quester> mq = q.getMultiplayerQuesters(this);
-            for (final Quester qq : mq) {
-                if (qq.getQuestData(this) != null) {
-                    completeQuest(qq, false);
-                }
-            }
-        }
+        if (allowSharedProgress)
+            performShareQuestWithFriends(q);
     }
     
     /**
@@ -1038,5 +1019,89 @@ public class Quest implements Comparable<Quest> {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Perform the quest and do the same for friends
+     * @param quester The main quester
+     * @param friends The friends of quester
+     * @param type Type of quest
+     * @param fun The function to perform to do the quest
+     */
+    public void performQuestWithFriends(final Quester quester, final List<Friend> friends, final ObjectiveType type, Function<Quester, Void> fun) {
+        boolean questerCompleted = false;
+        if (quester.meetsCondition(this, true)
+                && quester.getCurrentQuests().containsKey(this)
+                && quester.getCurrentStage(this).containsObjective(type)) {
+            fun.apply(quester);
+            questerCompleted = true;
+        }
+    
+        if (this.getOptions().getShareProgressLevel() == 1
+                && (!this.getOptions().canShareOnlySameQuest() || questerCompleted)) {
+            List<Friend> filteredFriends = filterFriendsPerPlugin(friends);
+            filteredFriends = filterFriendsPerDistance(filteredFriends, quester);
+            filteredFriends.forEach(f -> {
+                if (f.getQuester().meetsCondition(this, true)
+                        && f.getQuester().getCurrentQuests().containsKey(this)
+                        && f.getQuester().getCurrentStage(this).containsObjective(type)) {
+                    fun.apply(f.getQuester());
+                }
+            });
+        }
+    }
+    
+    public void performShareObjectiveWithFriends(final Quester quester, final Stage stage, Function<Quester, Void> fun) {
+        if (opts.getShareProgressLevel() == 2) {
+            List<Friend> friends = quester.getFriendsToShareWith();
+            friends = filterFriendsPerPlugin(friends);
+            friends = filterFriendsPerDistance(friends, quester);
+            friends.forEach(f -> {
+                if (stage.equals(f.getQuester().getCurrentStage(this))) {
+                    fun.apply(f.getQuester());
+                }
+            });
+        }
+    }
+    
+    public void performShareStageWithFriends(final Quester quester, final Stage stage) {
+        if (opts.getShareProgressLevel() == 3) {
+            List<Friend> friends = quester.getFriendsToShareWith();
+            friends = filterFriendsPerPlugin(friends);
+            friends = filterFriendsPerDistance(friends, quester);
+            friends.forEach(f -> {
+                if (stage.equals(f.getQuester().getCurrentStage(this))) {
+                    nextStage(f.getQuester(), false);
+                }
+            });
+        }
+    }
+    
+    public void performShareQuestWithFriends(final Quester quester) {
+        if (opts.getShareProgressLevel() == 4) {
+            List<Friend> friends = quester.getFriendsToShareWith();
+            friends = filterFriendsPerPlugin(friends);
+            friends = filterFriendsPerDistance(friends, quester);
+            friends.forEach(f -> {
+                if (f.getQuester().getQuestData(this) != null) {
+                    completeQuest(f.getQuester(), false);
+                }
+            });
+        }
+    }
+    
+    public List<Friend> filterFriendsPerPlugin(final List<Friend> friends) {
+        return friends.stream()
+                .filter(f ->
+                    (this.getOptions().canUseDungeonsXLPlugin() && f.getType() == Friend.FriendType.DUNGEONXL)
+                    || (this.getOptions().canUsePartiesPlugin() && f.getType() == Friend.FriendType.PARTIES)
+                ).collect(Collectors.toList());
+    }
+    
+    public List<Friend> filterFriendsPerDistance(final List<Friend> friends, final Quester quester) {
+        final long distanceSquared = this.getOptions().getShareDistance() * this.getOptions().getShareDistance();
+        return friends.stream()
+                .filter(f -> distanceSquared == 0 || quester.getPlayer().getLocation().distanceSquared(f.getQuester().getPlayer().getLocation()) <= distanceSquared)
+                .collect(Collectors.toList());
     }
 }

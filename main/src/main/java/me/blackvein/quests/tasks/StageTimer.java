@@ -44,7 +44,7 @@ public class StageTimer implements Runnable {
                 if (quester.getCurrentStage(quest).getScript() != null) {
                     plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
                 }
-                quest.completeQuest(quester);
+                quest.completeQuest(quester, true);
             } else {
                 final int stageNum = quester.getCurrentQuests().get(quest) + 1;
                 quester.getQuestData(quest).setDelayStartTime(0);
