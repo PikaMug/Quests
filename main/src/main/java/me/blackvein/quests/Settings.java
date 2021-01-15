@@ -36,6 +36,8 @@ public class Settings {
     private boolean npcEffects = true;
     private String effect = "note";
     private String redoEffect = "angry_villager";
+    private boolean sharingUseParties = false;
+    private boolean sharingUseDungeonXL = false;
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
     private int strictPlayerMovement = 0;
@@ -131,6 +133,18 @@ public class Settings {
     public void setRedoEffect(final String redoEffect) {
         this.redoEffect = redoEffect;
     }
+    public boolean canShareUseParties() {
+        return sharingUseParties;
+    }
+    public void setSharingUseParties(final boolean sharingUseParties) {
+        this.sharingUseParties = sharingUseParties;
+    }
+    public boolean canShareUseDungeonXL() {
+        return sharingUseDungeonXL;
+    }
+    public void setSharingUseDungeonXL(final boolean sharingUseDungeonXL) {
+        this.sharingUseDungeonXL = sharingUseDungeonXL;
+    }
     public boolean canShowQuestReqs() {
         return showQuestReqs;
     }
@@ -190,6 +204,8 @@ public class Settings {
         npcEffects = config.getBoolean("npc-effects.enabled", true);
         effect = config.getString("npc-effects.new-quest", "note");
         redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
+        sharingUseParties = config.getBoolean("sharing.use-parties-plugin", false);
+        sharingUseDungeonXL = config.getBoolean("sharing.use-dungeonxl-plugin", false);
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
         strictPlayerMovement = config.getInt("strict-player-movement", 0);

@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
+import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -213,16 +215,6 @@ public class Quest implements Comparable<Quest> {
             if (quester.getQuestData(this) != null) {
                 quester.getQuestData(this).setDelayStartTime(0);
                 quester.getQuestData(this).setDelayTimeLeft(-1);
-            }
-            
-            // Multiplayer
-            if (opts.getShareProgressLevel() == 3) {
-                final List<Quester> mq = quester.getMultiplayerQuesters(this);
-                for (final Quester qq : mq) {
-                    if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, allowSharedProgress);
-                    }
-                }
             }
         } else {
             quester.startStageTimer(this);
@@ -493,21 +485,11 @@ public class Quest implements Comparable<Quest> {
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
-     *
-     * @param q The quester finishing this quest
-     */
-    public void completeQuest(final Quester q) {
-        completeQuest(q, true);
-    }
-    
-    /**
-     * Proceed to finish this quest, issuing applicable rewards
      * 
      * @param q The quester finishing this quest
-     * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final Quester q, final boolean allowMultiplayer) {
+    public void completeQuest(final Quester q) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
             final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
@@ -935,16 +917,6 @@ public class Quest implements Comparable<Quest> {
             final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
-        // Multiplayer
-        if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
-            final List<Quester> mq = q.getMultiplayerQuesters(this);
-            for (final Quester qq : mq) {
-                if (qq.getQuestData(this) != null) {
-                    completeQuest(qq, false);
-                }
-            }
-        }
     }
     
     /**
@@ -1038,5 +1010,27 @@ public class Quest implements Comparable<Quest> {
             return true;
         }
         return false;
+    }
+    
+    // wip
+    public void performQuestWithFellows(final Quester quester, final List<Quester> fellows, final ObjectiveType type, Function<Quester, Void> fun) {
+        boolean questerCompleted = false;
+        if (quester.meetsCondition(this, true)
+                && quester.getCurrentQuests().containsKey(this)
+                && quester.getCurrentStage(this).containsObjective(type)) {
+            fun.apply(quester);
+            questerCompleted = true;
+        }
+    
+        if (this.getOptions().canShareProgress()
+                && (!this.getOptions().canShareOnlySameQuest() || questerCompleted)) {
+            fellows.forEach(q -> {
+                if (q.meetsCondition(this, true)
+                        && q.getCurrentQuests().containsKey(this)
+                        && q.getCurrentStage(this).containsObjective(type)) {
+                    fun.apply(q);
+                }
+            });
+        }
     }
 }

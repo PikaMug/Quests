@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.listeners;
 
+import me.blackvein.quests.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,10 +26,15 @@ import com.alessiodp.parties.api.events.bukkit.player.BukkitPartiesPlayerPostLea
 import me.blackvein.quests.util.Lang;
 
 public class PartiesListener implements Listener {
+    private final Quests plugin;
+    
+    public PartiesListener(final Quests plugin) {
+        this.plugin = plugin;
+    }
     
     @EventHandler
     public void onPartyCreate(final BukkitPartiesPartyPostCreateEvent event) {
-        if (event.getCreator() != null) {
+        if (plugin.getSettings().canShareUseParties() && event.getCreator() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID());
             if (p != null) {
                 if (Lang.get("questPartiesCreate").length() > 0) {
@@ -40,19 +46,23 @@ public class PartiesListener implements Listener {
     
     @EventHandler
     public void onPlayerJoinEvent(final BukkitPartiesPlayerPostJoinEvent event) {
-        final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && Lang.get("questPartiesLeave").length() > 0) {
-            p.sendMessage(ChatColor.GREEN + Lang.get(p, "questPartiesJoin"));
-            event.getParty().broadcastMessage(ChatColor.GREEN + Lang.get("questPartiesJoinBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+        if (plugin.getSettings().canShareUseParties()) {
+            final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
+            if (p != null && Lang.get("questPartiesLeave").length() > 0) {
+                p.sendMessage(ChatColor.GREEN + Lang.get(p, "questPartiesJoin"));
+                event.getParty().broadcastMessage(ChatColor.GREEN + Lang.get("questPartiesJoinBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+            }
         }
     }
     
     @EventHandler
     public void onPlayerLeaveEvent(final BukkitPartiesPlayerPostLeaveEvent event) {
-        final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && Lang.get("questPartiesLeave").length() > 0) {
-            p.sendMessage(ChatColor.RED + Lang.get(p, "questPartiesLeave"));
-            event.getParty().broadcastMessage(ChatColor.RED + Lang.get("questPartiesLeaveBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+        if (plugin.getSettings().canShareUseParties()) {
+            final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
+            if (p != null && Lang.get("questPartiesLeave").length() > 0) {
+                p.sendMessage(ChatColor.RED + Lang.get(p, "questPartiesLeave"));
+                event.getParty().broadcastMessage(ChatColor.RED + Lang.get("questPartiesLeaveBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+            }
         }
     }
 }

@@ -16,12 +16,9 @@ public class Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
     private boolean ignoreSilkTouch = true;
-    private boolean useDungeonsXLPlugin = false;
-    private boolean usePartiesPlugin = true;
-    private boolean partiesHandleOfflinePlayers = false;
-    private long partiesDistance = 0;
-    private int shareProgressLevel = 1;
-    private boolean shareSameQuestOnly = true;
+    private boolean shareProgress = false;
+    private long shareDistance = 0;
+    private boolean shareOnlySameQuest = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -47,51 +44,27 @@ public class Options {
         this.ignoreSilkTouch = ignoreSilkTouch;
     }
     
-    public boolean canUseDungeonsXLPlugin() {
-        return useDungeonsXLPlugin;
+    public long getShareDistance() {
+        return shareDistance;
     }
     
-    public void setUseDungeonsXLPlugin(final boolean useDungeonsXLPlugin) {
-        this.useDungeonsXLPlugin = useDungeonsXLPlugin;
+    public void setShareDistance(final long shareDistance) {
+        this.shareDistance = shareDistance;
     }
     
-    public boolean canUsePartiesPlugin() {
-        return usePartiesPlugin;
+    public boolean canShareProgress() {
+        return shareProgress;
     }
     
-    public void setUsePartiesPlugin(final boolean usePartiesPlugin) {
-        this.usePartiesPlugin = usePartiesPlugin;
+    public void setShareProgress(final boolean shareProgress) {
+        this.shareProgress = shareProgress;
     }
     
-    public boolean canPartiesHandleOfflinePlayers() {
-        return partiesHandleOfflinePlayers;
+    public boolean canShareOnlySameQuest() {
+        return shareOnlySameQuest;
     }
     
-    public void setPartiesHandleOfflinePlayers(final boolean partiesHandleOfflinePlayers) {
-        this.partiesHandleOfflinePlayers = partiesHandleOfflinePlayers;
-    }
-    
-    public long getPartiesDistance() {
-        return partiesDistance;
-    }
-    
-    public void setPartiesDistance(final long partiesDistance) {
-        this.partiesDistance = partiesDistance;
-    }
-    
-    public int getShareProgressLevel() {
-        return shareProgressLevel;
-    }
-    
-    public void setShareProgressLevel(final int shareProgressLevel) {
-        this.shareProgressLevel = shareProgressLevel;
-    }
-    
-    public boolean canShareSameQuestOnly() {
-        return shareSameQuestOnly;
-    }
-    
-    public void setShareSameQuestOnly(final boolean shareSameQuestOnly) {
-        this.shareSameQuestOnly = shareSameQuestOnly;
+    public void setShareOnlySameQuest(final boolean shareOnlySameQuest) {
+        this.shareOnlySameQuest = shareOnlySameQuest;
     }
 }

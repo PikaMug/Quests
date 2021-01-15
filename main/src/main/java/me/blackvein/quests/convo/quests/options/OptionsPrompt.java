@@ -182,17 +182,11 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsLevelPrompt extends QuestsEditorStringPrompt {
-        public OptionsLevelPrompt(final ConversationContext context) {
+    public class OptionsDistancePrompt extends QuestsEditorStringPrompt {
+        public OptionsDistancePrompt(final ConversationContext context) {
             super(context);
         }
 
-        private final int size = 6;
-        
-        public int getSize() {
-            return size;
-        }
-        
         @Override
         public String getTitle(final ConversationContext context) {
             return null;
@@ -200,68 +194,20 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return "Pick level of progress sharing";
+            return "Pick sharing distance";
         }
         
-        public String getSelectionText(final ConversationContext context, final int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GOLD + "1";
-            case 2:
-                return ChatColor.GOLD + "2";
-            case 3:
-                return ChatColor.GOLD + "3";
-            case 4:
-                return ChatColor.GOLD + "4";
-            case 5:
-                return ChatColor.RED + Lang.get("cmdClear");
-            case 6:
-                return ChatColor.RED + Lang.get("cmdCancel");
-            default:
-                return null;
-            }
-        }
-        
-        public String getAdditionalText(final ConversationContext context, final int number) {
-            switch (number) {
-            case 1:
-                return ChatColor.GRAY + Lang.get("everything");
-            case 2:
-                return ChatColor.GRAY + Lang.get("objectives");
-            case 3:
-                return ChatColor.GRAY + Lang.get("stageEditorStages");
-            case 4:
-                return ChatColor.GRAY + Lang.get("quests");
-            case 5:
-                return "";
-            case 6:
-                return "";
-            default:
-                return null;
-            }
-        }
-
         @Override
         public String getPromptText(final ConversationContext context) {
             final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = Lang.get("optNumberPrompt");
-            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "1" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Lang.get("everything");
-            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "2" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Lang.get("objectives");;
-            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "3" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Lang.get("stageEditorStages");
-            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "4" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Lang.get("quests");
-            return ChatColor.YELLOW + text;
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
                     final int i = Integer.parseInt(input);
                     context.setSessionData(tempKey, i);
@@ -269,9 +215,6 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
                 }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(tempKey, null);
-                return tempPrompt;
             }
             return tempPrompt;
         }
@@ -418,7 +361,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
 
-        private final int size = 5;
+        private final int size = 4;
         
         @Override
         public int getSize() {
@@ -434,14 +377,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.BLUE;
             case 2:
-                return ChatColor.BLUE;
             case 3:
                 return ChatColor.BLUE;
             case 4:
-                return ChatColor.BLUE;
-            case 5:
                 return ChatColor.GREEN;
              default:
                 return null;
@@ -452,14 +391,12 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Lang.get("optUseDungeonsXLPlugin");
+                return ChatColor.YELLOW + Lang.get("optShareProgress");
             case 2:
-                return ChatColor.YELLOW + Lang.get("optUsePartiesPlugin");
+                return ChatColor.YELLOW + Lang.get("optShareDistance");
             case 3:
-                return ChatColor.YELLOW + Lang.get("optShareProgressLevel");
-            case 4:
                 return ChatColor.YELLOW + Lang.get("optShareOnlySameQuest");
-            case 5:
+            case 4:
                 return ChatColor.YELLOW + Lang.get("done");
              default:
                 return null;
@@ -470,50 +407,38 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) == null) {
-                    final boolean defaultOpt = new Options().canUseDungeonsXLPlugin();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
-                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
+                if (context.getSessionData(CK.OPT_SHARE_PROGRESS) == null) {
+                    final boolean defaultOpt = new Options().canShareProgress();
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
-                    final boolean dungeonsOpt = (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
-                    return ChatColor.GRAY + "(" + (dungeonsOpt ? ChatColor.GREEN 
-                            + Lang.get(String.valueOf(dungeonsOpt)) : ChatColor.RED 
-                            + Lang.get(String.valueOf(dungeonsOpt))) + ChatColor.GRAY + ")";
+                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SHARE_PROGRESS);
+                    return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN
+                            + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED
+                            + Lang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                 }
             case 2:
-                if (context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) == null) {
-                    final boolean defaultOpt = new Options().canUsePartiesPlugin();
-                    return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
-                           + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                           + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
-                } else {
-                    final boolean partiesOpt = (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN);
-                    return ChatColor.GRAY + "(" + (partiesOpt ? ChatColor.GREEN 
-                            + Lang.get(String.valueOf(partiesOpt)) : ChatColor.RED 
-                            + Lang.get(String.valueOf(partiesOpt))) + ChatColor.GRAY +  ")";
-                }
-            case 3:
-                if (context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) == null) {
-                    final int defaultOpt = new Options().getShareProgressLevel();
+                if (context.getSessionData(CK.OPT_SHARE_DISTANCE) == null) {
+                    final long defaultOpt = new Options().getShareDistance();
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(defaultOpt) + ChatColor.GRAY + ")";
                 } else {
-                    final int shareOpt = (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL);
+                    final long shareOpt = (Long) context.getSessionData(CK.OPT_SHARE_DISTANCE);
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + String.valueOf(shareOpt) + ChatColor.GRAY + ")";
                 }
-            case 4:
-                if (context.getSessionData(CK.OPT_SAME_QUEST_ONLY) == null) {
-                    final boolean defaultOpt = new Options().canShareSameQuestOnly();
+            case 3:
+                if (context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) == null) {
+                    final boolean defaultOpt = new Options().canShareOnlySameQuest();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
-                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SAME_QUEST_ONLY);
+                    final boolean requireOpt = (Boolean) context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY);
                     return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN 
                             + Lang.get(String.valueOf(requireOpt)) : ChatColor.RED 
                             + Lang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                 }
-            case 5:
+            case 4:
                 return "";
             default:
                 return null;
@@ -537,22 +462,18 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
+                tempKey = CK.OPT_SHARE_PROGRESS;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
             case 2:
-                tempKey = CK.OPT_USE_PARTIES_PLUGIN;
+                tempKey = CK.OPT_SHARE_DISTANCE;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                return new OptionsDistancePrompt(context);
             case 3:
-                tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsLevelPrompt(context);
-            case 4:
-                tempKey = CK.OPT_SAME_QUEST_ONLY;
+                tempKey = CK.OPT_SHARE_SAME_QUEST_ONLY;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
-            case 5:
+            case 4:
                 tempKey = null;
                 tempPrompt = null;
                 try {

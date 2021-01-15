@@ -188,15 +188,6 @@ public abstract class CustomObjective implements Listener {
                     if (progress >= goal) {
                         quester.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                                 new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
-                        
-                        // Multiplayer
-                        quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
-                            q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
-                                    quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
-                            q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                    new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
-                            return null;
-                        });
                     }
                     
                     final QuesterPostUpdateObjectiveEvent postEvent 
