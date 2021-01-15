@@ -459,6 +459,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         public String getPromptText(final ConversationContext context) {
             final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
+            
             if (context.getForWhom() instanceof Player) {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());

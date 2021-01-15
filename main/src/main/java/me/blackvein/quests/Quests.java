@@ -3640,6 +3640,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 throw new ConditionFormatException("ride-entity is not a list of entity types", conditionKey);
             }
         }
+        if (data.contains(conditionKey + "ride-npc")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "ride-npc"), Integer.class)) {
+                final LinkedList<Integer> npcs = new LinkedList<Integer>();
+                for (final int i : data.getIntegerList(conditionKey + "ride-npc")) {
+                    if (i < 0) {
+                        throw new ConditionFormatException("ride-npc is not a valid NPC ID",
+                                conditionKey);
+                    }
+                    npcs.add(i);
+                }
+                condition.setNpcsWhileRiding(npcs);
+            } else {
+                throw new ConditionFormatException("ride-npc is not a list of NPC IDs", conditionKey);
+            }
+        }
         if (data.contains(conditionKey + "permission")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "permission"), String.class)) {
                 final LinkedList<String> permissions = new LinkedList<String>();

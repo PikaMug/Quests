@@ -183,6 +183,7 @@ public class CK {
     public static final String C_NAME = "conName";
     public static final String C_FAIL_QUEST = "conFailQuest";
     public static final String C_WHILE_RIDING_ENTITY = "conRidingEntity";
+    public static final String C_WHILE_RIDING_NPC = "conRidingNpc";
     public static final String C_WHILE_PERMISSION = "conPermission";
     public static final String C_WHILE_HOLDING_MAIN_HAND = "conHoldingMainHand";
     public static final String C_WHILE_WITHIN_WORLD = "conWithinWorld";

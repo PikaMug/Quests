@@ -30,6 +30,7 @@ public class Condition {
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<String> entitiesWhileRiding = new LinkedList<String>();
+    private LinkedList<Integer> npcsWhileRiding = new LinkedList<Integer>();
     private LinkedList<String> permissions = new LinkedList<String>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
@@ -64,6 +65,14 @@ public class Condition {
     
     public void setEntitiesWhileRiding(final LinkedList<String> entitiesWhileRiding) {
         this.entitiesWhileRiding = entitiesWhileRiding;
+    }
+    
+    public LinkedList<Integer> getNpcsWhileRiding() {
+        return npcsWhileRiding;
+    }
+    
+    public void setNpcsWhileRiding(final LinkedList<Integer> npcsWhileRiding) {
+        this.npcsWhileRiding = npcsWhileRiding;
     }
     
     public LinkedList<String> getPermissions() {
@@ -131,6 +140,17 @@ public class Condition {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
+                }
+            }
+        } else if (!npcsWhileRiding.isEmpty()) {
+            for (final int n : npcsWhileRiding) {
+                if (plugin.getDependencies().getCitizens() != null) {
+                    if (player.isInsideVehicle() && player.getVehicle()
+                            .equals(plugin.getDependencies().getCitizens().getNPCRegistry().getById(n).getEntity())) {
+                        return true;
+                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition NPC mismatch for " + player.getName() + ": ID " + n);
+                    }
                 }
             }
         } else if (!permissions.isEmpty()) {

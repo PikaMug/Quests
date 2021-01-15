@@ -72,6 +72,7 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Quester implements Comparable<Quester> {
@@ -610,6 +611,17 @@ public class Quester implements Comparable<Quester> {
                         String msg = "- " + Lang.get("conditionEditorRideEntity");
                         for (final String e : c.getEntitiesWhileRiding()) {
                             msg += ChatColor.AQUA + "\n   \u2515 " + e;
+                        }
+                        sendMessage(ChatColor.YELLOW + msg);
+                    } else if (!c.getNpcsWhileRiding().isEmpty()) {
+                        String msg = "- " + Lang.get("conditionEditorRideNPC");
+                        for (final int i : c.getNpcsWhileRiding()) {
+                            if (plugin.getDependencies().getCitizens() != null) {
+                                msg += ChatColor.AQUA + "\n   \u2515 " + CitizensAPI.getNPCRegistry().getById(i)
+                                        .getName();
+                            } else {
+                                msg += ChatColor.AQUA + "\n   \u2515 " + i;
+                            }
                         }
                         sendMessage(ChatColor.YELLOW + msg);
                     } else if (!c.getPermissions().isEmpty()) {

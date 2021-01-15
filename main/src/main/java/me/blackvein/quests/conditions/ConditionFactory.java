@@ -92,6 +92,12 @@ public class ConditionFactory implements ConversationAbandonedListener {
             entities.addAll(condition.getEntitiesWhileRiding());
             context.setSessionData(CK.C_WHILE_RIDING_ENTITY, entities);
         }
+        if (condition.getNpcsWhileRiding() != null 
+                && condition.getNpcsWhileRiding().isEmpty() == false) {
+            final LinkedList<Integer> npcs = new LinkedList<Integer>();
+            npcs.addAll(condition.getNpcsWhileRiding());
+            context.setSessionData(CK.C_WHILE_RIDING_NPC, npcs);
+        }
         if (condition.getPermissions() != null
                 && condition.getPermissions().isEmpty() == false) {
             final LinkedList<String> permissions = new LinkedList<String>();
@@ -141,6 +147,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.C_NAME, null);
         context.setSessionData(CK.C_FAIL_QUEST, null);
         context.setSessionData(CK.C_WHILE_RIDING_ENTITY, null);
+        context.setSessionData(CK.C_WHILE_RIDING_NPC, null);
         context.setSessionData(CK.C_WHILE_PERMISSION, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
@@ -231,6 +238,10 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) != null) {
             section.set("ride-entity", 
                     context.getSessionData(CK.C_WHILE_RIDING_ENTITY));
+        }
+        if (context.getSessionData(CK.C_WHILE_RIDING_NPC) != null) {
+            section.set("ride-npc", 
+                    context.getSessionData(CK.C_WHILE_RIDING_NPC));
         }
         if (context.getSessionData(CK.C_WHILE_PERMISSION) != null) {
             section.set("permission", 
