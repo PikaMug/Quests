@@ -750,16 +750,17 @@ public class PlayerListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective(type) 
-                        && evt.getState().equals(State.CAUGHT_FISH)) {
-                    quester.catchFish(quest);
+                if (evt.getState().equals(State.CAUGHT_FISH)) {
+                    if (quester.getCurrentQuests().containsKey(quest) 
+                            && quester.getCurrentStage(quest).containsObjective(type)) {
+                        quester.catchFish(quest);
+                    }
+                    
+                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        q.catchFish(cq);
+                        return null;
+                    });
                 }
-                
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    q.catchFish(cq);
-                    return null;
-                });
             }
         }
     }
