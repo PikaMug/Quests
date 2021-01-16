@@ -4086,7 +4086,7 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Get a list of follow Questers in a party or group
+     * Get a list of fellow Questers in a party or group
      * 
      * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
      * @return Potentially empty list of Questers or null for invalid quest

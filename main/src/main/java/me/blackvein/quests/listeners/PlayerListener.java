@@ -801,9 +801,6 @@ public class PlayerListener implements Listener {
             if (!quester.loadData() && plugin.getSettings().canGenFilesOnJoin()) {
                 quester.saveData();
             }
-            /*final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
-            temp.add(quester);
-            plugin.setOfflineQuesters(temp);*/
             for (final Quest q : quester.getCompletedQuests()) {
                 if (q != null) {
                     if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
