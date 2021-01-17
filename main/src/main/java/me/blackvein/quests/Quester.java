@@ -15,12 +15,14 @@ package me.blackvein.quests;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -4022,38 +4024,41 @@ public class Quester implements Comparable<Quester> {
      * @param type The type of objective to progress
      * @param fun The function to execute, the event call
      */
-    public void dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final BiFunction<Quester, Quest, Void> fun) {
-        if (quest == null) {
-            return;
-        }
-        try {
-            if (quest.getOptions().getShareProgressLevel() == 1) {
-                final List<Quester> mq = getMultiplayerQuesters(quest);
-                if (mq == null) {
-                    return;
-                }
-                for (final Quester q : mq) {
-                    if (q == null) {
-                        continue;
+    public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final BiFunction<Quester, Quest, Void> fun) {
+        final Set<String> appliedQuestIDs = new HashSet<String>();
+        if (quest != null) {
+            try {
+                if (quest.getOptions().getShareProgressLevel() == 1) {
+                    final List<Quester> mq = getMultiplayerQuesters(quest);
+                    if (mq == null) {
+                        return appliedQuestIDs;
                     }
-                    if (quest.getOptions().canShareSameQuestOnly()) {
-                        if (q.getCurrentStage(quest) != null) {
-                            fun.apply(q, quest);
+                    for (final Quester q : mq) {
+                        if (q == null) {
+                            continue;
                         }
-                    } else {
-                        q.getCurrentQuests().forEach((otherQuest, i) -> {
-                            if (otherQuest.getStage(i).containsObjective(type)) {
-                                fun.apply(q, otherQuest);
+                        if (quest.getOptions().canShareSameQuestOnly()) {
+                            if (q.getCurrentStage(quest) != null) {
+                                fun.apply(q, quest);
+                                appliedQuestIDs.add(quest.getId());
                             }
-                        });
+                        } else {
+                            q.getCurrentQuests().forEach((otherQuest, i) -> {
+                                if (otherQuest.getStage(i).containsObjective(type)) {
+                                    fun.apply(q, otherQuest);
+                                    appliedQuestIDs.add(otherQuest.getId());
+                                }
+                            });
+                        }
                     }
                 }
+            } catch (final Exception e) {
+                plugin.getLogger().severe("Error occurred while dispatching " + type.name() + " for quest ID "
+                        + quest.getId());
+                e.printStackTrace();
             }
-        } catch (final Exception e) {
-            plugin.getLogger().severe("Error occurred while dispatching " + type.name() + " for quest ID "
-                    + quest.getId());
-            e.printStackTrace();
         }
+        return appliedQuestIDs;
     }
     
     /**

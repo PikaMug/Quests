@@ -13,6 +13,9 @@
 
 package me.blackvein.quests.listeners;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -57,7 +60,7 @@ public class BlockListener implements Listener {
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType cutType = ObjectiveType.CUT_BLOCK;
-            boolean dispatched = false;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
@@ -73,13 +76,13 @@ public class BlockListener implements Listener {
                             quester.breakBlock(quest, blockItemStack);
                             
                             // Multiplayer
-                            if (!dispatched) {
-                                quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(quest.getId())) {
+                                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
+                                        (final Quester q, final Quest cq) -> {
                                     q.breakBlock(cq, blockItemStack);
                                     return null;
-                                });
+                                }));
                             }
-                            dispatched = true;
                         }
                     }
                     
@@ -94,10 +97,9 @@ public class BlockListener implements Listener {
                                     }
                                 }
                                 
-                                final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
                                 final QuesterPreUpdateObjectiveEvent preEvent 
                                         = new QuesterPreUpdateObjectiveEvent(quester, quest, 
-                                        new Objective(type, is.getAmount(), toPlace.getAmount()));
+                                        new Objective(placeType, is.getAmount(), toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(preEvent);
                                 
                                 final int index = quester.getQuestData(quest).blocksPlaced.indexOf(is);
@@ -107,7 +109,7 @@ public class BlockListener implements Listener {
                                 
                                 final QuesterPostUpdateObjectiveEvent postEvent 
                                         = new QuesterPostUpdateObjectiveEvent(quester, quest, 
-                                        new Objective(type, newAmount, toPlace.getAmount()));
+                                        new Objective(placeType, newAmount, toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
                         }
@@ -122,10 +124,9 @@ public class BlockListener implements Listener {
                                     }
                                 }
                                 
-                                final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
                                 final QuesterPreUpdateObjectiveEvent preEvent 
                                         = new QuesterPreUpdateObjectiveEvent(q, cq,
-                                        new Objective(type, is.getAmount(), toPlace.getAmount()));
+                                        new Objective(placeType, is.getAmount(), toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(preEvent);
                                 
                                 final int index = q.getQuestData(cq).blocksPlaced.indexOf(is);
@@ -135,7 +136,7 @@ public class BlockListener implements Listener {
                                 
                                 final QuesterPostUpdateObjectiveEvent postEvent 
                                         = new QuesterPostUpdateObjectiveEvent(q, cq,
-                                                    new Objective(type, newAmount, toPlace.getAmount()));
+                                                    new Objective(placeType, newAmount, toPlace.getAmount()));
                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                             }
                         }
