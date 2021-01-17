@@ -57,6 +57,7 @@ public class BlockListener implements Listener {
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType cutType = ObjectiveType.CUT_BLOCK;
+            boolean dispatched = false;
             for (final Quest quest : plugin.getQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
@@ -72,10 +73,13 @@ public class BlockListener implements Listener {
                             quester.breakBlock(quest, blockItemStack);
                             
                             // Multiplayer
-                            quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q, final Quest cq) -> {
-                                q.breakBlock(cq, blockItemStack);
-                                return null;
-                            });
+                            if (!dispatched) {
+                                quester.dispatchMultiplayerEverything(quest, breakType, (final Quester q, final Quest cq) -> {
+                                    q.breakBlock(cq, blockItemStack);
+                                    return null;
+                                });
+                            }
+                            dispatched = true;
                         }
                     }
                     
