@@ -85,7 +85,7 @@ public class Dependencies {
     }
     
     public mcMMO getMcmmoClassic() {
-        if (mcmmo == null && isPluginAvailable("Heroes")) {
+        if (mcmmo == null && isPluginAvailable("mcMMO")) {
             try {
                 Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
                 mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
