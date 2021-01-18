@@ -76,13 +76,13 @@ public class BlockListener implements Listener {
                             quester.breakBlock(quest, blockItemStack);
                             
                             // Multiplayer
-                            if (!dispatchedQuestIDs.contains(quest.getId())) {
-                                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
-                                        (final Quester q, final Quest cq) -> {
-                                    q.breakBlock(cq, blockItemStack);
-                                    return null;
-                                }));
-                            }
+                            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
+                                    (final Quester q, final Quest cq) -> {
+                                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                    q.breakBlock(cq, blockItemStack);      
+                                }
+                                return null;
+                            }));
                         }
                     }
                     

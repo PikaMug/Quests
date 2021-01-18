@@ -4042,14 +4042,15 @@ public class Quester implements Comparable<Quester> {
                                 fun.apply(q, quest);
                                 appliedQuestIDs.add(quest.getId());
                             }
-                        } else {
-                            q.getCurrentQuests().forEach((otherQuest, i) -> {
-                                if (otherQuest.getStage(i).containsObjective(type)) {
+                        }
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                            if (otherQuest.getStage(i).containsObjective(type)) {
+                                if (!otherQuest.getOptions().canShareSameQuestOnly()) {
                                     fun.apply(q, otherQuest);
                                     appliedQuestIDs.add(otherQuest.getId());
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
             } catch (final Exception e) {
