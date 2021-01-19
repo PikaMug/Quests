@@ -13,6 +13,7 @@
 
 package me.blackvein.quests.listeners;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -394,6 +395,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.MILK_COW;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -404,10 +406,13 @@ public class PlayerListener implements Listener {
                         quester.milkCow(quest);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.milkCow(cq);
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.milkCow(cq);
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -448,14 +453,18 @@ public class PlayerListener implements Listener {
                         }
                     }
                     final ObjectiveType type = ObjectiveType.PASSWORD;
+                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     if (quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.sayPassword(quest, evt);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.sayPassword(cq, evt);
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.sayPassword(cq, evt);
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -509,6 +518,7 @@ public class PlayerListener implements Listener {
                 final Sheep sheep = (Sheep) evt.getEntity();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -519,10 +529,13 @@ public class PlayerListener implements Listener {
                         quester.shearSheep(quest, sheep.getColor());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.shearSheep(cq, sheep.getColor());
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.shearSheep(cq, sheep.getColor());
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -535,6 +548,7 @@ public class PlayerListener implements Listener {
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -545,10 +559,13 @@ public class PlayerListener implements Listener {
                         quester.tameMob(quest, evt.getEntityType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.tameMob(cq, evt.getEntityType());
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.tameMob(cq, evt.getEntityType());
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -602,6 +619,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 final ObjectiveType type = ObjectiveType.KILL_NPC;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -612,13 +630,17 @@ public class PlayerListener implements Listener {
                         quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.killNPC(cq, CitizensAPI.getNPCRegistry().getNPC(target));
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.killNPC(cq, CitizensAPI.getNPCRegistry().getNPC(target));
+                        }
                         return null;
-                    });
+                    }));
                 }
             } else {
                 final ObjectiveType type = ObjectiveType.KILL_MOB;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -629,10 +651,13 @@ public class PlayerListener implements Listener {
                         quester.killMob(quest, target.getLocation(), target.getType());
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.killMob(cq, target.getLocation(), target.getType());
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.killMob(cq, target.getLocation(), target.getType());
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -721,6 +746,7 @@ public class PlayerListener implements Listener {
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -731,10 +757,13 @@ public class PlayerListener implements Listener {
                     quester.killPlayer(quest, (Player)target);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    q.killPlayer(cq, (Player)target);
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                        (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.killPlayer(cq, (Player)target);
+                    }
                     return null;
-                });
+                }));
             }
         }
     }
@@ -745,6 +774,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -756,10 +786,13 @@ public class PlayerListener implements Listener {
                         quester.catchFish(quest);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.catchFish(cq);
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                            (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.catchFish(cq);
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -914,6 +947,7 @@ public class PlayerListener implements Listener {
                 if (quester != null) {
                     if (plugin.canUseQuests(uuid)) {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
+                        final Set<String> dispatchedQuestIDs = new HashSet<String>();
                         for (final Quest quest : plugin.getQuests()) {
                             if (!quester.meetsCondition(quest, false)) {
                                 continue;
@@ -931,15 +965,18 @@ public class PlayerListener implements Listener {
                                 }
                             }
                             
-                            quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        q.reachLocation(cq, location);
-                                    }
-                                });
+                            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                                    (final Quester q, final Quest cq) -> {
+                                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            q.reachLocation(cq, location);
+                                        }
+                                    });
+                                }
                                 return null;
-                            });
+                            }));
                         }
                     }
                 }

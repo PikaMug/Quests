@@ -13,6 +13,9 @@
 
 package me.blackvein.quests.listeners;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,6 +49,7 @@ public class ItemListener implements Listener {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
+                final Set<String> dispatchedQuestIDs = new HashSet<String>();
                 for (final Quest quest : plugin.getQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -56,10 +60,12 @@ public class ItemListener implements Listener {
                         quester.craftItem(quest, craftedItem);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                        q.craftItem(cq, craftedItem);
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.craftItem(cq, craftedItem);
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -91,6 +97,7 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
+                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
@@ -101,16 +108,19 @@ public class ItemListener implements Listener {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                            q.smeltItem(cq, evt.getCurrentItem());
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.smeltItem(cq, evt.getCurrentItem());
+                            }
                             return null;
-                        });
+                        }));
                     }
                 }
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
+                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     for (final Quest quest : plugin.getQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
@@ -121,10 +131,12 @@ public class ItemListener implements Listener {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                            q.brewItem(cq, evt.getCurrentItem());
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.brewItem(cq, evt.getCurrentItem());
+                            }
                             return null;
-                        });
+                        }));
                     }
                 }
             }
@@ -143,6 +155,7 @@ public class ItemListener implements Listener {
             }
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -153,10 +166,12 @@ public class ItemListener implements Listener {
                     quester.enchantItem(quest, enchantedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    q.enchantItem(cq, enchantedItem);
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.enchantItem(cq, enchantedItem);
+                    }
                     return null;
-                });
+                }));
             }
         }
     }
@@ -169,6 +184,7 @@ public class ItemListener implements Listener {
             consumedItem.setAmount(1);
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
             for (final Quest quest : plugin.getQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -179,10 +195,12 @@ public class ItemListener implements Listener {
                     quester.consumeItem(quest, consumedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
-                    q.consumeItem(cq, consumedItem);
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.consumeItem(cq, consumedItem);
+                    }
                     return null;
-                });
+                }));
             }
         }
     }

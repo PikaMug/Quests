@@ -4015,7 +4015,8 @@ public class Quester implements Comparable<Quester> {
      * @param fun The function to execute, the event call
      */
     @Deprecated
-    public void dispatchMultiplayerEverything(final Quest quest, final String objectiveType, final BiFunction<Quester, Quest, Void> fun) {
+    public void dispatchMultiplayerEverything(final Quest quest, final String objectiveType,
+            final BiFunction<Quester, Quest, Void> fun) {
         dispatchMultiplayerEverything(quest, ObjectiveType.fromName(objectiveType), fun);
     }
     
@@ -4025,7 +4026,8 @@ public class Quester implements Comparable<Quester> {
      * @param type The type of objective to progress
      * @param fun The function to execute, the event call
      */
-    public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type, final BiFunction<Quester, Quest, Void> fun) {
+    public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
+            final BiFunction<Quester, Quest, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<String>();
         if (quest != null) {
             try {
@@ -4070,18 +4072,17 @@ public class Quester implements Comparable<Quester> {
      * @param currentStage The current stage of the quest
      * @param fun The function to execute, the event call
      */
-    public void dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage, final Function<Quester, Void> fun) {
-        if (quest == null) {
-            return;
-        }
+    public Set<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
+            final Function<Quester, Void> fun) {
+        final Set<String> appliedQuestIDs = new HashSet<String>();
         if (quest.getOptions().getShareProgressLevel() == 2) {
             final List<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
-                return;
+                return appliedQuestIDs;
             }
             for (final Quester q : mq) {
                 if (q == null) {
-                    return;
+                    continue;
                 }
                 // Share only same quest is not necessary here
                 // The function must be applied to the same quest
@@ -4090,6 +4091,7 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
+        return appliedQuestIDs;
     }
     
     /**
