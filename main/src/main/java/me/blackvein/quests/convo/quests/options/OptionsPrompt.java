@@ -128,10 +128,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            String text = "Select '<true>' or '<false>'";
-            text = text.replace("<true>", Lang.get("true"));
-            text = text.replace("<false>", Lang.get("false"));
-            return text;
+            return Lang.get("optBooleanQuery").replace("<true>", Lang.get("true"))
+                    .replace("<false>", Lang.get("false"));
         }
         
         public String getSelectionText(final ConversationContext context, final int number) {
@@ -154,10 +152,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String text = Lang.get("optBooleanPrompt");
-            text = text.replace("<true>", Lang.get("true"));
-            text = text.replace("<false>", Lang.get("false"));
-            return ChatColor.YELLOW + text;
+            return ChatColor.YELLOW + Lang.get("optBooleanPrompt").replace("<true>", Lang.get("true"))
+                    .replace("<false>", Lang.get("false"));
         }
         
         @Override
@@ -200,7 +196,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return "Pick level of progress sharing";
+            return Lang.get("optNumberQuery");
         }
         
         public String getSelectionText(final ConversationContext context, final int number) {
