@@ -3221,7 +3221,8 @@ public class Quester implements Comparable<Quester> {
                     temp.addEnchantments(i.getEnchantments());
                 } catch (final Exception e) {
                     plugin.getLogger().warning("Unable to add enchantment(s) " + i.getEnchantments().toString()
-                            + " to delivery item " + i.getType().name() + " x 0 for quest " + quest.getName());
+                            + " to delivery item " + i.getType().name() + " x " + i.getAmount() + " for quest ID "
+                            + quest.getId());
                 }
                 temp.setItemMeta(i.getItemMeta());
                 data.itemsDelivered.add(temp);
