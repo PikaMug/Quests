@@ -1194,7 +1194,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
                         String message = color + "- ";
                         if (stage.locationsToKillWithin.isEmpty()) {
-                            message = Lang.get(quester.getPlayer(), "kill");
+                            message += Lang.get(quester.getPlayer(), "kill");
                             if (message.contains("<count>")) {
                                 message = message.replace("<count>", "" + color 
                                         + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
@@ -1206,8 +1206,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                         + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
                             }
                         } else {
-                            message = Lang.get(quester.getPlayer(), "killAtLocation");
-                            message = message.replace("<location>", 
+                            message += Lang.get(quester.getPlayer(), "killAtLocation").replace("<location>", 
                                     stage.killNames.get(stage.mobsToKill.indexOf(e)));
                             if (message.contains("<count>")) {
                                 message = message.replace("<count>", "" + color 
