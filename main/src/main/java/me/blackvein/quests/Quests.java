@@ -1143,7 +1143,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
-            if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+            if (getSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments(), is.getItemMeta());
+            } else if (getSettings().canTranslateNames() && !is.hasItemMeta() 
+                    && Material.getMaterial("LINGERING_POTION") == null) {
+                // Bukkit version is below 1.9
                 localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
                         is.getEnchantments());
             } else {
