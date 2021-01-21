@@ -235,10 +235,12 @@ public class Metrics {
 
         final String pluginName = plugin.getDescription().getName();
         final String pluginVersion = plugin.getDescription().getVersion();
+        final String adjustedVersion = pluginVersion.contains("-") 
+                ? pluginVersion.substring(0, pluginVersion.lastIndexOf("-")) : pluginVersion;
 
         data.addProperty("pluginName", pluginName); // Append the name of the plugin
         data.addProperty("id", pluginId); // Append the id of the plugin
-        data.addProperty("pluginVersion", pluginVersion); // Append the version of the plugin
+        data.addProperty("pluginVersion", adjustedVersion); // Append the version of the plugin
         final JsonArray customCharts = new JsonArray();
         for (final CustomChart customChart : charts) {
             // Add the data of the custom charts
