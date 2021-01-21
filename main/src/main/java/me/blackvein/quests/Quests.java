@@ -162,6 +162,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         conditionFactory = new ConditionFactory(this);
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
+        /*final Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> Lang.getISO()));*/
 
         // 2 - Load main config
         settings.init();
