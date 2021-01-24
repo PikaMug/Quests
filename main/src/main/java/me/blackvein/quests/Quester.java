@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -4111,8 +4111,9 @@ public class Quester implements Comparable<Quester> {
                 if (partyPlayer != null && partyPlayer.getPartyId() != null) {
                     final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
                     if (party != null) {
-                        final long distanceSquared = quest.getOptions().getPartiesDistance() * quest.getOptions().getPartiesDistance();
-                        final boolean offlinePlayers = quest.getOptions().canPartiesHandleOfflinePlayers();
+                        final double distanceSquared = quest.getOptions().getShareDistance() 
+                                * quest.getOptions().getShareDistance();
+                        final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
                         if (offlinePlayers) {
                             for (final UUID id : party.getMembers()) {
                                 if (!id.equals(getUUID())) {
@@ -4124,11 +4125,13 @@ public class Quester implements Comparable<Quester> {
                                 if (!pp.getPlayerUUID().equals(getUUID())) {
                                     if (distanceSquared > 0) {
                                         final Player player = Bukkit.getPlayer(pp.getPlayerUUID());
-                                        if (player != null && distanceSquared >= getPlayer().getLocation().distanceSquared(player.getLocation())) {
+                                        if (player != null && distanceSquared >= getPlayer().getLocation()
+                                                .distanceSquared(player.getLocation())) {
                                             mq.add(plugin.getQuester(pp.getPlayerUUID()));
                                         }
-                                    } else
+                                    } else {
                                         mq.add(plugin.getQuester(pp.getPlayerUUID()));
+                                    }
                                 }
                             }
                         }
@@ -4142,9 +4145,28 @@ public class Quester implements Comparable<Quester> {
             if (quest.getOptions().canUseDungeonsXLPlugin()) {
                 final DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
                 if (group != null) {
-                    for (final UUID id : group.getMembers()) {
-                        if (!id.equals(getUUID())) {
-                            mq.add(plugin.getQuester(id));
+                    final double distanceSquared = quest.getOptions().getShareDistance() 
+                            * quest.getOptions().getShareDistance();
+                    final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
+                    if (offlinePlayers) {
+                        for (final UUID id : group.getMembers()) {
+                            if (!id.equals(getUUID())) {
+                                mq.add(plugin.getQuester(id));
+                            }
+                        }
+                    } else {
+                        for (final UUID id : group.getMembers()) {
+                            if (!id.equals(getUUID())) {
+                                if (distanceSquared > 0) {
+                                    final Player player = Bukkit.getPlayer(id);
+                                    if (player != null && distanceSquared >= getPlayer().getLocation()
+                                            .distanceSquared(player.getLocation())) {
+                                        mq.add(plugin.getQuester(id));
+                                    }
+                                } else {
+                                    mq.add(plugin.getQuester(id));
+                                }
+                            }
                         }
                     }
                     return mq;

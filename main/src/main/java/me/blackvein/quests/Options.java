@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -18,8 +18,8 @@ public class Options {
     private boolean ignoreSilkTouch = true;
     private boolean useDungeonsXLPlugin = false;
     private boolean usePartiesPlugin = true;
-    private boolean partiesHandleOfflinePlayers = false;
-    private long partiesDistance = 0;
+    private boolean handleOfflinePlayers = false;
+    private double shareDistance = 0.0D;
     private int shareProgressLevel = 1;
     private boolean shareSameQuestOnly = true;
     
@@ -63,22 +63,6 @@ public class Options {
         this.usePartiesPlugin = usePartiesPlugin;
     }
     
-    public boolean canPartiesHandleOfflinePlayers() {
-        return partiesHandleOfflinePlayers;
-    }
-    
-    public void setPartiesHandleOfflinePlayers(final boolean partiesHandleOfflinePlayers) {
-        this.partiesHandleOfflinePlayers = partiesHandleOfflinePlayers;
-    }
-    
-    public long getPartiesDistance() {
-        return partiesDistance;
-    }
-    
-    public void setPartiesDistance(final long partiesDistance) {
-        this.partiesDistance = partiesDistance;
-    }
-    
     public int getShareProgressLevel() {
         return shareProgressLevel;
     }
@@ -93,5 +77,21 @@ public class Options {
     
     public void setShareSameQuestOnly(final boolean shareSameQuestOnly) {
         this.shareSameQuestOnly = shareSameQuestOnly;
+    }
+    
+    public double getShareDistance() {
+        return shareDistance;
+    }
+    
+    public void setShareDistance(final double shareDistance) {
+        this.shareDistance = shareDistance;
+    }
+    
+    public boolean canHandleOfflinePlayers() {
+        return handleOfflinePlayers;
+    }
+    
+    public void setHandleOfflinePlayers(final boolean handleOfflinePlayers) {
+        this.handleOfflinePlayers = handleOfflinePlayers;
     }
 }

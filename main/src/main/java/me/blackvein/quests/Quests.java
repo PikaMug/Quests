@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -2174,17 +2174,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
             opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
         }
-        if (config.contains("quests." + questKey + ".options.parties.handle-offline-players")) {
-            opts.setPartiesHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.parties.handle-offline-players"));
-        }
-        if (config.contains("quests." + questKey + ".options.parties.distance")) {
-            opts.setPartiesDistance(config.getLong("quests." + questKey + ".options.parties.distance"));
-        }
         if (config.contains("quests." + questKey + ".options.share-progress-level")) {
             opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
         }
         if (config.contains("quests." + questKey + ".options.same-quest-only")) {
             opts.setShareSameQuestOnly(config.getBoolean("quests." + questKey + ".options.same-quest-only"));
+        }
+        if (config.contains("quests." + questKey + ".options.share-distance")) {
+            opts.setShareDistance(config.getDouble("quests." + questKey + ".options.share-distance"));
+        }
+        if (config.contains("quests." + questKey + ".options.handle-offline-players")) {
+            opts.setHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.handle-offline-players"));
         }
     }
 
