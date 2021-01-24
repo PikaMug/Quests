@@ -76,6 +76,7 @@ quests:
     finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
     requirements:
       quest-points: 1
+      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> or <pink>Mob Hunter<red> first.'
     stages:
       ordered:
         '1':
