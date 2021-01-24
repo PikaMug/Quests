@@ -2177,7 +2177,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".options.share-progress-level")) {
             opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
         }
-        if (config.contains("quests." + questKey + ".options.parties.distance")) {
+        if (config.contains("quests." + questKey + ".options.share-distance")) {
             opts.setShareDistance(config.getLong("quests." + questKey + ".options.share-distance"));
         }
         if (config.contains("quests." + questKey + ".options.share-only-same-quest")) {
