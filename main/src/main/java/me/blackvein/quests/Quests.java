@@ -1504,14 +1504,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
     }
-    
-    /**
-     * @deprecated Use {@link #reload(ReloadCallback)}
-     */
-    @Deprecated
-    public void reloadQuests() {
-        reload(null);
-    }
 
     /**
      * Reload quests, actions, config settings, lang and modules, and player data
@@ -1549,18 +1541,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             
                             @Override
                             public void run() {
+                                loading = false;
                                 callback.execute(true);
                             }
                         });
                     }
                 } catch (final Exception e) {
-                    loading = false;
                     e.printStackTrace();
                     if (callback != null) {
                         Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
                             
                             @Override
                             public void run() {
+                                loading = false;
                                 callback.execute(false);
                             }
                         });
