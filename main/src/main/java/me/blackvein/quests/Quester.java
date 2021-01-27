@@ -3094,6 +3094,10 @@ public class Quester implements Comparable<Quester> {
     public void finishObjective(final Quest quest, final String objective, final ItemStack increment, 
             final ItemStack goal, final Enchantment enchantment, final EntityType mob, final String extra, 
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
+        if (increment == null || goal == null) {
+            finishObjective(quest, new Objective(ObjectiveType.fromName(objective), 1, 1), mob, extra, npc,
+                    location, color, pass, co);
+        }
         finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc,
                 location, color, pass, co);
     }
