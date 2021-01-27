@@ -67,7 +67,12 @@ public enum ObjectiveType {
         if (name == null) {
             return null;
         }
-        return NAME_MAP.get(name.toLowerCase());
+        // Adjust custom string for legacy reasons
+        String n = name.toLowerCase();
+        if (n.startsWith("custom")) {
+            n = "custom";
+        }
+        return NAME_MAP.get(n);
     }
     
     public static ObjectiveType fromId(final int id) {
