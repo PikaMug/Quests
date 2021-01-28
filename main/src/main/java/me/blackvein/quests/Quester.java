@@ -2740,6 +2740,9 @@ public class Quester implements Comparable<Quester> {
     @SuppressWarnings("deprecation")
     public void finishObjective(final Quest quest, final Objective objective, final EntityType mob, final String extra,
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
+        if (objective == null) {
+            return;
+        }
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
         final ItemStack increment = objective.getItemProgress() != null ? objective.getItemProgress() 
@@ -3094,6 +3097,9 @@ public class Quester implements Comparable<Quester> {
     public void finishObjective(final Quest quest, final String objective, final ItemStack increment, 
             final ItemStack goal, final Enchantment enchantment, final EntityType mob, final String extra, 
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
+        if (objective == null) {
+            return;
+        }
         if (increment == null || goal == null) {
             finishObjective(quest, new Objective(ObjectiveType.fromName(objective), 1, 1), mob, extra, npc,
                     location, color, pass, co);
