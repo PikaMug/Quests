@@ -3103,9 +3103,10 @@ public class Quester implements Comparable<Quester> {
         if (increment == null || goal == null) {
             finishObjective(quest, new Objective(ObjectiveType.fromName(objective), 1, 1), mob, extra, npc,
                     location, color, pass, co);
+        } else {
+            finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc,
+                    location, color, pass, co);
         }
-        finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc,
-                location, color, pass, co);
     }
     
     /**
