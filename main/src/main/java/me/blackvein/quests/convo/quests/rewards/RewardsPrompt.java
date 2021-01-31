@@ -996,7 +996,6 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         permissions.add(s.trim());
                     }
                 }
-                permissions.addAll(Arrays.asList(args));
                 context.setSessionData(CK.REW_PERMISSION, permissions);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
