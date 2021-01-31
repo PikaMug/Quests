@@ -776,16 +776,17 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         s = s.substring(1);
                     }
                     switch (s.trim().split(" ")[0].toLowerCase()) {
-                    case "*":
-                    case "op":
-                    case "deop":
-                    case "stop":
-                    case "reload":
-                    case "timings":
-                    case "pardon":
-                    case "pardon-ip":
                     case "ban":
                     case "ban-ip":
+                    case "deop":
+                    case "kick":
+                    case "kill":
+                    case "timings":
+                    case "op": 
+                    case "pardon":
+                    case "pardon-ip":
+                    case "reload":
+                    case "stop":
                     case "whitelist":
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
                                 + ChatColor.DARK_RED + " (" + s.trim() + ")");
@@ -961,6 +962,40 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 final String[] args = input.split(" ");
                 final List<String> permissions = new LinkedList<String>();
+                for (String s : args) {
+                    if (s.startsWith("/")) {
+                        s = s.substring(1);
+                    }
+                    switch (s.trim().split(" ")[0].toLowerCase()) {
+                    case "*":
+                    case "*.*":
+                    case "bukkit.*":
+                    case "bukkit.command.*":
+                    case "bukkit.command.plugins":
+                    case "bukkit.command.reload":
+                    case "bukkit.command.timings":
+                    case "minecraft.*":
+                    case "minecraft.command.*":
+                    case "minecraft.command.ban":
+                    case "minecraft.command.ban-ip":
+                    case "minecraft.command.deop":
+                    case "minecraft.command.kick":
+                    case "minecraft.command.kill":
+                    case "minecraft.command.op":
+                    case "minecraft.command.pardon":
+                    case "minecraft.command.pardon-ip":
+                    case "minecraft.command.save-all":
+                    case "minecraft.command.save-off":
+                    case "minecraft.command.save-on":
+                    case "minecraft.command.stop":
+                    case "minecraft.command.whitelist":
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
+                                + ChatColor.DARK_RED + " (" + s.trim() + ")");
+                        continue;
+                    default:
+                        permissions.add(s.trim());
+                    }
+                }
                 permissions.addAll(Arrays.asList(args));
                 context.setSessionData(CK.REW_PERMISSION, permissions);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
