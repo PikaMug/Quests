@@ -1405,13 +1405,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             display = display.replace("%count%", entry.getValue() + "/" 
                                     + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        unfinished.add(display);
+                        unfinished.add(ChatColor.translateAlternateColorCodes('&', display));
                     } else {
                         if (co.canShowCount()) {
                             display = display.replace("%count%", stage.customObjectiveCounts.get(countsIndex) 
                                     + "/" + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        finished.add(display);
+                        finished.add(ChatColor.translateAlternateColorCodes('&', display));
                     }
                 }
                 countsIndex++;

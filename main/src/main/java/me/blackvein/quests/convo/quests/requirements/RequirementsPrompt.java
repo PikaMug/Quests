@@ -951,7 +951,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.AQUA + "- ";
+            String text = ChatColor.GOLD + "- ";
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
             final LinkedList<Map<String, Object>> datamapList
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
@@ -968,9 +968,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + dataKey;
                 if (datamap.get(dataKey) != null) {
-                    text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
+                    text += ChatColor.GRAY + " (" + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&',
+                            datamap.get(dataKey).toString()) + ChatColor.GRAY + ")\n";
                 } else {
-                    text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
+                    text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ChatColor.GRAY + ")\n";
                 }
                 index++;
             }
