@@ -52,7 +52,7 @@ public class NpcListener implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onNPCRightClick(final NPCRightClickEvent evt) {
         if (plugin.getDependencies().getCitizens() == null) {
             // Ensure that Citizens is linked (may not be if it loads after Quests)
