@@ -15,7 +15,7 @@ max-quests: 0
 npc-effects:
   enabled: true
   new-quest: note
-  redo-quest: angry_villager
+  redo-quest: heart
 show-requirements: true
 show-titles: true
 strict-player-movement: 0
