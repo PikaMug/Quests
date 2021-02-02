@@ -492,9 +492,9 @@ public class CmdExecutor implements CommandExecutor {
             cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD 
                     + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
-                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug");
+                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
             cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                    + "https://www.spigotmc.org/resources/quests.3711/");
+                    + "https://github.com/PikaMug/Quests");
         }
         return true;
     }
