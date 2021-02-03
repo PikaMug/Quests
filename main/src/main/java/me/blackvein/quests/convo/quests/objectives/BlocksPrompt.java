@@ -370,6 +370,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + getQueryText(context);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
@@ -398,6 +399,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_BREAK_NAMES, names);
+                
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                if (context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
+                }
+                for (int i = 0; i < names.size(); i++) {
+                    if (i >= amounts.size()) {
+                        amounts.add(1);
+                    }
+                }
+                context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
             }
             return new BlocksBreakListPrompt(context);
         }
@@ -688,6 +700,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + getQueryText(context);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
@@ -716,6 +729,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
+                
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
+                }
+                for (int i = 0; i < names.size(); i++) {
+                    if (i >= amounts.size()) {
+                        amounts.add(1);
+                    }
+                }
+                context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
             }
             return new BlocksDamageListPrompt(context);
         }
@@ -1006,6 +1030,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + getQueryText(context);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
@@ -1034,6 +1059,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_PLACE_NAMES, names);
+                
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
+                }
+                for (int i = 0; i < names.size(); i++) {
+                    if (i >= amounts.size()) {
+                        amounts.add(1);
+                    }
+                }
+                context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
             }
             return new BlocksPlaceListPrompt(context);
         }
@@ -1324,6 +1360,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + getQueryText(context);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
@@ -1352,6 +1389,17 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_USE_NAMES, names);
+                
+                LinkedList<Integer> amounts = new LinkedList<Integer>();
+                if (context.getSessionData(pref + CK.S_USE_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
+                }
+                for (int i = 0; i < names.size(); i++) {
+                    if (i >= amounts.size()) {
+                        amounts.add(1);
+                    }
+                }
+                context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
             }
             return new BlocksUseListPrompt(context);
         }
