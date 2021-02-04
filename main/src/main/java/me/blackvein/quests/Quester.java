@@ -4309,7 +4309,7 @@ public class Quester implements Comparable<Quester> {
                 }
                 hardQuit(quest);
             } else if (giveReason) {
-                if (System.currentTimeMillis() - lastNotifiedCondition > 5000) {
+                if (System.currentTimeMillis() - lastNotifiedCondition > 6000) {
                     getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
                             .replace("<quest>", quest.getName()));
                     lastNotifiedCondition = System.currentTimeMillis();

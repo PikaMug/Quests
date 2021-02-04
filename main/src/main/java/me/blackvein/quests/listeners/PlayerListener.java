@@ -948,7 +948,7 @@ public class PlayerListener implements Listener {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         final Set<String> dispatchedQuestIDs = new HashSet<String>();
                         for (final Quest quest : plugin.getQuests()) {
-                            if (!quester.meetsCondition(quest, false)) {
+                            if (!quester.meetsCondition(quest, true)) {
                                 continue;
                             }
                             
