@@ -55,12 +55,11 @@ public class NpcListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(final NPCRightClickEvent evt) {
         if (plugin.getDependencies().getCitizens() == null) {
-            // Ensure that Citizens is linked (may not be if it loads after Quests)
             return;
         }
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + Lang.get("id") + ": " 
-                    + ChatColor.DARK_GREEN + evt.getNPC().getId());
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + ChatColor.DARK_GREEN 
+                    + Lang.get("id") + ": "  + evt.getNPC().getId());
             return;
         }
         if (evt.getClicker().isConversing() == false) {
@@ -261,19 +260,17 @@ public class NpcListener implements Listener {
     @EventHandler
     public void onNPCLeftClick(final NPCLeftClickEvent evt) {
         if (plugin.getDependencies().getCitizens() == null) {
-            // Ensure that Citizens is linked (may not be if it loads after Quests)
             return;
         }
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + ": " + ChatColor.DARK_GREEN 
-                    + Lang.get("id") + " " + evt.getNPC().getId());
+            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + ChatColor.DARK_GREEN 
+                    + Lang.get("id") + ": " + evt.getNPC().getId());
         }
     }
 
     @EventHandler
     public void onNPCDeath(final NPCDeathEvent evt) {
         if (plugin.getDependencies().getCitizens() == null) {
-            // Ensure that Citizens is linked (may not be if it loads after Quests)
             return;
         }
         if (evt.getNPC() == null || evt.getNPC().getEntity() == null 
