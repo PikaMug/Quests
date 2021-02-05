@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.alessiodp.parties.api.Parties;
@@ -29,6 +31,7 @@ import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 
 import de.erethon.dungeonsxl.DungeonsXL;
+import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.Lang;
@@ -125,29 +128,37 @@ public class Dependencies {
     
     public CitizensPlugin getCitizens() {
         if (citizens == null) {
-            enableCitizens();
+            linkCitizens();
         }
         return citizens;
     }
     
-    public void enableCitizens() {
+    public void linkCitizens() {
         if (isPluginAvailable("Citizens")) {
             try {
                 citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-                plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
-                if (plugin.getSettings().canNpcEffects()) {
-                    plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
-                            20, 20);
+                boolean found = false;
+                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
+                    if (listener.getListener() instanceof NpcListener) {
+                        found = true;
+                    }
                 }
-                plugin.getLogger().info("Successfully linked Quests with Citizens " 
-                        + citizens.getDescription().getVersion());
+                if (!found) {
+                    plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
+                    if (plugin.getSettings().canNpcEffects()) {
+                        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
+                                20, 20);
+                    }
+                    plugin.getLogger().info("Successfully linked Quests with Citizens " 
+                            + citizens.getDescription().getVersion());
+                }
             } catch (final Exception e) {
                 plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
         }
     }
     
-    public void disableCitizens() {
+    public void unlinkCitizens() {
         citizens = null;
     }
     

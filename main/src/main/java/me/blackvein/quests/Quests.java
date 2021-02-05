@@ -217,7 +217,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
-        depends.enableCitizens();
+        depends.linkCitizens();
         getServer().getPluginManager().registerEvents(playerListener, this);
         if (settings.getStrictPlayerMovement() > 0) {
             final long ticks = settings.getStrictPlayerMovement() * 20;
@@ -650,7 +650,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (depends.getCitizens().getNPCRegistry() == null) {
                         getLogger().log(Level.SEVERE, 
                                 "Citizens was enabled but NPCRegistry was null. Disabling linkage.");
-                        depends.disableCitizens();
+                        depends.unlinkCitizens();
                     }
                 }
                 loadModules();
