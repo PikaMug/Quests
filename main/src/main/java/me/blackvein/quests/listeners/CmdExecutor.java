@@ -489,7 +489,7 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questsInfo(final CommandSender cs) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD 
+            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD 
                     + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
                     + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
