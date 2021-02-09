@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Ilagay ang pangalan ng Pangunahing Klase ng mga Heroes,
 reqHeroesSecondaryPrompt: "Ilagay ang pangalan ng Ikalawang Klase ng mga Heroes, <clear>, <cancel>"
 reqAddItem: "Magdagdag ng gamit"
 reqSetRemoveItems: "Itakda ang pagalis ng gamit"
-reqNoItemsSet: "Walang gamit na itinakda"
-reqNoValuesSet: "Walang itinakdang halaga"
 reqHeroesPrimaryDisplay: "Pangunahing Klase:"
 reqHeroesSecondaryDisplay: "Ikalawang Klase:"
 reqNotAQuestName: "<quest> ay hindi pangalan ng paghanap!"
