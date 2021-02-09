@@ -644,27 +644,33 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @SuppressWarnings("unchecked")
         @Override
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
                     String text = "\n";
-                    for (final ItemStack is : getItems(context)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)) {
+                        if (is == null) {
+                            // TODO - Find out why this happens after first setting GUI Display
+                            return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                        }
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
                 }
-                return "";
             case 2:
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("reqNoItemsSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
-                        return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         String text = "\n";
-                        for (final Boolean b : getRemoveItems(context)) {
+                        for (final Boolean b : (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)) {
                             text += ChatColor.GRAY + "     - " + ChatColor.AQUA
                                     + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
                         }
@@ -679,12 +685,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                    final List<ItemStack> itemReqs = getItems(context);
+                    final List<ItemStack> itemReqs = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                     itemReqs.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 } else {
@@ -750,15 +757,15 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /*@SuppressWarnings("unchecked")
         private List<ItemStack> getItems(final ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-        }
+        }*/
 
-        @SuppressWarnings("unchecked")
+        /*@SuppressWarnings("unchecked")
         private List<Boolean> getRemoveItems(final ConversationContext context) {
             return (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
-        }
+        }*/
     }
 
     public class RemoveItemsPrompt extends QuestsEditorStringPrompt {

@@ -683,7 +683,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 } else {
                     String text = "\n";
                     for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REW_ITEMS)) {
-                        text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
                 }
@@ -713,7 +713,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + getTitle(context);
