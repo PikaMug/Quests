@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Zadejte název primární třídy hrdinů, <clear>, <ca
 reqHeroesSecondaryPrompt: "Zadejte název druhé třídy hrdinů, <clear>, <cancel>"
 reqAddItem: "Přidat předmět"
 reqSetRemoveItems: "Nastavte odstranění položek"
-reqNoItemsSet: "Žádné položky nenastaveny"
-reqNoValuesSet: "Žádné hodnoty nejsou nastaveny"
 reqHeroesPrimaryDisplay: "Základní třída:"
 reqHeroesSecondaryDisplay: "Druhá třída:"
 reqNotAQuestName: "<quest> není název úkolu!"
