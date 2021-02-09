@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Wprowadź nazwę klasy głównej Heroes, <clear>, <canc
 reqHeroesSecondaryPrompt: "Wprowadź nazwę podklasy Heroes, <clear>, <cancel>"
 reqAddItem: "Dodaj przedmiot"
 reqSetRemoveItems: "Ustaw usuwanie przedmiotów"
-reqNoItemsSet: "Nie ustawiono przedmiotów"
-reqNoValuesSet: "Nie ustawiono wartości"
 reqHeroesPrimaryDisplay: "Główne klasy:"
 reqHeroesSecondaryDisplay: "Drugorzędne Klasy:"
 reqNotAQuestName: "<quest> nie jest nazwą misji!"
