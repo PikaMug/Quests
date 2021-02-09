@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Add meg a Heroes első osztályának nevet, <clear>, <c
 reqHeroesSecondaryPrompt: "Add meg a Heroes másodlagos osztály nevét, <clear>, <cancel>"
 reqAddItem: "Elem hozzáadása"
 reqSetRemoveItems: "Elemek eltávolításának beállítása"
-reqNoItemsSet: "Nincs elemek beállítva"
-reqNoValuesSet: "Nincs beállítva érték"
 reqHeroesPrimaryDisplay: "Elsődleges osztály:"
 reqHeroesSecondaryDisplay: "Másodlagos osztály:"
 reqNotAQuestName: "<quest> nem Küldetés név!"
