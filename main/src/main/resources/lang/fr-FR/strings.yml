@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Entrez un nom de classe primaire Heroes, <clear>, <canc
 reqHeroesSecondaryPrompt: "Entrez un nom de classe secondaire de héros, les <clear>, les <cancel>"
 reqAddItem: "Ajouter un item"
 reqSetRemoveItems: "Définir les items à supprimés"
-reqNoItemsSet: "Aucun items défini"
-reqNoValuesSet: "Aucunes valeurs défini"
 reqHeroesPrimaryDisplay: "Classes primaires:"
 reqHeroesSecondaryDisplay: "Classes secondaires:"
 reqNotAQuestName: "<quest> n’est pas un nom de quête !"
