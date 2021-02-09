@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Введите первичное название кл
 reqHeroesSecondaryPrompt: "Введите двоичное название класса героев, <clear>, <cancel>"
 reqAddItem: "Добавить предмет"
 reqSetRemoveItems: "Установить удаленные преметы"
-reqNoItemsSet: "Предметы не установлены"
-reqNoValuesSet: "Значение не установлено"
 reqHeroesPrimaryDisplay: "Первичный класс:"
 reqHeroesSecondaryDisplay: "Двоичный класс:"
 reqNotAQuestName: "<quest> не является именем квеста!"
