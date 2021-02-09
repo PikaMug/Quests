@@ -24,6 +24,7 @@ import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPro
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 
 public class TimerPrompt extends ActionsEditorNumericPrompt {
     
@@ -65,7 +66,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("eventEditorSetTimer");
         case 2:
-            return ChatColor.YELLOW + Lang.get("eventEditorCancelTimer");
+            return ChatColor.YELLOW + Lang.get("eventEditorCancelTimer") + ":";
         case 3:
             return ChatColor.GREEN + Lang.get("done");
         default:
@@ -80,7 +81,8 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_TIMER) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_TIMER) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA 
+                        + MiscUtil.getTime((Integer)context.getSessionData(CK.E_TIMER) * 1000) + ChatColor.GRAY + ")";
             }
         case 2:
             return ChatColor.AQUA + "" + context.getSessionData(CK.E_CANCEL_TIMER);
@@ -121,7 +123,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
             } else {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
             }
-            return new ActionMainPrompt(context);
+            return new TimerPrompt(context);
         case 3:
             return new ActionMainPrompt(context);
         default:
@@ -158,13 +160,17 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(final ConversationContext context, final String input) {
             try {
                 final Integer i = Integer.parseInt(input);
-                context.setSessionData(CK.E_TIMER, i);
-                return new TimerFailPrompt(context);
+                if (i < 1) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
+                } else {
+                    context.setSessionData(CK.E_TIMER, i);
+                }
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
                         + Lang.get("reqNotANumber").replace("<input>", input));
-                return new ActionMainPrompt(context);
+                return new TimerFailPrompt(context);
             }
+            return new TimerPrompt(context);
         }
     }
 }

@@ -88,7 +88,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 5:
             return ChatColor.YELLOW + Lang.get("conditionEditorCheckPlaceholder");
         case 6:
-            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
+            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
         case 7:
             return ChatColor.GREEN + Lang.get("save");
         case 8:
