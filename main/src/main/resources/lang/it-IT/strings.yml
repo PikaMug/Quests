@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Inserisci il nome di una classe primaria di Heroes, <cl
 reqHeroesSecondaryPrompt: "Inserisci il nome di una classe secondaria di Heroes, <clear>, <cancel>"
 reqAddItem: "Aggiungi oggetto"
 reqSetRemoveItems: "Imposta rimozione oggetti"
-reqNoItemsSet: "Nessun oggetto impostato"
-reqNoValuesSet: "Nessun valore impostato"
 reqHeroesPrimaryDisplay: "Classe primaria:"
 reqHeroesSecondaryDisplay: "Classe secondaria:"
 reqNotAQuestName: "<quest> non è il nome di una missione!"
