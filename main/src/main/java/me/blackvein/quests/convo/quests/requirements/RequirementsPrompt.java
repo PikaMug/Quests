@@ -654,10 +654,6 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 } else {
                     String text = "\n";
                     for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)) {
-                        if (is == null) {
-                            // TODO - Find out why this happens after first setting GUI Display
-                            return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                        }
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
@@ -692,11 +688,17 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
                     final List<ItemStack> itemReqs = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    final ItemStack i = (ItemStack) context.getSessionData("tempStack");
+                    if (i != null) {
+                        itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    }
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 } else {
                     final LinkedList<ItemStack> itemReqs = new LinkedList<ItemStack>();
-                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    final ItemStack i = (ItemStack) context.getSessionData("tempStack");
+                    if (i != null) {
+                        itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    }
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 }
                 context.setSessionData("newItem", null);
