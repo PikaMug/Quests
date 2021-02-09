@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Heroes 기본 클래스 이름 입력, <clear>, <cancel
 reqHeroesSecondaryPrompt: "Heroes 보조 클래스 이름 입력, <clear>, <cancel>"
 reqAddItem: "아이템 추가"
 reqSetRemoveItems: "아이템 지우기 설정"
-reqNoItemsSet: "아이템 설정 안됨"
-reqNoValuesSet: "값 설정 안됨"
 reqHeroesPrimaryDisplay: "기본 클래스:"
 reqHeroesSecondaryDisplay: "보조 클래스:"
 reqNotAQuestName: "<quest>는 퀘스트 이름이 아닙니다!"
