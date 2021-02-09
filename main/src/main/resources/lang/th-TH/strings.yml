@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "ใส่ชื่อคลาสหลักของ 
 reqHeroesSecondaryPrompt: "ใส่ชื่อคลาสรองของ Heroes <clear>, <cancel>"
 reqAddItem: "เพิ่มไอเท็ม"
 reqSetRemoveItems: "ตั้งไอเทมที่ลบ"
-reqNoItemsSet: "ไม่มีไอเท็มอะไรตั้งค่าอยู่"
-reqNoValuesSet: "ไม่มีค่าที่ตั้งได้"
 reqHeroesPrimaryDisplay: "คลาสหลัก:"
 reqHeroesSecondaryDisplay: "คลาสรอง:"
 reqNotAQuestName: "<quest> ไม่ใช่ชื่อเควส"
