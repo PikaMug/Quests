@@ -452,8 +452,6 @@ reqHeroesPrimaryPrompt: "Vul een Heroes Primaire Klasse naam in, <clear>, <cance
 reqHeroesSecondaryPrompt: "Vul een Heroes Secundaire Klasse naam in, <clear>, <cancel>"
 reqAddItem: "Voeg item toe"
 reqSetRemoveItems: "Verwijder items instellen"
-reqNoItemsSet: "Geen items ingesteld"
-reqNoValuesSet: "Geen waarden ingesteld"
 reqHeroesPrimaryDisplay: "Primaire Klasse:"
 reqHeroesSecondaryDisplay: "Secundaire Klasse:"
 reqNotAQuestName: "<quest> is geen queeste naam!"
