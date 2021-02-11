@@ -62,7 +62,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             return dateData;
         }
         final Calendar cal = Calendar.getInstance();
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/MM");
         final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         
         cal.set((Integer) context.getSessionData("tempYear"), (Integer) context.getSessionData("tempMonth"), 
