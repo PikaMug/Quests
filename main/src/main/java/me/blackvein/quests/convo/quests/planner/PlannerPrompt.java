@@ -370,7 +370,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     private String getPrettyDate(final String formattedDate) {
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/MM");
-        final SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+        final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         final String[] date = formattedDate.split(":");
         final int day = Integer.valueOf(date[0]);
         final int month = Integer.valueOf(date[1]);
