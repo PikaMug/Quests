@@ -111,11 +111,11 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         case 0:
             return ChatColor.GOLD + Lang.get("dateCreateLoadTime");
         case 1:
-            return ChatColor.YELLOW + Lang.get("timeDay");
+            return ChatColor.YELLOW + Lang.get("timeYear");
         case 2:
             return ChatColor.YELLOW + Lang.get("timeMonth");
         case 3:
-            return ChatColor.YELLOW + Lang.get("timeYear");
+            return ChatColor.YELLOW + Lang.get("timeDay");
         case 4:
             return ChatColor.YELLOW + Lang.get("timeHour");
         case 5:
@@ -139,8 +139,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         case 0:
             return "";
         case 1:
-            if (context.getSessionData("tempDay") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempDay") 
+            if (context.getSessionData("tempYear") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempYear") 
                         + ChatColor.GRAY + ")";
             }
         case 2:
@@ -149,8 +149,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         + ((Integer) context.getSessionData("tempMonth") + 1) + ChatColor.GRAY + ")";
             }
         case 3:
-            if (context.getSessionData("tempYear") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempYear") 
+            if (context.getSessionData("tempDay") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempDay") 
                         + ChatColor.GRAY + ")";
             }
         case 4:
@@ -188,8 +188,8 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
     
         String text = ChatColor.AQUA + getTitle(context) + "\n";
-        if (context.getSessionData("tempDay") != null && context.getSessionData("tempMonth") != null
-                && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
+        if (context.getSessionData("tempYear") != null  && context.getSessionData("tempMonth") != null
+                && context.getSessionData("tempDay") != null && context.getSessionData("tempHour") != null
                 && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
                 && context.getSessionData("tempZone") != null) {
             text += getDataText(context);
@@ -206,20 +206,20 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         switch(input.intValue()) {
         case 0:
             final Calendar cal = Calendar.getInstance();
-            context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
-            context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
             context.setSessionData("tempYear", cal.get(Calendar.YEAR));
+            context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
+            context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
             context.setSessionData("tempHour", cal.get(Calendar.HOUR_OF_DAY));
             context.setSessionData("tempMinute", cal.get(Calendar.MINUTE));
             context.setSessionData("tempSecond", cal.get(Calendar.SECOND));
             context.setSessionData("tempZone", cal.getTimeZone().getID());
             return new DateTimePrompt(context, oldPrompt, source);
         case 1:
-            return new DayPrompt(context);
+            return new YearPrompt(context);
         case 2:
             return new MonthPrompt(context);
         case 3:
-            return new YearPrompt(context);
+            return new DayPrompt(context);
         case 4:
             return new HourPrompt(context);
         case 5:
@@ -229,22 +229,22 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         case 7:
             return new OffsetPrompt(context);
         case 8:
-            context.setSessionData("tempDay", null);
-            context.setSessionData("tempMonth", null);
             context.setSessionData("tempYear", null);
+            context.setSessionData("tempMonth", null);
+            context.setSessionData("tempDay", null);
             context.setSessionData("tempHour", null);
             context.setSessionData("tempMinute", null);
             context.setSessionData("tempSecond", null);
             context.setSessionData("tempZone", null);
             return oldPrompt;
         case 9:
-            if (context.getSessionData("tempDay") != null && context.getSessionData("tempMonth") != null
-                    && context.getSessionData("tempYear") != null && context.getSessionData("tempHour") != null
+            if (context.getSessionData("tempYear") != null && context.getSessionData("tempMonth") != null
+                    && context.getSessionData("tempDay") != null && context.getSessionData("tempHour") != null
                     && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
                     && context.getSessionData("tempZone") != null) {
-                final int day = (Integer) context.getSessionData("tempDay");
-                final int month = (Integer) context.getSessionData("tempMonth");
                 final int year = (Integer) context.getSessionData("tempYear");
+                final int month = (Integer) context.getSessionData("tempMonth");
+                final int day = (Integer) context.getSessionData("tempDay");
                 final int hour = (Integer) context.getSessionData("tempHour");
                 final int minute = (Integer) context.getSessionData("tempMinute");
                 final int second = (Integer) context.getSessionData("tempSecond");
@@ -258,16 +258,16 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.PLN_END_DATE, date);
                     }
                 }
-                context.setSessionData("tempDay", null);
-                context.setSessionData("tempMonth", null);
                 context.setSessionData("tempYear", null);
+                context.setSessionData("tempMonth", null);
+                context.setSessionData("tempDay", null);
                 context.setSessionData("tempHour", null);
                 context.setSessionData("tempMinute", null);
                 context.setSessionData("tempSecond", null);
                 context.setSessionData("tempZone", null);
                 return oldPrompt;
-            } else if (context.getSessionData("tempDay") != null || context.getSessionData("tempMonth") != null
-                    || context.getSessionData("tempYear") != null || context.getSessionData("tempHour") != null
+            } else if (context.getSessionData("tempYear") != null || context.getSessionData("tempMonth") != null
+                    || context.getSessionData("tempDay") != null || context.getSessionData("tempHour") != null
                     || context.getSessionData("tempMinute") != null || context.getSessionData("tempSecond") != null
                     || context.getSessionData("tempZone") != null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -280,9 +280,9 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class DayPrompt extends QuestsEditorStringPrompt {
+    public class YearPrompt extends QuestsEditorStringPrompt {
         
-        public DayPrompt(final ConversationContext context) {
+        public YearPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -293,7 +293,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("dateCreateEnterDay");
+            return Lang.get("dateCreateEnterYear");
         }
 
         @Override
@@ -309,17 +309,17 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
                     final int amt = Integer.parseInt(input);
-                    if (amt < 1 || amt > 31) {
+                    if (amt < 1000 || amt > 9999) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
-                                .replace("<least>", "1").replace("<greatest>", "31"));
-                        return new DayPrompt(context);
+                                .replace("<least>", "1000").replace("<greatest>", "9999"));
+                        return new YearPrompt(context);
                     } else {
-                        context.setSessionData("tempDay", Integer.parseInt(input));
+                        context.setSessionData("tempYear", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new DayPrompt(context);
+                    return new YearPrompt(context);
                 }
             } else {
                 return new DateTimePrompt(context, oldPrompt, source);
@@ -374,9 +374,9 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class YearPrompt extends QuestsEditorStringPrompt {
+    public class DayPrompt extends QuestsEditorStringPrompt {
         
-        public YearPrompt(final ConversationContext context) {
+        public DayPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -387,7 +387,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("dateCreateEnterYear");
+            return Lang.get("dateCreateEnterDay");
         }
 
         @Override
@@ -403,17 +403,17 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
                     final int amt = Integer.parseInt(input);
-                    if (amt < 1000 || amt > 9999) {
+                    if (amt < 1 || amt > 31) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
-                                .replace("<least>", "1000").replace("<greatest>", "9999"));
-                        return new YearPrompt(context);
+                                .replace("<least>", "1").replace("<greatest>", "31"));
+                        return new DayPrompt(context);
                     } else {
-                        context.setSessionData("tempYear", Integer.parseInt(input));
+                        context.setSessionData("tempDay", Integer.parseInt(input));
                         return new DateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new YearPrompt(context);
+                    return new DayPrompt(context);
                 }
             } else {
                 return new DateTimePrompt(context, oldPrompt, source);
