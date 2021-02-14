@@ -228,7 +228,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " 
-                        + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+                        + Lang.get("points") + ChatColor.GRAY + ")";
             }
         case 5:
             if (context.getSessionData(CK.REW_COMMAND) == null) {
@@ -312,7 +312,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_PARTIES_EXPERIENCE) + " "
-                        + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+                        + Lang.get("points") + ChatColor.GRAY + ")";
             }
         case 10:
             if (plugin.getDependencies().getPhatLoots() != null) {
