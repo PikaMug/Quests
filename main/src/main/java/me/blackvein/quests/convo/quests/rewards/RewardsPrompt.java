@@ -788,7 +788,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     case "pardon-ip":
                     case "reload":
                     case "stop":
+                    case "we":
                     case "whitelist":
+                    case "worldedit":
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
                                 + ChatColor.DARK_RED + " (" + s.trim() + ")");
                         continue;
@@ -970,6 +972,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     final String[] arr = {
                             "*",
                             "bukkit.command",
+                            "fawe",
                             "minecraft.command",
                             "worledit"
                     };
