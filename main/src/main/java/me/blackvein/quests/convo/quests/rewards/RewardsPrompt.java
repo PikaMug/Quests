@@ -967,33 +967,24 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (s.startsWith("/")) {
                         s = s.substring(1);
                     }
-                    switch (s.trim().split(" ")[0].toLowerCase()) {
-                    case "*":
-                    case "*.*":
-                    case "bukkit.*":
-                    case "bukkit.command.*":
-                    case "bukkit.command.plugins":
-                    case "bukkit.command.reload":
-                    case "bukkit.command.timings":
-                    case "minecraft.*":
-                    case "minecraft.command.*":
-                    case "minecraft.command.ban":
-                    case "minecraft.command.ban-ip":
-                    case "minecraft.command.deop":
-                    case "minecraft.command.kick":
-                    case "minecraft.command.kill":
-                    case "minecraft.command.op":
-                    case "minecraft.command.pardon":
-                    case "minecraft.command.pardon-ip":
-                    case "minecraft.command.save-all":
-                    case "minecraft.command.save-off":
-                    case "minecraft.command.save-on":
-                    case "minecraft.command.stop":
-                    case "minecraft.command.whitelist":
+                    final String[] arr = {
+                            "*",
+                            "bukkit.command",
+                            "minecraft.command",
+                            "worledit"
+                    };
+                    boolean found = false;
+                    for (int i = 0; i < arr.length; i++) { 
+                        if (s.startsWith(arr[i])) { 
+                            found = true; 
+                            break; 
+                        } 
+                    } 
+                    if (found) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
-                                + ChatColor.DARK_RED + " (" + s.trim() + ")");
+                        + ChatColor.DARK_RED + " (" + s.trim() + ")");
                         continue;
-                    default:
+                    } else {
                         permissions.add(s.trim());
                     }
                 }
