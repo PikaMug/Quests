@@ -22,6 +22,7 @@ public abstract class CustomRequirement {
     private String name = null;
     private String author = null;
     private String display = null;
+    private final Map<String, Short> items = new HashMap<String, Short>();
     private final Map<String, Object> data = new HashMap<String, Object>();
     private final Map<String, String> descriptions = new HashMap<String, String>();
 
@@ -49,6 +50,14 @@ public abstract class CustomRequirement {
     
     public void setDisplay(final String display) {
         this.display = display;
+    }
+    
+    public Map<String, Short> getItems() {
+        return items;
+    }
+    
+    public void addItem(final String type, final short durability) {
+        this.items.put(type, durability);
     }
 
     public Map<String, Object> getData() {
