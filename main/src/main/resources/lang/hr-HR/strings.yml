@@ -222,7 +222,6 @@ conditionEditorModifiedNote: 'Bilješka: Promijenio si kondiciju koju koriste ov
 conditionEditorForcedToQuit: "Ako spremiš kondiciju, svi koji sada rade bilo koji od ovih zadataka će biti prisiljeni da ih napuste."
 conditionEditorSetName: "Postavi ime"
 conditionEditorWorld: "Svijet"
-conditionEditorFailQuest: "Ne uspij riješiti zadatak"
 conditionEditorConditionCleared: "Kondicija izbrisana."
 conditionEditorItemsInMainHand: "Drži u glavnoj ruci"
 conditionEditorStayWithinWorld: "Ostani unutar svijeta"
