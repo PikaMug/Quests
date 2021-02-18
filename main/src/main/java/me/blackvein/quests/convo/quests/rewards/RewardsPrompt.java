@@ -971,9 +971,13 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                     final String[] arr = {
                             "*",
+                            "bukkit.*",
                             "bukkit.command",
                             "fawe",
+                            "minecraft.*",
                             "minecraft.command",
+                            "quests",
+                            "vault",
                             "worledit"
                     };
                     boolean found = false;
