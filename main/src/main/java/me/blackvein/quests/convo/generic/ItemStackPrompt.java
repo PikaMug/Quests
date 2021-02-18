@@ -131,17 +131,85 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 0:
+            return "";
         case 1:
+            if (context.getSessionData("tempName") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                final String text = (String) context.getSessionData("tempName");
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + ItemUtil.getPrettyItemName(text) + ChatColor.GRAY + ")";
+            }
         case 2:
+            if (context.getSessionData("tempAmount") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                final int text = (Integer) context.getSessionData("tempAmount");
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
+            }
         case 3:
+            if (context.getSessionData("tempData") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                final short text = (Short) context.getSessionData("tempData");
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
+            }
         case 4:
+            if (context.getSessionData("tempEnchantments") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "";
+                final Map<Enchantment, Integer> map 
+                        = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
+                for (final Entry<Enchantment, Integer> e : map.entrySet()) {
+                    text += "\n" + ItemUtil.getPrettyEnchantmentName(e.getKey()) + " " 
+                            + RomanNumeral.getNumeral(e.getValue());
+                }
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
+            }
         case 5:
+            if (context.getSessionData("tempDisplay") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                final String text = (String) context.getSessionData("tempDisplay");
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
+            }
         case 6:
+            if (context.getSessionData("tempLore") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "";
+                final List<String> list = (List<String>) context.getSessionData("tempLore");
+                for (final String s : list) {
+                    text += "\n" + s;
+                }
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
+            }
         case 7:
+            if (context.getSessionData("tempMeta") == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                String text = "";
+                final LinkedHashMap<String, Object> map 
+                        = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
+                if (!map.isEmpty()) {
+                    for (final String key : map.keySet()) {
+                        if (key.equals("pages")) {
+                            final List<String> pages = (List<String>) map.get(key);
+                            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" 
+                            + pages.size();
+                        } else {
+                            text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.DARK_GREEN + key + "=" 
+                        + map.get(key);
+                        }
+                    }
+                }
+                return text;
+            }
         case 8:
         case 9:
             return "";
@@ -187,7 +255,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         }
         for (int i = start; i <= size-1; i++) {
             text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                    + getSelectionText(context, i)/* + " " + getAdditionalText(context, i)*/;
         }
         return text;
     }
