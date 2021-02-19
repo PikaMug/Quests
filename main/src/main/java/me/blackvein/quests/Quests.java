@@ -1654,14 +1654,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             throw new QuestFormatException("finish-message is missing", questKey);
         }
         if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
-            if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
-                    != null) {
-                quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                        + ".npc-giver-id"));
-                questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                        + ".npc-giver-id")));
+            final int npcId = config.getInt("quests." + questKey + ".npc-giver-id");
+            if (CitizensAPI.getNPCRegistry().getById(npcId) != null) {
+                quest.npcStart = CitizensAPI.getNPCRegistry().getById(npcId);
+                questNpcs.add(CitizensAPI.getNPCRegistry().getById(npcId));
             } else {
-                throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
+                throw new QuestFormatException("npc-giver-id has invalid NPC ID " + npcId, questKey);
             }
         }
         if (config.contains("quests." + questKey + ".block-start")) {
