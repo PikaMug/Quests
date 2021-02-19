@@ -3612,7 +3612,11 @@ public class Quester implements Comparable<Quester> {
         if (completedQuests.isEmpty()) {
             data.set("completed-Quests", "none");
         } else {
-            final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
+            //final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
+            final List<String> questIds = new LinkedList<String>();
+            for (final Quest quest : completedQuests) {
+                questIds.add(quest.getId());
+            }
             data.set("completed-Quests", questIds);
         }
         if (completedTimes.isEmpty() == false) {
