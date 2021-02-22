@@ -98,7 +98,7 @@ public class PlayerListener implements Listener {
             ItemStack item=evt.getWhoClicked().getInventory().getItem(event.getHotbarButton());
             if (item!=null) {
                if (ItemUtil.isItem(item) && ItemUtil.isJournal(item)) {
-                    event.setCancelled(true);
+                    evt.setCancelled(true);
                 }
             }
         }
