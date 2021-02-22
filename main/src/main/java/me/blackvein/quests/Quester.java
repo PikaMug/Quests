@@ -4211,8 +4211,8 @@ public class Quester implements Comparable<Quester> {
             if (getPlayer() instanceof Conversable) {
                 if (getPlayer().isConversing() == false) {
                     setQuestIdToTake(quest.getId());
-                    final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD 
-                            + " -\n" + "\n" + ChatColor.RESET + quest.getDescription() + "\n";
+                    final String s = ChatColor.GOLD + Lang.get("questObjectivesTitle")
+                            .replace("<quest>", quest.getName()) + "\n" + ChatColor.RESET + quest.getDescription();
                     for (final String msg : s.split("<br>")) {
                         sendMessage(msg);
                     }
