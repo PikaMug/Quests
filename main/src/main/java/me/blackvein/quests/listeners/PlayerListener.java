@@ -99,6 +99,7 @@ public class PlayerListener implements Listener {
             if (item!=null) {
                if (ItemUtil.isItem(item) && ItemUtil.isJournal(item)) {
                     evt.setCancelled(true);
+                   return;
                 }
             }
         }
