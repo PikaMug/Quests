@@ -94,6 +94,14 @@ public class PlayerListener implements Listener {
                 evt.setCancelled(true);
                 return;
             }
+        } else if (ac.equals(InventoryAction.SWAP_WITH_CURSOR))) {
+            ItemStack item=evt.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+            if (item!=null) {
+               if (ItemUtil.isItem(item) && ItemUtil.isJournal(item)) {
+                    evt.setCancelled(true);
+                   return;
+                }
+            }
         }
         if (ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem()) 
                 || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
