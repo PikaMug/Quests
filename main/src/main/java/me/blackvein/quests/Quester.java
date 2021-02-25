@@ -3123,7 +3123,7 @@ public class Quester implements Comparable<Quester> {
             if (co.canShowCount()) {
                 message = message.replace("%count%", goal.getAmount() + "/" + goal.getAmount());
             }
-            sendMessage(message);
+            sendMessage(ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', message)));
         }
         if (testComplete(quest)) {
             quest.nextStage(this, true);
