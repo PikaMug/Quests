@@ -879,6 +879,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     @SuppressWarnings("deprecation")
     public void showObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides) {
+        if (quest == null) {
+            getLogger().severe("Quest was null when getting objectives for " + quester.getLastKnownName());
+            return;
+        }
         if (quester.getQuestData(quest) == null) {
             getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
