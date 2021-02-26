@@ -285,6 +285,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
+        context.setSessionData(CK.OPT_SHARE_DISTANCE, opt.getShareDistance());
         context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
         // Stages (Objectives)
         int index = 1;
