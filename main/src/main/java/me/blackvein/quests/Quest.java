@@ -42,6 +42,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
 import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
@@ -391,6 +392,12 @@ public class Quest implements Comparable<Quest> {
         }
         if (targetLocation != null && targetLocation.getWorld() != null) {
             if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
+                final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(this, quester, targetLocation);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return false;
+                }
+                
                 quester.getPlayer().setCompassTarget(targetLocation);
             }
         }
