@@ -335,14 +335,14 @@ public class PlayerListener implements Listener {
                                                             + MiscUtil.getTime(quester.getCooldownDifference(q)) 
                                                             + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + early);
-                                                    return;
+                                                    continue;
                                                 } else if (quester.getCompletedQuests().contains(q) 
                                                         && q.getPlanner().getCooldown() < 0) {
                                                     String completed = Lang.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
                                                             + q.getName() + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + completed);
-                                                    return;
+                                                    continue;
                                                 }
                                             }
                                             quester.setQuestIdToTake(q.getId());
@@ -358,8 +358,8 @@ public class PlayerListener implements Listener {
                                                 }
                                                 plugin.getConversationFactory().buildConversation(player).begin();
                                             }
+                                            break;
                                         }
-                                        break;
                                     }
                                 }
                             }
