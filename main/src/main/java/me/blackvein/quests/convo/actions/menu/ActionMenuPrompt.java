@@ -90,8 +90,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
     @Override
     public String getPromptText(final ConversationContext context) {
-        final ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        final ActionsEditorPostOpenNumericPromptEvent event 
+                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
+        
         String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
             text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
@@ -166,7 +168,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final String text = ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -228,6 +231,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Action a : plugin.getActions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
@@ -273,6 +280,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Action a : plugin.getActions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ",";
@@ -337,6 +348,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ActionsEditorPostOpenStringPromptEvent event 
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
                     + Lang.get("yesWord") + "\n";
             text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 

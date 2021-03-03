@@ -88,7 +88,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public String getPromptText(final ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final QuestsEditorPostOpenNumericPromptEvent event 
+                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
@@ -149,7 +150,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final String text = ChatColor.GOLD + getTitle(context)+ "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -213,6 +215,10 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context);
             for (final Quest q : plugin.getQuests()) {
                 text += "\n" + ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName();
@@ -253,6 +259,10 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Quest quest : plugin.getQuests()) {
                 text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";

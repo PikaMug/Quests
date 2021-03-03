@@ -90,8 +90,10 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
 
     @Override
     public String getPromptText(final ConversationContext context) {
-        final ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+        final ConditionsEditorPostOpenNumericPromptEvent event 
+                = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
+        
         String text = ChatColor.GOLD + getTitle(context);
         for (int i = 1; i <= size; i++) {
             text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
@@ -164,7 +166,8 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final String text = ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -226,6 +229,10 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Condition a : plugin.getConditions()) {
                 text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
@@ -271,6 +278,10 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             for (final Condition c : plugin.getConditions()) {
                 text += ChatColor.AQUA + c.getName() + ChatColor.GRAY + ",";
@@ -335,10 +346,14 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-        + Lang.get("yesWord") + "\n";
+                    + Lang.get("yesWord") + "\n";
             text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-        + Lang.get("noWord");
+                    + Lang.get("noWord");
             return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
                     + (String) context.getSessionData(CK.ED_CONDITION_DELETE) + ChatColor.RED + ")\n" + text;
         }
