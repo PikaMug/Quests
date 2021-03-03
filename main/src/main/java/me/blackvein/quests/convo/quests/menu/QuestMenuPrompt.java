@@ -14,6 +14,7 @@ package me.blackvein.quests.convo.quests.menu;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -264,11 +265,15 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            for (final Quest quest : plugin.getQuests()) {
-                text += ChatColor.AQUA + quest.getName() + ChatColor.GRAY + ",";
+            final List<String> names = plugin.getQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            for (int i = 0; i < names.size(); i++) {
+                if (i < (names.size() - 1)) {
+                    text += ChatColor.AQUA + names.get(i) + ChatColor.GRAY + ", ";
+                } else {
+                    text += ChatColor.AQUA + names.get(i);
+                }
             }
-            text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + getQueryText(context);
+            text += "\n" + ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
