@@ -237,11 +237,14 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            for (final Action a : plugin.getActions()) {
-                text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
+            final List<String> names = plugin.getActions().stream().map(Action::getName).collect(Collectors.toList());
+            for (int i = 0; i < names.size(); i++) {
+                text += ChatColor.AQUA + names.get(i);
+                if (i < (names.size() - 1)) {
+                    text += ChatColor.GRAY + ", ";
+                }
             }
-            text = text.substring(0, text.length() - 2) + "\n";
-            text += ChatColor.YELLOW + getQueryText(context);
+            text += "\n" + ChatColor.YELLOW + getQueryText(context);
             return text;
         }
 
@@ -288,10 +291,9 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             final List<String> names = plugin.getActions().stream().map(Action::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
+                text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
-                    text += ChatColor.AQUA + names.get(i) + ChatColor.GRAY + ", ";
-                } else {
-                    text += ChatColor.AQUA + names.get(i);
+                    text += ChatColor.GRAY + ", ";
                 }
             }
             text += "\n" + ChatColor.YELLOW + getQueryText(context);

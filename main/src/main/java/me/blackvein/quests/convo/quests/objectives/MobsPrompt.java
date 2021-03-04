@@ -13,6 +13,7 @@
 package me.blackvein.quests.convo.quests.objectives;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -107,14 +108,14 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                String text = "";
                 final LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_MOB_TYPES);
                 final LinkedList<Integer> amnts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
                 if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
                     for (int i = 0; i < mobs.size(); i++) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA 
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA 
                                 + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY 
-                                + " x " + ChatColor.DARK_AQUA + amnts.get(i) + "\n";
+                                + " x " + ChatColor.DARK_AQUA + amnts.get(i);
                     }
                 } else {
                     final LinkedList<String> locs 
@@ -126,10 +127,10 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     for (int i = 0; i < mobs.size(); i++) {
                         String msg = Lang.get("blocksWithin");
                         msg = msg.replace("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i) + ChatColor.GRAY);
-                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE 
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.BLUE 
                                 + MiscUtil.getPrettyMobName(MiscUtil.getProperMobType(mobs.get(i))) + ChatColor.GRAY 
                                 + " x " + ChatColor.DARK_AQUA + amnts.get(i) + ChatColor.GRAY + msg + ChatColor.YELLOW 
-                                + names.get(i) + " (" + locs.get(i) + ")\n";
+                                + names.get(i) + " (" + locs.get(i) + ")";
                     }
                 }
                 return text;
@@ -138,12 +139,12 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                String text = "";
                 final LinkedList<String> mobs = (LinkedList<String>) context.getSessionData(pref + CK.S_TAME_TYPES);
                 final LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
                 for (int i = 0; i < mobs.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " 
-                            + ChatColor.AQUA + amounts.get(i) + "\n";
+                    text += "\n" + ChatColor.GRAY + "     - " + ChatColor.BLUE + mobs.get(i) + ChatColor.GRAY + " x " 
+                            + ChatColor.AQUA + amounts.get(i);
                 }
                 return text;
             }
@@ -153,7 +154,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 final Integer fish = (Integer) context.getSessionData(pref + CK.S_FISH);
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + fish + " " + Lang.get("stageEditorFish") 
-                        + ChatColor.GRAY + ")\n";
+                        + ChatColor.GRAY + ")";
             }
         case 4:
             if (context.getSessionData(pref + CK.S_COW_MILK) == null) {
@@ -161,18 +162,18 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 final Integer cows = (Integer) context.getSessionData(pref + CK.S_COW_MILK);
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + cows + " " + Lang.get("stageEditorCows") 
-                        + ChatColor.GRAY + ")\n";
+                        + ChatColor.GRAY + ")";
             }
         case 5:
             if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                String text = "";
                 final LinkedList<String> colors = (LinkedList<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS);
                 final LinkedList<Integer> amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
                 for (int i = 0; i < colors.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " 
-                            + ChatColor.AQUA + amounts.get(i) + "\n";
+                    text += "\n" + ChatColor.GRAY + "     - " + ChatColor.BLUE + colors.get(i) + ChatColor.GRAY + " x " 
+                            + ChatColor.AQUA + amounts.get(i);
                 }
                 return text;
             }
@@ -246,7 +247,13 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             switch (number) {
                 case 1:
                 case 2:
+                    return ChatColor.BLUE;
                 case 3:
+                    if (context.getForWhom() instanceof Player) {
+                        return ChatColor.BLUE;
+                    } else {
+                        return ChatColor.GRAY;
+                    }
                 case 4:
                 case 5:
                     return ChatColor.BLUE;
@@ -267,7 +274,11 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetMobAmounts"); 
             case 3:
-                return ChatColor.YELLOW + Lang.get("stageEditorSetKillLocations");
+                if (context.getForWhom() instanceof Player) {
+                    return ChatColor.YELLOW + Lang.get("stageEditorSetKillLocations");
+                } else {
+                    return ChatColor.GRAY + Lang.get("stageEditorSetKillLocations");
+                }
             case 4:
                 return ChatColor.YELLOW + Lang.get("stageEditorSetKillLocationRadii");
             case 5:
@@ -289,9 +300,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_MOB_TYPES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final String s : (List<String>) context.getSessionData(pref + CK.S_MOB_TYPES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
                     }
                     return text;
                 }
@@ -299,9 +310,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_MOB_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final Integer i : (List<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + i;
                     }
                     return text;
                 }
@@ -309,9 +320,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final String s : (List<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
                     }
                     return text;
                 }
@@ -319,9 +330,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final int i : (List<Integer>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + i;
                     }
                     return text;
                 }
@@ -329,9 +340,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final String s : (List<String>) context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
                     }
                     return text;
                 }
@@ -365,10 +376,15 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return new MobsAmountsPrompt(context);
             case 3:
-                final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
-                temp.put(((Player) context.getForWhom()).getUniqueId(), null);
-                plugin.getQuestFactory().setSelectedKillLocations(temp);
-                return new MobsLocationPrompt(context);
+                if (context.getForWhom() instanceof Player) {
+                    final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+                    temp.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    plugin.getQuestFactory().setSelectedKillLocations(temp);
+                    return new MobsLocationPrompt(context);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                    return new MobsKillListPrompt(context);
+                }
             case 4:
                 return new MobsRadiiPrompt(context);
             case 5:
@@ -455,8 +471,8 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String mobs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final LinkedList<EntityType> mobArr = new LinkedList<EntityType>(Arrays.asList(EntityType.values()));
-            final LinkedList<EntityType> toRemove = new LinkedList<EntityType>();
+            final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
+            final List<EntityType> toRemove = new LinkedList<EntityType>();
             for (int i = 0; i < mobArr.size(); i++) {
                 final EntityType type = mobArr.get(i);
                 if (type.isAlive() == false || type.name().equals("PLAYER")) {
@@ -464,26 +480,26 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             mobArr.removeAll(toRemove);
+            mobArr.sort(Comparator.comparing(EntityType::name));
             for (int i = 0; i < mobArr.size(); i++) {
+                mobs += ChatColor.AQUA + MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name());
                 if (i < (mobArr.size() - 1)) {
-                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()) + ", ";
-                } else {
-                    mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()) + "\n";
+                     mobs += ChatColor.GRAY + ", ";
                 }
             }
-            return mobs + ChatColor.YELLOW + getQueryText(context);
+            mobs += "\n" + ChatColor.YELLOW + getQueryText(context);
+            return mobs;
         }
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> mobTypes = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
                     if (MiscUtil.getProperMobType(s) != null) {
                         mobTypes.add(s);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidMob"));
                         return new MobsTypesPrompt(context);
                     }
@@ -520,7 +536,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<Integer>();
                 for (final String s : input.split(" ")) {
@@ -533,7 +548,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         mobAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
                         return new MobsAmountsPrompt(context);
                     }
                 }
@@ -628,7 +643,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Integer> radii = new LinkedList<Integer>();
                 for (final String s : input.split(" ")) {
@@ -641,7 +655,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         radii.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidItemName"));
                         return new MobsRadiiPrompt(context);
                     }
@@ -840,9 +854,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_TAME_TYPES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final String s : (List<String>) context.getSessionData(pref + CK.S_TAME_TYPES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
                     }
                     return text;
                 }
@@ -850,9 +864,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_TAME_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final Integer i : (List<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + i;
                     }
                     return text;
                 }
@@ -937,21 +951,28 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String mobs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final EntityType[] mobArr = EntityType.values();
-            for (int i = 0; i < mobArr.length; i++) {
-                final EntityType type = mobArr[i];
+            final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
+            final List<EntityType> toRemove = new LinkedList<EntityType>();
+            for (int i = 0; i < mobArr.size(); i++) {
+                final EntityType type = mobArr.get(i);
                 if (type.isAlive() == false || Tameable.class.isAssignableFrom(type.getEntityClass()) == false) {
-                    continue;
+                    toRemove.add(type);
                 }
-                mobs += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + ", ";
             }
-            mobs = mobs.substring(0, mobs.length() - 2) + "\n";
-            return mobs + ChatColor.YELLOW + getQueryText(context);
+            mobArr.removeAll(toRemove);
+            mobArr.sort(Comparator.comparing(EntityType::name));
+            for (int i = 0; i < mobArr.size(); i++) {
+                mobs += ChatColor.AQUA + MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name());
+                if (i < (mobArr.size() - 1)) {
+                     mobs += ChatColor.GRAY + ", ";
+                }
+            }
+            mobs += "\n" + ChatColor.YELLOW + getQueryText(context);
+            return mobs;
         }
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> mobTypes = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
@@ -961,12 +982,12 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                             mobTypes.add(s);
                             context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
                         } else {
-                            player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                     + Lang.get("stageEditorInvalidMob"));
                             return new MobsTameTypesPrompt(context);
                         }
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidMob"));
                         return new MobsTameTypesPrompt(context);
                     }
@@ -1002,7 +1023,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<Integer>();
                 for (final String s : input.split(" ")) {
@@ -1015,7 +1035,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         mobAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                                 .replace("<input>", input));
                         return new MobsTameAmountsPrompt(context);
                     }
@@ -1083,9 +1103,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_SHEAR_COLORS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final String s : (List<String>) context.getSessionData(pref + CK.S_SHEAR_COLORS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + s;
                     }
                     return text;
                 }
@@ -1093,9 +1113,9 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
+                    String text = "";
                     for (final Integer i : (List<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + i + "\n";
+                        text += "\n" + ChatColor.GRAY + "     - " + ChatColor.AQUA + i;
                     }
                     return text;
                 }
@@ -1193,7 +1213,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> colors = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
@@ -1201,7 +1220,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         colors.add(s);
                         context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidDye"));
                         return new MobsShearColorsPrompt(context);
                     }
@@ -1237,7 +1256,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Integer> shearAmounts = new LinkedList<Integer>();
                 for (final String s : input.split(" ")) {
@@ -1250,7 +1268,8 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         shearAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", input));
                         return new MobsShearAmountsPrompt(context);
                     }
                 }

@@ -220,11 +220,16 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle(context);
-            for (final Quest q : plugin.getQuests()) {
-                text += "\n" + ChatColor.GRAY + "- " + ChatColor.AQUA + q.getName();
+            String text = ChatColor.GOLD + getTitle(context) + "\n";
+            final List<String> names = plugin.getQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            for (int i = 0; i < names.size(); i++) {
+                text += ChatColor.AQUA + names.get(i);
+                if (i < (names.size() - 1)) {
+                    text += ChatColor.GRAY + ", ";
+                }
             }
-            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
+            text += "\n" + ChatColor.YELLOW + getQueryText(context);
+            return text;
         }
 
         @Override
@@ -267,10 +272,9 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             final List<String> names = plugin.getQuests().stream().map(Quest::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
+                text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
-                    text += ChatColor.AQUA + names.get(i) + ChatColor.GRAY + ", ";
-                } else {
-                    text += ChatColor.AQUA + names.get(i);
+                    text += ChatColor.GRAY + ", ";
                 }
             }
             text += "\n" + ChatColor.YELLOW + getQueryText(context);
