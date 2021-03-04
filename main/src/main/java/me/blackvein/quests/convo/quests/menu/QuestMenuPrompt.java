@@ -334,6 +334,28 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             return null;
         }
         
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN;
+            case 2:
+                return ChatColor.RED;
+            default:
+                return null;
+            }
+        }
+        
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN + Lang.get("yesWord");
+            case 2:
+                return ChatColor.RED + Lang.get("noWord");
+            default:
+                return null;
+            }
+        }
+        
         @Override
         public String getQueryText(final ConversationContext context) {
             return Lang.get("confirmDelete");
@@ -341,12 +363,17 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-                    + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-                    + Lang.get("noWord");
-            return ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW 
-                    + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n" + text;
+            final QuestsEditorPostOpenStringPromptEvent event 
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            String text = ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW 
+                    + (String) context.getSessionData(CK.ED_QUEST_DELETE) + ChatColor.RED + ")\n";
+            for (int i = 1; i <= size; i++) {
+                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
+                        + getSelectionText(context, i);
+            }
+            return text;
         }
 
         @Override
