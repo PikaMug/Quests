@@ -341,6 +341,12 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             super(context);
         }
         
+        private final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
+        
         @Override
         public String getTitle(final ConversationContext context) {
             return null;

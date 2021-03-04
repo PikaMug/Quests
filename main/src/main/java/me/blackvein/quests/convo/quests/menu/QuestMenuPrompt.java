@@ -322,6 +322,12 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         public QuestConfirmDeletePrompt(final ConversationContext context) {
             super(context);
         }
+        
+        private final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
 
         @Override
         public String getTitle(final ConversationContext context) {
