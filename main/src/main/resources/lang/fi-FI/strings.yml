@@ -262,6 +262,7 @@ rewNoMcMMOSkills: "Taitoja ei ole asetettu"
 itemCreateInvalidName: "Kelpaamaton tavara!"
 itemCreateInvalidDurab: "Kelpaamaton tavaran kestävyys!"
 itemCreateInvalidEnch: "Kelpaamaton lumous!"
+questObjectivesTitle: "---(<quest>)---"
 questCompleteTitle: '**SUORITETTU TEHTÄVÄ <quest>**'
 questFailed: "*TEHTÄVÄ EPÄONNISTUI*"
 questMaxAllowed: "Voit tehdä kerrallaan korkeintaan <number> tehtävää."
