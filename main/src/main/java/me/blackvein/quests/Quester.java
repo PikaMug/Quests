@@ -1304,9 +1304,8 @@ public class Quester implements Comparable<Quester> {
         for (final String s : getCurrentStage(quest).passwordDisplays) {
             if (data.passwordsSaid.containsKey(s)) {
                 final Boolean b = data.passwordsSaid.get(s);
-                final ChatColor color = b != null && !b == false ? ChatColor.GREEN : ChatColor.GRAY;
-                final String message = color + s;
-                objectives.add(message);
+                final ChatColor color = b != null && b == false ? ChatColor.GREEN : ChatColor.GRAY;
+                objectives.add(color + s);
             }
         }
         for (final CustomObjective co : getCurrentStage(quest).customObjectives) {
@@ -2826,8 +2825,6 @@ public class Quester implements Comparable<Quester> {
                 }
                 sendMessage(message);
             }
-        } else if (type.equals(ObjectiveType.PASSWORD)) {
-            sendMessage(ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass);
         } else if (type.equals(ObjectiveType.BREAK_BLOCK)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break");
             if (message.contains("<count>")) {
@@ -3101,6 +3098,8 @@ public class Quester implements Comparable<Quester> {
             }
             final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             sendMessage(message);
+        } else if (type.equals(ObjectiveType.PASSWORD)) {
+            sendMessage(ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass);
         } else if (co != null) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + co.getDisplay();
             int index = -1;
