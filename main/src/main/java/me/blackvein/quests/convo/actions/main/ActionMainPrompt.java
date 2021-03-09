@@ -562,10 +562,15 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 2:
                 return new ActionMobTypePrompt(context, mobIndex, questMob);
             case 3:
-                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
-                selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-                plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
-                return new ActionMobLocationPrompt(context, mobIndex, questMob);
+                if (context.getForWhom() instanceof Player) {
+                    final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                    selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
+                    return new ActionMobLocationPrompt(context, mobIndex, questMob);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                    return new ActionMainPrompt(context);
+                }
             case 4:
                 return new ActionMobAmountPrompt(context, mobIndex, questMob);
             case 5:
@@ -715,12 +720,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (MiscUtil.getProperMobType(input) != null) {
                     questMob.setType(MiscUtil.getProperMobType(input));
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("stageEditorInvalidMob"));
                     return new ActionMobTypePrompt(context, mobIndex, questMob);
                 }
@@ -760,18 +764,19 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 1) {
-                        player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                .replace("<number>", "1"));
                         return new ActionMobAmountPrompt(context, mobIndex, questMob);
                     }
                     questMob.setSpawnAmounts(i);
                     return new ActionMobPrompt(context, mobIndex, questMob);
                 } catch (final NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
                     return new ActionMobAmountPrompt(context, mobIndex, questMob);
                 }
             }
@@ -921,19 +926,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 if (plugin.getDependencies().getDenizenApi().containsScript(input)) {
                     context.setSessionData(CK.E_DENIZEN, input.toUpperCase());
                     return new ActionMainPrompt(context);
                 } else {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidScript"));
                     return new ActionDenizenPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_DENIZEN, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorDenizenCleared"));
                 return new ActionMainPrompt(context);
             } else {
                 return new ActionMainPrompt(context);

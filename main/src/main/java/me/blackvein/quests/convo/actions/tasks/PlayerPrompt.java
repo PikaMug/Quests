@@ -610,7 +610,6 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<String> effTypes = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
@@ -618,7 +617,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                         effTypes.add(PotionEffectType.getByName(s.toUpperCase()).getName());
                         context.setSessionData(CK.E_POTION_TYPES, effTypes);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                + Lang.get("eventEditorInvalidPotionType"));
                         return new PlayerPotionTypesPrompt(context);
                     }
@@ -655,7 +654,6 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Long> effDurations = new LinkedList<Long>();
                 for (final String s : input.split(" ")) {
@@ -663,12 +661,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                         final int i = Integer.parseInt(s);
                         final long l = i * 1000;
                         if (l < 1000) {
-                            player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                    .replace("<number>", "1"));
                             return new PlayerPotionDurationsPrompt(context);
                         }
                         effDurations.add(l / 50L);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", s));
                         return new PlayerPotionDurationsPrompt(context);
                     }
                 }
@@ -705,19 +705,20 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 final LinkedList<Integer> magAmounts = new LinkedList<Integer>();
                 for (final String s : input.split(" ")) {
                     try {
                         final int i = Integer.parseInt(s);
                         if (i < 1) {
-                            player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                    .replace("<number>", "1"));
                             return new PlayerPotionMagnitudesPrompt(context);
                         }
                         magAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", s));
                         return new PlayerPotionMagnitudesPrompt(context);
                     }
                 }
@@ -758,7 +759,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerHungerPrompt(context);
                     } else {
@@ -807,7 +808,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerSaturationPrompt(context);
                     } else {
@@ -856,7 +857,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerHealthPrompt(context);
                     } else {
