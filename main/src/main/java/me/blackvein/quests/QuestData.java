@@ -1292,7 +1292,7 @@ public class QuestData {
     private int playersKilled = 0;
     private long delayStartTime = 0;
     private long delayTimeLeft = -1;
-    private boolean delayOver = true;
+    //private final boolean delayOver = true;
     
     public int getCowsMilked() {
         return cowsMilked;
@@ -1344,7 +1344,7 @@ public class QuestData {
             quester.updateJournal();
     }
     
-    public boolean isDelayOver() {
+    /*public boolean isDelayOver() {
         return delayOver;
     }
     
@@ -1352,5 +1352,5 @@ public class QuestData {
         this.delayOver = delayOver;
         if (doJournalUpdate)
             quester.updateJournal();
-    }
+    }*/
 }

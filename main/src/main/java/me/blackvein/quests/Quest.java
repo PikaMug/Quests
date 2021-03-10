@@ -392,13 +392,20 @@ public class Quest implements Comparable<Quest> {
         }
         if (targetLocation != null && targetLocation.getWorld() != null) {
             if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-                final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(this, quester, targetLocation);
-                plugin.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return false;
-                }
-                
-                quester.getPlayer().setCompassTarget(targetLocation);
+                final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(), 
+                        targetLocation.getY(), targetLocation.getZ());
+                final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(this, quester, lockedTarget);
+                Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        plugin.getServer().getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            return;
+                        }
+                        quester.getPlayer().setCompassTarget(lockedTarget);
+                    }
+                });
             }
         }
         return targetLocation != null;

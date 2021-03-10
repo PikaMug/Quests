@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Bukkit;
@@ -838,37 +839,49 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = new Quester(plugin, evt.getPlayer().getUniqueId());
-            if (!quester.loadData() && plugin.getSettings().canGenFilesOnJoin()) {
-                quester.saveData();
+            final Quester noobCheck = new Quester(plugin, evt.getPlayer().getUniqueId());
+            if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
+                noobCheck.saveData();
             }
-            for (final Quest q : quester.getCompletedQuests()) {
-                if (q != null) {
-                    if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
-                        quester.getCompletedTimes().put(q, System.currentTimeMillis());
-                    }
-                }
-            }
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                quester.checkQuest(quest);
-            }
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.getCurrentStage(quest).getDelay() > -1 && !quester.getQuestData(quest).isDelayOver()) {
-                    quester.startStageTimer(quest);
-                }
-            }
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-
+            
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    if (quester.hasJournal()) {
-                        quester.updateJournal();
-                    }
-                    if (quester.canUseCompass()) {
-                        quester.resetCompass();
+                    final CompletableFuture<Quester> cf = plugin.getStorage().loadQuesterData(evt.getPlayer().getUniqueId());
+                    try {
+                        final Quester quester = cf.get();
+                        for (final Quest q : quester.getCompletedQuests()) {
+                            if (q != null) {
+                                if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
+                                    quester.getCompletedTimes().put(q, System.currentTimeMillis());
+                                }
+                            }
+                        }
+                        for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                            quester.checkQuest(quest);
+                        }
+                        for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                            if (quester.getCurrentStage(quest).getDelay() > -1 /*&& !quester.getQuestData(quest).isDelayOver()*/) {
+                                quester.startStageTimer(quest);
+                            }
+                        }
+                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if (quester.hasJournal()) {
+                                    quester.updateJournal();
+                                }
+                                if (quester.canUseCompass()) {
+                                    quester.resetCompass();
+                                }
+                            }
+                        }, 40L);
+                    } catch (final Exception e) {
+                        e.printStackTrace();
                     }
                 }
-            }, 40L);
+            });
         }
     }
 

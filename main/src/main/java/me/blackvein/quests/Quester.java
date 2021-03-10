@@ -3718,10 +3718,33 @@ public class Quester implements Comparable<Quester> {
     /**
      * Load data of the Quester from storage
      * 
+     * @deprecated Use {@link #hasData()}
      * @return true if successful
      */
+    @Deprecated
     public boolean loadData() {
         return plugin.getStorage().loadQuesterData(id) != null;
+    }
+    
+    /**
+     * Check whether the Quester has data saved to hard storage
+     * 
+     * @return true if successful
+     */
+    public boolean hasData() {
+        return plugin.getStorage().loadQuesterData(id) != null;
+    }
+    
+    /**
+     * Check whether the Quester has base data in memory, indicating they have participated in quests
+     * 
+     * @return false if empty
+     */
+    public boolean hasBaseData() {
+        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -3756,7 +3779,7 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).setDelayTimeLeft(getCurrentStage(quest).delay - (System.currentTimeMillis() 
                     - getQuestData(quest).getDelayStartTime()));
         }
-        getQuestData(quest).setDelayOver(false);
+        //getQuestData(quest).setDelayOver(false);
     }
     
     /**
@@ -3771,29 +3794,6 @@ public class Quester implements Comparable<Quester> {
         } else {
             return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).getDelayStartTime());
         }
-    }
-    
-    /**
-     * Check whether the Quester has base data, indicating they have participated in quests
-     * 
-     * @return false if empty
-     * @deprecated Use {@link #hasBaseData()}
-     */
-    @Deprecated
-    public boolean hasData() {
-        return hasBaseData();
-    }
-    
-    /**
-     * Check whether the Quester has base data, indicating they have participated in quests
-     * 
-     * @return false if empty
-     */
-    public boolean hasBaseData() {
-        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
-            return true;
-        }
-        return false;
     }
     
     /**

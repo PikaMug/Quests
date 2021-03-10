@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -640,7 +641,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
                 for (final Player p : getServer().getOnlinePlayers()) {
                     final Quester quester =  new Quester(Quests.this, p.getUniqueId());
-                    if (quester.loadData() == false) {
+                    if (!quester.hasData()) {
                         quester.saveData();
                     }
                     // Workaround for issues with the compass on fast join
@@ -1534,9 +1535,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     loadActions();
                     loadConditions();
                     for (final Quester quester : questers) {
-                        quester.loadData();
-                        for (final Quest q : quester.currentQuests.keySet()) {
-                            quester.checkQuest(q);
+                        final CompletableFuture<Quester> cf = getStorage().loadQuesterData(quester.getUUID());
+                        final Quester loaded = cf.get();
+                        for (final Quest q : loaded.currentQuests.keySet()) {
+                            loaded.checkQuest(q);
                         }
                     }
                     loadModules();

@@ -36,7 +36,7 @@ public class StageTimer implements Runnable {
         if (quester.getQuestData(quest) == null) {
             return;
         }
-        if (quester.getQuestData(quest).isDelayOver()) {
+        //if (quester.getQuestData(quest).isDelayOver()) {
             if (quester.getCurrentStage(quest).getFinishAction() != null) {
                     quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
             }
@@ -56,10 +56,10 @@ public class StageTimer implements Runnable {
                             + stageNum + " after delay");
                 }
             }
-            if (quester.getQuestData(quest) != null) {
+            /*if (quester.getQuestData(quest) != null) {
                 quester.getQuestData(quest).setDelayOver(true);
-            }
+            }*/
             quester.updateJournal();
-        }
+        //}
     }
 }
