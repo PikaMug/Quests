@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -36,7 +36,7 @@ public class StageTimer implements Runnable {
         if (quester.getQuestData(quest) == null) {
             return;
         }
-        if (quester.getQuestData(quest).isDelayOver()) {
+        //if (quester.getQuestData(quest).isDelayOver()) {
             if (quester.getCurrentStage(quest).getFinishAction() != null) {
                     quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
             }
@@ -56,10 +56,10 @@ public class StageTimer implements Runnable {
                             + stageNum + " after delay");
                 }
             }
-            if (quester.getQuestData(quest) != null) {
+            /*if (quester.getQuestData(quest) != null) {
                 quester.getQuestData(quest).setDelayOver(true);
-            }
+            }*/
             quester.updateJournal();
-        }
+        //}
     }
 }

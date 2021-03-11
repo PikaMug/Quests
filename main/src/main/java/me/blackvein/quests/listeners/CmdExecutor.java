@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -489,12 +489,12 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questsInfo(final CommandSender cs) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD 
+            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD 
                     + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
-                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug");
+                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
             cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                    + "https://www.spigotmc.org/resources/quests.3711/");
+                    + "https://github.com/PikaMug/Quests");
         }
         return true;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -95,6 +96,7 @@ import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
+import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.storage.StorageFactory;
 import me.blackvein.quests.tasks.NpcEffectThread;
@@ -162,8 +164,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         conditionFactory = new ConditionFactory(this);
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
-        /*final Metrics metrics = new Metrics(this);
-        metrics.addCustomChart(new Metrics.SimplePie("language", () -> Lang.getISO()));*/
+        final Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> Lang.getISO()));
 
         // 2 - Load main config
         settings.init();
@@ -217,7 +219,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
-        depends.enableCitizens();
+        depends.linkCitizens();
         getServer().getPluginManager().registerEvents(playerListener, this);
         if (settings.getStrictPlayerMovement() > 0) {
             final long ticks = settings.getStrictPlayerMovement() * 20;
@@ -639,7 +641,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
                 for (final Player p : getServer().getOnlinePlayers()) {
                     final Quester quester =  new Quester(Quests.this, p.getUniqueId());
-                    if (quester.loadData() == false) {
+                    if (!quester.hasData()) {
                         quester.saveData();
                     }
                     // Workaround for issues with the compass on fast join
@@ -650,7 +652,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (depends.getCitizens().getNPCRegistry() == null) {
                         getLogger().log(Level.SEVERE, 
                                 "Citizens was enabled but NPCRegistry was null. Disabling linkage.");
-                        depends.disableCitizens();
+                        depends.unlinkCitizens();
                     }
                 }
                 loadModules();
@@ -878,6 +880,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     @SuppressWarnings("deprecation")
     public void showObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides) {
+        if (quest == null) {
+            getLogger().severe("Quest was null when getting objectives for " + quester.getLastKnownName());
+            return;
+        }
         if (quester.getQuestData(quest) == null) {
             getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
@@ -1405,13 +1411,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             display = display.replace("%count%", entry.getValue() + "/" 
                                     + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        unfinished.add(display);
+                        unfinished.add(ChatColor.translateAlternateColorCodes('&', display));
                     } else {
                         if (co.canShowCount()) {
                             display = display.replace("%count%", stage.customObjectiveCounts.get(countsIndex) 
                                     + "/" + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        finished.add(display);
+                        finished.add(ChatColor.translateAlternateColorCodes('&', display));
                     }
                 }
                 countsIndex++;
@@ -1504,14 +1510,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
     }
-    
-    /**
-     * @deprecated Use {@link #reload(ReloadCallback)}
-     */
-    @Deprecated
-    public void reloadQuests() {
-        reload(null);
-    }
 
     /**
      * Reload quests, actions, config settings, lang and modules, and player data
@@ -1537,9 +1535,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     loadActions();
                     loadConditions();
                     for (final Quester quester : questers) {
-                        quester.loadData();
-                        for (final Quest q : quester.currentQuests.keySet()) {
-                            quester.checkQuest(q);
+                        final CompletableFuture<Quester> cf = getStorage().loadQuesterData(quester.getUUID());
+                        final Quester loaded = cf.get();
+                        for (final Quest q : loaded.currentQuests.keySet()) {
+                            loaded.checkQuest(q);
                         }
                     }
                     loadModules();
@@ -1549,18 +1548,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             
                             @Override
                             public void run() {
+                                loading = false;
                                 callback.execute(true);
                             }
                         });
                     }
                 } catch (final Exception e) {
-                    loading = false;
                     e.printStackTrace();
                     if (callback != null) {
                         Bukkit.getScheduler().runTask(Quests.this, new Runnable() {
                             
                             @Override
                             public void run() {
+                                loading = false;
                                 callback.execute(false);
                             }
                         });
@@ -1660,14 +1660,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             throw new QuestFormatException("finish-message is missing", questKey);
         }
         if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
-            if (CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey + ".npc-giver-id")) 
-                    != null) {
-                quest.npcStart = CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                        + ".npc-giver-id"));
-                questNpcs.add(CitizensAPI.getNPCRegistry().getById(config.getInt("quests." + questKey 
-                        + ".npc-giver-id")));
+            final int npcId = config.getInt("quests." + questKey + ".npc-giver-id");
+            if (CitizensAPI.getNPCRegistry().getById(npcId) != null) {
+                quest.npcStart = CitizensAPI.getNPCRegistry().getById(npcId);
+                questNpcs.add(CitizensAPI.getNPCRegistry().getById(npcId));
             } else {
-                throw new QuestFormatException("npc-giver-id has invalid NPC ID", questKey);
+                throw new QuestFormatException("npc-giver-id has invalid NPC ID " + npcId, questKey);
             }
         }
         if (config.contains("quests." + questKey + ".block-start")) {
@@ -2182,6 +2180,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (config.contains("quests." + questKey + ".options.share-only-same-quest")) {
             opts.setShareOnlySameQuest(config.getBoolean("quests." + questKey + ".options.share-only-same-quest"));
+        }
+        if (config.contains("quests." + questKey + ".options.share-distance")) {
+            opts.setShareDistance(config.getDouble("quests." + questKey + ".options.share-distance"));
+        }
+        if (config.contains("quests." + questKey + ".options.handle-offline-players")) {
+            opts.setHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.handle-offline-players"));
         }
     }
 

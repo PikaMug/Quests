@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -69,9 +69,6 @@ public class CK {
     public static final String S_SMELT_ITEMS = "smeltItems";
     public static final String S_CONSUME_ITEMS = "consumeItems";
     public static final String S_ENCHANT_ITEMS = "enchantItems";
-    //public static final String S_ENCHANT_TYPES = "enchantTypes";
-    //public static final String S_ENCHANT_NAMES = "enchantNames";
-    //public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";
     public static final String S_BREW_ITEMS = "brewItems";
     public static final String S_DELIVERY_ITEMS = "deliveryItems";
     public static final String S_DELIVERY_NPCS = "deliveryNPCs";
@@ -149,8 +146,9 @@ public class CK {
     public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
-    public static final String OPT_SHARE_DISTANCE = "shareDistanceOpt";
     public static final String OPT_SHARE_SAME_QUEST_ONLY = "shareSameQuestOnlyOpt";
+    public static final String OPT_SHARE_DISTANCE = "shareDistance";
+    public static final String OPT_HANDLE_OFFLINE_PLAYERS = "handleOfflinePlayers";
     // Actions
     public static final String E_OLD_EVENT = "oldEvent";
     public static final String E_NAME = "evtName";

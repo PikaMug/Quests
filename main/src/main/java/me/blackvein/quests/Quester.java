@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -877,294 +877,375 @@ public class Quester implements Comparable<Quester> {
      */
     @SuppressWarnings("deprecation")
     public LinkedList<String> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides) {
-        if (!ignoreOverrides) {
-            if (getCurrentStage(quest) != null) {
-                if (getCurrentStage(quest).objectiveOverrides.isEmpty() == false) {
-                    final LinkedList<String> objectives = new LinkedList<String>();
-                    for (final String s: getCurrentStage(quest).objectiveOverrides) {
-                        String message = ChatColor.GREEN + ConfigUtil.parseString(
-                                ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
-                        if (plugin.getDependencies().getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
-                        }
-                        objectives.add(message);
-                    }
-                    return objectives;
-                }
-            }
-        }
-        if (getQuestData(quest) == null || getCurrentStage(quest) == null) {
+        if (quest == null) {
+            plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
             return new LinkedList<String>();
         }
-        final LinkedList<String> unfinishedObjectives = new LinkedList<String>();
-        final LinkedList<String> finishedObjectives = new LinkedList<String>();
+        if (getQuestData(quest) == null) {
+            plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
+            return new LinkedList<String>();
+        }
+        if (getCurrentStage(quest) == null) {
+            plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
+            return new LinkedList<String>();
+        }
+        final Dependencies depends = plugin.getDependencies();
+        if (!ignoreOverrides && !getCurrentStage(quest).objectiveOverrides.isEmpty()) {
+            final LinkedList<String> objectives = new LinkedList<String>();
+            for (final String s: getCurrentStage(quest).objectiveOverrides) {
+                String message = ChatColor.GREEN + ConfigUtil.parseString(
+                        ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                objectives.add(message);
+            }
+            return objectives;
+        }
+        final QuestData data = getQuestData(quest);
+        final Stage stage = getCurrentStage(quest);
         final LinkedList<String> objectives = new LinkedList<String>();
-        for (final ItemStack e : getCurrentStage(quest).blocksToBreak) {
-            for (final ItemStack e2 : getQuestData(quest).blocksBroken) {
+        for (final ItemStack e : stage.blocksToBreak) {
+            for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "break") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+                    final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "break");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "break") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+                        // Legacy
+                        message += " <item>" + color + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message.replace("<item>", ItemUtil.getName(e2)));
                 }
             }
         }
-        for (final ItemStack e : getCurrentStage(quest).blocksToDamage) {
-            for (final ItemStack e2 : getQuestData(quest).blocksDamaged) {
+        for (final ItemStack e : stage.blocksToDamage) {
+            for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "damage") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+                    final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "damage");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "damage") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+                        // Legacy
+                        message += " <item>" + color + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message.replace("<item>", ItemUtil.getName(e2)));
                 }
             }
         }
-        for (final ItemStack e : getCurrentStage(quest).blocksToPlace) {
-            for (final ItemStack e2 : getQuestData(quest).blocksPlaced) {
+        for (final ItemStack e : stage.blocksToPlace) {
+            for (final ItemStack e2 : data.blocksPlaced) {
+                final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "place");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "place") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "place") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+                        // Legacy
+                        message += " <item>" + color + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message.replace("<item>", ItemUtil.getName(e2)));
                 }
             }
         }
-        for (final ItemStack e : getCurrentStage(quest).blocksToUse) {
-            for (final ItemStack e2 : getQuestData(quest).blocksUsed) {
+        for (final ItemStack e : stage.blocksToUse) {
+            for (final ItemStack e2 : data.blocksUsed) {
+                final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "use");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "use") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "use") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message.replace("<item>", ItemUtil.getName(e2)));
                 }
             }
         }
-        for (final ItemStack e : getCurrentStage(quest).blocksToCut) {
-            for (final ItemStack e2 : getQuestData(quest).blocksCut) {
+        for (final ItemStack e : stage.blocksToCut) {
+            for (final ItemStack e2 : data.blocksCut) {
+                final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "cut");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
-                    if (e2.getAmount() < e.getAmount()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "cut") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GREEN + ": " + e2.getAmount() + "/" + e.getAmount());
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "cut") + " " 
-                                + ItemUtil.getName(e2) + ChatColor.GRAY + ": " + e2.getAmount() + "/" + e.getAmount());
+                        // Legacy
+                        message += " <item>" + color + ": " + e2.getAmount() + "/" + e.getAmount();
                     }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    objectives.add(message.replace("<item>", ItemUtil.getName(e2)));
                 }
             }
         }
-        for (final ItemStack is : getCurrentStage(quest).itemsToCraft) {
+        for (final ItemStack is : stage.itemsToCraft) {
             int crafted = 0;
-            if (getQuestData(quest).itemsCrafted.containsKey(is)) {
-                crafted = getQuestData(quest).itemsCrafted.get(is);
+            if (data.itemsCrafted.containsKey(is)) {
+                crafted = data.itemsCrafted.get(is);
             }
             final int amt = is.getAmount();
-            if (crafted < amt) {
-                final String obj = Lang.get(getPlayer(), "craftItem").replace("<item>", ItemUtil.getName(is));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + crafted + "/" + amt);
+            final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "craftItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
             } else {
-                final String obj = Lang.get(getPlayer(), "craftItem").replace("<item>", ItemUtil.getName(is));
-                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + crafted + "/" + amt);
+                // Legacy
+                message += color + ": " + crafted + "/" + is.getAmount();
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        for (final ItemStack is : getCurrentStage(quest).itemsToSmelt) {
+        for (final ItemStack is : stage.itemsToSmelt) {
             int smelted = 0;
-            if (getQuestData(quest).itemsSmelted.containsKey(is)) {
-                smelted = getQuestData(quest).itemsSmelted.get(is);
+            if (data.itemsSmelted.containsKey(is)) {
+                smelted = data.itemsSmelted.get(is);
             }
             final int amt = is.getAmount();
-            if (smelted < amt) {
-                final String obj = Lang.get(getPlayer(), "smeltItem").replace("<item>", ItemUtil.getName(is));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + smelted + "/" + amt);
+            final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "smeltItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
             } else {
-                final String obj = Lang.get(getPlayer(), "smeltItem").replace("<item>", ItemUtil.getName(is));
-                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + smelted + "/" + amt);
+                // Legacy
+                message += color + ": " + smelted + "/" + is.getAmount();
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        for (final ItemStack is : getCurrentStage(quest).itemsToEnchant) {
+        for (final ItemStack is : stage.itemsToEnchant) {
             int enchanted = 0;
-            if (getQuestData(quest).itemsEnchanted.containsKey(is)) {
-                enchanted = getQuestData(quest).itemsEnchanted.get(is);
+            if (data.itemsEnchanted.containsKey(is)) {
+                enchanted = data.itemsEnchanted.get(is);
             }
             final int amt = is.getAmount();
-            if (enchanted < amt) {
-                final String obj = Lang.get(getPlayer(), "enchItem").replace("<item>", ItemUtil.getName(is));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + enchanted + "/" + amt);
+            final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "enchItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
             } else {
-                final String obj = Lang.get(getPlayer(), "enchItem").replace("<item>", ItemUtil.getName(is));
-                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + enchanted + "/" + amt);
+                // Legacy
+                message += color + ": " + enchanted + "/" + is.getAmount();
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            if (is.getEnchantments().isEmpty()) {
+                objectives.add(message.replace("<item>", ItemUtil.getName(is))
+                        .replace("<enchantment>", "")
+                        .replace("<level>", "")
+                        .replaceAll("\\s+", " "));
+            } else {
+                for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
+                    objectives.add(message.replace("<item>", ItemUtil.getName(is))
+                            .replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
+                            .replace("<level>", RomanNumeral.getNumeral(e.getValue())));
+                }
             }
         }
-        for (final ItemStack is : getCurrentStage(quest).itemsToBrew) {
+        for (final ItemStack is : stage.itemsToBrew) {
             int brewed = 0;
-            if (getQuestData(quest).itemsBrewed.containsKey(is)) {
-                brewed = getQuestData(quest).itemsBrewed.get(is);
+            if (data.itemsBrewed.containsKey(is)) {
+                brewed = data.itemsBrewed.get(is);
             }
             final int amt = is.getAmount();
-            if (brewed < amt) {
-                final String obj = Lang.get(getPlayer(), "brewItem").replace("<item>", ItemUtil.getName(is));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + brewed + "/" + amt);
+            final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "brewItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
             } else {
-                final String obj = Lang.get(getPlayer(), "brewItem").replace("<item>", ItemUtil.getName(is));
-                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + brewed + "/" + amt);
+                // Legacy
+                message += color + ": " + brewed + "/" + is.getAmount();
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        for (final ItemStack is : getCurrentStage(quest).itemsToConsume) {
+        for (final ItemStack is : stage.itemsToConsume) {
             int consumed = 0;
-            if (getQuestData(quest).itemsConsumed.containsKey(is)) {
-                consumed = getQuestData(quest).itemsConsumed.get(is);
+            if (data.itemsConsumed.containsKey(is)) {
+                consumed = data.itemsConsumed.get(is);
             }
             final int amt = is.getAmount();
-            if (consumed < amt) {
-                final String obj = Lang.get(getPlayer(), "consumeItem").replace("<item>", ItemUtil.getName(is));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + consumed + "/" + amt);
+            final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "consumeItem");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
             } else {
-                final String obj = Lang.get(getPlayer(), "consumeItem").replace("<item>", ItemUtil.getName(is));
-                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + consumed + "/" + amt);
+                // Legacy
+                message += color + ": " + consumed + "/" + is.getAmount();
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        if (getCurrentStage(quest).cowsToMilk != null) {
-            if (getQuestData(quest).getCowsMilked() < getCurrentStage(quest).cowsToMilk) {
-                unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "milkCow") + ChatColor.GREEN + ": " 
-            + getQuestData(quest).getCowsMilked() + "/" + getCurrentStage(quest).cowsToMilk);
+        if (stage.cowsToMilk != null) {
+            final ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.cowsToMilk);
             } else {
-                finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "milkCow") + ChatColor.GRAY + ": " 
-            + getQuestData(quest).getCowsMilked() + "/" + getCurrentStage(quest).cowsToMilk);
+                // Legacy
+                message += color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
         }
         if (getCurrentStage(quest).fishToCatch != null) {
-            if (getQuestData(quest).getFishCaught() < getCurrentStage(quest).fishToCatch) {
-                unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "catchFish") + ChatColor.GREEN + ": " 
-            + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+            final ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.fishToCatch);
             } else {
-                finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "catchFish") + ChatColor.GRAY + ": " 
-            + getQuestData(quest).getFishCaught() + "/" + getCurrentStage(quest).fishToCatch);
+                // Legacy
+                message += color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
         }
         for (final EntityType e : getCurrentStage(quest).mobsToKill) {
             for (final EntityType e2 : getQuestData(quest).mobsKilled) {
                 if (e == e2) {
-                    if (getQuestData(quest).mobNumKilled.size() > getQuestData(quest).mobsKilled.indexOf(e2) 
-                            && getCurrentStage(quest).mobNumToKill.size() > getCurrentStage(quest).mobsToKill
-                            .indexOf(e)) {
-                        if (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled.indexOf(e2)) 
-                                < getCurrentStage(quest).mobNumToKill.get(getCurrentStage(quest).mobsToKill
-                                .indexOf(e))) {
-                            if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-                                unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " 
-                                        + ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GREEN + ": " 
-                                        + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
-                                        .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                    if (data.mobNumKilled.size() > data.mobsKilled.indexOf(e2) 
+                            && stage.mobNumToKill.size() > stage.mobsToKill.indexOf(e)) {
+                        final ChatColor color = data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
+                                < stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)) 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = color + "";
+                        if (stage.locationsToKillWithin.isEmpty()) {
+                            message += Lang.get(getPlayer(), "kill");
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
                             } else {
-                                String obj = Lang.get(getPlayer(), "killAtLocation");
-                                obj = obj.replace("<mob>", ChatColor.LIGHT_PURPLE + MiscUtil.getPrettyMobName(e));
-                                obj = obj.replace("<location>", getCurrentStage(quest).killNames
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-                                unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " 
-                                        + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
-                                        .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                                // Legacy
+                                message += ChatColor.AQUA + " <mob>" + color + ": "
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
                             }
                         } else {
-                            if (getCurrentStage(quest).locationsToKillWithin.isEmpty()) {
-                                finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " 
-                                        + ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e) + ChatColor.GRAY + ": " 
-                                        + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
-                                        .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                            message += Lang.get(getPlayer(), "killAtLocation").replace("<location>", 
+                                    stage.killNames.get(stage.mobsToKill.indexOf(e)));
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
                             } else {
-                                String obj = Lang.get(getPlayer(), "killAtLocation");
-                                obj = obj.replace("<mob>", ChatColor.DARK_AQUA + MiscUtil.getPrettyMobName(e));
-                                obj = obj.replace("<location>", getCurrentStage(quest).killNames
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e)));
-                                finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " 
-                                        + (getQuestData(quest).mobNumKilled.get(getQuestData(quest).mobsKilled
-                                        .indexOf(e2))) + "/" + (getCurrentStage(quest).mobNumToKill
-                                        .get(getCurrentStage(quest).mobsToKill.indexOf(e))));
+                                message += color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
                             }
                         }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                        }
+                        objectives.add(message.replace("<mob>", MiscUtil.getProperMobName(e)));
                     }
                 }
             }
         }
-        if (getCurrentStage(quest).playersToKill != null) {
-            if (getQuestData(quest).getPlayersKilled() < getCurrentStage(quest).playersToKill) {
-                unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "killPlayer") + ChatColor.GREEN + ": " 
-            + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
+        if (stage.playersToKill != null) {
+            final ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "killPlayer");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/" + stage.playersToKill);
             } else {
-                finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "killPlayer") + ChatColor.GRAY + ": " 
-            + getQuestData(quest).getPlayersKilled() + "/" + getCurrentStage(quest).playersToKill);
+                // Legacy
+                message += color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
         }
         int index = 0;
-        for (final ItemStack is : getCurrentStage(quest).itemsToDeliver) {
+        for (final ItemStack is : stage.itemsToDeliver) {
             int delivered = 0;
-            if (index < getQuestData(quest).itemsDelivered.size()) {
-                delivered = getQuestData(quest).itemsDelivered.get(index).getAmount();
+            if (data.itemsDelivered.size() > index) {
+                delivered = data.itemsDelivered.get(index).getAmount();
             }
             final int toDeliver = is.getAmount();
-            final Integer npc = getCurrentStage(quest).itemDeliveryTargets.get(index);
+            final Integer npc = stage.itemDeliveryTargets.get(index);
             index++;
-            if (delivered < toDeliver) {
-                String obj = Lang.get(getPlayer(), "deliver");
-                obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GREEN);
-                obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(npc));
-                unfinishedObjectives.add(ChatColor.GREEN + obj + ": " + delivered + "/" + toDeliver);
+            final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
             } else {
-                String obj = Lang.get(getPlayer(), "deliver");
-                obj = obj.replace("<item>", ItemUtil.getName(is) + ChatColor.GRAY);
-                obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(npc));
-                finishedObjectives.add(ChatColor.GRAY + obj + ": " + delivered + "/" + toDeliver);
+                // Legacy
+                message += color + ": " + delivered + "/" + toDeliver;
             }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        for (final Integer n : getCurrentStage(quest).citizensToInteract) {
+        for (final Integer n : stage.citizensToInteract) {
             for (final Entry<Integer, Boolean> e : getQuestData(quest).citizensInteracted.entrySet()) {
                 if (e.getKey().equals(n)) {
-                    if (e.getValue() == false) {
-                        String obj = Lang.get(getPlayer(), "talkTo");
-                        obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(n));
-                        unfinishedObjectives.add(ChatColor.GREEN + obj);
-                    } else {
-                        String obj = Lang.get(getPlayer(), "talkTo");
-                        obj = obj.replace("<npc>", plugin.getDependencies().getNPCName(n));
-                        finishedObjectives.add(ChatColor.GRAY + obj);
+                    final ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "talkTo")
+                            .replace("<npc>", depends.getNPCName(n));
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
+                    objectives.add(message);
                 }
             }
         }
         for (final Integer n : getCurrentStage(quest).citizensToKill) {
             for (final Integer n2 : getQuestData(quest).citizensKilled) {
                 if (n.equals(n2)) {
-                    if (getQuestData(quest).citizenNumKilled.size() > getQuestData(quest).citizensKilled.indexOf(n2) 
-                            && getCurrentStage(quest).citizenNumToKill.size() > getCurrentStage(quest).citizensToKill
-                            .indexOf(n)) {
-                        if (getQuestData(quest).citizenNumKilled.get(getQuestData(quest).citizensKilled.indexOf(n2)) 
-                                < getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill
-                                .indexOf(n))) {
-                            unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "kill") + " " 
-                                    + plugin.getDependencies().getNPCName(n) + ChatColor.GREEN + " " 
-                                    + getQuestData(quest).citizenNumKilled.get(getCurrentStage(quest).citizensToKill
-                                    .indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill
-                                    .get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+                    if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
+                            && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
+                        final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
+                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = color + Lang.get(getPlayer(), "kill");
+                        if (message.contains("<mob>")) {
+                            message = message.replace("<mob>", depends.getNPCName(n));
                         } else {
-                            finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "kill") + " " 
-                                    + plugin.getDependencies().getNPCName(n) + ChatColor.GRAY + " " 
-                                    + getCurrentStage(quest).citizenNumToKill.get(getCurrentStage(quest).citizensToKill
-                                    .indexOf(n)) + "/" + getCurrentStage(quest).citizenNumToKill
-                                    .get(getCurrentStage(quest).citizensToKill.indexOf(n)));
+                            message += " " + depends.getNPCName(n);
                         }
+                        if (message.contains("<count>")) {
+                            message = message.replace("<count>", "" + color 
+                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)));
+                        } else {
+                            // Legacy
+                            message += color + ": " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+                        }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                        }
+                        objectives.add(message);
                     }
                 }
             }
@@ -1172,83 +1253,73 @@ public class Quester implements Comparable<Quester> {
         for (final Entry<EntityType, Integer> e : getCurrentStage(quest).mobsToTame.entrySet()) {
             for (final Entry<EntityType, Integer> e2 : getQuestData(quest).mobsTamed.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    if (e2.getValue() < e.getValue()) {
-                        unfinishedObjectives.add(ChatColor.GREEN + Lang.get(getPlayer(), "tame") + " " 
-                                + MiscUtil.getCapitalized(e.getKey().name()) 
-                                + ChatColor.GREEN + ": " + e2.getValue() + "/" + e.getValue());
-                    } else {
-                        finishedObjectives.add(ChatColor.GRAY + Lang.get(getPlayer(), "tame") + " " 
-                                + MiscUtil.getCapitalized(e.getKey().name()) + ChatColor.GRAY + ": " + e2.getValue() 
-                                + "/" + e.getValue());
+                    final ChatColor color = e2.getValue() < e.getValue() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "tame");
+                    if (!message.contains("<mob>")) {
+                        message += " <mob>";
                     }
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
+                    } else {
+                        // Legacy
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
+                    }
+                    objectives.add(message.replace("<mob>", MiscUtil.getProperMobName(e.getKey())));
                 }
             }
         }
         for (final Entry<DyeColor, Integer> e : getCurrentStage(quest).sheepToShear.entrySet()) {
             for (final Entry<DyeColor, Integer> e2 : getQuestData(quest).sheepSheared.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
-                    if (e2.getValue() < e.getValue()) {
-                        String obj = Lang.get(getPlayer(), "shearSheep");
-                        obj = obj.replace("<color>", e.getKey().name().toLowerCase());
-                        unfinishedObjectives.add(ChatColor.GREEN + obj + ChatColor.GREEN + ": " + e2.getValue() + "/" 
-                                + e.getValue());
+                    final ChatColor color = e2.getValue() < e.getValue() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "shearSheep");
+                    message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(e.getKey()));
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + e2.getValue() + "/" + e.getValue());
                     } else {
-                        String obj = Lang.get(getPlayer(), "shearSheep");
-                        obj = obj.replace("<color>", e.getKey().name().toLowerCase());
-                        finishedObjectives.add(ChatColor.GRAY + obj + ChatColor.GRAY + ": " + e2.getValue() + "/" 
-                                + e.getValue());
+                        // Legacy
+                        message += color + ": " + e2.getValue() + "/" + e.getValue();
                     }
+                    objectives.add(message);
                 }
             }
         }
         for (final Location l : getCurrentStage(quest).locationsToReach) {
             for (final Location l2 : getQuestData(quest).locationsReached) {
                 if (l.equals(l2)) {
-                    if (getQuestData(quest) != null && getQuestData(quest).hasReached != null) {
-                        if (!getQuestData(quest).hasReached.isEmpty()) {
-                            final int r = getQuestData(quest).locationsReached.indexOf(l2);
-                            if (r < getQuestData(quest).hasReached.size()
-                                    && getQuestData(quest).hasReached.get(r) == false) {
-                                String obj = Lang.get(getPlayer(), "goTo");
-                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                                unfinishedObjectives.add(ChatColor.GREEN + obj);
-                            } else {
-                                String obj = Lang.get(getPlayer(), "goTo");
-                                obj = obj.replace("<location>", getCurrentStage(quest).locationNames
-                                        .get(getCurrentStage(quest).locationsToReach.indexOf(l)));
-                                finishedObjectives.add(ChatColor.GRAY + obj);
-                            }
-                        }
+                    if (!data.hasReached.isEmpty()) {
+                        final ChatColor color = data.hasReached.get(data.locationsReached.indexOf(l2)) == false 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = color + Lang.get(getPlayer(), "goTo");
+                        message = message.replace("<location>", 
+                                stage.locationNames.get(stage.locationsToReach.indexOf(l)));
+                        objectives.add(message);
                     }
                 }
             }
         }
         for (final String s : getCurrentStage(quest).passwordDisplays) {
-            if (getQuestData(quest).passwordsSaid.containsKey(s)) {
-                final Boolean b = getQuestData(quest).passwordsSaid.get(s);
-                if (b != null && !b) {
-                    unfinishedObjectives.add(ChatColor.GREEN + s);
-                } else {
-                    finishedObjectives.add(ChatColor.GRAY + s);
-                }
+            if (data.passwordsSaid.containsKey(s)) {
+                final Boolean b = data.passwordsSaid.get(s);
+                final ChatColor color = b != null && b == false ? ChatColor.GREEN : ChatColor.GRAY;
+                objectives.add(color + s);
             }
         }
         for (final CustomObjective co : getCurrentStage(quest).customObjectives) {
             int countsIndex = 0;
             String display = co.getDisplay();
-            boolean addUnfinished = false;
-            boolean addFinished = false;
+            final List<String> unfinished = new LinkedList<String>();
+            final List<String> finished = new LinkedList<String>();
             for (final Entry<String, Integer> entry : getQuestData(quest).customObjectiveCounts.entrySet()) {
                 if (co.getName().equals(entry.getKey())) {
-                    int dataIndex = 0;
                     for (final Entry<String,Object> prompt : co.getData()) {
                         final String replacement = "%" + prompt.getKey() + "%";
                         try {
-                            if (display.contains(replacement)) {
-                                if (dataIndex < getCurrentStage(quest).customObjectiveData.size()) {
-                                    display = display.replace(replacement, ((String) getCurrentStage(quest)
-                                            .customObjectiveData.get(dataIndex).getValue()));
+                            for (final Entry<String, Object> e : stage.customObjectiveData) {
+                                if (e.getKey().equals(prompt.getKey())) {
+                                    if (display.contains(replacement)) {
+                                        display = display.replace(replacement, ((String) e.getValue()));
+                                    }
                                 }
                             }
                         } catch (final NullPointerException ne) {
@@ -1256,34 +1327,30 @@ public class Quester implements Comparable<Quester> {
                                     + quest.getName());
                             ne.printStackTrace();
                         }
-                        dataIndex++;
                     }
-                    if (entry.getValue() < getCurrentStage(quest).customObjectiveCounts.get(countsIndex)) {
+                    if (entry.getValue() < stage.customObjectiveCounts.get(countsIndex)) {
                         if (co.canShowCount()) {
-                            display = display.replace("%count%", entry.getValue() + "/" + getCurrentStage(quest)
-                                    .customObjectiveCounts.get(countsIndex));
+                            display = display.replace("%count%", entry.getValue() + "/" 
+                                    + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        addUnfinished = true;
+                        unfinished.add(ChatColor.translateAlternateColorCodes('&', display));
                     } else {
                         if (co.canShowCount()) {
-                            display = display.replace("%count%", getCurrentStage(quest).customObjectiveCounts
-                                    .get(countsIndex) + "/" + getCurrentStage(quest).customObjectiveCounts
-                                    .get(countsIndex));
+                            display = display.replace("%count%", stage.customObjectiveCounts.get(countsIndex) 
+                                    + "/" + stage.customObjectiveCounts.get(countsIndex));
                         }
-                        addFinished = true;
+                        finished.add(ChatColor.translateAlternateColorCodes('&', display));
                     }
-                    countsIndex++;
                 }
+                countsIndex++;
             }
-            if (addUnfinished) {
-                unfinishedObjectives.add(ChatColor.GREEN + display);
+            for (final String s : unfinished) {
+                objectives.add(ChatColor.GREEN + s);
             }
-            if (addFinished) {
-                finishedObjectives.add(ChatColor.GRAY + display);
+            for (final String s : finished) {
+                objectives.add(ChatColor.GRAY + s);
             }
         }
-        objectives.addAll(unfinishedObjectives);
-        objectives.addAll(finishedObjectives);
         return objectives;
     }
     
@@ -2739,6 +2806,9 @@ public class Quester implements Comparable<Quester> {
     @SuppressWarnings("deprecation")
     public void finishObjective(final Quest quest, final Objective objective, final EntityType mob, final String extra,
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
+        if (objective == null) {
+            return;
+        }
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
         final ItemStack increment = objective.getItemProgress() != null ? objective.getItemProgress() 
@@ -2754,8 +2824,6 @@ public class Quester implements Comparable<Quester> {
                 }
                 sendMessage(message);
             }
-        } else if (type.equals(ObjectiveType.PASSWORD)) {
-            sendMessage(ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass);
         } else if (type.equals(ObjectiveType.BREAK_BLOCK)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break");
             if (message.contains("<count>")) {
@@ -3029,6 +3097,8 @@ public class Quester implements Comparable<Quester> {
             }
             final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             sendMessage(message);
+        } else if (type.equals(ObjectiveType.PASSWORD)) {
+            sendMessage(ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass);
         } else if (co != null) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + co.getDisplay();
             int index = -1;
@@ -3051,7 +3121,7 @@ public class Quester implements Comparable<Quester> {
             if (co.canShowCount()) {
                 message = message.replace("%count%", goal.getAmount() + "/" + goal.getAmount());
             }
-            sendMessage(message);
+            sendMessage(ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', message)));
         }
         if (testComplete(quest)) {
             quest.nextStage(this, true);
@@ -3093,8 +3163,16 @@ public class Quester implements Comparable<Quester> {
     public void finishObjective(final Quest quest, final String objective, final ItemStack increment, 
             final ItemStack goal, final Enchantment enchantment, final EntityType mob, final String extra, 
             final NPC npc, final Location location, final DyeColor color, final String pass, final CustomObjective co) {
-        finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc,
-                location, color, pass, co);
+        if (objective == null) {
+            return;
+        }
+        if (increment == null || goal == null) {
+            finishObjective(quest, new Objective(ObjectiveType.fromName(objective), 1, 1), mob, extra, npc,
+                    location, color, pass, co);
+        } else {
+            finishObjective(quest, new Objective(ObjectiveType.fromName(objective), increment, goal), mob, extra, npc,
+                    location, color, pass, co);
+        }
     }
     
     /**
@@ -3600,7 +3678,11 @@ public class Quester implements Comparable<Quester> {
         if (completedQuests.isEmpty()) {
             data.set("completed-Quests", "none");
         } else {
-            final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
+            //final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
+            final List<String> questIds = new LinkedList<String>();
+            for (final Quest quest : completedQuests) {
+                questIds.add(quest.getId());
+            }
             data.set("completed-Quests", questIds);
         }
         if (completedTimes.isEmpty() == false) {
@@ -3635,10 +3717,33 @@ public class Quester implements Comparable<Quester> {
     /**
      * Load data of the Quester from storage
      * 
+     * @deprecated Use {@link #hasData()}
      * @return true if successful
      */
+    @Deprecated
     public boolean loadData() {
         return plugin.getStorage().loadQuesterData(id) != null;
+    }
+    
+    /**
+     * Check whether the Quester has data saved to hard storage
+     * 
+     * @return true if successful
+     */
+    public boolean hasData() {
+        return plugin.getStorage().loadQuesterData(id) != null;
+    }
+    
+    /**
+     * Check whether the Quester has base data in memory, indicating they have participated in quests
+     * 
+     * @return false if empty
+     */
+    public boolean hasBaseData() {
+        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -3673,7 +3778,7 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).setDelayTimeLeft(getCurrentStage(quest).delay - (System.currentTimeMillis() 
                     - getQuestData(quest).getDelayStartTime()));
         }
-        getQuestData(quest).setDelayOver(false);
+        //getQuestData(quest).setDelayOver(false);
     }
     
     /**
@@ -3688,29 +3793,6 @@ public class Quester implements Comparable<Quester> {
         } else {
             return getCurrentStage(quest).delay - (System.currentTimeMillis() - getQuestData(quest).getDelayStartTime());
         }
-    }
-    
-    /**
-     * Check whether the Quester has base data, indicating they have participated in quests
-     * 
-     * @return false if empty
-     * @deprecated Use {@link #hasBaseData()}
-     */
-    @Deprecated
-    public boolean hasData() {
-        return hasBaseData();
-    }
-    
-    /**
-     * Check whether the Quester has base data, indicating they have participated in quests
-     * 
-     * @return false if empty
-     */
-    public boolean hasBaseData() {
-        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
-            return true;
-        }
-        return false;
     }
     
     /**
@@ -4053,8 +4135,8 @@ public class Quester implements Comparable<Quester> {
             if (getPlayer() instanceof Conversable) {
                 if (getPlayer().isConversing() == false) {
                     setQuestIdToTake(quest.getId());
-                    final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD 
-                            + " -\n" + "\n" + ChatColor.RESET + quest.getDescription() + "\n";
+                    final String s = ChatColor.GOLD + Lang.get("questObjectivesTitle")
+                            .replace("<quest>", quest.getName()) + "\n" + ChatColor.RESET + quest.getDescription();
                     for (final String msg : s.split("<br>")) {
                         sendMessage(msg);
                     }
@@ -4155,7 +4237,7 @@ public class Quester implements Comparable<Quester> {
                 }
                 hardQuit(quest);
             } else if (giveReason) {
-                if (System.currentTimeMillis() - lastNotifiedCondition > 5000) {
+                if (System.currentTimeMillis() - lastNotifiedCondition > 6000) {
                     getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
                             .replace("<quest>", quest.getName()));
                     lastNotifiedCondition = System.currentTimeMillis();

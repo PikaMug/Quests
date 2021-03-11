@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -1292,7 +1292,7 @@ public class QuestData {
     private int playersKilled = 0;
     private long delayStartTime = 0;
     private long delayTimeLeft = -1;
-    private boolean delayOver = true;
+    //private final boolean delayOver = true;
     
     public int getCowsMilked() {
         return cowsMilked;
@@ -1344,7 +1344,7 @@ public class QuestData {
             quester.updateJournal();
     }
     
-    public boolean isDelayOver() {
+    /*public boolean isDelayOver() {
         return delayOver;
     }
     
@@ -1352,5 +1352,5 @@ public class QuestData {
         this.delayOver = delayOver;
         if (doJournalUpdate)
             quester.updateJournal();
-    }
+    }*/
 }

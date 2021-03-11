@@ -1,6 +1,6 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- *
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ****************************************************************************************************** */
+ *******************************************************************************************************/
 
 package me.blackvein.quests.particle;
 
@@ -77,7 +77,7 @@ public abstract class ParticleProvider {
         } else {
             try {
                 particle = Particle.valueOf(particleId);
-            } catch (final IllegalArgumentException e2) {
+            } catch (final IllegalArgumentException exception) {
                 return; // Fail silently
             }
         }
@@ -107,7 +107,7 @@ public abstract class ParticleProvider {
                 loaded.spawnParticle(player, location, Particle.valueOf(particleId), 0, 0, 0, 1, 3, null);
             } catch (final NoClassDefFoundError e1) {
                 Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
-            } catch (final IllegalArgumentException exception) {
+            } catch (final IllegalArgumentException e2) {
                 // Fail silently
             }
         }
@@ -128,7 +128,11 @@ public abstract class ParticleProvider {
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
         }
-        loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(),
-                particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(),particle.getCount(), null);
+        try {
+            loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(),
+                    particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(),particle.getCount(), null);
+        } catch (final IllegalArgumentException exception) {
+            // Fail silently
+        }
     }
 }

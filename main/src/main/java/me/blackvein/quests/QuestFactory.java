@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -286,7 +286,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
         context.setSessionData(CK.OPT_SHARE_DISTANCE, opt.getShareDistance());
-        context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareOnlySameQuest());
+        context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
         // Stages (Objectives)
         int index = 1;
         for (final Stage stage : q.getStages()) {
@@ -950,10 +950,12 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
         opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null
                 ? (Integer) context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
-        opts.set("share-distance", context.getSessionData(CK.OPT_SHARE_DISTANCE) != null
-                ? (Long) context.getSessionData(CK.OPT_SHARE_DISTANCE) : null);
-        opts.set("share-same-quest-only", context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) != null
+        opts.set("same-quest-only", context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) != null
                 ? (Boolean) context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) : null);
+        opts.set("share-distance", context.getSessionData(CK.OPT_SHARE_DISTANCE) != null
+                ? (Double) context.getSessionData(CK.OPT_SHARE_DISTANCE) : null);
+        opts.set("handle-offline-players", context.getSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS) != null
+                ? (Boolean) context.getSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }

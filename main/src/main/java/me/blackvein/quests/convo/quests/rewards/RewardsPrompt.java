@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -228,7 +228,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_EXP) + " " 
-                        + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+                        + Lang.get("points") + ChatColor.GRAY + ")";
             }
         case 5:
             if (context.getSessionData(CK.REW_COMMAND) == null) {
@@ -312,7 +312,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.REW_PARTIES_EXPERIENCE) + " "
-                        + Lang.get("points") + ChatColor.DARK_GRAY + ")";
+                        + Lang.get("points") + ChatColor.GRAY + ")";
             }
         case 10:
             if (plugin.getDependencies().getPhatLoots() != null) {
@@ -683,7 +683,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 } else {
                     String text = "\n";
                     for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REW_ITEMS)) {
-                        text += ChatColor.GRAY + "- " + ItemUtil.getDisplayString(is) + "\n";
+                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
                 }
@@ -713,7 +713,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData("tempStack", null);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + getTitle(context);
@@ -776,17 +777,20 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         s = s.substring(1);
                     }
                     switch (s.trim().split(" ")[0].toLowerCase()) {
-                    case "*":
-                    case "op":
-                    case "deop":
-                    case "stop":
-                    case "reload":
-                    case "timings":
-                    case "pardon":
-                    case "pardon-ip":
                     case "ban":
                     case "ban-ip":
+                    case "deop":
+                    case "kick":
+                    case "kill":
+                    case "timings":
+                    case "op": 
+                    case "pardon":
+                    case "pardon-ip":
+                    case "reload":
+                    case "stop":
+                    case "we":
                     case "whitelist":
+                    case "worldedit":
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
                                 + ChatColor.DARK_RED + " (" + s.trim() + ")");
                         continue;
@@ -961,7 +965,36 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 final String[] args = input.split(" ");
                 final List<String> permissions = new LinkedList<String>();
-                permissions.addAll(Arrays.asList(args));
+                for (String s : args) {
+                    if (s.startsWith("/")) {
+                        s = s.substring(1);
+                    }
+                    final String[] arr = {
+                            "*",
+                            "bukkit.*",
+                            "bukkit.command",
+                            "fawe",
+                            "minecraft.*",
+                            "minecraft.command",
+                            "quests",
+                            "vault",
+                            "worledit"
+                    };
+                    boolean found = false;
+                    for (int i = 0; i < arr.length; i++) { 
+                        if (s.startsWith(arr[i])) { 
+                            found = true; 
+                            break; 
+                        } 
+                    } 
+                    if (found) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption") 
+                        + ChatColor.DARK_RED + " (" + s.trim() + ")");
+                        continue;
+                    } else {
+                        permissions.add(s.trim());
+                    }
+                }
                 context.setSessionData(CK.REW_PERMISSION, permissions);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_PERMISSION, null);
@@ -1716,7 +1749,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.AQUA + "- ";
+            String text = ChatColor.GOLD + "- ";
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
             final LinkedList<Map<String, Object>> datamapList 
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA);
@@ -1733,9 +1766,10 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + dataKey;
                 if (datamap.get(dataKey) != null) {
-                    text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
+                    text += ChatColor.GRAY + " (" + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', 
+                            datamap.get(dataKey).toString()) + ChatColor.GRAY + ")\n";
                 } else {
-                    text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
+                    text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ChatColor.GRAY + ")\n";
                 }
                 index++;
             }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>4.0.0-rc.4</version>
+        <version>4.0.0</version>
     </parent>
     <artifactId>quests-main</artifactId>
     

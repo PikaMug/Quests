@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -146,11 +146,16 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         case 2:
             return new ThunderPrompt(context);
         case 3:
-            final Map<UUID, Block> selectedLightningLocations 
-                    = plugin.getActionFactory().getSelectedLightningLocations();
-            selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-            plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
-            return new LightningPrompt(context);
+            if (context.getForWhom() instanceof Player) {
+                final Map<UUID, Block> selectedLightningLocations 
+                        = plugin.getActionFactory().getSelectedLightningLocations();
+                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
+                return new LightningPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                return new WeatherPrompt(context);
+            }
         case 4:
             return new ActionMainPrompt(context);
         default:
@@ -307,12 +312,11 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_STORM, plugin.getServer().getWorld(input).getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidWorld"));
                     return new StormWorldPrompt(context);
                 }
@@ -517,12 +521,11 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
                 if (plugin.getServer().getWorld(input) != null) {
                     context.setSessionData(CK.E_WORLD_THUNDER, plugin.getServer().getWorld(input).getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidWorld"));
                     return new ThunderWorldPrompt(context);
                 }

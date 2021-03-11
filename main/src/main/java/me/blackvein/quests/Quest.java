@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -46,6 +46,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
 import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
@@ -388,7 +389,20 @@ public class Quest implements Comparable<Quest> {
         }
         if (targetLocation != null && targetLocation.getWorld() != null) {
             if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-                quester.getPlayer().setCompassTarget(targetLocation);
+                final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(), 
+                        targetLocation.getY(), targetLocation.getZ());
+                final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(this, quester, lockedTarget);
+                Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        plugin.getServer().getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            return;
+                        }
+                        quester.getPlayer().setCompassTarget(lockedTarget);
+                    }
+                });
             }
         }
         return targetLocation != null;

@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -18,8 +18,9 @@ public class Options {
     private boolean ignoreSilkTouch = true;
     private boolean useDungeonsXLPlugin = false;
     private boolean usePartiesPlugin = true;
+    private boolean handleOfflinePlayers = false;
+    private double shareDistance = 0.0D;
     private int shareProgressLevel = 1;
-    private long shareDistance = 0;
     private boolean shareOnlySameQuest = true;
     
     public boolean canAllowCommands() {
@@ -84,5 +85,21 @@ public class Options {
     
     public void setShareOnlySameQuest(final boolean shareOnlySameQuest) {
         this.shareOnlySameQuest = shareOnlySameQuest;
+    }
+    
+    public double getShareDistance() {
+        return shareDistance;
+    }
+    
+    public void setShareDistance(final double shareDistance) {
+        this.shareDistance = shareDistance;
+    }
+    
+    public boolean canHandleOfflinePlayers() {
+        return handleOfflinePlayers;
+    }
+    
+    public void setHandleOfflinePlayers(final boolean handleOfflinePlayers) {
+        this.handleOfflinePlayers = handleOfflinePlayers;
     }
 }

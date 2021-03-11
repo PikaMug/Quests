@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -88,7 +88,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 5:
             return ChatColor.YELLOW + Lang.get("conditionEditorCheckPlaceholder");
         case 6:
-            return ChatColor.YELLOW + Lang.get("conditionEditorFailQuest") + ":";
+            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
         case 7:
             return ChatColor.GREEN + Lang.get("save");
         case 8:

@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -2427,7 +2427,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.AQUA + "- ";
+            String text = ChatColor.GOLD + "- ";
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
                     + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Entry<String, Object>> datamapList 
@@ -2452,9 +2452,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW 
                                 + " - " + datamap.getKey();
                 if (currentData.getValue() != null) {
-                    text += ChatColor.GREEN + " (" + currentData.getValue().toString() + ")\n";
+                    text += ChatColor.GRAY + " (" + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', 
+                            currentData.getValue().toString()) + ChatColor.GRAY + ")\n";
                 } else {
-                    text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
+                    text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ChatColor.GRAY + ")\n";
                 }
                 index++;
                     }

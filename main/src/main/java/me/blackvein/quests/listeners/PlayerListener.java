@@ -1,6 +1,5 @@
 /*******************************************************************************************************
-
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import me.blackvein.quests.util.Friend;
@@ -95,6 +95,15 @@ public class PlayerListener implements Listener {
                     || ac.equals(InventoryAction.DROP_ONE_CURSOR)) {
                 evt.setCancelled(true);
                 return;
+            }
+        } else if (ac.equals(InventoryAction.SWAP_WITH_CURSOR) || ac.equals(InventoryAction.HOTBAR_SWAP)
+                || ac.equals(InventoryAction.HOTBAR_MOVE_AND_READD)) {
+            if (evt.getHotbarButton() > -1) {
+                final ItemStack item = evt.getWhoClicked().getInventory().getItem(evt.getHotbarButton());
+                if (ItemUtil.isItem(item) && ItemUtil.isJournal(item)) {
+                    evt.setCancelled(true);
+                    return;
+                }
             }
         }
         if (ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem()) 
@@ -329,14 +338,14 @@ public class PlayerListener implements Listener {
                                                             + MiscUtil.getTime(quester.getCooldownDifference(q)) 
                                                             + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + early);
-                                                    return;
+                                                    continue;
                                                 } else if (quester.getCompletedQuests().contains(q) 
                                                         && q.getPlanner().getCooldown() < 0) {
                                                     String completed = Lang.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
                                                             + q.getName() + ChatColor.YELLOW);
                                                     player.sendMessage(ChatColor.YELLOW + completed);
-                                                    return;
+                                                    continue;
                                                 }
                                             }
                                             quester.setQuestIdToTake(q.getId());
@@ -352,8 +361,8 @@ public class PlayerListener implements Listener {
                                                 }
                                                 plugin.getConversationFactory().buildConversation(player).begin();
                                             }
+                                            break;
                                         }
-                                        break;
                                     }
                                 }
                             }
@@ -733,37 +742,49 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = new Quester(plugin, evt.getPlayer().getUniqueId());
-            if (!quester.loadData() && plugin.getSettings().canGenFilesOnJoin()) {
-                quester.saveData();
+            final Quester noobCheck = new Quester(plugin, evt.getPlayer().getUniqueId());
+            if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
+                noobCheck.saveData();
             }
-            for (final Quest q : quester.getCompletedQuests()) {
-                if (q != null) {
-                    if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
-                        quester.getCompletedTimes().put(q, System.currentTimeMillis());
-                    }
-                }
-            }
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                quester.checkQuest(quest);
-            }
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.getCurrentStage(quest).getDelay() > -1 && !quester.getQuestData(quest).isDelayOver()) {
-                    quester.startStageTimer(quest);
-                }
-            }
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-
+            
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    if (quester.hasJournal()) {
-                        quester.updateJournal();
-                    }
-                    if (quester.canUseCompass()) {
-                        quester.resetCompass();
+                    final CompletableFuture<Quester> cf = plugin.getStorage().loadQuesterData(evt.getPlayer().getUniqueId());
+                    try {
+                        final Quester quester = cf.get();
+                        for (final Quest q : quester.getCompletedQuests()) {
+                            if (q != null) {
+                                if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
+                                    quester.getCompletedTimes().put(q, System.currentTimeMillis());
+                                }
+                            }
+                        }
+                        for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                            quester.checkQuest(quest);
+                        }
+                        for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                            if (quester.getCurrentStage(quest).getDelay() > -1 /*&& !quester.getQuestData(quest).isDelayOver()*/) {
+                                quester.startStageTimer(quest);
+                            }
+                        }
+                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if (quester.hasJournal()) {
+                                    quester.updateJournal();
+                                }
+                                if (quester.canUseCompass()) {
+                                    quester.resetCompass();
+                                }
+                            }
+                        }, 40L);
+                    } catch (final Exception e) {
+                        e.printStackTrace();
                     }
                 }
-            }, 40L);
+            });
         }
     }
 
@@ -852,6 +873,10 @@ public class PlayerListener implements Listener {
                         final List<Friend> friends = quester.getFriendsToShareWith();
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         for (final Quest quest : plugin.getQuests()) {
+                            if (!quester.meetsCondition(quest, true)) {
+                                continue;
+                            }
+                          
                             quest.performQuestWithFriends(quester, friends, type, (q) -> {
                                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                                     @Override

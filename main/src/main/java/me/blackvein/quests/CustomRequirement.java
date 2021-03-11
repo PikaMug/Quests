@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -22,6 +22,7 @@ public abstract class CustomRequirement {
     private String name = null;
     private String author = null;
     private String display = null;
+    private final Map<String, Short> items = new HashMap<String, Short>();
     private final Map<String, Object> data = new HashMap<String, Object>();
     private final Map<String, String> descriptions = new HashMap<String, String>();
 
@@ -49,6 +50,14 @@ public abstract class CustomRequirement {
     
     public void setDisplay(final String display) {
         this.display = display;
+    }
+    
+    public Map<String, Short> getItems() {
+        return items;
+    }
+    
+    public void addItem(final String type, final short durability) {
+        this.items.put(type, durability);
     }
 
     public Map<String, Object> getData() {

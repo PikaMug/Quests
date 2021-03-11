@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -235,11 +235,11 @@ public class Stage {
     }
     
     public LinkedList<ItemStack> getItemsToConsume() {
-        return itemsToBrew;
+        return itemsToConsume;
     }
 
-    public void setItemsToConsume(final LinkedList<ItemStack> itemsToBrew) {
-        this.itemsToBrew = itemsToBrew;
+    public void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume) {
+        this.itemsToBrew = itemsToConsume;
     }
 
     public LinkedList<ItemStack> getItemsToDeliver() {

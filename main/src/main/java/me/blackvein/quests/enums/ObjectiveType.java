@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -66,6 +66,10 @@ public enum ObjectiveType {
     public static ObjectiveType fromName(final String name) {
         if (name == null) {
             return null;
+        }
+        // Return custom for legacy reasons
+        if (name.startsWith("custom")) {
+            return CUSTOM;
         }
         return NAME_MAP.get(name.toLowerCase());
     }

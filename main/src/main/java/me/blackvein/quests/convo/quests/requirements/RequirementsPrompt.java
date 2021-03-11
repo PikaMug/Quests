@@ -1,5 +1,5 @@
 /*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  * 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -644,27 +644,29 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @SuppressWarnings("unchecked")
         @Override
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(CK.REQ_ITEMS) != null) {
+                if (context.getSessionData(CK.REQ_ITEMS) == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                } else {
                     String text = "\n";
-                    for (final ItemStack is : getItems(context)) {
+                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS)) {
                         text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
                     }
                     return text;
                 }
-                return "";
             case 2:
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("reqNoItemsSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
-                        return ChatColor.YELLOW + "(" + Lang.get("reqNoValuesSet") + ")";
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         String text = "\n";
-                        for (final Boolean b : getRemoveItems(context)) {
+                        for (final Boolean b : (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE)) {
                             text += ChatColor.GRAY + "     - " + ChatColor.AQUA
                                     + (b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord")) + "\n";
                         }
@@ -679,17 +681,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
         
+        @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("newItem") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
-                    final List<ItemStack> itemReqs = getItems(context);
-                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    final List<ItemStack> itemReqs = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
+                    final ItemStack i = (ItemStack) context.getSessionData("tempStack");
+                    if (i != null) {
+                        itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    }
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 } else {
                     final LinkedList<ItemStack> itemReqs = new LinkedList<ItemStack>();
-                    itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    final ItemStack i = (ItemStack) context.getSessionData("tempStack");
+                    if (i != null) {
+                        itemReqs.add((ItemStack) context.getSessionData("tempStack"));
+                    }
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 }
                 context.setSessionData("newItem", null);
@@ -750,15 +759,15 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /*@SuppressWarnings("unchecked")
         private List<ItemStack> getItems(final ConversationContext context) {
             return (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-        }
+        }*/
 
-        @SuppressWarnings("unchecked")
+        /*@SuppressWarnings("unchecked")
         private List<Boolean> getRemoveItems(final ConversationContext context) {
             return (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
-        }
+        }*/
     }
 
     public class RemoveItemsPrompt extends QuestsEditorStringPrompt {
@@ -951,7 +960,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.AQUA + "- ";
+            String text = ChatColor.GOLD + "- ";
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
             final LinkedList<Map<String, Object>> datamapList
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
@@ -968,9 +977,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.BLUE + "" + ChatColor.BOLD + index + ChatColor.RESET + ChatColor.YELLOW + " - " 
                         + dataKey;
                 if (datamap.get(dataKey) != null) {
-                    text += ChatColor.GREEN + " (" + datamap.get(dataKey).toString() + ")\n";
+                    text += ChatColor.GRAY + " (" + ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&',
+                            datamap.get(dataKey).toString()) + ChatColor.GRAY + ")\n";
                 } else {
-                    text += ChatColor.RED + " (" + Lang.get("valRequired") + ")\n";
+                    text += ChatColor.GRAY + " (" + Lang.get("noneSet") + ChatColor.GRAY + ")\n";
                 }
                 index++;
             }

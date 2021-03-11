@@ -10,5 +10,3 @@ labels: question
 **Where else have you looked for answers to this question?**
 
 **Share your question with as much detail as possible?**
-
-**If applicable, which Java class or API method does this reference?**
