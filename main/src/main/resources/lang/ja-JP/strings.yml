@@ -241,7 +241,7 @@ stageEditorNoItems: "最初にアイテムを追加する必要があります�
 stageEditorNoKillLocations: "最初に倒す場所を設定する必要があります！"
 stageEditorNoBlockSelected: "最初にブロックを選択する必要があります。"
 stageEditorNoLocations: "最初に場所を設定する必要があります！"
-stageEditorDelayCleared: "遅延をクリアしました"
+stageEditorDelayCleared: "遅延を削除しました。"
 stageEditorDeleteSucces: "ステージを削除しました。"
 stageEditorEnchantments: "エンチャント"
 stageEditorColors: "羊の色"
