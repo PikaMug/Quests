@@ -110,19 +110,19 @@
         <dependency>
             <groupId>com.github.RednedEpic</groupId>
             <artifactId>PhatLoots</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>e55d0ba1f6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.0.0-rc.1</version>
+            <version>3.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.DRE2N</groupId>
             <artifactId>DungeonsXL</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>5e7b28ea55</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
