@@ -14,7 +14,7 @@
     
     <repositories>
         <repository>
-            <!-- GPS, PhatLoots, CitizensBooks, mcMMO Classic, DungeonsXL, LocaleLib -->
+            <!-- CitizensBooks, DungeonsXL, GPS, LocaleLib, mcMMO Classic, PhatLoots -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -23,7 +23,7 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>citizens</id>
+            <id>citizens-repo</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
         <repository>
@@ -36,15 +36,12 @@
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
         <repository>
-            <id>placeholderapi</id>
+            <id>papi-repo</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
-            <id>heroes-stripped</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
-        </repository>
-        <repository>
-            <id>Vault</id>
+            <!-- Heroes, Vault -->
+            <id>hc-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
     </repositories>
