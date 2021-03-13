@@ -12,6 +12,8 @@
 
 package me.blackvein.quests.convo.conditions.tasks;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -173,17 +175,25 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
-            String entities = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final EntityType[] mobArr = EntityType.values();
-            for (int i = 0; i < mobArr.length; i++) {
-                final EntityType type = mobArr[i];
+            String mobs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
+            final List<EntityType> toRemove = new LinkedList<EntityType>();
+            for (int i = 0; i < mobArr.size(); i++) {
+                final EntityType type = mobArr.get(i);
                 if (type.getEntityClass() == null || !Vehicle.class.isAssignableFrom(type.getEntityClass())) {
-                    continue;
+                    toRemove.add(type);
                 }
-                entities += MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()) + ", ";
             }
-            entities = entities.substring(0, entities.length() - 2) + "\n";
-            return entities + ChatColor.YELLOW + getQueryText(context);
+            mobArr.removeAll(toRemove);
+            mobArr.sort(Comparator.comparing(EntityType::name));
+            for (int i = 0; i < mobArr.size(); i++) {
+                mobs += ChatColor.AQUA + MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name());
+                if (i < (mobArr.size() - 1)) {
+                     mobs += ChatColor.GRAY + ", ";
+                }
+            }
+            mobs += "\n" + ChatColor.YELLOW + getQueryText(context);
+            return mobs;
         }
 
         @Override

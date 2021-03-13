@@ -152,7 +152,7 @@ public class MiscUtil {
     }
 
     /**
-     * Gets living EntityType from name
+     * Gets EntityType from name
      * 
      * @param properName Name to get type from
      * @return EntityType or null if invalid
@@ -160,7 +160,7 @@ public class MiscUtil {
     public static EntityType getProperMobType(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
         for (final EntityType et : EntityType.values()) {
-            if (et.isAlive() && et.name().replace("_", "").equalsIgnoreCase(properName)) {
+            if (et.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return et;
             }
         }
