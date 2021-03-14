@@ -365,7 +365,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.E_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -375,8 +375,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.E_ITEMS, itemRews);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final ActionsEditorPostOpenNumericPromptEvent event

@@ -307,7 +307,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
                     final List<ItemStack> itemRews = (List<ItemStack>) context.getSessionData(pref + CK.S_DELIVERY_ITEMS);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
@@ -317,11 +317,11 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_DELIVERY_ITEMS, itemRews);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -";
@@ -343,7 +343,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 return new NpcDeliveryMessagesPrompt(context);
             case 4:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("Cleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cleared"));
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, null);
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, null);

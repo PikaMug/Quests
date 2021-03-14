@@ -685,7 +685,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.REQ_ITEMS) != null) {
                     final List<ItemStack> itemReqs = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                     final ItemStack i = (ItemStack) context.getSessionData("tempStack");
@@ -701,8 +701,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     }
                     context.setSessionData(CK.REQ_ITEMS, itemReqs);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final QuestsEditorPostOpenNumericPromptEvent event

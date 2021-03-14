@@ -161,7 +161,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     @Override
     public String getPromptText(final ConversationContext context) {
         // Check/add newly made item
-        if (context.getSessionData("newItem") != null) {
+        if (context.getSessionData("tempStack") != null) {
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
                 final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                 items.add((ItemStack) context.getSessionData("tempStack"));
@@ -171,10 +171,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 items.add((ItemStack) context.getSessionData("tempStack"));
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
             }
-            context.setSessionData("newItem", null);
-            context.setSessionData("tempStack", null);
+            ItemStackPrompt.clearSessionData(context);
         }
-        context.setSessionData(pref, Boolean.TRUE);
         
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         context.getPlugin().getServer().getPluginManager().callEvent(event);
@@ -284,7 +282,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -294,8 +292,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -398,7 +395,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -408,11 +405,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event 
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
@@ -512,7 +509,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -522,11 +519,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
@@ -626,7 +623,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -636,11 +633,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_BREW_ITEMS, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
@@ -740,7 +737,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
                     items.add((ItemStack) context.getSessionData("tempStack"));
@@ -750,11 +747,11 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
 
             String text = ChatColor.GOLD + "- " + getTitle(context) + " -";

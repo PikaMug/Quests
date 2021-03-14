@@ -699,9 +699,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-            
+            // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
                 boolean failed = false;
@@ -719,8 +717,12 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 if (!failed) {
                     context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
                 }
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
+            
+            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+            
             String text = ChatColor.GOLD + getTitle(context) + "\n";
             if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData(CK.Q_GUIDISPLAY);

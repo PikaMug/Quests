@@ -366,14 +366,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 8:
-            context.setSessionData("tempStack", null);
-            context.setSessionData("tempName", null);
-            context.setSessionData("tempAmount", null);
-            context.setSessionData("tempData", null);
-            context.setSessionData("tempEnchantments", null);
-            context.setSessionData("tempDisplay", null);
-            context.setSessionData("tempLore", null);
-            context.setSessionData("tempMeta", null);
+            clearSessionData(context);
             return oldPrompt;
         case 9:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
@@ -425,7 +418,6 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 
                 stack.setItemMeta(meta);
                 context.setSessionData("tempStack", stack);
-                context.setSessionData("newItem", Boolean.TRUE);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
@@ -798,5 +790,16 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         } else {
             return null;
         }
+    }
+    
+    public static void clearSessionData(final ConversationContext context) {
+        context.setSessionData("tempStack", null);
+        context.setSessionData("tempName", null);
+        context.setSessionData("tempAmount", null);
+        context.setSessionData("tempData", null);
+        context.setSessionData("tempEnchantments", null);
+        context.setSessionData("tempDisplay", null);
+        context.setSessionData("tempLore", null);
+        context.setSessionData("tempMeta", null);
     }
 }

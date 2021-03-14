@@ -699,7 +699,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.REW_ITEMS) != null) {
                     final List<ItemStack> itemRews = (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
@@ -709,8 +709,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     itemRews.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.REW_ITEMS, itemRews);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final QuestsEditorPostOpenNumericPromptEvent event 
