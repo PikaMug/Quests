@@ -1228,7 +1228,7 @@ public class Quester implements Comparable<Quester> {
                     if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
                             && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
                         final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
-                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false 
+                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
                         String message = color + Lang.get(getPlayer(), "kill");
                         if (message.contains("<mob>")) {

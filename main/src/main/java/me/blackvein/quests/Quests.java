@@ -1297,7 +1297,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
                             && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
                         final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
-                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) == false 
+                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) 
                                 ? ChatColor.GREEN : ChatColor.GRAY;
                         String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
                         if (message.contains("<mob>")) {
@@ -1378,7 +1378,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (final String s : stage.passwordDisplays) {
             if (data.passwordsSaid.containsKey(s)) {
                 final Boolean b = data.passwordsSaid.get(s);
-                final ChatColor color = b != null && !b == false ? ChatColor.GREEN : ChatColor.GRAY;
+                final ChatColor color = b != null && b == false ? ChatColor.GREEN : ChatColor.GRAY;
                 final String message = color + "- " + s;
                 quester.sendMessage(message);
             }
