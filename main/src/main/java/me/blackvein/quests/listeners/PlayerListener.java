@@ -850,6 +850,9 @@ public class PlayerListener implements Listener {
                     final CompletableFuture<Quester> cf = plugin.getStorage().loadQuesterData(evt.getPlayer().getUniqueId());
                     try {
                         final Quester quester = cf.get();
+                        if (quester == null) {
+                            return;
+                        }
                         for (final Quest q : quester.getCompletedQuests()) {
                             if (q != null) {
                                 if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
