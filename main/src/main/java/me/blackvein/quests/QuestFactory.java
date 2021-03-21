@@ -252,7 +252,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
         }
         if (rews.getPartiesExperience() != 0) {
-            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPhatLoots());
+            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPartiesExperience());
         }
         if (rews.getPhatLoots().isEmpty() == false) {
             context.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
