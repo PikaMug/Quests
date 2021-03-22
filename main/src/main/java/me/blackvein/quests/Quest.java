@@ -524,7 +524,7 @@ public class Quest implements Comparable<Quest> {
     public void completeQuest(final Quester q, final boolean allowMultiplayer) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
-            final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
+            final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this, true);
             plugin.getServer().getPluginManager().callEvent(preEvent);
             if (preEvent.isCancelled()) {
                 return;

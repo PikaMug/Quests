@@ -31,6 +31,11 @@ public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancel
         this.quest = quest;
     }
     
+    public QuesterPreCompleteQuestEvent(final Quester quester, final Quest quest, final boolean async) {
+        super(quester, async);
+        this.quest = quest;
+    }
+    
     /**
      * Returns the quest involved in this event
      * 
