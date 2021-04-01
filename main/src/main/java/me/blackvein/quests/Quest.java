@@ -524,10 +524,25 @@ public class Quest implements Comparable<Quest> {
     public void completeQuest(final Quester q, final boolean allowMultiplayer) {
         final OfflinePlayer player = q.getOfflinePlayer();
         if (player.isOnline()) {
-            final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this, true);
-            plugin.getServer().getPluginManager().callEvent(preEvent);
-            if (preEvent.isCancelled()) {
-                return;
+            if (Bukkit.isPrimaryThread()) {
+                final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this, false);
+                plugin.getServer().getPluginManager().callEvent(preEvent);
+                if (preEvent.isCancelled()) {
+                    return;
+                }
+            } else {
+                Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        final QuesterPreCompleteQuestEvent preEvent 
+                                = new QuesterPreCompleteQuestEvent(q, Quest.this, true);
+                        plugin.getServer().getPluginManager().callEvent(preEvent);
+                        if (preEvent.isCancelled()) {
+                            return;
+                        }
+                    }
+                });
             }
         }
         q.hardQuit(this);
