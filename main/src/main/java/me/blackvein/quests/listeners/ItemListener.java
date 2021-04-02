@@ -75,10 +75,13 @@ public class ItemListener implements Listener {
         if (evt.isShiftClick()) {
             final ItemStack recipeResult = evt.getRecipe().getResult();
             final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
-            int leastIngredient = 1;
+            int leastIngredient = -1;
             for (final ItemStack item : evt.getInventory().getMatrix()) {
                 if (item != null && !item.getType().equals(Material.AIR)) {
-                    leastIngredient = item.getAmount() * resultAmt;
+                    final int re = item.getAmount() * resultAmt;
+                    if (leastIngredient == -1 || re < leastIngredient) {
+                        leastIngredient = re;
+                    }
                 }
             }
             return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
