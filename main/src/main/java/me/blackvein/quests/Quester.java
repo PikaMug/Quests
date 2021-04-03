@@ -3201,6 +3201,14 @@ public class Quester implements Comparable<Quester> {
     public void addEmptiesFor(final Quest quest, final int stage) {
         final QuestData data = new QuestData(this);
         data.setDoJournalUpdate(false);
+        if (quest == null) {
+            plugin.getLogger().warning("Unable to find quest for player " + this.lastKnownName);
+            return;
+        }
+        if (quest.getStage(stage) == null) {
+            plugin.getLogger().severe("Unable to find Stage " + stage + " of quest ID " + quest.getId());
+            return;
+        }
         if (quest.getStage(stage).blocksToBreak.isEmpty() == false) {
             for (final ItemStack i : quest.getStage(stage).blocksToBreak) {
                 final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
