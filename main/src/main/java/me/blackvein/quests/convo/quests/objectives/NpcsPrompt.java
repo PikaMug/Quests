@@ -511,12 +511,14 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                         return new NpcsIdsToTalkToPrompt(context);
                     }
                 }
-                final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
-                temp.remove(((Player) context.getForWhom()).getUniqueId());
-                plugin.getQuestFactory().setSelectingNpcs(temp);
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, null);
+            }
+            if (context.getForWhom() instanceof Player) {
+                final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                temp.remove(((Player) context.getForWhom()).getUniqueId());
+                plugin.getQuestFactory().setSelectingNpcs(temp);
             }
             return new StageMainPrompt(stageNum, context);
         }
