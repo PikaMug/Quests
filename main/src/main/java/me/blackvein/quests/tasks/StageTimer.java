@@ -36,30 +36,28 @@ public class StageTimer implements Runnable {
         if (quester.getQuestData(quest) == null) {
             return;
         }
-        //if (quester.getQuestData(quest).isDelayOver()) {
-            if (quester.getCurrentStage(quest).getFinishAction() != null) {
-                    quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
+        if (quester.getCurrentStage(quest) == null) {
+            return;
+        }
+        if (quester.getCurrentStage(quest).getFinishAction() != null) {
+            quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
+        }
+        if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
+            if (quester.getCurrentStage(quest).getScript() != null) {
+                plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
             }
-            if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
-                if (quester.getCurrentStage(quest).getScript() != null) {
-                    plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester);
-                }
-                quest.completeQuest(quester);
-            } else {
-                final int stageNum = quester.getCurrentQuests().get(quest) + 1;
-                quester.getQuestData(quest).setDelayStartTime(0);
-                quester.getQuestData(quest).setDelayTimeLeft(-1);
-                try {
-                    quest.setStage(quester, stageNum);
-                } catch (final IndexOutOfBoundsException e) {
-                    plugin.getLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
-                            + stageNum + " after delay");
-                }
+            quest.completeQuest(quester);
+        } else {
+            final int stageNum = quester.getCurrentQuests().get(quest) + 1;
+            quester.getQuestData(quest).setDelayStartTime(0);
+            quester.getQuestData(quest).setDelayTimeLeft(-1);
+            try {
+                quest.setStage(quester, stageNum);
+            } catch (final IndexOutOfBoundsException e) {
+                plugin.getLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
+                        + stageNum + " after delay");
             }
-            /*if (quester.getQuestData(quest) != null) {
-                quester.getQuestData(quest).setDelayOver(true);
-            }*/
-            quester.updateJournal();
-        //}
+        }
+        quester.updateJournal();
     }
 }
