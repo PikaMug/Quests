@@ -889,7 +889,7 @@ public class Quester implements Comparable<Quester> {
             return new LinkedList<String>();
         }
         if (getCurrentStage(quest) == null) {
-            plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
+            //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
             return new LinkedList<String>();
         }
         final Dependencies depends = plugin.getDependencies();
