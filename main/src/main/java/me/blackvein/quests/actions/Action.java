@@ -337,7 +337,12 @@ public class Action {
             player.setHealth(health);
         }
         if (teleport != null) {
-            player.teleport(teleport);
+            if (player.isDead()) {
+                plugin.getLogger().warning("Tried to fire Action " + name + " but player " + player.getUniqueId() 
+                + " was dead (known Bukkit limitation).");
+            } else {
+                player.teleport(teleport);
+            }
         }
         if (book != null) {
             if (!book.isEmpty()) {
