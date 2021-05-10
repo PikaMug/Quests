@@ -386,7 +386,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         final TimeZone tz = TimeZone.getTimeZone(date[6]);
         cal.setTimeZone(tz);
         final String[] iso = Lang.getISO().split("-");
-        final Locale loc = new Locale(iso[0], iso[1]);
+        final Locale loc = iso.length > 1 ? new Locale(iso[0], iso[1]) : new Locale(iso[0]);
         final Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");
         final DecimalFormat zoneFormat = new DecimalFormat("00");

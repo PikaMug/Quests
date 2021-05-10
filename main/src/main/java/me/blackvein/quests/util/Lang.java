@@ -133,7 +133,7 @@ public class Lang {
                 + File.separator + "strings_new.yml");
         final boolean exists_new = langFile_new.exists();
         final LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
-        if (langFile.exists()) {
+        if (langFile.exists() && iso.split("-").length > 1) {
             final FileConfiguration config= YamlConfiguration
                     .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
             FileConfiguration config_new = null;
