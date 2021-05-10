@@ -14,6 +14,7 @@ package me.blackvein.quests.listeners;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -464,6 +465,14 @@ public class PlayerListener implements Listener {
                     final ObjectiveType type = ObjectiveType.PASSWORD;
                     final Set<String> dispatchedQuestIDs = new HashSet<String>();
                     if (quester.getCurrentStage(quest).containsObjective(type)) {
+                        for (final LinkedList<String> passes : quester.getCurrentStage(quest).getPasswordPhrases()) {
+                            for (final String pass : passes) {
+                                if (pass.equalsIgnoreCase(evt.getMessage())) {
+                                    evt.setCancelled(true);
+                                    break;
+                                }
+                            }
+                        }
                         quester.sayPassword(quest, evt);
                     }
                     

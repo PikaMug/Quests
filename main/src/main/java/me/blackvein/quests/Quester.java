@@ -2749,7 +2749,6 @@ public class Quester implements Comparable<Quester> {
                 done = false;
                 for (final String pass : passes) {
                     if (pass.equalsIgnoreCase(evt.getMessage())) {
-                        evt.setCancelled(true);
                         final String display = getCurrentStage(quest).passwordDisplays.get(getCurrentStage(quest)
                                 .passwordPhrases.indexOf(passes));
                         getQuestData(quest).passwordsSaid.put(display, true);
