@@ -440,8 +440,6 @@ public class PlayerListener implements Listener {
                 if (quester.getCurrentQuests().containsKey(quest)) {
                     final Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
-                        plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
-                                + " on chat for quest " + quest.getName());
                         continue;
                     }
                     if (currentStage.getChatActions().isEmpty() == false) {
