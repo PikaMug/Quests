@@ -119,7 +119,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         case 2:
             if (cs.hasPermission("quests.editor.actions.edit") 
                     || cs.hasPermission("quests.editor.events.edit")) {
-                if (plugin.getActions().isEmpty()) {
+                if (plugin.getLoadedActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToEdit"));
                     return new ActionMenuPrompt(context);
@@ -133,7 +133,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         case 3:
             if (cs.hasPermission("quests.editor.actions.delete") 
                     || cs.hasPermission("quests.editor.events.delete")) {
-                if (plugin.getActions().isEmpty()) {
+                if (plugin.getLoadedActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("eventEditorNoneToDelete"));
                     return new ActionMenuPrompt(context);
@@ -185,7 +185,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionSelectCreatePrompt(context);
@@ -237,7 +237,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getActions().stream().map(Action::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -289,7 +289,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getActions().stream().map(Action::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -306,7 +306,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 final LinkedList<String> used = new LinkedList<String>();
                 final Action a = plugin.getAction(input);
                 if (a != null) {
-                    for (final Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getFinishAction() != null 
                                     && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {

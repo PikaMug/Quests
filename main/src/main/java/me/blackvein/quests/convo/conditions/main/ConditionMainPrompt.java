@@ -196,7 +196,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Condition c : plugin.getConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionNamePrompt(context);
@@ -452,7 +452,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {

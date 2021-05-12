@@ -167,7 +167,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             }
             input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
                         return new QuestSelectCreatePrompt(context);
@@ -221,7 +221,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -270,7 +270,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -287,7 +287,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 final LinkedList<String> used = new LinkedList<String>();
                 final Quest found = plugin.getQuest(input);
                 if (found != null) {
-                    for (final Quest q : plugin.getQuests()) {
+                    for (final Quest q : plugin.getLoadedQuests()) {
                         if (q.getRequirements().getNeededQuests().contains(q) 
                                 || q.getRequirements().getBlockQuests().contains(q)) {
                             used.add(q.getName());

@@ -62,7 +62,7 @@ public class BlockListener implements Listener {
             final Set<String> dispatchedBreakQuestIDs = new HashSet<String>();
             final Set<String> dispatchedPlaceQuestIDs = new HashSet<String>();
             final Set<String> dispatchedCutQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -176,7 +176,7 @@ public class BlockListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -207,7 +207,7 @@ public class BlockListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (evt.isCancelled() == false) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -252,7 +252,7 @@ public class BlockListener implements Listener {
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                        for (final Quest quest : plugin.getQuests()) {
+                        for (final Quest quest : plugin.getLoadedQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 continue;
                             }

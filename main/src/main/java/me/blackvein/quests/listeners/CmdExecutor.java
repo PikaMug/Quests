@@ -778,7 +778,7 @@ public class CmdExecutor implements CommandExecutor {
             if (!(cs instanceof Player)) {
                 int num = 1;
                 cs.sendMessage(ChatColor.GOLD + Lang.get("questListTitle"));
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     cs.sendMessage(ChatColor.YELLOW + "" + num + ". " + q.getName());
                     num++;
                 }
@@ -928,7 +928,7 @@ public class CmdExecutor implements CommandExecutor {
                     if (response) {
                         cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
                         String msg = Lang.get("numQuestsLoaded");
-                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
+                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getLoadedQuests().size())
                                 + ChatColor.GOLD);
                         cs.sendMessage(ChatColor.GOLD + msg);
                     } else {

@@ -123,7 +123,7 @@ public class PlayerListener implements Listener {
         if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
             final ItemStack clicked = evt.getCurrentItem();
             if (ItemUtil.isItem(clicked)) {
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
                             if (quester.canAcceptOffer(quest, true)) {
@@ -213,7 +213,7 @@ public class PlayerListener implements Listener {
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     boolean hasObjective = false;
                     if (evt.isCancelled() == false) {
-                        for (final Quest quest : plugin.getQuests()) {
+                        for (final Quest quest : plugin.getLoadedQuests()) {
                             if (quester.getCurrentQuests().containsKey(quest) 
                                     && quester.getCurrentStage(quest).containsObjective("useBlock")) {
                                 hasObjective = true;
@@ -318,7 +318,7 @@ public class PlayerListener implements Listener {
                                     + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             evt.setCancelled(true);
                         } else if (player.isConversing() == false) {
-                            for (final Quest q : plugin.getQuests()) {
+                            for (final Quest q : plugin.getLoadedQuests()) {
                                 if (q.getBlockStart() != null) {
                                     if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() 
@@ -406,7 +406,7 @@ public class PlayerListener implements Listener {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.MILK_COW;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -432,7 +432,7 @@ public class PlayerListener implements Listener {
     public void onPlayerChat(final AsyncPlayerChatEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -535,7 +535,7 @@ public class PlayerListener implements Listener {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -565,7 +565,7 @@ public class PlayerListener implements Listener {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -636,7 +636,7 @@ public class PlayerListener implements Listener {
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 final ObjectiveType type = ObjectiveType.KILL_NPC;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -657,7 +657,7 @@ public class PlayerListener implements Listener {
             } else {
                 final ObjectiveType type = ObjectiveType.KILL_MOB;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -763,7 +763,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -791,7 +791,7 @@ public class PlayerListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -820,7 +820,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             quester.findCompassTarget();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -979,7 +979,7 @@ public class PlayerListener implements Listener {
                     if (plugin.canUseQuests(uuid)) {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                        for (final Quest quest : plugin.getQuests()) {
+                        for (final Quest quest : plugin.getLoadedQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 continue;
                             }

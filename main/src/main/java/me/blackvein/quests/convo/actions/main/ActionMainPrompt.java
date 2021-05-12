@@ -255,7 +255,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
@@ -954,7 +954,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {

@@ -14,6 +14,7 @@ package me.blackvein.quests.conditions;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -223,9 +224,9 @@ public class ConditionFactory implements ConversationAbandonedListener {
         }
         if (((String) context.getSessionData(CK.C_OLD_CONDITION)).isEmpty() == false) {
             data.set("conditions." + (String) context.getSessionData(CK.C_OLD_CONDITION), null);
-            final LinkedList<Condition> temp = plugin.getConditions();
+            final Collection<Condition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
-            plugin.setConditions(temp);
+            plugin.setLoadedConditions(temp);
         }
         final ConfigurationSection section = data.createSection("conditions." + (String) context.getSessionData(CK.C_NAME));
         editingConditionNames.remove(context.getSessionData(CK.C_NAME));

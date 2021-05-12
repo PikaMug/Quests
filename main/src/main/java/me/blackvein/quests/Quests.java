@@ -121,9 +121,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private final List<CustomReward> customRewards = new LinkedList<CustomReward>();
     private final List<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
     private Collection<Quester> questers = new ConcurrentSkipListSet<Quester>();
-    private final LinkedList<Quest> quests = new LinkedList<Quest>();
-    private LinkedList<Action> actions = new LinkedList<Action>();
-    private LinkedList<Condition> conditions = new LinkedList<Condition>();
+    private final Collection<Quest> quests = new ConcurrentSkipListSet<Quest>();
+    private Collection<Action> actions = new ConcurrentSkipListSet<Action>();
+    private Collection<Condition> conditions = new ConcurrentSkipListSet<Condition>();
     private LinkedList<NPC> questNpcs = new LinkedList<NPC>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
@@ -305,23 +305,99 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return Optional.empty();
     }
     
+    /**
+     * Get every Quest loaded in memory
+     * 
+     * @deprecated Use {@link #getLoadedQuests()}
+     * @return a list of all Quests
+     */
+    @Deprecated
     public LinkedList<Quest> getQuests() {
+        return new LinkedList<>(quests);
+    }
+    
+    /**
+     * Get every Quest loaded in memory
+     * 
+     * @return a collection of all Quests
+     */
+    public Collection<Quest> getLoadedQuests() {
         return quests;
     }
     
+    /**
+     * Get every Action loaded in memory
+     * 
+     * @deprecated Use {@link #getLoadedActions()}
+     * @return a list of all Actions
+     */
+    @Deprecated
     public LinkedList<Action> getActions() {
+        return new LinkedList<>(actions);
+    }
+    
+    /**
+     * Get every Action loaded in memory
+     * 
+     * @return a collection of all Actions
+     */
+    public Collection<Action> getLoadedActions() {
         return actions;
     }
     
+    /**
+     * Set every Action loaded in memory
+     * 
+     * @deprecated Use {@link #setLoadedActions()}
+     */
+    @Deprecated
     public void setActions(final LinkedList<Action> actions) {
         this.actions = actions;
     }
     
+    /**
+     * Set every Action loaded in memory
+     * 
+     */
+    public void setLoadedActions(final Collection<Action> actions) {
+        this.actions = actions;
+    }
+    
+    /**
+     * Get every Action loaded in memory
+     * 
+     * @deprecated Use {@link #getLoadedConditions()}
+     * @return a list of all Conditions
+     */
+    @Deprecated
     public LinkedList<Condition> getConditions() {
+        return new LinkedList<>(conditions);
+    }
+    
+    /**
+     * Get every Condition loaded in memory
+     * 
+     * @return a collection of all Conditions
+     */
+    public Collection<Condition> getLoadedConditions() {
         return conditions;
     }
     
+    /**
+     * Set every Condition loaded in memory
+     * 
+     * @deprecated Use {@link #setLoadedConditions()}
+     */
+    @Deprecated
     public void setConditions(final LinkedList<Condition> conditions) {
+        this.conditions = conditions;
+    }
+    
+    /**
+     * Set every Condition loaded in memory
+     * 
+     */
+    public void setLoadedConditions(final Collection<Condition> conditions) {
         this.conditions = conditions;
     }
     
@@ -358,7 +434,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Gets every Quester that has ever played on this server
+     * Get every Quester that has ever played on this server
      * 
      * @deprecated Use {@link #getOfflineQuesters()}
      * @return a list of all Questers
@@ -369,7 +445,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Sets every Quester that has ever played on this server
+     * Set every Quester that has ever played on this server
      * 
      * @deprecated Use {@link #setOfflineQuesters(Collection)}
      * @param questers a list of Questers
@@ -397,7 +473,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Gets every Quester that has ever played on this server
+     * Get every Quester that has ever played on this server
      * 
      * @return a collection of all Questers
      */
@@ -406,7 +482,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
     
     /**
-     * Sets every Quester that has ever played on this server
+     * Set every Quester that has ever played on this server
      * 
      * @param questers a collection of Questers
      */
@@ -697,8 +773,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             int count = 0;
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    for (final Quest oq : getQuests()) {
-                        if (oq.getId().equals(questKey)) {
+                    for (final Quest lq : getLoadedQuests()) {
+                        if (lq.getId().equals(questKey)) {
                             throw new QuestFormatException("id already exists", questKey);
                         }
                     }
@@ -1489,9 +1565,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 int fromOrder = (page - 1) * rows;
                 List<Quest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {
-                    subQuests = quests.subList((fromOrder), (fromOrder + rows));
+                    subQuests = getQuests().subList((fromOrder), (fromOrder + rows));
                 } else {
-                    subQuests = quests.subList((fromOrder), quests.size());
+                    subQuests = getQuests().subList((fromOrder), quests.size());
                 }
                 fromOrder++;
                 for (final Quest q : subQuests) {

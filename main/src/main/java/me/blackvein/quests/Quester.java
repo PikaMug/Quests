@@ -3811,7 +3811,7 @@ public class Quester implements Comparable<Quester> {
     public void checkQuest(final Quest quest) {
         if (quest != null) {
             boolean exists = false;
-            for (final Quest q : plugin.getQuests()) {
+            for (final Quest q : plugin.getLoadedQuests()) {
                 if (q.getId().equalsIgnoreCase(quest.getId())) {
                     final Stage stage = getCurrentStage(quest);
                     if (stage != null) {

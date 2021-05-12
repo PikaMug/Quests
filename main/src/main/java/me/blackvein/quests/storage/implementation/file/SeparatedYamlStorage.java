@@ -127,7 +127,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getId().equals(s)) {
                         if (!quester.getCompletedQuests().contains(q)) {
                             completedQuests.add(q);

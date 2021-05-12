@@ -1378,10 +1378,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none") + "\n";
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1394,7 +1394,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1443,10 +1443,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1459,7 +1459,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1508,10 +1508,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1524,7 +1524,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1573,10 +1573,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none") + "\n";
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1589,7 +1589,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1638,10 +1638,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1654,7 +1654,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1702,10 +1702,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1718,7 +1718,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1830,10 +1830,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getActions().isEmpty()) {
+            if (plugin.getLoadedActions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none");
             } else {
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text += ChatColor.GREEN + "- " + a.getName() + "\n";
                 }
             }
@@ -1846,7 +1846,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Action found = null;
-                for (final Action a : plugin.getActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1959,10 +1959,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.AQUA + "- " + getTitle(context) + " -\n";
-            if (plugin.getConditions().isEmpty()) {
+            if (plugin.getLoadedConditions().isEmpty()) {
                 text += ChatColor.RED + "- " + Lang.get("none") + "\n";
             } else {
-                for (final Condition c : plugin.getConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     text += ChatColor.GREEN + "- " + c.getName() + "\n";
                 }
             }
@@ -1975,7 +1975,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
                     && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
                 Condition found = null;
-                for (final Condition c : plugin.getConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         found = c;
                         break;

@@ -200,7 +200,7 @@ public class NpcListener implements Listener {
                 if (!hasObjective) {
                     boolean hasAtLeastOneGUI = false;
                     final LinkedList<Quest> npcQuests = new LinkedList<Quest>();
-                    for (final Quest q : plugin.getQuests()) {
+                    for (final Quest q : plugin.getLoadedQuests()) {
                         if (quester.getCurrentQuests().containsKey(q))
                             continue;
                         if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {

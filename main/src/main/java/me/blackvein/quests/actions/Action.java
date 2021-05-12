@@ -32,7 +32,7 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.Lang;
 
-public class Action {
+public class Action implements Comparable<Action> {
 
     private final Quests plugin;
     private String name = "";
@@ -82,6 +82,11 @@ public class Action {
 
     public Action(final Quests plugin) {
         this.plugin = plugin;
+    }
+    
+    @Override
+    public int compareTo(final Action action) {
+        return name.compareTo(action.getName());
     }
 
     public String getName() {

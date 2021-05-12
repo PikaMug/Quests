@@ -14,6 +14,7 @@ package me.blackvein.quests.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -348,9 +349,9 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
         if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
             data.set(key + "." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
-            final LinkedList<Action> temp = plugin.getActions();
+            final Collection<Action> temp = plugin.getLoadedActions();
             temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
-            plugin.setActions(temp);
+            plugin.setLoadedActions(temp);
         }
         final ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
         editingActionNames.remove(context.getSessionData(CK.E_NAME));

@@ -24,7 +24,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 
-public class Condition {
+public class Condition implements Comparable<Condition> {
 
     private final Quests plugin;
     private String name = "";
@@ -41,6 +41,11 @@ public class Condition {
 
     public Condition(final Quests plugin) {
         this.plugin = plugin;
+    }
+    
+    @Override
+    public int compareTo(final Condition condition) {
+        return name.compareTo(condition.getName());
     }
 
     public String getName() {

@@ -329,7 +329,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         String s = null;
                         if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -703,7 +703,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
                 boolean failed = false;
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
                             String error = Lang.get("questGUIError");

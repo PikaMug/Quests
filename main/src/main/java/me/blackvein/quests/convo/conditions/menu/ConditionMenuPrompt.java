@@ -117,7 +117,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
         case 2:
             if (cs.hasPermission("quests.conditions.edit")) {
-                if (plugin.getConditions().isEmpty()) {
+                if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToEdit"));
                     return new ConditionMenuPrompt(context);
@@ -130,7 +130,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
         case 3:
             if (cs.hasPermission("quests.conditions.delete")) {
-                if (plugin.getConditions().isEmpty()) {
+                if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToDelete"));
                     return new ConditionMenuPrompt(context);
@@ -183,7 +183,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
             input = input.trim();
             if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Condition c : plugin.getConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionSelectCreatePrompt(context);
@@ -235,7 +235,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getConditions().stream().map(Condition::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -287,7 +287,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = ChatColor.GOLD + getTitle(context) + "\n";
-            final List<String> names = plugin.getConditions().stream().map(Condition::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
             for (int i = 0; i < names.size(); i++) {
                 text += ChatColor.AQUA + names.get(i);
                 if (i < (names.size() - 1)) {
@@ -304,7 +304,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 final LinkedList<String> used = new LinkedList<String>();
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
-                    for (final Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getCondition() != null 
                                     && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {

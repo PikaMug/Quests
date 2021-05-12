@@ -49,7 +49,7 @@ public class ItemListener implements Listener {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -100,7 +100,7 @@ public class ItemListener implements Listener {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                    for (final Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -123,7 +123,7 @@ public class ItemListener implements Listener {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                    for (final Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -158,7 +158,7 @@ public class ItemListener implements Listener {
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -187,7 +187,7 @@ public class ItemListener implements Listener {
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<String>();
-            for (final Quest quest : plugin.getQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }

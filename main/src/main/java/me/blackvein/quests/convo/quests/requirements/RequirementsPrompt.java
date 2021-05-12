@@ -530,7 +530,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             
             String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n" + ChatColor.DARK_PURPLE;
             boolean none = true;
-            for (final Quest q : plugin.getQuests()) {
+            for (final Quest q : plugin.getLoadedQuests()) {
                 text += q.getName() + ", ";
                 none = false;
             }
