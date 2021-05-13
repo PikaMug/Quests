@@ -311,12 +311,61 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     }
                 }
                 if (questSec.contains("item-consume-amounts")) {
-                    final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
+                    /*final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
                     for (int i = 0; i < consumeAmounts.size(); i++) {
                         if (i < quester.getCurrentStage(quest).getItemsToConsume().size()) {
-                            quester.getQuestData(quest).itemsConsumed.put(quester.getCurrentStage(quest)
-                                    .getItemsToConsume().get(i), consumeAmounts.get(i));
+                            quester.getQuestData(quest).itemsConsumed.set(i, quester.getCurrentStage(quest)
+                                    .getItemsToConsume().get(i).clone());
                         }
+                    }*/
+                    final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
+                    int index = 0;
+                    for (final int amt : consumeAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToConsume().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).itemsConsumed.size() > 0) {
+                            quester.getQuestData(quest).itemsConsumed.set(index, temp);
+                        }
+                        index++;
+                    }
+                }
+                
+                if (questSec.contains("item-delivery-amounts")) {
+                    final List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
+                    int index = 0;
+                    for (final int amt : deliveryAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToDeliver().get(index);
+                        final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
+                        try {
+                            temp.addEnchantments(is.getEnchantments());
+                        } catch (final Exception e) {
+                            plugin.getLogger().warning("Unable to add enchantment(s) " + is.getEnchantments().toString()
+                                    + " to delivery item " + is.getType().name() + " x " + amt + " for quest " 
+                                    + quest.getName());
+                        }
+                        temp.setItemMeta(is.getItemMeta());
+                        if (quester.getQuestData(quest).itemsDelivered.size() > 0) {
+                            quester.getQuestData(quest).itemsDelivered.set(index, temp);
+                        }
+                        index++;
+                    }
+                }
+                if (questSec.contains("citizen-ids-to-talk-to")) {
+                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-to-talk-to");
+                    final List<Boolean> has = questSec.getBooleanList("has-talked-to");
+                    for (final int i : ids) {
+                        quester.getQuestData(quest).citizensInteracted.put(i, has.get(ids.indexOf(i)));
+                    }
+                }
+                if (questSec.contains("citizen-ids-killed")) {
+                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
+                    final List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
+                    quester.getQuestData(quest).citizensKilled.clear();
+                    quester.getQuestData(quest).citizenNumKilled.clear();
+                    for (final int i : ids) {
+                        quester.getQuestData(quest).citizensKilled.add(i);
+                        quester.getQuestData(quest).citizenNumKilled.add(num.get(ids.indexOf(i)));
                     }
                 }
                 if (questSec.contains("cows-milked")) {
@@ -356,43 +405,6 @@ public class SeparatedYamlStorage implements StorageImplementation {
                                 quester.getQuestData(quest).radiiToKillWithin.add(i);
                             }
                         }
-                    }
-                }
-                if (questSec.contains("item-delivery-amounts")) {
-                    final List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-                    int index = 0;
-                    for (final int amt : deliveryAmounts) {
-                        final ItemStack is = quester.getCurrentStage(quest).getItemsToDeliver().get(index);
-                        final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
-                        try {
-                            temp.addEnchantments(is.getEnchantments());
-                        } catch (final Exception e) {
-                            plugin.getLogger().warning("Unable to add enchantment(s) " + is.getEnchantments().toString()
-                                    + " to delivery item " + is.getType().name() + " x " + amt + " for quest " 
-                                    + quest.getName());
-                        }
-                        temp.setItemMeta(is.getItemMeta());
-                        if (quester.getQuestData(quest).itemsDelivered.size() > 0) {
-                            quester.getQuestData(quest).itemsDelivered.set(index, temp);
-                        }
-                        index++;
-                    }
-                }
-                if (questSec.contains("citizen-ids-to-talk-to")) {
-                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-to-talk-to");
-                    final List<Boolean> has = questSec.getBooleanList("has-talked-to");
-                    for (final int i : ids) {
-                        quester.getQuestData(quest).citizensInteracted.put(i, has.get(ids.indexOf(i)));
-                    }
-                }
-                if (questSec.contains("citizen-ids-killed")) {
-                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
-                    final List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
-                    quester.getQuestData(quest).citizensKilled.clear();
-                    quester.getQuestData(quest).citizenNumKilled.clear();
-                    for (final int i : ids) {
-                        quester.getQuestData(quest).citizensKilled.add(i);
-                        quester.getQuestData(quest).citizenNumKilled.add(num.get(ids.indexOf(i)));
                     }
                 }
                 if (questSec.contains("locations-to-reach")) {

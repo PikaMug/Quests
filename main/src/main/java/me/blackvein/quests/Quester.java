@@ -1085,16 +1085,18 @@ public class Quester implements Comparable<Quester> {
             }
             objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
+        int consumeIndex = 0;
         for (final ItemStack is : stage.itemsToConsume) {
             int consumed = 0;
-            if (data.itemsConsumed.containsKey(is)) {
-                consumed = data.itemsConsumed.get(is);
+            if (data.itemsConsumed.size() > consumeIndex) {
+                consumed = data.itemsConsumed.get(consumeIndex).getAmount();
             }
-            final int amt = is.getAmount();
-            final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            final int toConsume = is.getAmount();
+            consumeIndex++;
+            final ChatColor color = consumed < toConsume ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "consumeItem");
             if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
+                message = message.replace("<count>", "" + color + consumed + "/" + toConsume);
             } else {
                 // Legacy
                 message += color + ": " + consumed + "/" + is.getAmount();
@@ -1103,89 +1105,6 @@ public class Quester implements Comparable<Quester> {
                 message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
             }
             objectives.add(message.replace("<item>", ItemUtil.getName(is)));
-        }
-        if (stage.cowsToMilk != null) {
-            final ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "milkCow");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.cowsToMilk);
-            } else {
-                // Legacy
-                message += color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
-            }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
-            }
-            objectives.add(message);
-        }
-        if (getCurrentStage(quest).fishToCatch != null) {
-            final ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "catchFish");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.fishToCatch);
-            } else {
-                // Legacy
-                message += color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
-            }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
-            }
-            objectives.add(message);
-        }
-        for (final EntityType e : getCurrentStage(quest).mobsToKill) {
-            for (final EntityType e2 : getQuestData(quest).mobsKilled) {
-                if (e == e2) {
-                    if (data.mobNumKilled.size() > data.mobsKilled.indexOf(e2) 
-                            && stage.mobNumToKill.size() > stage.mobsToKill.indexOf(e)) {
-                        final ChatColor color = data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
-                                < stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)) 
-                                ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + "";
-                        if (stage.locationsToKillWithin.isEmpty()) {
-                            message += Lang.get(getPlayer(), "kill");
-                            if (message.contains("<count>")) {
-                                message = message.replace("<count>", "" + color 
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
-                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
-                            } else {
-                                // Legacy
-                                message += ChatColor.AQUA + " <mob>" + color + ": "
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
-                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                            }
-                        } else {
-                            message += Lang.get(getPlayer(), "killAtLocation").replace("<location>", 
-                                    stage.killNames.get(stage.mobsToKill.indexOf(e)));
-                            if (message.contains("<count>")) {
-                                message = message.replace("<count>", "" + color 
-                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
-                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
-                            } else {
-                                message += color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
-                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
-                            }
-                        }
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
-                        }
-                        objectives.add(message.replace("<mob>", MiscUtil.getProperMobName(e)));
-                    }
-                }
-            }
-        }
-        if (stage.playersToKill != null) {
-            final ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "killPlayer");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/" + stage.playersToKill);
-            } else {
-                // Legacy
-                message += color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
-            }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
-            }
-            objectives.add(message);
         }
         int index = 0;
         for (final ItemStack is : stage.itemsToDeliver) {
@@ -1253,6 +1172,47 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
+        for (final EntityType e : getCurrentStage(quest).mobsToKill) {
+            for (final EntityType e2 : getQuestData(quest).mobsKilled) {
+                if (e == e2) {
+                    if (data.mobNumKilled.size() > data.mobsKilled.indexOf(e2) 
+                            && stage.mobNumToKill.size() > stage.mobsToKill.indexOf(e)) {
+                        final ChatColor color = data.mobNumKilled.get(data.mobsKilled.indexOf(e2)) 
+                                < stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)) 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = color + "";
+                        if (stage.locationsToKillWithin.isEmpty()) {
+                            message += Lang.get(getPlayer(), "kill");
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                // Legacy
+                                message += ChatColor.AQUA + " <mob>" + color + ": "
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
+                        } else {
+                            message += Lang.get(getPlayer(), "killAtLocation").replace("<location>", 
+                                    stage.killNames.get(stage.mobsToKill.indexOf(e)));
+                            if (message.contains("<count>")) {
+                                message = message.replace("<count>", "" + color 
+                                        + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e))));
+                            } else {
+                                message += color + ": " + (data.mobNumKilled.get(data.mobsKilled.indexOf(e2))) + "/" 
+                                        + (stage.mobNumToKill.get(stage.mobsToKill.indexOf(e)));
+                            }
+                        }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                        }
+                        objectives.add(message.replace("<mob>", MiscUtil.getProperMobName(e)));
+                    }
+                }
+            }
+        }
         for (final Entry<EntityType, Integer> e : getCurrentStage(quest).mobsToTame.entrySet()) {
             for (final Entry<EntityType, Integer> e2 : getQuestData(quest).mobsTamed.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
@@ -1271,6 +1231,34 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
+        if (getCurrentStage(quest).fishToCatch != null) {
+            final ChatColor color = data.getFishCaught() < stage.fishToCatch ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.fishToCatch);
+            } else {
+                // Legacy
+                message += color + ": " + data.getFishCaught() + "/" + stage.fishToCatch;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
+        }
+        if (stage.cowsToMilk != null) {
+            final ChatColor color = data.getCowsMilked() < stage.cowsToMilk ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.cowsToMilk);
+            } else {
+                // Legacy
+                message += color + ": " + data.getCowsMilked() + "/" + stage.cowsToMilk;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
+        }
         for (final Entry<DyeColor, Integer> e : getCurrentStage(quest).sheepToShear.entrySet()) {
             for (final Entry<DyeColor, Integer> e2 : getQuestData(quest).sheepSheared.entrySet()) {
                 if (e.getKey().equals(e2.getKey())) {
@@ -1286,6 +1274,20 @@ public class Quester implements Comparable<Quester> {
                     objectives.add(message);
                 }
             }
+        }
+        if (stage.playersToKill != null) {
+            final ChatColor color = data.getPlayersKilled() < stage.playersToKill ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "killPlayer");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/" + stage.playersToKill);
+            } else {
+                // Legacy
+                message += color + ": " + data.getPlayersKilled() + "/" + stage.playersToKill;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(message);
         }
         for (final Location l : getCurrentStage(quest).locationsToReach) {
             for (final Location l2 : getQuestData(quest).locationsReached) {
@@ -2120,56 +2122,225 @@ public class Quester implements Comparable<Quester> {
      * @param i The item being consumed
      */
     public void consumeItem(final Quest quest, final ItemStack i) {
-        ItemStack found = null;
-        for (final ItemStack is : getQuestData(quest).itemsConsumed.keySet()) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsConsumed) {
+            currentIndex++;
             if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
+                matches.add(currentIndex);
             }
         }
-        if (found == null) {
+        if (matches.isEmpty()) {
             return;
         }
-        final int amount = getQuestData(quest).itemsConsumed.get(found);
-        if (getCurrentStage(quest).itemsToConsume.indexOf(found) < 0) {
-            plugin.getLogger().severe("Index out of bounds while consuming " + found.getType() + " x " 
-                    + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
-                    + i.getAmount() + " already consumed. List amount reports value of " +  amount 
-                    + ". Please report this error on Github!");
-            sendMessage(ChatColor.RED + "Quests had a problem consuming your item, please contact an administrator!");
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsConsumed);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toConsume = getCurrentStage(quest).itemsToConsume.get(match).getAmount();
+            
+            final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, amount, toConsume));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+            
+            final int newAmount = i.getAmount() + amount;
+            final Material m = i.getType();
+            if (amount < toConsume) {
+                if (newAmount >= toConsume) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toConsume);
+                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+                    
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                }
+                return;
+            }
+            
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, newAmount, toConsume));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
+        }
+    }
+    
+    /**
+     * Mark item as delivered to a NPC if Quester has such an objective
+     * 
+     * @param quest The quest for which the item is being delivered
+     * @param n The NPC being delivered to
+     * @param i The item being delivered
+     */
+    @SuppressWarnings("deprecation")
+    public void deliverToNPC(final Quest quest, final NPC n, final ItemStack i) {
+        if (n == null) {
             return;
         }
-        final int req = getCurrentStage(quest).itemsToConsume.get(getCurrentStage(quest).itemsToConsume.indexOf(found))
-                .getAmount();
         
-        final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsDelivered) {
+            currentIndex++;
+            if (ItemUtil.compareItems(i, is, true) == 0) {
+                matches.add(currentIndex);
+            }
+        }
+        if (matches.isEmpty()) {
+            return;
+        }
+        final Player player = getPlayer();
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered);
+            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(n.getId())) {
+                continue;
+            }
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toDeliver = getCurrentStage(quest).itemsToDeliver.get(match).getAmount();
+            
+            final ObjectiveType type = ObjectiveType.DELIVER_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, amount, toDeliver));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+            
+            final int newAmount = i.getAmount() + amount;
+            final Material m = i.getType();
+            if (amount < toDeliver) {
+                final int index = player.getInventory().first(i);
+                if (index == -1) {
+                    // Already delivered in previous loop
+                    return;
+                }
+                if (newAmount >= toDeliver) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toDeliver);
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                    if ((i.getAmount() + amount) >= toDeliver) {
+                        // Take away remaining amount to be delivered
+                        final ItemStack clone = i.clone();
+                        clone.setAmount(i.getAmount() - (toDeliver - amount));
+                        player.getInventory().setItem(index, clone);
+                    } else {
+                        player.getInventory().setItem(index, null);
+                    }
+                    player.updateInventory();
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+                    
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                    player.getInventory().setItem(index, null);
+                    player.updateInventory();
+                    final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
+                            .deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages
+                            .size())), plugin.getDependencies().getCitizens().getNPCRegistry()
+                            .getById(getCurrentStage(quest).itemDeliveryTargets.get(items.indexOf(found))));
+                    player.sendMessage(message);
+                }
+            }
+            
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, newAmount, toDeliver));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
+        }
+    }
+    
+    /**
+     * Mark NPC as interacted with if Quester has such an objective
+     * 
+     * @param quest The quest for which the NPC is being interacted with
+     * @param n The NPC being interacted with
+     */
+    public void interactWithNPC(final Quest quest, final NPC n) {
+        final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, amount, req));
+                new Objective(type, 1, 1));
         plugin.getServer().getPluginManager().callEvent(preEvent);
         
-        final int newAmount = i.getAmount() + amount;
-        if (amount < req) {
-            final Material m = i.getType();
-            if (newAmount >= req) {
-                getQuestData(quest).itemsConsumed.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null,
-                        null, null);
+        if (!getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
+            return;
+        }
+        
+        final Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
+        if (b != null && !b) {
+            getQuestData(quest).citizensInteracted.put(n.getId(), true);
+            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1)), 
+                    null, null, n, null, null, null, null);
+            
+            // Multiplayer
+            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                q.getQuestData(quest).citizensInteracted.put(n.getId(), true);
+                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                        new ItemStack(Material.AIR, 1)), null, null, n, null, null, null, null);
+                return null;
+            });
+            
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                    new Objective(type, 1, 1));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
+        }
+    }
+
+    /**
+     * Mark NPC as killed if the Quester has such an objective
+     * 
+     * @param quest The quest for which the NPC is being killed
+     * @param n The NPC being killed
+     */
+    public void killNPC(final Quest quest, final NPC n) {
+        if (!getQuestData(quest).citizensKilled.contains(n.getId())) {
+            return;
+        }
+        
+        final int index = getQuestData(quest).citizensKilled.indexOf(n.getId());
+        final int npcsKilled = getQuestData(quest).citizenNumKilled.get(index);
+        final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
+        
+        final ObjectiveType type = ObjectiveType.KILL_NPC;
+        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
+                new Objective(type, npcsKilled, npcsToKill));
+        plugin.getServer().getPluginManager().callEvent(preEvent);
+        
+        final int newNpcsKilled = getQuestData(quest).citizenNumKilled.get(index) + 1;
+        if (npcsKilled < npcsToKill) {
+            getQuestData(quest).citizenNumKilled.set(index, newNpcsKilled);
+            if (newNpcsKilled >= npcsToKill) {
+                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                        new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
                 
                 // Multiplayer
-                final ItemStack finalFound = found;
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).itemsConsumed.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null,
-                            null, null, null, null);
+                    q.getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled
+                            .get(index));
+                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                            new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
                     return null;
                 });
-            } else {
-                getQuestData(quest).itemsConsumed.put(found, newAmount);
             }
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, newAmount, req));
+                new Objective(type, newNpcsKilled, npcsToKill));
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
@@ -2390,175 +2561,6 @@ public class Quester implements Comparable<Quester> {
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
                 new Objective(type, newPlayersKilled, playersToKill));
-        plugin.getServer().getPluginManager().callEvent(postEvent);
-    }
-    
-    /**
-     * Mark item as delivered to a NPC if Quester has such an objective
-     * 
-     * @param quest The quest for which the item is being delivered
-     * @param n The NPC being delivered to
-     * @param i The item being delivered
-     */
-    @SuppressWarnings("deprecation")
-    public void deliverToNPC(final Quest quest, final NPC n, final ItemStack i) {
-        if (n == null) {
-            return;
-        }
-        
-        int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
-        for (final ItemStack is : getQuestData(quest).itemsDelivered) {
-            currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
-                matches.add(currentIndex);
-            }
-        }
-        if (matches.isEmpty()) {
-            return;
-        }
-        final Player player = getPlayer();
-        for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered);
-            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(n.getId())) {
-                continue;
-            }
-            final ItemStack found = items.get(match);
-            final int amount = found.getAmount();
-            final int toDeliver = getCurrentStage(quest).itemsToDeliver.get(match).getAmount();
-            
-            final ObjectiveType type = ObjectiveType.DELIVER_ITEM;
-            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                    new Objective(type, amount, toDeliver));
-            plugin.getServer().getPluginManager().callEvent(preEvent);
-            
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
-            if (amount < toDeliver) {
-                final int index = player.getInventory().first(i);
-                if (index == -1) {
-                    // Already delivered in previous loop
-                    return;
-                }
-                if (newAmount >= toDeliver) {
-                    final ItemStack newStack = found;
-                    found.setAmount(toDeliver);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                    if ((i.getAmount() + amount) >= toDeliver) {
-                        // Take away remaining amount to be delivered
-                        final ItemStack clone = i.clone();
-                        clone.setAmount(i.getAmount() - (toDeliver - amount));
-                        player.getInventory().setItem(index, clone);
-                    } else {
-                        player.getInventory().setItem(index, null);
-                    }
-                    player.updateInventory();
-                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
-                            null, null, null);
-                    
-                    // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
-                                null, null, null, null);
-                        return null;
-                    });
-                } else {
-                    final ItemStack newStack = found;
-                    found.setAmount(newAmount);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                    player.getInventory().setItem(index, null);
-                    player.updateInventory();
-                    final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
-                            .deliverMessages.get(new Random().nextInt(getCurrentStage(quest).deliverMessages
-                            .size())), plugin.getDependencies().getCitizens().getNPCRegistry()
-                            .getById(getCurrentStage(quest).itemDeliveryTargets.get(items.indexOf(found))));
-                    player.sendMessage(message);
-                }
-            }
-            
-            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                    new Objective(type, newAmount, toDeliver));
-            plugin.getServer().getPluginManager().callEvent(postEvent);
-        }
-    }
-    
-    /**
-     * Mark NPC as interacted with if Quester has such an objective
-     * 
-     * @param quest The quest for which the NPC is being interacted with
-     * @param n The NPC being interacted with
-     */
-    public void interactWithNPC(final Quest quest, final NPC n) {
-        final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, 1, 1));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        if (!getQuestData(quest).citizensInteracted.containsKey(n.getId())) {
-            return;
-        }
-        
-        final Boolean b = getQuestData(quest).citizensInteracted.get(n.getId());
-        if (b != null && !b) {
-            getQuestData(quest).citizensInteracted.put(n.getId(), true);
-            finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1)), 
-                    null, null, n, null, null, null, null);
-            
-            // Multiplayer
-            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                q.getQuestData(quest).citizensInteracted.put(n.getId(), true);
-                q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, 1)), null, null, n, null, null, null, null);
-                return null;
-            });
-            
-            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                    new Objective(type, 1, 1));
-            plugin.getServer().getPluginManager().callEvent(postEvent);
-        }
-    }
-
-    /**
-     * Mark NPC as killed if the Quester has such an objective
-     * 
-     * @param quest The quest for which the NPC is being killed
-     * @param n The NPC being killed
-     */
-    public void killNPC(final Quest quest, final NPC n) {
-        if (!getQuestData(quest).citizensKilled.contains(n.getId())) {
-            return;
-        }
-        
-        final int index = getQuestData(quest).citizensKilled.indexOf(n.getId());
-        final int npcsKilled = getQuestData(quest).citizenNumKilled.get(index);
-        final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
-        
-        final ObjectiveType type = ObjectiveType.KILL_NPC;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, npcsKilled, npcsToKill));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        final int newNpcsKilled = getQuestData(quest).citizenNumKilled.get(index) + 1;
-        if (npcsKilled < npcsToKill) {
-            getQuestData(quest).citizenNumKilled.set(index, newNpcsKilled);
-            if (newNpcsKilled >= npcsToKill) {
-                finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).citizenNumKilled.set(index, getQuestData(quest).citizenNumKilled
-                            .get(index));
-                    q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
-                    return null;
-                });
-            }
-        }
-        
-        final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, newNpcsKilled, npcsToKill));
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
@@ -3279,26 +3281,19 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (quest.getStage(stage).itemsToConsume.isEmpty() == false) {
-            for (final ItemStack is : quest.getStage(stage).itemsToConsume) {
-                data.itemsConsumed.put(is, 0);
+            for (final ItemStack i : quest.getStage(stage).itemsToConsume) {
+                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                try {
+                    temp.addEnchantments(i.getEnchantments());
+                } catch (final Exception e) {
+                    plugin.getLogger().warning("Unable to add enchantment(s) " + i.getEnchantments().toString()
+                            + " to consume item " + i.getType().name() + " x " + i.getAmount() + " for quest ID "
+                            + quest.getId());
+                }
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsConsumed.add(temp);
             }
         }
-        if (quest.getStage(stage).mobsToKill.isEmpty() == false) {
-            for (final EntityType e : quest.getStage(stage).mobsToKill) {
-                data.mobsKilled.add(e);
-                data.mobNumKilled.add(0);
-                if (quest.getStage(stage).locationsToKillWithin.isEmpty() == false) {
-                    data.locationsToKillWithin.add(quest.getStage(stage).locationsToKillWithin.get(data.mobsKilled
-                            .indexOf(e)));
-                }
-                if (quest.getStage(stage).radiiToKillWithin.isEmpty() == false) {
-                    data.radiiToKillWithin.add(quest.getStage(stage).radiiToKillWithin.get(data.mobsKilled.indexOf(e)));
-                }
-            }
-        }
-        data.setCowsMilked(0);
-        data.setFishCaught(0);
-        data.setPlayersKilled(0);
         if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
             for (final ItemStack i : quest.getStage(stage).itemsToDeliver) {
                 final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
@@ -3324,6 +3319,22 @@ public class Quester implements Comparable<Quester> {
                 data.citizenNumKilled.add(0);
             }
         }
+        if (quest.getStage(stage).mobsToKill.isEmpty() == false) {
+            for (final EntityType e : quest.getStage(stage).mobsToKill) {
+                data.mobsKilled.add(e);
+                data.mobNumKilled.add(0);
+                if (quest.getStage(stage).locationsToKillWithin.isEmpty() == false) {
+                    data.locationsToKillWithin.add(quest.getStage(stage).locationsToKillWithin.get(data.mobsKilled
+                            .indexOf(e)));
+                }
+                if (quest.getStage(stage).radiiToKillWithin.isEmpty() == false) {
+                    data.radiiToKillWithin.add(quest.getStage(stage).radiiToKillWithin.get(data.mobsKilled.indexOf(e)));
+                }
+            }
+        }
+        data.setCowsMilked(0);
+        data.setFishCaught(0);
+        data.setPlayersKilled(0);
         if (quest.getStage(stage).locationsToReach.isEmpty() == false) {
             for (final Location l : quest.getStage(stage).locationsToReach) {
                 data.locationsReached.add(l);
@@ -3530,10 +3541,35 @@ public class Quester implements Comparable<Quester> {
                 }
                 if (questData.itemsConsumed.isEmpty() == false) {
                     final LinkedList<Integer> consumeAmounts = new LinkedList<Integer>();
-                    for (final Entry<ItemStack, Integer> e : questData.itemsConsumed.entrySet()) {
-                        consumeAmounts.add(e.getValue());
+                    for (final ItemStack m : questData.itemsConsumed) {
+                        consumeAmounts.add(m.getAmount());
                     }
                     questSec.set("item-consume-amounts", consumeAmounts);
+                }
+                if (questData.itemsDelivered.isEmpty() == false) {
+                    final LinkedList<Integer> deliveryAmounts = new LinkedList<Integer>();
+                    for (final ItemStack m : questData.itemsDelivered) {
+                        deliveryAmounts.add(m.getAmount());
+                    }
+                    questSec.set("item-delivery-amounts", deliveryAmounts);
+                }
+                if (questData.citizensInteracted.isEmpty() == false) {
+                    final LinkedList<Integer> npcIds = new LinkedList<Integer>();
+                    final LinkedList<Boolean> hasTalked = new LinkedList<Boolean>();
+                    for (final Integer n : questData.citizensInteracted.keySet()) {
+                        npcIds.add(n);
+                        hasTalked.add(questData.citizensInteracted.get(n));
+                    }
+                    questSec.set("citizen-ids-to-talk-to", npcIds);
+                    questSec.set("has-talked-to", hasTalked);
+                }
+                if (questData.citizensKilled.isEmpty() == false) {
+                    final LinkedList<Integer> npcIds = new LinkedList<Integer>();
+                    for (final Integer n : questData.citizensKilled) {
+                        npcIds.add(n);
+                    }
+                    questSec.set("citizen-ids-killed", npcIds);
+                    questSec.set("citizen-amounts-killed", questData.citizenNumKilled);
                 }
                 if (getCurrentStage(quest) != null) {
                     if (getCurrentStage(quest).cowsToMilk != null) {
@@ -3569,31 +3605,6 @@ public class Quester implements Comparable<Quester> {
                         questSec.set("mob-kill-locations", locations);
                         questSec.set("mob-kill-location-radii", radii);
                     }
-                }
-                if (questData.itemsDelivered.isEmpty() == false) {
-                    final LinkedList<Integer> deliveryAmounts = new LinkedList<Integer>();
-                    for (final ItemStack m : questData.itemsDelivered) {
-                        deliveryAmounts.add(m.getAmount());
-                    }
-                    questSec.set("item-delivery-amounts", deliveryAmounts);
-                }
-                if (questData.citizensInteracted.isEmpty() == false) {
-                    final LinkedList<Integer> npcIds = new LinkedList<Integer>();
-                    final LinkedList<Boolean> hasTalked = new LinkedList<Boolean>();
-                    for (final Integer n : questData.citizensInteracted.keySet()) {
-                        npcIds.add(n);
-                        hasTalked.add(questData.citizensInteracted.get(n));
-                    }
-                    questSec.set("citizen-ids-to-talk-to", npcIds);
-                    questSec.set("has-talked-to", hasTalked);
-                }
-                if (questData.citizensKilled.isEmpty() == false) {
-                    final LinkedList<Integer> npcIds = new LinkedList<Integer>();
-                    for (final Integer n : questData.citizensKilled) {
-                        npcIds.add(n);
-                    }
-                    questSec.set("citizen-ids-killed", npcIds);
-                    questSec.set("citizen-amounts-killed", questData.citizenNumKilled);
                 }
                 if (questData.locationsReached.isEmpty() == false) {
                     final LinkedList<String> locations = new LinkedList<String>();

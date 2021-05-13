@@ -1210,12 +1210,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
+        int consumeIndex = 0;
         for (final ItemStack is : stage.itemsToConsume) {
             int consumed = 0;
-            if (data.itemsConsumed.containsKey(is)) {
-                consumed = data.itemsConsumed.get(is);
+            if (data.itemsConsumed.size() > consumeIndex) {
+                consumed = data.itemsConsumed.get(consumeIndex).getAmount();
             }
             final int amt = is.getAmount();
+            consumeIndex++;
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + Lang.get(quester.getPlayer(), "consumeItem");
             if (message.contains("<count>")) {
@@ -1238,6 +1240,78 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         is.getEnchantments());
             } else {
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+            }
+        }
+        
+        int index = 0;
+        for (final ItemStack is : stage.itemsToDeliver) {
+            int delivered = 0;
+            if (data.itemsDelivered.size() > index) {
+                delivered = data.itemsDelivered.get(index).getAmount();
+            }
+            final int toDeliver = is.getAmount();
+            final Integer npc = stage.itemDeliveryTargets.get(index);
+            index++;
+            final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + "- " + Lang.get(quester.getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
+            } else {
+                // Legacy
+                message += color + ": " + delivered + "/" + toDeliver;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+            }
+            if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
+                        is.getEnchantments());
+            } else {
+                quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
+            }
+        }
+        for (final Integer n : stage.citizensToInteract) {
+            for (final Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
+                if (e.getKey().equals(n)) {
+                    final ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
+                            .replace("<npc>", depends.getNPCName(n));
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                    }
+                    quester.sendMessage(message);
+                }
+            }
+        }
+        for (final Integer n : stage.citizensToKill) {
+            for (final Integer n2 : data.citizensKilled) {
+                if (n.equals(n2)) {
+                    if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
+                            && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
+                        final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
+                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) 
+                                ? ChatColor.GREEN : ChatColor.GRAY;
+                        String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
+                        if (message.contains("<mob>")) {
+                            message = message.replace("<mob>", depends.getNPCName(n));
+                        } else {
+                            message += " " + depends.getNPCName(n);
+                        }
+                        if (message.contains("<count>")) {
+                            message = message.replace("<count>", "" + color 
+                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)));
+                        } else {
+                            // Legacy
+                            message += color + ": " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
+                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
+                        }
+                        if (depends.getPlaceholderApi() != null) {
+                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                        }
+                        quester.sendMessage(message);
+                    }
+                }
             }
         }
         if (stage.cowsToMilk != null) {
@@ -1326,77 +1400,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
             quester.sendMessage(message);
-        }
-        int index = 0;
-        for (final ItemStack is : stage.itemsToDeliver) {
-            int delivered = 0;
-            if (data.itemsDelivered.size() > index) {
-                delivered = data.itemsDelivered.get(index).getAmount();
-            }
-            final int toDeliver = is.getAmount();
-            final Integer npc = stage.itemDeliveryTargets.get(index);
-            index++;
-            final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
-            } else {
-                // Legacy
-                message += color + ": " + delivered + "/" + toDeliver;
-            }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-            }
-            if (getSettings().canTranslateNames() && !is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
-                localeManager.sendMessage(quester.getPlayer(), message, is.getType(), is.getDurability(), 
-                        is.getEnchantments());
-            } else {
-                quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
-            }
-        }
-        for (final Integer n : stage.citizensToInteract) {
-            for (final Entry<Integer, Boolean> e : data.citizensInteracted.entrySet()) {
-                if (e.getKey().equals(n)) {
-                    final ChatColor color = e.getValue() == false ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
-                            .replace("<npc>", depends.getNPCName(n));
-                    if (depends.getPlaceholderApi() != null) {
-                        message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                    }
-                    quester.sendMessage(message);
-                }
-            }
-        }
-        for (final Integer n : stage.citizensToKill) {
-            for (final Integer n2 : data.citizensKilled) {
-                if (n.equals(n2)) {
-                    if (data.citizenNumKilled.size() > data.citizensKilled.indexOf(n2) 
-                            && stage.citizenNumToKill.size() > stage.citizensToKill.indexOf(n)) {
-                        final ChatColor color = data.citizenNumKilled.get(data.citizensKilled.indexOf(n2)) 
-                                < stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)) 
-                                ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
-                        if (message.contains("<mob>")) {
-                            message = message.replace("<mob>", depends.getNPCName(n));
-                        } else {
-                            message += " " + depends.getNPCName(n);
-                        }
-                        if (message.contains("<count>")) {
-                            message = message.replace("<count>", "" + color 
-                                    + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
-                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n)));
-                        } else {
-                            // Legacy
-                            message += color + ": " + data.citizenNumKilled.get(stage.citizensToKill.indexOf(n)) + "/" 
-                                    + stage.citizenNumToKill.get(stage.citizensToKill.indexOf(n));
-                        }
-                        if (depends.getPlaceholderApi() != null) {
-                            message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                        }
-                        quester.sendMessage(message);
-                    }
-                }
-            }
         }
         for (final Entry<EntityType, Integer> e : stage.mobsToTame.entrySet()) {
             for (final Entry<EntityType, Integer> e2 : data.mobsTamed.entrySet()) {
