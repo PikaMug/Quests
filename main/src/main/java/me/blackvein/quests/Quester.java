@@ -46,6 +46,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
@@ -3892,6 +3893,7 @@ public class Quester implements Comparable<Quester> {
                     }
                     meta.setLore(lines);
                 }
+                meta.addItemFlags(ItemFlag.values());
                 display.setItemMeta(meta);
                 inv.setItem(i, display);
                 i++;
