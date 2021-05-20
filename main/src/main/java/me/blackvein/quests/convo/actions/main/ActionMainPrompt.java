@@ -532,13 +532,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 questMob = new QuestMob();
             }
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (itemIndex >= 0) {
                     questMob.getInventory()[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
                     itemIndex = -1;
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final ActionsEditorPostOpenNumericPromptEvent event
