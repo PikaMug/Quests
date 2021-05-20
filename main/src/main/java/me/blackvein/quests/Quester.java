@@ -2610,7 +2610,7 @@ public class Quester implements Comparable<Quester> {
                                     finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                                             new ItemStack(Material.AIR, 1)), null, null, null, location, null, null,
                                             null);
-                                } else if (getQuestData(quest).hasReached.get(index) == false) {
+                                } else if (index >= getQuestData(quest).hasReached.size()) {
                                     getQuestData(quest).hasReached.set(index, true);
                                     finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                                             new ItemStack(Material.AIR, 1)), null, null, null, location, null, null,
