@@ -337,13 +337,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     for (final int amt : deliveryAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToDeliver().get(index);
                         final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
-                        try {
-                            temp.addEnchantments(is.getEnchantments());
-                        } catch (final Exception e) {
-                            plugin.getLogger().warning("Unable to add enchantment(s) " + is.getEnchantments().toString()
-                                    + " to delivery item " + is.getType().name() + " x " + amt + " for quest " 
-                                    + quest.getName());
-                        }
+                        temp.addUnsafeEnchantments(is.getEnchantments());
                         temp.setItemMeta(is.getItemMeta());
                         if (quester.getQuestData(quest).itemsDelivered.size() > 0) {
                             quester.getQuestData(quest).itemsDelivered.set(index, temp);

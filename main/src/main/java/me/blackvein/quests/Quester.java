@@ -3284,13 +3284,7 @@ public class Quester implements Comparable<Quester> {
         if (quest.getStage(stage).itemsToConsume.isEmpty() == false) {
             for (final ItemStack i : quest.getStage(stage).itemsToConsume) {
                 final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                try {
-                    temp.addEnchantments(i.getEnchantments());
-                } catch (final Exception e) {
-                    plugin.getLogger().warning("Unable to add enchantment(s) " + i.getEnchantments().toString()
-                            + " to consume item " + i.getType().name() + " x " + i.getAmount() + " for quest ID "
-                            + quest.getId());
-                }
+                temp.addUnsafeEnchantments(i.getEnchantments());
                 temp.setItemMeta(i.getItemMeta());
                 data.itemsConsumed.add(temp);
             }
@@ -3298,13 +3292,7 @@ public class Quester implements Comparable<Quester> {
         if (quest.getStage(stage).itemsToDeliver.isEmpty() == false) {
             for (final ItemStack i : quest.getStage(stage).itemsToDeliver) {
                 final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                try {
-                    temp.addEnchantments(i.getEnchantments());
-                } catch (final Exception e) {
-                    plugin.getLogger().warning("Unable to add enchantment(s) " + i.getEnchantments().toString()
-                            + " to delivery item " + i.getType().name() + " x " + i.getAmount() + " for quest ID "
-                            + quest.getId());
-                }
+                temp.addUnsafeEnchantments(i.getEnchantments());
                 temp.setItemMeta(i.getItemMeta());
                 data.itemsDelivered.add(temp);
             }
