@@ -1,5 +1,5 @@
 ---
-COMMAND_LIST: "danhSách"
+COMMAND_LIST: "danhsách"
 COMMAND_LIST_HELP: "<command> [page] - Nhiệm vụ có sẵn"
 COMMAND_TAKE: "nhận"
 COMMAND_TAKE_HELP: "<command> [quest] - Chấp nhận nhiệm vụ"
