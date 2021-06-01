@@ -200,7 +200,7 @@ public class SqlStorage implements StorageImplementation {
             } else {
                 try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
                     ps.setString(1, uniqueId.toString());
-                    ps.setString(2, lastKnownName);
+                    ps.setString(2, lastKnownName != null ? lastKnownName : "unspecified");
                     ps.setInt(3, quester.getQuestPoints());
                     ps.execute();
                 }
