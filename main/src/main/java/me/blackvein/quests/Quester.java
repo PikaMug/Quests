@@ -3431,7 +3431,7 @@ public class Quester implements Comparable<Quester> {
                     plugin.getLogger().severe("Quest name was null or empty while loading data");
                     return null;
                 }
-                final ConfigurationSection questSec = dataSec.createSection(quest.getName());
+                final ConfigurationSection questSec = dataSec.createSection(quest.getId());
                 final QuestData questData = getQuestData(quest);
                 if (questData == null)
                     continue;

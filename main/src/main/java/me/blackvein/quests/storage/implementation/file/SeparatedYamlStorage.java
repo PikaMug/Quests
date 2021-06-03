@@ -164,7 +164,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
-                final Quest quest = plugin.getQuest(key);
+                final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
                 Stage stage;
                 if (quest == null || quester.getCurrentQuests().containsKey(quest) == false) {
                     continue;
@@ -177,8 +177,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     continue;
                 }
                 quester.addEmptiesFor(quest, quester.getCurrentQuests().get(quest));
-                if (questSec == null)
+                if (questSec == null) {
                     continue;
+                }
                 if (questSec.contains("blocks-broken-names")) {
                     final List<String> names = questSec.getStringList("blocks-broken-names");
                     final List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
