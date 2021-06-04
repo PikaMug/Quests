@@ -1440,18 +1440,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
         }
-        for (final Location l : stage.locationsToReach) {
-            for (final Location l2 : data.locationsReached) {
-                if (l.equals(l2)) {
-                    if (!data.hasReached.isEmpty()) {
-                        final ChatColor color = data.hasReached.get(data.locationsReached.indexOf(l2)) == false 
-                                ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + "- " + Lang.get(quester.getPlayer(), "goTo");
-                        message = message.replace("<location>", 
-                                stage.locationNames.get(stage.locationsToReach.indexOf(l)));
-                        quester.sendMessage(message);
-                    }
-                }
+        for (int i = 0 ; i < stage.locationsToReach.size(); i++) {
+            if (i < data.hasReached.size()) {
+                final ChatColor color = data.hasReached.get(i) == false ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(quester.getPlayer(), "goTo");
+                message = message.replace("<location>", stage.locationNames.get(i));
+                quester.sendMessage(message);
             }
         }
         for (final String s : stage.passwordDisplays) {

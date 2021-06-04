@@ -1290,18 +1290,12 @@ public class Quester implements Comparable<Quester> {
             }
             objectives.add(message);
         }
-        for (final Location l : getCurrentStage(quest).locationsToReach) {
-            for (final Location l2 : getQuestData(quest).locationsReached) {
-                if (l.equals(l2)) {
-                    if (!data.hasReached.isEmpty()) {
-                        final ChatColor color = data.hasReached.get(data.locationsReached.indexOf(l2)) == false 
-                                ? ChatColor.GREEN : ChatColor.GRAY;
-                        String message = color + Lang.get(getPlayer(), "goTo");
-                        message = message.replace("<location>", 
-                                stage.locationNames.get(stage.locationsToReach.indexOf(l)));
-                        objectives.add(message);
-                    }
-                }
+        for (int i = 0 ; i < getCurrentStage(quest).locationsToReach.size(); i++) {
+            if (i < data.hasReached.size()) {
+                final ChatColor color = data.hasReached.get(i) == false ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "goTo");
+                message = message.replace("<location>", stage.locationNames.get(i));
+                objectives.add(message);
             }
         }
         for (final String s : getCurrentStage(quest).passwordDisplays) {
@@ -2569,88 +2563,65 @@ public class Quester implements Comparable<Quester> {
      * Mark location as reached if the Quester has such an objective
      * 
      * @param quest The quest for which the location is being reached
-     * @param l The location being reached
+     * @param location The location being reached
      */
-    public void reachLocation(final Quest quest, final Location l) {
-        if (getQuestData(quest) == null || getQuestData(quest).locationsReached == null) {
+    public void reachLocation(final Quest quest, final Location location) {
+        if (getQuestData(quest) == null || getCurrentStage(quest) == null
+                || getCurrentStage(quest).locationsToReach == null
+                || getQuestData(quest).locationsReached == null || getQuestData(quest).radiiToReachWithin == null
+                || getQuestData(quest).hasReached == null) {
             return;
         }
         
+        final int locsToReach = getCurrentStage(quest).locationsToReach.size();
+        final int locsReached = getQuestData(quest).locationsReached.size();
+        
         int index = 0;
-        for (final Location location : getQuestData(quest).locationsReached) {
-            try {
-                if (getCurrentStage(quest).locationsToReach.size() <= index) {
-                    return;
-                }
-                if (getCurrentStage(quest).radiiToReachWithin.size() <= index) {
-                    return;
-                }
-                if (getQuestData(quest).radiiToReachWithin.size() <= index) {
-                    return;
-                }
-                
-                final Location locationToReach = getCurrentStage(quest).locationsToReach.get(index);
+        try {
+            for (final Location toReach : getCurrentStage(quest).locationsToReach) {
                 final double radius = getQuestData(quest).radiiToReachWithin.get(index);
-                if (l.getX() < (locationToReach.getX() + radius) && l.getX() > (locationToReach.getX() - radius)) {
-                    if (l.getZ() < (locationToReach.getZ() + radius) && l.getZ() > (locationToReach.getZ() - radius)) {
-                        if (l.getY() < (locationToReach.getY() + radius) && l.getY() 
-                                > (locationToReach.getY() - radius)) {
-                            if (l.getWorld().getName().equals(locationToReach.getWorld().getName())) {
-                                final int locationsReached = getQuestData(quest).hasReached.size();
-                                final int locationsToReach = getCurrentStage(quest).locationsToReach.size();
-                                
-                                final ObjectiveType type = ObjectiveType.REACH_LOCATION;
-                                final QuesterPreUpdateObjectiveEvent preEvent 
-                                        = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                                        new Objective(type, locationsReached, locationsToReach));
-                                plugin.getServer().getPluginManager().callEvent(preEvent);
-                                
-                                if (locationsReached <= index) {
-                                    getQuestData(quest).hasReached.add(true);
-                                    finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1)), null, null, null, location, null, null,
-                                            null);
-                                } else if (index >= getQuestData(quest).hasReached.size()) {
-                                    getQuestData(quest).hasReached.set(index, true);
-                                    finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                            new ItemStack(Material.AIR, 1)), null, null, null, location, null, null,
-                                            null);
-                                }
-                                
-                                // Multiplayer
-                                final int finalIndex = index;
-                                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                                    if (finalIndex >= getQuestData(quest).hasReached.size()) {
-                                        q.getQuestData(quest).hasReached.add(true);
-                                        q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                                new ItemStack(Material.AIR, 1)), null, null, null, location, null,
-                                                null, null);
-                                    } else {
-                                        q.getQuestData(quest).hasReached.set(finalIndex, true);
-                                        q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                                                new ItemStack(Material.AIR, 1)), null, null, null, location, null,
-                                                null, null);
-                                    }
-                                    return null;
-                                });
-                                
-                                final QuesterPostUpdateObjectiveEvent postEvent 
-                                        = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                                        new Objective(type, locationsReached + 1, locationsToReach));
-                                plugin.getServer().getPluginManager().callEvent(postEvent);
-                            }
-                        }
+                if (toReach.distanceSquared(location) <= radius * radius) {
+                    if (!getQuestData(quest).hasReached.get(index)) {
+                        final ObjectiveType type = ObjectiveType.REACH_LOCATION;
+                        final QuesterPreUpdateObjectiveEvent preEvent 
+                                = new QuesterPreUpdateObjectiveEvent(this, quest, 
+                                new Objective(type, locsReached, locsToReach));
+                        plugin.getServer().getPluginManager().callEvent(preEvent);
+                        
+                        getQuestData(quest).hasReached.set(index, true);
+                        finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null,
+                                null);
+                        
+                        // Multiplayer
+                        final int finalIndex = index;
+                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                            q.getQuestData(quest).hasReached.set(finalIndex, true);
+                            q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
+                                    new ItemStack(Material.AIR, 1)), null, null, null, toReach, null,
+                                    null, null);
+                            return null;
+                        });
+                        
+                        final QuesterPostUpdateObjectiveEvent postEvent 
+                                = new QuesterPostUpdateObjectiveEvent(this, quest, 
+                                new Objective(type, locsReached + 1, locsToReach));
+                        plugin.getServer().getPluginManager().callEvent(postEvent);
+                        
+                        break;
                     }
                 }
                 index++;
-            } catch (final IndexOutOfBoundsException e) {
-                plugin.getLogger().severe("An error has occurred with Quests. Please report on Github with info below");
-                plugin.getLogger().warning("index = " + index);
-                plugin.getLogger().warning("currentLocation = " + location.toString());
-                plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.size());
-                plugin.getLogger().warning("hasReached = " + getQuestData(quest).hasReached.size());
-                e.printStackTrace();
             }
+        } catch (final Exception e) {
+            plugin.getLogger().severe("An error has occurred with Quests. Please report on Github with info below");
+            plugin.getLogger().warning("quest = " + quest.getId());
+            plugin.getLogger().warning("index = " + index);
+            plugin.getLogger().warning("location = " + location.toString());
+            plugin.getLogger().warning("locationsToReach = " + getCurrentStage(quest).locationsToReach.size());
+            plugin.getLogger().warning("locationsReached = " + getQuestData(quest).locationsReached.size());
+            plugin.getLogger().warning("hasReached = " + getQuestData(quest).hasReached.size());
+            e.printStackTrace();
         }
     }
 
@@ -3433,8 +3404,9 @@ public class Quester implements Comparable<Quester> {
                 }
                 final ConfigurationSection questSec = dataSec.createSection(quest.getId());
                 final QuestData questData = getQuestData(quest);
-                if (questData == null)
+                if (questData == null) {
                     continue;
+                }
                 if (questData.blocksBroken.isEmpty() == false) {
                     final LinkedList<String> blockNames = new LinkedList<String>();
                     final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
