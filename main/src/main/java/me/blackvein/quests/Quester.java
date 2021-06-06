@@ -2579,6 +2579,10 @@ public class Quester implements Comparable<Quester> {
         int index = 0;
         try {
             for (final Location toReach : getCurrentStage(quest).locationsToReach) {
+                if (!location.getWorld().getName().equals(toReach.getWorld().getName())) {
+                    index++;
+                    continue;
+                }
                 final double radius = getQuestData(quest).radiiToReachWithin.get(index);
                 if (toReach.distanceSquared(location) <= radius * radius) {
                     if (!getQuestData(quest).hasReached.get(index)) {
