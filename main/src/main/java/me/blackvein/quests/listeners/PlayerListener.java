@@ -632,49 +632,29 @@ public class PlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player) {
-            final Quester quester = plugin.getQuester(damager.getUniqueId());
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
-                final ObjectiveType type = ObjectiveType.KILL_NPC;
-                final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getLoadedQuests()) {
-                    if (!quester.meetsCondition(quest, true)) {
-                        continue;
-                    }
-                    
-                    if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.killNPC(quest, CitizensAPI.getNPCRegistry().getNPC(target));
-                    }
-                    
-                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
-                        if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.killNPC(cq, CitizensAPI.getNPCRegistry().getNPC(target));
-                        }
-                        return null;
-                    }));
+                return;
+            }
+            final Quester quester = plugin.getQuester(damager.getUniqueId());
+            final ObjectiveType type = ObjectiveType.KILL_MOB;
+            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            for (final Quest quest : plugin.getLoadedQuests()) {
+                if (!quester.meetsCondition(quest, true)) {
+                    continue;
                 }
-            } else {
-                final ObjectiveType type = ObjectiveType.KILL_MOB;
-                final Set<String> dispatchedQuestIDs = new HashSet<String>();
-                for (final Quest quest : plugin.getLoadedQuests()) {
-                    if (!quester.meetsCondition(quest, true)) {
-                        continue;
-                    }
-                    
-                    if (quester.getCurrentQuests().containsKey(quest) 
-                            && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.killMob(quest, target.getLocation(), target.getType());
-                    }
-                    
-                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
-                        if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.killMob(cq, target.getLocation(), target.getType());
-                        }
-                        return null;
-                    }));
+                
+                if (quester.getCurrentQuests().containsKey(quest) 
+                        && quester.getCurrentStage(quest).containsObjective(type)) {
+                    quester.killMob(quest, target.getLocation(), target.getType());
                 }
+                
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
+                        (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.killMob(cq, target.getLocation(), target.getType());
+                    }
+                    return null;
+                }));
             }
         }
     }
