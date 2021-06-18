@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -42,6 +43,9 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onCraftItem(final CraftItemEvent evt) {
+        if (evt.getAction().equals(InventoryAction.NOTHING)) {
+            return;
+        }
         if (evt.getWhoClicked() instanceof Player) {
             final Player player = (Player) evt.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {

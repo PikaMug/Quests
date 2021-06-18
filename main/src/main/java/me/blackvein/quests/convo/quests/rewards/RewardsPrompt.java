@@ -191,7 +191,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final int moneyRew = (Integer) context.getSessionData(CK.REW_MONEY);
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyRew + " "
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA
                             + plugin.getDependencies().getVaultEconomy().format(moneyRew) + ChatColor.GRAY + ")";
                 }
             } else {
@@ -496,7 +496,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 text = text.replace("<money>", ChatColor.AQUA
-                        + (plugin.getDependencies().getVaultEconomy().currencyNamePlural() + ChatColor.YELLOW));
+                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural() + ChatColor.YELLOW);
             }
             return ChatColor.YELLOW + text;
         }
