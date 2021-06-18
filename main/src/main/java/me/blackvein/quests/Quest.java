@@ -508,24 +508,25 @@ public class Quest implements Comparable<Quest> {
     /**
      * Proceed to finish this quest, issuing applicable rewards
      *
-     * @param q The quester finishing this quest
+     * @param quester The quester finishing this quest
      */
-    public void completeQuest(final Quester q) {
-        completeQuest(q, true);
+    public void completeQuest(final Quester quester) {
+        completeQuest(quester, true);
     }
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
      * 
-     * @param q The quester finishing this quest
+     * @param quester The quester finishing this quest
      * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final Quester q, final boolean allowMultiplayer) {
-        final OfflinePlayer player = q.getOfflinePlayer();
+    public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
+        final OfflinePlayer player = quester.getOfflinePlayer();
         if (player.isOnline()) {
             if (Bukkit.isPrimaryThread()) {
-                final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this, false);
+                final QuesterPreCompleteQuestEvent preEvent
+                        = new QuesterPreCompleteQuestEvent(quester, this, false);
                 plugin.getServer().getPluginManager().callEvent(preEvent);
                 if (preEvent.isCancelled()) {
                     return;
@@ -536,7 +537,7 @@ public class Quest implements Comparable<Quest> {
                     @Override
                     public void run() {
                         final QuesterPreCompleteQuestEvent preEvent 
-                                = new QuesterPreCompleteQuestEvent(q, Quest.this, true);
+                                = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
                         plugin.getServer().getPluginManager().callEvent(preEvent);
                         if (preEvent.isCancelled()) {
                             return;
@@ -545,19 +546,20 @@ public class Quest implements Comparable<Quest> {
                 });
             }
         }
-        q.hardQuit(this);
-        if (!q.completedQuests.contains(this)) {
-            q.completedQuests.add(this);
+        quester.hardQuit(this);
+        if (!quester.completedQuests.contains(this)) {
+            quester.completedQuests.add(this);
         }
-        for (final Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
+        for (final Map.Entry<Integer, Quest> entry : quester.timers.entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
-                q.timers.remove(entry.getKey());
+                quester.timers.remove(entry.getKey());
             }
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
-            final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA + finished, this, p);
+            final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA
+                    + finished, this, p);
             Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 
                 @Override
@@ -567,22 +569,23 @@ public class Quest implements Comparable<Quest> {
             }, 40);
         }
         if (pln.getCooldown() > -1) {
-            q.completedTimes.put(this, System.currentTimeMillis());
-            if (q.amountsCompleted.containsKey(this)) {
-                q.amountsCompleted.put(this, q.amountsCompleted.get(this) + 1);
+            quester.completedTimes.put(this, System.currentTimeMillis());
+            if (quester.amountsCompleted.containsKey(this)) {
+                quester.amountsCompleted.put(this, quester.amountsCompleted.get(this) + 1);
             } else {
-                q.amountsCompleted.put(this, 1);
+                quester.amountsCompleted.put(this, 1);
             }
         }
         
         // Issue rewards
+        Dependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
-        if (rews.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
-            plugin.getDependencies().getVaultEconomy().depositPlayer(player, rews.getMoney());
+        if (rews.getMoney() > 0 && depends.getVaultEconomy() != null) {
+            depends.getVaultEconomy().depositPlayer(player, rews.getMoney());
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getMoney() 
-                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural());
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded "
+                        + depends.getVaultEconomy().format(rews.getMoney()));
             }
         }
         if (player.isOnline()) {
@@ -592,7 +595,7 @@ public class Quest implements Comparable<Quest> {
                 } catch (final Exception e) {
                     plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                             + player.getName() + " upon completion of quest " + name);
-                    q.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+                    quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
                             + "Please contact an administrator.");
                 }
                 issuedReward = true;
@@ -604,7 +607,7 @@ public class Quest implements Comparable<Quest> {
         }
         for (final String s : rews.getCommands()) {
             String temp = s.replace("<player>", player.getName());
-            if (plugin.getDependencies().getPlaceholderApi() != null && player.isOnline()) {
+            if (depends.getPlaceholderApi() != null && player.isOnline()) {
                 temp = PlaceholderAPI.setPlaceholders((Player)player, temp);
             }
             final String command = temp;
@@ -625,16 +628,16 @@ public class Quest implements Comparable<Quest> {
             }
         }
         for (int i = 0; i < rews.getPermissions().size(); i++) {
-            if (plugin.getDependencies().getVaultPermission() != null) {
+            if (depends.getVaultPermission() != null) {
                 final String perm = rews.getPermissions().get(i);
                 String world = null;
                 if (i < rews.getPermissionWorlds().size()) {
                     world = rews.getPermissionWorlds().get(i);
                 }
                 if (world == null || world.equals("null")) {
-                    plugin.getDependencies().getVaultPermission().playerAdd(null, player, perm);
+                    depends.getVaultPermission().playerAdd(null, player, perm);
                 } else {
-                    plugin.getDependencies().getVaultPermission().playerAdd(world, player, perm);
+                    depends.getVaultPermission().playerAdd(world, player, perm);
                 }
                 if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was rewarded permission " + perm);
@@ -662,15 +665,16 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
-        if (rews.getPartiesExperience() > 0 && plugin.getDependencies().getPartiesApi() != null) {
-            final PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(player.getUniqueId());
+        if (rews.getPartiesExperience() > 0 && depends.getPartiesApi() != null) {
+            final PartyPlayer partyPlayer = depends.getPartiesApi().getPartyPlayer(player.getUniqueId());
             if (partyPlayer != null && partyPlayer.getPartyId() != null) {
-                final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
+                final Party party = depends.getPartiesApi().getParty(partyPlayer.getPartyId());
                 if (party != null) {
                     party.giveExperience(rews.getPartiesExperience());
                     issuedReward = true;
                     if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getPartiesExperience() + " party experience");
+                        plugin.getLogger().info(player.getUniqueId() + " was rewarded "
+                                + rews.getPartiesExperience() + " party experience");
                     }
                 }
             }
@@ -687,9 +691,8 @@ public class Quest implements Comparable<Quest> {
                 }
             }
             if (lb.getMoney() > 0) {
-                if (plugin.getDependencies().getVaultEconomy() != null) {
-                    plugin.getDependencies().getVaultEconomy()
-                            .depositPlayer(player, lb.getMoney());
+                if (depends.getVaultEconomy() != null) {
+                    depends.getVaultEconomy().depositPlayer(player, lb.getMoney());
                 }
             }
             if (lb.getItemList().isEmpty() == false) {
@@ -699,9 +702,9 @@ public class Quest implements Comparable<Quest> {
                         try {
                             InventoryUtil.addItem(player.getPlayer(), is);
                         } catch (final Exception e) {
-                            plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " + player.getName() 
-                                    + " upon completion of quest " + name);
-                            q.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+                            plugin.getLogger().severe("Unable to add PhatLoots item to inventory of "
+                                    + player.getName() + " upon completion of quest " + name);
+                            quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
                                     + "Please contact an administrator.");
                         }
                     }
@@ -728,7 +731,7 @@ public class Quest implements Comparable<Quest> {
             issuedReward = true;
         }
         if (rews.getQuestPoints() > 0) {
-            q.questPoints += rews.getQuestPoints();
+            quester.questPoints += rews.getQuestPoints();
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() + " "
                         + Lang.get("questPoints"));
@@ -747,8 +750,8 @@ public class Quest implements Comparable<Quest> {
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            q.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>", ChatColor.YELLOW + name
-                    + ChatColor.GOLD));
+            quester.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
+                    ChatColor.YELLOW + name + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " title " + "{\"text\":\"" + Lang.get(p, "quest") + " " + Lang.get(p, "complete") 
@@ -766,11 +769,11 @@ public class Quest implements Comparable<Quest> {
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(p, message);
                     }
-                    q.sendMessage("- " + message);
+                    quester.sendMessage("- " + message);
                 }
             } else {
                 if (rews.getQuestPoints() > 0) {
-                    q.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " " 
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " "
                             + Lang.get(p, "questPoints"));
                 }
                 for (final ItemStack i : rews.getItems()) {
@@ -786,7 +789,8 @@ public class Quest implements Comparable<Quest> {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
                                     text +=  ChatColor.GRAY + " " + Lang.get(p, "with") + ChatColor.DARK_PURPLE;
                                     for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
+                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":"
+                                                + e.getValue();
                                     }
                                 }
                             } catch (final Throwable tr) {
@@ -828,51 +832,51 @@ public class Quest implements Comparable<Quest> {
                                 i.getEnchantments());
                     } else {
                         for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                            text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()));
+                            text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                    e.getKey()));
                             text = text.replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue()));
                         }
-                        q.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
+                        quester.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
                     }
                 }
                 for (final ItemStack i : phatLootItems) {
                     if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
-                            q.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
+                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
+                                    + i.getAmount());
                         } else {
-                            q.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE 
-                                    + " " + Lang.get(p, "enchantedItem"));
+                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
+                                    + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
                         }
                     } else if (i.getDurability() != 0) {
                         if (i.getEnchantments().isEmpty()) {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() 
-                                    + ChatColor.GRAY + " x " + i.getAmount());
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
+                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                         } else {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() 
-                                    + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " 
-                                    + Lang.get(p, "enchantedItem"));
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
+                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount()
+                                    + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
                         }
                     } else {
                         if (i.getEnchantments().isEmpty()) {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " 
-                                    + i.getAmount());
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
+                                    + " x " + i.getAmount());
                         } else {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " 
-                                    + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
+                                    + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " "
+                                    + Lang.get(p, "enchantedItem"));
                         }
                     }
                 }
-                if (rews.getMoney() > 1) {
-                    q.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                            + plugin.getDependencies().getCurrency(true));
-                } else if (rews.getMoney() == 1) {
-                    q.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                            + plugin.getDependencies().getCurrency(false));
+                if (rews.getMoney() > 0 && depends.getVaultEconomy() != null) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN
+                            + depends.getVaultEconomy().format(rews.getMoney()));
                 }
                 if (rews.getExp() > 0 || phatLootExp > 0) {
                     final int tot = rews.getExp() + phatLootExp;
-                    q.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " 
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " "
                             + Lang.get(p, "experience"));
                 }
                 if (rews.getCommands().isEmpty() == false) {
@@ -881,11 +885,11 @@ public class Quest implements Comparable<Quest> {
                         if (rews.getCommandsOverrideDisplay().isEmpty() == false 
                                 && rews.getCommandsOverrideDisplay().size() > index) {
                             if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
-                                q.sendMessage("- " + ChatColor.DARK_GREEN 
+                                quester.sendMessage("- " + ChatColor.DARK_GREEN
                                         + rews.getCommandsOverrideDisplay().get(index));
                             }
                         } else {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                         }
                         index++;
                     }
@@ -894,10 +898,10 @@ public class Quest implements Comparable<Quest> {
                     int index = 0;
                     for (final String s : rews.getPermissions()) {
                         if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + s + " (" + rews.getPermissionWorlds().get(index)
-                                    + ")");
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s + " ("
+                                    + rews.getPermissionWorlds().get(index) + ")");
                         } else {
-                            q.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                             
                         }
                         index++;
@@ -905,25 +909,25 @@ public class Quest implements Comparable<Quest> {
                 }
                 if (rews.getMcmmoSkills().isEmpty() == false) {
                     for (final String s : rews.getMcmmoSkills()) {
-                        q.sendMessage("- " + ChatColor.DARK_GREEN 
+                        quester.sendMessage("- " + ChatColor.DARK_GREEN
                                 + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
                                 + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
                 if (rews.getHeroesClasses().isEmpty() == false) {
                     for (final String s : rews.getHeroesClasses()) {
-                        q.sendMessage("- " + ChatColor.AQUA 
+                        quester.sendMessage("- " + ChatColor.AQUA
                                 + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE 
                                 + s + " " + Lang.get(p, "experience"));
                     }
                 }
                 if (rews.getPartiesExperience() > 0) {
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getPartiesExperience() + ChatColor.DARK_PURPLE + " "
-                            + Lang.get(p, "partiesExperience"));
+                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getPartiesExperience() + ChatColor.DARK_PURPLE
+                            + " " + Lang.get(p, "partiesExperience"));
                 }
                 if (phatLootMessages.isEmpty() == false) {
                     for (final String s : phatLootMessages) {
-                        q.sendMessage("- " + s);
+                        quester.sendMessage("- " + s);
                     }
                 }
                 for (final String s : rews.getCustomRewards().keySet()) {
@@ -941,33 +945,34 @@ public class Quest implements Comparable<Quest> {
                             for (final String key : datamap.keySet()) {
                                 message = message.replace("%" + key + "%", datamap.get(key).toString());
                             }
-                            q.sendMessage("- " + ChatColor.GOLD + message);
+                            quester.sendMessage("- " + ChatColor.GOLD + message);
                         } else {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
                         found.giveReward(p, rews.getCustomRewards().get(s));
                     } else {
-                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \"" + name 
-                                + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
+                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
+                                + name + "\", but the Custom Reward \"" + s
+                                + "\" could not be found. Does it still exist?");
                     }
                 }
             }
         }
-        q.saveData();
+        quester.saveData();
         if (player.isOnline()) {
             player.getPlayer().updateInventory();
         }
-        q.updateJournal();
-        q.findCompassTarget();
+        quester.updateJournal();
+        quester.findCompassTarget();
         if (player.isOnline()) {
-            final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
+            final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(quester, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
         
         // Multiplayer
         if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
-            final List<Quester> mq = q.getMultiplayerQuesters(this);
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
                     completeQuest(qq, false);

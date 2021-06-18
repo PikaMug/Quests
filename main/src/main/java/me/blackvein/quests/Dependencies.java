@@ -171,8 +171,12 @@ public class Dependencies {
     
     public CitizensBooksAPI getCitizensBooksApi() {
         if (citizensBooks == null && isPluginAvailable("CitizensBooks")) {
-            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
-                    .getAPI();
+            try {
+                citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
+                        .getAPI();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
         return citizensBooks;
     }
@@ -198,12 +202,17 @@ public class Dependencies {
     
     public boolean isPluginAvailable(final String pluginName) {
         if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
-            if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
-                plugin.getLogger().warning(pluginName 
-                        + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
-            } else {
-                return true;
+            try {
+                if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
+                    plugin.getLogger().warning(pluginName
+                            + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
+                } else {
+                    return true;
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
+
         }
         return false;
     }
@@ -244,8 +253,12 @@ public class Dependencies {
         }
         return (permission != null);
     }
-    
+
+    /**
+     * @deprecated Do not use. Will be removed in a future version.
+     **/
     public String getCurrency(final boolean plural) {
+        // TODO remove "money" from strings.yml
         if (getVaultEconomy() == null) {
             return Lang.get("money");
         }
