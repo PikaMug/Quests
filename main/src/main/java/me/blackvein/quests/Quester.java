@@ -535,7 +535,7 @@ public class Quester implements Comparable<Quester> {
                     }
                     
                     // If quest is not active, or new period of activity should override player cooldown, inform user
-                    if (!active | (q.getPlanner().getOverride() && completedEnd > 0L
+                    if (!active || (q.getPlanner().getOverride() && completedEnd > 0L
                             && currentTime < (completedEnd /*+ repeat*/))) {
                         if (getPlayer().isOnline()) {
                             final String early = Lang.get("plnTooEarly")
