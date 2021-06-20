@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.5</version>
     </parent>
     <artifactId>quests-main</artifactId>
     
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>398781f85e</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

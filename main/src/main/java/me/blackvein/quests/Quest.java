@@ -828,8 +828,15 @@ public class Quest implements Comparable<Quest> {
                         }
                     }
                     if (plugin.getSettings().canTranslateNames() && text.contains("<item>")) {
-                        plugin.getLocaleManager().sendMessage(p, text, i.getType(), i.getDurability(), 
-                                i.getEnchantments());
+                        if (!plugin.getLocaleManager().sendMessage(p, text, i.getType(), i.getDurability(),
+                                i.getEnchantments())) {
+                            for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                                text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                        e.getKey()));
+                                text = text.replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue()));
+                            }
+                            quester.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
+                        }
                     } else {
                         for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
                             text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
