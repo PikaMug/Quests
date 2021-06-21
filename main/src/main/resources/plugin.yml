@@ -124,6 +124,9 @@ permissions:
   quests.admin.drop:
     description: Ability to drop the Quests Journal
     default: op
+  quests.admin.trial:
+    description: Limit access to sensitive editor prompts
+    default: false
   quests.editor.*:
     description: Access all Quests Editor functionality
     default: op

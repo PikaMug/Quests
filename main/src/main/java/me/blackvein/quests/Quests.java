@@ -56,6 +56,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
@@ -4142,6 +4143,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if conversable is player in trial mode
+     *
+     * @param conversable the editor user to be checked
+     * @return {@code true} if user is a Player with quests.admin.trial permission
+     */
+    public boolean hasLimitedAccess(final Conversable conversable) {
+        if (!(conversable instanceof Player)) {
+            return false;
+        }
+        return ((Player)conversable).hasPermission("quests.admin.trial");
     }
     
     /**

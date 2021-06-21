@@ -205,7 +205,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 6:
             return new ActionMobListPrompt(context);
         case 7:
-            return new ActionDenizenPrompt(context);
+            if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                return new ActionDenizenPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                return new ActionMainPrompt(context);
+            }
         case 8:
             final String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
             if (s.equalsIgnoreCase(Lang.get("yesWord"))) {

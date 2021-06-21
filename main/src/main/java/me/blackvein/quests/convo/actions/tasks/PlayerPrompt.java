@@ -249,7 +249,12 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return new PlayerPrompt(context);
             }
         case 9:
-            return new PlayerCommandsPrompt(context);
+            if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                return new PlayerCommandsPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                return new PlayerPrompt(context);
+            }
         case 10:
             return new ActionMainPrompt(context);
         default:

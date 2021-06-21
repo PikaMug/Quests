@@ -411,9 +411,19 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 4:
             return new RewardsExperiencePrompt(context);
         case 5:
-            return new RewardsCommandsPrompt(context);
+            if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                return new RewardsCommandsPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                return new RewardsPrompt(context);
+            }
         case 6:
-            return new RewardsPermissionsListPrompt(context);
+            if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                return new RewardsPermissionsListPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                return new RewardsPrompt(context);
+            }
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 return new RewardsMcMMOListPrompt(context);
