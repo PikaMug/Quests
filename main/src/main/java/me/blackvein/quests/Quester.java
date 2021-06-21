@@ -999,16 +999,18 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
+        int craftIndex = 0;
         for (final ItemStack is : stage.itemsToCraft) {
             int crafted = 0;
-            if (data.itemsCrafted.containsKey(is)) {
-                crafted = data.itemsCrafted.get(is);
+            if (data.itemsConsumed.size() > craftIndex) {
+                crafted = data.itemsConsumed.get(craftIndex).getAmount();
             }
-            final int amt = is.getAmount();
-            final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            final int toCraft = is.getAmount();
+            craftIndex++;
+            final ChatColor color = crafted < toCraft ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "craftItem");
             if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
+                message = message.replace("<count>", "" + color + crafted + "/" + toCraft);
             } else {
                 // Legacy
                 message += color + ": " + crafted + "/" + is.getAmount();
@@ -1018,16 +1020,18 @@ public class Quester implements Comparable<Quester> {
             }
             objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
+        int smeltIndex = 0;
         for (final ItemStack is : stage.itemsToSmelt) {
             int smelted = 0;
-            if (data.itemsSmelted.containsKey(is)) {
-                smelted = data.itemsSmelted.get(is);
+            if (data.itemsConsumed.size() > smeltIndex) {
+                smelted = data.itemsConsumed.get(smeltIndex).getAmount();
             }
-            final int amt = is.getAmount();
-            final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            final int toSmelt = is.getAmount();
+            smeltIndex++;
+            final ChatColor color = smelted < toSmelt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "smeltItem");
             if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
+                message = message.replace("<count>", "" + color + smelted + "/" + toSmelt);
             } else {
                 // Legacy
                 message += color + ": " + smelted + "/" + is.getAmount();
@@ -1037,16 +1041,18 @@ public class Quester implements Comparable<Quester> {
             }
             objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
+        int enchantIndex = 0;
         for (final ItemStack is : stage.itemsToEnchant) {
             int enchanted = 0;
-            if (data.itemsEnchanted.containsKey(is)) {
-                enchanted = data.itemsEnchanted.get(is);
+            if (data.itemsConsumed.size() > enchantIndex) {
+                enchanted = data.itemsConsumed.get(enchantIndex).getAmount();
             }
-            final int amt = is.getAmount();
-            final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            final int toEnchant = is.getAmount();
+            enchantIndex++;
+            final ChatColor color = enchanted < toEnchant ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "enchItem");
             if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
+                message = message.replace("<count>", "" + color + enchanted + "/" + toEnchant);
             } else {
                 // Legacy
                 message += color + ": " + enchanted + "/" + is.getAmount();
@@ -1067,16 +1073,18 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
+        int brewIndex = 0;
         for (final ItemStack is : stage.itemsToBrew) {
             int brewed = 0;
-            if (data.itemsBrewed.containsKey(is)) {
-                brewed = data.itemsBrewed.get(is);
+            if (data.itemsConsumed.size() > brewIndex) {
+                brewed = data.itemsConsumed.get(brewIndex).getAmount();
             }
-            final int amt = is.getAmount();
-            final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            final int toBrew = is.getAmount();
+            brewIndex++;
+            final ChatColor color = brewed < toBrew ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "brewItem");
             if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
+                message = message.replace("<count>", "" + color + brewed + "/" + toBrew);
             } else {
                 // Legacy
                 message += color + ": " + brewed + "/" + is.getAmount();
@@ -1107,15 +1115,15 @@ public class Quester implements Comparable<Quester> {
             }
             objectives.add(message.replace("<item>", ItemUtil.getName(is)));
         }
-        int index = 0;
+        int deliverIndex = 0;
         for (final ItemStack is : stage.itemsToDeliver) {
             int delivered = 0;
-            if (data.itemsDelivered.size() > index) {
-                delivered = data.itemsDelivered.get(index).getAmount();
+            if (data.itemsDelivered.size() > deliverIndex) {
+                delivered = data.itemsDelivered.get(deliverIndex).getAmount();
             }
             final int toDeliver = is.getAmount();
-            final Integer npc = stage.itemDeliveryTargets.get(index);
-            index++;
+            final Integer npc = stage.itemDeliveryTargets.get(deliverIndex);
+            deliverIndex++;
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
             if (message.contains("<count>")) {
@@ -1869,58 +1877,57 @@ public class Quester implements Comparable<Quester> {
      * @param i The item being crafted
      */
     public void craftItem(final Quest quest, final ItemStack i) {
-        ItemStack found = null;
-        for (final ItemStack is : getQuestData(quest).itemsCrafted.keySet()) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsCrafted) {
+            currentIndex++;
             if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
+                matches.add(currentIndex);
             }
         }
-        if (found == null) {
+        if (matches.isEmpty()) {
             return;
         }
-        final int amount = getQuestData(quest).itemsCrafted.get(found);
-        if (getCurrentStage(quest).itemsToCraft.indexOf(found) < 0) {
-            plugin.getLogger().severe("Index out of bounds while crafting " + found.getType() + " x " 
-                    + found.getAmount() + " for quest " 
-                    + quest.getName() + " with " + i.getType() + " x " + i.getAmount() 
-                    + " already crafted. List amount reports value of " + amount
-                    + ". Please report this error on Github!");
-            sendMessage(ChatColor.RED + "Quests had a problem crafting your item, please contact an administrator!");
-            return;
-        }
-        final int req = getCurrentStage(quest).itemsToCraft.get(getCurrentStage(quest).itemsToCraft.indexOf(found))
-                .getAmount();
-        
-        final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, amount, req));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        final int newAmount = i.getAmount() + amount;
-        if (amount < req) {
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsCrafted);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toCraft = getCurrentStage(quest).itemsToCraft.get(match).getAmount();
+
+            final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
+                    new Objective(type, amount, toCraft));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+
+            final int newAmount = i.getAmount() + amount;
             final Material m = i.getType();
-            if (newAmount >= req) {
-                getQuestData(quest).itemsCrafted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null,
-                        null, null);
-                
-                // Multiplayer
-                final ItemStack finalFound = found;
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).itemsCrafted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null,
-                            null, null, null, null);
-                    return null;
-                });
-            } else {
-                getQuestData(quest).itemsCrafted.put(found, newAmount);
+            if (amount < toCraft) {
+                if (newAmount >= toCraft) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toCraft);
+                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                }
+                return;
             }
+
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
+                    new Objective(type, newAmount, toCraft));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
-        final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, newAmount, req));
-        plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
     /**
@@ -1930,57 +1937,57 @@ public class Quester implements Comparable<Quester> {
      * @param i The item being smelted
      */
     public void smeltItem(final Quest quest, final ItemStack i) {
-        ItemStack found = null;
-        for (final ItemStack is : getQuestData(quest).itemsSmelted.keySet()) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsSmelted) {
+            currentIndex++;
             if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
+                matches.add(currentIndex);
             }
         }
-        if (found == null) {
+        if (matches.isEmpty()) {
             return;
         }
-        final int amount = getQuestData(quest).itemsSmelted.get(found);
-        if (getCurrentStage(quest).itemsToSmelt.indexOf(found) < 0) {
-            plugin.getLogger().severe("Index out of bounds while smelting " + found.getType() + " x " 
-                    + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
-                    + i.getAmount() + " already smelted. List amount reports value of " + amount 
-                    + ". Please report this error on Github!");
-            sendMessage(ChatColor.RED + "Quests had a problem smelting your item, please contact an administrator!");
-            return;
-        }
-        final int req = getCurrentStage(quest).itemsToSmelt.get(getCurrentStage(quest).itemsToSmelt.indexOf(found))
-                .getAmount();
-        
-        final ObjectiveType type = ObjectiveType.SMELT_ITEM;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, amount, req));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        final int newAmount = i.getAmount() + amount;
-        if (amount < req) {
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsSmelted);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toSmelt = getCurrentStage(quest).itemsToSmelt.get(match).getAmount();
+
+            final ObjectiveType type = ObjectiveType.SMELT_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
+                    new Objective(type, amount, toSmelt));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+
+            final int newAmount = i.getAmount() + amount;
             final Material m = i.getType();
-            if (newAmount >= req) {
-                getQuestData(quest).itemsSmelted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null,
-                        null, null);
-                
-                // Multiplayer
-                final ItemStack finalFound = found;
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).itemsSmelted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null,
-                            null, null, null, null);
-                    return null;
-                });
-            } else {
-                getQuestData(quest).itemsSmelted.put(found, newAmount);
+            if (amount < toSmelt) {
+                if (newAmount >= toSmelt) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toSmelt);
+                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                }
+                return;
             }
+
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
+                    new Objective(type, newAmount, toSmelt));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
-        final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, newAmount, req));
-        plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
     /**
@@ -1990,64 +1997,63 @@ public class Quester implements Comparable<Quester> {
      * @param i The item being enchanted
      */
     public void enchantItem(final Quest quest, final ItemStack i) {
-        ItemStack found = null;
-        for (final ItemStack is : getQuestData(quest).itemsEnchanted.keySet()) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsEnchanted) {
+            currentIndex++;
             if (!is.getEnchantments().isEmpty()) {
                 if (ItemUtil.compareItems(i, is, true) == 0) {
-                    found = is;
-                    break;
+                    matches.add(currentIndex);
                 }
             } else {
                 if (ItemUtil.compareItems(i, is, true) == -4) {
-                    found = is;
-                    break;
+                    matches.add(currentIndex);
                 }
             }
         }
-        if (found == null) {
+        if (matches.isEmpty()) {
             return;
         }
-        final int amount = getQuestData(quest).itemsEnchanted.get(found);
-        if (getCurrentStage(quest).itemsToEnchant.indexOf(found) < 0) {
-            plugin.getLogger().severe("Index out of bounds while enchanting " + found.getType() + " x " 
-                    + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
-                    + i.getAmount() + " already enchanted. List amount reports value of " + amount 
-                    + ". Please report this error on Github!");
-            sendMessage(ChatColor.RED + "Quests had a problem enchanting your item, please contact an administrator!");
-            return;
-        }
-        final int req = getCurrentStage(quest).itemsToEnchant.get(getCurrentStage(quest).itemsToEnchant
-                .indexOf(found)).getAmount();
-        
-        final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, amount, req));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        final int newAmount = i.getAmount() + amount;
-        if (amount < req) {
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsEnchanted);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toEnchant = getCurrentStage(quest).itemsToEnchant.get(match).getAmount();
+
+            final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
+                    new Objective(type, amount, toEnchant));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+
+            final int newAmount = i.getAmount() + amount;
             final Material m = i.getType();
-            if (newAmount >= req) {
-                getQuestData(quest).itemsEnchanted.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null,
-                        null, null);
-                
-                // Multiplayer
-                final ItemStack finalFound = found;
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).itemsEnchanted.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null,
-                            null, null, null, null);
-                    return null;
-                });
-            } else {
-                getQuestData(quest).itemsEnchanted.put(found, newAmount);
+            if (amount < toEnchant) {
+                if (newAmount >= toEnchant) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toEnchant);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                }
+                return;
             }
+
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
+                    new Objective(type, i.getAmount() + amount, toEnchant));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
-        final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, i.getAmount() + amount, req));
-        plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
     /**
@@ -2057,57 +2063,57 @@ public class Quester implements Comparable<Quester> {
      * @param i The item being brewed
      */
     public void brewItem(final Quest quest, final ItemStack i) {
-        ItemStack found = null;
-        for (final ItemStack is : getQuestData(quest).itemsBrewed.keySet()) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        for (final ItemStack is : getQuestData(quest).itemsBrewed) {
+            currentIndex++;
             if (ItemUtil.compareItems(i, is, true) == 0) {
-                found = is;
-                break;
+                matches.add(currentIndex);
             }
         }
-        if (found == null) {
+        if (matches.isEmpty()) {
             return;
         }
-        final int amount = getQuestData(quest).itemsBrewed.get(found);
-        if (getCurrentStage(quest).itemsToBrew.indexOf(found) < 0) {
-            plugin.getLogger().severe("Index out of bounds while brewing " + found.getType() + " x " 
-                    + found.getAmount() + " for quest " + quest.getName() + " with " + i.getType() + " x " 
-                    + i.getAmount() + " already smelted. List amount reports value of " +  amount 
-                    + ". Please report this error on Github!");
-            sendMessage(ChatColor.RED + "Quests had a problem brewing your item, please contact an administrator!");
-            return;
-        }
-        final int req = getCurrentStage(quest).itemsToBrew.get(getCurrentStage(quest).itemsToBrew.indexOf(found))
-                .getAmount();
-        
-        final ObjectiveType type = ObjectiveType.BREW_ITEM;
-        final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                new Objective(type, amount, req));
-        plugin.getServer().getPluginManager().callEvent(preEvent);
-        
-        final int newAmount = i.getAmount() + amount;
-        if (amount < req) {
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsBrewed);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toBrew = getCurrentStage(quest).itemsToBrew.get(match).getAmount();
+
+            final ObjectiveType type = ObjectiveType.BREW_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
+                    new Objective(type, amount, toBrew));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+
+            final int newAmount = i.getAmount() + amount;
             final Material m = i.getType();
-            if (newAmount >= req) {
-                getQuestData(quest).itemsBrewed.put(found, req);
-                finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null, null,
-                        null, null);
-                
-                // Multiplayer
-                final ItemStack finalFound = found;
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    q.getQuestData(quest).itemsBrewed.put(finalFound, req);
-                    q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), finalFound), null, null, null,
-                            null, null, null, null);
-                    return null;
-                });
-            } else {
-                getQuestData(quest).itemsBrewed.put(found, newAmount);
+            if (amount < toBrew) {
+                if (newAmount >= toBrew) {
+                    final ItemStack newStack = found;
+                    found.setAmount(toBrew);
+                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    final ItemStack newStack = found;
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                }
+                return;
             }
+
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
+                    new Objective(type, newAmount, toBrew));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
         }
-        
-        final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                new Objective(type, newAmount, req));
-        plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
     /**
@@ -3275,23 +3281,35 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (quest.getStage(stage).itemsToCraft.isEmpty() == false) {
-            for (final ItemStack is : quest.getStage(stage).itemsToCraft) {
-                data.itemsCrafted.put(is, 0);
+            for (final ItemStack i : quest.getStage(stage).itemsToCraft) {
+                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                temp.addUnsafeEnchantments(i.getEnchantments());
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsCrafted.add(temp);
             }
         }
         if (quest.getStage(stage).itemsToSmelt.isEmpty() == false) {
-            for (final ItemStack is : quest.getStage(stage).itemsToSmelt) {
-                data.itemsSmelted.put(is, 0);
+            for (final ItemStack i : quest.getStage(stage).itemsToSmelt) {
+                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                temp.addUnsafeEnchantments(i.getEnchantments());
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsSmelted.add(temp);
             }
         }
         if (quest.getStage(stage).itemsToEnchant.isEmpty() == false) {
-            for (final ItemStack is : quest.getStage(stage).itemsToEnchant) {
-                data.itemsEnchanted.put(is, 0);
+            for (final ItemStack i : quest.getStage(stage).itemsToEnchant) {
+                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                temp.addUnsafeEnchantments(i.getEnchantments());
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsEnchanted.add(temp);
             }
         }
         if (quest.getStage(stage).itemsToBrew.isEmpty() == false) {
-            for (final ItemStack is : quest.getStage(stage).itemsToBrew) {
-                data.itemsBrewed.put(is, 0);
+            for (final ItemStack i : quest.getStage(stage).itemsToBrew) {
+                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
+                temp.addUnsafeEnchantments(i.getEnchantments());
+                temp.setItemMeta(i.getItemMeta());
+                data.itemsBrewed.add(temp);
             }
         }
         if (quest.getStage(stage).itemsToConsume.isEmpty() == false) {
@@ -3516,29 +3534,29 @@ public class Quester implements Comparable<Quester> {
                 }
                 if (questData.itemsCrafted.isEmpty() == false) {
                     final LinkedList<Integer> craftAmounts = new LinkedList<Integer>();
-                    for (final Entry<ItemStack, Integer> e : questData.itemsCrafted.entrySet()) {
-                        craftAmounts.add(e.getValue());
+                    for (final ItemStack m : questData.itemsCrafted) {
+                        craftAmounts.add(m.getAmount());
                     }
                     questSec.set("item-craft-amounts", craftAmounts);
                 }
                 if (questData.itemsSmelted.isEmpty() == false) {
                     final LinkedList<Integer> smeltAmounts = new LinkedList<Integer>();
-                    for (final Entry<ItemStack, Integer> e : questData.itemsSmelted.entrySet()) {
-                        smeltAmounts.add(e.getValue());
+                    for (final ItemStack m : questData.itemsSmelted) {
+                        smeltAmounts.add(m.getAmount());
                     }
                     questSec.set("item-smelt-amounts", smeltAmounts);
                 }
                 if (questData.itemsEnchanted.isEmpty() == false) {
                     final LinkedList<Integer> enchantAmounts = new LinkedList<Integer>();
-                    for (final Entry<ItemStack, Integer> e : questData.itemsEnchanted.entrySet()) {
-                        enchantAmounts.add(e.getValue());
+                    for (final ItemStack m : questData.itemsEnchanted) {
+                        enchantAmounts.add(m.getAmount());
                     }
                     questSec.set("item-enchant-amounts", enchantAmounts);
                 }
                 if (questData.itemsBrewed.isEmpty() == false) {
                     final LinkedList<Integer> brewAmounts = new LinkedList<Integer>();
-                    for (final Entry<ItemStack, Integer> e : questData.itemsBrewed.entrySet()) {
-                        brewAmounts.add(e.getValue());
+                    for (final ItemStack m : questData.itemsBrewed) {
+                        brewAmounts.add(m.getAmount());
                     }
                     questSec.set("item-brew-amounts", brewAmounts);
                 }

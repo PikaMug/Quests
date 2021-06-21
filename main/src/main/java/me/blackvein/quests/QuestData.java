@@ -255,21 +255,29 @@ public class QuestData {
         }
     };
     
-    public LinkedHashMap<ItemStack, Integer> itemsCrafted = new LinkedHashMap<ItemStack, Integer>() {
+    public LinkedList<ItemStack> itemsCrafted = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 2774356294049526105L;
 
         @Override
-        public Integer put(final ItemStack key, final Integer val) {
-            final Integer data = super.put(key, val);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -283,28 +291,37 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
+            return i;
         }
     };
     
-    public LinkedHashMap<ItemStack, Integer> itemsSmelted = new LinkedHashMap<ItemStack, Integer>() {
+    public LinkedList<ItemStack> itemsSmelted = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 2774356235274526106L;
 
         @Override
-        public Integer put(final ItemStack key, final Integer val) {
-            final Integer data = super.put(key, val);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -318,28 +335,37 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
+            return i;
         }
     };
     
-    public LinkedHashMap<ItemStack, Integer> itemsEnchanted = new LinkedHashMap<ItemStack, Integer>() {
+    public LinkedList<ItemStack> itemsEnchanted = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 416869352279205852L;
 
         @Override
-        public Integer put(final ItemStack key, final Integer val) {
-            final Integer data = super.put(key, val);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -353,28 +379,37 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
+            return i;
         }
     };
     
-    public LinkedHashMap<ItemStack, Integer> itemsBrewed = new LinkedHashMap<ItemStack, Integer>() {
+    public LinkedList<ItemStack> itemsBrewed = new LinkedList<ItemStack>() {
 
         private static final long serialVersionUID = 2774356235274526107L;
 
         @Override
-        public Integer put(final ItemStack key, final Integer val) {
-            final Integer data = super.put(key, val);
+        public ItemStack set(final int index, final ItemStack key) {
+            final ItemStack data = super.set(index, key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
+        public boolean add(final ItemStack key) {
+            final boolean data = super.add(key);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return data;
+        }
+
+        @Override
+        public boolean remove(final Object key) {
+            final boolean i = super.remove(key);
             if (doJournalUpdate)
                 quester.updateJournal();
             return i;
@@ -388,10 +423,11 @@ public class QuestData {
         }
 
         @Override
-        public void putAll(final Map<? extends ItemStack, ? extends Integer> m) {
-            super.putAll(m);
+        public boolean addAll(final Collection<? extends ItemStack> m) {
+            final boolean i = super.addAll(m);
             if (doJournalUpdate)
                 quester.updateJournal();
+            return i;
         }
     };
     

@@ -348,7 +348,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Set every Action loaded in memory
      * 
-     * @deprecated Use {@link #setLoadedActions()}
+     * @deprecated Use {@link #setLoadedActions(Collection)}
      */
     @Deprecated
     public void setActions(final LinkedList<Action> actions) {
@@ -386,7 +386,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     /**
      * Set every Condition loaded in memory
      * 
-     * @deprecated Use {@link #setLoadedConditions()}
+     * @deprecated Use {@link #setLoadedConditions(Collection)}
      */
     @Deprecated
     public void setConditions(final LinkedList<Condition> conditions) {
@@ -1091,12 +1091,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
         }
+        int craftIndex = 0;
         for (final ItemStack is : stage.itemsToCraft) {
             int crafted = 0;
-            if (data.itemsCrafted.containsKey(is)) {
-                crafted = data.itemsCrafted.get(is);
+            if (data.itemsCrafted.size() > craftIndex) {
+                crafted = data.itemsCrafted.get(craftIndex).getAmount();
             }
             final int amt = is.getAmount();
+            craftIndex++;
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + Lang.get(quester.getPlayer(), "craftItem");
             if (message.contains("<count>")) {
@@ -1115,12 +1117,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
+        int smeltIndex = 0;
         for (final ItemStack is : stage.itemsToSmelt) {
             int smelted = 0;
-            if (data.itemsSmelted.containsKey(is)) {
-                smelted = data.itemsSmelted.get(is);
+            if (data.itemsSmelted.size() > smeltIndex) {
+                smelted = data.itemsSmelted.get(smeltIndex).getAmount();
             }
             final int amt = is.getAmount();
+            smeltIndex++;
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + Lang.get(quester.getPlayer(), "smeltItem");
             if (message.contains("<count>")) {
@@ -1139,12 +1143,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 quester.sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         }
+        int enchantIndex = 0;
         for (final ItemStack is : stage.itemsToEnchant) {
             int enchanted = 0;
-            if (data.itemsEnchanted.containsKey(is)) {
-                enchanted = data.itemsEnchanted.get(is);
+            if (data.itemsEnchanted.size() > enchantIndex) {
+                enchanted = data.itemsEnchanted.get(enchantIndex).getAmount();
             }
             final int amt = is.getAmount();
+            enchantIndex++;
             final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + Lang.get(quester.getPlayer(), "enchItem");
             if (message.contains("<count>")) {
@@ -1180,12 +1186,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
         }
+        int brewIndex = 0;
         for (final ItemStack is : stage.itemsToBrew) {
             int brewed = 0;
-            if (data.itemsBrewed.containsKey(is)) {
-                brewed = data.itemsBrewed.get(is);
+            if (data.itemsBrewed.size() > brewIndex) {
+                brewed = data.itemsBrewed.get(brewIndex).getAmount();
             }
             final int amt = is.getAmount();
+            brewIndex++;
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + Lang.get(quester.getPlayer(), "brewItem");
             if (message.contains("<count>")) {

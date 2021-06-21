@@ -277,48 +277,57 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("item-craft-amounts")) {
                     final List<Integer> craftAmounts = questSec.getIntegerList("item-craft-amounts");
-                    for (int i = 0; i < craftAmounts.size(); i++) {
-                        if (i < quester.getCurrentStage(quest).getItemsToCraft().size()) {
-                            quester.getQuestData(quest).itemsCrafted.put(quester.getCurrentStage(quest)
-                                    .getItemsToCraft().get(i), craftAmounts.get(i));
+                    int index = 0;
+                    for (final int amt : craftAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToCraft().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).itemsCrafted.size() > 0) {
+                            quester.getQuestData(quest).itemsCrafted.set(index, temp);
                         }
+                        index++;
                     }
                 }
                 if (questSec.contains("item-smelt-amounts")) {
                     final List<Integer> smeltAmounts = questSec.getIntegerList("item-smelt-amounts");
-                    for (int i = 0; i < smeltAmounts.size(); i++) {
-                        if (i < quester.getCurrentStage(quest).getItemsToSmelt().size()) {
-                            quester.getQuestData(quest).itemsSmelted.put(quester.getCurrentStage(quest)
-                                    .getItemsToSmelt().get(i), smeltAmounts.get(i));
+                    int index = 0;
+                    for (final int amt : smeltAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToSmelt().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).itemsSmelted.size() > 0) {
+                            quester.getQuestData(quest).itemsSmelted.set(index, temp);
                         }
+                        index++;
                     }
                 }
                 if (questSec.contains("item-enchant-amounts")) {
                     final List<Integer> enchantAmounts = questSec.getIntegerList("item-enchant-amounts");
-                    for (int i = 0; i < enchantAmounts.size(); i++) {
-                        if (i < quester.getCurrentStage(quest).getItemsToEnchant().size()) {
-                            quester.getQuestData(quest).itemsEnchanted.put(quester.getCurrentStage(quest)
-                                    .getItemsToEnchant().get(i), enchantAmounts.get(i));
+                    int index = 0;
+                    for (final int amt : enchantAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToEnchant().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).itemsEnchanted.size() > 0) {
+                            quester.getQuestData(quest).itemsEnchanted.set(index, temp);
                         }
+                        index++;
                     }
                 }
                 if (questSec.contains("item-brew-amounts")) {
                     final List<Integer> brewAmounts = questSec.getIntegerList("item-brew-amounts");
-                    for (int i = 0; i < brewAmounts.size(); i++) {
-                        if (i < quester.getCurrentStage(quest).getItemsToBrew().size()) {
-                            quester.getQuestData(quest).itemsBrewed.put(quester.getCurrentStage(quest)
-                                    .getItemsToBrew().get(i), brewAmounts.get(i));
+                    int index = 0;
+                    for (final int amt : brewAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getItemsToBrew().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).itemsBrewed.size() > 0) {
+                            quester.getQuestData(quest).itemsBrewed.set(index, temp);
                         }
+                        index++;
                     }
                 }
                 if (questSec.contains("item-consume-amounts")) {
-                    /*final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
-                    for (int i = 0; i < consumeAmounts.size(); i++) {
-                        if (i < quester.getCurrentStage(quest).getItemsToConsume().size()) {
-                            quester.getQuestData(quest).itemsConsumed.set(i, quester.getCurrentStage(quest)
-                                    .getItemsToConsume().get(i).clone());
-                        }
-                    }*/
                     final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
                     int index = 0;
                     for (final int amt : consumeAmounts) {
