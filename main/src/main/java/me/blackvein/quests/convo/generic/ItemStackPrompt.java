@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.blackvein.quests.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -462,6 +463,15 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidName"));
                     return new ItemNamePrompt(context);
                 } else {
+                    if (context.getPlugin() instanceof Quests) {
+                        final Quests plugin = (Quests)context.getPlugin();
+                        if (plugin.hasLimitedAccess(context.getForWhom())) {
+                            if (plugin.getServer().getRecipesFor(new ItemStack(mat)).isEmpty()) {
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                                return new ItemStackPrompt(context, oldPrompt);
+                            }
+                        }
+                    }
                     context.setSessionData("tempName", mat.name());
                     context.setSessionData("tempAmount", 1);
                     return new ItemStackPrompt(context, oldPrompt);
