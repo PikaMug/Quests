@@ -12,12 +12,11 @@
 
 package me.blackvein.quests;
 
-import java.io.File;
-import java.io.IOException;
-
+import me.blackvein.quests.util.Lang;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import me.blackvein.quests.util.Lang;
+import java.io.File;
+import java.io.IOException;
 
 public class Settings {
     
@@ -39,6 +38,7 @@ public class Settings {
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
     private int strictPlayerMovement = 0;
+    private boolean trialSave = true;
     private int topLimit = 150;
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
@@ -149,6 +149,12 @@ public class Settings {
     public void setStrictPlayerMovement(final int strictPlayerMovement) {
         this.strictPlayerMovement = strictPlayerMovement;
     }
+    public boolean canTrialSave() {
+        return trialSave;
+    }
+    public void setTrialSave(final boolean trialSave) {
+        this.trialSave = trialSave;
+    }
     public int getTopLimit() {
         return topLimit;
     }
@@ -193,6 +199,7 @@ public class Settings {
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
         strictPlayerMovement = config.getInt("strict-player-movement", 0);
+        trialSave = config.getBoolean("trial-save", true);
         topLimit = config.getInt("top-limit", 150);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);

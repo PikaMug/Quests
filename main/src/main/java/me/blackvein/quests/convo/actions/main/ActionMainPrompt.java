@@ -12,20 +12,6 @@
 
 package me.blackvein.quests.convo.actions.main;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quests;
@@ -45,6 +31,19 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
@@ -1032,6 +1031,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                    return new ActionMainPrompt(context);
+                }
                 plugin.getActionFactory().saveAction(context);
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {

@@ -32,6 +32,7 @@ storage-data:
     connection-timeout: 5000
 storage-method:
   player-data: yaml
+trial-save: true
 top-limit: 150
 translate-names: true
 translate-subcommands: false

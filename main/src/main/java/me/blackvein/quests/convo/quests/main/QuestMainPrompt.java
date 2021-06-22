@@ -12,28 +12,7 @@
 
 package me.blackvein.quests.convo.quests.main;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import com.sk89q.worldguard.protection.managers.RegionManager;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -51,6 +30,25 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
@@ -815,6 +813,10 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                    return new QuestMainPrompt(context);
+                }
                 if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNeedAskMessage"));
                     return new QuestMainPrompt(context);

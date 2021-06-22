@@ -12,14 +12,6 @@
 
 package me.blackvein.quests.convo.conditions.main;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
@@ -33,6 +25,13 @@ import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNume
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     
@@ -527,6 +526,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
+                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                    return new ConditionMainPrompt(context);
+                }
                 plugin.getConditionFactory().saveCondition(context);
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
