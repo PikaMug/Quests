@@ -12,26 +12,6 @@
 
 package me.blackvein.quests;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
@@ -40,7 +20,6 @@ import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
-
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
 import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
@@ -56,6 +35,25 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Quest implements Comparable<Quest> {
 
@@ -288,7 +286,7 @@ public class Quest implements Comparable<Quest> {
      * 
      * @param quester The online quester to have their compass updated
      * @param stage The stage to process for targets
-     * @return true if successful
+     * @return true if an attempt was made successfully
      */
     public boolean updateCompass(final Quester quester, final Stage stage) {
         if (quester == null) {
@@ -303,112 +301,125 @@ public class Quest implements Comparable<Quest> {
         if (!quester.getPlayer().hasPermission("quests.compass")) {
             return false;
         }
-        Location targetLocation = null;
-        if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
-        } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
-        } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-            targetLocation = stage.locationsToReach.getFirst();
-        } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
-                    .getFirst());
-            targetLocation = npc.getStoredLocation();
-        } else if (stage.playersToKill != null && stage.playersToKill > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            for (final Player p : source.getWorld().getPlayers()) {
-                if (p.getUniqueId().equals(quester.getUUID())) {
-                    continue;
+        final Quest quest = this;
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                Location targetLocation = null;
+                if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
+                    targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
+                } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
+                    targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
+                } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
+                    targetLocation = stage.locationsToReach.getFirst();
+                } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
+                    final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
+                            .getFirst());
+                    targetLocation = npc.getStoredLocation();
+                } else if (stage.playersToKill != null && stage.playersToKill > 0) {
+                    final Location source = quester.getPlayer().getLocation();
+                    Location nearest = null;
+                    double old_distance = 30000000;
+                    if (source.getWorld() == null) {
+                        return;
+                    }
+                    for (final Player p : source.getWorld().getPlayers()) {
+                        if (p.getUniqueId().equals(quester.getUUID())) {
+                            continue;
+                        }
+                        final double new_distance = p.getLocation().distanceSquared(source);
+                        if (new_distance < old_distance) {
+                            nearest = p.getLocation();
+                            old_distance = new_distance;
+                        }
+                    }
+                    if (nearest != null) {
+                        targetLocation = nearest;
+                    }
+                } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
+                    final Location source = quester.getPlayer().getLocation();
+                    Location nearest = null;
+                    double old_distance = 30000000;
+                    final EntityType et = stage.mobsToKill.getFirst();
+                    if (source.getWorld() == null) {
+                        return;
+                    }
+                    for (final Entity e : source.getWorld().getEntities()) {
+                        if (!e.getType().equals(et)) {
+                            continue;
+                        }
+                        final double new_distance = e.getLocation().distanceSquared(source);
+                        if (new_distance < old_distance) {
+                            nearest = e.getLocation();
+                            old_distance = new_distance;
+                        }
+                    }
+                    if (nearest != null) {
+                        targetLocation = nearest;
+                    }
+                } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
+                    final Location source = quester.getPlayer().getLocation();
+                    Location nearest = null;
+                    double old_distance = 30000000;
+                    final EntityType et = stage.mobsToTame.keySet().iterator().next();
+                    if (source.getWorld() == null) {
+                        return;
+                    }
+                    for (final Entity e : source.getWorld().getEntities()) {
+                        if (!e.getType().equals(et)) {
+                            continue;
+                        }
+                        final double new_distance = e.getLocation().distanceSquared(source);
+                        if (new_distance < old_distance) {
+                            nearest = e.getLocation();
+                            old_distance = new_distance;
+                        }
+                    }
+                    if (nearest != null) {
+                        targetLocation = nearest;
+                    }
+                } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
+                    final Location source = quester.getPlayer().getLocation();
+                    Location nearest = null;
+                    double old_distance = 30000000;
+                    final DyeColor dc = stage.sheepToShear.keySet().iterator().next();
+                    if (source.getWorld() == null) {
+                        return;
+                    }
+                    for (final Entity e : source.getWorld().getEntities()) {
+                        if (!e.getType().equals(EntityType.SHEEP)) {
+                            continue;
+                        }
+                        final Sheep s = (Sheep)e;
+                        if (s.getColor()!= null && s.getColor().equals(dc)) {
+                            continue;
+                        }
+                        final double new_distance = e.getLocation().distanceSquared(source);
+                        if (new_distance < old_distance) {
+                            nearest = e.getLocation();
+                            old_distance = new_distance;
+                        }
+                    }
+                    if (nearest != null) {
+                        targetLocation = nearest;
+                    }
                 }
-                final double new_distance = p.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = p.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final EntityType et = stage.mobsToKill.getFirst();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(et)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final EntityType et = stage.mobsToTame.keySet().iterator().next();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(et)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final DyeColor dc = stage.sheepToShear.keySet().iterator().next();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(EntityType.SHEEP)) {
-                    continue;
-                }
-                final Sheep s = (Sheep)e;
-                if (s.getColor().equals(dc)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        }
-        if (targetLocation != null && targetLocation.getWorld() != null) {
-            if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-                final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(), 
-                        targetLocation.getY(), targetLocation.getZ());
-                final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(this, quester, lockedTarget);
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    
-                    @Override
-                    public void run() {
+                if (targetLocation != null && targetLocation.getWorld() != null) {
+                    if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
+                        final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
+                                targetLocation.getY(), targetLocation.getZ());
+                        final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(quest, quester, lockedTarget);
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return;
                         }
                         quester.getPlayer().setCompassTarget(lockedTarget);
                     }
-                });
+                }
             }
-        }
-        return targetLocation != null;
+        });
+        return true;
     }
     
     /**
