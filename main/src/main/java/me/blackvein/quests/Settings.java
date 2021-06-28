@@ -199,7 +199,7 @@ public class Settings {
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
         strictPlayerMovement = config.getInt("strict-player-movement", 0);
-        trialSave = config.getBoolean("trial-save", true);
+        trialSave = config.getBoolean("trial-save", false);
         topLimit = config.getInt("top-limit", 150);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);

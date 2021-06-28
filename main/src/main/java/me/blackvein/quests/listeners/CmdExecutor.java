@@ -12,20 +12,21 @@
 
 package me.blackvein.quests.listeners;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
-
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Requirements;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
+import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
+import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
+import me.blackvein.quests.events.quest.QuestQuitEvent;
+import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.item.QuestJournal;
+import me.blackvein.quests.storage.Storage;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -42,21 +43,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.Requirements;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
-import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
-import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
-import me.blackvein.quests.events.quest.QuestQuitEvent;
-import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.item.QuestJournal;
-import me.blackvein.quests.storage.Storage;
-import me.blackvein.quests.util.ItemUtil;
-import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class CmdExecutor implements CommandExecutor {
     private final Quests plugin;
@@ -501,7 +500,8 @@ public class CmdExecutor implements CommandExecutor {
 
     private boolean questsActions(final CommandSender cs) {
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
-                || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")) {
+                || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
@@ -515,7 +515,8 @@ public class CmdExecutor implements CommandExecutor {
     }
     
     private boolean questsConditions(final CommandSender cs) {
-        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")) {
+        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getConditionFactory().getConversationFactory().buildConversation(c).begin();
@@ -529,7 +530,8 @@ public class CmdExecutor implements CommandExecutor {
     }
 
     private boolean questsEditor(final CommandSender cs) {
-        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 final Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
@@ -869,19 +871,21 @@ public class CmdExecutor implements CommandExecutor {
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_TOP")
                     : "top") + ChatColor.YELLOW));
         }
-        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_EDITOR")
                     : "editor") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
-                || cs.hasPermission("quests.events.editor") || cs.hasPermission("quests.actions.editor")) {
+                || cs.hasPermission("quests.events.editor") || cs.hasPermission("quests.actions.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions") + ChatColor.YELLOW));
         }
-        if (cs.hasPermission("quests.conditions.*") 
-                || cs.hasPermission("quests.conditions.editor")) {
+        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
+                || cs.hasPermission("quests.admin.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_CONDITIONS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_CONDITIONS_EDITOR") : "conditions") + ChatColor.YELLOW));
