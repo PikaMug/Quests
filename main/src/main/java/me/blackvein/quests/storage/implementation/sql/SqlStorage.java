@@ -12,6 +12,12 @@
 
 package me.blackvein.quests.storage.implementation.sql;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.storage.implementation.StorageImplementation;
+import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,12 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.storage.implementation.StorageImplementation;
-import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFactory;
 
 public class SqlStorage implements StorageImplementation {
     private static final String PLAYER_SELECT = "SELECT lastknownname, questpoints FROM '{prefix}players' WHERE uuid=?";
@@ -161,7 +161,7 @@ public class SqlStorage implements StorageImplementation {
                     ps.setString(1, uniqueId.toString());
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
-                            quester.setLastKnownName(rs.getString("lastKnownName"));
+                            quester.setLastKnownName(rs.getString("lastknownname"));
                             quester.setQuestPoints(rs.getInt("questpoints"));
                         }
                     }
