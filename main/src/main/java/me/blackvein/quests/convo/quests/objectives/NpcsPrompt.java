@@ -12,18 +12,6 @@
 
 package me.blackvein.quests.convo.quests.objectives;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -33,6 +21,17 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromp
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class NpcsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
@@ -111,7 +110,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     return text;
                 }
             } else {
-                return ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")";
+                return ChatColor.GRAY + " (" + Lang.get("notInstalled") + ")";
             }
         case 2:
             if (plugin.getDependencies().getCitizens() != null) {
@@ -129,7 +128,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     return text;
                 }
             } else {
-                return ChatColor.GRAY + "(" + Lang.get("questCitNotInstalled") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
         case 3:
             if (plugin.getDependencies().getCitizens() != null) {
@@ -148,7 +147,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     return text;
                 }
             } else {
-                return ChatColor.GRAY + "(" + Lang.get("questCitNotInstalled") + ")";
+                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
         case 4:
             return "";
@@ -591,7 +590,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                         return text;
                     }
                 } else {
-                    return ChatColor.GRAY + " (" + Lang.get("questCitNotInstalled") + ")";
+                    return ChatColor.GRAY + " (" + Lang.get("notInstalled") + ")";
                 }
             case 2:
                 if (context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) == null) {
