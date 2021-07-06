@@ -365,7 +365,7 @@ public class SqlStorage implements StorageImplementation {
 	public void getQuestData(final UUID uniqueId) throws Exception {
     	Quester quester = this.plugin.getQuester(uniqueId);
     	if(quester == null) {
-    
+          return;
     	}
     	try(Connection c = connectionFactory.getConnection()){
     		try(PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUESTDATA_SELECT))){
