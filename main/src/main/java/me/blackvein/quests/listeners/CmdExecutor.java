@@ -121,6 +121,8 @@ public class CmdExecutor implements CommandExecutor {
             adminCommands.put(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"), 4); // setstage [player] [quest] [stage]
             adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RESET"), 2); // reset [player]
             adminCommands.put(Lang.get("COMMAND_QUESTADMIN_RELOAD"), 1); // reload
+            adminCommands.put("save", 2);
+            adminCommands.put("saveall", 1);
         } else {
             commands.put("list", 1); // list {page}
             commands.put("take", 2); // take [quest]
@@ -146,6 +148,8 @@ public class CmdExecutor implements CommandExecutor {
             adminCommands.put("setstage", 4); // setstage [player] [quest] [stage]
             adminCommands.put("reset", 2); // reset [player]
             adminCommands.put("reload", 1); // reload
+            adminCommands.put("save", 2);
+            adminCommands.put("saveall", 1);
         }
     }
     
@@ -182,6 +186,9 @@ public class CmdExecutor implements CommandExecutor {
             if (adminCommands.containsKey(subCmd)) {
                 final int min = adminCommands.get(subCmd);
                 if (args.length < min) {
+                	if(args[0].equalsIgnoreCase("save")) {
+                	 return ChatColor.RED + "Usage: " + ChatColor.YELLOW + "/questadmin save <player>";
+                	}
                     return getQuestadminCommandUsage(subCmd);
                 } else {
                     return null;
@@ -323,7 +330,48 @@ public class CmdExecutor implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("reload") 
                 || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
             adminReload(cs);
-        } else {
+        }  else if(args[0].equalsIgnoreCase("saveall")){
+        	if(!cs.hasPermission("cs.admin.saveall")||!cs.hasPermission("cs.admin.save")) {
+        		cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+        		return false;
+        	}
+        	 for (final Player p : plugin.getServer().getOnlinePlayers()) {
+                 final Quester quester = plugin.getQuester(p.getUniqueId());
+                 if (plugin.getSettings().canGenFilesOnJoin()) {
+                     if (quester.hasBaseData()) {
+                         quester.saveData();
+                     }
+                 } else {
+                     quester.saveData();
+                 }
+             }
+        	 cs.sendMessage(ChatColor.GREEN + "saved all player data!");
+        } else if(args[0].equalsIgnoreCase("save")){
+        	if(args.length == 2) {
+        		if(!cs.hasPermission("cs.admin.save")&&!cs.hasPermission("cs.admin.*")) {
+        			cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+        			return false;
+        		}
+        		Player p = plugin.getServer().getPlayer(args[1]);
+        		if(p == null) {
+        			cs.sendMessage(ChatColor.YELLOW+"Player not found online!");
+        			return false;
+        		}
+        		cs.sendMessage(ChatColor.YELLOW + "Saving Player Data of " + args[1]);
+                final Quester quester = plugin.getQuester(p.getUniqueId());
+                try {
+					plugin.getStorage().getImplementation().saveQuesterData(quester);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					cs.sendMessage(ChatColor.RED+"Unable to save player data!");
+				}
+        		cs.sendMessage(ChatColor.GREEN + "PlayerData is saved!");
+        	}else {
+        		cs.sendMessage(ChatColor.YELLOW + "Unknown Arguments Number");
+        	}
+        	
+        }else {
             cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));
         }
         return true;
@@ -488,12 +536,7 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questsInfo(final CommandSender cs) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD 
-                    + plugin.getDescription().getVersion());
-            cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
-                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
-            cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                    + "https://github.com/PikaMug/Quests");
+           cs.sendMessage(ChatColor.GREEN + "[PecoQuest] Quests plugin v4.0.3 forked from PikaMug created by PecoMC Developer");
         }
         return true;
     }
@@ -1523,6 +1566,12 @@ public class CmdExecutor implements CommandExecutor {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
                     + Lang.get("COMMAND_QUESTADMIN_RELOAD_HELP").replace("<command>", ChatColor.GOLD
                     + (translateSubCommands ? Lang.get("COMMAND_QUESTADMIN_RELOAD") : "reload") + ChatColor.RED));
+        }
+        if(cs.hasPermission("quests.admin.*")|| cs.hasPermission("quests.admin.saveall")) {
+        	cs.sendMessage(ChatColor.YELLOW + "/questadmin saveall - save all player data");
+        }
+        if(cs.hasPermission("quests.admin.*")||cs.hasPermission("quests.admin.save")) {
+        	cs.sendMessage(ChatColor.YELLOW + "/questadmin save <player> - save single player data of <player>");
         }
     }
 
