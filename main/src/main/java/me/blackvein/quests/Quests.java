@@ -77,7 +77,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 
 import me.blackvein.quests.actions.Action;
@@ -90,6 +90,7 @@ import me.blackvein.quests.exceptions.ConditionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.libs.localelib.LocaleManager;
 import me.blackvein.quests.listeners.BlockListener;
 import me.blackvein.quests.listeners.CmdExecutor;
 import me.blackvein.quests.listeners.DungeonsListener;
@@ -108,7 +109,6 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.pikamug.localelib.LocaleManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -242,7 +242,34 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         getLogger().info("Saving Quester data...");
         for (final Player p : getServer().getOnlinePlayers()) {
             final Quester quester = getQuester(p.getUniqueId());
-            quester.saveData();
+            for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                final Stage currentStage = quester.getCurrentStage(quest);
+                if (currentStage == null) {
+                    getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
+                            + " on quit for quest " + quest.getName());
+                    continue;
+                }
+                if (currentStage.getDelay() > -1) {
+                    quester.stopStageTimer(quest);
+                }
+                if (currentStage.getDisconnectAction() != null) {
+                    currentStage.getDisconnectAction().fire(quester, quest);
+                }
+            }
+            for (final Integer timerId : quester.getTimers().keySet()) {
+                getServer().getScheduler().cancelTask(timerId);
+                if (quester.getTimers().containsKey(timerId)) {
+                    quester.getTimers().get(timerId).failQuest(quester);
+                    quester.removeTimer(timerId);
+                }
+            }
+            if (getSettings().canGenFilesOnJoin()) {
+                if (quester.hasBaseData()) {
+                    quester.saveData();
+                }
+            } else {
+                quester.saveData();
+            }
         }
         getLogger().info("Closing storage...");
         storage.close();
@@ -4085,8 +4112,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
-    public static SkillType getMcMMOSkill(final String s) {
-        return SkillType.getSkill(s);
+    @SuppressWarnings("deprecation")
+	public static PrimarySkillType getMcMMOSkill(final String s) {
+        return PrimarySkillType.getSkill(s);
     }
 
     /**
