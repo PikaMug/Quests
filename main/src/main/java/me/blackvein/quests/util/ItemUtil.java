@@ -12,14 +12,6 @@
 
 package me.blackvein.quests.util;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -35,8 +27,53 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 @SuppressWarnings("deprecation")
 public class ItemUtil {
+
+    /*public static String toBase64(ItemStack itemStack) {
+        if (itemStack == null) {
+            return null;
+        }
+        try {
+            final ByteArrayOutputStream io = new ByteArrayOutputStream();
+            final BukkitObjectOutputStream os = new BukkitObjectOutputStream(io);
+            os.writeObject(itemStack);
+            os.flush();
+
+            final byte[] serializedObject = io.toByteArray();
+            return Base64.getEncoder().encodeToString(serializedObject);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ItemStack fromBase64(String encodedObject) {
+        if (encodedObject == null) {
+            return null;
+        }
+        final byte[] serializedObject = Base64.getDecoder().decode(encodedObject);
+
+        try {
+            final ByteArrayInputStream in = new ByteArrayInputStream((serializedObject));
+            final BukkitObjectInputStream is = new BukkitObjectInputStream(in);
+            final Object object = is.readObject();
+            if (object instanceof ItemStack) {
+                return (ItemStack)object;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
 
     /**
      * Compare two stacks by name, amount, durability, display name, lore, enchantments, stored enchants and item flags
@@ -199,14 +236,25 @@ public class ItemUtil {
      * @return ItemStack, or null if invalid format
      */
     public static ItemStack processItemStack(final String material, final int amount, final short durability) {
+        if (material == null) {
+            return null;
+        }
         try {
-            return new ItemStack(Material.getMaterial(material.toUpperCase()), amount, durability);
+            final Material mat = Material.getMaterial(material.toUpperCase());
+            if (mat == null) {
+                return null;
+            }
+            return new ItemStack(mat, amount, durability);
         } catch (final Exception e) {
             try {
                 Bukkit.getLogger().warning(material + " x " + amount
                         + " is invalid! You may need to update your quests.yml or actions.yml "
                         + "in accordance with https://bit.ly/2BkBNNN");
-                return new ItemStack(Material.matchMaterial(material, true), amount, durability);
+                final Material mat = Material.matchMaterial(material, true);
+                if (mat == null) {
+                    return null;
+                }
+                return new ItemStack(mat, amount, durability);
             } catch (final Exception e2) {
                 Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
                 e2.printStackTrace();
@@ -217,11 +265,12 @@ public class ItemUtil {
 
     /**
      * Get ItemStack from formatted string. See serialize() for reverse function.
-     * 
+     *
      * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
      * :lore-lore
      * <p>May continue with extraneous data such as :ItemFlags-flags:stored-enchants:{enc, level}:internal-hashstring
-     * 
+     *
+     * @deprecated Legacy code, do not use
      * @param data formatted string
      * @return ItemStack, or null if invalid format
      */
@@ -265,7 +314,7 @@ public class ItemUtil {
                         if (e != null) {
                             enchs.put(e, Integer.parseInt(temp[1]));
                         } else {
-                            Bukkit.getLogger().severe("Legacy enchantment name \'" + temp[0] + "\' on " + name 
+                            Bukkit.getLogger().severe("Legacy enchantment name \'" + temp[0] + "\' on " + name
                                     + " is invalid. Make sure it is spelled correctly");
                         }
                     } else {
@@ -273,12 +322,12 @@ public class ItemUtil {
                         if (Enchantment.getByName(temp[0]) != null) {
                             enchs.put(Enchantment.getByName(temp[0]), Integer.parseInt(temp[1]));
                         } else {
-                            Bukkit.getLogger().severe("Enum enchantment name \'" + temp[0] + "\' on " + name 
+                            Bukkit.getLogger().severe("Enum enchantment name \'" + temp[0] + "\' on " + name
                                     + " is invalid. Make sure it is spelled correctly");
                         }
                     }
                 } catch (final Exception e) {
-                    Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name 
+                    Bukkit.getLogger().severe("The enchantment name \'" + temp[0] + "\' on " + name
                             + " is invalid. Make sure quests.yml is UTF-8 encoded");
                     return null;
                 }
@@ -309,7 +358,7 @@ public class ItemUtil {
                 final int dash = arg.lastIndexOf('-');
                 final String key = arg.substring(0, dash);
                 final String value = arg.substring(dash + 1);
-                
+
                 int i = -1;
                 try {
                     // Num such as book generation
@@ -317,7 +366,7 @@ public class ItemUtil {
                 } catch (final NumberFormatException e) {
                     // Do nothing
                 }
-                
+
                 if (i > -1) {
                     extra.put(key, i);
                 } else if (value.startsWith("[") && value.endsWith("]")) {
@@ -433,10 +482,11 @@ public class ItemUtil {
 
     /**
      * Get formatted string from ItemStack. See readItemStack() for reverse function.
-     * 
+     *
      * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
      * :lore-lore:
-     * 
+     *
+     * @deprecated Legacy code, do not use
      * @param is ItemStack
      * @return formatted string, or null if invalid stack
      */
@@ -465,10 +515,10 @@ public class ItemUtil {
                     serial += ":lore-" + s;
                 }
             }
-            
+
             final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.putAll(meta.serialize());
-            
+
             if (map.containsKey("lore")) {
                 map.remove("lore");
             }
@@ -481,11 +531,11 @@ public class ItemUtil {
         }
         return serial;
     }
-    
+
     /**
      * Essentially the reverse of ItemMeta.serialize()
      * 
-     * @param ItemMeta class, key/value map of metadata
+     * @param itemMetaClass key/value map of metadata
      * @return ItemMeta
      */
     public static ItemMeta deserializeItemMeta(final Class<? extends ItemMeta> itemMetaClass, final Map<String, Object> args) {
@@ -516,7 +566,7 @@ public class ItemUtil {
             if (is.getDurability() != 0) {
                 text += ChatColor.AQUA + ":" + is.getDurability();
             }
-            if (is.getEnchantments().isEmpty() == false) {
+            if (!is.getEnchantments().isEmpty()) {
                 text += " " + ChatColor.GRAY + Lang.get("with") + ChatColor.DARK_PURPLE;
                 for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
                     text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
@@ -528,8 +578,7 @@ public class ItemUtil {
     }
     
     /**
-     * Returns a formatted display name. If none exists, returns item name.
-     * Also returns formatted durability and amount.
+     * Returns a formatted display name, plus durability and amount. If none exists, returns item name.
      * 
      * Format is ([display]name:durability) x (amount)
      * 
@@ -580,11 +629,10 @@ public class ItemUtil {
      * @return true if stack is not null or Material.AIR
      */
     public static boolean isItem(final ItemStack is) {
-        if (is == null)
+        if (is == null) {
             return false;
-        if (is.getType().equals(Material.AIR))
-            return false;
-        return true;
+        }
+        return !is.getType().equals(Material.AIR);
     }
 
     /**
@@ -594,12 +642,15 @@ public class ItemUtil {
      * @return true if display name equals colored journal title
      */
     public static boolean isJournal(final ItemStack is) {
-        if (is == null)
+        if (is == null) {
             return false;
-        if (is.hasItemMeta() == false)
+        }
+        if (!is.hasItemMeta()) {
             return false;
-        if (is.getItemMeta().hasDisplayName() == false)
+        }
+        if (!is.getItemMeta().hasDisplayName()) {
             return false;
+        }
         return is.getItemMeta().getDisplayName().equals(ChatColor.LIGHT_PURPLE + Lang.get("journalTitle"));
     }
     
@@ -611,7 +662,11 @@ public class ItemUtil {
      * @return cleaned-up string
      */
     public static String getPrettyItemName(final String itemName) {
-        final String baseString = Material.matchMaterial(itemName).toString();
+        final Material material = Material.matchMaterial(itemName);
+        if (material == null) {
+            return "invalid";
+        }
+        final String baseString = material.toString();
         final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
@@ -668,7 +723,7 @@ public class ItemUtil {
     /**
      * Gets Enchantment from name as it appears in lang file
      * 
-     * @deprecated Use {@link #getProperEnchantmentType(String)}
+     * @deprecated Use {@link #getEnchantmentFromProperName(String)}
      * @param enchant Name to match lang value to
      * @return Enchantment or null if invalid
      */
@@ -728,8 +783,10 @@ public class ItemUtil {
     }
 
     public static Enchantment getEnchantmentFromPrettyName(String enchant) {
-        while (MiscUtil.spaceToCapital(enchant) != null) {
-            enchant = MiscUtil.spaceToCapital(enchant);
+        if (enchant != null) {
+            while (MiscUtil.spaceToCapital(enchant) != null) {
+                enchant = MiscUtil.spaceToCapital(enchant);
+            }
         }
         return getEnchantmentFromProperName(enchant);
     }

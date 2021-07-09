@@ -12,21 +12,19 @@
 
 package me.blackvein.quests;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.conditions.Condition;
-import me.blackvein.quests.enums.ObjectiveType;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Stage {
 
@@ -35,9 +33,6 @@ public class Stage {
     protected LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
-    protected Integer cowsToMilk;
-    protected Integer fishToCatch;
-    protected Integer playersToKill;
     protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
     protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<ItemStack>();
@@ -111,14 +106,19 @@ public class Stage {
     protected LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
     protected LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
     protected LinkedList<String> killNames = new LinkedList<String>();
+    protected LinkedList<EntityType> mobsToTame = new LinkedList<EntityType>();
+    protected LinkedList<Integer> mobNumToTame = new LinkedList<Integer>();
+    protected Integer fishToCatch;
+    protected Integer cowsToMilk;
+    protected LinkedList<DyeColor> sheepToShear = new LinkedList<DyeColor>();
+    protected LinkedList<Integer> sheepNumToShear = new LinkedList<Integer>();
+    protected Integer playersToKill;
     protected LinkedList<Location> locationsToReach = new LinkedList<Location>();
     protected LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
     protected LinkedList<World> worldsToReachWithin = new LinkedList<World>();
     protected LinkedList<String> locationNames = new LinkedList<String>();
-    protected Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
-    protected Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
     protected LinkedList<String> passwordDisplays = new LinkedList<String>();
-    protected LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
+    protected LinkedList<String> passwordPhrases = new LinkedList<String>();
     protected String script;
     protected Action startAction = null;
     protected Action finishAction = null;
@@ -176,30 +176,6 @@ public class Stage {
 
     public void setBlocksToCut(final LinkedList<ItemStack> blocksToCut) {
         this.blocksToCut = blocksToCut;
-    }
-    
-    public Integer getCowsToMilk() {
-        return cowsToMilk;
-    }
-
-    public void setCowsToMilk(final Integer cowsToMilk) {
-        this.cowsToMilk = cowsToMilk;
-    }
-
-    public Integer getFishToCatch() {
-        return fishToCatch;
-    }
-
-    public void setFishToCatch(final Integer fishToCatch) {
-        this.fishToCatch = fishToCatch;
-    }
-
-    public Integer getPlayersToKill() {
-        return playersToKill;
-    }
-
-    public void setPlayersToKill(final Integer playersToKill) {
-        this.playersToKill = playersToKill;
     }
     
     public LinkedList<ItemStack> getItemsToCraft() {
@@ -362,20 +338,60 @@ public class Stage {
         this.locationNames = locationNames;
     }
 
-    public Map<EntityType, Integer> getMobsToTame() {
+    public LinkedList<EntityType> getMobsToTame() {
         return mobsToTame;
     }
 
-    public void setMobsToTame(final Map<EntityType, Integer> mobsToTame) {
+    public void setMobsToTame(final LinkedList<EntityType> mobsToTame) {
         this.mobsToTame = mobsToTame;
     }
 
-    public Map<DyeColor, Integer> getSheepToShear() {
+    public LinkedList<Integer> getMobNumToTame() {
+        return mobNumToTame;
+    }
+
+    public void setMobNumToTame(final LinkedList<Integer> mobNumToTame) {
+        this.mobNumToTame = mobNumToTame;
+    }
+
+    public Integer getFishToCatch() {
+        return fishToCatch;
+    }
+
+    public void setFishToCatch(final Integer fishToCatch) {
+        this.fishToCatch = fishToCatch;
+    }
+
+    public Integer getCowsToMilk() {
+        return cowsToMilk;
+    }
+
+    public void setCowsToMilk(final Integer cowsToMilk) {
+        this.cowsToMilk = cowsToMilk;
+    }
+
+    public Integer getPlayersToKill() {
+        return playersToKill;
+    }
+
+    public void setPlayersToKill(final Integer playersToKill) {
+        this.playersToKill = playersToKill;
+    }
+
+    public LinkedList<DyeColor> getSheepToShear() {
         return sheepToShear;
     }
 
-    public void setSheepToShear(final Map<DyeColor, Integer> sheepToShear) {
+    public void setSheepToShear(final LinkedList<DyeColor> sheepToShear) {
         this.sheepToShear = sheepToShear;
+    }
+
+    public LinkedList<Integer> getSheepNumToShear() {
+        return sheepNumToShear;
+    }
+
+    public void setSheepNumToShear(final LinkedList<Integer> sheepNumToShear) {
+        this.sheepNumToShear = sheepNumToShear;
     }
 
     public LinkedList<String> getPasswordDisplays() {
@@ -386,11 +402,11 @@ public class Stage {
         this.passwordDisplays = passwordDisplays;
     }
 
-    public LinkedList<LinkedList<String>> getPasswordPhrases() {
+    public LinkedList<String> getPasswordPhrases() {
         return passwordPhrases;
     }
 
-    public void setPasswordPhrases(final LinkedList<LinkedList<String>> passwordPhrases) {
+    public void setPasswordPhrases(final LinkedList<String> passwordPhrases) {
         this.passwordPhrases = passwordPhrases;
     }
 
@@ -530,27 +546,27 @@ public class Stage {
      * @return true if stage contains an objective
      */
     public boolean hasObjective() {
-        if (blocksToBreak.isEmpty() == false) { return true; }
-        if (blocksToDamage.isEmpty() == false) { return true; }
-        if (blocksToPlace.isEmpty() == false) { return true; }
-        if (blocksToUse.isEmpty() == false) { return true; }
-        if (blocksToCut.isEmpty() == false) { return true; }
+        if (!blocksToBreak.isEmpty()) { return true; }
+        if (!blocksToDamage.isEmpty()) { return true; }
+        if (!blocksToPlace.isEmpty()) { return true; }
+        if (!blocksToUse.isEmpty()) { return true; }
+        if (!blocksToCut.isEmpty()) { return true; }
         if (cowsToMilk != null) { return true; }
         if (fishToCatch != null) { return true; }
         if (playersToKill != null) { return true; }
-        if (itemsToCraft.isEmpty() == false) { return true; }
-        if (itemsToSmelt.isEmpty() == false) { return true; }
-        if (itemsToEnchant.isEmpty() == false) { return true; }
-        if (itemsToBrew.isEmpty() == false) { return true; }
-        if (itemsToConsume.isEmpty() == false) { return true; }
-        if (itemsToDeliver.isEmpty() == false) { return true; }
-        if (citizensToInteract.isEmpty() == false) { return true; }
-        if (citizensToKill.isEmpty() == false) { return true; }
-        if (locationsToReach.isEmpty() == false) { return true; }
-        if (mobsToTame.isEmpty() == false) { return true; }
-        if (sheepToShear.isEmpty() == false) { return true; }
-        if (passwordDisplays.isEmpty() == false) { return true; }
-        if (customObjectives.isEmpty() == false) { return true; }
+        if (!itemsToCraft.isEmpty()) { return true; }
+        if (!itemsToSmelt.isEmpty()) { return true; }
+        if (!itemsToEnchant.isEmpty()) { return true; }
+        if (!itemsToBrew.isEmpty()) { return true; }
+        if (!itemsToConsume.isEmpty()) { return true; }
+        if (!itemsToDeliver.isEmpty()) { return true; }
+        if (!citizensToInteract.isEmpty()) { return true; }
+        if (!citizensToKill.isEmpty()) { return true; }
+        if (!locationsToReach.isEmpty()) { return true; }
+        if (!mobsToTame.isEmpty()) { return true; }
+        if (!sheepToShear.isEmpty()) { return true; }
+        if (!passwordDisplays.isEmpty()) { return true; }
+        if (!customObjectives.isEmpty()) { return true; }
         return false;
     }
     

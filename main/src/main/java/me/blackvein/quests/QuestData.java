@@ -12,15 +12,11 @@
 
 package me.blackvein.quests;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class QuestData {
 
@@ -34,10 +30,10 @@ public class QuestData {
     public void setDoJournalUpdate(final boolean b) {
         doJournalUpdate = b;
     }
+    
+    public LinkedList<ItemStack> blocksBroken = new LinkedList<ItemStack>() {
 
-    public LinkedList<ItemStack> blocksDamaged = new LinkedList<ItemStack>() {
-
-        private static final long serialVersionUID = -4211891633163257743L;
+        private static final long serialVersionUID = -6071822509475270168L;
 
         @Override
         public ItemStack set(final int index, final ItemStack key) {
@@ -78,10 +74,10 @@ public class QuestData {
             return i;
         }
     };
-    
-    public LinkedList<ItemStack> blocksBroken = new LinkedList<ItemStack>() {
 
-        private static final long serialVersionUID = -6071822509475270168L;
+    public LinkedList<ItemStack> blocksDamaged = new LinkedList<ItemStack>() {
+
+        private static final long serialVersionUID = -4211891633163257743L;
 
         @Override
         public ItemStack set(final int index, final ItemStack key) {
@@ -518,8 +514,209 @@ public class QuestData {
             return i;
         }
     };
+
+    public LinkedList<Boolean> citizensInteracted = new LinkedList<Boolean>() {
+
+        private static final long serialVersionUID = 2447610341508300847L;
+
+        @Override
+        public boolean add(final Boolean e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Boolean element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Boolean remove(final int index) {
+            final Boolean s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Boolean set(final int index, final Boolean element) {
+            final Boolean s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
+
+    public LinkedList<Integer> citizensIdsKilled = new LinkedList<Integer>() {
+
+        private static final long serialVersionUID = -6054581494356961482L;
+
+        @Override
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
+
+    public LinkedList<Integer> citizensNumKilled = new LinkedList<Integer>() {
+
+        private static final long serialVersionUID = 1849192351499071688L;
+
+        @Override
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
     
-    public LinkedList<EntityType> mobsKilled = new LinkedList<EntityType>() {
+    public LinkedList<EntityType> mobTypesKilled = new LinkedList<EntityType>() {
 
         private static final long serialVersionUID = 8178007458817522183L;
 
@@ -652,77 +849,10 @@ public class QuestData {
             return s;
         }
     };
-    
-    public LinkedList<Location> locationsToKillWithin = new LinkedList<Location>() {
 
-        private static final long serialVersionUID = 557285564460615021L;
+    public LinkedList<Integer> mobsTamed = new LinkedList<Integer>() {
 
-        @Override
-        public boolean add(final Location e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final Location element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends Location> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends Location> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public Location remove(final int index) {
-            final Location s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public Location set(final int index, final Location element) {
-            final Location s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-    
-    public LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>() {
-
-        private static final long serialVersionUID = 1973115869697752181L;
+        private static final long serialVersionUID = 3851959471748032699L;
 
         @Override
         public boolean add(final Integer e) {
@@ -786,45 +916,14 @@ public class QuestData {
             return s;
         }
     };
-    
-    public LinkedHashMap<Integer, Boolean> citizensInteracted = new LinkedHashMap<Integer, Boolean>() {
 
-        private static final long serialVersionUID = 2447610341508300847L;
+    private int fishCaught = 0;
 
-        @Override
-        public Boolean put(final Integer key, final Boolean val) {
-            final Boolean data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
+    private int cowsMilked = 0;
 
-        @Override
-        public Boolean remove(final Object key) {
-            final Boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
+    public LinkedList<Integer> sheepSheared = new LinkedList<Integer>() {
 
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends Integer, ? extends Boolean> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    public LinkedList<Integer> citizensKilled = new LinkedList<Integer>() {
-
-        private static final long serialVersionUID = -6054581494356961482L;
+        private static final long serialVersionUID = -6016463677133534885L;
 
         @Override
         public boolean add(final Integer e) {
@@ -888,142 +987,10 @@ public class QuestData {
             return s;
         }
     };
+
+    private int playersKilled = 0;
     
-    public LinkedList<Integer> citizenNumKilled = new LinkedList<Integer>() {
-
-        private static final long serialVersionUID = 1849192351499071688L;
-
-        @Override
-        public boolean add(final Integer e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final Integer element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public Integer remove(final int index) {
-            final Integer s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public Integer set(final int index, final Integer element) {
-            final Integer s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-    
-    public LinkedList<Location> locationsReached = new LinkedList<Location>() {
-
-        private static final long serialVersionUID = 2875034788869133862L;
-
-        @Override
-        public boolean add(final Location e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final Location element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends Location> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends Location> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public Location remove(final int index) {
-            final Location s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public Location set(final int index, final Location element) {
-            final Location s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-    
-    public LinkedList<Boolean> hasReached = new LinkedList<Boolean>() {
+    public LinkedList<Boolean> locationsReached = new LinkedList<Boolean>() {
 
         private static final long serialVersionUID = -8802305642082466541L;
 
@@ -1090,9 +1057,76 @@ public class QuestData {
         }
     };
     
-    public LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>() {
+    public LinkedList<Boolean> passwordsSaid = new LinkedList<Boolean>() {
 
-        private static final long serialVersionUID = 6027656509740406846L;
+        private static final long serialVersionUID = -4297291041298491402L;
+
+        @Override
+        public boolean add(final Boolean e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Boolean element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Boolean> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Boolean remove(final int index) {
+            final Boolean s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Boolean set(final int index, final Boolean element) {
+            final Boolean s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
+
+    public LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>() {
+
+        private static final long serialVersionUID = 6027656575740406823L;
 
         @Override
         public boolean add(final Integer e) {
@@ -1156,207 +1190,228 @@ public class QuestData {
             return s;
         }
     };
-    
-    public LinkedHashMap<EntityType, Integer> mobsTamed = new LinkedHashMap<EntityType, Integer>() {
 
-        private static final long serialVersionUID = 3851959471748032699L;
-
-        @Override
-        public Integer put(final EntityType key, final Integer val) {
-            final Integer data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends EntityType, ? extends Integer> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    public LinkedHashMap<DyeColor, Integer> sheepSheared = new LinkedHashMap<DyeColor, Integer>() {
-
-        private static final long serialVersionUID = -6016463677133534885L;
-
-        @Override
-        public Integer put(final DyeColor key, final Integer val) {
-            final Integer data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends DyeColor, ? extends Integer> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    public LinkedHashMap<String, Boolean> passwordsSaid = new LinkedHashMap<String, Boolean>() {
-
-        private static final long serialVersionUID = -4297290041298491402L;
-
-        @Override
-        public Boolean put(final String key, final Boolean val) {
-            final Boolean data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public Boolean remove(final Object key) {
-            final Boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends String, ? extends Boolean> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    public LinkedHashMap<String, Integer> customObjectiveCounts = new LinkedHashMap<String, Integer>() {
-
-        private static final long serialVersionUID = -2148775183072606256L;
-
-        @Override
-        public Integer put(final String key, final Integer val) {
-            final Integer data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public Integer remove(final Object key) {
-            final Integer i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends String, ? extends Integer> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    public LinkedHashMap<String, Boolean> actionFired = new LinkedHashMap<String, Boolean>() {
-
-        private static final long serialVersionUID = 7106048037834965123L;
-
-        @Override
-        public Boolean put(final String key, final Boolean val) {
-            final Boolean data = super.put(key, val);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public Boolean remove(final Object key) {
-            final Boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public void putAll(final Map<? extends String, ? extends Boolean> m) {
-            super.putAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-    };
-    
-    private int cowsMilked = 0;
-    private int fishCaught = 0;
-    private int playersKilled = 0;
     private long delayStartTime = 0;
     private long delayTimeLeft = -1;
-    //private final boolean delayOver = true;
-    
+
+    public LinkedList<ItemStack> getBlocksBroken() {
+        return blocksBroken;
+    }
+
+    public void setBlocksBroken(final LinkedList<ItemStack> blocksBroken) {
+        this.blocksBroken = blocksBroken;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getBlocksDamaged() {
+        return blocksDamaged;
+    }
+
+    public void setBlocksDamaged(final LinkedList<ItemStack> blocksDamaged) {
+        this.blocksDamaged = blocksDamaged;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getBlocksPlaced() {
+        return blocksPlaced;
+    }
+
+    public void setBlocksPlaced(final LinkedList<ItemStack> blocksPlaced) {
+        this.blocksPlaced = blocksPlaced;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getBlocksUsed() {
+        return blocksUsed;
+    }
+
+    public void setBlocksUsed(final LinkedList<ItemStack> blocksUsed) {
+        this.blocksUsed = blocksUsed;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getBlocksCut() {
+        return blocksCut;
+    }
+
+    public void setBlocksCut(final LinkedList<ItemStack> blocksCut) {
+        this.blocksCut = blocksCut;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsCrafted() {
+        return itemsCrafted;
+    }
+
+    public void setItemsCrafted(final LinkedList<ItemStack> itemsCrafted) {
+        this.itemsCrafted = itemsCrafted;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsSmelted() {
+        return itemsSmelted;
+    }
+
+    public void setItemsSmelted(final LinkedList<ItemStack> itemsSmelted) {
+        this.itemsSmelted = itemsSmelted;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsEnchanted() {
+        return itemsEnchanted;
+    }
+
+    public void setItemsEnchanted(final LinkedList<ItemStack> itemsEnchanted) {
+        this.itemsEnchanted = itemsEnchanted;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsBrewed() {
+        return itemsBrewed;
+    }
+
+    public void setItemsBrewed(final LinkedList<ItemStack> itemsBrewed) {
+        this.itemsBrewed = itemsBrewed;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsConsumed() {
+        return itemsConsumed;
+    }
+
+    public void setItemsConsumed(final LinkedList<ItemStack> itemsConsumed) {
+        this.itemsConsumed = itemsConsumed;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<ItemStack> getItemsDelivered() {
+        return itemsDelivered;
+    }
+
+    public void setItemsDelivered(final LinkedList<ItemStack> itemsDelivered) {
+        this.itemsDelivered = itemsDelivered;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Boolean> getCitizensInteracted() {
+        return citizensInteracted;
+    }
+
+    public void setCitizensInteracted(final LinkedList<Boolean> citizensInteracted) {
+        this.citizensInteracted = citizensInteracted;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Integer> getCitizensIdsKilled() {
+        return citizensIdsKilled;
+    }
+
+    public void setCitizensIdsKilled(final LinkedList<Integer> citizensIdsKilled) {
+        this.citizensIdsKilled = citizensIdsKilled;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Integer> getCitizensNumKilled() {
+        return citizensNumKilled;
+    }
+
+    public void setCitizensNumKilled(final LinkedList<Integer> citizensNumKilled) {
+        this.citizensNumKilled = citizensNumKilled;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<EntityType> getMobTypesKilled() {
+        return mobTypesKilled;
+    }
+
+    public void setMobTypesKilled(final LinkedList<EntityType> mobTypesKilled) {
+        this.mobTypesKilled = mobTypesKilled;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Integer> getMobNumKilled() {
+        return mobNumKilled;
+    }
+
+    public void setMobNumKilled(final LinkedList<Integer> mobNumKilled) {
+        this.mobNumKilled = mobNumKilled;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Integer> getMobsTamed() {
+        return mobsTamed;
+    }
+
+    public void setMobsTamed(final LinkedList<Integer> mobsTamed) {
+        this.mobsTamed = mobsTamed;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public int getFishCaught() {
+        return fishCaught;
+    }
+
+    public void setFishCaught(final int fishCaught) {
+        this.fishCaught = fishCaught;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
     public int getCowsMilked() {
         return cowsMilked;
     }
     
     public void setCowsMilked(final int cowsMilked) {
         this.cowsMilked = cowsMilked;
-        if (doJournalUpdate)
+        if (doJournalUpdate) {
             quester.updateJournal();
+        }
     }
     
-    public int getFishCaught() {
-        return fishCaught;
+    public LinkedList<Integer> getSheepSheared() {
+        return sheepSheared;
     }
-    
-    public void setFishCaught(final int fishCaught) {
-        this.fishCaught = fishCaught;
-        if (doJournalUpdate)
+
+    public void setSheepSheared(LinkedList<Integer> sheepSheared) {
+        this.sheepSheared = sheepSheared;
+        if (doJournalUpdate) {
             quester.updateJournal();
+        }
     }
     
     public int getPlayersKilled() {
@@ -1365,8 +1420,39 @@ public class QuestData {
     
     public void setPlayersKilled(final int playersKilled) {
         this.playersKilled = playersKilled;
-        if (doJournalUpdate)
+        if (doJournalUpdate) {
             quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Boolean> getLocationsReached() {
+        return locationsReached;
+    }
+
+    public void setLocationsReached(final LinkedList<Boolean> locationsReached) {
+        this.locationsReached = locationsReached;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
+    }
+
+    public LinkedList<Boolean> getPasswordsSaid() {
+        return passwordsSaid;
+    }
+
+    public void setPasswordsSaid(final LinkedList<Boolean> passwordsSaid) {
+        this.passwordsSaid = passwordsSaid;
+    }
+
+    public LinkedList<Integer> getCustomObjectiveCounts() {
+        return customObjectiveCounts;
+    }
+
+    public void setCustomObjectiveCounts(final LinkedList<Integer> customObjectiveCounts) {
+        this.customObjectiveCounts = customObjectiveCounts;
+        if (doJournalUpdate) {
+            quester.updateJournal();
+        }
     }
     
     public long getDelayStartTime() {
@@ -1375,8 +1461,9 @@ public class QuestData {
     
     public void setDelayStartTime(final long delayStartTime) {
         this.delayStartTime = delayStartTime;
-        if (doJournalUpdate)
+        if (doJournalUpdate) {
             quester.updateJournal();
+        }
     }
     
     public long getDelayTimeLeft() {
@@ -1385,17 +1472,8 @@ public class QuestData {
     
     public void setDelayTimeLeft(final long delayTimeLeft) {
         this.delayTimeLeft = delayTimeLeft;
-        if (doJournalUpdate)
+        if (doJournalUpdate) {
             quester.updateJournal();
+        }
     }
-    
-    /*public boolean isDelayOver() {
-        return delayOver;
-    }
-    
-    public void setDelayOver(final boolean delayOver) {
-        this.delayOver = delayOver;
-        if (doJournalUpdate)
-            quester.updateJournal();
-    }*/
 }

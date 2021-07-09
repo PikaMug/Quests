@@ -12,18 +12,14 @@
 
 package me.blackvein.quests;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
+import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
+import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
+import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -42,14 +38,17 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
-import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
-import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
-import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.util.CK;
-import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.Lang;
-import me.blackvein.quests.util.MiscUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class QuestFactory implements ConversationAbandonedListener {
 
@@ -180,23 +179,23 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (reqs.getQuestPoints() != 0) {
             context.setSessionData(CK.REQ_QUEST_POINTS, reqs.getQuestPoints());
         }
-        if (reqs.getItems().isEmpty() == false) {
+        if (!reqs.getItems().isEmpty()) {
             context.setSessionData(CK.REQ_ITEMS, reqs.getItems());
             context.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
         }
-        if (reqs.getNeededQuests().isEmpty() == false) {
+        if (!reqs.getNeededQuests().isEmpty()) {
             final List<String> names = reqs.getNeededQuests().stream().map(Quest::getName).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST, names);
         }
-        if (reqs.getBlockQuests().isEmpty() == false) {
+        if (!reqs.getBlockQuests().isEmpty()) {
             final List<String> names = reqs.getBlockQuests().stream().map(Quest::getName).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST_BLOCK, names);
         }
-        if (reqs.getMcmmoSkills().isEmpty() == false) {
+        if (!reqs.getMcmmoSkills().isEmpty()) {
             context.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
             context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, reqs.getMcmmoAmounts());
         }
-        if (reqs.getPermissions().isEmpty() == false) {
+        if (!reqs.getPermissions().isEmpty()) {
             context.setSessionData(CK.REQ_PERMISSION, reqs.getPermissions());
         }
         if (reqs.getHeroesPrimaryClass() != null) {
@@ -205,7 +204,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (reqs.getHeroesSecondaryClass() != null) {
             context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
         }
-        if (reqs.getCustomRequirements().isEmpty() == false) {
+        if (!reqs.getCustomRequirements().isEmpty()) {
             final LinkedList<String> list = new LinkedList<String>();
             final LinkedList<Map<String, Object>> datamapList = new LinkedList<Map<String, Object>>();
             for (final Entry<String, Map<String, Object>> entry : reqs.getCustomRequirements().entrySet()) {
@@ -215,7 +214,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REQ_CUSTOM, list);
             context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
         }
-        if (reqs.getDetailsOverride().isEmpty() == false) {
+        if (!reqs.getDetailsOverride().isEmpty()) {
             context.setSessionData(CK.REQ_FAIL_MESSAGE, reqs.getDetailsOverride());
         }
         final Rewards rews = q.getRewards();
@@ -228,40 +227,40 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (rews.getExp() != 0) {
             context.setSessionData(CK.REW_EXP, rews.getExp());
         }
-        if (rews.getItems().isEmpty() == false) {
+        if (!rews.getItems().isEmpty()) {
             context.setSessionData(CK.REW_ITEMS, rews.getItems());
         }
-        if (rews.getCommands().isEmpty() == false) {
+        if (!rews.getCommands().isEmpty()) {
             context.setSessionData(CK.REW_COMMAND, rews.getCommands());
         }
-        if (rews.getCommandsOverrideDisplay().isEmpty() == false) {
+        if (!rews.getCommandsOverrideDisplay().isEmpty()) {
             context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rews.getCommandsOverrideDisplay());
         }
-        if (rews.getPermissions().isEmpty() == false) {
+        if (!rews.getPermissions().isEmpty()) {
             context.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
         }
-        if (rews.getPermissions().isEmpty() == false) {
+        if (!rews.getPermissions().isEmpty()) {
             context.setSessionData(CK.REW_PERMISSION_WORLDS, rews.getPermissionWorlds());
         }
-        if (rews.getMcmmoSkills().isEmpty() == false) {
+        if (!rews.getMcmmoSkills().isEmpty()) {
             context.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
             context.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
         }
-        if (rews.getHeroesClasses().isEmpty() == false) {
+        if (!rews.getHeroesClasses().isEmpty()) {
             context.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
             context.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
         }
         if (rews.getPartiesExperience() != 0) {
             context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPartiesExperience());
         }
-        if (rews.getPhatLoots().isEmpty() == false) {
+        if (!rews.getPhatLoots().isEmpty()) {
             context.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
         }
-        if (rews.getCustomRewards().isEmpty() == false) {
+        if (!rews.getCustomRewards().isEmpty()) {
             context.setSessionData(CK.REW_CUSTOM, new LinkedList<String>(rews.getCustomRewards().keySet()));
             context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
         }
-        if (rews.getDetailsOverride().isEmpty() == false) {
+        if (!rews.getDetailsOverride().isEmpty()) {
             context.setSessionData(CK.REW_DETAILS_OVERRIDE, rews.getDetailsOverride());
         }
         final Planner pln = q.getPlanner();
@@ -360,38 +359,23 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
             }
             if (!stage.getItemsToCraft().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (final ItemStack is : stage.getItemsToCraft()) {
-                    items.add(is);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToCraft());
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
             }
             if (!stage.getItemsToSmelt().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (final ItemStack is : stage.getItemsToSmelt()) {
-                    items.add(is);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToSmelt());
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
             }
             if (!stage.getItemsToEnchant().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (final ItemStack is : stage.getItemsToEnchant()) {
-                    items.add(is);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToEnchant());
                 context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
             }
             if (!stage.getItemsToBrew().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (final ItemStack is : stage.getItemsToBrew()) {
-                    items.add(is);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToBrew());
                 context.setSessionData(pref + CK.S_BREW_ITEMS, items);
             }
             if (!stage.getItemsToConsume().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                for (final ItemStack is : stage.getItemsToConsume()) {
-                    items.add(is);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToConsume());
                 context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
             }
             if (stage.getCowsToMilk() != null) {
@@ -404,30 +388,18 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(pref + CK.S_PLAYER_KILL, stage.getPlayersToKill());
             }
             if (!stage.getItemsToDeliver().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-                final LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (final ItemStack is : stage.getItemsToDeliver()) {
-                    items.add(is);
-                }
-                for (final Integer n : stage.getItemDeliveryTargets()) {
-                    npcs.add(n);
-                }
+                final LinkedList<ItemStack> items = new LinkedList<ItemStack>(stage.getItemsToDeliver());
+                final LinkedList<Integer> npcs = new LinkedList<Integer>(stage.getItemDeliveryTargets());
                 context.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.getDeliverMessages());
             }
             if (!stage.getCitizensToInteract().isEmpty()) {
-                final LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (final Integer n : stage.getCitizensToInteract()) {
-                    npcs.add(n);
-                }
+                final LinkedList<Integer> npcs = new LinkedList<Integer>(stage.getCitizensToInteract());
                 context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
             }
             if (!stage.getCitizensToKill().isEmpty()) {
-                final LinkedList<Integer> npcs = new LinkedList<Integer>();
-                for (final Integer n : stage.getCitizensToKill()) {
-                    npcs.add(n);
-                }
+                final LinkedList<Integer> npcs = new LinkedList<Integer>(stage.getCitizensToKill());
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.getCitizenNumToKill());
             }
@@ -459,23 +431,22 @@ public class QuestFactory implements ConversationAbandonedListener {
             }
             if (!stage.getMobsToTame().isEmpty()) {
                 final LinkedList<String> mobs = new LinkedList<String>();
-                final LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (final Entry<EntityType, Integer> e : stage.getMobsToTame().entrySet()) {
-                    mobs.add(MiscUtil.getPrettyMobName(e.getKey()));
-                    amnts.add(e.getValue());
+                for (final EntityType e : stage.getMobsToTame()) {
+                    mobs.add(MiscUtil.getPrettyMobName(e));
                 }
+                final LinkedList<Integer> amts = new LinkedList<Integer>(stage.getMobNumToTame());
                 context.setSessionData(pref + CK.S_TAME_TYPES, mobs);
-                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amnts);
+                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amts);
             }
             if (!stage.getSheepToShear().isEmpty()) {
                 final LinkedList<String> colors = new LinkedList<String>();
-                final LinkedList<Integer> amnts = new LinkedList<Integer>();
-                for (final Entry<DyeColor, Integer> e : stage.getSheepToShear().entrySet()) {
-                    colors.add(MiscUtil.getPrettyDyeColorName(e.getKey()));
-                    amnts.add(e.getValue());
+                for (final DyeColor d : stage.getSheepToShear()) {
+                    colors.add(MiscUtil.getPrettyDyeColorName(d));
+
                 }
+                final LinkedList<Integer> amts = new LinkedList<Integer>(stage.sheepNumToShear);
                 context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
-                context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amnts);
+                context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amts);
             }
             if (!stage.getPasswordDisplays().isEmpty()) {
                 context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
@@ -484,12 +455,12 @@ public class QuestFactory implements ConversationAbandonedListener {
             if (!stage.getCustomObjectives().isEmpty()) {
                 final LinkedList<String> list = new LinkedList<String>();
                 final LinkedList<Integer> countList = new LinkedList<Integer>();
-                final LinkedList<Entry<String, Object>> datamapList = new LinkedList<Entry<String, Object>>();
                 for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
                     list.add(stage.getCustomObjectives().get(i).getName());
                     countList.add(stage.getCustomObjectiveCounts().get(i));
                 }
-                datamapList.addAll(stage.getCustomObjectiveData());
+                final LinkedList<Entry<String, Object>> datamapList
+                        = new LinkedList<Entry<String, Object>>(stage.getCustomObjectiveData());
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
@@ -781,23 +752,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) : null);
             stage.set("password-displays", context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null 
                     ? (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) : null);
-            final LinkedList<LinkedList<String>> passPhrases 
-                    = (LinkedList<LinkedList<String>>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES);
-            if (context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null) {
-                final LinkedList<String> toPut = new LinkedList<String>();
-                for (final LinkedList<String> list : passPhrases) {
-                    String combine = "";
-                    for (final String s : list) {
-                        if (list.getLast().equals(s) == false) {
-                            combine += s + "|";
-                        } else {
-                            combine += s;
-                        }
-                    }
-                    toPut.add(combine);
-                }
-                stage.set("password-phrases", toPut);
-            }
+            stage.set("password-phrases", context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null
+                    ? (LinkedList<String>) context.getSessionData(pref + CK.S_PASSWORD_PHRASES) : null);
             final LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Integer> customObjCounts 
                     = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
@@ -849,21 +805,20 @@ public class QuestFactory implements ConversationAbandonedListener {
             stage.set("condition", context.getSessionData(pref + CK.S_CONDITION) != null 
                     ? context.getSessionData(pref + CK.S_CONDITION) : null);
             final Long delay = (Long) context.getSessionData(pref + CK.S_DELAY);
-            if (context.getSessionData(pref + CK.S_DELAY) != null) {
+            if (delay != null) {
                 stage.set("delay", delay.intValue() / 1000);
             }
             final String delayMessage = (String) context.getSessionData(pref + CK.S_DELAY_MESSAGE);
-            if (context.getSessionData(pref + CK.S_DELAY_MESSAGE) != null) {
-                stage.set("delay-message", delayMessage == null ? delayMessage : delayMessage.replace("\\n", "\n"));
+            if (delayMessage != null) {
+                stage.set("delay-message", delayMessage.replace("\\n", "\n"));
             }
             final String startMessage = (String) context.getSessionData(pref + CK.S_START_MESSAGE);
-            if (context.getSessionData(pref + CK.S_START_MESSAGE) != null) {
-                stage.set("start-message", startMessage == null ? startMessage : startMessage.replace("\\n", "\n"));
+            if (startMessage != null) {
+                stage.set("start-message", startMessage.replace("\\n", "\n"));
             }
             final String completeMessage = (String) context.getSessionData(pref + CK.S_COMPLETE_MESSAGE);
-            if (context.getSessionData(pref + CK.S_COMPLETE_MESSAGE) != null) {
-                stage.set("complete-message", completeMessage == null ? completeMessage 
-                        : completeMessage.replace("\\n", "\n"));
+            if (completeMessage != null) {
+                stage.set("complete-message", completeMessage.replace("\\n", "\n"));
             }
             stage.set("objective-override", context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null 
                     ? context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) : null);
@@ -927,9 +882,9 @@ public class QuestFactory implements ConversationAbandonedListener {
         pln.set("end", context.getSessionData(CK.PLN_END_DATE) != null 
                 ? (String) context.getSessionData(CK.PLN_END_DATE) : null);
         pln.set("repeat", context.getSessionData(CK.PLN_REPEAT_CYCLE) != null 
-                ? ((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) / 1000) : null);
+                ? ((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE) / 1000L) : null);
         pln.set("cooldown", context.getSessionData(CK.PLN_COOLDOWN) != null 
-                ? ((Long) context.getSessionData(CK.PLN_COOLDOWN) / 1000) : null);
+                ? ((Long) context.getSessionData(CK.PLN_COOLDOWN) / 1000L) : null);
         pln.set("override", context.getSessionData(CK.PLN_OVERRIDE) != null 
                 ? (Boolean) context.getSessionData(CK.PLN_OVERRIDE) : null);
         if (pln.getKeys(false).isEmpty()) {

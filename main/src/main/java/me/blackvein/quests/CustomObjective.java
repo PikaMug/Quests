@@ -12,20 +12,19 @@
 
 package me.blackvein.quests;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
+import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.enums.ObjectiveType;
-import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
-import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class CustomObjective implements Listener {
 
@@ -121,7 +120,7 @@ public abstract class CustomObjective implements Listener {
     /**
      * Set whether to let user set required amount for objective
      * 
-     * @param showCount
+     * @param showCount Whether or not to show the count
      */
     public void setShowCount(final boolean showCount) {
         this.showCount = showCount;
@@ -150,7 +149,7 @@ public abstract class CustomObjective implements Listener {
                         }
                     }
                 }
-                if (m != null && !m.isEmpty()) {
+                if (!m.isEmpty()) {
                     return m;
                 }
             }
@@ -161,32 +160,19 @@ public abstract class CustomObjective implements Listener {
     public void incrementObjective(final Player player, final CustomObjective obj, final int count, final Quest quest) {
         final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
-            // Check if the player has Quest with objective
-            boolean hasQuest = false;
-            for (final CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
-                if (co.getName().equals(obj.getName())) {
-                    hasQuest = true;
-                    break;
-                }
-            }
-            if (hasQuest && quester.hasCustomObjective(quest, obj.getName())) {
-                if (quester.getQuestData(quest).customObjectiveCounts.containsKey(obj.getName())) {
-                    final int old = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
-                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
-                            .put(obj.getName(), old + count);
-                } else {
-                    plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
-                            .put(obj.getName(), count);
-                }
+            if (quester.hasCustomObjective(quest, obj.getName())) {
                 int index = -1;
-                for (int i = 0; i < quester.getCurrentStage(quest).customObjectives.size(); i++) {
-                    if (quester.getCurrentStage(quest).customObjectives.get(i).getName().equals(obj.getName())) {
-                        index = i;
+                for (CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+                    index++;
+                    if (co.getName().equals(this.getName())) {
+                        final int old = quester.getQuestData(quest).customObjectiveCounts.get(index);
+                        plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
+                                .set(index, old + count);
                         break;
                     }
                 }
                 if (index > -1) {
-                    final int progress = quester.getQuestData(quest).customObjectiveCounts.get(obj.getName());
+                    final int progress = quester.getQuestData(quest).customObjectiveCounts.get(index);
                     final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
                     
                     final ObjectiveType type = ObjectiveType.CUSTOM;
@@ -199,9 +185,10 @@ public abstract class CustomObjective implements Listener {
                                 new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
                         
                         // Multiplayer
+                        int finalIndex = index;
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
-                            q.getQuestData(quest).customObjectiveCounts.put(obj.getName(), 
-                                    quester.getQuestData(quest).customObjectiveCounts.get(obj.getName()));
+                            final int old = q.getQuestData(quest).customObjectiveCounts.get(finalIndex);
+                            q.getQuestData(quest).customObjectiveCounts.set(finalIndex, old + count);
                             q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
                                     new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
                             return null;

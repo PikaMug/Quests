@@ -12,6 +12,20 @@
 
 package me.blackvein.quests.storage.implementation.file;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.storage.implementation.StorageImplementation;
+import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -21,24 +35,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
-
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.storage.implementation.StorageImplementation;
-import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.MiscUtil;
 
 public class SeparatedYamlStorage implements StorageImplementation {
     private final Quests plugin;
@@ -72,7 +68,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     
     @SuppressWarnings("deprecation")
     @Override
-    public Quester loadQuesterData(final UUID uniqueId) throws Exception {
+    public Quester loadQuester(final UUID uniqueId) throws Exception {
         final FileConfiguration data = new YamlConfiguration();
         Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
@@ -144,7 +140,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
         }
         quester.setCompletedQuests(completedQuests);
-        if (data.isString("currentQuests") == false) {
+        if (!data.isString("currentQuests")) {
             final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             final int maxSize = Math.min(questIds.size(), questStages.size());
@@ -166,7 +162,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
                 final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
                 Stage stage;
-                if (quest == null || quester.getCurrentQuests().containsKey(quest) == false) {
+                if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
                 stage = quester.getCurrentStage(quest);
@@ -180,97 +176,67 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 if (questSec == null) {
                     continue;
                 }
-                if (questSec.contains("blocks-broken-names")) {
-                    final List<String> names = questSec.getStringList("blocks-broken-names");
-                    final List<Integer> amounts = questSec.getIntegerList("blocks-broken-amounts");
-                    final List<Short> durability = questSec.getShortList("blocks-broken-durability");
+                if (questSec.contains("blocks-broken-amounts")) {
+                    final List<Integer> brokenAmounts = questSec.getIntegerList("blocks-broken-amounts");
                     int index = 0;
-                    for (final String s : names) {
-                        ItemStack is;
-                        try {
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), durability.get(index));
-                        } catch (final IndexOutOfBoundsException e) {
-                            // Legacy
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), (short) 0);
-                        }
-                        if (quester.getQuestData(quest).blocksBroken.size() > 0) {
-                            quester.getQuestData(quest).blocksBroken.set(index, is);
+                    for (final int amt : brokenAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getBlocksToBreak().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).getBlocksBroken().size() > 0) {
+                            quester.getQuestData(quest).blocksBroken.set(index, temp);
                         }
                         index++;
                     }
                 }
-                if (questSec.contains("blocks-damaged-names")) {
-                    final List<String> names = questSec.getStringList("blocks-damaged-names");
-                    final List<Integer> amounts = questSec.getIntegerList("blocks-damaged-amounts");
-                    final List<Short> durability = questSec.getShortList("blocks-damaged-durability");
+                if (questSec.contains("blocks-damaged-amounts")) {
+                    final List<Integer> damagedAmounts = questSec.getIntegerList("blocks-damaged-amounts");
                     int index = 0;
-                    for (final String s : names) {
-                        ItemStack is;
-                        try {
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), durability.get(index));
-                        } catch (final IndexOutOfBoundsException e) {
-                            // Legacy
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), (short) 0);
-                        }
-                        if (quester.getQuestData(quest).blocksDamaged.size() > 0) {
-                            quester.getQuestData(quest).blocksDamaged.set(index, is);
+                    for (final int amt : damagedAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getBlocksToDamage().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).getBlocksDamaged().size() > 0) {
+                            quester.getQuestData(quest).blocksDamaged.set(index, temp);
                         }
                         index++;
                     }
                 }
-                if (questSec.contains("blocks-placed-names")) {
-                    final List<String> names = questSec.getStringList("blocks-placed-names");
-                    final List<Integer> amounts = questSec.getIntegerList("blocks-placed-amounts");
-                    final List<Short> durability = questSec.getShortList("blocks-placed-durability");
+                if (questSec.contains("blocks-placed-amounts")) {
+                    final List<Integer> placedAmounts = questSec.getIntegerList("blocks-placed-amounts");
                     int index = 0;
-                    for (final String s : names) {
-                        ItemStack is;
-                        try {
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), durability.get(index));
-                        } catch (final IndexOutOfBoundsException e) {
-                            // Legacy
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), (short) 0);
-                        }
-                        if (quester.getQuestData(quest).blocksPlaced.size() > 0) {
-                            quester.getQuestData(quest).blocksPlaced.set(index, is);
+                    for (final int amt : placedAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getBlocksToPlace().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).getBlocksPlaced().size() > 0) {
+                            quester.getQuestData(quest).blocksPlaced.set(index, temp);
                         }
                         index++;
                     }
                 }
-                if (questSec.contains("blocks-used-names")) {
-                    final List<String> names = questSec.getStringList("blocks-used-names");
-                    final List<Integer> amounts = questSec.getIntegerList("blocks-used-amounts");
-                    final List<Short> durability = questSec.getShortList("blocks-used-durability");
+                if (questSec.contains("blocks-used-amounts")) {
+                    final List<Integer> usedAmounts = questSec.getIntegerList("blocks-used-amounts");
                     int index = 0;
-                    for (final String s : names) {
-                        ItemStack is;
-                        try {
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), durability.get(index));
-                        } catch (final IndexOutOfBoundsException e) {
-                            // Legacy
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), (short) 0);
-                        }
-                        if (quester.getQuestData(quest).blocksUsed.size() > 0) {
-                            quester.getQuestData(quest).blocksUsed.set(index, is);
+                    for (final int amt : usedAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getBlocksToUse().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).getBlocksUsed().size() > 0) {
+                            quester.getQuestData(quest).blocksUsed.set(index, temp);
                         }
                         index++;
                     }
                 }
-                if (questSec.contains("blocks-cut-names")) {
-                    final List<String> names = questSec.getStringList("blocks-cut-names");
-                    final List<Integer> amounts = questSec.getIntegerList("blocks-cut-amounts");
-                    final List<Short> durability = questSec.getShortList("blocks-cut-durability");
+                if (questSec.contains("blocks-cut-amounts")) {
+                    final List<Integer> cutAmounts = questSec.getIntegerList("blocks-cut-amounts");
                     int index = 0;
-                    for (final String s : names) {
-                        ItemStack is;
-                        try {
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), durability.get(index));
-                        } catch (final IndexOutOfBoundsException e) {
-                            // Legacy
-                            is = new ItemStack(Material.matchMaterial(s), amounts.get(index), (short) 0);
-                        }
-                        if (quester.getQuestData(quest).blocksCut.size() > 0) {
-                            quester.getQuestData(quest).blocksCut.set(index, is);
+                    for (final int amt : cutAmounts) {
+                        final ItemStack is = quester.getCurrentStage(quest).getBlocksToCut().get(index);
+                        final ItemStack temp = is.clone();
+                        temp.setAmount(amt);
+                        if (quester.getQuestData(quest).getBlocksCut().size() > 0) {
+                            quester.getQuestData(quest).blocksCut.set(index, temp);
                         }
                         index++;
                     }
@@ -282,7 +248,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToCraft().get(index);
                         final ItemStack temp = is.clone();
                         temp.setAmount(amt);
-                        if (quester.getQuestData(quest).itemsCrafted.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsCrafted().size() > 0) {
                             quester.getQuestData(quest).itemsCrafted.set(index, temp);
                         }
                         index++;
@@ -295,7 +261,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToSmelt().get(index);
                         final ItemStack temp = is.clone();
                         temp.setAmount(amt);
-                        if (quester.getQuestData(quest).itemsSmelted.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsSmelted().size() > 0) {
                             quester.getQuestData(quest).itemsSmelted.set(index, temp);
                         }
                         index++;
@@ -308,7 +274,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToEnchant().get(index);
                         final ItemStack temp = is.clone();
                         temp.setAmount(amt);
-                        if (quester.getQuestData(quest).itemsEnchanted.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsEnchanted().size() > 0) {
                             quester.getQuestData(quest).itemsEnchanted.set(index, temp);
                         }
                         index++;
@@ -321,7 +287,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToBrew().get(index);
                         final ItemStack temp = is.clone();
                         temp.setAmount(amt);
-                        if (quester.getQuestData(quest).itemsBrewed.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsBrewed().size() > 0) {
                             quester.getQuestData(quest).itemsBrewed.set(index, temp);
                         }
                         index++;
@@ -334,7 +300,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToConsume().get(index);
                         final ItemStack temp = is.clone();
                         temp.setAmount(amt);
-                        if (quester.getQuestData(quest).itemsConsumed.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsConsumed().size() > 0) {
                             quester.getQuestData(quest).itemsConsumed.set(index, temp);
                         }
                         index++;
@@ -349,27 +315,24 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
                         temp.addUnsafeEnchantments(is.getEnchantments());
                         temp.setItemMeta(is.getItemMeta());
-                        if (quester.getQuestData(quest).itemsDelivered.size() > 0) {
+                        if (quester.getQuestData(quest).getItemsDelivered().size() > 0) {
                             quester.getQuestData(quest).itemsDelivered.set(index, temp);
                         }
                         index++;
                     }
                 }
-                if (questSec.contains("citizen-ids-to-talk-to")) {
-                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-to-talk-to");
-                    final List<Boolean> has = questSec.getBooleanList("has-talked-to");
-                    for (final int i : ids) {
-                        quester.getQuestData(quest).citizensInteracted.put(i, has.get(ids.indexOf(i)));
-                    }
+                if (questSec.contains("has-talked-to")) {
+                    final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
+                    quester.getQuestData(quest).setCitizensInteracted(new LinkedList<Boolean>(talkAmount));
                 }
                 if (questSec.contains("citizen-ids-killed")) {
                     final List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
                     final List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
-                    quester.getQuestData(quest).citizensKilled.clear();
-                    quester.getQuestData(quest).citizenNumKilled.clear();
+                    quester.getQuestData(quest).citizensIdsKilled.clear();
+                    quester.getQuestData(quest).citizensNumKilled.clear();
                     for (final int i : ids) {
-                        quester.getQuestData(quest).citizensKilled.add(i);
-                        quester.getQuestData(quest).citizenNumKilled.add(num.get(ids.indexOf(i)));
+                        quester.getQuestData(quest).citizensIdsKilled.add(i);
+                        quester.getQuestData(quest).citizensNumKilled.add(num.get(ids.indexOf(i)));
                     }
                 }
                 if (questSec.contains("cows-milked")) {
@@ -389,106 +352,36 @@ public class SeparatedYamlStorage implements StorageImplementation {
                         if (mob != null) {
                             mobs.add(mob);
                         }
-                        quester.getQuestData(quest).mobsKilled.clear();
+                        quester.getQuestData(quest).mobTypesKilled.clear();
                         quester.getQuestData(quest).mobNumKilled.clear();
                         for (final EntityType e : mobs) {
-                            quester.getQuestData(quest).mobsKilled.add(e);
+                            quester.getQuestData(quest).mobTypesKilled.add(e);
                             quester.getQuestData(quest).mobNumKilled.add(amounts.get(mobs.indexOf(e)));
-                        }
-                        if (questSec.contains("mob-kill-locations")) {
-                            final LinkedList<Location> locations = new LinkedList<Location>();
-                            final List<Integer> radii = questSec.getIntegerList("mob-kill-location-radii");
-                            for (final String loc : questSec.getStringList("mob-kill-locations")) {
-                                if (ConfigUtil.getLocation(loc) != null) {
-                                    locations.add(ConfigUtil.getLocation(loc));
-                                }
-                            }
-                            quester.getQuestData(quest).locationsToKillWithin = locations;
-                            quester.getQuestData(quest).radiiToKillWithin.clear();
-                            for (final int i : radii) {
-                                quester.getQuestData(quest).radiiToKillWithin.add(i);
-                            }
                         }
                     }
                 }
                 if (questSec.contains("locations-to-reach")) {
-                    final LinkedList<Location> locations = new LinkedList<Location>();
-                    final List<Boolean> has = questSec.getBooleanList("has-reached-location");
-                    while (has.size() < locations.size()) {
-                        // TODO - Find proper cause of Github issues #646 and #825
-                        plugin.getLogger().info("Added missing has-reached-location data for Quester " + uniqueId);
-                        has.add(false);
-                    }
-                    final List<Integer> radii = questSec.getIntegerList("radii-to-reach-within");
-                    for (final String loc : questSec.getStringList("locations-to-reach")) {
-                        if (ConfigUtil.getLocation(loc) != null) {
-                            locations.add(ConfigUtil.getLocation(loc));
-                        }
-                    }
-                    quester.getQuestData(quest).locationsReached = locations;
-                    quester.getQuestData(quest).hasReached.clear();
-                    quester.getQuestData(quest).radiiToReachWithin.clear();
-                    for (final boolean b : has) {
-                        quester.getQuestData(quest).hasReached.add(b);
-                    }
-                    for (final int i : radii) {
-                        quester.getQuestData(quest).radiiToReachWithin.add(i);
-                    }
+                    final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");
+                    quester.getQuestData(quest).setLocationsReached(new LinkedList<Boolean>(hasReached));
                 }
-                if (questSec.contains("mobs-to-tame")) {
-                    final List<String> mobs = questSec.getStringList("mobs-to-tame");
-                    final List<Integer> amounts = questSec.getIntegerList("mob-tame-amounts");
-                    for (final String mob : mobs) {
-                        quester.getQuestData(quest).mobsTamed.put(EntityType.valueOf(mob.toUpperCase()), amounts
-                                .get(mobs.indexOf(mob)));
-                    }
+                if (questSec.contains("mob-tame-amounts")) {
+                    final List<Integer> tameAmounts = questSec.getIntegerList("mob-tame-amounts");
+                    quester.getQuestData(quest).setMobsTamed(new LinkedList<Integer>(tameAmounts));
                 }
-                if (questSec.contains("sheep-to-shear")) {
-                    final List<String> colors = questSec.getStringList("sheep-to-shear");
-                    final List<Integer> amounts = questSec.getIntegerList("sheep-sheared");
-                    for (final String color : colors) {
-                        quester.getQuestData(quest).sheepSheared.put(MiscUtil.getProperDyeColor(color), amounts.get(colors
-                                .indexOf(color)));
-                    }
+                if (questSec.contains("sheep-sheared")) {
+                    final List<Integer> sheepAmounts = questSec.getIntegerList("sheep-sheared");
+                    quester.getQuestData(quest).setSheepSheared(new LinkedList<Integer>(sheepAmounts));
                 }
-                if (questSec.contains("passwords")) {
-                    final List<String> passwords = questSec.getStringList("passwords");
-                    final List<Boolean> said = questSec.getBooleanList("passwords-said");
-                    for (int i = 0; i < passwords.size(); i++) {
-                        quester.getQuestData(quest).passwordsSaid.put(passwords.get(i), said.get(i));
-                    }
+                if (questSec.contains("passwords-said")) {
+                    final List<Boolean> passAmounts = questSec.getBooleanList("passwords-said");
+                    quester.getQuestData(quest).setPasswordsSaid(new LinkedList<Boolean>(passAmounts));
                 }
                 if (questSec.contains("custom-objectives")) {
-                    final List<String> customObj = questSec.getStringList("custom-objectives");
                     final List<Integer> customObjCount = questSec.getIntegerList("custom-objective-counts");
-                    for (int i = 0; i < customObj.size(); i++) {
-                        quester.getQuestData(quest).customObjectiveCounts.put(customObj.get(i), customObjCount.get(i));
-                    }
+                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<Integer>(customObjCount));
                 }
                 if (questSec.contains("stage-delay")) {
                     quester.getQuestData(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
-                }
-                if (quester.getCurrentStage(quest).getChatActions().isEmpty() == false) {
-                    for (final String chatTrig : quester.getCurrentStage(quest).getChatActions().keySet()) {
-                        quester.getQuestData(quest).actionFired.put(chatTrig, false);
-                    }
-                }
-                if (questSec.contains("chat-triggers")) {
-                    final List<String> chatTriggers = questSec.getStringList("chat-triggers");
-                    for (final String s : chatTriggers) {
-                        quester.getQuestData(quest).actionFired.put(s, true);
-                    }
-                }
-                if (quester.getCurrentStage(quest).getCommandActions().isEmpty() == false) {
-                    for (final String commandTrig : quester.getCurrentStage(quest).getCommandActions().keySet()) {
-                        quester.getQuestData(quest).actionFired.put(commandTrig, false);
-                    }
-                }
-                if (questSec.contains("command-triggers")) {
-                    final List<String> commandTriggers = questSec.getStringList("command-triggers");
-                    for (final String s : commandTriggers) {
-                        quester.getQuestData(quest).actionFired.put(s, true);
-                    }
                 }
             }
         }
@@ -496,7 +389,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuesterData(final Quester quester) throws Exception {
+    public void saveQuester(final Quester quester) throws Exception {
         final FileConfiguration data = quester.getBaseData();
         try {
             data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
@@ -506,7 +399,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void deleteQuesterData(final UUID uniqueId) throws Exception {
+    public void deleteQuester(final UUID uniqueId) throws Exception {
         final File f = new File(directoryPath + File.separator + uniqueId + ".yml");
         f.delete();
     }
@@ -535,19 +428,20 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 return name.endsWith(".yml");
             }
         });
-        
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                final String name = listOfFiles[i].getName().substring(0, listOfFiles[i].getName().lastIndexOf("."));
+
+        if (listOfFiles == null) {
+            return ids;
+        }
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                final String name = listOfFile.getName().substring(0, listOfFile.getName().lastIndexOf("."));
                 UUID id = null;
                 try {
                     id = UUID.fromString(name);
                 } catch (final IllegalArgumentException e) {
                     continue;
                 }
-                if (id != null) {
-                    ids.add(id);
-                }
+                ids.add(id);
             }
         }
         return ids;

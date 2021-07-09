@@ -198,7 +198,7 @@ public class CmdExecutor implements CommandExecutor {
                 if (args.length == 0) {
                     final Player player = (Player) cs;
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    if (quester.getCurrentQuests().isEmpty() == false) {
+                    if (!quester.getCurrentQuests().isEmpty()) {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
@@ -1381,7 +1381,7 @@ public class CmdExecutor implements CommandExecutor {
                 quester.saveData();
                 quester.updateJournal();
                 final Storage storage = plugin.getStorage();
-                storage.deleteQuesterData(id);
+                storage.deleteQuester(id);
                 String msg = Lang.get("questReset");
                 if (target.getName() != null) {
                     msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);

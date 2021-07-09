@@ -12,11 +12,11 @@
 
 package me.blackvein.quests.storage.implementation;
 
-import java.util.Collection;
-import java.util.UUID;
-
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+
+import java.util.Collection;
+import java.util.UUID;
 
 public interface StorageImplementation {
     Quests getPlugin();
@@ -27,11 +27,11 @@ public interface StorageImplementation {
 
     void close();
     
-    Quester loadQuesterData(UUID uniqueId) throws Exception;
+    Quester loadQuester(UUID uniqueId) throws Exception;
 
-    void saveQuesterData(Quester quester) throws Exception;
+    void saveQuester(Quester quester) throws Exception;
 
-    void deleteQuesterData(UUID uniqueId) throws Exception;
+    void deleteQuester(UUID uniqueId) throws Exception;
 
     String getQuesterLastKnownName(UUID uniqueId) throws Exception;
     

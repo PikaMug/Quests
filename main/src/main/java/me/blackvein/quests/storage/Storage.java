@@ -12,16 +12,16 @@
 
 package me.blackvein.quests.storage;
 
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.storage.implementation.StorageImplementation;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.storage.implementation.StorageImplementation;
 
 public class Storage {
     private final Quests plugin;
@@ -88,27 +88,26 @@ public class Storage {
         }
     }
     
-    public CompletableFuture<Quester> loadQuesterData(final UUID uniqueId) {
+    public CompletableFuture<Quester> loadQuester(final UUID uniqueId) {
         return makeFuture(() -> {
-            final Quester quester = implementation.loadQuesterData(uniqueId);
-            return quester;
+            return implementation.loadQuester(uniqueId);
         });
     }
 
-    public CompletableFuture<Void> saveQuesterData(final Quester quester) {
+    public CompletableFuture<Void> saveQuester(final Quester quester) {
         return makeFuture(() -> {
             try {
-                implementation.saveQuesterData(quester);
+                implementation.saveQuester(quester);
             } catch (final Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
-    public CompletableFuture<Void> deleteQuesterData(final UUID uniqueId) {
+    public CompletableFuture<Void> deleteQuester(final UUID uniqueId) {
         return makeFuture(() -> {
             try {
-                implementation.deleteQuesterData(uniqueId);
+                implementation.deleteQuester(uniqueId);
             } catch (final Exception e) {
                 e.printStackTrace();
             }

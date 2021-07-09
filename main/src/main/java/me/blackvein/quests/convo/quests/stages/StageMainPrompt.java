@@ -12,22 +12,6 @@
 
 package me.blackvein.quests.convo.quests.stages;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
-import org.bukkit.entity.Player;
-
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
@@ -45,6 +29,21 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Player;
+
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class StageMainPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
@@ -307,16 +306,13 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 String text = "\n";
-                final LinkedList<LinkedList<String>> passPhrases 
-                        = (LinkedList<LinkedList<String>>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES);
+                final LinkedList<String> passPhrases
+                        = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES);
                 final LinkedList<String> passDisplays 
                         = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS);
-                for (int i = 0; i < passPhrases.size(); i++) {
+                for (int i = 0; i < passDisplays.size(); i++) {
                     text += ChatColor.AQUA + "     - \"" + passDisplays.get(i) + "\"\n";
-                    final LinkedList<String> phrases = passPhrases.get(i);
-                    for (final String phrase : phrases) {
-                        text += ChatColor.DARK_AQUA + "          - " + phrase + "\n";
-                    }
+                    text += ChatColor.DARK_AQUA + "          - " + passPhrases.get(i) + "\n";
                 }
                 return text;
             }
@@ -992,7 +988,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (final String display : (List<String>) context.getSessionData(stagePrefix 
+                    for (final String display : (List<String>) context.getSessionData(stagePrefix
                             + CK.S_PASSWORD_DISPLAYS)) {
                         text += ChatColor.GRAY + "     - " + ChatColor.AQUA + display + "\n";
                     }
@@ -1003,16 +999,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
                     String text = "\n";
-                    for (final LinkedList<String> phraseList : (LinkedList<LinkedList<String>>) context
-                            .getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES)) {
-                        text += ChatColor.GRAY + "     - ";
-                        for (final String s : phraseList) {
-                            if (phraseList.getLast().equals(s) == false) {
-                                text += ChatColor.DARK_AQUA + s + ChatColor.GRAY + "|";
-                            } else {
-                                text += ChatColor.DARK_AQUA + s + "\n";
-                            }
-                        }
+                    for (final String phrase : (List<String>) context.getSessionData(stagePrefix
+                            + CK.S_PASSWORD_PHRASES)) {
+                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_AQUA + phrase + "\n";
                     }
                     return text;
                 }
@@ -1065,8 +1054,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     one = 0;
                 }
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES) != null) {
-                    two = ((LinkedList<LinkedList<String>>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES))
-                            .size();
+                    two = ((List<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES)).size();
                 } else {
                     two = 0;
                 }
@@ -1109,11 +1097,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS) != null) {
                     @SuppressWarnings("unchecked")
-                    final
-                    List<String> displays = (List<String>) context.getSessionData(stagePrefix 
+                    final List<String> displays = (List<String>) context.getSessionData(stagePrefix
                             + CK.S_PASSWORD_DISPLAYS);
                     displays.add(input);
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS, displays);
@@ -1155,22 +1142,16 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES) != null) {
                     @SuppressWarnings("unchecked")
-                    final
-                    LinkedList<LinkedList<String>> phrases 
-                            = (LinkedList<LinkedList<String>>) context.getSessionData(stagePrefix 
+                    final List<String> phrases = (List<String>) context.getSessionData(stagePrefix
                             + CK.S_PASSWORD_PHRASES);
-                    final LinkedList<String> newPhrases = new LinkedList<String>();
-                    newPhrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
-                    phrases.add(newPhrases);
+                    phrases.add(input);
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_PHRASES, phrases);
                 } else {
-                    final LinkedList<LinkedList<String>> phrases = new LinkedList<LinkedList<String>>();
-                    final LinkedList<String> newPhrases = new LinkedList<String>();
-                    newPhrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
-                    phrases.add(newPhrases);
+                    final List<String> phrases = new LinkedList<String>();
+                    phrases.add(input);
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_PHRASES, phrases);
                 }
             }

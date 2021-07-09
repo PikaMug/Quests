@@ -362,7 +362,7 @@ public class Quest implements Comparable<Quest> {
                     final Location source = quester.getPlayer().getLocation();
                     Location nearest = null;
                     double old_distance = 30000000;
-                    final EntityType et = stage.mobsToTame.keySet().iterator().next();
+                    final EntityType et = stage.mobsToTame.getFirst();
                     if (source.getWorld() == null) {
                         return;
                     }
@@ -383,7 +383,7 @@ public class Quest implements Comparable<Quest> {
                     final Location source = quester.getPlayer().getLocation();
                     Location nearest = null;
                     double old_distance = 30000000;
-                    final DyeColor dc = stage.sheepToShear.keySet().iterator().next();
+                    final DyeColor dc = stage.sheepToShear.getFirst();
                     if (source.getWorld() == null) {
                         return;
                     }
@@ -452,7 +452,7 @@ public class Quest implements Comparable<Quest> {
         if (quester.questPoints < reqs.getQuestPoints()) {
             return false;
         }
-        if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
+        if (!quester.completedQuests.containsAll(reqs.getNeededQuests())) {
             return false;
         }
         for (final Quest q : reqs.getBlockQuests()) {
@@ -468,14 +468,13 @@ public class Quest implements Comparable<Quest> {
             }
         }
         if (reqs.getHeroesPrimaryClass() != null) {
-            if (plugin.getDependencies()
-                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
+            if (!plugin.getDependencies().testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
                 return false;
             }
         }
         if (reqs.getHeroesSecondaryClass() != null) {
-            if (plugin.getDependencies()
-                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
+            if (!plugin.getDependencies().testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(),
+                    player.getUniqueId())) {
                 return false;
             }
         }
@@ -491,7 +490,7 @@ public class Quest implements Comparable<Quest> {
                 }
             }
             for (final String s : reqs.getPermissions()) {
-                if (p.hasPermission(s) == false) {
+                if (!p.hasPermission(s)) {
                     return false;
                 }
             }
@@ -504,7 +503,7 @@ public class Quest implements Comparable<Quest> {
                     }
                 }
                 if (found != null) {
-                    if (found.testRequirement(p, reqs.getCustomRequirements().get(s)) == false) {
+                    if (!found.testRequirement(p, reqs.getCustomRequirements().get(s))) {
                         return false;
                     }
                 } else {
@@ -706,7 +705,7 @@ public class Quest implements Comparable<Quest> {
                     depends.getVaultEconomy().depositPlayer(player, lb.getMoney());
                 }
             }
-            if (lb.getItemList().isEmpty() == false) {
+            if (!lb.getItemList().isEmpty()) {
                 phatLootItems.addAll(lb.getItemList());
                 if (player.isOnline()) {
                     for (final ItemStack is : lb.getItemList()) {
@@ -721,12 +720,12 @@ public class Quest implements Comparable<Quest> {
                     }
                 }
             }
-            if (lb.getCommandList().isEmpty() == false && player.isOnline()) {
+            if (!lb.getCommandList().isEmpty() && player.isOnline()) {
                 for (final CommandLoot cl : lb.getCommandList()) {
                     cl.execute((Player)player);
                 }
             }
-            if (lb.getMessageList().isEmpty() == false) {
+            if (!lb.getMessageList().isEmpty()) {
                 phatLootMessages.addAll(lb.getMessageList());
             }
             if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -749,7 +748,7 @@ public class Quest implements Comparable<Quest> {
             }
             issuedReward = true;
         }
-        if (rews.getCustomRewards().isEmpty() == false) {
+        if (!rews.getCustomRewards().isEmpty()) {
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 for (final String s : rews.getCustomRewards().keySet()) {
@@ -897,10 +896,10 @@ public class Quest implements Comparable<Quest> {
                     quester.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " "
                             + Lang.get(p, "experience"));
                 }
-                if (rews.getCommands().isEmpty() == false) {
+                if (!rews.getCommands().isEmpty()) {
                     int index = 0;
                     for (final String s : rews.getCommands()) {
-                        if (rews.getCommandsOverrideDisplay().isEmpty() == false 
+                        if (!rews.getCommandsOverrideDisplay().isEmpty()
                                 && rews.getCommandsOverrideDisplay().size() > index) {
                             if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
                                 quester.sendMessage("- " + ChatColor.DARK_GREEN
@@ -912,7 +911,7 @@ public class Quest implements Comparable<Quest> {
                         index++;
                     }
                 }
-                if (rews.getPermissions().isEmpty() == false) {
+                if (!rews.getPermissions().isEmpty()) {
                     int index = 0;
                     for (final String s : rews.getPermissions()) {
                         if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
@@ -925,14 +924,14 @@ public class Quest implements Comparable<Quest> {
                         index++;
                     }
                 }
-                if (rews.getMcmmoSkills().isEmpty() == false) {
+                if (!rews.getMcmmoSkills().isEmpty()) {
                     for (final String s : rews.getMcmmoSkills()) {
                         quester.sendMessage("- " + ChatColor.DARK_GREEN
                                 + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
                                 + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
-                if (rews.getHeroesClasses().isEmpty() == false) {
+                if (!rews.getHeroesClasses().isEmpty()) {
                     for (final String s : rews.getHeroesClasses()) {
                         quester.sendMessage("- " + ChatColor.AQUA
                                 + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE 
@@ -943,7 +942,7 @@ public class Quest implements Comparable<Quest> {
                     p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getPartiesExperience() + ChatColor.DARK_PURPLE
                             + " " + Lang.get(p, "partiesExperience"));
                 }
-                if (phatLootMessages.isEmpty() == false) {
+                if (!phatLootMessages.isEmpty()) {
                     for (final String s : phatLootMessages) {
                         quester.sendMessage("- " + s);
                     }
@@ -979,7 +978,9 @@ public class Quest implements Comparable<Quest> {
         }
         quester.saveData();
         if (player.isOnline()) {
-            player.getPlayer().updateInventory();
+            if (player.getPlayer() != null) {
+                player.getPlayer().updateInventory();
+            }
         }
         quester.updateJournal();
         quester.findCompassTarget();
@@ -1043,7 +1044,7 @@ public class Quest implements Comparable<Quest> {
     /**
      * Checks if quester is in WorldGuard region start
      * 
-     * @deprecated Use {@link #isInRegion(Quester)}
+     * @deprecated Use {@link #isInRegionStart(Quester)}
      * @param quester The quester to check
      * @return true if quester is in region
      */
@@ -1085,10 +1086,7 @@ public class Quest implements Comparable<Quest> {
         if (regionStart == null) {
             return false;
         }
-        if (plugin.getDependencies().getWorldGuardApi()
-                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart)) {
-            return true;
-        }
-        return false;
+        return plugin.getDependencies().getWorldGuardApi()
+                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart);
     }
 }
