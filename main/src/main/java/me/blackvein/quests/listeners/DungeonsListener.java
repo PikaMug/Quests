@@ -28,14 +28,18 @@ public class DungeonsListener implements Listener {
     @EventHandler
     public void onGroupCreate(final GroupCreateEvent event) {
         if (Lang.get("questDungeonsCreate").length() > 0) {
-            event.getCreator().sendMessage(ChatColor.YELLOW + Lang.get("questDungeonsCreate"));
+            if(Lang.canSend("questDungeonsCreate")) {
+                event.getCreator().sendMessage(ChatColor.YELLOW + Lang.get("questDungeonsCreate"));
+            }
         }
     }
     
     @EventHandler
     public void onGroupDisbandEvent(final GroupDisbandEvent event) {
         if (Lang.get("questDungeonsDisband").length() > 0) {
-            event.getDisbander().sendMessage(ChatColor.RED + Lang.get("questDungeonsDisband"));
+            if(Lang.canSend("questDungeonsDisband")) {
+                event.getDisbander().sendMessage(ChatColor.RED + Lang.get("questDungeonsDisband"));
+            }
         }
     }
     
@@ -45,13 +49,18 @@ public class DungeonsListener implements Listener {
             final Player i = event.getGroup().getLeader();
             final Player p = event.getPlayer().getPlayer();
             if (i != null && p != null) {
-                if (Lang.get("questDungeonsInvite").length() > 0) {
-                    i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite")
-                            .replace("<player>", p.getName()));
+                if(Lang.canSend("questDungeonsInvite")) {
+                    if (Lang.get("questDungeonsInvite").length() > 0) {
+                        i.sendMessage(ChatColor.GREEN + Lang.get(i, "questDungeonsInvite")
+                                .replace("<player>", p.getName()));
+                    }
                 }
-                if (Lang.get("questDungeonsJoin").length() > 0) {
-                    p.sendMessage(ChatColor.GREEN + Lang.get(p, "questDungeonsJoin").replace("<player>", i.getName()));
+                if(Lang.canSend("questDungeonsJoin")) {
+                    if (Lang.get("questDungeonsJoin").length() > 0) {
+                        p.sendMessage(ChatColor.GREEN + Lang.get(p, "questDungeonsJoin").replace("<player>", i.getName()));
+                    }
                 }
+
             }
         }
     }
@@ -62,11 +71,15 @@ public class DungeonsListener implements Listener {
             final Player k = event.getGroup().getLeader();
             final Player p = event.getPlayer().getPlayer();
             if (k != null && p != null) {
-                if (Lang.get("questDungeonsKicked").length() > 0) {
-                    k.sendMessage(ChatColor.RED + Lang.get(k, "questDungeonsKicked").replace("<player>", k.getName()));
+                if(Lang.canSend("questDungeonsKicked")) {
+                    if (Lang.get("questDungeonsKicked").length() > 0) {
+                        k.sendMessage(ChatColor.RED + Lang.get(k, "questDungeonsKicked").replace("<player>", k.getName()));
+                    }
                 }
-                if (Lang.get("questDungeonsLeave").length() > 0) {
-                    p.sendMessage(ChatColor.RED + Lang.get(p, "questDungeonsLeave").replace("<player>", p.getName()));
+                if(Lang.canSend("questDungeonsLeave")) {
+                    if (Lang.get("questDungeonsLeave").length() > 0) {
+                        p.sendMessage(ChatColor.RED + Lang.get(p, "questDungeonsLeave").replace("<player>", p.getName()));
+                    }
                 }
             }
         }

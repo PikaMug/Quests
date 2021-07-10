@@ -580,7 +580,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (quester.saveData()) {
                         getLogger().info("Created new data for player " + player.getName());
                     } else {
-                        player.sendMessage(ChatColor.RED + Lang.get(player, "questSaveError"));
+                        if(Lang.canSend("questSaveError")) {
+                            player.sendMessage(ChatColor.RED + Lang.get(player, "questSaveError"));
+                        }
                     }
                 }
                 final String questIdToTake = quester.questIdToTake;
@@ -598,13 +600,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 return Prompt.END_OF_CONVERSATION;
             } else if (s != null && s.equalsIgnoreCase(Lang.get("noWord"))) {
-                player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
+                if(Lang.canSend("cancelled")) {
+                    player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
+                }
                 return Prompt.END_OF_CONVERSATION;
             } else {
-                final String msg = Lang.get(player, "questInvalidChoice")
-                    .replace("<yes>", Lang.get(player, "yesWord"))
-                    .replace("<no>", Lang.get(player, "noWord"));
-                player.sendMessage(ChatColor.RED + msg);
+                if(Lang.canSend("questInvalidChoice")) {
+                    final String msg = Lang.get(player, "questInvalidChoice")
+                            .replace("<yes>", Lang.get(player, "yesWord"))
+                            .replace("<no>", Lang.get(player, "noWord"));
+                    player.sendMessage(ChatColor.RED + msg);
+                }
                 return new QuestAcceptPrompt();
             }
         }
@@ -1501,9 +1507,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if ((available.size() + rows) <= (page * rows) || available.size() == 0) {
-                quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                if(Lang.canSend("pageNotExist")) {
+                    quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                }
             } else {
-                quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                if(Lang.canSend("questListTitle")) {
+                    quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                }
                 int fromOrder = (page - 1) * rows;
                 List<Quest> subQuests;
                 if (available.size() >= (fromOrder + rows)) {
@@ -1528,9 +1538,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
         } else {
             if ((quests.size() + rows) <= (page * rows) || quests.size() == 0) {
-                quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                if(Lang.canSend("pageNotExist")) {
+                    quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                }
             } else {
-                quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                if(Lang.canSend("questListTitle")) {
+                    quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                }
                 int fromOrder = (page - 1) * rows;
                 List<Quest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {

@@ -73,6 +73,16 @@ public class Lang {
         return langMap.containsKey(key) ? LangToken.convertString(langMap.get(key)) : "NULL";
     }
 
+    public static boolean canSend(final String key) {
+        if(langMap.containsKey(key)){
+            String string = LangToken.convertString(langMap.get(key));
+            return !string.equals("");
+        }
+        return false;
+        //return langMap.containsKey(key) ? LangToken.convertString(langMap.get(key)) : "NULL";
+    }
+
+
     /**
      * Get key for lang string
      * @param value The lang string

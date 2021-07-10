@@ -760,8 +760,10 @@ public class Quest implements Comparable<Quest> {
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            quester.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
-                    ChatColor.YELLOW + name + ChatColor.GOLD));
+            if(Lang.canSend("questCompleteTitle")) {
+                quester.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
+                        ChatColor.YELLOW + name + ChatColor.GOLD));
+            }
             if (plugin.getSettings().canShowQuestTitles()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " title " + "{\"text\":\"" + Lang.get(p, "quest") + " " + Lang.get(p, "complete") 
@@ -769,7 +771,9 @@ public class Quest implements Comparable<Quest> {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
             }
-            p.sendMessage(ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
+            if(Lang.canSend("questRewardsTitle")) {
+                p.sendMessage(ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
+            }
             if (!issuedReward) {
                 p.sendMessage(ChatColor.GRAY + "- (" + Lang.get("none") + ")");
             } else if (!rews.getDetailsOverride().isEmpty()) {
