@@ -61,12 +61,8 @@ quests:
     stages:
       ordered:
         1:
-          start-event: RodStart
+          start-event: GiveRod
           death-event: DeathFail
-          chat-events:
-            - "GiveRod"
-          chat-event-triggers:
-            - "rod"
           fish-to-catch: 5
     rewards:
       exp: 250

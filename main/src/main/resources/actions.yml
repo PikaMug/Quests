@@ -14,10 +14,8 @@ actions:
     message: "<green>Nice work!"
   DeathFail:
     fail-quest: true
-  RodStart:
-    message: "<yellow>Type 'rod' in chat to get a fishing rod!"
   GiveRod:
-    message: "<green>Here you go!"
+    message: "<green>Here's a rod to get you started!"
     items:
       - name-fishing_rod:amount-1
   TimerStart:
