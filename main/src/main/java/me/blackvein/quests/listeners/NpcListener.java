@@ -189,9 +189,10 @@ public class NpcListener implements Listener {
                 boolean hasObjective = false;
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
-                        if (quester.getQuestData(quest) != null 
-                                && quester.getCurrentStage(quest).getCitizensToInteract().contains(evt.getNPC().getId())
-                                && !quester.getQuestData(quest).citizensInteracted.get(evt.getNPC().getId())) {
+                        final int npcIndex
+                                = quester.getCurrentStage(quest).getCitizensToInteract().indexOf(evt.getNPC().getId());
+                        if (quester.getQuestData(quest) != null && npcIndex > -1
+                                && !quester.getQuestData(quest).citizensInteracted.get(npcIndex)) {
                             hasObjective = true;
                         }
                         quester.interactWithNPC(quest, evt.getNPC());
