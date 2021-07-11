@@ -75,7 +75,7 @@ public class BlockListener implements Listener {
                         if (quester.getCurrentStage(quest).containsObjective(breakType)) {
                             if (quest.getOptions().canIgnoreSilkTouch()
                                     && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
-                                player.sendMessage(ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
+                                Lang.send(player, ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
                                         .replace("<quest>", quest.getName()));
                             } else {
                                 quester.breakBlock(quest, blockItemStack);
@@ -249,7 +249,7 @@ public class BlockListener implements Listener {
                     return;
                 }
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    if (evt.isCancelled() == false) {
+                    if (!evt.isCancelled()) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;

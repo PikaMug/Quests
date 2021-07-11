@@ -12,6 +12,15 @@
 
 package me.blackvein.quests.util;
 
+import me.blackvein.quests.Quests;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,21 +33,11 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
-import me.blackvein.quests.Quests;
-import me.clip.placeholderapi.PlaceholderAPI;
-
 public class Lang {
 
     private static String iso = "en-US";
     private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
-    private static Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
     public static String getISO() {
         return iso;
@@ -55,12 +54,12 @@ public class Lang {
     /**
      * Get lang string AND pass Player for use with PlaceholderAPI, if installed
      * 
-     * @param p the Player whom will receive the string
+     * @param player the Player whom will receive the string
      * @param key label as it appears in lang file, such as "journalNoQuests"
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
-    public static String get(final Player p, final String key) {
-        return langMap.containsKey(key) ? LangToken.convertString(p, langMap.get(key)) : "NULL";
+    public static String get(final Player player, final String key) {
+        return langMap.containsKey(key) ? LangToken.convertString(player, langMap.get(key)) : "NULL";
     }
 
     /**
@@ -118,12 +117,10 @@ public class Lang {
         return orig;
     }
     
-    /**
-     * @deprecated Use {@link #init(Quests)}
-     */
-    @Deprecated
-    public static void loadLang(final Quests plugin) throws InvalidConfigurationException, IOException {
-        init(plugin);
+    public static void send(final Player player, String message) {
+        if (message != null && !ChatColor.stripColor(message).equals("")) {
+            player.sendMessage(message);
+        }
     }
 
     public static void init(final Quests plugin) throws InvalidConfigurationException, IOException {
@@ -260,8 +257,8 @@ public class Lang {
                 final StringBuilder hex = new StringBuilder();
                 hex.append(ChatColor.COLOR_CHAR + "x");
                 final char[] chars = matcher.group(1).toCharArray();
-                for (int index = 0; index < chars.length; index++) {
-                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
+                for (char aChar : chars) {
+                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
                 }
                 s = s.replace(matcher.group(), hex.toString());
             }

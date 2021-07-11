@@ -205,7 +205,7 @@ public class CmdExecutor implements CommandExecutor {
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
                                 final String msg = Lang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
-                                quester.sendMessage(ChatColor.GOLD + msg);
+                                Lang.send(player, ChatColor.GOLD + msg);
                                 plugin.showObjectives(q, quester, false);
                             } else {
                                 final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
@@ -213,11 +213,11 @@ public class CmdExecutor implements CommandExecutor {
                                         +  Lang.get(player, "plnTooEarly");
                                 msg = msg.replace("<quest>", q.getName());
                                 msg = msg.replace("<time>", MiscUtil.getTime(time));
-                                quester.sendMessage(msg);
+                                Lang.send(player, msg);
                             }
                         }
                     } else {
-                        quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
                     }
                 } else {
                     showQuestDetails(cs, args);
@@ -686,12 +686,12 @@ public class CmdExecutor implements CommandExecutor {
             final int index = quester.getJournalIndex();
             if (index != -1) {
                 inv.setItem(index, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalPutAway")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalPutAway")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
             } else if (player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) {
                 final QuestJournal journal = new QuestJournal(quester);
                 player.setItemInHand(journal.toItemStack());
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
                 //quester.updateJournal();
             } else if (inv.firstEmpty() != -1) {
@@ -700,14 +700,14 @@ public class CmdExecutor implements CommandExecutor {
                     if (arr[i] == null) {
                         final QuestJournal journal = new QuestJournal(quester);
                         inv.setItem(i, journal.toItemStack());
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                                 .replace("<journal>", Lang.get(player, "journalTitle")));
                         //quester.updateJournal();
                         break;
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
             }
         }
@@ -716,11 +716,11 @@ public class CmdExecutor implements CommandExecutor {
     private void questsQuit(final Player player, final String[] args) {
         if (player.hasPermission("quests.quit")) {
             if (args.length == 1) {
-                player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
+                Lang.send(player, ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
                 return;
             }
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() == false) {
+            if (!quester.getCurrentQuests().isEmpty()) {
                 final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
@@ -733,45 +733,45 @@ public class CmdExecutor implements CommandExecutor {
                         msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
                         quester.quitQuest(quest, msg);
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
                     }
                 } else {
-                    player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
+                    Lang.send(player, ChatColor.RED + Lang.get(player, "questNotFound"));
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
             }
         } else {
-            player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
+            Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));
         }
     }
 
     private void questsTake(final Player player, final String[] args) {
-        if (plugin.getSettings().canAllowCommands() == true) {
+        if (plugin.getSettings().canAllowCommands()) {
             if (player.hasPermission("quests.take")) {
                 if (args.length == 1) {
-                    player.sendMessage(ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
                 } else {
                     final Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     if (questToFind != null) {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             if (q.getId().equals(questToFind.getId())) {
-                                player.sendMessage(ChatColor.RED + Lang.get(player, "questAlreadyOn"));
+                                Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
                                 return;
                             }
                         }
                         //quester.setQuestToTake(questToFind);
                         quester.offerQuest(questToFind, true);
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questNotFound"));
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
+                Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));
             }
         } else {
-            player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
+            Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
         }
     }
 

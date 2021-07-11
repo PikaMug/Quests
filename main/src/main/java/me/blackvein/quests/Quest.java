@@ -557,9 +557,7 @@ public class Quest implements Comparable<Quest> {
             }
         }
         quester.hardQuit(this);
-        if (!quester.completedQuests.contains(this)) {
-            quester.completedQuests.add(this);
-        }
+        quester.completedQuests.add(this);
         for (final Map.Entry<Integer, Quest> entry : quester.timers.entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
@@ -616,6 +614,9 @@ public class Quest implements Comparable<Quest> {
             }
         }
         for (final String s : rews.getCommands()) {
+            if (player.getName() == null) {
+                continue;
+            }
             String temp = s.replace("<player>", player.getName());
             if (depends.getPlaceholderApi() != null && player.isOnline()) {
                 temp = PlaceholderAPI.setPlaceholders((Player)player, temp);
@@ -760,7 +761,7 @@ public class Quest implements Comparable<Quest> {
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            quester.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
+            Lang.send(p, ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
                     ChatColor.YELLOW + name + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
@@ -769,7 +770,7 @@ public class Quest implements Comparable<Quest> {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
             }
-            p.sendMessage(ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
+            Lang.send(p, ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
             if (!issuedReward) {
                 p.sendMessage(ChatColor.GRAY + "- (" + Lang.get("none") + ")");
             } else if (!rews.getDetailsOverride().isEmpty()) {

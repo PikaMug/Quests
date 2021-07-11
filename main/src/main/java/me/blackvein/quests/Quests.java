@@ -580,7 +580,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     if (quester.saveData()) {
                         getLogger().info("Created new data for player " + player.getName());
                     } else {
-                        player.sendMessage(ChatColor.RED + Lang.get(player, "questSaveError"));
+                        Lang.send(player, ChatColor.RED + Lang.get(player, "questSaveError"));
                     }
                 }
                 final String questIdToTake = quester.questIdToTake;
@@ -598,13 +598,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
                 return Prompt.END_OF_CONVERSATION;
             } else if (s != null && s.equalsIgnoreCase(Lang.get("noWord"))) {
-                player.sendMessage(ChatColor.YELLOW + Lang.get("cancelled"));
+                Lang.send(player, ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
             } else {
                 final String msg = Lang.get(player, "questInvalidChoice")
                     .replace("<yes>", Lang.get(player, "yesWord"))
                     .replace("<no>", Lang.get(player, "noWord"));
-                player.sendMessage(ChatColor.RED + msg);
+                Lang.send(player, ChatColor.RED + msg);
                 return new QuestAcceptPrompt();
             }
         }
@@ -1501,9 +1501,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 }
             }
             if ((available.size() + rows) <= (page * rows) || available.size() == 0) {
-                quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
             } else {
-                quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
                 List<Quest> subQuests;
                 if (available.size() >= (fromOrder + rows)) {
@@ -1524,13 +1524,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 String msg = Lang.get(player, "pageFooter");
                 msg = msg.replace("<current>", String.valueOf(page));
                 msg = msg.replace("<all>", String.valueOf(numPages));
-                quester.sendMessage(ChatColor.GOLD + msg);
+                Lang.send(player, ChatColor.GOLD + msg);
             }
         } else {
             if ((quests.size() + rows) <= (page * rows) || quests.size() == 0) {
-                quester.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
             } else {
-                quester.sendMessage(ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
                 List<Quest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {
@@ -1541,9 +1541,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 fromOrder++;
                 for (final Quest q : subQuests) {
                     if (quester.canAcceptOffer(q, false)) {
-                        quester.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                        Lang.send(player, ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
                     } else {
-                        quester.sendMessage(ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
+                        Lang.send(player, ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
                     }
                     fromOrder++;
                 }
@@ -1551,7 +1551,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 String msg = Lang.get(player, "pageFooter");
                 msg = msg.replace("<current>", String.valueOf(page));
                 msg = msg.replace("<all>", String.valueOf(numPages));
-                quester.sendMessage(ChatColor.GOLD + msg);
+                Lang.send(player, ChatColor.GOLD + msg);
             }
         }
     }
