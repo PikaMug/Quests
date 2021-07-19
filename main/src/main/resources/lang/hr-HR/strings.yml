@@ -193,6 +193,7 @@ stageEditorEnterBlockDurability: "Upiši izdržljivosti blokova (brojevi), <spac
 stageEditorCatchFishPrompt: "Upiši broj riba za uloviti, <clear>, <cancel>"
 stageEditorMilkCowsPrompt: "Upiši broj krava za pomusti, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Upiši broj igrača za ubiti, <clear>, <cancel>"
+stageEditorEnchantTypePrompt: "Unesite nazive enchantmenta, <space>, <cancel>"
 stageEditorNPCPrompt: "Unesi NPC IDs, <space>, <cancel>"
 stageEditorNPCToTalkToPrompt: "Unesi NPC IDs, <space>, <clear>, <cancel>"
 stageEditorMobLocationNamesPrompt: "Upiši imena lokacija, <semicolon>, <cancel>"
