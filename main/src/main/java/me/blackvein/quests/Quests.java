@@ -19,6 +19,7 @@ import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.conditions.ConditionFactory;
+import me.blackvein.quests.convo.QuestsStringPrompt;
 import me.blackvein.quests.convo.npcs.NpcOfferQuestPrompt;
 import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.ConditionFormatException;
@@ -67,7 +68,6 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -80,6 +80,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -561,18 +562,22 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
-    private class QuestAcceptPrompt extends StringPrompt {
+    public class QuestAcceptPrompt extends QuestsStringPrompt {
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @Nonnull String getPromptText(final ConversationContext context) {
             return ChatColor.YELLOW + Lang.get((Player) context.getForWhom(), "acceptQuest") + "  " + ChatColor.GREEN 
                     + Lang.get("yesWord") + " / " + Lang.get("noWord");
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String s) {
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            if (input == null) {
+                getLogger().severe("Ended conversation because input for " + getName() + "was null");
+                return Prompt.END_OF_CONVERSATION;
+            }
             final Player player = (Player) context.getForWhom();
-            if (s != null && s.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
                 Quester quester = getQuester(player.getUniqueId());
                 if (quester == null) {
                     // Must be new player
@@ -597,7 +602,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     e.printStackTrace();
                 }
                 return Prompt.END_OF_CONVERSATION;
-            } else if (s != null && s.equalsIgnoreCase(Lang.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 Lang.send(player, ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
             } else {

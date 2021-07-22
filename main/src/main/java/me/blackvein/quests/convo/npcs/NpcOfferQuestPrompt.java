@@ -12,29 +12,32 @@
 
 package me.blackvein.quests.convo.npcs;
 
-import java.text.MessageFormat;
-import java.util.LinkedList;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
-import org.bukkit.entity.Player;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.QuestsStringPrompt;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
 
-public class NpcOfferQuestPrompt extends StringPrompt {
+import javax.annotation.Nonnull;
+import java.text.MessageFormat;
+import java.util.LinkedList;
+
+public class NpcOfferQuestPrompt extends QuestsStringPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @Nonnull String getPromptText(final ConversationContext context) {
         final Quests plugin = (Quests)context.getPlugin();
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");
+        if (plugin == null || quests == null || npc == null) {
+            return ChatColor.RED + "Bad offer";
+        }
+        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         final String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
         String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
@@ -58,8 +61,11 @@ public class NpcOfferQuestPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(final ConversationContext context, final String input) {
         final Quests plugin = (Quests)context.getPlugin();
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        if (plugin == null || quests == null) {
+            return Prompt.END_OF_CONVERSATION;
+        }
+        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
@@ -109,62 +115,6 @@ public class NpcOfferQuestPrompt extends StringPrompt {
                         plugin.getConversationFactory().buildConversation(player).begin();
                     }
                 }
-                /*Player player = quester.getPlayer();
-                if (!quester.getCompletedQuests().contains(q.getName())) {
-                    if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
-                            || plugin.getSettings().getMaxQuests() < 1) {
-                        if (q.testRequirements(quester)) {
-                            quester.setQuestToTake(q.getName());
-                            String s = extracted(plugin, quester);
-                            for (String msg : s.split("<br>")) {
-                                player.sendMessage(msg);
-                            }
-                            if (!plugin.getSettings().canAskConfirmation()) {
-                                quester.takeQuest(q, false);
-                            } else {
-                                plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-                            }
-                        } else {
-                            for (String msg : q.getRequirements().getDetailsOverride()) {
-                                player.sendMessage(msg);
-                            }
-                        }
-                    } else if (quester.getCurrentQuests().containsKey(q) == false) {
-                        String msg = Lang.get("questMaxAllowed");
-                        msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-                        player.sendMessage(ChatColor.YELLOW + msg);
-                    }
-                } else if (quester.getCompletedQuests().contains(q.getName())) {
-                    if (quester.getCurrentQuests().size() < plugin.getSettings().getMaxQuests() 
-                            || plugin.getSettings().getMaxQuests() < 1) {
-                        if (quester.getRemainingCooldown(q) > 0 && !q.getPlanner().getOverride()) {
-                            String early = Lang.get("questTooEarly");
-                            early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                            early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                    + MiscUtil.getTime(quester.getRemainingCooldown(q)) + ChatColor.YELLOW);
-                            player.sendMessage(ChatColor.YELLOW + early);
-                        } else if (q.getPlanner().getCooldown() < 0) {
-                            String completed = Lang.get("questAlreadyCompleted");
-                            completed = completed.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
-                            player.sendMessage(ChatColor.YELLOW + completed);
-                        } else {
-                            quester.setQuestToTake(q.getName());
-                            String s = extracted(plugin, quester);
-                            for (String msg : s.split("<br>")) {
-                                player.sendMessage(msg);
-                            }
-                            if (!plugin.getSettings().canAskConfirmation()) {
-                                quester.takeQuest(q, false);
-                            } else {
-                                plugin.getConversationFactory().buildConversation((Conversable) player).begin();
-                            }
-                        }
-                    } else if (quester.getCurrentQuests().containsKey(q) == false) {
-                        String msg = Lang.get("questMaxAllowed");
-                        msg = msg.replace("<number>", String.valueOf(plugin.getSettings().getMaxQuests()));
-                        player.sendMessage(ChatColor.YELLOW + msg);
-                    }
-                }*/
                 return Prompt.END_OF_CONVERSATION;
             }
         }
