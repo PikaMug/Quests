@@ -16,6 +16,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsStringPrompt;
+import me.blackvein.quests.events.misc.MiscPostNpcOfferQuestEvent;
 import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -28,6 +29,10 @@ import java.util.LinkedList;
 
 public class NpcOfferQuestPrompt extends QuestsStringPrompt {
 
+    public String getQueryText(final ConversationContext context) {
+        return Lang.get("questNPCListTitle");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public @Nonnull String getPromptText(final ConversationContext context) {
@@ -37,8 +42,12 @@ public class NpcOfferQuestPrompt extends QuestsStringPrompt {
         if (plugin == null || quests == null || npc == null) {
             return ChatColor.RED + "Bad offer";
         }
+
+        final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
+        plugin.getServer().getPluginManager().callEvent(event);
+
         final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        final String text = Lang.get("questNPCListTitle").replace("<npc>", npc);
+        final String text = getQueryText(context).replace("<npc>", npc);
         String menu = text + "\n";
         for (int i = 1; i <= quests.size(); i++) {
             final Quest quest = quests.get(i - 1);

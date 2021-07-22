@@ -21,6 +21,7 @@ import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.conditions.ConditionFactory;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 import me.blackvein.quests.convo.npcs.NpcOfferQuestPrompt;
+import me.blackvein.quests.events.misc.MiscPostQuestAcceptEvent;
 import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.ConditionFormatException;
 import me.blackvein.quests.exceptions.QuestFormatException;
@@ -564,10 +565,49 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     public class QuestAcceptPrompt extends QuestsStringPrompt {
 
+        private final int size = 2;
+
+        public int getSize() {
+            return size;
+        }
+
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.GREEN;
+                case 2:
+                    return ChatColor.RED;
+                default:
+                    return null;
+            }
+        }
+
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.GREEN + Lang.get("yesWord");
+                case 2:
+                    return ChatColor.RED + Lang.get("noWord");
+                default:
+                    return null;
+            }
+        }
+
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("acceptQuest");
+        }
+
         @Override
         public @Nonnull String getPromptText(final ConversationContext context) {
-            return ChatColor.YELLOW + Lang.get((Player) context.getForWhom(), "acceptQuest") + "  " + ChatColor.GREEN 
-                    + Lang.get("yesWord") + " / " + Lang.get("noWord");
+            final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
+            getServer().getPluginManager().callEvent(event);
+
+            return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
+                    + getSelectionText(context, 1) + " / " + getSelectionText(context, 2);
         }
 
         @Override
