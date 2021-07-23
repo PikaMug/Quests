@@ -19,8 +19,8 @@ import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.conditions.ConditionFactory;
-import me.blackvein.quests.convo.QuestsStringPrompt;
-import me.blackvein.quests.convo.npcs.NpcOfferQuestPrompt;
+import me.blackvein.quests.convo.misc.MiscStringPrompt;
+import me.blackvein.quests.convo.misc.NpcOfferQuestPrompt;
 import me.blackvein.quests.events.misc.MiscPostQuestAcceptEvent;
 import me.blackvein.quests.exceptions.ActionFormatException;
 import me.blackvein.quests.exceptions.ConditionFormatException;
@@ -215,7 +215,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
                 .withFirstPrompt(new NpcOfferQuestPrompt()).withTimeout(settings.getAcceptTimeout())
                 .withLocalEcho(false).addConversationAbandonedListener(this);
-        
+
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(itemListener, this);
@@ -563,7 +563,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
     }
 
-    public class QuestAcceptPrompt extends QuestsStringPrompt {
+    public class QuestAcceptPrompt extends MiscStringPrompt {
+
+        private ConversationContext cc;
+
+        public QuestAcceptPrompt() {
+            super(null);
+        }
+
+        public QuestAcceptPrompt(final ConversationContext context) {
+            super(context);
+        }
 
         private final int size = 2;
 
@@ -603,11 +613,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
         @Override
         public @Nonnull String getPromptText(final ConversationContext context) {
+            this.cc = context;
+
             final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
             getServer().getPluginManager().callEvent(event);
 
             return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
-                    + getSelectionText(context, 1) + " / " + getSelectionText(context, 2);
+                    + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
         }
 
         @Override
@@ -650,7 +662,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     .replace("<yes>", Lang.get(player, "yesWord"))
                     .replace("<no>", Lang.get(player, "noWord"));
                 Lang.send(player, ChatColor.RED + msg);
-                return new QuestAcceptPrompt();
+                return new QuestAcceptPrompt(context);
             }
         }
     }

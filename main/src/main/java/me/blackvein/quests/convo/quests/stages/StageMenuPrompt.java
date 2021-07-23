@@ -46,7 +46,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         final int stages = getStages(context);
         if (number > 0) {
-            if (number < (stages + 1) && number > 0) {
+            if (number < (stages + 1)) {
                 return ChatColor.BLUE;
             } else if (number == (stages + 1)) {
                 return ChatColor.BLUE;
@@ -95,7 +95,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         final int i = input.intValue();
         final int stages = getStages(context);
         if (i > 0) {
-            if (i < (stages + 1) && i > 0) {
+            if (i < (stages + 1)) {
                 return new StageMainPrompt((i), context);
             } else if (i == (stages + 1)) {
                 return new StageMainPrompt((stages + 1), context);
