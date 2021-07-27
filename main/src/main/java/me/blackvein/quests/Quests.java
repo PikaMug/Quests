@@ -1504,7 +1504,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         for (final CustomObjective co : stage.customObjectives) {
             int cleared = 0;
             if (data.customObjectiveCounts.size() > customIndex) {
-                cleared = data.sheepSheared.get(customIndex);
+                cleared = data.customObjectiveCounts.get(customIndex);
             }
             final int toClear = co.getCount();
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
