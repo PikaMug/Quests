@@ -1506,7 +1506,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (data.customObjectiveCounts.size() > customIndex) {
                 cleared = data.customObjectiveCounts.get(customIndex);
             }
-            final int toClear = co.getCount();
+            final int toClear = stage.customObjectiveCounts.get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + co.getDisplay();
             for (final Entry<String,Object> prompt : co.getData()) {
@@ -3873,10 +3873,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     return;
                 }
                 final Stage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
-                oStage.customObjectives = new LinkedList<>();
-                oStage.customObjectiveCounts = new LinkedList<>();
-                oStage.customObjectiveData = new LinkedList<>();
-                oStage.customObjectiveDisplays = new LinkedList<>();
+                oStage.customObjectives.clear();
+                oStage.customObjectiveCounts.clear();
+                oStage.customObjectiveData.clear();
+                oStage.customObjectiveDisplays.clear();
                 if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".custom-objectives")) {
                     final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered."
                             + stageNum + ".custom-objectives");
@@ -3895,13 +3895,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     + quest.getName() + "\" could not be found!");
                             continue;
                         } else {
-                            final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
                             oStage.customObjectives.add(found.get());
                             if (count <= 0) {
                                 oStage.customObjectiveCounts.add(0);
                             } else {
                                 oStage.customObjectiveCounts.add(count);
                             }
+                            final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
                             for (final Entry<String,Object> prompt : found.get().getData()) {
                                 final Entry<String, Object> data = populateCustoms(sec2, prompt);
                                 oStage.customObjectiveData.add(data);

@@ -1302,7 +1302,7 @@ public class Quester implements Comparable<Quester> {
             if (data.customObjectiveCounts.size() > customIndex) {
                 cleared = data.customObjectiveCounts.get(customIndex);
             }
-            final int toClear = co.getCount();
+            final int toClear = stage.customObjectiveCounts.get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "- " + co.getDisplay();
             for (final Entry<String,Object> prompt : co.getData()) {
