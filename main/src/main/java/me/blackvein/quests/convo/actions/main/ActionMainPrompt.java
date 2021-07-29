@@ -207,7 +207,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (!plugin.hasLimitedAccess(context.getForWhom())) {
                 return new ActionDenizenPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
+                        .replace("mode", Lang.get("trialMode")));
                 return new ActionMainPrompt(context);
             }
         case 8:
@@ -1032,7 +1033,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptInput(final ConversationContext context, final String input) {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
+                            .replace("mode", Lang.get("trialMode")));
                     return new ActionMainPrompt(context);
                 }
                 plugin.getActionFactory().saveAction(context);
