@@ -2258,6 +2258,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             
             String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n";
             if (plugin.getCustomObjectives().isEmpty()) {
+                text += "" + ChatColor.DARK_AQUA + ChatColor.UNDERLINE
+                        + "https://pikamug.gitbook.io/quests/casual/modules\n";
                 text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
             } else {
                 for (final CustomObjective co : plugin.getCustomObjectives()) {

@@ -12,23 +12,10 @@
 
 package me.blackvein.quests.convo.quests.rewards;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
-import org.bukkit.inventory.ItemStack;
-
 import com.codisimus.plugins.phatloots.PhatLoot;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -41,6 +28,17 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
@@ -1674,6 +1672,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             
             String text = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
             if (plugin.getCustomRewards().isEmpty()) {
+                text += "" + ChatColor.DARK_AQUA + ChatColor.UNDERLINE
+                        + "https://pikamug.gitbook.io/quests/casual/modules\n";
                 text += ChatColor.DARK_PURPLE + "(" + Lang.get("stageEditorNoModules") + ") ";
             } else {
                 for (final CustomReward cr : plugin.getCustomRewards()) {
