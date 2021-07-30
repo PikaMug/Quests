@@ -54,6 +54,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class Quest implements Comparable<Quest> {
 
@@ -523,6 +525,45 @@ public class Quest implements Comparable<Quest> {
     public void completeQuest(final Quester quester) {
         completeQuest(quester, true);
     }
+
+    public void runEvent(Quester quester, Consumer<Boolean> callback) {
+        if (Bukkit.isPrimaryThread()) {
+            final QuesterPreCompleteQuestEvent preEvent
+                    = new QuesterPreCompleteQuestEvent(quester, this, false);
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+            callback.accept(preEvent.isCancelled());
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    final QuesterPreCompleteQuestEvent preEvent
+                            = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
+                    plugin.getServer().getPluginManager().callEvent(preEvent);
+                    callback.accept(preEvent.isCancelled());
+                }
+            });
+        }
+    }
+
+    public CompletableFuture<Boolean> completeEvent(Quester quester) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                final QuesterPreCompleteQuestEvent preEvent
+                        = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
+                plugin.getServer().getPluginManager().callEvent(preEvent);
+                result.complete(preEvent.isCancelled());
+            }
+        });
+        // do your processes asynchronously
+        // in the asynchronous process, call "result.complete(theValueOfMoney)" to complete the task
+        // or if an exception is thrown, you can also "result.completeExceptionally(theException)"
+
+        return result;
+    }
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
@@ -533,6 +574,7 @@ public class Quest implements Comparable<Quest> {
     @SuppressWarnings("deprecation")
     public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
         final OfflinePlayer player = quester.getOfflinePlayer();
+        boolean cancelled = false;
         if (player.isOnline()) {
             if (Bukkit.isPrimaryThread()) {
                 final QuesterPreCompleteQuestEvent preEvent
@@ -542,19 +584,23 @@ public class Quest implements Comparable<Quest> {
                     return;
                 }
             } else {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        final QuesterPreCompleteQuestEvent preEvent 
-                                = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
-                        plugin.getServer().getPluginManager().callEvent(preEvent);
-                        if (preEvent.isCancelled()) {
-                            return;
-                        }
-                    }
+                CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+                    final QuesterPreCompleteQuestEvent preEvent
+                            = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
+                    plugin.getServer().getPluginManager().callEvent(preEvent);
+                    return preEvent.isCancelled();
                 });
+
+                try {
+                    cancelled = future.get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
+        }
+        if (cancelled) {
+            return;
         }
         quester.hardQuit(this);
         quester.completedQuests.add(this);
@@ -625,13 +671,8 @@ public class Quest implements Comparable<Quest> {
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
             } else {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-                    }
-                });
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+                        Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command));
             }
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
