@@ -30,8 +30,8 @@
 
     <repositories>
         <repository>
-            <id>dre-repo</id>
-            <url>https://erethon.de/repo/</url>
+            <id>elmakers-repo</id>
+            <url>http://maven.elmakers.com/repository/</url>
         </repository>
     </repositories>
 </project>

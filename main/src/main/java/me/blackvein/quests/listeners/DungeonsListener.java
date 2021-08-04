@@ -12,20 +12,11 @@
 
 package me.blackvein.quests.listeners;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import de.erethon.dungeonsxl.api.event.group.GroupCreateEvent;
-import de.erethon.dungeonsxl.api.event.group.GroupDisbandEvent;
-import de.erethon.dungeonsxl.api.event.group.GroupPlayerJoinEvent;
-import de.erethon.dungeonsxl.api.event.group.GroupPlayerLeaveEvent;
-import me.blackvein.quests.util.Lang;
 
 public class DungeonsListener implements Listener {
     
-    @EventHandler
+    /*@EventHandler
     public void onGroupCreate(final GroupCreateEvent event) {
         if (Lang.get("questDungeonsCreate").length() > 0) {
             final Player p = event.getCreator().getPlayer();
@@ -72,5 +63,5 @@ public class DungeonsListener implements Listener {
                 }
             }
         }
-    }
+    }*/
 }

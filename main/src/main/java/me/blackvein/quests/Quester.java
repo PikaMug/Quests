@@ -16,7 +16,7 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
-import de.erethon.dungeonsxl.player.DGroup;
+//import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
@@ -4125,7 +4125,7 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
-        if (plugin.getDependencies().getDungeonsApi() != null) {
+        /*if (plugin.getDependencies().getDungeonsApi() != null) {
             if (quest.getOptions().canUseDungeonsXLPlugin()) {
                 final DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
                 if (group != null) {
@@ -4156,7 +4156,7 @@ public class Quester implements Comparable<Quester> {
                     return mq;
                 }
             }
-        }
+        }*/
         return mq;
     }
     

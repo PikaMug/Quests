@@ -225,9 +225,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final long ticks = settings.getStrictPlayerMovement() * 20L;
             getServer().getScheduler().scheduleSyncRepeatingTask(this, moveThread, ticks, ticks);
         }
-        if (depends.getDungeonsApi() != null) {
+        /*if (depends.getDungeonsApi() != null) {
             getServer().getPluginManager().registerEvents(dungeonsListener, this);
-        }
+        }*/
         if (depends.getPartiesApi() != null) {
             getServer().getPluginManager().registerEvents(partiesListener, this);
         }

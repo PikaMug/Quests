@@ -12,25 +12,15 @@
 
 package me.blackvein.quests;
 
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
-import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
-
-import de.erethon.dungeonsxl.DungeonsXL;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
@@ -39,8 +29,17 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import ro.nicuch.citizensbooks.CitizensBooksAPI;
 import ro.nicuch.citizensbooks.CitizensBooksPlugin;
+
+import java.util.UUID;
+
+//import de.erethon.dungeonsxl.DungeonsXL;
 
 public class Dependencies {
     
@@ -55,7 +54,7 @@ public class Dependencies {
     private static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;
-    private static DungeonsXL dungeons = null;
+    //private static DungeonsXL dungeons = null;
     private static PartiesAPI parties = null;
     
     public Dependencies(final Quests plugin) {
@@ -181,12 +180,12 @@ public class Dependencies {
         return citizensBooks;
     }
     
-    public DungeonsXL getDungeonsApi() {
+    /*public DungeonsXL getDungeonsApi() {
         if (dungeons == null && isPluginAvailable("DungeonsXL")) {
             dungeons = DungeonsXL.getInstance();
         }
         return dungeons;
-    }
+    }*/
     
     public PartiesAPI getPartiesApi() {
         if (parties == null && isPluginAvailable("Parties")) {
@@ -226,7 +225,7 @@ public class Dependencies {
         getPhatLoots();
         getPlaceholderApi();
         getCitizensBooksApi();
-        getDungeonsApi();
+        //getDungeonsApi();
         getPartiesApi();
         getVaultEconomy();
         getVaultPermission();

@@ -122,12 +122,14 @@
             <version>3.1.6</version>
             <scope>provided</scope>
         </dependency>
+        <!-- repo offline
         <dependency>
             <groupId>com.github.DRE2N</groupId>
             <artifactId>DungeonsXL</artifactId>
             <version>5e7b28ea55</version>
             <scope>provided</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
