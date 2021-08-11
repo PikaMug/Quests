@@ -6,7 +6,7 @@ description: An extensive questing system.
 website: https://www.spigotmc.org/resources/quests.3711/
 dev-url: https://github.com/PikaMug/Quests
 author: PikaMug
-softdepend: [Citizens, CitizensBooks, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PhatLoots, PlaceholderAPI, Vault, WorldGuard]
+softdepend: [Citizens, CitizensBooks, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PhatLoots, PlaceholderAPI, Unite, Vault, WorldGuard]
 permissions:
   quests.*:
     description: Access ALL Quests functionality

@@ -16,6 +16,7 @@ import me.blackvein.quests.Objective;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.Stage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
@@ -67,12 +68,13 @@ public class BlockListener implements Listener {
                         continue;
                     }
                     if (quester.getCurrentQuests().containsKey(quest)) {
-                        if (quester.getCurrentStage(quest) == null) {
+                        final Stage currentStage = quester.getCurrentStage(quest);
+                        if (currentStage == null) {
                             plugin.getLogger().severe("Player " + player.getName() + " (" + player.getUniqueId()
                                     + ") has invalid stage for quest " + quest.getName() + " (" + quest.getId() + ")");
                             continue;
                         }
-                        if (quester.getCurrentStage(quest).containsObjective(breakType)) {
+                        if (currentStage.containsObjective(breakType)) {
                             if (quest.getOptions().canIgnoreSilkTouch()
                                     && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
                                 Lang.send(player, ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
@@ -90,11 +92,11 @@ public class BlockListener implements Listener {
                                         }));
                             }
                         }
-                        if (quester.getCurrentStage(quest).containsObjective(placeType)) {
+                        if (currentStage.containsObjective(placeType)) {
                             for (final ItemStack is : quester.getQuestData(quest).blocksPlaced) {
                                 if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                     ItemStack toPlace = new ItemStack(is.getType(), 64);
-                                    for (final ItemStack stack : quester.getCurrentStage(quest).getBlocksToPlace()) {
+                                    for (final ItemStack stack : currentStage.getBlocksToPlace()) {
                                         if (ItemUtil.compareItems(is, stack, true) == 0) {
                                             toPlace = stack;
                                         }
@@ -148,7 +150,7 @@ public class BlockListener implements Listener {
                                     }
                                     return null;
                                 }));
-                        if (quester.getCurrentStage(quest).containsObjective(cutType)) {
+                        if (currentStage.containsObjective(cutType)) {
                             if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                                 quester.cutBlock(quest, blockItemStack);
                             }

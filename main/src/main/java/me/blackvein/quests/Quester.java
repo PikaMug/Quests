@@ -16,7 +16,6 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
-//import de.erethon.dungeonsxl.player.DGroup;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
@@ -35,6 +34,7 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -75,6 +75,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+//import de.erethon.dungeonsxl.player.DGroup;
 
 public class Quester implements Comparable<Quester> {
 
@@ -4089,13 +4091,46 @@ public class Quester implements Comparable<Quester> {
             return null;
         }
         final List<Quester> mq = new LinkedList<Quester>();
-        if (plugin.getDependencies().getPartiesApi() != null) {
+        if (plugin.getDependencies().getPartyProvider() != null) {
+            final PartyProvider partyProvider = plugin.getDependencies().getPartyProvider();
+            if (partyProvider != null && quest.getOptions().canUsePartiesPlugin()
+                    || quest.getOptions().canUseDungeonsXLPlugin()) {
+                if (getUUID() != null && partyProvider.getPartyId(getUUID()) != null) {
+                    String partyId = partyProvider.getPartyId(getUUID());
+                    final double distanceSquared = quest.getOptions().getShareDistance()
+                            * quest.getOptions().getShareDistance();
+                    final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
+                    if (offlinePlayers) {
+                        for (final UUID id : partyProvider.getMembers(partyId)) {
+                            if (!id.equals(getUUID())) {
+                                mq.add(plugin.getQuester(id));
+                            }
+                        }
+                    } else {
+                        for (final UUID id : partyProvider.getOnlineMembers(partyId)) {
+                            if (!id.equals(getUUID())) {
+                                if (distanceSquared > 0) {
+                                    final Player player = Bukkit.getPlayer(id);
+                                    if (player != null && distanceSquared >= getPlayer().getLocation()
+                                            .distanceSquared(player.getLocation())) {
+                                        mq.add(plugin.getQuester(id));
+                                    }
+                                } else {
+                                    mq.add(plugin.getQuester(id));
+                                }
+                            }
+                        }
+                    }
+                    return mq;
+                }
+            }
+        } else if (plugin.getDependencies().getPartiesApi() != null) {
             if (quest.getOptions().canUsePartiesPlugin()) {
                 final PartyPlayer partyPlayer = plugin.getDependencies().getPartiesApi().getPartyPlayer(getUUID());
                 if (partyPlayer != null && partyPlayer.getPartyId() != null) {
                     final Party party = plugin.getDependencies().getPartiesApi().getParty(partyPlayer.getPartyId());
                     if (party != null) {
-                        final double distanceSquared = quest.getOptions().getShareDistance() 
+                        final double distanceSquared = quest.getOptions().getShareDistance()
                                 * quest.getOptions().getShareDistance();
                         final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
                         if (offlinePlayers) {
@@ -4119,44 +4154,12 @@ public class Quester implements Comparable<Quester> {
                                 }
                             }
                         }
-                        
+
                         return mq;
                     }
                 }
             }
         }
-        /*if (plugin.getDependencies().getDungeonsApi() != null) {
-            if (quest.getOptions().canUseDungeonsXLPlugin()) {
-                final DGroup group = (DGroup) plugin.getDependencies().getDungeonsApi().getPlayerGroup(getPlayer());
-                if (group != null) {
-                    final double distanceSquared = quest.getOptions().getShareDistance() 
-                            * quest.getOptions().getShareDistance();
-                    final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
-                    if (offlinePlayers) {
-                        for (final UUID id : group.getMembers()) {
-                            if (!id.equals(getUUID())) {
-                                mq.add(plugin.getQuester(id));
-                            }
-                        }
-                    } else {
-                        for (final UUID id : group.getMembers()) {
-                            if (!id.equals(getUUID())) {
-                                if (distanceSquared > 0) {
-                                    final Player player = Bukkit.getPlayer(id);
-                                    if (player != null && distanceSquared >= getPlayer().getLocation()
-                                            .distanceSquared(player.getLocation())) {
-                                        mq.add(plugin.getQuester(id));
-                                    }
-                                } else {
-                                    mq.add(plugin.getQuester(id));
-                                }
-                            }
-                        }
-                    }
-                    return mq;
-                }
-            }
-        }*/
         return mq;
     }
     

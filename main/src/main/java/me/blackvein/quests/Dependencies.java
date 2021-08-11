@@ -26,6 +26,7 @@ import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -37,15 +38,15 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import ro.nicuch.citizensbooks.CitizensBooksAPI;
 import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
+import java.util.Objects;
 import java.util.UUID;
-
-//import de.erethon.dungeonsxl.DungeonsXL;
 
 public class Dependencies {
     
     private final Quests plugin;
     private static Economy economy = null;
     private static Permission permission = null;
+    private static PartyProvider partyProvider = null;
     private static WorldGuardAPI worldGuardApi = null;
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
@@ -54,7 +55,6 @@ public class Dependencies {
     private static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;
-    //private static DungeonsXL dungeons = null;
     private static PartiesAPI parties = null;
     
     public Dependencies(final Quests plugin) {
@@ -64,7 +64,7 @@ public class Dependencies {
     public Economy getVaultEconomy() {
         if (economy == null && isPluginAvailable("Vault")) {
             if (!setupEconomy()) {
-                plugin.getLogger().warning("Economy not found.");
+                plugin.getLogger().warning("Economy provider not found.");
             }
         }
         return economy;
@@ -73,10 +73,19 @@ public class Dependencies {
     public Permission getVaultPermission() {
         if (permission == null && isPluginAvailable("Vault")) {
             if (!setupPermissions()) {
-                plugin.getLogger().warning("Permissions not found.");
+                plugin.getLogger().warning("Permission provider not found.");
             }
         }
         return permission;
+    }
+
+    public PartyProvider getPartyProvider() {
+        if (partyProvider == null && isPluginAvailable("Unite")) {
+            if (!setupParty()) {
+                plugin.getLogger().warning("Party provider not found.");
+            }
+        }
+        return partyProvider;
     }
     
     public WorldGuardAPI getWorldGuardApi() {
@@ -171,22 +180,15 @@ public class Dependencies {
     public CitizensBooksAPI getCitizensBooksApi() {
         if (citizensBooks == null && isPluginAvailable("CitizensBooks")) {
             try {
-                citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
-                        .getAPI();
+                citizensBooks = ((CitizensBooksPlugin) Objects.requireNonNull(plugin.getServer().getPluginManager()
+                        .getPlugin("CitizensBooks"))).getAPI();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
         return citizensBooks;
     }
-    
-    /*public DungeonsXL getDungeonsApi() {
-        if (dungeons == null && isPluginAvailable("DungeonsXL")) {
-            dungeons = DungeonsXL.getInstance();
-        }
-        return dungeons;
-    }*/
-    
+
     public PartiesAPI getPartiesApi() {
         if (parties == null && isPluginAvailable("Parties")) {
             try {
@@ -202,7 +204,7 @@ public class Dependencies {
     public boolean isPluginAvailable(final String pluginName) {
         if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
             try {
-                if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
+                if (!Objects.requireNonNull(plugin.getServer().getPluginManager().getPlugin(pluginName)).isEnabled()) {
                     plugin.getLogger().warning(pluginName
                             + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
                 } else {
@@ -225,18 +227,18 @@ public class Dependencies {
         getPhatLoots();
         getPlaceholderApi();
         getCitizensBooksApi();
-        //getDungeonsApi();
         getPartiesApi();
+        getPartyProvider();
         getVaultEconomy();
         getVaultPermission();
     }
 
     private boolean setupEconomy() {
         try {
-            final RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
-                    .getRegistration(net.milkbowl.vault.economy.Economy.class);
-            if (economyProvider != null) {
-                economy = economyProvider.getProvider();
+            final RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager()
+                    .getRegistration(Economy.class);
+            if (rsp != null) {
+                economy = rsp.getProvider();
             }
             return (economy != null);
         } catch (final Exception e) {
@@ -245,12 +247,21 @@ public class Dependencies {
     }
 
     private boolean setupPermissions() {
-        final RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
-                .getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
+        final RegisteredServiceProvider<Permission> rsp = plugin.getServer().getServicesManager()
+                .getRegistration(Permission.class);
+        if (rsp != null) {
+            permission = rsp.getProvider();
         }
         return (permission != null);
+    }
+
+    private boolean setupParty() {
+        final RegisteredServiceProvider<PartyProvider> rsp = plugin.getServer().getServicesManager()
+                .getRegistration(PartyProvider.class);
+        if (rsp != null) {
+            partyProvider = rsp.getProvider();
+        }
+        return (partyProvider != null);
     }
 
     /**

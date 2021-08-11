@@ -29,10 +29,10 @@ import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
 import me.blackvein.quests.listeners.CmdExecutor;
-import me.blackvein.quests.listeners.DungeonsListener;
 import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
+import me.blackvein.quests.listeners.UniteListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
@@ -102,6 +102,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -137,7 +138,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private PlayerListener playerListener;
     private NpcEffectThread effectThread;
     private PlayerMoveThread moveThread;
-    private DungeonsListener dungeonsListener;
+    private UniteListener uniteListener;
     private PartiesListener partiesListener;
     private DenizenTrigger trigger;
     private LocaleManager localeManager;
@@ -155,7 +156,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
         playerListener = new PlayerListener(this);
-        dungeonsListener = new DungeonsListener();
+        uniteListener = new UniteListener();
         partiesListener = new PartiesListener();
         effectThread = new NpcEffectThread(this);
         moveThread = new PlayerMoveThread(this);
@@ -173,12 +174,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 3 - Setup language files
         try {
             setupLang();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } catch (final URISyntaxException e) {
+        } catch (final IOException | URISyntaxException e) {
             e.printStackTrace();
         }
-        
+
         // 4 - Load command executor
         cmdExecutor = new CmdExecutor(this);
         
@@ -197,15 +196,21 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         storage = storageFactory.getInstance();
         
         // 8 - Setup commands
-        getCommand("quests").setExecutor(cmdExecutor);
-        getCommand("questadmin").setExecutor(cmdExecutor);
-        getCommand("quest").setExecutor(cmdExecutor);
+        if (getCommand("quests") != null) {
+            Objects.requireNonNull(getCommand("quests")).setExecutor(cmdExecutor);
+        }
+        if (getCommand("questadmin") != null) {
+            Objects.requireNonNull(getCommand("questadmin")).setExecutor(cmdExecutor);
+        }
+        if (getCommand("quest") != null) {
+            Objects.requireNonNull(getCommand("quest")).setExecutor(cmdExecutor);
+        }
         
         // 9 - Build conversation factories
         this.conversationFactory = new ConversationFactory(this).withModality(false)
                 .withPrefix(new ConversationPrefix() {
                     @Override
-                    public String getPrefix(final ConversationContext context) {
+                    public @Nonnull String getPrefix(final @Nonnull ConversationContext context) {
                         return ChatColor.GRAY.toString();
                     }
                 })
@@ -225,10 +230,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final long ticks = settings.getStrictPlayerMovement() * 20L;
             getServer().getScheduler().scheduleSyncRepeatingTask(this, moveThread, ticks, ticks);
         }
-        /*if (depends.getDungeonsApi() != null) {
-            getServer().getPluginManager().registerEvents(dungeonsListener, this);
-        }*/
-        if (depends.getPartiesApi() != null) {
+        if (depends.getPartyProvider() != null) {
+            getServer().getPluginManager().registerEvents(uniteListener, this);
+        } else if (depends.getPartiesApi() != null) {
             getServer().getPluginManager().registerEvents(partiesListener, this);
         }
         
@@ -243,8 +247,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final Quester quester = getQuester(p.getUniqueId());
             quester.saveData();
         }
+        Bukkit.getScheduler().cancelTasks(this);
         getLogger().info("Closing storage...");
-        storage.close();
+        if (storage != null) {
+            storage.close();
+        }
     }
     
     public boolean isLoading() {
@@ -527,16 +534,16 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return playerListener;
     }
     
-    public DungeonsListener getDungeonsListener() {
-        return dungeonsListener;
-    }
-    
-    public PartiesListener getPartiesListener() {
-        return partiesListener;
+    public UniteListener getUniteListener() {
+        return uniteListener;
     }
     
     public NpcEffectThread getNpcEffectThread() {
         return effectThread;
+    }
+
+    public PartiesListener getPartiesListener() {
+        return partiesListener;
     }
     
     public DenizenTrigger getDenizenTrigger() {
