@@ -992,8 +992,8 @@ public class Quester implements Comparable<Quester> {
         int craftIndex = 0;
         for (final ItemStack is : stage.itemsToCraft) {
             int crafted = 0;
-            if (data.itemsConsumed.size() > craftIndex) {
-                crafted = data.itemsConsumed.get(craftIndex).getAmount();
+            if (data.itemsCrafted.size() > craftIndex) {
+                crafted = data.itemsCrafted.get(craftIndex).getAmount();
             }
             final int toCraft = is.getAmount();
             final ChatColor color = crafted < toCraft ? ChatColor.GREEN : ChatColor.GRAY;
@@ -1013,8 +1013,8 @@ public class Quester implements Comparable<Quester> {
         int smeltIndex = 0;
         for (final ItemStack is : stage.itemsToSmelt) {
             int smelted = 0;
-            if (data.itemsConsumed.size() > smeltIndex) {
-                smelted = data.itemsConsumed.get(smeltIndex).getAmount();
+            if (data.itemsSmelted.size() > smeltIndex) {
+                smelted = data.itemsSmelted.get(smeltIndex).getAmount();
             }
             final int toSmelt = is.getAmount();
             final ChatColor color = smelted < toSmelt ? ChatColor.GREEN : ChatColor.GRAY;
@@ -1034,8 +1034,8 @@ public class Quester implements Comparable<Quester> {
         int enchantIndex = 0;
         for (final ItemStack is : stage.itemsToEnchant) {
             int enchanted = 0;
-            if (data.itemsConsumed.size() > enchantIndex) {
-                enchanted = data.itemsConsumed.get(enchantIndex).getAmount();
+            if (data.itemsEnchanted.size() > enchantIndex) {
+                enchanted = data.itemsEnchanted.get(enchantIndex).getAmount();
             }
             final int toEnchant = is.getAmount();
             final ChatColor color = enchanted < toEnchant ? ChatColor.GREEN : ChatColor.GRAY;
@@ -1066,8 +1066,8 @@ public class Quester implements Comparable<Quester> {
         int brewIndex = 0;
         for (final ItemStack is : stage.itemsToBrew) {
             int brewed = 0;
-            if (data.itemsConsumed.size() > brewIndex) {
-                brewed = data.itemsConsumed.get(brewIndex).getAmount();
+            if (data.itemsBrewed.size() > brewIndex) {
+                brewed = data.itemsBrewed.get(brewIndex).getAmount();
             }
             final int toBrew = is.getAmount();
             final ChatColor color = brewed < toBrew ? ChatColor.GREEN : ChatColor.GRAY;
