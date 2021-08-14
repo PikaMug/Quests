@@ -2826,7 +2826,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             throw new StageFormatException("Citizens not found for npc-ids-to-talk-to", quest, 
                                     stageNum);
                         }
-                        
                     }
                 } else {
                     throw new StageFormatException("npc-ids-to-talk-to is not a list of numbers", quest, stageNum);
@@ -2861,12 +2860,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                                     oStage.itemDeliveryTargets.add(npcId);
                                                     oStage.deliverMessages.add(msg);
                                                 } else {
-                                                    throw new StageFormatException(
-                                                            "Citizens not found for npc-delivery-ids", quest, stageNum);
+                                                    throw new StageFormatException("npc-delivery-ids has invalid NPC " +
+                                                            "ID of " + npcId, quest, stageNum);
                                                 }
                                             } else {
-                                                throw new StageFormatException("npc-delivery-ids has invalid NPC ID of " 
-                                           + npcId, quest, stageNum);
+                                                throw new StageFormatException(
+                                                        "Citizens not found for npc-delivery-ids", quest, stageNum);
                                             }
                                         } else {
                                             throw new StageFormatException("items-to-deliver has invalid formatting " 
