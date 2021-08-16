@@ -118,6 +118,9 @@ public class QuestMob {
     @SuppressWarnings("deprecation")
     public void spawn() {
         final World world = spawnLocation.getWorld();
+        if (world == null) {
+            return;
+        }
         for (int i = 0; i < spawnAmounts; i++) {
             final LivingEntity entity = (LivingEntity) world.spawnEntity(spawnLocation, entityType);
             if (name != null) {
@@ -125,6 +128,9 @@ public class QuestMob {
                 entity.setCustomNameVisible(true);
             }
             final EntityEquipment eq = entity.getEquipment();
+            if (eq == null) {
+                return;
+            }
             eq.setItemInHand(inventory[0]);
             eq.setBoots(inventory[1]);
             eq.setLeggings(inventory[2]);
@@ -252,7 +258,7 @@ public class QuestMob {
                 }
             }
         }
-        final QuestMob qm = new QuestMob(entityType, loc, amounts);
+        final QuestMob qm = new QuestMob(entityType, loc, amounts != null ? amounts : 1);
         qm.setName(name);
         qm.inventory = inventory;
         qm.dropChances = dropChances;

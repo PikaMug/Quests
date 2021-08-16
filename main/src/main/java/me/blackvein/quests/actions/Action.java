@@ -11,18 +11,6 @@
  */
 package me.blackvein.quests.actions;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quester;
@@ -31,6 +19,17 @@ import me.blackvein.quests.tasks.ActionTimer;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class Action implements Comparable<Action> {
 
@@ -39,9 +38,9 @@ public class Action implements Comparable<Action> {
     protected String message = null;
     protected boolean clearInv = false;
     protected boolean failQuest = false;
-    protected LinkedList<Location> explosions = new LinkedList<Location>();
-    protected Map<Location, Effect> effects = new HashMap<Location, Effect>();
-    protected LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+    protected LinkedList<Location> explosions = new LinkedList<>();
+    protected Map<Location, Effect> effects = new HashMap<>();
+    protected LinkedList<ItemStack> items = new LinkedList<>();
     protected World stormWorld = null;
     protected int stormDuration = 0;
     protected World thunderWorld = null;
@@ -62,7 +61,7 @@ public class Action implements Comparable<Action> {
                     return false;
                 }
                 for (int i = 0; i < size(); i++) {
-                    if (get(i).equals(other.get(i)) == false) {
+                    if (!get(i).equals(other.get(i))) {
                         return false;
                     }
                 }
@@ -70,9 +69,9 @@ public class Action implements Comparable<Action> {
             return false;
         }
     };
-    protected LinkedList<Location> lightningStrikes = new LinkedList<Location>();
-    protected LinkedList<String> commands = new LinkedList<String>();
-    protected LinkedList<PotionEffect> potionEffects = new LinkedList<PotionEffect>();
+    protected LinkedList<Location> lightningStrikes = new LinkedList<>();
+    protected LinkedList<String> commands = new LinkedList<>();
+    protected LinkedList<PotionEffect> potionEffects = new LinkedList<>();
     protected int hunger = -1;
     protected int saturation = -1;
     protected float health = -1;
@@ -278,20 +277,24 @@ public class Action implements Comparable<Action> {
         if (message != null) {
             player.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
         }
-        if (clearInv == true) {
+        if (clearInv) {
             player.getInventory().clear();
         }
-        if (explosions.isEmpty() == false) {
+        if (!explosions.isEmpty()) {
             for (final Location l : explosions) {
-                l.getWorld().createExplosion(l, 4F, false);
+                if (l.getWorld() != null) {
+                    l.getWorld().createExplosion(l, 4F, false);
+                }
             }
         }
-        if (effects.isEmpty() == false) {
+        if (!effects.isEmpty()) {
             for (final Location l : effects.keySet()) {
-                l.getWorld().playEffect(l, effects.get(l), 1);
+                if (l.getWorld() != null) {
+                    l.getWorld().playEffect(l, effects.get(l), 1);
+                }
             }
         }
-        if (items.isEmpty() == false) {
+        if (!items.isEmpty()) {
             for (final ItemStack is : items) {
                 try {
                     InventoryUtil.addItem(player, is);
@@ -311,23 +314,25 @@ public class Action implements Comparable<Action> {
             thunderWorld.setThundering(true);
             thunderWorld.setThunderDuration(thunderDuration);
         }
-        if (mobSpawns.isEmpty() == false) {
+        if (!mobSpawns.isEmpty()) {
             for (final QuestMob questMob : mobSpawns) {
                 questMob.spawn();
             }
         }
-        if (lightningStrikes.isEmpty() == false) {
+        if (!lightningStrikes.isEmpty()) {
             for (final Location l : lightningStrikes) {
-                l.getWorld().strikeLightning(l);
+                if (l.getWorld() != null) {
+                    l.getWorld().strikeLightning(l);
+                }
             }
         }
-        if (commands.isEmpty() == false) {
+        if (!commands.isEmpty()) {
             for (final String s : commands) {
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), 
                         s.replace("<player>", quester.getPlayer().getName()));
             }
         }
-        if (potionEffects.isEmpty() == false) {
+        if (!potionEffects.isEmpty()) {
             for (final PotionEffect p : potionEffects) {
                 player.addPotionEffect(p);
             }
@@ -359,7 +364,7 @@ public class Action implements Comparable<Action> {
                 }
             }
         }
-        if (failQuest == true) {
+        if (failQuest) {
             quest.failQuest(quester, true);
         }
         if (timer > 0) {
@@ -367,38 +372,38 @@ public class Action implements Comparable<Action> {
                     .replace("<time>", ChatColor.RED + String.valueOf(timer) + ChatColor.GREEN));
             if (timer > 60) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
-                        .runTaskLater(plugin, (timer-60)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 60) * 20L).getTaskId(), quest);
             }
             if (timer > 30) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 30, false)
-                        .runTaskLater(plugin, (timer-30)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 30) * 20L).getTaskId(), quest);
             }
             if (timer > 10) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 10, false)
-                        .runTaskLater(plugin, (timer-10)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 10) * 20L).getTaskId(), quest);
             }
             if (timer > 5) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 5, false)
-                        .runTaskLater(plugin, (timer-5)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 5) * 20L).getTaskId(), quest);
             }
             if (timer > 4) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 4, false)
-                        .runTaskLater(plugin, (timer-4)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 4) * 20L).getTaskId(), quest);
             }
             if (timer > 3) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 3, false)
-                        .runTaskLater(plugin, (timer-3)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 3) * 20L).getTaskId(), quest);
             }
             if (timer > 2) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 2, false)
-                        .runTaskLater(plugin, (timer-2)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 2) * 20L).getTaskId(), quest);
             }
             if (timer > 1) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 1, false)
-                        .runTaskLater(plugin, (timer-1)*20).getTaskId(), quest);
+                        .runTaskLater(plugin, (timer - 1) * 20L).getTaskId(), quest);
             }
             quester.getTimers().put(new ActionTimer(quester, quest, 0, true)
-                    .runTaskLater(plugin, timer*20).getTaskId(), quest);
+                    .runTaskLater(plugin, timer * 20L).getTaskId(), quest);
         }
         if (cancelTimer) {
             for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {

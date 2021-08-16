@@ -64,7 +64,7 @@ public class Quest implements Comparable<Quest> {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private final LinkedList<Stage> orderedStages = new LinkedList<Stage>();
+    private final LinkedList<Stage> orderedStages = new LinkedList<>();
     protected NPC npcStart;
     protected Location blockStart;
     protected String regionStart = null;
@@ -216,11 +216,11 @@ public class Quest implements Comparable<Quest> {
             }
             
             // Multiplayer
-            if (opts.getShareProgressLevel() == 3) {
+            if (allowSharedProgress && opts.getShareProgressLevel() == 3) {
                 final List<Quester> mq = quester.getMultiplayerQuesters(this);
                 for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, allowSharedProgress);
+                        nextStage(qq, true);
                     }
                 }
             }
@@ -303,120 +303,116 @@ public class Quest implements Comparable<Quest> {
             return false;
         }
         final Quest quest = this;
-        Bukkit.getScheduler().runTask(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                Location targetLocation = null;
-                if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
-                    targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
-                } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
-                    targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
-                } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-                    targetLocation = stage.locationsToReach.getFirst();
-                } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-                    final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
-                            .getFirst());
-                    targetLocation = npc.getStoredLocation();
-                } else if (stage.playersToKill != null && stage.playersToKill > 0) {
-                    final Location source = quester.getPlayer().getLocation();
-                    Location nearest = null;
-                    double old_distance = 30000000;
-                    if (source.getWorld() == null) {
-                        return;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Location targetLocation = null;
+            if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
+            } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
+            } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
+                targetLocation = stage.locationsToReach.getFirst();
+            } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
+                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
+                        .getFirst());
+                targetLocation = npc.getStoredLocation();
+            } else if (stage.playersToKill != null && stage.playersToKill > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Player p : source.getWorld().getPlayers()) {
+                    if (p.getUniqueId().equals(quester.getUUID())) {
+                        continue;
                     }
-                    for (final Player p : source.getWorld().getPlayers()) {
-                        if (p.getUniqueId().equals(quester.getUUID())) {
-                            continue;
-                        }
-                        final double new_distance = p.getLocation().distanceSquared(source);
-                        if (new_distance < old_distance) {
-                            nearest = p.getLocation();
-                            old_distance = new_distance;
-                        }
-                    }
-                    if (nearest != null) {
-                        targetLocation = nearest;
-                    }
-                } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
-                    final Location source = quester.getPlayer().getLocation();
-                    Location nearest = null;
-                    double old_distance = 30000000;
-                    final EntityType et = stage.mobsToKill.getFirst();
-                    if (source.getWorld() == null) {
-                        return;
-                    }
-                    for (final Entity e : source.getWorld().getEntities()) {
-                        if (!e.getType().equals(et)) {
-                            continue;
-                        }
-                        final double new_distance = e.getLocation().distanceSquared(source);
-                        if (new_distance < old_distance) {
-                            nearest = e.getLocation();
-                            old_distance = new_distance;
-                        }
-                    }
-                    if (nearest != null) {
-                        targetLocation = nearest;
-                    }
-                } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
-                    final Location source = quester.getPlayer().getLocation();
-                    Location nearest = null;
-                    double old_distance = 30000000;
-                    final EntityType et = stage.mobsToTame.getFirst();
-                    if (source.getWorld() == null) {
-                        return;
-                    }
-                    for (final Entity e : source.getWorld().getEntities()) {
-                        if (!e.getType().equals(et)) {
-                            continue;
-                        }
-                        final double new_distance = e.getLocation().distanceSquared(source);
-                        if (new_distance < old_distance) {
-                            nearest = e.getLocation();
-                            old_distance = new_distance;
-                        }
-                    }
-                    if (nearest != null) {
-                        targetLocation = nearest;
-                    }
-                } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
-                    final Location source = quester.getPlayer().getLocation();
-                    Location nearest = null;
-                    double old_distance = 30000000;
-                    final DyeColor dc = stage.sheepToShear.getFirst();
-                    if (source.getWorld() == null) {
-                        return;
-                    }
-                    for (final Entity e : source.getWorld().getEntities()) {
-                        if (!e.getType().equals(EntityType.SHEEP)) {
-                            continue;
-                        }
-                        final Sheep s = (Sheep)e;
-                        if (s.getColor()!= null && s.getColor().equals(dc)) {
-                            continue;
-                        }
-                        final double new_distance = e.getLocation().distanceSquared(source);
-                        if (new_distance < old_distance) {
-                            nearest = e.getLocation();
-                            old_distance = new_distance;
-                        }
-                    }
-                    if (nearest != null) {
-                        targetLocation = nearest;
+                    final double new_distance = p.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = p.getLocation();
+                        old_distance = new_distance;
                     }
                 }
-                if (targetLocation != null && targetLocation.getWorld() != null) {
-                    if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-                        final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
-                                targetLocation.getY(), targetLocation.getZ());
-                        final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(quest, quester, lockedTarget);
-                        plugin.getServer().getPluginManager().callEvent(event);
-                        if (event.isCancelled()) {
-                            return;
-                        }
-                        quester.getPlayer().setCompassTarget(lockedTarget);
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final EntityType et = stage.mobsToKill.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
                     }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final EntityType et = stage.mobsToTame.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
+                    }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final DyeColor dc = stage.sheepToShear.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(EntityType.SHEEP)) {
+                        continue;
+                    }
+                    final Sheep s = (Sheep)e;
+                    if (s.getColor()!= null && s.getColor().equals(dc)) {
+                        continue;
+                    }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            }
+            if (targetLocation != null && targetLocation.getWorld() != null) {
+                if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
+                    final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
+                            targetLocation.getY(), targetLocation.getZ());
+                    final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(quest, quester, lockedTarget);
+                    plugin.getServer().getPluginManager().callEvent(event);
+                    if (event.isCancelled()) {
+                        return;
+                    }
+                    quester.getPlayer().setCompassTarget(lockedTarget);
                 }
             }
         });
@@ -574,13 +570,7 @@ public class Quest implements Comparable<Quest> {
             final Player p = (Player)player;
             final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA
                     + finished, this, p);
-            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    p.sendMessage(ps);
-                }
-            }, 40);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(ps), 40);
         }
         if (pln.getCooldown() > -1) {
             quester.completedTimes.put(this, System.currentTimeMillis());
@@ -691,9 +681,9 @@ public class Quest implements Comparable<Quest> {
                 }
             }
         }
-        final LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
+        final LinkedList<ItemStack> phatLootItems = new LinkedList<>();
         int phatLootExp = 0;
-        final LinkedList<String> phatLootMessages = new LinkedList<String>();
+        final LinkedList<String> phatLootMessages = new LinkedList<>();
         for (final String s : rews.getPhatLoots()) {
             final LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
             if (lb.getExp() > 0) {
@@ -789,77 +779,72 @@ public class Quest implements Comparable<Quest> {
                             + Lang.get(p, "questPoints"));
                 }
                 for (final ItemStack i : rews.getItems()) {
-                    String text = "error";
-                    if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
+                    StringBuilder text;
+                    if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() 
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount();
+                            text = new StringBuilder("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
+                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
                         } else {
-                            text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() 
-                                    + ChatColor.RESET;            
+                            text = new StringBuilder("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
+                                    + ChatColor.RESET);
                             try {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-                                    text +=  ChatColor.GRAY + " " + Lang.get(p, "with") + ChatColor.DARK_PURPLE;
+                                    text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with")).append(ChatColor.DARK_PURPLE);
                                     for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":"
-                                                + e.getValue();
+                                        text.append(" ").append(ItemUtil.getPrettyEnchantmentName(e.getKey())).append(":").append(e.getValue());
                                     }
                                 }
                             } catch (final Throwable tr) {
                                 // Do nothing, hasItemFlag() not introduced until 1.8.6
                             }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
+                            text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
                         }
                     } else if (i.getDurability() != 0) {
-                        text = "- " + ChatColor.DARK_GREEN + "<item>:" + i.getDurability();
-                        if (i.getEnchantments().isEmpty()) {
-                            text += ChatColor.GRAY + " x " + i.getAmount();
-                        } else {
-                            text += ChatColor.GRAY + " " + Lang.get(p, "with");
+                        text = new StringBuilder("- " + ChatColor.DARK_GREEN + "<item>:" + i.getDurability());
+                        if (!i.getEnchantments().isEmpty()) {
+                            text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with"));
                             for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
-                                text += " <enchantment> <level>";
+                                text.append(" <enchantment> <level>");
                             }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
                         }
+                        text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
                     } else {
-                        text = "- " + ChatColor.DARK_GREEN + "<item>";
-                        if (i.getEnchantments().isEmpty()) {
-                            text += ChatColor.GRAY + " x " + i.getAmount();
-                        } else {
+                        text = new StringBuilder("- " + ChatColor.DARK_GREEN + "<item>");
+                        if (!i.getEnchantments().isEmpty()) {
                             try {
                                 if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-                                    text += ChatColor.GRAY + " " + Lang.get(p, "with");
+                                    text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with"));
                                     for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
-                                        text += " <enchantment> <level>";
+                                        text.append(" <enchantment> <level>");
                                     }
                                 }
                             } catch (final Throwable tr) {
                                 // Do nothing, hasItemFlag() not introduced until 1.8.6
                             }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
                         }
+                        text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
                     }
-                    if (plugin.getSettings().canTranslateNames() && text.contains("<item>")) {
-                        if (!plugin.getLocaleManager().sendMessage(p, text, i.getType(), i.getDurability(),
+                    if (plugin.getSettings().canTranslateNames() && text.toString().contains("<item>")) {
+                        if (!plugin.getLocaleManager().sendMessage(p, text.toString(), i.getType(), i.getDurability(),
                                 i.getEnchantments())) {
                             for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
-                                        e.getKey()));
-                                text = text.replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue()));
+                                text = new StringBuilder(text.toString().replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                        e.getKey())));
+                                text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
                             }
-                            quester.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
+                            quester.sendMessage(text.toString().replace("<item>", ItemUtil.getName(i)));
                         }
                     } else {
                         for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                            text = text.replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
-                                    e.getKey()));
-                            text = text.replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue()));
+                            text = new StringBuilder(text.toString().replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                    e.getKey())));
+                            text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
                         }
-                        quester.sendMessage(text.replace("<item>", ItemUtil.getName(i)));
+                        quester.sendMessage(text.toString().replace("<item>", ItemUtil.getName(i)));
                     }
                 }
                 for (final ItemStack i : phatLootItems) {
-                    if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
+                    if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
                             quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
                                     + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "

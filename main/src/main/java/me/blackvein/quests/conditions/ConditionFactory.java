@@ -12,12 +12,15 @@
 
 package me.blackvein.quests.conditions;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
+import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
+import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.FakeConversable;
+import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -30,33 +33,34 @@ import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
-import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
-import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.util.CK;
-import me.blackvein.quests.util.Lang;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class ConditionFactory implements ConversationAbandonedListener {
 
     private final Quests plugin;
     private final ConversationFactory convoCreator;
-    private List<String> editingConditionNames = new LinkedList<String>();
+    private List<String> editingConditionNames = new LinkedList<>();
 
     public ConditionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new ConditionMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
+                .withFirstPrompt(new ConditionMenuPrompt(new ConversationContext(plugin, new FakeConversable(),
+                        new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
     }
     
-    public class LineBreakPrefix implements ConversationPrefix {
+    public static class LineBreakPrefix implements ConversationPrefix {
         @Override
-        public String getPrefix(final ConversationContext context) {
+        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
             return "\n";
         }
     }
@@ -74,7 +78,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
     }
 
     @Override
-    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
+    public void conversationAbandoned(final @NotNull ConversationAbandonedEvent abandonedEvent) {
     }
     
     public Prompt returnToMenu(final ConversationContext context) {
@@ -82,63 +86,46 @@ public class ConditionFactory implements ConversationAbandonedListener {
     }
     
     public void loadData(final Condition condition, final ConversationContext context) {
-        if (condition.isFailQuest() == true) {
+        if (condition.isFailQuest()) {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
         } else {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
         }
-        if (condition.getEntitiesWhileRiding() != null 
-                && condition.getEntitiesWhileRiding().isEmpty() == false) {
-            final LinkedList<String> entities = new LinkedList<String>();
-            entities.addAll(condition.getEntitiesWhileRiding());
+        if (condition.getEntitiesWhileRiding() != null && !condition.getEntitiesWhileRiding().isEmpty()) {
+            final LinkedList<String> entities = new LinkedList<>(condition.getEntitiesWhileRiding());
             context.setSessionData(CK.C_WHILE_RIDING_ENTITY, entities);
         }
-        if (condition.getNpcsWhileRiding() != null 
-                && condition.getNpcsWhileRiding().isEmpty() == false) {
-            final LinkedList<Integer> npcs = new LinkedList<Integer>();
-            npcs.addAll(condition.getNpcsWhileRiding());
+        if (condition.getNpcsWhileRiding() != null && !condition.getNpcsWhileRiding().isEmpty()) {
+            final LinkedList<Integer> npcs = new LinkedList<>(condition.getNpcsWhileRiding());
             context.setSessionData(CK.C_WHILE_RIDING_NPC, npcs);
         }
-        if (condition.getPermissions() != null
-                && condition.getPermissions().isEmpty() == false) {
-            final LinkedList<String> permissions = new LinkedList<String>();
-            permissions.addAll(condition.getPermissions());
+        if (condition.getPermissions() != null && !condition.getPermissions().isEmpty()) {
+            final LinkedList<String> permissions = new LinkedList<>(condition.getPermissions());
             context.setSessionData(CK.C_WHILE_PERMISSION, permissions);
         }
-        if (condition.getItemsWhileHoldingMainHand() != null 
-                && condition.getItemsWhileHoldingMainHand().isEmpty() == false) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-            items.addAll(condition.getItemsWhileHoldingMainHand());
+        if (condition.getItemsWhileHoldingMainHand() != null && !condition.getItemsWhileHoldingMainHand().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(condition.getItemsWhileHoldingMainHand());
             context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
         }
-        if (condition.getWorldsWhileStayingWithin() != null 
-                && condition.getWorldsWhileStayingWithin().isEmpty() == false) {
-            final LinkedList<String> worlds = new LinkedList<String>();
-            worlds.addAll(condition.getBiomesWhileStayingWithin());
+        if (condition.getWorldsWhileStayingWithin() != null && !condition.getWorldsWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> worlds = new LinkedList<>(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
         }
-        if (condition.getBiomesWhileStayingWithin() != null 
-                && condition.getBiomesWhileStayingWithin().isEmpty() == false) {
-            final LinkedList<String> biomes = new LinkedList<String>();
-            biomes.addAll(condition.getBiomesWhileStayingWithin());
+        if (condition.getBiomesWhileStayingWithin() != null && !condition.getBiomesWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> biomes = new LinkedList<>(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
         }
-        if (condition.getRegionsWhileStayingWithin() != null 
-                && condition.getRegionsWhileStayingWithin().isEmpty() == false) {
-            final LinkedList<String> regions = new LinkedList<String>();
-            regions.addAll(condition.getRegionsWhileStayingWithin());
+        if (condition.getRegionsWhileStayingWithin() != null && !condition.getRegionsWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> regions = new LinkedList<>(condition.getRegionsWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_REGION, regions);
         }
-        if (condition.getPlaceholdersCheckIdentifier() != null 
-                && condition.getPlaceholdersCheckIdentifier().isEmpty() == false) {
-            final LinkedList<String> identifiers = new LinkedList<String>();
-            identifiers.addAll(condition.getPlaceholdersCheckIdentifier());
+        if (condition.getPlaceholdersCheckIdentifier() != null
+                && !condition.getPlaceholdersCheckIdentifier().isEmpty()) {
+            final LinkedList<String> identifiers = new LinkedList<>(condition.getPlaceholdersCheckIdentifier());
             context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, identifiers);
         }
-        if (condition.getPlaceholdersCheckValue() != null 
-                && condition.getPlaceholdersCheckValue().isEmpty() == false) {
-            final LinkedList<String> values = new LinkedList<String>();
-            values.addAll(condition.getPlaceholdersCheckValue());
+        if (condition.getPlaceholdersCheckValue() != null && !condition.getPlaceholdersCheckValue().isEmpty()) {
+            final LinkedList<String> values = new LinkedList<>(condition.getPlaceholdersCheckValue());
             context.setSessionData(CK.C_WHILE_PLACEHOLDER_VAL, values);
         }
     }
@@ -163,12 +150,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
         try {
             data.load(conditionsFile);
-        } catch (final IOException e) {
-            e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
-                    .replace("<file>", conditionsFile.getName()));
-            return;
-        } catch (final InvalidConfigurationException e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
@@ -176,19 +158,18 @@ public class ConditionFactory implements ConversationAbandonedListener {
         }
         final String condition = (String) context.getSessionData(CK.ED_CONDITION_DELETE);
         final ConfigurationSection sec = data.getConfigurationSection("conditions");
-        sec.set(condition, null);
+        if (sec != null && condition != null) {
+            sec.set(condition, null);
+        }
         try {
             data.save(conditionsFile);
         } catch (final IOException e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            @Override
-            public void execute(final Boolean response) {
-                if (!response) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
-                }
+        final ReloadCallback<Boolean> callback = response -> {
+            if (!response) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
             }
         };
         plugin.reload(callback);
@@ -211,28 +192,24 @@ public class ConditionFactory implements ConversationAbandonedListener {
         final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
         try {
             data.load(conditionsFile);
-        } catch (final IOException e) {
-            e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
-                    .replace("<file>", conditionsFile.getName()));
-            return;
-        } catch (final InvalidConfigurationException e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
         }
-        if (((String) context.getSessionData(CK.C_OLD_CONDITION)).isEmpty() == false) {
-            data.set("conditions." + (String) context.getSessionData(CK.C_OLD_CONDITION), null);
+        if (context.getSessionData(CK.C_OLD_CONDITION) != null
+                && !((String) Objects.requireNonNull(context.getSessionData(CK.C_OLD_CONDITION))).isEmpty()) {
+            data.set("conditions." + context.getSessionData(CK.C_OLD_CONDITION), null);
             final Collection<Condition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
             plugin.setLoadedConditions(temp);
         }
-        final ConfigurationSection section = data.createSection("conditions." + (String) context.getSessionData(CK.C_NAME));
-        editingConditionNames.remove(context.getSessionData(CK.C_NAME));
+        final ConfigurationSection section = data.createSection("conditions." + context.getSessionData(CK.C_NAME));
+        editingConditionNames.remove((String) context.getSessionData(CK.C_NAME));
         if (context.getSessionData(CK.C_FAIL_QUEST) != null) {
             final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("fail-quest", true);
             }
         }
@@ -278,12 +255,9 @@ public class ConditionFactory implements ConversationAbandonedListener {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            @Override
-            public void execute(final Boolean response) {
-                if (!response) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
-                }
+        final ReloadCallback<Boolean> callback = response -> {
+            if (!response) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
             }
         };
         plugin.reload(callback);
@@ -291,7 +265,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (plugin.getSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(identifier + " saved condition " + (String) context.getSessionData(CK.C_NAME));
+            plugin.getLogger().info(identifier + " saved condition " + context.getSessionData(CK.C_NAME));
         }
         for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {

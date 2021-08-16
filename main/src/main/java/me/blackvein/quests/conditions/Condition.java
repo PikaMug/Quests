@@ -12,32 +12,32 @@
 
 package me.blackvein.quests.conditions;
 
-import java.util.LinkedList;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.LinkedList;
+import java.util.Objects;
 
 public class Condition implements Comparable<Condition> {
 
     private final Quests plugin;
     private String name = "";
     private boolean failQuest = false;
-    private LinkedList<String> entitiesWhileRiding = new LinkedList<String>();
-    private LinkedList<Integer> npcsWhileRiding = new LinkedList<Integer>();
-    private LinkedList<String> permissions = new LinkedList<String>();
-    private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<ItemStack>();
-    private LinkedList<String> worldsWhileStayingWithin = new LinkedList<String>();
-    private LinkedList<String> biomesWhileStayingWithin = new LinkedList<String>();
-    private LinkedList<String> regionsWhileStayingWithin = new LinkedList<String>();
-    private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<String>();
-    private LinkedList<String> placeholdersCheckValue = new LinkedList<String>();
+    private LinkedList<String> entitiesWhileRiding = new LinkedList<>();
+    private LinkedList<Integer> npcsWhileRiding = new LinkedList<>();
+    private LinkedList<String> permissions = new LinkedList<>();
+    private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<>();
+    private LinkedList<String> worldsWhileStayingWithin = new LinkedList<>();
+    private LinkedList<String> biomesWhileStayingWithin = new LinkedList<>();
+    private LinkedList<String> regionsWhileStayingWithin = new LinkedList<>();
+    private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<>();
+    private LinkedList<String> placeholdersCheckValue = new LinkedList<>();
 
     public Condition(final Quests plugin) {
         this.plugin = plugin;
@@ -141,7 +141,7 @@ public class Condition implements Comparable<Condition> {
         final Player player = quester.getPlayer();
         if (!entitiesWhileRiding.isEmpty()) {
             for (final String e : entitiesWhileRiding) {
-                if (player.isInsideVehicle() && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
+                if (player.getVehicle() != null && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
@@ -150,7 +150,7 @@ public class Condition implements Comparable<Condition> {
         } else if (!npcsWhileRiding.isEmpty()) {
             for (final int n : npcsWhileRiding) {
                 if (plugin.getDependencies().getCitizens() != null) {
-                    if (player.isInsideVehicle() && player.getVehicle()
+                    if (player.getVehicle() != null && player.getVehicle()
                             .equals(plugin.getDependencies().getCitizens().getNPCRegistry().getById(n).getEntity())) {
                         return true;
                     } else if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -189,8 +189,11 @@ public class Condition implements Comparable<Condition> {
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
             for (final String b : biomesWhileStayingWithin) {
+                if (MiscUtil.getProperBiome(b) == null) {
+                    continue;
+                }
                 if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
-                        .name().equalsIgnoreCase(MiscUtil.getProperBiome(b).name())) {
+                        .name().equalsIgnoreCase(Objects.requireNonNull(MiscUtil.getProperBiome(b)).name())) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": " 

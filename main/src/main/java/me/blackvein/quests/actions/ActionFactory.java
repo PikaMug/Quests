@@ -12,16 +12,18 @@
 
 package me.blackvein.quests.actions;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.QuestMob;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
+import me.blackvein.quests.convo.actions.menu.ActionMenuPrompt;
+import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.util.CK;
+import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.FakeConversable;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -38,41 +40,42 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.QuestMob;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
-import me.blackvein.quests.convo.actions.menu.ActionMenuPrompt;
-import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.util.CK;
-import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.ItemUtil;
-import me.blackvein.quests.util.Lang;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ActionFactory implements ConversationAbandonedListener {
 
     private final Quests plugin;
     private final ConversationFactory convoCreator;
-    private Map<UUID, Block> selectedExplosionLocations = new HashMap<UUID, Block>();
-    private Map<UUID, Block> selectedEffectLocations = new HashMap<UUID, Block>();
-    private Map<UUID, Block> selectedMobLocations = new HashMap<UUID, Block>();
-    private Map<UUID, Block> selectedLightningLocations = new HashMap<UUID, Block>();
-    private Map<UUID, Block> selectedTeleportLocations = new HashMap<UUID, Block>();
-    private List<String> editingActionNames = new LinkedList<String>();
+    private Map<UUID, Block> selectedExplosionLocations = new HashMap<>();
+    private Map<UUID, Block> selectedEffectLocations = new HashMap<>();
+    private Map<UUID, Block> selectedMobLocations = new HashMap<>();
+    private Map<UUID, Block> selectedLightningLocations = new HashMap<>();
+    private Map<UUID, Block> selectedTeleportLocations = new HashMap<>();
+    private List<String> editingActionNames = new LinkedList<>();
 
     public ActionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
         this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new ActionMenuPrompt(new ConversationContext(plugin, null, null))).withTimeout(3600)
+                .withFirstPrompt(new ActionMenuPrompt(new ConversationContext(plugin, new FakeConversable(),
+                        new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
     }
     
-    public class LineBreakPrefix implements ConversationPrefix {
+    public static class LineBreakPrefix implements ConversationPrefix {
         @Override
-        public String getPrefix(final ConversationContext context) {
+        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
             return "\n";
         }
     }
@@ -152,31 +155,30 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (event.message != null) {
             context.setSessionData(CK.E_MESSAGE, event.message);
         }
-        if (event.clearInv == true) {
+        if (event.clearInv) {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
         } else {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
         }
-        if (event.failQuest == true) {
+        if (event.failQuest) {
             context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
         } else {
             context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
         }
-        if (event.items != null && event.items.isEmpty() == false) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-            items.addAll(event.items);
+        if (event.items != null && !event.items.isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(event.items);
             context.setSessionData(CK.E_ITEMS, items);
         }
-        if (event.explosions != null && event.explosions.isEmpty() == false) {
-            final LinkedList<String> locs = new LinkedList<String>();
+        if (event.explosions != null && !event.explosions.isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
             for (final Location loc : event.explosions) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_EXPLOSIONS, locs);
         }
-        if (event.effects != null && event.effects.isEmpty() == false) {
-            final LinkedList<String> locs = new LinkedList<String>();
-            final LinkedList<String> effs = new LinkedList<String>();
+        if (event.effects != null && !event.effects.isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
+            final LinkedList<String> effs = new LinkedList<>();
             for (final Entry<Location, Effect> e : event.effects.entrySet()) {
                 locs.add(ConfigUtil.getLocationInfo(e.getKey()));
                 effs.add(e.getValue().toString());
@@ -192,24 +194,24 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.E_WORLD_THUNDER, event.thunderWorld.getName());
             context.setSessionData(CK.E_WORLD_THUNDER_DURATION, event.thunderDuration);
         }
-        if (event.mobSpawns != null && event.mobSpawns.isEmpty() == false) {
-            final LinkedList<String> questMobs = new LinkedList<String>();
+        if (event.mobSpawns != null && !event.mobSpawns.isEmpty()) {
+            final LinkedList<String> questMobs = new LinkedList<>();
             for (final QuestMob questMob : event.mobSpawns) {
                 questMobs.add(questMob.serialize());
             }
             context.setSessionData(CK.E_MOB_TYPES, questMobs);
         }
-        if (event.lightningStrikes != null && event.lightningStrikes.isEmpty() == false) {
-            final LinkedList<String> locs = new LinkedList<String>();
+        if (event.lightningStrikes != null && !event.lightningStrikes.isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
             for (final Location loc : event.lightningStrikes) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_LIGHTNING, locs);
         }
-        if (event.potionEffects != null && event.potionEffects.isEmpty() == false) {
-            final LinkedList<String> types = new LinkedList<String>();
-            final LinkedList<Long> durations = new LinkedList<Long>();
-            final LinkedList<Integer> mags = new LinkedList<Integer>();
+        if (event.potionEffects != null && !event.potionEffects.isEmpty()) {
+            final LinkedList<String> types = new LinkedList<>();
+            final LinkedList<Long> durations = new LinkedList<>();
+            final LinkedList<Integer> mags = new LinkedList<>();
             for (final PotionEffect pe : event.potionEffects) {
                 types.add(pe.getType().getName());
                 durations.add((long) pe.getDuration());
@@ -276,12 +278,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
             data.load(actionsFile);
-        } catch (final IOException e) {
-            e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
-                    .replace("<file>", actionsFile.getName()));
-            return;
-        } catch (final InvalidConfigurationException e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
@@ -294,19 +291,18 @@ public class ActionFactory implements ConversationAbandonedListener {
             key = "events";
             sec = data.getConfigurationSection(key);
         }
-        sec.set(action, null);
+        if (sec != null && action != null) {
+            sec.set(action, null);
+        }
         try {
             data.save(actionsFile);
         } catch (final IOException e) {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            @Override
-            public void execute(final Boolean response) {
-                if (!response) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
-                }
+        final ReloadCallback<Boolean> callback = response -> {
+            if (!response) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
             }
         };
         plugin.reload(callback);
@@ -330,43 +326,37 @@ public class ActionFactory implements ConversationAbandonedListener {
         final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
         try {
             data.load(actionsFile);
-        } catch (final IOException e) {
-            e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
-                    .replace("<file>", actionsFile.getName()));
-            return;
-        } catch (final InvalidConfigurationException e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questErrorReadingFile")
                     .replace("<file>", actionsFile.getName()));
             return;
         }
         String key = "actions";
-        ConfigurationSection sec = data.getConfigurationSection(key);
-        if (sec == null) {
+        if (data.getConfigurationSection(key) == null) {
             key = "events";
-            sec = data.getConfigurationSection(key);
         }
-        if (((String) context.getSessionData(CK.E_OLD_EVENT)).isEmpty() == false) {
-            data.set(key + "." + (String) context.getSessionData(CK.E_OLD_EVENT), null);
+        if (context.getSessionData(CK.E_OLD_EVENT) != null
+                && !((String) Objects.requireNonNull(context.getSessionData(CK.E_OLD_EVENT))).isEmpty()) {
+            data.set(key + "." + context.getSessionData(CK.E_OLD_EVENT), null);
             final Collection<Action> temp = plugin.getLoadedActions();
             temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
             plugin.setLoadedActions(temp);
         }
-        final ConfigurationSection section = data.createSection(key + "." + (String) context.getSessionData(CK.E_NAME));
-        editingActionNames.remove(context.getSessionData(CK.E_NAME));
+        final ConfigurationSection section = data.createSection(key + "." + context.getSessionData(CK.E_NAME));
+        editingActionNames.remove((String) context.getSessionData(CK.E_NAME));
         if (context.getSessionData(CK.E_MESSAGE) != null) {
             section.set("message", context.getSessionData(CK.E_MESSAGE));
         }
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) != null) {
             final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("clear-inventory", true);
             }
         }
         if (context.getSessionData(CK.E_FAIL_QUEST) != null) {
             final String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("fail-quest", true);
             }
         }
@@ -391,13 +381,14 @@ public class ActionFactory implements ConversationAbandonedListener {
         try {
             if (context.getSessionData(CK.E_MOB_TYPES) != null) {
                 int count = 0;
-                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES)) {
+                for (final String s : (LinkedList<String>) Objects.requireNonNull(context
+                        .getSessionData(CK.E_MOB_TYPES))) {
                     ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
                     if (ss == null) {
                         ss = section.createSection("mob-spawns." + count);
                     }
                     final QuestMob questMob = QuestMob.fromString(s);
-                    if (questMob == null) {
+                    if (questMob.getName() == null) {
                         continue;
                     }
                     ss.set("name", questMob.getName());
@@ -425,7 +416,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         }
         if (context.getSessionData(CK.E_COMMANDS) != null) {
             final LinkedList<String> commands = (LinkedList<String>) context.getSessionData(CK.E_COMMANDS);
-            if (commands.isEmpty() == false) {
+            if (commands != null && !commands.isEmpty()) {
                 section.set("commands", commands);
             }
         }
@@ -446,12 +437,15 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.E_TELEPORT) != null) {
             section.set("teleport-location", context.getSessionData(CK.E_TELEPORT));
         }
-        if (context.getSessionData(CK.E_TIMER) != null && (int) context.getSessionData(CK.E_TIMER) > 0) {
-            section.set("timer", context.getSessionData(CK.E_TIMER));
+        if (context.getSessionData(CK.E_TIMER) != null) {
+            final Integer i = (Integer) context.getSessionData(CK.E_TIMER);
+            if (i != null && i > 0) {
+                section.set("timer", context.getSessionData(CK.E_TIMER));
+            }
         }
         if (context.getSessionData(CK.E_CANCEL_TIMER) != null) {
             final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 section.set("cancel-timer", true);
             }
         }
@@ -464,12 +458,9 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questSaveError"));
             return;
         }
-        final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-            @Override
-            public void execute(final Boolean response) {
-                if (!response) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
-                }
+        final ReloadCallback<Boolean> callback = response -> {
+            if (!response) {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
             }
         };
         plugin.reload(callback);
@@ -477,7 +468,7 @@ public class ActionFactory implements ConversationAbandonedListener {
         if (plugin.getSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(identifier + " saved action " + (String) context.getSessionData(CK.E_NAME));
+            plugin.getLogger().info(identifier + " saved action " + context.getSessionData(CK.E_NAME));
         }
         for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuests().keySet()) {
