@@ -56,7 +56,7 @@ import java.util.UUID;
 public class ActionFactory implements ConversationAbandonedListener {
 
     private final Quests plugin;
-    private final ConversationFactory convoCreator;
+    private final ConversationFactory conversationFactory;
     private Map<UUID, Block> selectedExplosionLocations = new HashMap<>();
     private Map<UUID, Block> selectedEffectLocations = new HashMap<>();
     private Map<UUID, Block> selectedMobLocations = new HashMap<>();
@@ -66,8 +66,8 @@ public class ActionFactory implements ConversationAbandonedListener {
 
     public ActionFactory(final Quests plugin) {
         this.plugin = plugin;
-        // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
-        this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
+        // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
+        this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new ActionMenuPrompt(new ConversationContext(plugin, new FakeConversable(),
                         new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
@@ -124,7 +124,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     }
 
     public ConversationFactory getConversationFactory() {
-        return convoCreator;
+        return conversationFactory;
     }
     
     public List<String> getNamesOfActionsBeingEdited() {

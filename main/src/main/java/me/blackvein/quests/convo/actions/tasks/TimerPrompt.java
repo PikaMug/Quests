@@ -25,6 +25,7 @@ import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringProm
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class TimerPrompt extends ActionsEditorNumericPrompt {
     
@@ -81,8 +82,11 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_TIMER) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA 
-                        + MiscUtil.getTime((Integer)context.getSessionData(CK.E_TIMER) * 1000) + ChatColor.GRAY + ")";
+                final Integer timer = (Integer)context.getSessionData(CK.E_TIMER);
+                if (timer != null) {
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(timer * 1000L) + ChatColor.GRAY
+                            + ")";
+                }
             }
         case 2:
             return ChatColor.AQUA + "" + context.getSessionData(CK.E_CANCEL_TIMER);
@@ -94,7 +98,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
             context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
         }
@@ -103,22 +107,23 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        return text;
+        return text.toString();
     }
     
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new TimerFailPrompt(context);
         case 2:
             final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
             } else {
                 context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
@@ -148,25 +153,25 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
+
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             try {
-                final Integer i = Integer.parseInt(input);
+                final int i = Integer.parseInt(input);
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorPositiveAmount"));
                 } else {
                     context.setSessionData(CK.E_TIMER, i);
                 }
             } catch (final NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED 
+                context.getForWhom().sendRawMessage(ChatColor.RED
                         + Lang.get("reqNotANumber").replace("<input>", input));
                 return new TimerFailPrompt(context);
             }

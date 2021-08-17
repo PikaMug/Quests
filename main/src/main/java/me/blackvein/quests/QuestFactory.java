@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 public class QuestFactory implements ConversationAbandonedListener {
 
     private final Quests plugin;
-    private final ConversationFactory convoCreator;
+    private final ConversationFactory conversationFactory;
     private Map<UUID, Block> selectedBlockStarts = new HashMap<>();
     private Map<UUID, Block> selectedKillLocations = new HashMap<>();
     private Map<UUID, Block> selectedReachLocations = new HashMap<>();
@@ -65,8 +65,8 @@ public class QuestFactory implements ConversationAbandonedListener {
     
     public QuestFactory(final Quests plugin) {
         this.plugin = plugin;
-        // Ensure to initialize convoCreator last so that 'this' is fully initialized before it is passed
-        this.convoCreator = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
+        // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
+        this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
                 .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, new FakeConversable(),
                         new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
@@ -136,7 +136,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     }
     
     public ConversationFactory getConversationFactory() {
-        return convoCreator;
+        return conversationFactory;
     }
 
     @Override

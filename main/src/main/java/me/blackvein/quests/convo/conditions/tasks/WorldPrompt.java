@@ -12,19 +12,7 @@
 
 package me.blackvein.quests.convo.conditions.tasks;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 import com.sk89q.worldguard.protection.managers.RegionManager;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -35,6 +23,17 @@ import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WorldPrompt extends QuestsEditorNumericPrompt {
     
@@ -99,32 +98,42 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
-                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                final StringBuilder text = new StringBuilder("\n");
+                final List<String> whileWithinWorld = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD);
+                if (whileWithinWorld != null) {
+                    for (final String s: whileWithinWorld) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 2:
             if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
-                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                final StringBuilder text = new StringBuilder("\n");
+                final List<String> whileWithinBiome = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME);
+                if (whileWithinBiome != null) {
+                    for (final String s: whileWithinBiome) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 3:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_REGION)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    final List<String> whileWithinRegion
+                            = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_REGION);
+                    if (whileWithinRegion != null) {
+                        for (final String s: whileWithinRegion) {
+                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                        }
                     }
-                    return text;
+                    return text.toString();
                 }
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
@@ -137,20 +146,24 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        context.getPlugin().getServer().getPluginManager().callEvent(event);
-        
-        String text = ChatColor.AQUA + "- " + getTitle(context) + " -";
-        for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        if (context.getPlugin() != null) {
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
-        return text;
+        
+        final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
+        for (int i = 1; i <= size; i++) {
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
+        }
+        return text.toString();
     }
     
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
             return new WorldsPrompt(context);
@@ -187,25 +200,31 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
-            String worlds = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final List<World> worldArr = Bukkit.getWorlds();
             for (int i = 0; i < worldArr.size(); i++) {
                 if (i < (worldArr.size() - 1)) {
-                    worlds += worldArr.get(i).getName() + ", ";
+                    worlds.append(worldArr.get(i).getName()).append(", ");
                 } else {
-                    worlds += worldArr.get(i).getName() + "\n";
+                    worlds.append(worldArr.get(i).getName()).append("\n");
                 }
             }
-            return worlds + ChatColor.YELLOW + getQueryText(context);
+            return worlds.toString() + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> worlds = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
                     if (Bukkit.getWorld(s) != null) {
@@ -239,25 +258,31 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
-            String biomes = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            final StringBuilder biomes = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final LinkedList<Biome> biomeArr = new LinkedList<Biome>(Arrays.asList(Biome.values()));
             for (int i = 0; i < biomeArr.size(); i++) {
                 if (i < (biomeArr.size() - 1)) {
-                    biomes += MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()) + ", ";
+                    biomes.append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name())).append(", ");
                 } else {
-                    biomes += MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()) + "\n";
+                    biomes.append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name())).append("\n");
                 }
             }
-            return biomes + ChatColor.YELLOW + getQueryText(context);
+            return biomes.toString() + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> biomes = new LinkedList<String>();
                 for (final String s : input.split(" ")) {
                     if (MiscUtil.getProperBiome(s) != null) {
@@ -291,42 +316,52 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
-            String regions = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            StringBuilder regions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             boolean any = false;
             for (final World world : plugin.getServer().getWorlds()) {
                 final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                final RegionManager rm = api.getRegionManager(world);
-                for (final String region : rm.getRegions().keySet()) {
-                    any = true;
-                    regions += ChatColor.GREEN + region + ", ";
+                final RegionManager regionManager = api.getRegionManager(world);
+                if (regionManager != null) {
+                    for (final String region : regionManager.getRegions().keySet()) {
+                        any = true;
+                        regions.append(ChatColor.GREEN).append(region).append(", ");
+                    }
                 }
             }
             if (any) {
-                regions = regions.substring(0, regions.length() - 2) + "\n";
+                regions = new StringBuilder(regions.substring(0, regions.length() - 2) + "\n");
             } else {
-                regions += ChatColor.GRAY + "(" + Lang.get("none") + ")\n";
+                regions.append(ChatColor.GRAY).append("(").append(Lang.get("none")).append(")\n");
             }
-            return regions + ChatColor.YELLOW + getQueryText(context);
+            return regions.toString() + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> regions = new LinkedList<String>();
                 for (final String r : input.split(" ")) {
                     boolean found = false;
                     for (final World world : plugin.getServer().getWorlds()) {
                         final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                        final RegionManager rm = api.getRegionManager(world);
-                        for (final String region : rm.getRegions().keySet()) {
-                            if (region.equalsIgnoreCase(r)) {
-                                regions.add(region);
-                                found = true;
-                                break;
+                        final RegionManager regionManager = api.getRegionManager(world);
+                        if (regionManager != null) {
+                            for (final String region : regionManager.getRegions().keySet()) {
+                                if (region.equalsIgnoreCase(r)) {
+                                    regions.add(region);
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                         
@@ -334,7 +369,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                             break;
                         }
                     }
-                    if (found = false) {
+                    if (!found) {
                         String error = Lang.get("questWGInvalidRegion");
                         error = error.replace("<region>", ChatColor.RED + r + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + error);

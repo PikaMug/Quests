@@ -24,7 +24,7 @@ public abstract class ConditionsEditorStringPrompt extends QuestsStringPrompt {
     
     public ConditionsEditorStringPrompt(final ConversationContext context) {
         this.context = context;
-        if (context != null) {
+        if (context != null && context.getPlugin() != null) {
             this.factory = ((Quests)context.getPlugin()).getConditionFactory();
         }
     }

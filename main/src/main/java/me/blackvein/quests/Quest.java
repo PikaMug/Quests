@@ -540,7 +540,7 @@ public class Quest implements Comparable<Quest> {
                     return;
                 }
             } else {
-                CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+                final CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
                     final QuesterPreCompleteQuestEvent preEvent
                             = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
                     plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -549,10 +549,9 @@ public class Quest implements Comparable<Quest> {
 
                 try {
                     cancelled = future.get();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
-
             }
         }
         if (cancelled) {
@@ -582,7 +581,7 @@ public class Quest implements Comparable<Quest> {
         }
         
         // Issue rewards
-        Dependencies depends = plugin.getDependencies();
+        final Dependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
         if (rews.getMoney() > 0 && depends.getVaultEconomy() != null) {
             depends.getVaultEconomy().depositPlayer(player, rews.getMoney());

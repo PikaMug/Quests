@@ -25,7 +25,7 @@ public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt 
     
     public ConditionsEditorNumericPrompt(final ConversationContext context) {
         this.context = context;
-        if (context != null) {
+        if (context != null && context.getPlugin() != null) {
             this.factory = ((Quests)context.getPlugin()).getConditionFactory();
         }
     }

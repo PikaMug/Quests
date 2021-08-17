@@ -12,19 +12,6 @@
 
 package me.blackvein.quests.convo.actions.tasks;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -35,6 +22,20 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class EffectPrompt extends ActionsEditorNumericPrompt {
     
@@ -92,25 +93,31 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_EFFECTS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
-                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
-                for (final String effect : effects) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + effect + ChatColor.GRAY + " at " 
-                            + ChatColor.DARK_AQUA + locations.get(effects.indexOf(effect)) + "\n";
+                final LinkedList<String> locations
+                        = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
+                if (effects != null && locations != null) {
+                    for (final String effect : effects) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(effect)
+                                .append(ChatColor.GRAY).append(" at ").append(ChatColor.DARK_AQUA)
+                                .append(locations.get(effects.indexOf(effect))).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 2:
             if (context.getSessionData(CK.E_EXPLOSIONS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
-                for (final String loc : locations) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + loc + "\n";
+                if (locations != null) {
+                    for (final String loc : locations) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 3:
             return "";
@@ -120,21 +127,22 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        return text;
+        return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new EffectSoundListPrompt(context);
@@ -157,11 +165,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
     
     public class EffectSoundListPrompt extends ActionsEditorNumericPrompt {
 
-        private final Quests plugin;
         
         public EffectSoundListPrompt(final ConversationContext context) {
             super(context);
-            this.plugin = (Quests)context.getPlugin();
+
         }
         
         private final int size = 4;
@@ -214,21 +221,22 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_EFFECTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final String s : (List<String>) context.getSessionData(CK.E_EFFECTS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 2:
                 if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final String s : (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final String s : (List<String>) Objects.requireNonNull(context
+                            .getSessionData(CK.E_EFFECTS_LOCATIONS))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 3:
             case 4:
@@ -239,22 +247,23 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
     
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
             for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
-            return text;
+            return text.toString();
         }
         
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new EffectSoundPrompt(context);
@@ -279,15 +288,16 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 context.setSessionData(CK.E_EFFECTS_LOCATIONS, null);
                 return new EffectSoundListPrompt(context);
             case 4:
-                int one;
-                int two;
+                final int one;
+                final int two;
                 if (context.getSessionData(CK.E_EFFECTS) != null) {
-                    one = ((List<String>) context.getSessionData(CK.E_EFFECTS)).size();
+                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS))).size();
                 } else {
                     one = 0;
                 }
                 if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
-                    two = ((List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS)).size();
+                    two = ((List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS_LOCATIONS)))
+                            .size();
                 } else {
                     two = 0;
                 }
@@ -320,37 +330,42 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String effects = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
-            final Effect[] vals = Effect.values();
-            for (int i = 0; i < vals.length; i++) {
-                final Effect eff = vals[i];
-                if (i < (vals.length - 1)) {
-                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + ", ";
+            final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final Effect[] values = Effect.values();
+            for (int i = 0; i < values.length; i++) {
+                final Effect eff = values[i];
+                if (i < (values.length - 1)) {
+                    effects.append(MiscUtil.snakeCaseToUpperCamelCase(eff.name())).append(", ");
                 } else {
-                    effects += MiscUtil.snakeCaseToUpperCamelCase(eff.name()) + "\n";
+                    effects.append(MiscUtil.snakeCaseToUpperCamelCase(eff.name())).append("\n");
                 }
                 
             }
-            return effects + ChatColor.YELLOW + getQueryText(context);
+            return effects.toString() + ChatColor.YELLOW + getQueryText(context);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (MiscUtil.getProperEffect(input) != null) {
-                    LinkedList<String> effects;
+                    final LinkedList<String> effects;
                     if (context.getSessionData(CK.E_EFFECTS) != null) {
                         effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
                     } else {
-                        effects = new LinkedList<String>();
+                        effects = new LinkedList<>();
                     }
-                    effects.add(MiscUtil.getProperEffect(input).name());
+                    if (effects != null && MiscUtil.getProperEffect(input) != null) {
+                        effects.add(Objects.requireNonNull(MiscUtil.getProperEffect(input)).name());
+                    }
                     context.setSessionData(CK.E_EFFECTS, effects);
                     if (context.getForWhom() instanceof Player) {
                         final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
@@ -391,7 +406,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -401,21 +416,26 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 final Block block = selectedEffectLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    LinkedList<String> locs;
+                    final LinkedList<String> locations;
                     if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
-                        locs = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
+                        locations = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
                     } else {
-                        locs = new LinkedList<String>();
+                        locations = new LinkedList<>();
                     }
-                    locs.add(ConfigUtil.getLocationInfo(loc));
-                    context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
+                    if (locations != null) {
+                        locations.add(ConfigUtil.getLocationInfo(loc));
+                    }
+                    context.setSessionData(CK.E_EFFECTS_LOCATIONS, locations);
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
@@ -450,7 +470,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -460,21 +480,26 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 final Block block = selectedExplosionLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    LinkedList<String> locs;
+                    final LinkedList<String> locations;
                     if (context.getSessionData(CK.E_EXPLOSIONS) != null) {
-                        locs = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
+                        locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
                     } else {
-                        locs = new LinkedList<String>();
+                        locations = new LinkedList<>();
                     }
-                    locs.add(ConfigUtil.getLocationInfo(loc));
-                    context.setSessionData(CK.E_EXPLOSIONS, locs);
+                    if (locations != null) {
+                        locations.add(ConfigUtil.getLocationInfo(loc));
+                    }
+                    context.setSessionData(CK.E_EXPLOSIONS, locations);
                     selectedExplosionLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 } else {
