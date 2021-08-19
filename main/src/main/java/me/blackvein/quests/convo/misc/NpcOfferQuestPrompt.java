@@ -34,7 +34,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         super(null);
     }
 
-    public NpcOfferQuestPrompt(ConversationContext context) {
+    public NpcOfferQuestPrompt(final ConversationContext context) {
         super(context);
     }
 
@@ -53,25 +53,27 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @Override
     public String getTitle(final ConversationContext context) {
         final String npc = (String) context.getSessionData("npc");
-        return Lang.get("questNPCListTitle").replace("<npc>", npc);
+        return Lang.get("questNPCListTitle").replace("<npc>", npc != null ? npc : "NPC");
     }
 
     @SuppressWarnings("unchecked")
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        if (quests != null && number > 0) {
-            if (number < (quests.size() + 1)) {
-                final Quest quest = quests.get(number - 1);
-                if (quester.getCompletedQuests().contains(quest)) {
-                    return ChatColor.GREEN;
-                } else {
+        if (plugin != null) {
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            if (quests != null && number > 0) {
+                if (number < (quests.size() + 1)) {
+                    final Quest quest = quests.get(number - 1);
+                    if (quester.getCompletedQuests().contains(quest)) {
+                        return ChatColor.GREEN;
+                    } else {
+                        return ChatColor.GOLD;
+                    }
+                } else if (number == (quests.size() + 1)) {
+                    //return ChatColor.RED;
                     return ChatColor.GOLD;
                 }
-            } else if (number == (quests.size() + 1)) {
-                //return ChatColor.RED;
-                return ChatColor.GOLD;
             }
         }
         return null;
@@ -81,17 +83,19 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        if (quests != null && number > 0) {
-            if (number < (quests.size() + 1)) {
-                final Quest quest = quests.get(number - 1);
-                if (quester.getCompletedQuests().contains(quest)) {
-                    return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
-                } else {
-                    return ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName();
+        if (plugin != null) {
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            if (quests != null && number > 0) {
+                if (number < (quests.size() + 1)) {
+                    final Quest quest = quests.get(number - 1);
+                    if (quester.getCompletedQuests().contains(quest)) {
+                        return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
+                    } else {
+                        return ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName();
+                    }
+                } else if (number == (quests.size() + 1)) {
+                    return ChatColor.GRAY + Lang.get("cancel");
                 }
-            } else if (number == (quests.size() + 1)) {
-                return ChatColor.GRAY + Lang.get("cancel");
             }
         }
         return null;
@@ -101,12 +105,14 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
-        if (quests != null && number > 0) {
-            if (number < (quests.size() + 1)) {
-                final Quest quest = quests.get(number - 1);
-                if (quester.getCompletedQuests().contains(quest)) {
-                    return ChatColor.GREEN + "" + Lang.get("redoCompleted");
+        if (plugin != null) {
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            if (quests != null && number > 0) {
+                if (number < (quests.size() + 1)) {
+                    final Quest quest = quests.get(number - 1);
+                    if (quester.getCompletedQuests().contains(quest)) {
+                        return ChatColor.GREEN + "" + Lang.get("redoCompleted");
+                    }
                 }
             }
         }
@@ -131,14 +137,15 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        String text = ChatColor.WHITE + getTitle(context);
+        final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle(context));
         size = quests.size();
         for (int i = 1; i <= size + 1; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ". " + ChatColor.RESET
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(". ")
+                    .append(ChatColor.RESET).append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        text += "\n" + ChatColor.WHITE + getQueryText(context);
-        return text;
+        text.append("\n").append(ChatColor.WHITE).append(getQueryText(context));
+        return text.toString();
     }
 
     @SuppressWarnings("unchecked")

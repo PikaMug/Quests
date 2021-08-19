@@ -28,20 +28,6 @@ public class StageFormatException extends Exception {
         this.quest = quest;
         this.stage = stage;
     }
-
-    /**
-     * Create a new instance of this class with the afflicted quest and stage number.
-     * 
-     * @deprecated Use {@link#StageFormatException(String, Quest, int)}
-     * @param quest The quest that an invalid stage id was set within.
-     * @param stage The invalid stage id that was set.
-     */
-    @Deprecated
-    public StageFormatException(final Quest quest, final int stage) {
-        this.message = "Failed to load quest " + quest.getName() + " stage " + stage;
-        this.quest = quest;
-        this.stage = stage;
-    }
     
     /**
      * Get the message associated with this exception.

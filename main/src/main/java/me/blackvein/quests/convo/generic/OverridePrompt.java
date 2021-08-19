@@ -18,6 +18,7 @@ import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class OverridePrompt extends QuestsEditorStringPrompt {
     private final Prompt oldPrompt;
@@ -48,9 +49,12 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
-        final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-        context.getPlugin().getServer().getPluginManager().callEvent(event);
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        if (context.getPlugin() != null) {
+            final QuestsEditorPostOpenStringPromptEvent event
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        }
 
         return ChatColor.YELLOW + getQueryText(context);
     }
