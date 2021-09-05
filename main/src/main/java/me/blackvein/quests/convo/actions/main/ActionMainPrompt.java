@@ -212,7 +212,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionDenizenPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
-                        .replace("mode", Lang.get("trialMode")));
+                        .replace("<mode>", Lang.get("trialMode")));
                 return new ActionMainPrompt(context);
             }
         case 8:
@@ -374,7 +374,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
             for (int i = 1; i <= size; i++) {
                 text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(context, i)).append(" ")
@@ -1093,7 +1093,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
-                            .replace("mode", Lang.get("trialMode")));
+                            .replace("<mode>", Lang.get("trialMode")));
                     return new ActionMainPrompt(context);
                 }
                 plugin.getActionFactory().saveAction(context);

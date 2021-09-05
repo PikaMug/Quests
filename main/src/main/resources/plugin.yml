@@ -79,6 +79,7 @@ permissions:
       quests.admin.remove: true
       quests.admin.reload: true
       quests.admin.drop: true
+      quests.admin.trial: false
   quests.admin:
     description: Display administrator help
     default: op
