@@ -24,7 +24,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     
     public QuestsEditorStringPrompt(final ConversationContext context) {
         this.context = context;
-        if (context != null) {
+        if (context != null && context.getPlugin() != null) {
             factory = ((Quests)context.getPlugin()).getQuestFactory();
         }
     }

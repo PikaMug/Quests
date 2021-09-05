@@ -40,11 +40,11 @@ public enum ObjectiveType {
     PASSWORD(21, "Password"),
     CUSTOM(127, "Custom");
     
-    private String name;
-    private byte typeId;
+    private final String name;
+    private final byte typeId;
     
-    private static final Map<String, ObjectiveType> NAME_MAP = new HashMap<String, ObjectiveType>();
-    private static final Map<Byte, ObjectiveType> ID_MAP = new HashMap<Byte, ObjectiveType>();
+    private static final Map<String, ObjectiveType> NAME_MAP = new HashMap<>();
+    private static final Map<Byte, ObjectiveType> ID_MAP = new HashMap<>();
     
     static {
         for (final ObjectiveType type : values()) {

@@ -25,7 +25,7 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     
     public QuestsEditorNumericPrompt(final ConversationContext context) {
         this.context = context;
-        if (context != null) {
+        if (context != null && context.getPlugin() != null) {
             factory = ((Quests)context.getPlugin()).getQuestFactory();
         }
     }

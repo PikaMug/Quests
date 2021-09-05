@@ -290,14 +290,15 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             case 4:
                 final int one;
                 final int two;
-                if (context.getSessionData(CK.E_EFFECTS) != null) {
-                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS))).size();
+                final List<String> effects = (List<String>) context.getSessionData(CK.E_EFFECTS);
+                final List<String> locations = (List<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
+                if (effects != null) {
+                    one = effects.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) != null) {
-                    two = ((List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS_LOCATIONS)))
-                            .size();
+                if (locations != null) {
+                    two = locations.size();
                 } else {
                     two = 0;
                 }

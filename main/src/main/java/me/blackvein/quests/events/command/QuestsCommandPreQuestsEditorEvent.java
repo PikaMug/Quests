@@ -17,6 +17,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when the /quests editor command is run by a player
@@ -42,7 +43,7 @@ public class QuestsCommandPreQuestsEditorEvent extends QuestsCommandEvent implem
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
     

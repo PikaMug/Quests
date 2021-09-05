@@ -12,16 +12,6 @@
 
 package me.blackvein.quests.convo.quests.planner;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 import me.blackvein.quests.Planner;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -31,6 +21,17 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPrompt
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.jetbrains.annotations.NotNull;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
@@ -50,7 +51,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("plannerTitle").replace("<quest>", (String) context.getSessionData(CK.Q_NAME));
+        return Lang.get("plannerTitle").replace("<quest>", (String) Objects
+                .requireNonNull(context.getSessionData(CK.Q_NAME)));
     }
     
     @Override
@@ -58,6 +60,8 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         switch (number) {
         case 1:
         case 2:
+        case 4:
+        case 5:
             return ChatColor.BLUE;
         case 3:
             if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
@@ -65,9 +69,6 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 4:
-        case 5:
-            return ChatColor.BLUE;
         case 6:
             return ChatColor.GREEN;
         default:
@@ -103,48 +104,49 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(CK.PLN_START_DATE) == null) {
+            final String start = (String) context.getSessionData(CK.PLN_START_DATE);
+            if (start == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return "\n" + ChatColor.YELLOW + "     - " + getPrettyDate((String) context.getSessionData(CK.PLN_START_DATE));
+                return "\n" + ChatColor.YELLOW + "     - " + getPrettyDate(start);
             }
         case 2:
-            if (context.getSessionData(CK.PLN_END_DATE) == null) {
+            final String end = (String) context.getSessionData(CK.PLN_END_DATE);
+            if (end == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return "\n" + ChatColor.YELLOW +  "     - " 
-                        + getPrettyDate((String) context.getSessionData(CK.PLN_END_DATE));
+                        + getPrettyDate(end);
             }
         case 3:
+            final Long repeat = (Long) context.getSessionData(CK.PLN_REPEAT_CYCLE);
             if (context.getSessionData(CK.PLN_START_DATE) == null || context.getSessionData(CK.PLN_END_DATE) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
             } else {
-                if (context.getSessionData(CK.PLN_REPEAT_CYCLE) == null) {
+                if (repeat == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.YELLOW + "(" 
-                            + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_REPEAT_CYCLE)) 
-                            + ChatColor.RESET + ChatColor.YELLOW + ")";
+                    return ChatColor.YELLOW + "(" + MiscUtil.getTime(repeat) + ChatColor.RESET + ChatColor.YELLOW + ")";
                 }
             }
         case 4:
-            if (context.getSessionData(CK.PLN_COOLDOWN) == null) {
+            final Long cooldown = (Long) context.getSessionData(CK.PLN_COOLDOWN);
+            if (cooldown == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.YELLOW + "(" + MiscUtil.getTime((Long) context.getSessionData(CK.PLN_COOLDOWN)) 
-                        + ChatColor.RESET + ChatColor.YELLOW + ")";
+                return ChatColor.YELLOW + "(" + MiscUtil.getTime(cooldown) + ChatColor.RESET + ChatColor.YELLOW + ")";
             }
         case 5:
-            if (context.getSessionData(CK.PLN_OVERRIDE) == null) {
+            final Boolean override = (Boolean) context.getSessionData(CK.PLN_OVERRIDE);
+            if (override == null) {
                 final boolean defaultOpt = new Planner().getOverride();
                 return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
                         + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
                         + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
             } else {
-               final boolean quittingOpt = (Boolean) context.getSessionData(CK.PLN_OVERRIDE);
-                return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN
-                        + Lang.get(String.valueOf(quittingOpt)) : ChatColor.RED 
-                        + Lang.get(String.valueOf(quittingOpt))) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + (override ? ChatColor.GREEN
+                        + Lang.get(String.valueOf(override)) : ChatColor.RED
+                        + Lang.get(String.valueOf(override))) + ChatColor.GRAY + ")";
             }
         case 6:
             return "";
@@ -154,22 +156,26 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        context.getPlugin().getServer().getPluginManager().callEvent(event);
-        
-        String text = ChatColor.DARK_AQUA + getTitle(context).replace((String) context
-                .getSessionData(CK.Q_NAME), ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) 
-                + ChatColor.DARK_AQUA);
-        for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        if (context.getPlugin() != null) {
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
-        return text;
+
+        final String name = Objects.requireNonNull((String) context.getSessionData(CK.Q_NAME));
+        final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + getTitle(context)
+                .replace(name, ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA));
+        for (int i = 1; i <= size; i++) {
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
+        }
+        return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new DateTimePrompt(context, PlannerPrompt.this, "start");
@@ -210,15 +216,21 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 return new PlannerPrompt(context);
             }
@@ -226,7 +238,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.PLN_REPEAT_CYCLE, null);
                 return new PlannerPrompt(context);
             }
-            long delay;
+            final long delay;
             try {
                 final long l = Long.parseLong(input);
                 delay = l * 1000;
@@ -261,15 +273,21 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 return new PlannerPrompt(context);
             }
@@ -277,7 +295,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.PLN_COOLDOWN, null);
                 return new PlannerPrompt(context);
             }
-            long delay;
+            final long delay;
             try {
                 final long l = Long.parseLong(input);
                 delay = l * 1000;
@@ -335,9 +353,12 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
             String text = Lang.get("optBooleanPrompt");
             text = text.replace("<true>", Lang.get("true"));
@@ -346,9 +367,11 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 if (input.startsWith("t") || input.equalsIgnoreCase(Lang.get("true")) 
                         || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                     context.setSessionData(CK.PLN_OVERRIDE, true);
@@ -372,12 +395,12 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/MM");
         final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         final String[] date = formattedDate.split(":");
-        final int day = Integer.valueOf(date[0]);
-        final int month = Integer.valueOf(date[1]);
-        final int year = Integer.valueOf(date[2]);
-        final int hour = Integer.valueOf(date[3]);
-        final int minute = Integer.valueOf(date[4]);
-        final int second = Integer.valueOf(date[5]);
+        final int day = Integer.parseInt(date[0]);
+        final int month = Integer.parseInt(date[1]);
+        final int year = Integer.parseInt(date[2]);
+        final int hour = Integer.parseInt(date[3]);
+        final int minute = Integer.parseInt(date[4]);
+        final int second = Integer.parseInt(date[5]);
         
         cal.set(year, month, day, hour, minute, second);
         String output = ChatColor.DARK_AQUA + dateFormat.format(cal.getTime());
@@ -387,10 +410,10 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         cal.setTimeZone(tz);
         final String[] iso = Lang.getISO().split("-");
         final Locale loc = iso.length > 1 ? new Locale(iso[0], iso[1]) : new Locale(iso[0]);
-        final Double zhour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
-        final String[] sep = String.valueOf(zhour).replace("-", "").split("\\.");
+        final Double zonehour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
+        final String[] sep = String.valueOf(zonehour).replace("-", "").split("\\.");
         final DecimalFormat zoneFormat = new DecimalFormat("00");
-        output += ChatColor.LIGHT_PURPLE + " UTC" + (zhour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0])) 
+        output += ChatColor.LIGHT_PURPLE + " UTC" + (zonehour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0]))
                 + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
                 + cal.getTimeZone().getDisplayName(loc) + ")";
         return output;

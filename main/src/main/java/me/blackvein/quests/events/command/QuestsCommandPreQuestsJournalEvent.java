@@ -16,6 +16,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when the /quests journal command is run by a player
@@ -39,7 +40,7 @@ public class QuestsCommandPreQuestsJournalEvent extends QuestsCommandEvent imple
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
     

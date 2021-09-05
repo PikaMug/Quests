@@ -579,19 +579,21 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 final int one;
                 final int two;
                 final int three;
-                if (context.getSessionData(CK.E_POTION_TYPES) != null) {
-                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(CK.E_POTION_TYPES))).size();
+                final List<String> types = (List<String>) context.getSessionData(CK.E_POTION_TYPES);
+                final List<Long> durations = (List<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
+                final List<Integer> strength = (List<Integer>) context.getSessionData(CK.E_POTION_STRENGTH);
+                if (types != null) {
+                    one = types.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(CK.E_POTION_DURATIONS) != null) {
-                    two = ((List<Long>) Objects.requireNonNull(context.getSessionData(CK.E_POTION_DURATIONS))).size();
+                if (durations != null) {
+                    two = durations.size();
                 } else {
                     two = 0;
                 }
-                if (context.getSessionData(CK.E_POTION_STRENGTH) != null) {
-                    three = ((List<Integer>) Objects.requireNonNull(context.getSessionData(CK.E_POTION_STRENGTH)))
-                            .size();
+                if (strength != null) {
+                    three = strength.size();
                 } else {
                     three = 0;
                 }

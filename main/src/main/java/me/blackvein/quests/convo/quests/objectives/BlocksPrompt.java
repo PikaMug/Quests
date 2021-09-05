@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 public class BlocksPrompt extends QuestsEditorNumericPrompt {
     private final int stageNum;
@@ -349,35 +348,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 final int one;
                 final int two;
-                if (context.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
-                    one = ((List<Integer>) Objects.requireNonNull(context.getSessionData(pref + CK.S_BREAK_NAMES)))
-                            .size();
+                final List<Integer> names = (List<Integer>) context.getSessionData(pref + CK.S_BREAK_NAMES);
+                final List<Integer> amounts = (List<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
+                if (names != null) {
+                    one = names.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null) {
-                    two = ((List<Integer>) Objects.requireNonNull(context.getSessionData(pref + CK.S_BREAK_AMOUNTS)))
-                            .size();
+                if (amounts != null) {
+                    two = amounts.size();
                 } else {
                     two = 0;
                 }
                 if (one == two) {                    
                     final int missing;
-                    final LinkedList<Short> elements;
-                    if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null) {
-                        missing = one - ((List<Short>) Objects.requireNonNull(context
-                                .getSessionData(pref + CK.S_BREAK_DURABILITY))).size();
-                        elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
+                    final LinkedList<Short> durability
+                            = (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
+                    if (durability != null) {
+                        missing = one - durability.size();
                     } else {
                         missing = one;
-                        elements = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (elements != null) {
-                            elements.add((short) 0);
+                        if (durability != null) {
+                            durability.add((short) 0);
                         }
                     }
-                    context.setSessionData(pref + CK.S_BREAK_DURABILITY, elements);
+                    context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -722,35 +719,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 final int one;
                 final int two;
-                if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
-                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(pref + CK.S_DAMAGE_NAMES)))
-                            .size();
+                final List<Integer> names = (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
+                final List<Integer> amounts = (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
+                if (names != null) {
+                    one = names.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null) {
-                    two = ((List<Integer>) Objects.requireNonNull(context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS)))
-                            .size();
+                if (amounts != null) {
+                    two = amounts.size();
                 } else {
                     two = 0;
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> elements;
-                    if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null) {
-                        missing = one - ((List<Short>) Objects.requireNonNull(context
-                                .getSessionData(pref + CK.S_DAMAGE_DURABILITY))).size();
-                        elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
+                    final LinkedList<Short> durability
+                            = (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
+                    if (durability != null) {
+                        missing = one - durability.size();
                     } else {
                         missing = one;
-                        elements = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (elements != null) {
-                            elements.add((short) 0);
+                        if (durability != null) {
+                            durability.add((short) 0);
                         }
                     }
-                    context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, elements);
+                    context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -1093,35 +1088,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 final int one;
                 final int two;
-                if (context.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
-                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(pref + CK.S_PLACE_NAMES)))
-                            .size();
+                final List<Integer> names = (List<Integer>) context.getSessionData(pref + CK.S_PLACE_NAMES);
+                final List<Integer> amounts = (List<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
+                if (names != null) {
+                    one = names.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null) {
-                    two = ((List<Integer>) Objects.requireNonNull(context.getSessionData(pref + CK.S_PLACE_AMOUNTS)))
-                            .size();
+                if (amounts != null) {
+                    two = amounts.size();
                 } else {
                     two = 0;
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> elements;
-                    if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null) {
-                        missing = one - ((List<Short>) Objects.requireNonNull(context
-                                .getSessionData(pref + CK.S_PLACE_DURABILITY))).size();
-                        elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
+                    final LinkedList<Short> durability
+                            = (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
+                    if (durability != null) {
+                        missing = one - durability.size();
                     } else {
                         missing = one;
-                        elements = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (elements != null) {
-                            elements.add((short) 0);
+                        if (durability != null) {
+                            durability.add((short) 0);
                         }
                     }
-                    context.setSessionData(pref + CK.S_PLACE_DURABILITY, elements);
+                    context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -1462,34 +1455,33 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             case 5:
                 final int one;
                 final int two;
-                if (context.getSessionData(pref + CK.S_USE_NAMES) != null) {
-                    one = ((List<String>) Objects.requireNonNull(context.getSessionData(pref + CK.S_USE_NAMES))).size();
+                final List<Integer> names = (List<Integer>) context.getSessionData(pref + CK.S_USE_NAMES);
+                final List<Integer> amounts = (List<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
+                if (names != null) {
+                    one = names.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(pref + CK.S_USE_AMOUNTS) != null) {
-                    two = ((List<Integer>) Objects.requireNonNull(context.getSessionData(pref + CK.S_USE_AMOUNTS)))
-                            .size();
+                if (amounts != null) {
+                    two = amounts.size();
                 } else {
                     two = 0;
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> elements;
-                    if (context.getSessionData(pref + CK.S_USE_DURABILITY) != null) {
-                        missing = one - ((List<Short>) Objects.requireNonNull(context
-                                .getSessionData(pref + CK.S_USE_DURABILITY))).size();
-                        elements = (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
+                    final LinkedList<Short> durability
+                            = (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
+                    if (durability != null) {
+                        missing = one - durability.size();
                     } else {
                         missing = one;
-                        elements = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (elements != null) {
-                            elements.add((short) 0);
+                        if (durability != null) {
+                            durability.add((short) 0);
                         }
                     }
-                    context.setSessionData(pref + CK.S_USE_DURABILITY, elements);
+                    context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
