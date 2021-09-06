@@ -16,6 +16,7 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -38,7 +39,7 @@ public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
     

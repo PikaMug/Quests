@@ -19,6 +19,9 @@ import org.bukkit.event.HandlerList;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.events.QuestsEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * Represents an Actions Editor-related event
@@ -31,14 +34,14 @@ public abstract class ActionsEditorEvent extends QuestsEvent {
     
     public ActionsEditorEvent(final ConversationContext context, final Prompt prompt) {
         this.context = context;
-        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getActionFactory();
         this.prompt = prompt;
     }
     
     public ActionsEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
         super(async);
         this.context = context;
-        this.factory = ((Quests)context.getPlugin()).getActionFactory();
+        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getActionFactory();
         this.prompt = prompt;
     }
     
@@ -70,7 +73,7 @@ public abstract class ActionsEditorEvent extends QuestsEvent {
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
     

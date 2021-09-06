@@ -188,12 +188,12 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
         }
         if (!reqs.getNeededQuests().isEmpty()) {
-            final List<String> names = reqs.getNeededQuests().stream().map(Quest::getName).collect(Collectors.toList());
-            context.setSessionData(CK.REQ_QUEST, names);
+            final List<String> ids = reqs.getNeededQuests().stream().map(Quest::getId).collect(Collectors.toList());
+            context.setSessionData(CK.REQ_QUEST, ids);
         }
         if (!reqs.getBlockQuests().isEmpty()) {
-            final List<String> names = reqs.getBlockQuests().stream().map(Quest::getName).collect(Collectors.toList());
-            context.setSessionData(CK.REQ_QUEST_BLOCK, names);
+            final List<String> ids = reqs.getBlockQuests().stream().map(Quest::getId).collect(Collectors.toList());
+            context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
         }
         if (!reqs.getMcmmoSkills().isEmpty()) {
             context.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());

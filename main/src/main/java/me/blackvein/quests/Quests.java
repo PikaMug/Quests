@@ -683,7 +683,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private void setupLang() throws IOException, URISyntaxException {
         final String path = "lang";
         final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-        if(jarFile.isFile()) {
+        if (jarFile.isFile()) {
             final JarFile jar = new JarFile(jarFile);
             final Enumeration<JarEntry> entries = jar.entries();
             final Set<String> results = new HashSet<>();
@@ -1769,7 +1769,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 boolean exists = false;
                 for (final World world : getServer().getWorlds()) {
                     if (world != null && getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
-
                         if (Objects.requireNonNull(getDependencies().getWorldGuardApi().getRegionManager(world))
                                 .hasRegion(region)) {
                             quest.regionStart = region;
@@ -1831,7 +1830,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     @SuppressWarnings({"unchecked", "deprecation"})
     private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey)
             throws QuestFormatException {
-        final Rewards rews = quest.getRewards();
+        final Rewards rewards = quest.getRewards();
         if (config.contains("quests." + questKey + ".rewards.items")) {
             final LinkedList<ItemStack> temp = new LinkedList<>();
             final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
@@ -1859,25 +1858,25 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     throw new QuestFormatException("Reward items has invalid formatting", questKey);
                 }
             }
-            rews.setItems(temp);
+            rewards.setItems(temp);
         }
         if (config.contains("quests." + questKey + ".rewards.money")) {
             if (config.getInt("quests." + questKey + ".rewards.money", -999) != -999) {
-                rews.setMoney(config.getInt("quests." + questKey + ".rewards.money"));
+                rewards.setMoney(config.getInt("quests." + questKey + ".rewards.money"));
             } else {
                 throw new QuestFormatException("Reward money is not a number", questKey);
             }
         }
         if (config.contains("quests." + questKey + ".rewards.exp")) {
             if (config.getInt("quests." + questKey + ".rewards.exp", -999) != -999) {
-                rews.setExp(config.getInt("quests." + questKey + ".rewards.exp"));
+                rewards.setExp(config.getInt("quests." + questKey + ".rewards.exp"));
             } else {
                 throw new QuestFormatException("Reward exp is not a number", questKey);
             }
         }
         if (config.contains("quests." + questKey + ".rewards.commands")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
-                rews.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
+                rewards.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
             } else {
                 throw new QuestFormatException("Reward commands is not a list of commands", questKey);
             }
@@ -1886,7 +1885,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             // Legacy
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands-override-display"), 
                     String.class)) {
-                rews.setCommandsOverrideDisplay(config.getStringList("quests." + questKey 
+                rewards.setCommandsOverrideDisplay(config.getStringList("quests." + questKey
                         + ".rewards.commands-override-display"));
             } else {
                 throw new QuestFormatException("Reward commands-override-display is not a list of strings", questKey);
@@ -1894,7 +1893,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (config.contains("quests." + questKey + ".rewards.permissions")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.permissions"), String.class)) {
-                rews.setPermissions(config.getStringList("quests." + questKey + ".rewards.permissions"));
+                rewards.setPermissions(config.getStringList("quests." + questKey + ".rewards.permissions"));
             } else {
                 throw new QuestFormatException("Reward permissions is not a list of permissions", questKey);
             }
@@ -1902,14 +1901,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".rewards.permission-worlds")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey 
                     + ".rewards.permission-worlds"), String.class)) {
-                rews.setPermissionWorlds(config.getStringList("quests." + questKey + ".rewards.permission-worlds"));
+                rewards.setPermissionWorlds(config.getStringList("quests." + questKey + ".rewards.permission-worlds"));
             } else {
                 throw new QuestFormatException("Reward permissions is not a list of worlds", questKey);
             }
         }
         if (config.contains("quests." + questKey + ".rewards.quest-points")) {
             if (config.getInt("quests." + questKey + ".rewards.quest-points", -999) != -999) {
-                rews.setQuestPoints(config.getInt("quests." + questKey + ".rewards.quest-points"));
+                rewards.setQuestPoints(config.getInt("quests." + questKey + ".rewards.quest-points"));
             } else {
                 throw new QuestFormatException("Reward quest-points is not a number", questKey);
             }
@@ -1930,8 +1929,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                             + skill, questKey);
                                 }
                             }
-                            rews.setMcmmoSkills(config.getStringList("quests." + questKey + ".rewards.mcmmo-skills"));
-                            rews.setMcmmoAmounts(config.getIntegerList("quests." + questKey + ".rewards.mcmmo-levels"));
+                            rewards.setMcmmoSkills(config.getStringList("quests." + questKey
+                                    + ".rewards.mcmmo-skills"));
+                            rewards.setMcmmoAmounts(config.getIntegerList("quests." + questKey
+                                    + ".rewards.mcmmo-levels"));
                         } else {
                             throw new QuestFormatException("Reward mcmmo-levels is not a list of numbers", questKey);
                         }
@@ -1959,9 +1960,9 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                             + heroClass, questKey);
                                 }
                             }
-                            rews.setHeroesClasses(config.getStringList("quests." + questKey 
+                            rewards.setHeroesClasses(config.getStringList("quests." + questKey
                                     + ".rewards.heroes-exp-classes"));
-                            rews.setHeroesAmounts(config.getDoubleList("quests." + questKey 
+                            rewards.setHeroesAmounts(config.getDoubleList("quests." + questKey
                                     + ".rewards.heroes-exp-amounts"));
                         } else {
                             throw new QuestFormatException("Reward heroes-exp-amounts is not a list of decimal numbers",
@@ -1979,7 +1980,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (depends.isPluginAvailable("Parties")) {
             if (config.contains("quests." + questKey + ".rewards.parties-experience")) {
                 if (config.getInt("quests." + questKey + ".rewards.parties-experience", -999) != -999) {
-                    rews.setPartiesExperience(config.getInt("quests." + questKey + ".rewards.parties-experience"));
+                    rewards.setPartiesExperience(config.getInt("quests." + questKey + ".rewards.parties-experience"));
                 } else {
                     throw new QuestFormatException("Reward parties-experience is not a number", questKey);
                 }
@@ -1996,7 +1997,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     questKey);
                         }
                     }
-                    rews.setPhatLoots(config.getStringList("quests." + questKey + ".rewards.phat-loots"));
+                    rewards.setPhatLoots(config.getStringList("quests." + questKey + ".rewards.phat-loots"));
                 } else {
                     throw new QuestFormatException("Reward phat-loots is not a list of PhatLoots", questKey);
                 }
@@ -2005,7 +2006,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".rewards.details-override")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey 
                     + ".rewards.details-override"), String.class)) {
-                rews.setDetailsOverride(config.getStringList("quests." + questKey + ".rewards.details-override"));
+                rewards.setDetailsOverride(config.getStringList("quests." + questKey + ".rewards.details-override"));
             }  else {
                 throw new QuestFormatException("Reward details-override is not a list of strings", questKey);
             }
@@ -2015,17 +2016,17 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     @SuppressWarnings({ "unchecked", "deprecation" })
     private void loadQuestRequirements(final FileConfiguration config, final ConfigurationSection questsSection,
                                        final Quest quest, final String questKey) throws QuestFormatException {
-        final Requirements reqs = quest.getRequirements();
+        final Requirements requires = quest.getRequirements();
         if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
             final Object o = config.get("quests." + questKey + ".requirements.fail-requirement-message");
             if (o instanceof List) {
-                reqs.setDetailsOverride(config.getStringList("quests." + questKey 
+                requires.setDetailsOverride(config.getStringList("quests." + questKey
                         + ".requirements.fail-requirement-message"));
             } else {
                 // Legacy
                 final List<String> override = new LinkedList<>();
                 override.add((String) o);
-                reqs.setDetailsOverride(override);
+                requires.setDetailsOverride(override);
             }
         }
         if (config.contains("quests." + questKey + ".requirements.items")) {
@@ -2057,11 +2058,11 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     throw new QuestFormatException("Requirement items has invalid formatting", questKey);
                 }
             }
-            reqs.setItems(temp);
+            requires.setItems(temp);
             if (config.contains("quests." + questKey + ".requirements.remove-items")) {
                 if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.remove-items"), 
                         Boolean.class)) {
-                    reqs.setRemoveItems(config.getBooleanList("quests." + questKey + ".requirements.remove-items"));
+                    requires.setRemoveItems(config.getBooleanList("quests." + questKey + ".requirements.remove-items"));
                 } else {
                     throw new QuestFormatException("Requirement remove-items is not a list of true/false values",
                             questKey);
@@ -2072,14 +2073,14 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (config.contains("quests." + questKey + ".requirements.money")) {
             if (config.getInt("quests." + questKey + ".requirements.money", -999) != -999) {
-                reqs.setMoney(config.getInt("quests." + questKey + ".requirements.money"));
+                requires.setMoney(config.getInt("quests." + questKey + ".requirements.money"));
             } else {
                 throw new QuestFormatException("Requirement money is not a number", questKey);
             }
         }
         if (config.contains("quests." + questKey + ".requirements.quest-points")) {
             if (config.getInt("quests." + questKey + ".requirements.quest-points", -999) != -999) {
-                reqs.setQuestPoints(config.getInt("quests." + questKey + ".requirements.quest-points"));
+                requires.setQuestPoints(config.getInt("quests." + questKey + ".requirements.quest-points"));
             } else {
                 throw new QuestFormatException("Requirement quest-points is not a number", questKey);
             }
@@ -2087,21 +2088,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".requirements.quest-blocks")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quest-blocks"), 
                     String.class)) {
-                final List<String> names = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
+                final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
                 boolean failed = false;
                 String failedQuest = "NULL";
                 final List<Quest> temp = new LinkedList<>();
-                for (final String name : names) {
+                for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
-                        final String name2 = config.getString("quests." + id + ".name");
-                        if (name2 != null && (name2.equalsIgnoreCase(name)
-                                || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name)))) {
-                            if (getQuest(name) != null) {
-                                temp.add(getQuest(name));
+                        final String node2 = config.getString("quests." + id + ".name");
+                        if (node2 != null && (id.equals(node) || node2.equalsIgnoreCase(node)
+                                || ChatColor.stripColor(node2).equalsIgnoreCase(ChatColor.stripColor(node)))) {
+                            if (getQuest(node) != null) {
+                                temp.add(getQuest(node));
+                            } else if (getQuestById(node) != null) {
+                                temp.add(getQuestById(node));
                             } else {
-                                throw new QuestFormatException("Requirement quest-blocks has unknown quest name " 
-                                        + name + ", place it earlier in file so it loads first", questKey);
+                                throw new QuestFormatException("Requirement quest-blocks has unknown quest name/id "
+                                        + node + ", place it earlier in file so it loads first", questKey);
                             }
                             done = true;
                             break;
@@ -2109,13 +2112,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                     if (!done) {
                         failed = true;
-                        failedQuest = name;
+                        failedQuest = node;
                         break;
                     }
                 }
-                reqs.setBlockQuests(temp);
+                requires.setBlockQuests(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quest-blocks has invalid quest name " + failedQuest,
+                    throw new QuestFormatException("Requirement quest-blocks has invalid quest name/id " + failedQuest,
                             questKey);
                 }
             } else {
@@ -2124,21 +2127,23 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (config.contains("quests." + questKey + ".requirements.quests")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quests"), String.class)) {
-                final List<String> names = config.getStringList("quests." + questKey + ".requirements.quests");
+                final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quests");
                 boolean failed = false;
                 String failedQuest = "NULL";
                 final List<Quest> temp = new LinkedList<>();
-                for (final String name : names) {
+                for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
-                        final String name2 = config.getString("quests." + id + ".name");
-                        if (name2 != null && (name2.equalsIgnoreCase(name)
-                                || ChatColor.stripColor(name2).equalsIgnoreCase(ChatColor.stripColor(name)))) {
-                            if (getQuest(name) != null) {
-                                temp.add(getQuest(name));
+                        final String node2 = config.getString("quests." + id + ".name");
+                        if (node2 != null && (id.equals(node) || node2.equalsIgnoreCase(node)
+                                || ChatColor.stripColor(node2).equalsIgnoreCase(ChatColor.stripColor(node)))) {
+                            if (getQuest(node) != null) {
+                                temp.add(getQuest(node));
+                            } else if (getQuestById(node) != null) {
+                                temp.add(getQuestById(node));
                             } else {
                                 throw new QuestFormatException("Requirement quests has unknown quest name " 
-                                        + name + ", place it earlier in file so it loads first", questKey);
+                                        + node + ", place it earlier in file so it loads first", questKey);
                             }
                             done = true;
                             break;
@@ -2146,13 +2151,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     }
                     if (!done) {
                         failed = true;
-                        failedQuest = name;
+                        failedQuest = node;
                         break;
                     }
                 }
-                reqs.setNeededQuests(temp);
+                requires.setNeededQuests(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quests has invalid quest name " 
+                    throw new QuestFormatException("Requirement quests has invalid quest name/id "
                             + failedQuest, questKey);
                 }
             } else {
@@ -2162,7 +2167,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".requirements.permissions")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.permissions"), 
                     String.class)) {
-                reqs.setPermissions(config.getStringList("quests." + questKey + ".requirements.permissions"));
+                requires.setPermissions(config.getStringList("quests." + questKey + ".requirements.permissions"));
             } else {
                 throw new QuestFormatException("Requirement permissions is not a list of permissions", questKey);
             }
@@ -2181,8 +2186,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                             throw new QuestFormatException("Requirement mcmmo-skills: and mcmmo-amounts are not the " +
                                     "same size", questKey);
                         }
-                        reqs.setMcmmoSkills(skills);
-                        reqs.setMcmmoAmounts(amounts);
+                        requires.setMcmmoSkills(skills);
+                        requires.setMcmmoAmounts(amounts);
                     } else {
                         throw new QuestFormatException("Requirement mcmmo-amounts is not a list of numbers", questKey);
                     }
@@ -2197,7 +2202,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final String className = config.getString("quests." + questKey + ".requirements.heroes-primary-class");
             final HeroClass hc = depends.getHeroes().getClassManager().getClass(className);
             if (hc != null && hc.isPrimary()) {
-                reqs.setHeroesPrimaryClass(hc.getName());
+                requires.setHeroesPrimaryClass(hc.getName());
             } else if (hc != null) {
                 throw new QuestFormatException("Requirement heroes-primary-class is not a primary Heroes class",
                         questKey);
@@ -2209,7 +2214,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final String className = config.getString("quests." + questKey + ".requirements.heroes-secondary-class");
             final HeroClass hc = depends.getHeroes().getClassManager().getClass(className);
             if (hc != null && hc.isSecondary()) {
-                reqs.setHeroesSecondaryClass(hc.getName());
+                requires.setHeroesSecondaryClass(hc.getName());
             } else if (hc != null) {
                 throw new QuestFormatException("Requirement heroes-secondary-class is not a secondary Heroes class",
                         questKey);
@@ -2220,7 +2225,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".requirements.details-override")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey 
                     + ".requirements.details-override"), String.class)) {
-                reqs.setDetailsOverride(config.getStringList("quests." + questKey + ".requirements.details-override"));
+                requires.setDetailsOverride(config.getStringList("quests." + questKey + ".requirements.details-override"));
             }  else {
                 throw new QuestFormatException("Requirement details-override is not a list of strings", questKey);
             }
@@ -3993,7 +3998,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         final YamlConfiguration config = new YamlConfiguration();
         final File legacyFile = new File(this.getDataFolder(), "events.yml");
         final File actionsFile = new File(this.getDataFolder(), "actions.yml");
-        // Using isFile() because exists() and renameTo() can return false positives
+        // Using #isFile because #exists and #renameTo can return false positives
         if (legacyFile.isFile()) {
             try {
                 if (legacyFile.renameTo(actionsFile)) {
@@ -4054,7 +4059,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void loadConditions() {
         final YamlConfiguration config = new YamlConfiguration();
         final File conditionsFile = new File(this.getDataFolder(), "conditions.yml");
-        // Using isFile() because exists() and renameTo() can return false positives
+        // Using #isFile because #exists and #renameTo can return false positives
         if (conditionsFile.length() != 0) {
             try {
                 if (conditionsFile.isFile()) {

@@ -36,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -216,7 +215,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 final StringBuilder text = new StringBuilder("\n");
                 final List<String> questReq = (List<String>) context.getSessionData(CK.REQ_QUEST);
                 if (questReq != null) {
-                    for (final String s : questReq) {
+                    for (String s : questReq) {
+                        if (plugin.getQuestById(s) != null) {
+                            s = plugin.getQuestById(s).getName();
+                        }
                         text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                     }
                 }
@@ -229,7 +231,10 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 final StringBuilder text = new StringBuilder("\n");
                 final List<String> questBlockReq = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
                 if (questBlockReq != null) {
-                    for (final String s : questBlockReq) {
+                    for (String s : questBlockReq) {
+                        if (plugin.getQuestById(s) != null) {
+                            s = plugin.getQuestById(s).getName();
+                        }
                         text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                     }
                 }
@@ -534,88 +539,6 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class RequirementsQuestListPrompt extends QuestsEditorStringPrompt {
-        
-        private final boolean isRequiredQuest;
-
-        public RequirementsQuestListPrompt(final ConversationContext context, final boolean isRequired) {
-            super(context);
-            this.isRequiredQuest = isRequired;
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return Lang.get("reqQuestListTitle");
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("reqQuestPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
-            
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
-                    + ChatColor.DARK_PURPLE);
-            boolean none = true;
-            for (final Quest q : plugin.getLoadedQuests()) {
-                text.append(q.getName()).append(", ");
-                none = false;
-            }
-            if (none) {
-                text.append("(").append(Lang.get("none")).append(")\n");
-            } else {
-                text = new StringBuilder(text.substring(0, (text.length() - 2)));
-                text.append("\n");
-            }
-            text.append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
-        }
-
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                return null;
-            }
-            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                final String[] args = input.split(Lang.get("charSemi"));
-                final LinkedList<String> questNames = new LinkedList<>();
-                for (final String s : args) {
-                    if (plugin.getQuest(s) == null) {
-                        String text = Lang.get("reqNotAQuestName");
-                        text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
-                        context.getForWhom().sendRawMessage(text);
-                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
-                    }
-                    if (questNames.contains(s)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
-                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
-                    }
-                    questNames.add(plugin.getQuest(s).getName());
-                }
-                questNames.sort(Comparator.naturalOrder());
-                if (isRequiredQuest) {
-                    context.setSessionData(CK.REQ_QUEST, questNames);
-                } else {
-                    context.setSessionData(CK.REQ_QUEST_BLOCK, questNames);
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                if (isRequiredQuest) {
-                    context.setSessionData(CK.REQ_QUEST, null);
-                } else {
-                    context.setSessionData(CK.REQ_QUEST_BLOCK, null);
-                }
-            }
-            return new RequirementsPrompt(context);
-        }
-    }
-
     public class RequirementsItemListPrompt extends QuestsEditorNumericPrompt {
         
         public RequirementsItemListPrompt(final ConversationContext context) {
@@ -896,20 +819,23 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class CustomRequirementsPrompt extends QuestsEditorStringPrompt {
-        
-        public CustomRequirementsPrompt(final ConversationContext context) {
+    public class RequirementsQuestListPrompt extends QuestsEditorStringPrompt {
+
+        private final boolean isRequiredQuest;
+
+        public RequirementsQuestListPrompt(final ConversationContext context, final boolean isRequired) {
             super(context);
+            this.isRequiredQuest = isRequired;
         }
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("customRequirementsTitle");
+            return Lang.get("reqQuestListTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("reqCustomPrompt");
+            return Lang.get("reqQuestPrompt");
         }
 
         @Override
@@ -919,191 +845,58 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
-            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            if (plugin.getCustomRequirements().isEmpty()) {
-                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
-                        .append("https://pikamug.gitbook.io/quests/casual/modules\n").append(ChatColor.DARK_PURPLE)
-                        .append("(").append(Lang.get("stageEditorNoModules")).append(") ");
-            } else {
-                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
-                }
+
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+                    + ChatColor.DARK_PURPLE);
+            boolean none = true;
+            for (final Quest q : plugin.getLoadedQuests()) {
+                text.append(q.getName()).append(", ");
+                none = false;
             }
-            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            if (none) {
+                text.append("(").append(Lang.get("none")).append(")\n");
+            } else {
+                text = new StringBuilder(text.substring(0, (text.length() - 2)));
+                text.append("\n");
+            }
+            text.append(ChatColor.YELLOW).append(getQueryText(context));
+            return text.toString();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input == null) {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                CustomRequirement found = null;
-                // Check if we have a custom requirement with the specified name
-                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
-                    if (cr.getName().equalsIgnoreCase(input)) {
-                        found = cr;
-                        break;
+                final String[] args = input.split(Lang.get("charSemi"));
+                final LinkedList<String> questIds = new LinkedList<>();
+                for (final String s : args) {
+                    if (plugin.getQuest(s) == null) {
+                        String text = Lang.get("reqNotAQuestName");
+                        text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        context.getForWhom().sendRawMessage(text);
+                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
                     }
+                    if (questIds.contains(plugin.getQuest(s).getId())) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
+                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
+                    }
+                    questIds.add(plugin.getQuest(s).getId());
                 }
-                if (found == null) {
-                    // No? Check again, but with locale sensitivity
-                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
-                        if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
-                            found = cr;
-                            break;
-                        }
-                    }
-                }
-                if (found != null) {
-                    if (context.getSessionData(CK.REQ_CUSTOM) != null) {
-                        // The custom requirement may already have been added, so let's check that
-                        final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-                        final LinkedList<Map<String, Object>> dataMapList
-                                = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-                        if (dataMapList != null && list != null && !list.contains(found.getName())) {
-                            // Hasn't been added yet, so let's do it
-                            list.add(found.getName());
-                            dataMapList.add(found.getData());
-                            context.setSessionData(CK.REQ_CUSTOM, list);
-                            context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
-                        } else {
-                            // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
-                            return new CustomRequirementsPrompt(context);
-                        }
-                    } else {
-                        // The custom requirement hasn't been added yet, so let's do it
-                        final LinkedList<Map<String, Object>> dataMapList = new LinkedList<>();
-                        dataMapList.add(found.getData());
-                        final LinkedList<String> list = new LinkedList<>();
-                        list.add(found.getName());
-                        context.setSessionData(CK.REQ_CUSTOM, list);
-                        context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
-                    }
-                    // Send user to the custom data prompt if there is any needed
-                    if (!found.getData().isEmpty()) {
-                        context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
-                        return new RequirementCustomDataListPrompt();
-                    }
+                if (isRequiredQuest) {
+                    context.setSessionData(CK.REQ_QUEST, questIds);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
-                    return new CustomRequirementsPrompt(context);
+                    context.setSessionData(CK.REQ_QUEST_BLOCK, questIds);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.REQ_CUSTOM, null);
-                context.setSessionData(CK.REQ_CUSTOM_DATA, null);
-                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
-            }
-            return new RequirementsPrompt(context);
-        }
-    }
-
-    private class RequirementCustomDataListPrompt extends StringPrompt {
-        
-        @SuppressWarnings("unchecked")
-        @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- ");
-            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
-            final LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            if (dataMapList != null && list != null) {
-                final String reqName = list.getLast();
-                final Map<String, Object> dataMap = dataMapList.getLast();
-                text.append(reqName).append(" -\n");
-                int index = 1;
-                final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
-                Collections.sort(dataMapKeys);
-                for (final String dataKey : dataMapKeys) {
-                    text.append(ChatColor.BLUE).append(ChatColor.BOLD).append(index).append(ChatColor.RESET)
-                            .append(ChatColor.YELLOW).append(" - ").append(dataKey);
-                    if (dataMap.get(dataKey) != null) {
-                        text.append(ChatColor.GRAY).append(" (").append(ChatColor.AQUA)
-                                .append(ChatColor.translateAlternateColorCodes('&', dataMap.get(dataKey).toString()))
-                                .append(ChatColor.GRAY).append(")\n");
-                    } else {
-                        text.append(ChatColor.GRAY).append(" (").append(Lang.get("noneSet")).append(ChatColor.GRAY)
-                                .append(")\n");
-                    }
-                    index++;
-                }
-                text.append(ChatColor.GREEN).append(ChatColor.BOLD).append(index).append(ChatColor.YELLOW).append(" - ")
-                        .append(Lang.get("done"));
-            }
-            return text.toString();
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            @SuppressWarnings("unchecked")
-            final LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            if (dataMapList != null) {
-                final Map<String, Object> dataMap = dataMapList.getLast();
-                final int numInput;
-                try {
-                    numInput = Integer.parseInt(input);
-                } catch (final NumberFormatException nfe) {
-                    return new RequirementCustomDataListPrompt();
-                }
-                if (numInput < 1 || numInput > dataMap.size() + 1) {
-                    return new RequirementCustomDataListPrompt();
-                }
-                if (numInput < dataMap.size() + 1) {
-                    final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
-                    Collections.sort(dataMapKeys);
-                    final String selectedKey = dataMapKeys.get(numInput - 1);
-                    context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
-                    return new RequirementCustomDataPrompt();
+                if (isRequiredQuest) {
+                    context.setSessionData(CK.REQ_QUEST, null);
                 } else {
-                    if (dataMap.containsValue(null)) {
-                        return new RequirementCustomDataListPrompt();
-                    } else {
-                        context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
-                    }
+                    context.setSessionData(CK.REQ_QUEST_BLOCK, null);
                 }
             }
             return new RequirementsPrompt(context);
-        }
-    }
-
-    private class RequirementCustomDataPrompt extends StringPrompt {
-
-        @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
-            String text = "";
-            final String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
-            @SuppressWarnings("unchecked")
-            final
-            Map<String, String> descriptions 
-                    = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
-            if (temp != null && descriptions != null) {
-                if (descriptions.get(temp) != null) {
-                    text += ChatColor.GOLD + descriptions.get(temp) + "\n";
-                }
-                String lang = Lang.get("stageEditorCustomDataPrompt");
-                lang = lang.replace("<data>", temp);
-                text += ChatColor.YELLOW + lang;
-            }
-            return text;
-        }
-
-        @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            @SuppressWarnings("unchecked")
-            final
-            LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
-            if (dataMapList != null) {
-                final Map<String, Object> dataMap = dataMapList.getLast();
-                dataMap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
-                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
-            }
-            return new RequirementCustomDataListPrompt();
         }
     }
 
@@ -1593,6 +1386,217 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return new RequirementsHeroesListPrompt(context);
             }
+        }
+    }
+
+    public class CustomRequirementsPrompt extends QuestsEditorStringPrompt {
+
+        public CustomRequirementsPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("customRequirementsTitle");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("reqCustomPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (plugin.getCustomRequirements().isEmpty()) {
+                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                        .append("https://pikamug.gitbook.io/quests/casual/modules\n").append(ChatColor.DARK_PURPLE)
+                        .append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+            } else {
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
+                }
+            }
+            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                CustomRequirement found = null;
+                // Check if we have a custom requirement with the specified name
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getName().equalsIgnoreCase(input)) {
+                        found = cr;
+                        break;
+                    }
+                }
+                if (found == null) {
+                    // No? Check again, but with locale sensitivity
+                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                        if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
+                            found = cr;
+                            break;
+                        }
+                    }
+                }
+                if (found != null) {
+                    if (context.getSessionData(CK.REQ_CUSTOM) != null) {
+                        // The custom requirement may already have been added, so let's check that
+                        final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+                        final LinkedList<Map<String, Object>> dataMapList
+                                = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+                        if (dataMapList != null && list != null && !list.contains(found.getName())) {
+                            // Hasn't been added yet, so let's do it
+                            list.add(found.getName());
+                            dataMapList.add(found.getData());
+                            context.setSessionData(CK.REQ_CUSTOM, list);
+                            context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
+                        } else {
+                            // Already added, so inform user
+                            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
+                            return new CustomRequirementsPrompt(context);
+                        }
+                    } else {
+                        // The custom requirement hasn't been added yet, so let's do it
+                        final LinkedList<Map<String, Object>> dataMapList = new LinkedList<>();
+                        dataMapList.add(found.getData());
+                        final LinkedList<String> list = new LinkedList<>();
+                        list.add(found.getName());
+                        context.setSessionData(CK.REQ_CUSTOM, list);
+                        context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
+                    }
+                    // Send user to the custom data prompt if there is any needed
+                    if (!found.getData().isEmpty()) {
+                        context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
+                        return new RequirementCustomDataListPrompt();
+                    }
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
+                    return new CustomRequirementsPrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.REQ_CUSTOM, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
+            }
+            return new RequirementsPrompt(context);
+        }
+    }
+
+    private class RequirementCustomDataListPrompt extends StringPrompt {
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public @NotNull String getPromptText(final ConversationContext context) {
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- ");
+            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
+            final LinkedList<Map<String, Object>> dataMapList
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            if (dataMapList != null && list != null) {
+                final String reqName = list.getLast();
+                final Map<String, Object> dataMap = dataMapList.getLast();
+                text.append(reqName).append(" -\n");
+                int index = 1;
+                final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
+                Collections.sort(dataMapKeys);
+                for (final String dataKey : dataMapKeys) {
+                    text.append(ChatColor.BLUE).append(ChatColor.BOLD).append(index).append(ChatColor.RESET)
+                            .append(ChatColor.YELLOW).append(" - ").append(dataKey);
+                    if (dataMap.get(dataKey) != null) {
+                        text.append(ChatColor.GRAY).append(" (").append(ChatColor.AQUA)
+                                .append(ChatColor.translateAlternateColorCodes('&', dataMap.get(dataKey).toString()))
+                                .append(ChatColor.GRAY).append(")\n");
+                    } else {
+                        text.append(ChatColor.GRAY).append(" (").append(Lang.get("noneSet")).append(ChatColor.GRAY)
+                                .append(")\n");
+                    }
+                    index++;
+                }
+                text.append(ChatColor.GREEN).append(ChatColor.BOLD).append(index).append(ChatColor.YELLOW).append(" - ")
+                        .append(Lang.get("done"));
+            }
+            return text.toString();
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            @SuppressWarnings("unchecked")
+            final LinkedList<Map<String, Object>> dataMapList
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            if (dataMapList != null) {
+                final Map<String, Object> dataMap = dataMapList.getLast();
+                final int numInput;
+                try {
+                    numInput = Integer.parseInt(input);
+                } catch (final NumberFormatException nfe) {
+                    return new RequirementCustomDataListPrompt();
+                }
+                if (numInput < 1 || numInput > dataMap.size() + 1) {
+                    return new RequirementCustomDataListPrompt();
+                }
+                if (numInput < dataMap.size() + 1) {
+                    final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
+                    Collections.sort(dataMapKeys);
+                    final String selectedKey = dataMapKeys.get(numInput - 1);
+                    context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
+                    return new RequirementCustomDataPrompt();
+                } else {
+                    if (dataMap.containsValue(null)) {
+                        return new RequirementCustomDataListPrompt();
+                    } else {
+                        context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
+                    }
+                }
+            }
+            return new RequirementsPrompt(context);
+        }
+    }
+
+    private class RequirementCustomDataPrompt extends StringPrompt {
+
+        @Override
+        public @NotNull String getPromptText(final ConversationContext context) {
+            String text = "";
+            final String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
+            @SuppressWarnings("unchecked")
+            final
+            Map<String, String> descriptions
+                    = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
+            if (temp != null && descriptions != null) {
+                if (descriptions.get(temp) != null) {
+                    text += ChatColor.GOLD + descriptions.get(temp) + "\n";
+                }
+                String lang = Lang.get("stageEditorCustomDataPrompt");
+                lang = lang.replace("<data>", temp);
+                text += ChatColor.YELLOW + lang;
+            }
+            return text;
+        }
+
+        @Override
+        public Prompt acceptInput(final ConversationContext context, final String input) {
+            @SuppressWarnings("unchecked")
+            final
+            LinkedList<Map<String, Object>> dataMapList
+                    = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
+            if (dataMapList != null) {
+                final Map<String, Object> dataMap = dataMapList.getLast();
+                dataMap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
+                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
+            }
+            return new RequirementCustomDataListPrompt();
         }
     }
 }
