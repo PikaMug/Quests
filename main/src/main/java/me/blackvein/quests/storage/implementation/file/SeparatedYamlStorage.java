@@ -161,11 +161,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
                 final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
-                Stage stage;
                 if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
-                stage = quester.getCurrentStage(quest);
+                final Stage stage = quester.getCurrentStage(quest);
                 if (stage == null) {
                     quest.completeQuest(quester);
                     plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + uniqueId + "\" on Quest \"" 
@@ -376,9 +375,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     final List<Boolean> passAmounts = questSec.getBooleanList("passwords-said");
                     quester.getQuestData(quest).setPasswordsSaid(new LinkedList<Boolean>(passAmounts));
                 }
-                if (questSec.contains("custom-objectives")) {
-                    final List<Integer> customObjCount = questSec.getIntegerList("custom-objective-counts");
-                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<Integer>(customObjCount));
+                if (questSec.contains("custom-objective-counts")) {
+                    final List<Integer> customObjCounts = questSec.getIntegerList("custom-objective-counts");
+                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<Integer>(customObjCounts));
                 }
                 if (questSec.contains("stage-delay")) {
                     quester.getQuestData(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));

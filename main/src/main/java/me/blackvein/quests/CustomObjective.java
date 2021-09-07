@@ -162,18 +162,24 @@ public abstract class CustomObjective implements Listener {
         if (quester != null) {
             if (quester.hasCustomObjective(quest, obj.getName())) {
                 int index = -1;
+                final LinkedList<Integer> customObjCounts = quester.getQuestData(quest).customObjectiveCounts;
                 for (final CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
                     index++;
                     if (co.getName().equals(this.getName())) {
-                        final int old = quester.getQuestData(quest).customObjectiveCounts.get(index);
+                        if (index >= customObjCounts.size()) {
+                            plugin.getLogger().severe("Index was larger than count for " + obj.getName() + " by "
+                                    + obj.getAuthor());
+                            continue;
+                        }
+                        final int old = customObjCounts.get(index);
                         plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
                                 .set(index, old + count);
                         break;
                     }
                 }
                 if (index > -1) {
-                    final int progress = quester.getQuestData(quest).customObjectiveCounts.get(index);
-                    final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
+                    final int progress = customObjCounts.get(index);
+                    final int goal = customObjCounts.get(index);
                     
                     final ObjectiveType type = ObjectiveType.CUSTOM;
                     final QuesterPreUpdateObjectiveEvent preEvent 
