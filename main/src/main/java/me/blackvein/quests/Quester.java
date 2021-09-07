@@ -873,22 +873,21 @@ public class Quester implements Comparable<Quester> {
     public LinkedList<String> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
             plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
-            return new LinkedList<String>();
+            return new LinkedList<>();
         }
         if (getQuestData(quest) == null) {
             plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
-            return new LinkedList<String>();
+            return new LinkedList<>();
         }
         if (getCurrentStage(quest) == null) {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
-            return new LinkedList<String>();
+            return new LinkedList<>();
         }
         final Dependencies depends = plugin.getDependencies();
         if (!ignoreOverrides && !getCurrentStage(quest).objectiveOverrides.isEmpty()) {
-            final LinkedList<String> objectives = new LinkedList<String>();
+            final LinkedList<String> objectives = new LinkedList<>();
             for (final String s: getCurrentStage(quest).objectiveOverrides) {
-                String message = ChatColor.GREEN + ConfigUtil.parseString(
-                        ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
+                String message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
@@ -1326,7 +1325,7 @@ public class Quester implements Comparable<Quester> {
             if (co.canShowCount()) {
                 message = message.replace("%count%", cleared + "/" + toClear);
             }
-            objectives.add(message);
+            objectives.add(ConfigUtil.parseString(message));
             customIndex++;
         }
         return objectives;

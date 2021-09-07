@@ -917,61 +917,68 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             @SuppressWarnings("resource")
             final
             JarFile jarFile = new JarFile(jar);
-            final Enumeration<JarEntry> e = jarFile.entries();
+            final Enumeration<JarEntry> entry = jarFile.entries();
             final URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
             final ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
             int count = 0;
-            while (e.hasMoreElements()) {
-                final JarEntry je = e.nextElement();
+            while (entry.hasMoreElements()) {
+                final JarEntry je = entry.nextElement();
                 if (je.isDirectory() || !je.getName().endsWith(".class")) {
                     continue;
                 }
-                String className = je.getName().substring(0, je.getName().length() - 6);
-                className = className.replace('/', '.');
-                final Class<?> c = Class.forName(className, true, cl);
-                if (CustomRequirement.class.isAssignableFrom(c)) {
-                    final Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
-                    final Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
-                    final CustomRequirement requirement = cstrctr.newInstance();
-                    final Optional<CustomRequirement>oo=getCustomRequirement(requirement.getClass().getName());
-                    oo.ifPresent(customRequirements::remove);
-                    customRequirements.add(requirement);
-                    final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
-                    final String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-                    count++;
-                    getLogger().info("Loaded Module: " + name + " by " + author);
-                } else if (CustomReward.class.isAssignableFrom(c)) {
-                    final Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
-                    final Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
-                    final CustomReward reward = cstrctr.newInstance();
-                    final Optional<CustomReward>oo=getCustomReward(reward.getClass().getName());
-                    oo.ifPresent(customRewards::remove);
-                    customRewards.add(reward);
-                    final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
-                    final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
-                    count++;
-                    getLogger().info("Loaded Module: " + name + " by " + author);
-                } else if (CustomObjective.class.isAssignableFrom(c)) {
-                    final Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
-                    final Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
-                    final CustomObjective objective = cstrctr.newInstance();
-                    final Optional<CustomObjective>oo=getCustomObjective(objective.getClass().getName());
-                    if (oo.isPresent()) {
-                        HandlerList.unregisterAll(oo.get());
-                        customObjectives.remove(oo.get());
-                    }
-                    customObjectives.add(objective);
-                    final String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
-                    final String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
-                    count++;
-                    getLogger().info("Loaded Module: " + name + " by " + author);
-                    try {
-                        getServer().getPluginManager().registerEvents(objective, this);
-                        getLogger().info("Registered events for custom objective \"" + name + "\"");
-                    } catch (final Exception ex) {
-                        getLogger().warning("Failed to register events for custom objective \"" + name 
-                                + "\". Does the objective class listen for events?");
-                        ex.printStackTrace();
+                final String className = je.getName().substring(0, je.getName().length() - 6).replace('/', '.');
+                Class<?> c = null;
+                try {
+                    c = Class.forName(className, true, cl);
+                } catch (final NoClassDefFoundError e) {
+                    getLogger().severe("Module error! Seek help from developer of module:");
+                    e.printStackTrace();
+                }
+                if (c != null) {
+                    if (CustomRequirement.class.isAssignableFrom(c)) {
+                        final Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
+                        final Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
+                        final CustomRequirement requirement = cstrctr.newInstance();
+                        final Optional<CustomRequirement>oo=getCustomRequirement(requirement.getClass().getName());
+                        oo.ifPresent(customRequirements::remove);
+                        customRequirements.add(requirement);
+                        final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
+                        final String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
+                        count++;
+                        getLogger().info("Loaded Module: " + name + " by " + author);
+                    } else if (CustomReward.class.isAssignableFrom(c)) {
+                        final Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
+                        final Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
+                        final CustomReward reward = cstrctr.newInstance();
+                        final Optional<CustomReward>oo=getCustomReward(reward.getClass().getName());
+                        oo.ifPresent(customRewards::remove);
+                        customRewards.add(reward);
+                        final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
+                        final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
+                        count++;
+                        getLogger().info("Loaded Module: " + name + " by " + author);
+                    } else if (CustomObjective.class.isAssignableFrom(c)) {
+                        final Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
+                        final Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
+                        final CustomObjective objective = cstrctr.newInstance();
+                        final Optional<CustomObjective>oo=getCustomObjective(objective.getClass().getName());
+                        if (oo.isPresent()) {
+                            HandlerList.unregisterAll(oo.get());
+                            customObjectives.remove(oo.get());
+                        }
+                        customObjectives.add(objective);
+                        final String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
+                        final String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
+                        count++;
+                        getLogger().info("Loaded Module: " + name + " by " + author);
+                        try {
+                            getServer().getPluginManager().registerEvents(objective, this);
+                            getLogger().info("Registered events for custom objective \"" + name + "\"");
+                        } catch (final Exception ex) {
+                            getLogger().warning("Failed to register events for custom objective \"" + name
+                                    + "\". Does the objective class listen for events?");
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
@@ -1011,7 +1018,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (!ignoreOverrides && !quester.getCurrentStage(quest).objectiveOverrides.isEmpty()) {
             for (final String s: quester.getCurrentStage(quest).objectiveOverrides) {
                 String message = ChatColor.GREEN + (s.trim().length() > 0 ? "- " : "") + ConfigUtil
-                        .parseString(ChatColor.translateAlternateColorCodes('&', s), quest, quester.getPlayer());
+                        .parseString(s, quest, quester.getPlayer());
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                 }
@@ -1526,7 +1533,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             if (co.canShowCount()) {
                 message = message.replace("%count%", cleared + "/" + toClear);
             }
-            quester.sendMessage(message);
+            quester.sendMessage(ConfigUtil.parseString(message));
             customIndex++;
         }
     }
@@ -3887,7 +3894,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     oStage.customObjectiveData.add(data);
                                 }
                             } else {
-                                throw new QuestFormatException(name + " custom requirement not found for Stage "
+                                throw new QuestFormatException(name + " custom objective not found for Stage "
                                         + stageNum, questKey);
                             }
                         }

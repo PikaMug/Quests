@@ -32,9 +32,9 @@ public abstract class CustomObjective implements Listener {
     private String name = null;
     private String author = null;
     private String display = "Progress: %count%";
-    private final Map<String, Short> items = new HashMap<String, Short>();
-    private final LinkedList<Entry<String, Object>> data = new LinkedList<Entry<String, Object>>();
-    private final Map<String, String> descriptions = new HashMap<String, String>();
+    private final Map<String, Short> items = new HashMap<>();
+    private final LinkedList<Entry<String, Object>> data = new LinkedList<>();
+    private final Map<String, String> descriptions = new HashMap<>();
     private String countPrompt = "Enter number";
     private boolean showCount = true;
     private int count = 1;
@@ -54,7 +54,7 @@ public abstract class CustomObjective implements Listener {
     public void setAuthor(final String author) {
         this.author = author;
     }
-    
+
     public String getDisplay() {
         return display;
     }
@@ -62,7 +62,7 @@ public abstract class CustomObjective implements Listener {
     public void setDisplay(final String display) {
         this.display = display;
     }
-    
+
     public Map<String, Short> getItems() {
         return items;
     }
@@ -70,7 +70,7 @@ public abstract class CustomObjective implements Listener {
     public void addItem(final String type, final short durability) {
         this.items.put(type, durability);
     }
-        
+
     public LinkedList<Entry<String, Object>> getData() {
         return data;
     }
@@ -85,11 +85,11 @@ public abstract class CustomObjective implements Listener {
      * @param defaultValue Value to be used if input is not received
      */
     public void addStringPrompt(final String title, final String description, final Object defaultValue) {
-        final Entry<String, Object> prompt = new AbstractMap.SimpleEntry<String, Object>(title, defaultValue);
+        final Entry<String, Object> prompt = new AbstractMap.SimpleEntry<>(title, defaultValue);
         data.add(prompt);
         descriptions.put(title, description);
     }
-    
+
     public Map<String, String> getDescriptions() {
         return descriptions;
     }
@@ -120,7 +120,7 @@ public abstract class CustomObjective implements Listener {
     /**
      * Set whether to let user set required amount for objective
      * 
-     * @param showCount Whether or not to show the count
+     * @param showCount Whether to show the count
      */
     public void setShowCount(final boolean showCount) {
         this.showCount = showCount;
@@ -141,10 +141,10 @@ public abstract class CustomObjective implements Listener {
                 }
             }
             if (found != null) {
-                final Map<String, Object> m = new HashMap<String, Object>();
-                for (final Entry<String, Object> datamap : found.getData()) {
+                final Map<String, Object> m = new HashMap<>();
+                for (final Entry<String, Object> dataMap : found.getData()) {
                     for (final Entry<String, Object> e : currentStage.customObjectiveData) {
-                        if (e.getKey().equals(datamap.getKey())) {
+                        if (e.getKey().equals(dataMap.getKey())) {
                             m.put(e.getKey(), e.getValue());
                         }
                     }
@@ -162,7 +162,7 @@ public abstract class CustomObjective implements Listener {
         if (quester != null) {
             if (quester.hasCustomObjective(quest, obj.getName())) {
                 int index = -1;
-                for (CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
+                for (final CustomObjective co : quester.getCurrentStage(quest).customObjectives) {
                     index++;
                     if (co.getName().equals(this.getName())) {
                         final int old = quester.getQuestData(quest).customObjectiveCounts.get(index);
@@ -185,7 +185,7 @@ public abstract class CustomObjective implements Listener {
                                 new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
                         
                         // Multiplayer
-                        int finalIndex = index;
+                        final int finalIndex = index;
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
                             final int old = q.getQuestData(quest).customObjectiveCounts.get(finalIndex);
                             q.getQuestData(quest).customObjectiveCounts.set(finalIndex, old + count);
