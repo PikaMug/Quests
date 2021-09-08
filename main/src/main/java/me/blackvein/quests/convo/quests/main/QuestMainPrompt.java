@@ -843,7 +843,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
-                            .replace("mode", Lang.get("trialMode")));
+                            .replace("<mode>", Lang.get("trialMode")));
                     return new QuestMainPrompt(context);
                 }
                 if (context.getSessionData(CK.Q_ASK_MESSAGE) == null) {
