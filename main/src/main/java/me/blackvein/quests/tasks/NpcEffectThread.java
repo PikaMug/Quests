@@ -12,16 +12,15 @@
 
 package me.blackvein.quests.tasks;
 
-import java.util.List;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.particle.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class NpcEffectThread implements Runnable {
 
@@ -36,7 +35,7 @@ public class NpcEffectThread implements Runnable {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
-            if (nearby.isEmpty() == false) {
+            if (!nearby.isEmpty()) {
                 for (final Entity e : nearby) {
                     if (plugin.getDependencies().getCitizens() != null 
                             && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {

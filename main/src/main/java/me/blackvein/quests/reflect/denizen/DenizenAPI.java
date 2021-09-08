@@ -12,15 +12,13 @@
 
 package me.blackvein.quests.reflect.denizen;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-import net.citizensnpcs.api.npc.NPC;
+import java.lang.reflect.Method;
+import java.util.Set;
 
 public class DenizenAPI {
     private Class<?> denizen_1_0_9 = null;
@@ -79,7 +77,7 @@ public class DenizenAPI {
             containsScriptMethod = scriptRegistry.getMethod("containsScript", String.class);
             getScriptNamesMethod = scriptRegistry.getMethod("_getScriptNames");
             getScriptContainerAsMethod = scriptRegistry
-                    .getMethod("getScriptContainerAs", String.class, taskScriptContainer.getClass());
+                    .getMethod("getScriptContainerAs", String.class, taskScriptContainer);
             mirrorBukkitPlayerMethod = dPlayer.getMethod("mirrorBukkitPlayer", OfflinePlayer.class);
             mirrorCitizensNPCMethod = dNPC.getMethod("mirrorCitizensNPC", NPC.class);
         } catch (final Exception e) {
@@ -88,12 +86,10 @@ public class DenizenAPI {
     }
     
     public boolean isEnabled() {
-        if (denizen_1_1_1 != null || denizen_1_1_0 != null || denizen_1_0_9 != null) {
-            return true;
-        }
-        return false;
+        return denizen_1_1_1 != null || denizen_1_1_0 != null || denizen_1_0_9 != null;
     }
-    
+
+    @Nullable
     public Class<?> getDenizenClass() {
         if (denizen_1_1_1 != null) {
             return denizen_1_1_1;
@@ -105,7 +101,6 @@ public class DenizenAPI {
         return null;
     }
     
-    @Nullable
     public boolean containsScript(final String input) {
         if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.containsScript(input);
@@ -116,7 +111,7 @@ public class DenizenAPI {
         }
         return false;
     }
-    
+
     @Nullable
     public String getScriptContainerName(final String input) {
         if (denizen_1_1_1 != null) {
@@ -128,7 +123,7 @@ public class DenizenAPI {
         }
         return null;
     }
-    
+
     @Nullable
     public Set<String> getScriptNames() {
         if (denizen_1_1_1 != null) {
@@ -140,7 +135,7 @@ public class DenizenAPI {
         }
         return null;
     }
-    
+
     @Nullable
     public Object getScriptContainerAs(final String scriptName) {
         if (denizen_1_1_1 != null) {
@@ -152,7 +147,7 @@ public class DenizenAPI {
         }
         return null;
     }
-    
+
     @Nullable
     public Object mirrorBukkitPlayer(final Player player) {
         if (denizen_1_1_1 != null) {
@@ -164,7 +159,7 @@ public class DenizenAPI {
         }
         return null;
     }
-    
+
     @Nullable
     public Object mirrorCitizensNPC(final NPC npc) {
         if (denizen_1_1_1 != null) {
@@ -176,8 +171,7 @@ public class DenizenAPI {
         }
         return null;
     }
-    
-    @Nullable
+
     public void runTaskScript(final String scriptName, final Player player) {
         if (denizen_1_1_1 != null) {
             DenizenAPI_1_1_1.runTaskScript(scriptName, player);

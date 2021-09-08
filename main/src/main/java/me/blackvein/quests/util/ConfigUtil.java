@@ -12,23 +12,23 @@
 
 package me.blackvein.quests.util;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.Quest;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import me.blackvein.quests.Dependencies;
-import me.blackvein.quests.Quest;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.citizensnpcs.api.npc.NPC;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigUtil {
     
-    private static Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
     /**
      * Checks whether items in a list are instances of a class<p>
@@ -44,7 +44,7 @@ public class ConfigUtil {
             return false;
         }
         for (final Object o : list) {
-            if (clazz.isAssignableFrom(o.getClass()) == false) {
+            if (!clazz.isAssignableFrom(o.getClass())) {
                 return false;
             }
         }
@@ -69,16 +69,16 @@ public class ConfigUtil {
             if (index == 0) {
                 sb.append(s);
             } else {
-                sb.append(" " + s);
+                sb.append(" ").append(s);
             }
             index++;
         }
         
         final String world = sb.toString();
         
-        double x;
-        double y;
-        double z;
+        final double x;
+        final double y;
+        final double z;
         try {
             x = Double.parseDouble(info[xIndex]);
             y = Double.parseDouble(info[yIndex]);
@@ -92,12 +92,12 @@ public class ConfigUtil {
             Bukkit.getLogger().severe("Quests could not locate world " + world + ", is it loaded?");
             return null;
         }
-        final Location finalLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z);
-        return finalLocation;
+        return new Location(Bukkit.getServer().getWorld(world), x, y, z);
     }
 
     public static String getLocationInfo(final Location loc) {
-        return loc.getWorld().getName() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ();
+        return Objects.requireNonNull(loc.getWorld()).getName() + " " + loc.getX() + " " + loc.getY() + " "
+                + loc.getZ();
     }
     
     public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final Player player) {
@@ -197,8 +197,8 @@ public class ConfigUtil {
             final StringBuilder hex = new StringBuilder();
             hex.append(ChatColor.COLOR_CHAR + "x");
             final char[] chars = matcher.group(1).toCharArray();
-            for (int index = 0; index < chars.length; index++) {
-                hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
+            for (final char aChar : chars) {
+                hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
             }
             parsed = parsed.replace(matcher.group(), hex.toString());
         }

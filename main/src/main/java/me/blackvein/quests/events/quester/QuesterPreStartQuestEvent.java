@@ -17,6 +17,7 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called before a quester starts a quest
@@ -51,7 +52,7 @@ public class QuesterPreStartQuestEvent extends QuesterEvent implements Cancellab
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

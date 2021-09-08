@@ -16,6 +16,7 @@ import me.blackvein.quests.events.QuestsEvent;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a miscellaneous editor-related event
@@ -55,7 +56,7 @@ public class MiscEditorEvent extends QuestsEvent {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

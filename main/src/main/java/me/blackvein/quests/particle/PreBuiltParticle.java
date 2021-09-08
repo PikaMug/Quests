@@ -29,9 +29,12 @@ public enum PreBuiltParticle {
     SPLASH("splash", 0, 0, 0, 1, 4, new Vector(0, .5, 0)),
     SMOKE("smoke", 0, 1, 0, 1, 20);
 
-    private String identifier;
-    private float offsetX, offsetY, offsetZ, speed;
-    private int count;
+    private final String identifier;
+    private final float offsetX;
+    private final float offsetY;
+    private final float offsetZ;
+    private final float speed;
+    private final int count;
     private Vector vector;
 
     PreBuiltParticle(final String identifier, final float offsetX, final float offsetY, final float offsetZ, final float speed, final int count) {

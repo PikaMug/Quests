@@ -12,14 +12,7 @@
 
 package me.blackvein.quests.storage;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.google.common.collect.ImmutableSet;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.custom.CustomStorageProviders;
@@ -27,6 +20,11 @@ import me.blackvein.quests.storage.implementation.file.SeparatedYamlStorage;
 import me.blackvein.quests.storage.implementation.sql.SqlStorage;
 import me.blackvein.quests.storage.implementation.sql.connection.hikari.MySqlConnectionFactory;
 import me.blackvein.quests.storage.misc.StorageCredentials;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.Set;
 
 public class StorageFactory {
     private final Quests plugin;
@@ -41,8 +39,7 @@ public class StorageFactory {
     }
 
     public Storage getInstance() {
-        Storage storage;
-
+        final Storage storage;
         final StorageType type = StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"), 
                 StorageType.YAML);
         plugin.getLogger().info("Loading storage implementation: " + type.name());

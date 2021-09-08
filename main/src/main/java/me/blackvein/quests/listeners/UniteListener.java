@@ -55,7 +55,7 @@ public class UniteListener implements Listener {
         if (p != null && Lang.get("questPartiesLeave").length() > 0) {
             Lang.send(p, ChatColor.GREEN + Lang.get(p, "questPartiesJoin"));
             if (Lang.get("questPartiesJoinBroadcast").length() > 0) {
-                for (Player online : Bukkit.getOnlinePlayers()) {
+                for (final Player online : Bukkit.getOnlinePlayers()) {
                     if (event.getPlayer().equals(online.getUniqueId())) {
                         continue;
                     }
@@ -73,7 +73,7 @@ public class UniteListener implements Listener {
         if (p != null && Lang.get("questPartiesLeave").length() > 0) {
             Lang.send(p, ChatColor.RED + Lang.get(p, "questPartiesLeave"));
             if (Lang.get("questPartiesLeaveBroadcast").length() > 0) {
-                for (Player online : Bukkit.getOnlinePlayers()) {
+                for (final Player online : Bukkit.getOnlinePlayers()) {
                     if (event.getPlayer().equals(online.getUniqueId())) {
                         continue;
                     }

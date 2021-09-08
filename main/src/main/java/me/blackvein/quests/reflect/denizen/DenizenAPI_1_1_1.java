@@ -12,12 +12,6 @@
 
 package me.blackvein.quests.reflect.denizen;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.entity.Player;
-
 import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizen.objects.PlayerTag;
 import com.denizenscript.denizen.utilities.implementation.BukkitScriptEntryData;
@@ -25,12 +19,15 @@ import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
 import com.denizenscript.denizencore.scripts.queues.ScriptQueue;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
-
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class DenizenAPI_1_1_1 {
     
-    @Nullable
     public static boolean containsScript(final String input) {
         return ScriptRegistry.containsScript(input);
     }
@@ -40,8 +37,7 @@ public class DenizenAPI_1_1_1 {
         return ScriptRegistry.getScriptContainer(input).getName();
     }
     
-    @Nullable
-    public static Set<String> getScriptNames() {
+    public static @NotNull Set<String> getScriptNames() {
         return ScriptRegistry.scriptContainers.keySet();
     }
     
@@ -55,12 +51,10 @@ public class DenizenAPI_1_1_1 {
         return PlayerTag.mirrorBukkitPlayer(player);
     }
     
-    @Nullable
-    public static Object mirrorCitizensNPC(final NPC npc) {
+    public static @NotNull Object mirrorCitizensNPC(final NPC npc) {
         return NPCTag.mirrorCitizensNPC(npc);
     }
     
-    @Nullable
     public static void runTaskScript(final String scriptName, final Player player) {
         final TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
         final BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);

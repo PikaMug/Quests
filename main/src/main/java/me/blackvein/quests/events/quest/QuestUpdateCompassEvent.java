@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a quest has its compass target updated for a quester
@@ -63,7 +64,7 @@ public class QuestUpdateCompassEvent extends QuestEvent implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

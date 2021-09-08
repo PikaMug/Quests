@@ -12,9 +12,10 @@
 
 package me.blackvein.quests.listeners;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,10 +29,8 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.enums.ObjectiveType;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ItemListener implements Listener {
     
@@ -52,7 +51,7 @@ public class ItemListener implements Listener {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
-                final Set<String> dispatchedQuestIDs = new HashSet<String>();
+                final Set<String> dispatchedQuestIDs = new HashSet<>();
                 for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -103,7 +102,7 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
-                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
+                    final Set<String> dispatchedQuestIDs = new HashSet<>();
                     for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
@@ -126,7 +125,7 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
-                    final Set<String> dispatchedQuestIDs = new HashSet<String>();
+                    final Set<String> dispatchedQuestIDs = new HashSet<>();
                     for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
@@ -161,7 +160,7 @@ public class ItemListener implements Listener {
             }
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -190,7 +189,7 @@ public class ItemListener implements Listener {
             consumedItem.setAmount(1);
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;

@@ -58,10 +58,7 @@ public class Storage {
             try {
                 runnable.run();
             } catch (final Exception e) {
-                if (e instanceof RuntimeException) {
-                    throw (RuntimeException) e;
-                }
-                throw new CompletionException(e);
+                throw (RuntimeException) e;
             }
         });
     }
@@ -89,9 +86,7 @@ public class Storage {
     }
     
     public CompletableFuture<Quester> loadQuester(final UUID uniqueId) {
-        return makeFuture(() -> {
-            return implementation.loadQuester(uniqueId);
-        });
+        return makeFuture(() -> implementation.loadQuester(uniqueId));
     }
 
     public CompletableFuture<Void> saveQuester(final Quester quester) {

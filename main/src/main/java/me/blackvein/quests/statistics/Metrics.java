@@ -12,6 +12,13 @@
 
 package me.blackvein.quests.statistics;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -39,14 +46,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
 public class Metrics {
 
   private final Plugin plugin;
@@ -57,8 +56,6 @@ public class Metrics {
    * Creates a new Metrics instance.
    *
    * @param plugin Your plugin instance.
-   * @param serviceId The id of the service. It can be found at <a
-   *     href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
    */
   public Metrics(final JavaPlugin plugin) {
     this.plugin = plugin;
@@ -324,11 +321,11 @@ public class Metrics {
       connection.setRequestProperty("Content-Type", "application/json");
       connection.setRequestProperty("User-Agent", "Metrics-Service/1");
       connection.setDoOutput(true);
-      try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
+      try (final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
         outputStream.write(compressedData);
       }
       final StringBuilder builder = new StringBuilder();
-      try (BufferedReader bufferedReader =
+      try (final BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -371,7 +368,7 @@ public class Metrics {
         return null;
       }
       final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      try (GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
+      try (final GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
         gzip.write(str.getBytes(StandardCharsets.UTF_8));
       }
       return outputStream.toByteArray();

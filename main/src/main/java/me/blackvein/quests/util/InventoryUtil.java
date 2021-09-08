@@ -12,14 +12,14 @@
 
 package me.blackvein.quests.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InventoryUtil {
     
@@ -36,11 +36,9 @@ public class InventoryUtil {
         }
         final PlayerInventory inv = player.getInventory();
         final HashMap<Integer, ItemStack> leftovers = inv.addItem(item);
-        if (leftovers != null) {
-            if (leftovers.isEmpty() == false) {
-                for (final ItemStack leftover : leftovers.values()) {
-                    player.getWorld().dropItem(player.getLocation(), leftover);
-                }
+        if (!leftovers.isEmpty()) {
+            for (final ItemStack leftover : leftovers.values()) {
+                player.getWorld().dropItem(player.getLocation(), leftover);
             }
         }
     }
@@ -55,26 +53,20 @@ public class InventoryUtil {
     public static boolean canRemoveItem(final Inventory inventory, final ItemStack item) {
         final int amount = item.getAmount();
         final HashMap<Integer, ? extends ItemStack> allItems = inventory.all(item.getType());
-        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
         int foundAmount = 0;
         for (final Map.Entry<Integer, ? extends ItemStack> items : allItems.entrySet()) {
             if (ItemUtil.compareItems(item, items.getValue(), true) == 0) {
                 if (items.getValue().getAmount() >= amount - foundAmount) {
-                    removeFrom.put(items.getKey(), amount - foundAmount);
                     foundAmount = amount;
                 } else {
                     foundAmount += items.getValue().getAmount();
-                    removeFrom.put(items.getKey(), items.getValue().getAmount());
                 }
                 if (foundAmount >= amount) {
                     break;
                 }
             }
         }
-        if (foundAmount == amount) {
-            return true;
-        }
-        return false;
+        return foundAmount == amount;
     }
     
     /**
@@ -87,7 +79,7 @@ public class InventoryUtil {
     public static boolean removeItem(final Inventory inventory, final ItemStack item) {
         final int amount = item.getAmount();
         final HashMap<Integer, ? extends ItemStack> allItems = inventory.all(item.getType());
-        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+        final HashMap<Integer, Integer> removeFrom = new HashMap<>();
         int foundAmount = 0;
         for (final Map.Entry<Integer, ? extends ItemStack> items : allItems.entrySet()) {
             if (ItemUtil.compareItems(item, items.getValue(), true) == 0) {
@@ -106,11 +98,13 @@ public class InventoryUtil {
         if (foundAmount == amount) {
             for (final Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
                 final ItemStack i = inventory.getItem(toRemove.getKey());
-                if (i.getAmount() - toRemove.getValue() <= 0) {
-                    inventory.clear(toRemove.getKey());
-                } else {
-                    i.setAmount(i.getAmount() - toRemove.getValue());
-                    inventory.setItem(toRemove.getKey(), i);
+                if (i != null) {
+                    if (i.getAmount() - toRemove.getValue() <= 0) {
+                        inventory.clear(toRemove.getKey());
+                    } else {
+                        i.setAmount(i.getAmount() - toRemove.getValue());
+                        inventory.setItem(toRemove.getKey(), i);
+                    }
                 }
             }
             return true;
@@ -128,7 +122,7 @@ public class InventoryUtil {
     public static boolean stripItem(final EntityEquipment equipment, final ItemStack item) {
         final int amount = item.getAmount();
         final ItemStack[] allItems = equipment.getArmorContents();
-        final HashMap<Integer, Integer> removeFrom = new HashMap<Integer, Integer>();
+        final HashMap<Integer, Integer> removeFrom = new HashMap<>();
         int foundAmount = 0;
         
         int index = 0;

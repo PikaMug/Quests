@@ -12,25 +12,23 @@
 
 package me.blackvein.quests.reflect.worldguard;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.association.Associables;
 import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.logging.Level;
 
 public class WorldGuardAPI {
     private Object worldGuard7 = null;
@@ -60,7 +58,7 @@ public class WorldGuardAPI {
     }
 
     protected RegionAssociable getAssociable(final Player player) {
-        RegionAssociable associable;
+        final RegionAssociable associable;
         if (player == null) {
             associable = Associables.constant(Association.NON_MEMBER);
         } else {

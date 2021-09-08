@@ -12,14 +12,14 @@
 
 package me.blackvein.quests.events.quester;
 
-import java.util.LinkedList;
-
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
-
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
 
 /**
  * Called before a quester opens a quest selection GUI
@@ -65,7 +65,7 @@ public class QuesterPreOpenGUIEvent extends QuesterEvent implements Cancellable 
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

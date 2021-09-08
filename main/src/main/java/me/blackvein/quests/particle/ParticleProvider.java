@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.particle;
 
-import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 public abstract class ParticleProvider {
 
@@ -33,7 +33,7 @@ public abstract class ParticleProvider {
             } else {
                 loaded = new ParticleProvider_Bukkit();
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
             Bukkit.getLogger().severe("[Quests] Could not find a valid implementation for this server version.");
         }
@@ -70,7 +70,7 @@ public abstract class ParticleProvider {
      */
     public static void sendToPlayer(final Player player, final Location location, final String particleId, final float offsetX, final float offsetY,
             final float offsetZ, final float speed, final int count, final int[] data) {
-        Object particle;
+        final Object particle;
         final PreBuiltParticle pbp = PreBuiltParticle.fromIdentifier(particleId);
         if (pbp != null) {
             particle = loaded.getParticleMap().get(pbp);

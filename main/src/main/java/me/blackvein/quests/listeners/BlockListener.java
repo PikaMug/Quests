@@ -59,9 +59,9 @@ public class BlockListener implements Listener {
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType cutType = ObjectiveType.CUT_BLOCK;
-            final Set<String> dispatchedBreakQuestIDs = new HashSet<String>();
-            final Set<String> dispatchedPlaceQuestIDs = new HashSet<String>();
-            final Set<String> dispatchedCutQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedBreakQuestIDs = new HashSet<>();
+            final Set<String> dispatchedPlaceQuestIDs = new HashSet<>();
+            final Set<String> dispatchedCutQuestIDs = new HashSet<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!evt.isCancelled()) {
                     if (!quester.meetsCondition(quest, true)) {
@@ -179,7 +179,7 @@ public class BlockListener implements Listener {
                     .getData().toItemStack().getDurability());
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -210,9 +210,9 @@ public class BlockListener implements Listener {
                     .getData().toItemStack().getDurability());
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
-                if (evt.isCancelled() == false) {
+                if (!evt.isCancelled()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -251,11 +251,11 @@ public class BlockListener implements Listener {
                     return;
                 }
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    if (!evt.isCancelled()) {
+                    if (!evt.isCancelled() && evt.getClickedBlock() != null) {
                         final ItemStack blockItemStack = new ItemStack(evt.getClickedBlock().getType(), 1, evt
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
-                        final Set<String> dispatchedQuestIDs = new HashSet<String>();
+                        final Set<String> dispatchedQuestIDs = new HashSet<>();
                         for (final Quest quest : plugin.getLoadedQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 continue;

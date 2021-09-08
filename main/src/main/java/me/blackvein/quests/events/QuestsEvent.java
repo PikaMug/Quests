@@ -14,6 +14,7 @@ package me.blackvein.quests.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class QuestsEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -26,7 +27,7 @@ public abstract class QuestsEvent extends Event {
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

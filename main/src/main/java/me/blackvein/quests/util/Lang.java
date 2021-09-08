@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.util;
 
+import me.blackvein.quests.Dependencies;
 import me.blackvein.quests.Quests;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -25,18 +26,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lang {
 
     private static String iso = "en-US";
-    private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
+    private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<>();
     private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
     public static String getISO() {
@@ -117,7 +120,7 @@ public class Lang {
         return orig;
     }
     
-    public static void send(final Player player, String message) {
+    public static void send(final Player player, final String message) {
         if (message != null && !ChatColor.stripColor(message).equals("")) {
             player.sendMessage(message);
         }
@@ -129,14 +132,14 @@ public class Lang {
         final File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings_new.yml");
         final boolean exists_new = langFile_new.exists();
-        final LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> allStrings = new LinkedHashMap<>();
         if (langFile.exists() && iso.split("-").length > 1) {
             final FileConfiguration config= YamlConfiguration
-                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
+                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
             FileConfiguration config_new = null;
             if (exists_new) {
-                config_new = YamlConfiguration
-                        .loadConfiguration(new InputStreamReader(new FileInputStream(langFile_new), "UTF-8"));
+                config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
+                        new FileInputStream(langFile_new), StandardCharsets.UTF_8));
             }
             // Load user's lang file and determine new strings
             for (final String key : config.getKeys(false)) {
@@ -170,8 +173,8 @@ public class Lang {
             plugin.getLogger()
                     .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
             iso = "en-US";
-            final FileConfiguration config = YamlConfiguration
-                    .loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
+            final FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
+                    .requireNonNull(plugin.getResource("strings.yml")), StandardCharsets.UTF_8));
             for (final String key : config.getKeys(false)) {
                 allStrings.put(key, config.getString(key));
             }
@@ -214,7 +217,7 @@ public class Lang {
 
     private static class LangToken {
 
-        static Map<String, String> tokenMap = new HashMap<String, String>();
+        static Map<String, String> tokenMap = new HashMap<>();
 
         public static void init() {
             tokenMap.put("%br%", "\n");
@@ -257,7 +260,7 @@ public class Lang {
                 final StringBuilder hex = new StringBuilder();
                 hex.append(ChatColor.COLOR_CHAR + "x");
                 final char[] chars = matcher.group(1).toCharArray();
-                for (char aChar : chars) {
+                for (final char aChar : chars) {
                     hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
                 }
                 s = s.replace(matcher.group(), hex.toString());
@@ -271,7 +274,7 @@ public class Lang {
             }
             s = convertString(s);
             if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
-                if (!Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
+                if (Dependencies.placeholder.isEnabled()) {
                     s = PlaceholderAPI.setPlaceholders(p, s);
                 }
             }

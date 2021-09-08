@@ -17,6 +17,7 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called before an online quester completes a quest
@@ -56,7 +57,7 @@ public class QuesterPreCompleteQuestEvent extends QuesterEvent implements Cancel
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

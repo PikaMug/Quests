@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import me.blackvein.quests.Objective;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called after a quester progresses an objective
@@ -63,7 +64,7 @@ public class QuesterPostUpdateObjectiveEvent extends QuesterEvent implements Can
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

@@ -16,6 +16,7 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.events.QuestsEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a quester-related event
@@ -44,7 +45,7 @@ public abstract class QuesterEvent extends QuestsEvent {
     }
     
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
      

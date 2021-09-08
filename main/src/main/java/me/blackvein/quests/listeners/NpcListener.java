@@ -62,16 +62,15 @@ public class NpcListener implements Listener {
                     + Lang.get("id") + ": "  + evt.getNPC().getId());
             return;
         }
-        if (evt.getClicker().isConversing() == false) {
+        if (!evt.getClicker().isConversing()) {
             final Player player = evt.getClicker();
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            boolean delivery = false;
             for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM) 
-                        && player.getItemInHand() != null) {
+                if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
+                    player.getItemInHand();
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
-                    final LinkedList<Integer> matches = new LinkedList<Integer>();
+                    final LinkedList<Integer> matches = new LinkedList<>();
                     int reasonCode = 0;
                     for (final ItemStack is : quester.getCurrentStage(quest).getItemsToDeliver()) {
                         currentIndex++;
@@ -86,7 +85,6 @@ public class NpcListener implements Listener {
                             final Integer id = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
                             if (id.equals(clicked.getId())) {
                                 quester.deliverToNPC(quest, clicked, hand);
-                                delivery = true;
                                 return;
                             }
                         }
@@ -94,19 +92,19 @@ public class NpcListener implements Listener {
                         for (final Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
                             if (n.equals(clicked.getId())) {
                                 String text = "";
-                                final boolean hasMeta = hand.hasItemMeta();
+                                final boolean hasMeta = hand.getItemMeta() != null;
                                 if (hasMeta) {
                                     text += ChatColor.LIGHT_PURPLE + "" + ChatColor.ITALIC
                                             + (hand.getItemMeta().hasDisplayName() ? hand.getItemMeta().getDisplayName()
                                             + ChatColor.GRAY + " (" : "");
                                 }
-                                text += ChatColor.AQUA + "<item>" + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE 
+                                text += ChatColor.AQUA + "<item>" + (hand.getDurability() != 0 ? (":" + ChatColor.BLUE
                                         + hand.getDurability()) : "") + ChatColor.GRAY;
                                 if (hasMeta) {
                                     text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
                                 }
                                 text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-                                if (plugin.getSettings().canTranslateNames() && !hasMeta 
+                                if (plugin.getSettings().canTranslateNames() && !hasMeta
                                         && !hand.getItemMeta().hasDisplayName()) {
                                     plugin.getLocaleManager().sendMessage(player, Lang
                                             .get(player, "questInvalidDeliveryItem").replace("<item>", text), hand
@@ -166,14 +164,13 @@ public class NpcListener implements Listener {
                                 }
                                 if (hasMeta) {
                                     if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
-                                        final EnchantmentStorageMeta esmeta = (EnchantmentStorageMeta) hand.getItemMeta();
-                                        if (esmeta.hasStoredEnchants()) {
-                                            for (final Entry<Enchantment, Integer> e : esmeta.getStoredEnchants()
+                                        final EnchantmentStorageMeta esMeta = (EnchantmentStorageMeta) hand.getItemMeta();
+                                        if (esMeta.hasStoredEnchants()) {
+                                            for (final Entry<Enchantment, Integer> e : esMeta.getStoredEnchants()
                                                     .entrySet()) {
-                                                final HashMap<Enchantment, Integer> single 
-                                                        = new HashMap<Enchantment, Integer>();
+                                                final HashMap<Enchantment, Integer> single = new HashMap<>();
                                                 single.put(e.getKey(), e.getValue());
-                                                plugin.getLocaleManager().sendMessage(player, ChatColor.GRAY + "\u2515 " 
+                                                plugin.getLocaleManager().sendMessage(player, ChatColor.GRAY + "\u2515 "
                                                         + ChatColor.DARK_GREEN + "<enchantment> <level>\n", single);
                                             }
                                         }
@@ -200,7 +197,7 @@ public class NpcListener implements Listener {
                 }
                 if (!hasObjective) {
                     boolean hasAtLeastOneGUI = false;
-                    final LinkedList<Quest> npcQuests = new LinkedList<Quest>();
+                    final LinkedList<Quest> npcQuests = new LinkedList<>();
                     for (final Quest q : plugin.getLoadedQuests()) {
                         if (quester.getCurrentQuests().containsKey(q))
                             continue;
@@ -284,7 +281,7 @@ public class NpcListener implements Listener {
                 return;
             }
             final ObjectiveType type = ObjectiveType.KILL_NPC;
-            final Set<String> dispatchedQuestIDs = new HashSet<String>();
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             Player player = null;
             if (damager instanceof Projectile
                     && evt.getNPC().getEntity().getLastDamageCause().getEntity() instanceof Player) {

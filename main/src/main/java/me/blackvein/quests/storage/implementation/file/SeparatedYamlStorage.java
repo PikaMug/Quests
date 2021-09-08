@@ -27,7 +27,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -83,10 +82,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             } else {
                 return null;
             }
-        } catch (final IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (final InvalidConfigurationException e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             return null;
         }
@@ -106,14 +102,14 @@ public class SeparatedYamlStorage implements StorageImplementation {
         }
         if (data.contains("amountsCompletedQuests")) {
             final List<String> questIds = data.getStringList("amountsCompletedQuests");
-            final List<Integer> questAmts = data.getIntegerList("amountsCompleted");
+            final List<Integer> questAmounts = data.getIntegerList("amountsCompleted");
             final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
                 if (plugin.getQuestById(questIds.get(i)) != null) {
-                    amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmts.get(i));
+                    amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmounts.get(i));
                 } else if (plugin.getQuest(questIds.get(i)) != null) {
                     // Legacy
-                    amountsCompleted.put(plugin.getQuest(questIds.get(i)), questAmts.get(i));
+                    amountsCompleted.put(plugin.getQuest(questIds.get(i)), questAmounts.get(i));
                 }
             }
             quester.setAmountsCompleted(amountsCompleted);
@@ -322,7 +318,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("has-talked-to")) {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
-                    quester.getQuestData(quest).setCitizensInteracted(new LinkedList<Boolean>(talkAmount));
+                    quester.getQuestData(quest).setCitizensInteracted(new LinkedList<>(talkAmount));
                 }
                 if (questSec.contains("citizen-ids-killed")) {
                     final List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
@@ -344,7 +340,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     quester.getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
                 }
                 if (questSec.contains("mobs-killed")) {
-                    final LinkedList<EntityType> mobs = new LinkedList<EntityType>();
+                    final LinkedList<EntityType> mobs = new LinkedList<>();
                     final List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
                     for (final String s : questSec.getStringList("mobs-killed")) {
                         final EntityType mob = MiscUtil.getProperMobType(s);
@@ -361,23 +357,23 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("locations-to-reach")) {
                     final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");
-                    quester.getQuestData(quest).setLocationsReached(new LinkedList<Boolean>(hasReached));
+                    quester.getQuestData(quest).setLocationsReached(new LinkedList<>(hasReached));
                 }
                 if (questSec.contains("mob-tame-amounts")) {
                     final List<Integer> tameAmounts = questSec.getIntegerList("mob-tame-amounts");
-                    quester.getQuestData(quest).setMobsTamed(new LinkedList<Integer>(tameAmounts));
+                    quester.getQuestData(quest).setMobsTamed(new LinkedList<>(tameAmounts));
                 }
                 if (questSec.contains("sheep-sheared")) {
                     final List<Integer> sheepAmounts = questSec.getIntegerList("sheep-sheared");
-                    quester.getQuestData(quest).setSheepSheared(new LinkedList<Integer>(sheepAmounts));
+                    quester.getQuestData(quest).setSheepSheared(new LinkedList<>(sheepAmounts));
                 }
                 if (questSec.contains("passwords-said")) {
                     final List<Boolean> passAmounts = questSec.getBooleanList("passwords-said");
-                    quester.getQuestData(quest).setPasswordsSaid(new LinkedList<Boolean>(passAmounts));
+                    quester.getQuestData(quest).setPasswordsSaid(new LinkedList<>(passAmounts));
                 }
                 if (questSec.contains("custom-objective-counts")) {
                     final List<Integer> customObjCounts = questSec.getIntegerList("custom-objective-counts");
-                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<Integer>(customObjCounts));
+                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<>(customObjCounts));
                 }
                 if (questSec.contains("stage-delay")) {
                     quester.getQuestData(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
@@ -416,25 +412,20 @@ public class SeparatedYamlStorage implements StorageImplementation {
     
     @Override
     public Collection<UUID> getSavedUniqueIds() throws Exception {
-        final Collection<UUID> ids = new ConcurrentSkipListSet<UUID>();
+        final Collection<UUID> ids = new ConcurrentSkipListSet<>();
         final File folder = new File(directoryPath);
         if (!folder.exists()) {
             return ids;
         }
-        final File[] listOfFiles = folder.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".yml");
-            }
-        });
+        final File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".yml"));
 
         if (listOfFiles == null) {
             return ids;
         }
-        for (File listOfFile : listOfFiles) {
+        for (final File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
                 final String name = listOfFile.getName().substring(0, listOfFile.getName().lastIndexOf("."));
-                UUID id = null;
+                final UUID id;
                 try {
                     id = UUID.fromString(name);
                 } catch (final IllegalArgumentException e) {

@@ -17,6 +17,7 @@ import org.bukkit.event.HandlerList;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a quest is quit by a quester
@@ -51,7 +52,7 @@ public class QuestQuitEvent extends QuestEvent implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
     

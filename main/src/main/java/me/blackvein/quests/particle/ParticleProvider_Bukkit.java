@@ -12,16 +12,16 @@
 
 package me.blackvein.quests.particle;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class ParticleProvider_Bukkit extends ParticleProvider {
 
-    private static Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
+    private static final Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
 
     static {
         PARTICLES.put(PreBuiltParticle.ENCHANT, Particle.ENCHANTMENT_TABLE);

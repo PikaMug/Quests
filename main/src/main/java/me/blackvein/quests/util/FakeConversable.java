@@ -37,25 +37,26 @@ public class FakeConversable implements Conversable {
         return false;
     }
 
-    public void acceptConversationInput(@NotNull String input) {
+    public void acceptConversationInput(@NotNull final String input) {
     }
 
-    public boolean beginConversation(Conversation conversation) {
+    public boolean beginConversation(final Conversation conversation) {
         begunConversation = conversation;
         conversation.outputNextPrompt();
         return true;
     }
 
-    public void abandonConversation(@NotNull Conversation conversation) {
+    public void abandonConversation(@NotNull final Conversation conversation) {
         abandonedConverstion = conversation;
     }
 
-    public void abandonConversation(@NotNull Conversation conversation, @NotNull ConversationAbandonedEvent details) {
+    public void abandonConversation(@NotNull final Conversation conversation,
+                                    @NotNull final ConversationAbandonedEvent details) {
         abandonedConverstion = conversation;
         abandonedConversationEvent = details;
     }
 
-    public void sendRawMessage(@NotNull String message) {
+    public void sendRawMessage(@NotNull final String message) {
         lastSentMessage = message;
     }
 
@@ -67,39 +68,40 @@ public class FakeConversable implements Conversable {
         return null;
     }
 
-    public boolean isPermissionSet(String name) {
+    public boolean isPermissionSet(final String name) {
         return false;
     }
 
-    public boolean isPermissionSet(Permission perm) {
+    public boolean isPermissionSet(final Permission perm) {
         return false;
     }
 
-    public boolean hasPermission(String name) {
+    public boolean hasPermission(final String name) {
         return false;
     }
 
-    public boolean hasPermission(Permission perm) {
+    public boolean hasPermission(final Permission perm) {
         return false;
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
+    public PermissionAttachment addAttachment(final Plugin plugin, final String name, final boolean value) {
         return null;
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin) {
+    public PermissionAttachment addAttachment(final Plugin plugin) {
         return null;
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
+    public PermissionAttachment addAttachment(final Plugin plugin, final String name, final boolean value,
+                                              final int ticks) {
         return null;
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
+    public PermissionAttachment addAttachment(final Plugin plugin, final int ticks) {
         return null;
     }
 
-    public void removeAttachment(PermissionAttachment attachment) {
+    public void removeAttachment(final PermissionAttachment attachment) {
     }
 
     public void recalculatePermissions() {
@@ -113,7 +115,7 @@ public class FakeConversable implements Conversable {
         return false;
     }
 
-    public void setOp(boolean value) {
+    public void setOp(final boolean value) {
     }
 }
 

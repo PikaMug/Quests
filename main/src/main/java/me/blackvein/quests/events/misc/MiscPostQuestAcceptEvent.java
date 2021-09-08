@@ -15,6 +15,7 @@ package me.blackvein.quests.events.misc;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class MiscPostQuestAcceptEvent extends MiscEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -45,7 +46,7 @@ public class MiscPostQuestAcceptEvent extends MiscEditorEvent {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

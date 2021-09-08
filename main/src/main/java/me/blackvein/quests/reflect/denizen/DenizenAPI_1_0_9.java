@@ -12,29 +12,26 @@
 
 package me.blackvein.quests.reflect.denizen;
 
+import me.blackvein.quests.Quests;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import javax.annotation.Nullable;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
-import me.blackvein.quests.Quests;
-import net.citizensnpcs.api.npc.NPC;
-
 public class DenizenAPI_1_0_9 {
     
-    private static Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
-    private static DenizenAPI api = quests.getDependencies().getDenizenApi();
+    private static final Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+    private static final DenizenAPI api = quests != null ? quests.getDependencies().getDenizenApi() : null;
     
-    @Nullable
     public static boolean containsScript(final String input) {
-        if (api.scriptRegistry == null || api.containsScriptMethod == null) return false;
+        if (quests == null || api.scriptRegistry == null || api.containsScriptMethod == null) return false;
         boolean script = false;
         try {
             script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
@@ -46,9 +43,9 @@ public class DenizenAPI_1_0_9 {
     
     @Nullable
     public static String getScriptContainerName(final String input) {
-        if (api.scriptRegistry == null || api.scriptContainer == null) return null;
+        if (quests == null || api.scriptRegistry == null || api.scriptContainer == null) return null;
         String name = null;
-        Object instance;
+        final Object instance;
         try {
             final Constructor<?> constructor = api.scriptRegistry.getConstructor(YamlConfiguration.class, String.class);
             instance = constructor.newInstance(null, input);
@@ -62,7 +59,7 @@ public class DenizenAPI_1_0_9 {
     @SuppressWarnings("unchecked")
     @Nullable
     public static Set<String> getScriptNames() {
-        if (api.scriptRegistry == null || api.getScriptNamesMethod == null) return null;
+        if (quests == null || api.scriptRegistry == null || api.getScriptNamesMethod == null) return null;
         Set<String> names = null;
         try {
             names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
@@ -74,7 +71,7 @@ public class DenizenAPI_1_0_9 {
     
     @Nullable
     public static Object getScriptContainerAs(final String scriptName) {
-        if (api.scriptRegistry == null || api.taskScriptContainer == null) return null;
+        if (quests == null || api.scriptRegistry == null || api.taskScriptContainer == null) return null;
         Object container = null;
         try {
             container = api.getScriptContainerAsMethod.invoke(api.scriptRegistry, scriptName, api.taskScriptContainer);
@@ -86,7 +83,7 @@ public class DenizenAPI_1_0_9 {
     
     @Nullable
     public static Object mirrorBukkitPlayer(final Player player) {
-        if (api.dPlayer == null || api.mirrorBukkitPlayerMethod == null) return null;
+        if (quests == null || api.dPlayer == null || api.mirrorBukkitPlayerMethod == null) return null;
         Object dp = null;
         try {
             dp = api.mirrorBukkitPlayerMethod.invoke(api.dPlayer, player);
@@ -98,7 +95,7 @@ public class DenizenAPI_1_0_9 {
     
     @Nullable
     public static Object mirrorCitizensNPC(final NPC npc) {
-        if (api.dNPC == null || api.mirrorCitizensNPCMethod == null) return null;
+        if (quests == null || api.dNPC == null || api.mirrorCitizensNPCMethod == null) return null;
         Object dp = null;
         try {
             dp = api.mirrorCitizensNPCMethod.invoke(api.dNPC, npc);
@@ -108,14 +105,15 @@ public class DenizenAPI_1_0_9 {
         return dp;
     }
     
-    @Nullable
     public static void runTaskScript(final String scriptName, final Player player) {
-        if (api.scriptRegistry == null || api.bukkitScriptEntryData == null || api.scriptEntryData == null) return;
+        if (quests == null || api.scriptRegistry == null || api.bukkitScriptEntryData == null || api.scriptEntryData == null) return;
         try {
             final Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
             final Object tsc = getScriptContainerAs(scriptName);
-            final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
-            runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
+            if (tsc != null) {
+                final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
+                runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
+            }
         } catch (final Exception e) {
             quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
         }
