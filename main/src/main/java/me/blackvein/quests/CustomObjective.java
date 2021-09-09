@@ -179,7 +179,7 @@ public abstract class CustomObjective implements Listener {
                 }
                 if (index > -1) {
                     final int progress = customObjCounts.get(index);
-                    final int goal = customObjCounts.get(index);
+                    final int goal = quester.getCurrentStage(quest).customObjectiveCounts.get(index);
                     
                     final ObjectiveType type = ObjectiveType.CUSTOM;
                     final QuesterPreUpdateObjectiveEvent preEvent 
