@@ -12,19 +12,18 @@
 
 package me.blackvein.quests.particle;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.minecraft.server.v1_8_R2.EnumParticle;
+import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_8_R2.EnumParticle;
-import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParticleProvider_v1_8_R2 extends ParticleProvider {
 
-    private static Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
+    private static final Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
 
     static {
         PARTICLES.put(PreBuiltParticle.ENCHANT, EnumParticle.ENCHANTMENT_TABLE);

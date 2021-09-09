@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class ParticleProvider_v1_8_R1 extends ParticleProvider {
 
-    private static Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
+    private static final Map<PreBuiltParticle, Object> PARTICLES = new HashMap<>();
 
     static {
         PARTICLES.put(PreBuiltParticle.ENCHANT, EnumParticle.ENCHANTMENT_TABLE);

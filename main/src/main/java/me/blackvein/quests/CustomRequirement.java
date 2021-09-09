@@ -12,19 +12,19 @@
 
 package me.blackvein.quests;
 
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.entity.Player;
 
 public abstract class CustomRequirement {
 
     private String name = null;
     private String author = null;
     private String display = null;
-    private final Map<String, Short> items = new HashMap<String, Short>();
-    private final Map<String, Object> data = new HashMap<String, Object>();
-    private final Map<String, String> descriptions = new HashMap<String, String>();
+    private final Map<String, Short> items = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
+    private final Map<String, String> descriptions = new HashMap<>();
 
     public abstract boolean testRequirement(Player p, Map<String, Object> m);
 

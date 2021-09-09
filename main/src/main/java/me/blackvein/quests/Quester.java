@@ -46,7 +46,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -57,6 +56,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,20 +87,20 @@ public class Quester implements Comparable<Quester> {
     protected int questPoints = 0;
     private String compassTargetQuestId;
     private long lastNotifiedCondition = 0L;
-    protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<Integer, Quest>();
+    protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 6361484975823846780L;
 
         @Override
-        public Integer put(final Quest key, final Integer val) {
+        public Integer put(final @NotNull Quest key, final @NotNull Integer val) {
             final Integer data = super.put(key, val);
             updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
+        public Integer remove(final @NotNull Object key) {
             final Integer i = super.remove(key);
             updateJournal();
             return i;
@@ -128,26 +128,13 @@ public class Quester implements Comparable<Quester> {
             updateJournal();
             return b;
         }
-
-        /*@Override
-        public void add(final int index, final Quest element) {
-            super.add(index, element);
-            updateJournal();
-        }*/
         
         @Override
-        public boolean addAll(final Collection<? extends Quest> c) {
+        public boolean addAll(final @NotNull Collection<? extends Quest> c) {
             final boolean b = super.addAll(c);
             updateJournal();
             return b;
         }
-
-        /*@Override
-        public boolean addAll(final int index, final Collection<? extends Quest> c) {
-            final boolean b = super.addAll(index, c);
-            updateJournal();
-            return b;
-        }*/
 
         @Override
         public void clear() {
@@ -168,35 +155,21 @@ public class Quester implements Comparable<Quester> {
             updateJournal();
             return b;
         }
-
-        /*@Override
-        public Quest remove(final int index) {
-            final Quest s = super.remove(index);
-            updateJournal();
-            return s;
-        }
-
-        @Override
-        public Quest set(final int index, final Quest element) {
-            final Quest s = super.set(index, element);
-            updateJournal();
-            return s;
-        }*/
     };
-    protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<Quest, Long>();
+    protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 5475202358792520975L;
 
         @Override
-        public Integer put(final Quest key, final Integer val) {
+        public Integer put(final @NotNull Quest key, final @NotNull Integer val) {
             final Integer data = super.put(key, val);
             updateJournal();
             return data;
         }
 
         @Override
-        public Integer remove(final Object key) {
+        public Integer remove(final @NotNull Object key) {
             final Integer i = super.remove(key);
             updateJournal();
             return i;
@@ -219,14 +192,14 @@ public class Quester implements Comparable<Quester> {
         private static final long serialVersionUID = -4607112433003926066L;
 
         @Override
-        public QuestData put(final Quest key, final QuestData val) {
+        public QuestData put(final @NotNull Quest key, final @NotNull QuestData val) {
             final QuestData data = super.put(key, val);
             updateJournal();
             return data;
         }
 
         @Override
-        public QuestData remove(final Object key) {
+        public QuestData remove(final @NotNull Object key) {
             final QuestData data = super.remove(key);
             updateJournal();
             return data;
@@ -453,22 +426,22 @@ public class Quester implements Comparable<Quester> {
     /**
      * Start a quest for this Quester
      * 
-     * @param q The quest to start
-     * @param ignoreReqs Whether to ignore Requirements
+     * @param quest The quest to start
+     * @param ignoreRequirements Whether to ignore Requirements
      */
     @SuppressWarnings("deprecation")
-    public void takeQuest(final Quest q, final boolean ignoreReqs) {
-        if (q == null) {
+    public void takeQuest(final Quest quest, final boolean ignoreRequirements) {
+        if (quest == null) {
             return;
         }
-        final QuesterPreStartQuestEvent preEvent = new QuesterPreStartQuestEvent(this, q);
+        final QuesterPreStartQuestEvent preEvent = new QuesterPreStartQuestEvent(this, quest);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
         final OfflinePlayer offlinePlayer = getOfflinePlayer();
         if (offlinePlayer.isOnline()) {
-            final Planner pln = q.getPlanner();
+            final Planner pln = quest.getPlanner();
             final long currentTime = System.currentTimeMillis();
             final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
             final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
@@ -477,7 +450,7 @@ public class Quester implements Comparable<Quester> {
             if (start != -1) {
                 if (currentTime < start) {
                     String early = Lang.get("plnTooEarly");
-                    early = early.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW);
+                    early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
                     early = early.replace("<time>", ChatColor.RED
                             + MiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
                     sendMessage(ChatColor.YELLOW + early);
@@ -487,7 +460,7 @@ public class Quester implements Comparable<Quester> {
             if (end != -1 && repeat == -1) {
                 if (currentTime > end) {
                     String late = Lang.get("plnTooLate");
-                    late = late.replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.RED);
+                    late = late.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.RED);
                     late = late.replace("<time>", ChatColor.DARK_PURPLE
                             + MiscUtil.getTime(currentTime - end) + ChatColor.RED);
                     sendMessage(ChatColor.RED + late);
@@ -509,8 +482,8 @@ public class Quester implements Comparable<Quester> {
                     
                     // Get last completed time
                     long completedTime = 0L;
-                    if (getCompletedTimes().containsKey(q)) {
-                        completedTime = getCompletedTimes().get(q);
+                    if (getCompletedTimes().containsKey(quest)) {
+                        completedTime = getCompletedTimes().get(quest);
                     }
                     long completedEnd = 0L;
                     
@@ -531,15 +504,16 @@ public class Quester implements Comparable<Quester> {
                     for (final Entry<Long, Long> startEnd : mostRecent.entrySet()) {
                         if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
                             active = true;
+                            break;
                         }
                     }
                     
                     // If quest is not active, or new period of activity should override player cooldown, inform user
-                    if (!active || (q.getPlanner().getOverride() && completedEnd > 0L
+                    if (!active || (quest.getPlanner().getOverride() && completedEnd > 0L
                             && currentTime < (completedEnd /*+ repeat*/))) {
                         if (getPlayer().isOnline()) {
                             final String early = Lang.get("plnTooEarly")
-                                .replace("<quest>", ChatColor.AQUA + q.getName() + ChatColor.YELLOW)
+                                .replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW)
                                 .replace("<time>", ChatColor.DARK_PURPLE
                                 + MiscUtil.getTime((completedEnd /*+ repeat*/) - currentTime) + ChatColor.YELLOW);
                             sendMessage(ChatColor.YELLOW + early);
@@ -549,146 +523,151 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
-        if (q.testRequirements(offlinePlayer) || ignoreReqs) {
-            addEmptiesFor(q, 0);
+        if (quest.testRequirements(offlinePlayer) || ignoreRequirements) {
+            addEmptiesFor(quest, 0);
             try {
-                currentQuests.put(q, 0);
+                currentQuests.put(quest, 0);
                 if (plugin.getSettings().getConsoleLogging() > 1) {
-                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + q.getName());
+                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + quest.getName());
                 }
             } catch (final NullPointerException npe) {
-                plugin.getLogger().severe("Unable to add quest" + q.getName() + " for player " + offlinePlayer.getName()
+                plugin.getLogger().severe("Unable to add quest" + quest.getName() + " for player " + offlinePlayer.getName()
                         + ". Consider resetting player data or report on Github");
             }
-            final Stage stage = q.getStage(0);
-            if (!ignoreReqs) {
-                final Requirements reqs = q.getRequirements();
-                if (reqs.getMoney() > 0) {
+            final Stage stage = quest.getStage(0);
+            if (!ignoreRequirements) {
+                final Requirements requirements = quest.getRequirements();
+                if (requirements.getMoney() > 0) {
                     if (plugin.getDependencies().getVaultEconomy() != null) {
-                        plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), reqs.getMoney());
+                        plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), requirements.getMoney());
                     }
                 }
                 if (offlinePlayer.isOnline()) {
                     final Player p = getPlayer();
-                    final ItemStack[] original = p.getInventory().getContents().clone();
-                    for (final ItemStack is : reqs.getItems()) {
-                        if (reqs.getRemoveItems().get(reqs.getItems().indexOf(is))) {
-                            if (!InventoryUtil.removeItem(p.getInventory(), is)) {
-                                if (!InventoryUtil.stripItem(p.getEquipment(), is)) {
-                                    p.getInventory().setContents(original);
-                                    p.updateInventory();
-                                    sendMessage(Lang.get(p, "requirementsItemFail"));
-                                    hardQuit(q);
-                                    return;
+                    if (p != null) {
+                        final ItemStack[] original = p.getInventory().getContents().clone();
+                        for (final ItemStack is : requirements.getItems()) {
+                            if (requirements.getRemoveItems().get(requirements.getItems().indexOf(is))) {
+                                if (!InventoryUtil.removeItem(p.getInventory(), is)) {
+                                    if (p.getEquipment() != null && !InventoryUtil.stripItem(p.getEquipment(), is)) {
+                                        p.getInventory().setContents(original);
+                                        p.updateInventory();
+                                        sendMessage(Lang.get(p, "requirementsItemFail"));
+                                        hardQuit(quest);
+                                        return;
+                                    }
                                 }
                             }
                         }
-                    }
-                    String accepted = Lang.get(getPlayer(), "questAccepted");
-                    accepted = accepted.replace("<quest>", q.getName());
-                    sendMessage(ChatColor.GREEN + accepted);
-                    p.sendMessage("");
-                    if (plugin.getSettings().canShowQuestTitles()) {
-                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title " 
-                                + offlinePlayer.getName() + " title " + "{\"text\":\"" + Lang.get(getPlayer(), "quest")
-                                + " " + Lang.get(getPlayer(), "accepted") +  "\",\"color\":\"gold\"}");
-                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title " 
-                                + offlinePlayer.getName() + " subtitle " + "{\"text\":\"" + q.getName() 
-                                + "\",\"color\":\"yellow\"}");
+                        String accepted = Lang.get(p, "questAccepted");
+                        accepted = accepted.replace("<quest>", quest.getName());
+                        sendMessage(ChatColor.GREEN + accepted);
+                        p.sendMessage("");
+                        if (plugin.getSettings().canShowQuestTitles()) {
+                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title "
+                                    + offlinePlayer.getName() + " title " + "{\"text\":\"" + Lang.get(p, "quest")
+                                    + " " + Lang.get(p, "accepted") +  "\",\"color\":\"gold\"}");
+                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title "
+                                    + offlinePlayer.getName() + " subtitle " + "{\"text\":\"" + quest.getName()
+                                    + "\",\"color\":\"yellow\"}");
+                        }
                     }
                 }
             }
             if (offlinePlayer.isOnline()) {
                 final Player p = getPlayer();
-                final String title = Lang.get(p, "objectives").replace("<quest>", q.getName());
+                final String title = Lang.get(p, "objectives").replace("<quest>", quest.getName());
                 sendMessage(ChatColor.GOLD + title);
-                plugin.showObjectives(q, this, false);
+                plugin.showObjectives(quest, this, false);
                 final String stageStartMessage = stage.startMessage;
                 if (stageStartMessage != null) {
-                    p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, q, getPlayer()));
+                    p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, quest, getPlayer()));
                 }
                 final Condition c = stage.getCondition();
                 if (c != null) {
                     sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions"));
                     if (!c.getEntitiesWhileRiding().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorRideEntity");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideEntity"));
                         for (final String e : c.getEntitiesWhileRiding()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + e;
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getNpcsWhileRiding().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorRideNPC");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideNPC"));
                         for (final int i : c.getNpcsWhileRiding()) {
                             if (plugin.getDependencies().getCitizens() != null) {
-                                msg += ChatColor.AQUA + "\n   \u2515 " + CitizensAPI.getNPCRegistry().getById(i)
-                                        .getName();
+                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
+                                        .getById(i).getName());
                             } else {
-                                msg += ChatColor.AQUA + "\n   \u2515 " + i;
+                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(i);
                             }
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getPermissions().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorPermissions");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorPermissions"));
                         for (final String e : c.getPermissions()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + e;
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorItemsInMainHand");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorItemsInMainHand"));
                         for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + ItemUtil.getPrettyItemName(is.getType().name());
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(ItemUtil.getPrettyItemName(is
+                                    .getType().name()));
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorStayWithinWorld");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinWorld"));
                         for (final String w : c.getWorldsWhileStayingWithin()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + w;
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(w);
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getBiomesWhileStayingWithin().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorStayWithinBiome");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinBiome"));
                         for (final String b : c.getBiomesWhileStayingWithin()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + MiscUtil.snakeCaseToUpperCamelCase(b);
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(MiscUtil
+                                    .snakeCaseToUpperCamelCase(b));
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getRegionsWhileStayingWithin().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorStayWithinRegion");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinRegion"));
                         for (final String r : c.getRegionsWhileStayingWithin()) {
-                            msg += ChatColor.AQUA + "\n   \u2515 " + r;
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r);
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getPlaceholdersCheckIdentifier().isEmpty()) {
-                        String msg = "- " + Lang.get("conditionEditorCheckPlaceholder");
+                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorCheckPlaceholder"));
                         int index = 0;
                         for (final String r : c.getPlaceholdersCheckIdentifier()) {
                             if (c.getPlaceholdersCheckValue().size() > index) {
-                                msg += ChatColor.AQUA + "\n   \u2515 " + r + ChatColor.GRAY + " = " 
-                                        + ChatColor.AQUA + c.getPlaceholdersCheckValue().get(index);
+                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r).append(ChatColor.GRAY)
+                                        .append(" = ").append(ChatColor.AQUA).append(c.getPlaceholdersCheckValue()
+                                        .get(index));
                             }
                             index++;
                         }
-                        sendMessage(ChatColor.YELLOW + msg);
+                        sendMessage(ChatColor.YELLOW + msg.toString());
                     }
                 }
             }
-            if (q.initialAction != null) {
-                q.initialAction.fire(this, q);
+            if (quest.initialAction != null) {
+                quest.initialAction.fire(this, quest);
             }
             if (stage.startAction != null) {
-                stage.startAction.fire(this, q);
+                stage.startAction.fire(this, quest);
             }
-            q.updateCompass(this, stage);
+            quest.updateCompass(this, stage);
             saveData();
         } else {
             if (offlinePlayer.isOnline()) {
                 sendMessage(ChatColor.DARK_AQUA + Lang.get("requirements"));
-                for (final String s : getCurrentRequirements(q, false)) {
+                for (final String s : getCurrentRequirements(quest, false)) {
                     sendMessage(ChatColor.GRAY + "- " + s);
                 }
             }
         }
         if (offlinePlayer.isOnline()) {
-            final QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, q);
+            final QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, quest);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
     }
@@ -725,52 +704,51 @@ public class Quester implements Comparable<Quester> {
             }
         }
         saveData();
-        //loadData();
         updateJournal();
     }
     
     public LinkedList<String> getCurrentRequirements(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
-            return new LinkedList<String>();
+            return new LinkedList<>();
         }
-        final Requirements reqs = quest.getRequirements();
+        final Requirements requirements = quest.getRequirements();
         if (!ignoreOverrides) {
-            if (reqs.getDetailsOverride() != null && !reqs.getDetailsOverride().isEmpty()) {
-                final LinkedList<String> requirements = new LinkedList<String>();
-                for (final String s : reqs.getDetailsOverride()) {
+            if (requirements.getDetailsOverride() != null && !requirements.getDetailsOverride().isEmpty()) {
+                final LinkedList<String> current = new LinkedList<>();
+                for (final String s : requirements.getDetailsOverride()) {
                     String message = ChatColor.RED + ConfigUtil.parseString(
                             ChatColor.translateAlternateColorCodes('&', s), quest, getPlayer());
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    requirements.add(message);
+                    current.add(message);
                     
                 }
-                return requirements;
+                return current;
             }
         }
-        final LinkedList<String> unfinishedRequirements = new LinkedList<String>();
-        final LinkedList<String> finishedRequirements = new LinkedList<String>();
-        final LinkedList<String> requirements = new LinkedList<String>();
+        final LinkedList<String> unfinishedRequirements = new LinkedList<>();
+        final LinkedList<String> finishedRequirements = new LinkedList<>();
+        final LinkedList<String> current = new LinkedList<>();
         final OfflinePlayer player = getPlayer();
-        if (reqs.getMoney() > 0) {
-            final String currency = plugin.getDependencies().getCurrency(reqs.getMoney() == 1 ? false : true);
+        if (requirements.getMoney() > 0) {
+            final String currency = plugin.getDependencies().getCurrency(requirements.getMoney() != 1);
             if (plugin.getDependencies().getVaultEconomy() != null
-                    && plugin.getDependencies().getVaultEconomy().getBalance(player) >= reqs.getMoney()) {
-                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getMoney() + " " + currency);
+                    && plugin.getDependencies().getVaultEconomy().getBalance(player) >= requirements.getMoney()) {
+                unfinishedRequirements.add(ChatColor.GREEN + "" + requirements.getMoney() + " " + currency);
             } else {
-                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getMoney() + " " + currency);
+                finishedRequirements.add(ChatColor.GRAY + "" + requirements.getMoney() + " " + currency);
             }
         }
-        if (reqs.getQuestPoints() > 0) {
-            if (getQuestPoints() >= reqs.getQuestPoints()) {
-                unfinishedRequirements.add(ChatColor.GREEN + "" + reqs.getQuestPoints() + " " 
+        if (requirements.getQuestPoints() > 0) {
+            if (getQuestPoints() >= requirements.getQuestPoints()) {
+                unfinishedRequirements.add(ChatColor.GREEN + "" + requirements.getQuestPoints() + " "
                         + Lang.get("questPoints"));
             } else {
-                finishedRequirements.add(ChatColor.GRAY + "" + reqs.getQuestPoints() + " " + Lang.get("questPoints"));
+                finishedRequirements.add(ChatColor.GRAY + "" + requirements.getQuestPoints() + " " + Lang.get("questPoints"));
             }
         }
-        for (final Quest q : reqs.getNeededQuests()) {
+        for (final Quest q : requirements.getNeededQuests()) {
             if (q != null) {
                 if (getCompletedQuests().contains(q)) {
                     finishedRequirements.add(ChatColor.GREEN + q.getName());
@@ -779,40 +757,40 @@ public class Quester implements Comparable<Quester> {
                 }
             }
         }
-        for (final Quest q : reqs.getBlockQuests()) {
+        for (final Quest q : requirements.getBlockQuests()) {
             if (q != null) {
                 if (completedQuests.contains(q) || currentQuests.containsKey(q)) {
-                    requirements.add(ChatColor.RED + quest.getName());
+                    current.add(ChatColor.RED + quest.getName());
                 }
             }
         }
-        for (final String s : reqs.getMcmmoSkills()) {
+        for (final String s : requirements.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
-            final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
+            final int lvl = requirements.getMcmmoAmounts().get(requirements.getMcmmoSkills().indexOf(s));
             if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) >= lvl) {
                 finishedRequirements.add(ChatColor.GREEN + "" + lvl + " " + s);
             } else {
                 unfinishedRequirements.add(ChatColor.GRAY + "" + lvl + " " + s);
             }
         }
-        if (reqs.getHeroesPrimaryClass() != null) {
+        if (requirements.getHeroesPrimaryClass() != null) {
             if (plugin.getDependencies()
-                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
+                    .testPrimaryHeroesClass(requirements.getHeroesPrimaryClass(), player.getUniqueId())) {
                 finishedRequirements.add(ChatColor.GREEN + Lang.get("reqHeroesPrimaryDisplay") + " " 
-                    + reqs.getHeroesPrimaryClass());
+                    + requirements.getHeroesPrimaryClass());
             } else {
                 unfinishedRequirements.add(ChatColor.GRAY + Lang.get("reqHeroesPrimaryDisplay") + " " 
-                        + reqs.getHeroesPrimaryClass());
+                        + requirements.getHeroesPrimaryClass());
             }
         }
-        if (reqs.getHeroesSecondaryClass() != null) {
+        if (requirements.getHeroesSecondaryClass() != null) {
             if (plugin.getDependencies()
-                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId())) {
+                    .testSecondaryHeroesClass(requirements.getHeroesSecondaryClass(), player.getUniqueId())) {
                 finishedRequirements.add(ChatColor.GREEN + Lang.get("reqHeroesSecondaryDisplay") + " " 
-                        + reqs.getHeroesSecondaryClass());
+                        + requirements.getHeroesSecondaryClass());
             } else {
                 finishedRequirements.add(ChatColor.GRAY + Lang.get("reqHeroesSecondaryDisplay") + " " 
-                        + reqs.getHeroesSecondaryClass());
+                        + requirements.getHeroesSecondaryClass());
             }
         }
         if (player.isOnline()) {
@@ -820,7 +798,7 @@ public class Quester implements Comparable<Quester> {
             fakeInv.setContents(getPlayer().getInventory().getContents().clone());
             
             int num = 0;
-            for (final ItemStack is : reqs.getItems()) {
+            for (final ItemStack is : requirements.getItems()) {
                 if (InventoryUtil.canRemoveItem(fakeInv, is)) {
                     InventoryUtil.removeItem(fakeInv, is);
                     num += is.getAmount();
@@ -833,7 +811,7 @@ public class Quester implements Comparable<Quester> {
                 num = 0;
             }
             
-            for (final String perm :reqs.getPermissions()) {
+            for (final String perm :requirements.getPermissions()) {
                 if (getPlayer().hasPermission(perm)) {
                     finishedRequirements.add(ChatColor.GREEN + Lang.get("permissionDisplay") + " " + perm);
                 } else {
@@ -841,25 +819,23 @@ public class Quester implements Comparable<Quester> {
                 }
                 
             }
-            for (final Entry<String, Map<String, Object>> m : reqs.getCustomRequirements().entrySet()) {
+            for (final Entry<String, Map<String, Object>> m : requirements.getCustomRequirements().entrySet()) {
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(m.getKey())) {
-                        if (cr != null) {
-                            if (cr.testRequirement(getPlayer(), m.getValue())) {
-                                finishedRequirements.add(ChatColor.GREEN + "" 
-                                        + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
-                            } else {
-                                unfinishedRequirements.add(ChatColor.GRAY + "" 
-                                        + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
-                            }
+                        if (cr.testRequirement(getPlayer(), m.getValue())) {
+                            finishedRequirements.add(ChatColor.GREEN + ""
+                                    + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
+                        } else {
+                            unfinishedRequirements.add(ChatColor.GRAY + ""
+                                    + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
                         }
                     }
                 }
             } 
         }
-        requirements.addAll(unfinishedRequirements);
-        requirements.addAll(finishedRequirements);
-        return requirements;
+        current.addAll(unfinishedRequirements);
+        current.addAll(finishedRequirements);
+        return current;
     }
     
     /**
@@ -897,7 +873,7 @@ public class Quester implements Comparable<Quester> {
         }
         final QuestData data = getQuestData(quest);
         final Stage stage = getCurrentStage(quest);
-        final LinkedList<String> objectives = new LinkedList<String>();
+        final LinkedList<String> objectives = new LinkedList<>();
         for (final ItemStack e : stage.blocksToBreak) {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
@@ -1376,7 +1352,7 @@ public class Quester implements Comparable<Quester> {
         if (quest == null || getCurrentStage(quest) == null) {
             return false;
         }
-        for (CustomObjective co : getCurrentStage(quest).customObjectives) {
+        for (final CustomObjective co : getCurrentStage(quest).customObjectives) {
             if (co.getName().equals(name)) {
                 return true;
             }
@@ -1385,40 +1361,39 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Mark block as broken if Quester has such an objective
+     * Marks block as broken if Quester has such an objective
      * 
      * @param quest The quest for which the block is being broken
-     * @param m The block being broken
+     * @param itemStack The block being broken
      */
     @SuppressWarnings("deprecation")
-    public void breakBlock(final Quest quest, final ItemStack m) {
-        final ItemStack temp = m;
-        temp.setAmount(0);
-        ItemStack broken = temp;
-        ItemStack toBreak = temp;
+    public void breakBlock(final Quest quest, final ItemStack itemStack) {
+        itemStack.setAmount(0);
+        ItemStack broken = itemStack;
+        ItemStack toBreak = itemStack;
         for (final ItemStack is : getQuestData(quest).blocksBroken) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         broken = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         broken = is;
                     }
-                } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
+                } else if (itemStack.getData() instanceof Crops && is.getData() instanceof Crops) {
                     if (is.getDurability() > 0) {
                         // Age is specified so check for durability
-                        if (m.getDurability() == is.getDurability()) {
+                        if (itemStack.getDurability() == is.getDurability()) {
                             broken = is;
                         }
                     } else {
                         // Age is unspecified so ignore durability
                         broken = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         broken = is;
                     }
                 } else {
@@ -1428,28 +1403,28 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final ItemStack is : getCurrentStage(quest).blocksToBreak) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toBreak = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toBreak = is;
                     }
-                } else if (m.getData() instanceof Crops && is.getData() instanceof Crops) {
+                } else if (itemStack.getData() instanceof Crops && is.getData() instanceof Crops) {
                     if (is.getDurability() > 0) {
                         // Age is specified so check for durability
-                        if (m.getDurability() == is.getDurability()) {
+                        if (itemStack.getDurability() == is.getDurability()) {
                             toBreak = is;
                         }
                     } else {
                         // Age is unspecified so ignore durability
                         toBreak = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toBreak = is;
                     }
                 } else {
@@ -1470,7 +1445,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksBroken.contains(broken)) {
                 getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken.indexOf(broken), newBroken);
                 if (broken.getAmount() == toBreak.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toBreak), null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, itemStack, toBreak), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalBroken = broken;
@@ -1478,7 +1453,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken
                                 .indexOf(finalBroken), newBroken);
-                        q.finishObjective(quest, new Objective(type, m, finalToBreak), null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, itemStack, finalToBreak), null, null, null, null, null,
                                 null, null);
                         return null;
                     });
@@ -1492,30 +1467,29 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Mark block as damaged if Quester has such an objective
+     * Marks block as damaged if Quester has such an objective
      * 
      * @param quest The quest for which the block is being damaged
-     * @param m The block being damaged
+     * @param itemStack The block being damaged
      */
     @SuppressWarnings("deprecation")
-    public void damageBlock(final Quest quest, final ItemStack m) {
-        final ItemStack temp = m;
-        temp.setAmount(0);
-        ItemStack damaged = temp;
-        ItemStack toDamage = temp;
+    public void damageBlock(final Quest quest, final ItemStack itemStack) {
+        itemStack.setAmount(0);
+        ItemStack damaged = itemStack;
+        ItemStack toDamage = itemStack;
         for (final ItemStack is : getQuestData(quest).blocksDamaged) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         damaged = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         damaged = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         damaged = is;
                     }
                 } else {
@@ -1525,18 +1499,18 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final ItemStack is : getCurrentStage(quest).blocksToDamage) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toDamage = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toDamage = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toDamage = is;
                     }
                 } else {
@@ -1558,7 +1532,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksDamaged.contains(damaged)) {
                 getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged.indexOf(damaged), newDamaged);
                 if (damaged.getAmount() == toDamage.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toDamage), null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, itemStack, toDamage), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalDamaged = damaged;
@@ -1566,7 +1540,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged
                                 .indexOf(finalDamaged), newDamaged);
-                        q.finishObjective(quest, new Objective(type, m, finalToDamage), null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, itemStack, finalToDamage), null, null, null, null, null,
                                 null, null);
                         return null;
                     });
@@ -1580,30 +1554,29 @@ public class Quester implements Comparable<Quester> {
     }
 
     /**
-     * Mark block as placed if Quester has such an objective
+     * Marks block as placed if Quester has such an objective
      * 
      * @param quest The quest for which the block is being placed
-     * @param m The block being placed
+     * @param itemStack The block being placed
      */
     @SuppressWarnings("deprecation")
-    public void placeBlock(final Quest quest, final ItemStack m) {
-        final ItemStack temp = m;
-        temp.setAmount(0);
-        ItemStack placed = temp;
-        ItemStack toPlace = temp;
+    public void placeBlock(final Quest quest, final ItemStack itemStack) {
+        itemStack.setAmount(0);
+        ItemStack placed = itemStack;
+        ItemStack toPlace = itemStack;
         for (final ItemStack is : getQuestData(quest).blocksPlaced) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         placed = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         placed = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         placed = is;
                     }
                 } else {
@@ -1613,18 +1586,18 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final ItemStack is : getCurrentStage(quest).blocksToPlace) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toPlace = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toPlace = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toPlace = is;
                     }
                 } else {
@@ -1645,7 +1618,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksPlaced.contains(placed)) {
                 getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced.indexOf(placed), newPlaced);
                 if (placed.getAmount() == toPlace.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toPlace), null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, itemStack, toPlace), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalPlaced = placed;
@@ -1653,7 +1626,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced
                                 .indexOf(finalPlaced), newPlaced);
-                        q.finishObjective(quest, new Objective(type, m, finalToPlace), null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, itemStack, finalToPlace), null, null, null, null, null,
                                 null, null);
                         return null;
                     });
@@ -1667,30 +1640,29 @@ public class Quester implements Comparable<Quester> {
     }
 
     /**
-     * Mark block as used if Quester has such an objective
+     * Marks block as used if Quester has such an objective
      * 
      * @param quest The quest for which the block is being used
-     * @param m The block being used
+     * @param itemStack The block being used
      */
     @SuppressWarnings("deprecation")
-    public void useBlock(final Quest quest, final ItemStack m) {
-        final ItemStack temp = m;
-        temp.setAmount(0);
-        ItemStack used = temp;
-        ItemStack toUse = temp;
+    public void useBlock(final Quest quest, final ItemStack itemStack) {
+        itemStack.setAmount(0);
+        ItemStack used = itemStack;
+        ItemStack toUse = itemStack;
         for (final ItemStack is : getQuestData(quest).blocksUsed) {
-            if (m.getType() == is.getType() ) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType() ) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         used = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         used = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         used = is;
                     }
                 } else {
@@ -1700,18 +1672,18 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final ItemStack is : getCurrentStage(quest).blocksToUse) {
-            if (m.getType() == is.getType() ) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType() ) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid, so check durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toUse = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toUse = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toUse = is;
                     }
                 } else {
@@ -1732,7 +1704,7 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksUsed.contains(used)) {
                 getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed.indexOf(used), newUsed);
                 if (used.getAmount() == toUse.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toUse), null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, itemStack, toUse), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalUsed = used;
@@ -1740,7 +1712,7 @@ public class Quester implements Comparable<Quester> {
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed
                                 .indexOf(finalUsed), newUsed);
-                        q.finishObjective(quest, new Objective(type, m, finalToUse), null, null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, itemStack, finalToUse), null, null, null, null, null, null,
                                 null);
                         return null;
                     });
@@ -1754,30 +1726,29 @@ public class Quester implements Comparable<Quester> {
     }
 
     /**
-     * Mark block as cut if Quester has such an objective
+     * Marks block as cut if Quester has such an objective
      * 
      * @param quest The quest for which the block is being cut
-     * @param m The block being cut
+     * @param itemStack The block being cut
      */
     @SuppressWarnings("deprecation")
-    public void cutBlock(final Quest quest, final ItemStack m) {
-        final ItemStack temp = m;
-        temp.setAmount(0);
-        ItemStack cut = temp;
-        ItemStack toCut = temp;
+    public void cutBlock(final Quest quest, final ItemStack itemStack) {
+        itemStack.setAmount(0);
+        ItemStack cut = itemStack;
+        ItemStack toCut = itemStack;
         for (final ItemStack is : getQuestData(quest).blocksCut) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         cut = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         cut = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         cut = is;
                     }
                 } else {
@@ -1787,18 +1758,18 @@ public class Quester implements Comparable<Quester> {
             }
         }
         for (final ItemStack is : getCurrentStage(quest).blocksToCut) {
-            if (m.getType() == is.getType()) {
-                if (m.getType().isSolid() && is.getType().isSolid()) {
+            if (itemStack.getType() == is.getType()) {
+                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toCut = is;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
                         toCut = is;
                     }
-                } else if (m.getType().name().equals("RED_ROSE")) {
+                } else if (itemStack.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (m.getDurability() == is.getDurability()) {
+                    if (itemStack.getDurability() == is.getDurability()) {
                         toCut = is;
                     }
                 } else {
@@ -1819,14 +1790,14 @@ public class Quester implements Comparable<Quester> {
             if (getQuestData(quest).blocksCut.contains(cut)) {
                 getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(cut), newCut);
                 if (cut.getAmount() == toCut.getAmount()) {
-                    finishObjective(quest, new Objective(type, m, toCut), null, null, null, null, null, null, null);
+                    finishObjective(quest, new Objective(type, itemStack, toCut), null, null, null, null, null, null, null);
                     
                     // Multiplayer
                     final ItemStack finalCut = cut;
                     final ItemStack finalToCut = toCut;
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(finalCut), newCut);
-                        q.finishObjective(quest, new Objective(type, m, finalToCut), null, null, null, null, null, null,
+                        q.finishObjective(quest, new Objective(type, itemStack, finalToCut), null, null, null, null, null, null,
                                 null);
                         return null;
                     });
@@ -1843,14 +1814,14 @@ public class Quester implements Comparable<Quester> {
      * Mark item as crafted if Quester has such an objective
      * 
      * @param quest The quest for which the item is being crafted
-     * @param i The item being crafted
+     * @param itemStack The item being crafted
      */
-    public void craftItem(final Quest quest, final ItemStack i) {
+    public void craftItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsCrafted) {
             currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
+            if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                 matches.add(currentIndex);
             }
         }
@@ -1858,7 +1829,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsCrafted);
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsCrafted);
             final ItemStack found = items.get(match);
             final int amount = found.getAmount();
             final int toCraft = getCurrentStage(quest).itemsToCraft.get(match).getAmount();
@@ -1868,27 +1839,25 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toCraft));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toCraft) {
                 if (newAmount >= toCraft) {
-                    final ItemStack newStack = found;
                     found.setAmount(toCraft);
-                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), found);
                     finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
 
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsCrafted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsCrafted.set(items.indexOf(found), found);
                 }
                 return;
             }
@@ -1903,14 +1872,14 @@ public class Quester implements Comparable<Quester> {
      * Mark item as smelted if Quester has such an objective
      * 
      * @param quest The quest for which the item is being smelted
-     * @param i The item being smelted
+     * @param itemStack The item being smelted
      */
-    public void smeltItem(final Quest quest, final ItemStack i) {
+    public void smeltItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsSmelted) {
             currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
+            if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                 matches.add(currentIndex);
             }
         }
@@ -1918,7 +1887,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsSmelted);
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsSmelted);
             final ItemStack found = items.get(match);
             final int amount = found.getAmount();
             final int toSmelt = getCurrentStage(quest).itemsToSmelt.get(match).getAmount();
@@ -1928,27 +1897,25 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toSmelt));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toSmelt) {
                 if (newAmount >= toSmelt) {
-                    final ItemStack newStack = found;
                     found.setAmount(toSmelt);
-                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), found);
                     finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
 
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsSmelted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsSmelted.set(items.indexOf(found), found);
                 }
                 return;
             }
@@ -1963,19 +1930,19 @@ public class Quester implements Comparable<Quester> {
      * Mark item as enchanted if Quester has such an objective
      * 
      * @param quest The quest for which the item is being enchanted
-     * @param i The item being enchanted
+     * @param itemStack The item being enchanted
      */
-    public void enchantItem(final Quest quest, final ItemStack i) {
+    public void enchantItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsEnchanted) {
             currentIndex++;
             if (!is.getEnchantments().isEmpty()) {
-                if (ItemUtil.compareItems(i, is, true) == 0) {
+                if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                     matches.add(currentIndex);
                 }
             } else {
-                if (ItemUtil.compareItems(i, is, true) == -4) {
+                if (ItemUtil.compareItems(itemStack, is, true) == -4) {
                     matches.add(currentIndex);
                 }
             }
@@ -1984,7 +1951,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsEnchanted);
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsEnchanted);
             final ItemStack found = items.get(match);
             final int amount = found.getAmount();
             final int toEnchant = getCurrentStage(quest).itemsToEnchant.get(match).getAmount();
@@ -1994,33 +1961,31 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toEnchant));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toEnchant) {
                 if (newAmount >= toEnchant) {
-                    final ItemStack newStack = found;
                     found.setAmount(toEnchant);
-                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
                     finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
 
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
                 }
                 return;
             }
 
             final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
-                    new Objective(type, i.getAmount() + amount, toEnchant));
+                    new Objective(type, itemStack.getAmount() + amount, toEnchant));
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
     }
@@ -2029,14 +1994,14 @@ public class Quester implements Comparable<Quester> {
      * Mark item as brewed if Quester has such an objective
      * 
      * @param quest The quest for which the item is being brewed
-     * @param i The item being brewed
+     * @param itemStack The item being brewed
      */
-    public void brewItem(final Quest quest, final ItemStack i) {
+    public void brewItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsBrewed) {
             currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
+            if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                 matches.add(currentIndex);
             }
         }
@@ -2044,7 +2009,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsBrewed);
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsBrewed);
             final ItemStack found = items.get(match);
             final int amount = found.getAmount();
             final int toBrew = getCurrentStage(quest).itemsToBrew.get(match).getAmount();
@@ -2054,27 +2019,25 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toBrew));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toBrew) {
                 if (newAmount >= toBrew) {
-                    final ItemStack newStack = found;
                     found.setAmount(toBrew);
-                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), found);
                     finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
 
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsBrewed.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsBrewed.set(items.indexOf(found), found);
                 }
                 return;
             }
@@ -2089,14 +2052,14 @@ public class Quester implements Comparable<Quester> {
      * Mark item as consumed if Quester has such an objective
      * 
      * @param quest The quest for which the item is being consumed
-     * @param i The item being consumed
+     * @param itemStack The item being consumed
      */
-    public void consumeItem(final Quest quest, final ItemStack i) {
+    public void consumeItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsConsumed) {
             currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
+            if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                 matches.add(currentIndex);
             }
         }
@@ -2104,7 +2067,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsConsumed);
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsConsumed);
             final ItemStack found = items.get(match);
             final int amount = found.getAmount();
             final int toConsume = getCurrentStage(quest).itemsToConsume.get(match).getAmount();
@@ -2114,27 +2077,25 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toConsume));
             plugin.getServer().getPluginManager().callEvent(preEvent);
             
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toConsume) {
                 if (newAmount >= toConsume) {
-                    final ItemStack newStack = found;
                     found.setAmount(toConsume);
-                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), found);
                     finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
                     
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsConsumed.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsConsumed.set(items.indexOf(found), found);
                 }
                 return;
             }
@@ -2149,20 +2110,20 @@ public class Quester implements Comparable<Quester> {
      * Mark item as delivered to a NPC if Quester has such an objective
      * 
      * @param quest The quest for which the item is being delivered
-     * @param n The NPC being delivered to
-     * @param i The item being delivered
+     * @param npc The NPC being delivered to
+     * @param itemStack The item being delivered
      */
     @SuppressWarnings("deprecation")
-    public void deliverToNPC(final Quest quest, final NPC n, final ItemStack i) {
-        if (n == null) {
+    public void deliverToNPC(final Quest quest, final NPC npc, final ItemStack itemStack) {
+        if (npc == null) {
             return;
         }
         
         int currentIndex = -1;
-        final LinkedList<Integer> matches = new LinkedList<Integer>();
+        final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsDelivered) {
             currentIndex++;
-            if (ItemUtil.compareItems(i, is, true) == 0) {
+            if (ItemUtil.compareItems(itemStack, is, true) == 0) {
                 matches.add(currentIndex);
             }
         }
@@ -2171,8 +2132,8 @@ public class Quester implements Comparable<Quester> {
         }
         final Player player = getPlayer();
         for (final Integer match : matches) {
-            final LinkedList<ItemStack> items = new LinkedList<ItemStack>(getQuestData(quest).itemsDelivered);
-            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(n.getId())) {
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsDelivered);
+            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc.getId())) {
                 continue;
             }
             final ItemStack found = items.get(match);
@@ -2184,22 +2145,21 @@ public class Quester implements Comparable<Quester> {
                     new Objective(type, amount, toDeliver));
             plugin.getServer().getPluginManager().callEvent(preEvent);
             
-            final int newAmount = i.getAmount() + amount;
-            final Material m = i.getType();
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
             if (amount < toDeliver) {
-                final int index = player.getInventory().first(i);
+                final int index = player.getInventory().first(itemStack);
                 if (index == -1) {
                     // Already delivered in previous loop
                     return;
                 }
                 if (newAmount >= toDeliver) {
-                    final ItemStack newStack = found;
                     found.setAmount(toDeliver);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
-                    if ((i.getAmount() + amount) >= toDeliver) {
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
+                    if ((itemStack.getAmount() + amount) >= toDeliver) {
                         // Take away remaining amount to be delivered
-                        final ItemStack clone = i.clone();
-                        clone.setAmount(i.getAmount() - (toDeliver - amount));
+                        final ItemStack clone = itemStack.clone();
+                        clone.setAmount(itemStack.getAmount() - (toDeliver - amount));
                         player.getInventory().setItem(index, clone);
                     } else {
                         player.getInventory().setItem(index, null);
@@ -2210,15 +2170,14 @@ public class Quester implements Comparable<Quester> {
                     
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
-                    final ItemStack newStack = found;
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), newStack);
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
                     player.getInventory().setItem(index, null);
                     player.updateInventory();
                     final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
@@ -2239,14 +2198,14 @@ public class Quester implements Comparable<Quester> {
      * Mark NPC as interacted with if Quester has such an objective
      * 
      * @param quest The quest for which the NPC is being interacted with
-     * @param n The NPC being interacted with
+     * @param npc The NPC being interacted with
      */
-    public void interactWithNPC(final Quest quest, final NPC n) {
-        if (!getCurrentStage(quest).getCitizensToInteract().contains(n.getId())) {
+    public void interactWithNPC(final Quest quest, final NPC npc) {
+        if (!getCurrentStage(quest).getCitizensToInteract().contains(npc.getId())) {
             return;
         }
 
-        final int index = getCurrentStage(quest).getCitizensToInteract().indexOf(n.getId());
+        final int index = getCurrentStage(quest).getCitizensToInteract().indexOf(npc.getId());
         final boolean npcsInteracted = getQuestData(quest).citizensInteracted.get(index);
 
         final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
@@ -2257,13 +2216,13 @@ public class Quester implements Comparable<Quester> {
         if (!npcsInteracted) {
             getQuestData(quest).citizensInteracted.set(index, true);
             finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), new ItemStack(Material.AIR, 1)), 
-                    null, null, n, null, null, null, null);
+                    null, null, npc, null, null, null, null);
             
             // Multiplayer
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 q.getQuestData(quest).citizensInteracted.set(index, true);
                 q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, 1)), null, null, n, null, null, null, null);
+                        new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
                 return null;
             });
             
@@ -2277,14 +2236,14 @@ public class Quester implements Comparable<Quester> {
      * Mark NPC as killed if the Quester has such an objective
      * 
      * @param quest The quest for which the NPC is being killed
-     * @param n The NPC being killed
+     * @param npc The NPC being killed
      */
-    public void killNPC(final Quest quest, final NPC n) {
-        if (!getQuestData(quest).citizensIdsKilled.contains(n.getId())) {
+    public void killNPC(final Quest quest, final NPC npc) {
+        if (!getQuestData(quest).citizensIdsKilled.contains(npc.getId())) {
             return;
         }
         
-        final int index = getQuestData(quest).citizensIdsKilled.indexOf(n.getId());
+        final int index = getQuestData(quest).citizensIdsKilled.indexOf(npc.getId());
         final int npcsKilled = getQuestData(quest).citizensNumKilled.get(index);
         final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
         
@@ -2298,14 +2257,14 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).citizensNumKilled.set(index, newNpcsKilled);
             if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                        new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
+                        new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).citizensNumKilled.set(index, getQuestData(quest).citizensNumKilled
                             .get(index));
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1), 
-                            new ItemStack(Material.AIR, npcsToKill)), null, null, n, null, null, null, null);
+                            new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
                     return null;
                 });
             }
@@ -2317,7 +2276,7 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Mark cow as milked if Quester has such an objective
+     * Marks cow as milked if Quester has such an objective
      * 
      * @param quest The quest for which the fish is being caught
      */
@@ -2366,7 +2325,7 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Mark fish as caught if Quester has such an objective
+     * Marks fish as caught if Quester has such an objective
      * 
      * @param quest The quest for which the fish is being caught
      */
@@ -2419,11 +2378,11 @@ public class Quester implements Comparable<Quester> {
      * 
      * @param quest The quest for which the mob is being killed
      * @param killedLocation The optional location to kill at
-     * @param e The mob to be killed
+     * @param entityType The mob to be killed
      */
-    public void killMob(final Quest quest, final Location killedLocation, final EntityType e) {
+    public void killMob(final Quest quest, final Location killedLocation, final EntityType entityType) {
         final QuestData questData = getQuestData(quest);
-        if (e == null) {
+        if (entityType == null) {
             return;
         }
         final Stage currentStage = getCurrentStage(quest);
@@ -2431,7 +2390,7 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         
-        final int index = questData.mobTypesKilled.indexOf(e);
+        final int index = questData.mobTypesKilled.indexOf(entityType);
         if (index == -1) {
             return;
         }
@@ -2470,13 +2429,13 @@ public class Quester implements Comparable<Quester> {
             questData.mobNumKilled.set(index, newMobsKilled);
             if (newMobsKilled >= mobsToKill) {
                 finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, mobsToKill)), e, null, null, null, null, null, null);
+                        new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
                 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, currentStage, (final Quester q) -> {
                     q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
                     q.finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, mobsToKill)), e, null, null, null, null, null, null);
+                            new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
                     return null;
                 });
             }
@@ -2549,13 +2508,13 @@ public class Quester implements Comparable<Quester> {
         }
 
         // TODO redo this
-        int locsReached = 0;
-        for (Boolean b : getQuestData(quest).locationsReached) {
+        int locationsReached = 0;
+        for (final Boolean b : getQuestData(quest).locationsReached) {
             if (b) {
-                locsReached++;
+                locationsReached++;
             }
         }
-        final int locsToReach = getCurrentStage(quest).locationsToReach.size();
+        final int locationsToReach = getCurrentStage(quest).locationsToReach.size();
 
         int index = 0;
         try {
@@ -2574,7 +2533,7 @@ public class Quester implements Comparable<Quester> {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                         final QuesterPreUpdateObjectiveEvent preEvent 
                                 = new QuesterPreUpdateObjectiveEvent(this, quest, 
-                                new Objective(type, locsReached, locsToReach));
+                                new Objective(type, locationsReached, locationsToReach));
                         plugin.getServer().getPluginManager().callEvent(preEvent);
                         
                         getQuestData(quest).locationsReached.set(index, true);
@@ -2594,7 +2553,7 @@ public class Quester implements Comparable<Quester> {
                         
                         final QuesterPostUpdateObjectiveEvent postEvent 
                                 = new QuesterPostUpdateObjectiveEvent(this, quest, 
-                                new Objective(type, locsReached + 1, locsToReach));
+                                new Objective(type, locationsReached + 1, locationsToReach));
                         plugin.getServer().getPluginManager().callEvent(postEvent);
                         
                         break;
@@ -2687,7 +2646,7 @@ public class Quester implements Comparable<Quester> {
         }
 
         final int sheepToShear = getCurrentStage(quest).sheepNumToShear.get(index);
-        final int sheepSheared = getQuestData(quest).sheepSheared.get(index);
+        final int sheepSheared = questData.sheepSheared.get(index);
         
         final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
@@ -2735,7 +2694,7 @@ public class Quester implements Comparable<Quester> {
                     final String display = getCurrentStage(quest).passwordDisplays.get(index);
                     getQuestData(quest).passwordsSaid.set(index, true);
 
-                    int finalIndex = index;
+                    final int finalIndex = index;
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         finishObjective(quest, new Objective(type, new ItemStack(Material.AIR, 1),
                                 new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
@@ -2810,7 +2769,7 @@ public class Quester implements Comparable<Quester> {
                 // Legacy
                 message += " <item>" + ChatColor.GREEN + ": " + goal.getAmount() + "/" + goal.getAmount();
             }
-            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta() 
+            if (plugin.getSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(), null)) {
                     sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
@@ -3124,14 +3083,12 @@ public class Quester implements Comparable<Quester> {
                     break;
                 }
             }
-            final List<Entry<String, Object>> sub = new LinkedList<>();
-            sub.addAll(getCurrentStage(quest).customObjectiveData.subList(index, getCurrentStage(quest)
+            final List<Entry<String, Object>> sub = new LinkedList<>(getCurrentStage(quest).customObjectiveData.subList(index, getCurrentStage(quest)
                     .customObjectiveData.size()));
-            final List<Entry<String, Object>> end = new LinkedList<Entry<String, Object>>(sub);
-            sub.clear(); // since sub is backed by end, this removes all sub-list items from end
-            for (final Entry<String, Object> datamap : end) {
-                message = message.replace("%" + (String.valueOf(datamap.getKey())) + "%", String.valueOf(datamap
-                        .getValue()));
+            final List<Entry<String, Object>> end = new LinkedList<>(sub);
+            sub.clear(); // Since sub is backed by end, this removes all sub-list items from end
+            for (final Entry<String, Object> dataMap : end) {
+                message = message.replace("%" + (dataMap.getKey()) + "%", String.valueOf(dataMap.getValue()));
             }
             
             if (co.canShowCount()) {
@@ -3225,9 +3182,9 @@ public class Quester implements Comparable<Quester> {
             return;
         }
         if (!quest.getStage(stage).blocksToBreak.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).blocksToBreak) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                if (data.blocksBroken.contains(i)) {
+            for (final ItemStack toBreak : quest.getStage(stage).blocksToBreak) {
+                final ItemStack temp = new ItemStack(toBreak.getType(), 0, toBreak.getDurability());
+                if (data.blocksBroken.contains(toBreak)) {
                     data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
                 } else {
                     data.blocksBroken.add(temp);
@@ -3235,9 +3192,9 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).blocksToDamage.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).blocksToDamage) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                if (data.blocksDamaged.contains(i)) {
+            for (final ItemStack toDamage : quest.getStage(stage).blocksToDamage) {
+                final ItemStack temp = new ItemStack(toDamage.getType(), 0, toDamage.getDurability());
+                if (data.blocksDamaged.contains(toDamage)) {
                     data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
                 } else {
                     data.blocksDamaged.add(temp);
@@ -3245,9 +3202,9 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).blocksToPlace.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).blocksToPlace) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                if (data.blocksPlaced.contains(i)) {
+            for (final ItemStack toPlace : quest.getStage(stage).blocksToPlace) {
+                final ItemStack temp = new ItemStack(toPlace.getType(), 0, toPlace.getDurability());
+                if (data.blocksPlaced.contains(toPlace)) {
                     data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
                 } else {
                     data.blocksPlaced.add(temp);
@@ -3255,9 +3212,9 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).blocksToUse.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).blocksToUse) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                if (data.blocksUsed.contains(i)) {
+            for (final ItemStack toUse : quest.getStage(stage).blocksToUse) {
+                final ItemStack temp = new ItemStack(toUse.getType(), 0, toUse.getDurability());
+                if (data.blocksUsed.contains(toUse)) {
                     data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
                 } else {
                     data.blocksUsed.add(temp);
@@ -3265,9 +3222,9 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).blocksToCut.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).blocksToCut) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                if (data.blocksCut.contains(i)) {
+            for (final ItemStack toCut : quest.getStage(stage).blocksToCut) {
+                final ItemStack temp = new ItemStack(toCut.getType(), 0, toCut.getDurability());
+                if (data.blocksCut.contains(toCut)) {
                     data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
                 } else {
                     data.blocksCut.add(temp);
@@ -3275,67 +3232,67 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).itemsToCraft.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToCraft) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toCraft : quest.getStage(stage).itemsToCraft) {
+                final ItemStack temp = new ItemStack(toCraft.getType(), 0, toCraft.getDurability());
+                temp.addUnsafeEnchantments(toCraft.getEnchantments());
+                temp.setItemMeta(toCraft.getItemMeta());
                 data.itemsCrafted.add(temp);
             }
         }
         if (!quest.getStage(stage).itemsToSmelt.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToSmelt) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toSmelt : quest.getStage(stage).itemsToSmelt) {
+                final ItemStack temp = new ItemStack(toSmelt.getType(), 0, toSmelt.getDurability());
+                temp.addUnsafeEnchantments(toSmelt.getEnchantments());
+                temp.setItemMeta(toSmelt.getItemMeta());
                 data.itemsSmelted.add(temp);
             }
         }
         if (!quest.getStage(stage).itemsToEnchant.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToEnchant) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toEnchant : quest.getStage(stage).itemsToEnchant) {
+                final ItemStack temp = new ItemStack(toEnchant.getType(), 0, toEnchant.getDurability());
+                temp.addUnsafeEnchantments(toEnchant.getEnchantments());
+                temp.setItemMeta(toEnchant.getItemMeta());
                 data.itemsEnchanted.add(temp);
             }
         }
         if (!quest.getStage(stage).itemsToBrew.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToBrew) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toBrew : quest.getStage(stage).itemsToBrew) {
+                final ItemStack temp = new ItemStack(toBrew.getType(), 0, toBrew.getDurability());
+                temp.addUnsafeEnchantments(toBrew.getEnchantments());
+                temp.setItemMeta(toBrew.getItemMeta());
                 data.itemsBrewed.add(temp);
             }
         }
         if (!quest.getStage(stage).itemsToConsume.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToConsume) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toConsume : quest.getStage(stage).itemsToConsume) {
+                final ItemStack temp = new ItemStack(toConsume.getType(), 0, toConsume.getDurability());
+                temp.addUnsafeEnchantments(toConsume.getEnchantments());
+                temp.setItemMeta(toConsume.getItemMeta());
                 data.itemsConsumed.add(temp);
             }
         }
         if (!quest.getStage(stage).itemsToDeliver.isEmpty()) {
-            for (final ItemStack i : quest.getStage(stage).itemsToDeliver) {
-                final ItemStack temp = new ItemStack(i.getType(), 0, i.getDurability());
-                temp.addUnsafeEnchantments(i.getEnchantments());
-                temp.setItemMeta(i.getItemMeta());
+            for (final ItemStack toDeliver : quest.getStage(stage).itemsToDeliver) {
+                final ItemStack temp = new ItemStack(toDeliver.getType(), 0, toDeliver.getDurability());
+                temp.addUnsafeEnchantments(toDeliver.getEnchantments());
+                temp.setItemMeta(toDeliver.getItemMeta());
                 data.itemsDelivered.add(temp);
             }
         }
         if (!quest.getStage(stage).citizensToInteract.isEmpty()) {
-            for (final Integer n : quest.getStage(stage).citizensToInteract) {
+            for (final Integer ignored : quest.getStage(stage).citizensToInteract) {
                 data.citizensInteracted.add(false);
             }
         }
         if (!quest.getStage(stage).citizensToKill.isEmpty()) {
-            for (final Integer n : quest.getStage(stage).citizensToKill) {
-                data.citizensIdsKilled.add(n);
+            for (final Integer toKill : quest.getStage(stage).citizensToKill) {
+                data.citizensIdsKilled.add(toKill);
                 data.citizensNumKilled.add(0);
             }
         }
         if (!quest.getStage(stage).mobsToKill.isEmpty()) {
-            for (final EntityType e : quest.getStage(stage).mobsToKill) {
-                data.mobTypesKilled.add(e);
+            for (final EntityType toKill : quest.getStage(stage).mobsToKill) {
+                data.mobTypesKilled.add(toKill);
                 data.mobNumKilled.add(0);
             }
         }
@@ -3388,14 +3345,14 @@ public class Quester implements Comparable<Quester> {
     }
     
     /**
-     * Get the difference between Sytem.currentTimeMillis() and the last completed time for a quest
+     * Get the difference between System.currentTimeMillis() and the last completed time for a quest
      * 
      * @param quest The quest to get the last completed time of
      * @return Difference between now and then in milliseconds
      */
     public long getCompletionDifference(final Quest quest) {
         final long currentTime = System.currentTimeMillis();
-        long lastTime;
+        final long lastTime;
         if (!completedTimes.containsKey(quest)) {
             lastTime = System.currentTimeMillis();
             completedTimes.put(quest, System.currentTimeMillis());
@@ -3427,12 +3384,11 @@ public class Quester implements Comparable<Quester> {
         return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
     }
 
-    @SuppressWarnings("deprecation")
     public FileConfiguration getBaseData() {
         final FileConfiguration data = new YamlConfiguration();
         if (!currentQuests.isEmpty()) {
-            final ArrayList<String> questIds = new ArrayList<String>();
-            final ArrayList<Integer> questStages = new ArrayList<Integer>();
+            final ArrayList<String> questIds = new ArrayList<>();
+            final ArrayList<Integer> questStages = new ArrayList<>();
             for (final Quest quest : currentQuests.keySet()) {
                 questIds.add(quest.getId());
                 questStages.add(currentQuests.get(quest));
@@ -3452,77 +3408,77 @@ public class Quester implements Comparable<Quester> {
                     continue;
                 }
                 if (!questData.blocksBroken.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.blocksBroken) {
                         blockAmounts.add(m.getAmount());
                     }
                     questSec.set("blocks-broken-amounts", blockAmounts);
                 }
                 if (!questData.blocksDamaged.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.blocksDamaged) {
                         blockAmounts.add(m.getAmount());
                     }
                     questSec.set("blocks-damaged-amounts", blockAmounts);
                 }
                 if (!questData.blocksPlaced.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.blocksPlaced) {
                         blockAmounts.add(m.getAmount());
                     }
                     questSec.set("blocks-placed-amounts", blockAmounts);
                 }
                 if (!questData.blocksUsed.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.blocksUsed) {
                         blockAmounts.add(m.getAmount());
                     }
                     questSec.set("blocks-used-amounts", blockAmounts);
                 }
                 if (!questData.blocksCut.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.blocksCut) {
                         blockAmounts.add(m.getAmount());
                     }
                     questSec.set("blocks-cut-amounts", blockAmounts);
                 }
                 if (!questData.itemsCrafted.isEmpty()) {
-                    final LinkedList<Integer> craftAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> craftAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsCrafted) {
                         craftAmounts.add(m.getAmount());
                     }
                     questSec.set("item-craft-amounts", craftAmounts);
                 }
                 if (!questData.itemsSmelted.isEmpty()) {
-                    final LinkedList<Integer> smeltAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> smeltAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsSmelted) {
                         smeltAmounts.add(m.getAmount());
                     }
                     questSec.set("item-smelt-amounts", smeltAmounts);
                 }
                 if (!questData.itemsEnchanted.isEmpty()) {
-                    final LinkedList<Integer> enchantAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> enchantAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsEnchanted) {
                         enchantAmounts.add(m.getAmount());
                     }
                     questSec.set("item-enchant-amounts", enchantAmounts);
                 }
                 if (!questData.itemsBrewed.isEmpty()) {
-                    final LinkedList<Integer> brewAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> brewAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsBrewed) {
                         brewAmounts.add(m.getAmount());
                     }
                     questSec.set("item-brew-amounts", brewAmounts);
                 }
                 if (!questData.itemsConsumed.isEmpty()) {
-                    final LinkedList<Integer> consumeAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> consumeAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsConsumed) {
                         consumeAmounts.add(m.getAmount());
                     }
                     questSec.set("item-consume-amounts", consumeAmounts);
                 }
                 if (!questData.itemsDelivered.isEmpty()) {
-                    final LinkedList<Integer> deliveryAmounts = new LinkedList<Integer>();
+                    final LinkedList<Integer> deliveryAmounts = new LinkedList<>();
                     for (final ItemStack m : questData.itemsDelivered) {
                         deliveryAmounts.add(m.getAmount());
                     }
@@ -3535,7 +3491,7 @@ public class Quester implements Comparable<Quester> {
                     questSec.set("citizen-amounts-killed", questData.citizensNumKilled);
                 }
                 if (!questData.mobTypesKilled.isEmpty()) {
-                    final LinkedList<String> mobNames = new LinkedList<String>();
+                    final LinkedList<String> mobNames = new LinkedList<>();
                     for (final EntityType e : questData.mobTypesKilled) {
                         mobNames.add(MiscUtil.getPrettyMobName(e));
                     }
@@ -3581,16 +3537,15 @@ public class Quester implements Comparable<Quester> {
         if (completedQuests.isEmpty()) {
             data.set("completed-Quests", "none");
         } else {
-            //final List<String> questIds = completedQuests.stream().map(Quest::getId).collect(Collectors.toList());
-            final List<String> questIds = new LinkedList<String>();
+            final List<String> questIds = new LinkedList<>();
             for (final Quest quest : completedQuests) {
                 questIds.add(quest.getId());
             }
             data.set("completed-Quests", questIds);
         }
         if (!completedTimes.isEmpty()) {
-            final List<String> questIds = new LinkedList<String>();
-            final List<Long> questTimes = new LinkedList<Long>();
+            final List<String> questIds = new LinkedList<>();
+            final List<Long> questTimes = new LinkedList<>();
             for (final Entry<Quest, Long> entry : completedTimes.entrySet()) {
                 questIds.add(entry.getKey().getId());
                 questTimes.add(entry.getValue());
@@ -3599,14 +3554,14 @@ public class Quester implements Comparable<Quester> {
             data.set("completedQuestTimes", questTimes);
         }
         if (!amountsCompleted.isEmpty()) {
-            final List<String> questIds = new LinkedList<String>();
-            final List<Integer> questAmts = new LinkedList<Integer>();
+            final List<String> questIds = new LinkedList<>();
+            final List<Integer> questAmounts = new LinkedList<>();
             for (final Entry<Quest, Integer> entry : amountsCompleted.entrySet()) {
                 questIds.add(entry.getKey().getId());
-                questAmts.add(entry.getValue());
+                questAmounts.add(entry.getValue());
             }
             data.set("amountsCompletedQuests", questIds);
-            data.set("amountsCompleted", questAmts);
+            data.set("amountsCompleted", questAmounts);
         }
         // #getPlayer is faster
         OfflinePlayer representedPlayer = getPlayer();
@@ -3643,10 +3598,7 @@ public class Quester implements Comparable<Quester> {
      * @return false if empty
      */
     public boolean hasBaseData() {
-        if (!currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty()) {
-            return true;
-        }
-        return false;
+        return !currentQuests.isEmpty() || !questData.isEmpty() || !completedQuests.isEmpty();
     }
 
     /**
@@ -3662,8 +3614,10 @@ public class Quester implements Comparable<Quester> {
                     (long) (getCurrentStage(quest).delay * 0.02));
             if (getCurrentStage(quest).delayMessage != null) {
                 final Player p = plugin.getServer().getPlayer(id);
-                p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks((getCurrentStage(quest)
-                        .delayMessage), quest, p));
+                if (p != null) {
+                    p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks((getCurrentStage(quest)
+                            .delayMessage), quest, p));
+                }
             }
         }
         getQuestData(quest).setDelayStartTime(System.currentTimeMillis());
@@ -3681,7 +3635,6 @@ public class Quester implements Comparable<Quester> {
             getQuestData(quest).setDelayTimeLeft(getCurrentStage(quest).delay - (System.currentTimeMillis() 
                     - getQuestData(quest).getDelayStartTime()));
         }
-        //getQuestData(quest).setDelayOver(false);
     }
     
     /**
@@ -3757,27 +3710,29 @@ public class Quester implements Comparable<Quester> {
                 }
                 final ItemStack display = quest.guiDisplay;
                 final ItemMeta meta = display.getItemMeta();
-                if (completedQuests.contains(quest)) {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName()
-                            + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
-                } else {
-                    meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName(), npc));
-                }
-                if (!meta.hasLore()) {
-                    LinkedList<String> lines = new LinkedList<String>();
-                    String desc = quest.description;
-                    if (plugin.getDependencies().getPlaceholderApi() != null) {
-                        desc = PlaceholderAPI.setPlaceholders(player, desc);
-                    }
-                    if (desc.equals(ChatColor.stripColor(desc))) {
-                        lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
+                if (meta != null) {
+                    if (completedQuests.contains(quest)) {
+                        meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName()
+                                + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
                     } else {
-                        lines = MiscUtil.makeLines(desc, " ", 40, null);
+                        meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName(), npc));
                     }
-                    meta.setLore(lines);
+                    if (!meta.hasLore()) {
+                        final LinkedList<String> lines;
+                        String desc = quest.description;
+                        if (plugin.getDependencies().getPlaceholderApi() != null) {
+                            desc = PlaceholderAPI.setPlaceholders(player, desc);
+                        }
+                        if (desc.equals(ChatColor.stripColor(desc))) {
+                            lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
+                        } else {
+                            lines = MiscUtil.makeLines(desc, " ", 40, null);
+                        }
+                        meta.setLore(lines);
+                    }
+                    meta.addItemFlags(ItemFlag.values());
+                    display.setItemMeta(meta);
                 }
-                meta.addItemFlags(ItemFlag.values());
-                display.setItemMeta(meta);
                 inv.setItem(i, display);
                 i++;
             }
@@ -3795,9 +3750,7 @@ public class Quester implements Comparable<Quester> {
     public void hardQuit(final Quest quest) {
         try {
             currentQuests.remove(quest);
-            if (questData.containsKey(quest)) {
-                questData.remove(quest);
-            }
+            questData.remove(quest);
             if (!timers.isEmpty()) {
                 for (final Map.Entry<Integer, Quest> entry : timers.entrySet()) {
                     if (entry.getValue().getName().equals(quest.getName())) {
@@ -3876,9 +3829,7 @@ public class Quester implements Comparable<Quester> {
     public boolean canUseCompass() {
         if (getPlayer() != null) {
             if (!getPlayer().hasPermission("worldedit.navigation.jumpto")) {
-                if (getPlayer().hasPermission("quests.compass")) {
-                    return true;
-                }
+                return getPlayer().hasPermission("quests.compass");
             }
         }
         return false;
@@ -3903,9 +3854,7 @@ public class Quester implements Comparable<Quester> {
             defaultLocation = player.getWorld().getSpawnLocation();
         }
         compassTargetQuestId = null;
-        if (defaultLocation != null) {
-            player.setCompassTarget(defaultLocation);
-        }
+        player.setCompassTarget(defaultLocation);
     }
 
     /**
@@ -3932,37 +3881,34 @@ public class Quester implements Comparable<Quester> {
         if (!canUseCompass()) {
             return;
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                final LinkedList<String> list = currentQuests.keySet().stream()
-                        .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
-                        .collect(Collectors.toCollection(LinkedList::new));
-                int index = 0;
-                if (compassTargetQuestId != null) {
-                    if (!list.contains(compassTargetQuestId) && notify) {
-                        return;
-                    }
-                    index = list.indexOf(compassTargetQuestId) + 1;
-                    if (index >= list.size()) {
-                        index = 0;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            final LinkedList<String> list = currentQuests.keySet().stream()
+                    .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
+                    .collect(Collectors.toCollection(LinkedList::new));
+            int index = 0;
+            if (compassTargetQuestId != null) {
+                if (!list.contains(compassTargetQuestId) && notify) {
+                    return;
+                }
+                index = list.indexOf(compassTargetQuestId) + 1;
+                if (index >= list.size()) {
+                    index = 0;
+                }
+            }
+            if (list.size() > 0) {
+                final Quest quest = plugin.getQuestById(list.get(index));
+                compassTargetQuestId = quest.getId();
+                final Stage stage = getCurrentStage(quest);
+                if (stage != null) {
+                    quest.updateCompass(Quester.this, stage);
+                    if (notify) {
+                        sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
+                                .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
                     }
                 }
-                if (list.size() > 0) {
-                    final Quest quest = plugin.getQuestById(list.get(index));
-                    compassTargetQuestId = quest.getId();
-                    final Stage stage = getCurrentStage(quest);
-                    if (stage != null) {
-                        quest.updateCompass(Quester.this, stage);
-                        if (notify) {
-                            sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
-                                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
-                        }
-                    }
-                } else {
-                    sendMessage(ChatColor.RED + Lang.get(getPlayer(), "journalNoQuests")
-                            .replace("<journal>", Lang.get(getPlayer(), "journalTitle")));
-                }
+            } else {
+                sendMessage(ChatColor.RED + Lang.get(getPlayer(), "journalNoQuests")
+                        .replace("<journal>", Lang.get(getPlayer(), "journalTitle")));
             }
         });
     }
@@ -4013,7 +3959,7 @@ public class Quester implements Comparable<Quester> {
      */
     public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
             final BiFunction<Quester, Quest, Void> fun) {
-        final Set<String> appliedQuestIDs = new HashSet<String>();
+        final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
             try {
                 if (quest.getOptions().getShareProgressLevel() == 1) {
@@ -4059,7 +4005,7 @@ public class Quester implements Comparable<Quester> {
      */
     public Set<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
             final Function<Quester, Void> fun) {
-        final Set<String> appliedQuestIDs = new HashSet<String>();
+        final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest.getOptions().getShareProgressLevel() == 2) {
             final List<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
@@ -4089,38 +4035,39 @@ public class Quester implements Comparable<Quester> {
         if (quest == null) {
             return null;
         }
-        final List<Quester> mq = new LinkedList<Quester>();
+        final List<Quester> mq = new LinkedList<>();
         if (plugin.getDependencies().getPartyProvider() != null) {
             final PartyProvider partyProvider = plugin.getDependencies().getPartyProvider();
-            if (partyProvider != null && quest.getOptions().canUsePartiesPlugin()
-                    || quest.getOptions().canUseDungeonsXLPlugin()) {
-                if (getUUID() != null && partyProvider.getPartyId(getUUID()) != null) {
-                    String partyId = partyProvider.getPartyId(getUUID());
-                    final double distanceSquared = quest.getOptions().getShareDistance()
-                            * quest.getOptions().getShareDistance();
-                    final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
-                    if (offlinePlayers) {
-                        for (final UUID id : partyProvider.getMembers(partyId)) {
-                            if (!id.equals(getUUID())) {
-                                mq.add(plugin.getQuester(id));
-                            }
-                        }
-                    } else {
-                        for (final UUID id : partyProvider.getOnlineMembers(partyId)) {
-                            if (!id.equals(getUUID())) {
-                                if (distanceSquared > 0) {
-                                    final Player player = Bukkit.getPlayer(id);
-                                    if (player != null && distanceSquared >= getPlayer().getLocation()
-                                            .distanceSquared(player.getLocation())) {
-                                        mq.add(plugin.getQuester(id));
-                                    }
-                                } else {
+            if (partyProvider != null) {
+                if (quest.getOptions().canUsePartiesPlugin() || quest.getOptions().canUseDungeonsXLPlugin()) {
+                    if (getUUID() != null && partyProvider.getPartyId(getUUID()) != null) {
+                        final String partyId = partyProvider.getPartyId(getUUID());
+                        final double distanceSquared = quest.getOptions().getShareDistance()
+                                * quest.getOptions().getShareDistance();
+                        final boolean offlinePlayers = quest.getOptions().canHandleOfflinePlayers();
+                        if (offlinePlayers) {
+                            for (final UUID id : partyProvider.getMembers(partyId)) {
+                                if (!id.equals(getUUID())) {
                                     mq.add(plugin.getQuester(id));
                                 }
                             }
+                        } else {
+                            for (final UUID id : partyProvider.getOnlineMembers(partyId)) {
+                                if (!id.equals(getUUID())) {
+                                    if (distanceSquared > 0) {
+                                        final Player player = Bukkit.getPlayer(id);
+                                        if (player != null && distanceSquared >= getPlayer().getLocation()
+                                                .distanceSquared(player.getLocation())) {
+                                            mq.add(plugin.getQuester(id));
+                                        }
+                                    } else {
+                                        mq.add(plugin.getQuester(id));
+                                    }
+                                }
+                            }
                         }
+                        return mq;
                     }
-                    return mq;
                 }
             }
         } else if (plugin.getDependencies().getPartiesApi() != null) {
@@ -4153,7 +4100,6 @@ public class Quester implements Comparable<Quester> {
                                 }
                             }
                         }
-
                         return mq;
                     }
                 }
@@ -4179,8 +4125,8 @@ public class Quester implements Comparable<Quester> {
             return false;
         }
         if (canAcceptOffer(quest, giveReason)) {
-            if (getPlayer() instanceof Conversable) {
-                if (getPlayer().isConversing() == false) {
+            if (getPlayer() != null) {
+                if (!getPlayer().isConversing()) {
                     setQuestIdToTake(quest.getId());
                     final String s = ChatColor.GOLD + Lang.get("questObjectivesTitle")
                             .replace("<quest>", quest.getName()) + "\n" + ChatColor.RESET + quest.getDescription();
@@ -4235,7 +4181,9 @@ public class Quester implements Comparable<Quester> {
             return false;
         } else if (plugin.getDependencies().getCitizens() != null
                 && !plugin.getSettings().canAllowCommandsForNpcQuests()
-                && quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null 
+                && quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null
+                && quest.getNpcStart().getEntity().getLocation().getWorld() != null
+                && getPlayer().getLocation().getWorld() != null
                 && quest.getNpcStart().getEntity().getLocation().getWorld().getName().equals(
                 getPlayer().getLocation().getWorld().getName())
                 && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) > 6.0) {

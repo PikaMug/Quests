@@ -1403,7 +1403,7 @@ public class QuestData {
         return sheepSheared;
     }
 
-    public void setSheepSheared(LinkedList<Integer> sheepSheared) {
+    public void setSheepSheared(final LinkedList<Integer> sheepSheared) {
         this.sheepSheared = sheepSheared;
         if (doJournalUpdate) {
             quester.updateJournal();

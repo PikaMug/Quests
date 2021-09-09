@@ -69,10 +69,10 @@ public class Quest implements Comparable<Quest> {
     protected Location blockStart;
     protected String regionStart = null;
     protected Action initialAction;
-    private final Requirements reqs = new Requirements();
-    private final Planner pln = new Planner();
-    private final Rewards rews = new Rewards();
-    private final Options opts = new Options();
+    private final Requirements requirements = new Requirements();
+    private final Planner planner = new Planner();
+    private final Rewards rewards = new Rewards();
+    private final Options options = new Options();
 
     @Override
     public int compareTo(final Quest quest) {
@@ -160,19 +160,19 @@ public class Quest implements Comparable<Quest> {
     }
     
     public Requirements getRequirements() {
-        return reqs;
+        return requirements;
     }
     
     public Planner getPlanner() {
-        return pln;
+        return planner;
     }
     
     public Rewards getRewards() {
-        return rews;
+        return rewards;
     }
     
     public Options getOptions() {
-        return opts;
+        return options;
     }
 
     /**
@@ -216,7 +216,7 @@ public class Quest implements Comparable<Quest> {
             }
             
             // Multiplayer
-            if (allowSharedProgress && opts.getShareProgressLevel() == 3) {
+            if (allowSharedProgress && options.getShareProgressLevel() == 3) {
                 final List<Quester> mq = quester.getMultiplayerQuesters(this);
                 for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
@@ -441,36 +441,36 @@ public class Quest implements Comparable<Quest> {
      */
     protected boolean testRequirements(final OfflinePlayer player) {
         final Quester quester = plugin.getQuester(player.getUniqueId());
-        if (reqs.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
-            if (plugin.getDependencies().getVaultEconomy().getBalance(player) < reqs.getMoney()) {
+        if (requirements.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
+            if (plugin.getDependencies().getVaultEconomy().getBalance(player) < requirements.getMoney()) {
                 return false;
             }
         }
-        if (quester.questPoints < reqs.getQuestPoints()) {
+        if (quester.questPoints < requirements.getQuestPoints()) {
             return false;
         }
-        if (!quester.completedQuests.containsAll(reqs.getNeededQuests())) {
+        if (!quester.completedQuests.containsAll(requirements.getNeededQuests())) {
             return false;
         }
-        for (final Quest q : reqs.getBlockQuests()) {
+        for (final Quest q : requirements.getBlockQuests()) {
             if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(q)) {
                 return false;
             }
         }
-        for (final String s : reqs.getMcmmoSkills()) {
+        for (final String s : requirements.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
-            final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
+            final int lvl = requirements.getMcmmoAmounts().get(requirements.getMcmmoSkills().indexOf(s));
             if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) < lvl) {
                 return false;
             }
         }
-        if (reqs.getHeroesPrimaryClass() != null) {
-            if (!plugin.getDependencies().testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
+        if (requirements.getHeroesPrimaryClass() != null) {
+            if (!plugin.getDependencies().testPrimaryHeroesClass(requirements.getHeroesPrimaryClass(), player.getUniqueId())) {
                 return false;
             }
         }
-        if (reqs.getHeroesSecondaryClass() != null) {
-            if (!plugin.getDependencies().testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(),
+        if (requirements.getHeroesSecondaryClass() != null) {
+            if (!plugin.getDependencies().testSecondaryHeroesClass(requirements.getHeroesSecondaryClass(),
                     player.getUniqueId())) {
                 return false;
             }
@@ -479,19 +479,19 @@ public class Quest implements Comparable<Quest> {
             final Player p = (Player)player;
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
             fakeInv.setContents(p.getInventory().getContents().clone());
-            for (final ItemStack is : reqs.getItems()) {
+            for (final ItemStack is : requirements.getItems()) {
                 if (InventoryUtil.canRemoveItem(fakeInv, is)) {
                     InventoryUtil.removeItem(fakeInv, is);
                 } else {
                     return false;
                 }
             }
-            for (final String s : reqs.getPermissions()) {
+            for (final String s : requirements.getPermissions()) {
                 if (!p.hasPermission(s)) {
                     return false;
                 }
             }
-            for (final String s : reqs.getCustomRequirements().keySet()) {
+            for (final String s : requirements.getCustomRequirements().keySet()) {
                 CustomRequirement found = null;
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(s)) {
@@ -500,7 +500,7 @@ public class Quest implements Comparable<Quest> {
                     }
                 }
                 if (found != null) {
-                    if (!found.testRequirement(p, reqs.getCustomRequirements().get(s))) {
+                    if (!found.testRequirement(p, requirements.getCustomRequirements().get(s))) {
                         return false;
                     }
                 } else {
@@ -571,7 +571,7 @@ public class Quest implements Comparable<Quest> {
                     + finished, this, p);
             Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(ps), 40);
         }
-        if (pln.getCooldown() > -1) {
+        if (planner.getCooldown() > -1) {
             quester.completedTimes.put(this, System.currentTimeMillis());
             if (quester.amountsCompleted.containsKey(this)) {
                 quester.amountsCompleted.put(this, quester.amountsCompleted.get(this) + 1);
@@ -583,16 +583,16 @@ public class Quest implements Comparable<Quest> {
         // Issue rewards
         final Dependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
-        if (rews.getMoney() > 0 && depends.getVaultEconomy() != null) {
-            depends.getVaultEconomy().depositPlayer(player, rews.getMoney());
+        if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
+            depends.getVaultEconomy().depositPlayer(player, rewards.getMoney());
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded "
-                        + depends.getVaultEconomy().format(rews.getMoney()));
+                        + depends.getVaultEconomy().format(rewards.getMoney()));
             }
         }
         if (player.isOnline()) {
-            for (final ItemStack i : rews.getItems()) {
+            for (final ItemStack i : rewards.getItems()) {
                 try {
                     InventoryUtil.addItem(player.getPlayer(), i);
                 } catch (final Exception e) {
@@ -608,7 +608,7 @@ public class Quest implements Comparable<Quest> {
                 }
             }
         }
-        for (final String s : rews.getCommands()) {
+        for (final String s : rewards.getCommands()) {
             if (player.getName() == null) {
                 continue;
             }
@@ -628,12 +628,12 @@ public class Quest implements Comparable<Quest> {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded command " + s);
             }
         }
-        for (int i = 0; i < rews.getPermissions().size(); i++) {
+        for (int i = 0; i < rewards.getPermissions().size(); i++) {
             if (depends.getVaultPermission() != null) {
-                final String perm = rews.getPermissions().get(i);
+                final String perm = rewards.getPermissions().get(i);
                 String world = null;
-                if (i < rews.getPermissionWorlds().size()) {
-                    world = rews.getPermissionWorlds().get(i);
+                if (i < rewards.getPermissionWorlds().size()) {
+                    world = rewards.getPermissionWorlds().get(i);
                 }
                 if (world == null || world.equals("null")) {
                     depends.getVaultPermission().playerAdd(null, player, perm);
@@ -646,8 +646,8 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
-        for (final String s : rews.getMcmmoSkills()) {
-            final int levels = rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s));
+        for (final String s : rewards.getMcmmoSkills()) {
+            final int levels = rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s));
             UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), levels);
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
@@ -655,9 +655,9 @@ public class Quest implements Comparable<Quest> {
             issuedReward = true;
         }
         if (player.isOnline()) {
-            for (final String s : rews.getHeroesClasses()) {
+            for (final String s : rewards.getHeroesClasses()) {
                 final Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
-                final double expChange = rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s));
+                final double expChange = rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s));
                 hero.addExp(expChange, plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
                 if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -666,16 +666,16 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
-        if (rews.getPartiesExperience() > 0 && depends.getPartiesApi() != null) {
+        if (rewards.getPartiesExperience() > 0 && depends.getPartiesApi() != null) {
             final PartyPlayer partyPlayer = depends.getPartiesApi().getPartyPlayer(player.getUniqueId());
             if (partyPlayer != null && partyPlayer.getPartyId() != null) {
                 final Party party = depends.getPartiesApi().getParty(partyPlayer.getPartyId());
                 if (party != null) {
-                    party.giveExperience(rews.getPartiesExperience());
+                    party.giveExperience(rewards.getPartiesExperience());
                     issuedReward = true;
                     if (plugin.getSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info(player.getUniqueId() + " was rewarded "
-                                + rews.getPartiesExperience() + " party experience");
+                                + rewards.getPartiesExperience() + " party experience");
                     }
                 }
             }
@@ -683,7 +683,7 @@ public class Quest implements Comparable<Quest> {
         final LinkedList<ItemStack> phatLootItems = new LinkedList<>();
         int phatLootExp = 0;
         final LinkedList<String> phatLootMessages = new LinkedList<>();
-        for (final String s : rews.getPhatLoots()) {
+        for (final String s : rewards.getPhatLoots()) {
             final LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
             if (lb.getExp() > 0) {
                 phatLootExp += lb.getExp();
@@ -724,25 +724,25 @@ public class Quest implements Comparable<Quest> {
             }
             issuedReward = true;
         }
-        if (rews.getExp() > 0 && player.isOnline()) {
-            ((Player)player).giveExp(rews.getExp());
+        if (rewards.getExp() > 0 && player.isOnline()) {
+            ((Player)player).giveExp(rewards.getExp());
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rews.getExp());
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rewards.getExp());
             }
             issuedReward = true;
         }
-        if (rews.getQuestPoints() > 0) {
-            quester.questPoints += rews.getQuestPoints();
+        if (rewards.getQuestPoints() > 0) {
+            quester.questPoints += rewards.getQuestPoints();
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() + " "
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rewards.getQuestPoints() + " "
                         + Lang.get("questPoints"));
             }
             issuedReward = true;
         }
-        if (!rews.getCustomRewards().isEmpty()) {
+        if (!rewards.getCustomRewards().isEmpty()) {
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                for (final String s : rews.getCustomRewards().keySet()) {
+                for (final String s : rewards.getCustomRewards().keySet()) {
                     plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
                 }
             }
@@ -763,8 +763,8 @@ public class Quest implements Comparable<Quest> {
             Lang.send(p, ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
             if (!issuedReward) {
                 p.sendMessage(ChatColor.GRAY + "- (" + Lang.get("none") + ")");
-            } else if (!rews.getDetailsOverride().isEmpty()) {
-                for (final String s: rews.getDetailsOverride()) {
+            } else if (!rewards.getDetailsOverride().isEmpty()) {
+                for (final String s: rewards.getDetailsOverride()) {
                     String message = ChatColor.DARK_GREEN + ConfigUtil.parseString(
                             ChatColor.translateAlternateColorCodes('&', s));
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
@@ -773,11 +773,11 @@ public class Quest implements Comparable<Quest> {
                     quester.sendMessage("- " + message);
                 }
             } else {
-                if (rews.getQuestPoints() > 0) {
-                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " "
+                if (rewards.getQuestPoints() > 0) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
                             + Lang.get(p, "questPoints"));
                 }
-                for (final ItemStack i : rews.getItems()) {
+                for (final ItemStack i : rewards.getItems()) {
                     StringBuilder text;
                     if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
@@ -873,23 +873,23 @@ public class Quest implements Comparable<Quest> {
                         }
                     }
                 }
-                if (rews.getMoney() > 0 && depends.getVaultEconomy() != null) {
+                if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
                     quester.sendMessage("- " + ChatColor.DARK_GREEN
-                            + depends.getVaultEconomy().format(rews.getMoney()));
+                            + depends.getVaultEconomy().format(rewards.getMoney()));
                 }
-                if (rews.getExp() > 0 || phatLootExp > 0) {
-                    final int tot = rews.getExp() + phatLootExp;
+                if (rewards.getExp() > 0 || phatLootExp > 0) {
+                    final int tot = rewards.getExp() + phatLootExp;
                     quester.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " "
                             + Lang.get(p, "experience"));
                 }
-                if (!rews.getCommands().isEmpty()) {
+                if (!rewards.getCommands().isEmpty()) {
                     int index = 0;
-                    for (final String s : rews.getCommands()) {
-                        if (!rews.getCommandsOverrideDisplay().isEmpty()
-                                && rews.getCommandsOverrideDisplay().size() > index) {
-                            if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+                    for (final String s : rewards.getCommands()) {
+                        if (!rewards.getCommandsOverrideDisplay().isEmpty()
+                                && rewards.getCommandsOverrideDisplay().size() > index) {
+                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().equals("")) {
                                 quester.sendMessage("- " + ChatColor.DARK_GREEN
-                                        + rews.getCommandsOverrideDisplay().get(index));
+                                        + rewards.getCommandsOverrideDisplay().get(index));
                             }
                         } else {
                             quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
@@ -897,12 +897,12 @@ public class Quest implements Comparable<Quest> {
                         index++;
                     }
                 }
-                if (!rews.getPermissions().isEmpty()) {
+                if (!rewards.getPermissions().isEmpty()) {
                     int index = 0;
-                    for (final String s : rews.getPermissions()) {
-                        if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
+                    for (final String s : rewards.getPermissions()) {
+                        if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
                             quester.sendMessage("- " + ChatColor.DARK_GREEN + s + " ("
-                                    + rews.getPermissionWorlds().get(index) + ")");
+                                    + rewards.getPermissionWorlds().get(index) + ")");
                         } else {
                             quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                             
@@ -910,22 +910,22 @@ public class Quest implements Comparable<Quest> {
                         index++;
                     }
                 }
-                if (!rews.getMcmmoSkills().isEmpty()) {
-                    for (final String s : rews.getMcmmoSkills()) {
+                if (!rewards.getMcmmoSkills().isEmpty()) {
+                    for (final String s : rewards.getMcmmoSkills()) {
                         quester.sendMessage("- " + ChatColor.DARK_GREEN
-                                + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
+                                + rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s)) + " "
                                 + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
-                if (!rews.getHeroesClasses().isEmpty()) {
-                    for (final String s : rews.getHeroesClasses()) {
+                if (!rewards.getHeroesClasses().isEmpty()) {
+                    for (final String s : rewards.getHeroesClasses()) {
                         quester.sendMessage("- " + ChatColor.AQUA
-                                + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE 
+                                + rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE
                                 + s + " " + Lang.get(p, "experience"));
                     }
                 }
-                if (rews.getPartiesExperience() > 0) {
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getPartiesExperience() + ChatColor.DARK_PURPLE
+                if (rewards.getPartiesExperience() > 0) {
+                    p.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getPartiesExperience() + ChatColor.DARK_PURPLE
                             + " " + Lang.get(p, "partiesExperience"));
                 }
                 if (!phatLootMessages.isEmpty()) {
@@ -933,7 +933,7 @@ public class Quest implements Comparable<Quest> {
                         quester.sendMessage("- " + s);
                     }
                 }
-                for (final String s : rews.getCustomRewards().keySet()) {
+                for (final String s : rewards.getCustomRewards().keySet()) {
                     CustomReward found = null;
                     for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getName().equalsIgnoreCase(s)) {
@@ -942,18 +942,18 @@ public class Quest implements Comparable<Quest> {
                         }
                     }
                     if (found != null) {
-                        final Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
+                        final Map<String, Object> dataMap = rewards.getCustomRewards().get(found.getName());
                         String message = found.getDisplay();
                         if (message != null) {
-                            for (final String key : datamap.keySet()) {
-                                message = message.replace("%" + key + "%", datamap.get(key).toString());
+                            for (final String key : dataMap.keySet()) {
+                                message = message.replace("%" + key + "%", dataMap.get(key).toString());
                             }
                             quester.sendMessage("- " + ChatColor.GOLD + message);
                         } else {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
-                        found.giveReward(p, rews.getCustomRewards().get(s));
+                        found.giveReward(p, rewards.getCustomRewards().get(s));
                     } else {
                         plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
                                 + name + "\", but the Custom Reward \"" + s
@@ -976,7 +976,7 @@ public class Quest implements Comparable<Quest> {
         }
         
         // Multiplayer
-        if (allowMultiplayer && opts.getShareProgressLevel() == 4) {
+        if (allowMultiplayer && options.getShareProgressLevel() == 4) {
             final List<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
@@ -999,7 +999,7 @@ public class Quest implements Comparable<Quest> {
      * Force player to quit quest and inform them of their failure
      * 
      * @param quester The quester to be ejected
-     * @param ignoreFailAction Whether or not to ignore quest fail Action
+     * @param ignoreFailAction Whether to ignore quest fail Action
      */
     @SuppressWarnings("deprecation")
     public void failQuest(final Quester quester, final boolean ignoreFailAction) {

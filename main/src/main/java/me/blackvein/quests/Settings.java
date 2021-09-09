@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Settings {
     
@@ -186,7 +187,7 @@ public class Settings {
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
         ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
         killDelay = config.getInt("kill-delay", 600);
-        if (config.getString("language").equalsIgnoreCase("en")) {
+        if (Objects.requireNonNull(config.getString("language")).equalsIgnoreCase("en")) {
             //Legacy
             Lang.setISO("en-US");
         } else {

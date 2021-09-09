@@ -12,27 +12,27 @@
 
 package me.blackvein.quests;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.inventory.ItemStack;
-
 public class Requirements {
     private int money = 0;
     private int questPoints = 0;
-    private List<ItemStack> items = new LinkedList<ItemStack>();
-    private List<Boolean> removeItems = new LinkedList<Boolean>();
-    private List<Quest> neededQuests = new LinkedList<Quest>();
-    private List<Quest> blockQuests = new LinkedList<Quest>();
-    private List<String> permissions = new LinkedList<String>();
-    private List<String> mcmmoSkills = new LinkedList<String>();
-    private List<Integer> mcmmoAmounts = new LinkedList<Integer>();
+    private List<ItemStack> items = new LinkedList<>();
+    private List<Boolean> removeItems = new LinkedList<>();
+    private List<Quest> neededQuests = new LinkedList<>();
+    private List<Quest> blockQuests = new LinkedList<>();
+    private List<String> permissions = new LinkedList<>();
+    private List<String> mcmmoSkills = new LinkedList<>();
+    private List<Integer> mcmmoAmounts = new LinkedList<>();
     private String heroesPrimaryClass = null;
     private String heroesSecondaryClass = null;
-    private Map<String, Map<String, Object>> customRequirements = new HashMap<String, Map<String, Object>>();
-    private List<String> detailsOverride = new LinkedList<String>();
+    private Map<String, Map<String, Object>> customRequirements = new HashMap<>();
+    private List<String> detailsOverride = new LinkedList<>();
     
     public int getMoney() {
         return money;

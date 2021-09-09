@@ -176,96 +176,96 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (q.getGUIDisplay() != null) {
             context.setSessionData(CK.Q_GUIDISPLAY, q.getGUIDisplay());
         }
-        final Requirements reqs = q.getRequirements();
-        if (reqs.getMoney() != 0) {
-            context.setSessionData(CK.REQ_MONEY, reqs.getMoney());
+        final Requirements requirements = q.getRequirements();
+        if (requirements.getMoney() != 0) {
+            context.setSessionData(CK.REQ_MONEY, requirements.getMoney());
         }
-        if (reqs.getQuestPoints() != 0) {
-            context.setSessionData(CK.REQ_QUEST_POINTS, reqs.getQuestPoints());
+        if (requirements.getQuestPoints() != 0) {
+            context.setSessionData(CK.REQ_QUEST_POINTS, requirements.getQuestPoints());
         }
-        if (!reqs.getItems().isEmpty()) {
-            context.setSessionData(CK.REQ_ITEMS, reqs.getItems());
-            context.setSessionData(CK.REQ_ITEMS_REMOVE, reqs.getRemoveItems());
+        if (!requirements.getItems().isEmpty()) {
+            context.setSessionData(CK.REQ_ITEMS, requirements.getItems());
+            context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
         }
-        if (!reqs.getNeededQuests().isEmpty()) {
-            final List<String> ids = reqs.getNeededQuests().stream().map(Quest::getId).collect(Collectors.toList());
+        if (!requirements.getNeededQuests().isEmpty()) {
+            final List<String> ids = requirements.getNeededQuests().stream().map(Quest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST, ids);
         }
-        if (!reqs.getBlockQuests().isEmpty()) {
-            final List<String> ids = reqs.getBlockQuests().stream().map(Quest::getId).collect(Collectors.toList());
+        if (!requirements.getBlockQuests().isEmpty()) {
+            final List<String> ids = requirements.getBlockQuests().stream().map(Quest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
         }
-        if (!reqs.getMcmmoSkills().isEmpty()) {
-            context.setSessionData(CK.REQ_MCMMO_SKILLS, reqs.getMcmmoAmounts());
-            context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, reqs.getMcmmoAmounts());
+        if (!requirements.getMcmmoSkills().isEmpty()) {
+            context.setSessionData(CK.REQ_MCMMO_SKILLS, requirements.getMcmmoAmounts());
+            context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, requirements.getMcmmoAmounts());
         }
-        if (!reqs.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REQ_PERMISSION, reqs.getPermissions());
+        if (!requirements.getPermissions().isEmpty()) {
+            context.setSessionData(CK.REQ_PERMISSION, requirements.getPermissions());
         }
-        if (reqs.getHeroesPrimaryClass() != null) {
-            context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, reqs.getHeroesPrimaryClass());
+        if (requirements.getHeroesPrimaryClass() != null) {
+            context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, requirements.getHeroesPrimaryClass());
         }
-        if (reqs.getHeroesSecondaryClass() != null) {
-            context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, reqs.getHeroesSecondaryClass());
+        if (requirements.getHeroesSecondaryClass() != null) {
+            context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, requirements.getHeroesSecondaryClass());
         }
-        if (!reqs.getCustomRequirements().isEmpty()) {
+        if (!requirements.getCustomRequirements().isEmpty()) {
             final LinkedList<String> list = new LinkedList<>();
-            final LinkedList<Map<String, Object>> datamapList = new LinkedList<>();
-            for (final Entry<String, Map<String, Object>> entry : reqs.getCustomRequirements().entrySet()) {
+            final LinkedList<Map<String, Object>> dataMapList = new LinkedList<>();
+            for (final Entry<String, Map<String, Object>> entry : requirements.getCustomRequirements().entrySet()) {
                 list.add(entry.getKey());
-                datamapList.add(entry.getValue());
+                dataMapList.add(entry.getValue());
             }
             context.setSessionData(CK.REQ_CUSTOM, list);
-            context.setSessionData(CK.REQ_CUSTOM_DATA, datamapList);
+            context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
         }
-        if (!reqs.getDetailsOverride().isEmpty()) {
-            context.setSessionData(CK.REQ_FAIL_MESSAGE, reqs.getDetailsOverride());
+        if (!requirements.getDetailsOverride().isEmpty()) {
+            context.setSessionData(CK.REQ_FAIL_MESSAGE, requirements.getDetailsOverride());
         }
-        final Rewards rews = q.getRewards();
-        if (rews.getMoney() != 0) {
-            context.setSessionData(CK.REW_MONEY, rews.getMoney());
+        final Rewards rewards = q.getRewards();
+        if (rewards.getMoney() != 0) {
+            context.setSessionData(CK.REW_MONEY, rewards.getMoney());
         }
-        if (rews.getQuestPoints() != 0) {
-            context.setSessionData(CK.REW_QUEST_POINTS, rews.getQuestPoints());
+        if (rewards.getQuestPoints() != 0) {
+            context.setSessionData(CK.REW_QUEST_POINTS, rewards.getQuestPoints());
         }
-        if (rews.getExp() != 0) {
-            context.setSessionData(CK.REW_EXP, rews.getExp());
+        if (rewards.getExp() != 0) {
+            context.setSessionData(CK.REW_EXP, rewards.getExp());
         }
-        if (!rews.getItems().isEmpty()) {
-            context.setSessionData(CK.REW_ITEMS, rews.getItems());
+        if (!rewards.getItems().isEmpty()) {
+            context.setSessionData(CK.REW_ITEMS, rewards.getItems());
         }
-        if (!rews.getCommands().isEmpty()) {
-            context.setSessionData(CK.REW_COMMAND, rews.getCommands());
+        if (!rewards.getCommands().isEmpty()) {
+            context.setSessionData(CK.REW_COMMAND, rewards.getCommands());
         }
-        if (!rews.getCommandsOverrideDisplay().isEmpty()) {
-            context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rews.getCommandsOverrideDisplay());
+        if (!rewards.getCommandsOverrideDisplay().isEmpty()) {
+            context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rewards.getCommandsOverrideDisplay());
         }
-        if (!rews.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REW_PERMISSION, rews.getPermissions());
+        if (!rewards.getPermissions().isEmpty()) {
+            context.setSessionData(CK.REW_PERMISSION, rewards.getPermissions());
         }
-        if (!rews.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REW_PERMISSION_WORLDS, rews.getPermissionWorlds());
+        if (!rewards.getPermissions().isEmpty()) {
+            context.setSessionData(CK.REW_PERMISSION_WORLDS, rewards.getPermissionWorlds());
         }
-        if (!rews.getMcmmoSkills().isEmpty()) {
-            context.setSessionData(CK.REW_MCMMO_SKILLS, rews.getMcmmoSkills());
-            context.setSessionData(CK.REW_MCMMO_AMOUNTS, rews.getMcmmoAmounts());
+        if (!rewards.getMcmmoSkills().isEmpty()) {
+            context.setSessionData(CK.REW_MCMMO_SKILLS, rewards.getMcmmoSkills());
+            context.setSessionData(CK.REW_MCMMO_AMOUNTS, rewards.getMcmmoAmounts());
         }
-        if (!rews.getHeroesClasses().isEmpty()) {
-            context.setSessionData(CK.REW_HEROES_CLASSES, rews.getHeroesClasses());
-            context.setSessionData(CK.REW_HEROES_AMOUNTS, rews.getHeroesAmounts());
+        if (!rewards.getHeroesClasses().isEmpty()) {
+            context.setSessionData(CK.REW_HEROES_CLASSES, rewards.getHeroesClasses());
+            context.setSessionData(CK.REW_HEROES_AMOUNTS, rewards.getHeroesAmounts());
         }
-        if (rews.getPartiesExperience() != 0) {
-            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rews.getPartiesExperience());
+        if (rewards.getPartiesExperience() != 0) {
+            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rewards.getPartiesExperience());
         }
-        if (!rews.getPhatLoots().isEmpty()) {
-            context.setSessionData(CK.REW_PHAT_LOOTS, rews.getPhatLoots());
+        if (!rewards.getPhatLoots().isEmpty()) {
+            context.setSessionData(CK.REW_PHAT_LOOTS, rewards.getPhatLoots());
         }
-        if (!rews.getCustomRewards().isEmpty()) {
-            context.setSessionData(CK.REW_CUSTOM, new LinkedList<>(rews.getCustomRewards().keySet()));
-            context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rews.getCustomRewards().values()));
+        if (!rewards.getCustomRewards().isEmpty()) {
+            context.setSessionData(CK.REW_CUSTOM, new LinkedList<>(rewards.getCustomRewards().keySet()));
+            context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rewards.getCustomRewards().values()));
         }
-        if (!rews.getDetailsOverride().isEmpty()) {
-            context.setSessionData(CK.REW_DETAILS_OVERRIDE, rews.getDetailsOverride());
+        if (!rewards.getDetailsOverride().isEmpty()) {
+            context.setSessionData(CK.REW_DETAILS_OVERRIDE, rewards.getDetailsOverride());
         }
         final Planner pln = q.getPlanner();
         if (pln.getStart() != null) {
@@ -299,68 +299,68 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(pref, Boolean.TRUE);
             if (!stage.getBlocksToBreak().isEmpty()) {
                 final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amnts = new LinkedList<>();
-                final LinkedList<Short> durab = new LinkedList<>();
+                final LinkedList<Integer> amounts = new LinkedList<>();
+                final LinkedList<Short> durability = new LinkedList<>();
                 for (final ItemStack e : stage.getBlocksToBreak()) {
                     names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
+                    amounts.add(e.getAmount());
+                    durability.add(e.getDurability());
                 }
                 context.setSessionData(pref + CK.S_BREAK_NAMES, names);
-                context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amnts);
-                context.setSessionData(pref + CK.S_BREAK_DURABILITY, durab);
+                context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
             }
             if (!stage.getBlocksToDamage().isEmpty()) {
                 final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amnts = new LinkedList<>();
-                final LinkedList<Short> durab = new LinkedList<>();
+                final LinkedList<Integer> amounts = new LinkedList<>();
+                final LinkedList<Short> durability = new LinkedList<>();
                 for (final ItemStack e : stage.getBlocksToDamage()) {
                     names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
+                    amounts.add(e.getAmount());
+                    durability.add(e.getDurability());
                 }
                 context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
-                context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amnts);
-                context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durab);
+                context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
             }
             if (!stage.getBlocksToPlace().isEmpty()) {
                 final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amnts = new LinkedList<>();
-                final LinkedList<Short> durab = new LinkedList<>();
+                final LinkedList<Integer> amounts = new LinkedList<>();
+                final LinkedList<Short> durability = new LinkedList<>();
                 for (final ItemStack e : stage.getBlocksToPlace()) {
                     names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
+                    amounts.add(e.getAmount());
+                    durability.add(e.getDurability());
                 }
                 context.setSessionData(pref + CK.S_PLACE_NAMES, names);
-                context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amnts);
-                context.setSessionData(pref + CK.S_PLACE_DURABILITY, durab);
+                context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
             }
             if (!stage.getBlocksToUse().isEmpty()) {
                 final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amnts = new LinkedList<>();
-                final LinkedList<Short> durab = new LinkedList<>();
+                final LinkedList<Integer> amounts = new LinkedList<>();
+                final LinkedList<Short> durability = new LinkedList<>();
                 for (final ItemStack e : stage.getBlocksToUse()) {
                     names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
+                    amounts.add(e.getAmount());
+                    durability.add(e.getDurability());
                 }
                 context.setSessionData(pref + CK.S_USE_NAMES, names);
-                context.setSessionData(pref + CK.S_USE_AMOUNTS, amnts);
-                context.setSessionData(pref + CK.S_USE_DURABILITY, durab);
+                context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
             }
             if (!stage.getBlocksToCut().isEmpty()) {
                 final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amnts = new LinkedList<>();
-                final LinkedList<Short> durab = new LinkedList<>();
+                final LinkedList<Integer> amounts = new LinkedList<>();
+                final LinkedList<Short> durability = new LinkedList<>();
                 for (final ItemStack e : stage.getBlocksToCut()) {
                     names.add(e.getType().name());
-                    amnts.add(e.getAmount());
-                    durab.add(e.getDurability());
+                    amounts.add(e.getAmount());
+                    durability.add(e.getDurability());
                 }
                 context.setSessionData(pref + CK.S_CUT_NAMES, names);
-                context.setSessionData(pref + CK.S_CUT_AMOUNTS, amnts);
-                context.setSessionData(pref + CK.S_CUT_DURABILITY, durab);
+                context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
+                context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
             }
             if (!stage.getItemsToCraft().isEmpty()) {
                 final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToCraft());
@@ -415,21 +415,21 @@ public class QuestFactory implements ConversationAbandonedListener {
                 context.setSessionData(pref + CK.S_MOB_TYPES, mobs);
                 context.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.getMobNumToKill());
                 if (!stage.getLocationsToKillWithin().isEmpty()) {
-                    final LinkedList<String> locs = new LinkedList<>();
+                    final LinkedList<String> locations = new LinkedList<>();
                     for (final Location l : stage.getLocationsToKillWithin()) {
-                        locs.add(ConfigUtil.getLocationInfo(l));
+                        locations.add(ConfigUtil.getLocationInfo(l));
                     }
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locs);
+                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locations);
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.getRadiiToKillWithin());
                     context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.getKillNames());
                 }
             }
             if (!stage.getLocationsToReach().isEmpty()) {
-                final LinkedList<String> locs = new LinkedList<>();
+                final LinkedList<String> locations = new LinkedList<>();
                 for (final Location l : stage.getLocationsToReach()) {
-                    locs.add(ConfigUtil.getLocationInfo(l));
+                    locations.add(ConfigUtil.getLocationInfo(l));
                 }
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS, locs);
+                context.setSessionData(pref + CK.S_REACH_LOCATIONS, locations);
                 context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.getRadiiToReachWithin());
                 context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.getLocationNames());
             }
@@ -438,9 +438,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                 for (final EntityType e : stage.getMobsToTame()) {
                     mobs.add(MiscUtil.getPrettyMobName(e));
                 }
-                final LinkedList<Integer> amts = new LinkedList<>(stage.getMobNumToTame());
+                final LinkedList<Integer> amounts = new LinkedList<>(stage.getMobNumToTame());
                 context.setSessionData(pref + CK.S_TAME_TYPES, mobs);
-                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amts);
+                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amounts);
             }
             if (!stage.getSheepToShear().isEmpty()) {
                 final LinkedList<String> colors = new LinkedList<>();
@@ -448,9 +448,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                     colors.add(MiscUtil.getPrettyDyeColorName(d));
 
                 }
-                final LinkedList<Integer> amts = new LinkedList<>(stage.sheepNumToShear);
+                final LinkedList<Integer> amounts = new LinkedList<>(stage.sheepNumToShear);
                 context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
-                context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amts);
+                context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
             }
             if (!stage.getPasswordDisplays().isEmpty()) {
                 context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
@@ -463,10 +463,10 @@ public class QuestFactory implements ConversationAbandonedListener {
                     list.add(stage.getCustomObjectives().get(i).getName());
                     countList.add(stage.getCustomObjectiveCounts().get(i));
                 }
-                final LinkedList<Entry<String, Object>> datamapList = new LinkedList<>(stage.getCustomObjectiveData());
+                final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(stage.getCustomObjectiveData());
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
                 context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
-                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, datamapList);
+                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
             }
             if (stage.getStartAction() != null) {
                 context.setSessionData(pref + CK.S_START_EVENT, stage.getStartAction().getName());
@@ -619,44 +619,44 @@ public class QuestFactory implements ConversationAbandonedListener {
     
     @SuppressWarnings("unchecked")
     private void saveRequirements(final ConversationContext context, final ConfigurationSection section) {
-        final ConfigurationSection reqs = section.createSection("requirements");
-        reqs.set("money", context.getSessionData(CK.REQ_MONEY) != null 
+        final ConfigurationSection requirements = section.createSection("requirements");
+        requirements.set("money", context.getSessionData(CK.REQ_MONEY) != null
                 ? context.getSessionData(CK.REQ_MONEY) : null);
-        reqs.set("quest-points", context.getSessionData(CK.REQ_QUEST_POINTS) != null 
+        requirements.set("quest-points", context.getSessionData(CK.REQ_QUEST_POINTS) != null
                 ? context.getSessionData(CK.REQ_QUEST_POINTS) : null);
-        reqs.set("items", context.getSessionData(CK.REQ_ITEMS) != null 
+        requirements.set("items", context.getSessionData(CK.REQ_ITEMS) != null
                 ? context.getSessionData(CK.REQ_ITEMS) : null);
-        reqs.set("remove-items", context.getSessionData(CK.REQ_ITEMS_REMOVE) != null 
+        requirements.set("remove-items", context.getSessionData(CK.REQ_ITEMS_REMOVE) != null
                 ? context.getSessionData(CK.REQ_ITEMS_REMOVE) : null);
-        reqs.set("permissions", context.getSessionData(CK.REQ_PERMISSION) != null 
+        requirements.set("permissions", context.getSessionData(CK.REQ_PERMISSION) != null
                 ? context.getSessionData(CK.REQ_PERMISSION) : null);
-        reqs.set("quests", context.getSessionData(CK.REQ_QUEST) != null 
+        requirements.set("quests", context.getSessionData(CK.REQ_QUEST) != null
                 ? context.getSessionData(CK.REQ_QUEST) : null);
-        reqs.set("quest-blocks", context.getSessionData(CK.REQ_QUEST_BLOCK) != null 
+        requirements.set("quest-blocks", context.getSessionData(CK.REQ_QUEST_BLOCK) != null
                 ? context.getSessionData(CK.REQ_QUEST_BLOCK) : null);
-        reqs.set("mcmmo-skills", context.getSessionData(CK.REQ_MCMMO_SKILLS) != null 
+        requirements.set("mcmmo-skills", context.getSessionData(CK.REQ_MCMMO_SKILLS) != null
                 ? context.getSessionData(CK.REQ_MCMMO_SKILLS) : null);
-        reqs.set("mcmmo-amounts", context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) != null 
+        requirements.set("mcmmo-amounts", context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) != null
                 ? context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) : null);
-        reqs.set("heroes-primary-class", context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null 
+        requirements.set("heroes-primary-class", context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) != null
                 ? context.getSessionData(CK.REQ_HEROES_PRIMARY_CLASS) : null);
-        reqs.set("heroes-secondary-class", context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null 
+        requirements.set("heroes-secondary-class", context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) != null
                 ? context.getSessionData(CK.REQ_HEROES_SECONDARY_CLASS) : null);
-        final LinkedList<String> customReqs = context.getSessionData(CK.REQ_CUSTOM) != null 
+        final LinkedList<String> customRequirements = context.getSessionData(CK.REQ_CUSTOM) != null
                 ? (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM) : null;
-        final LinkedList<Map<String, Object>> customReqsData = context.getSessionData(CK.REQ_CUSTOM_DATA) != null 
+        final LinkedList<Map<String, Object>> customRequirementsData = context.getSessionData(CK.REQ_CUSTOM_DATA) != null
                 ? (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA) : null;
-        if (customReqs != null && customReqsData != null) {
-            final ConfigurationSection customReqsSec = reqs.createSection("custom-requirements");
-            for (int i = 0; i < customReqs.size(); i++) {
-                final ConfigurationSection customReqSec = customReqsSec.createSection("req" + (i + 1));
-                customReqSec.set("name", customReqs.get(i));
-                customReqSec.set("data", customReqsData.get(i));
+        if (customRequirements != null && customRequirementsData != null) {
+            final ConfigurationSection customRequirementsSec = requirements.createSection("custom-requirements");
+            for (int i = 0; i < customRequirements.size(); i++) {
+                final ConfigurationSection customReqSec = customRequirementsSec.createSection("req" + (i + 1));
+                customReqSec.set("name", customRequirements.get(i));
+                customReqSec.set("data", customRequirementsData.get(i));
             }
         }
-        reqs.set("fail-requirement-message", context.getSessionData(CK.REQ_FAIL_MESSAGE) != null 
+        requirements.set("fail-requirement-message", context.getSessionData(CK.REQ_FAIL_MESSAGE) != null
                 ? context.getSessionData(CK.REQ_FAIL_MESSAGE) : null);
-        if (reqs.getKeys(false).isEmpty()) {
+        if (requirements.getKeys(false).isEmpty()) {
             section.set("requirements", null);
         }
     }
@@ -755,23 +755,23 @@ public class QuestFactory implements ConversationAbandonedListener {
                     ? context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) : null);
             stage.set("password-phrases", context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null
                     ? context.getSessionData(pref + CK.S_PASSWORD_PHRASES) : null);
-            final LinkedList<String> customObjs = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
+            final LinkedList<String> customObj = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Integer> customObjCounts 
                     = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
-            final LinkedList<Entry<String, Object>> customObjsData 
+            final LinkedList<Entry<String, Object>> customObjData
                     = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
             if (context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES) != null) {
                 final ConfigurationSection sec = stage.createSection("custom-objectives");
-                if (customObjs == null || customObjCounts == null || customObjsData == null) {
+                if (customObj == null || customObjCounts == null || customObjData == null) {
                     continue;
                 }
-                for (int index = 0; index < customObjs.size(); index++) {
+                for (int index = 0; index < customObj.size(); index++) {
                     final ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
-                    sec2.set("name", customObjs.get(index));
+                    sec2.set("name", customObj.get(index));
                     sec2.set("count", customObjCounts.get(index));
                     CustomObjective found = null;
                     for (final CustomObjective co : plugin.getCustomObjectives()) {
-                        if (co.getName().equals(customObjs.get(index))) {
+                        if (co.getName().equals(customObj.get(index))) {
                             found = co;
                             break;
                         }
@@ -780,9 +780,9 @@ public class QuestFactory implements ConversationAbandonedListener {
                         continue;
                     }
                     final ConfigurationSection sec3 = sec2.createSection("data");
-                    for (final Entry<String, Object> datamap : found.getData()) {
-                        for (final Entry<String, Object> e : customObjsData) {
-                            if (e.getKey().equals(datamap.getKey())) {
+                    for (final Entry<String, Object> dataMap : found.getData()) {
+                        for (final Entry<String, Object> e : customObjData) {
+                            if (e.getKey().equals(dataMap.getKey())) {
                                 sec3.set(e.getKey(), e.getValue()); // if anything goes wrong it's probably here
                             }
                         }
@@ -834,50 +834,50 @@ public class QuestFactory implements ConversationAbandonedListener {
     
     @SuppressWarnings("unchecked")
     private void saveRewards(final ConversationContext context, final ConfigurationSection section) {
-        final ConfigurationSection rews = section.createSection("rewards");
-        rews.set("items", context.getSessionData(CK.REW_ITEMS) != null 
+        final ConfigurationSection rewards = section.createSection("rewards");
+        rewards.set("items", context.getSessionData(CK.REW_ITEMS) != null
                 ? context.getSessionData(CK.REW_ITEMS) : null);
-        rews.set("money", context.getSessionData(CK.REW_MONEY) != null 
+        rewards.set("money", context.getSessionData(CK.REW_MONEY) != null
                 ? context.getSessionData(CK.REW_MONEY) : null);
-        rews.set("quest-points", context.getSessionData(CK.REW_QUEST_POINTS) != null 
+        rewards.set("quest-points", context.getSessionData(CK.REW_QUEST_POINTS) != null
                 ? context.getSessionData(CK.REW_QUEST_POINTS) : null);
-        rews.set("exp", context.getSessionData(CK.REW_EXP) != null 
+        rewards.set("exp", context.getSessionData(CK.REW_EXP) != null
                 ? context.getSessionData(CK.REW_EXP) : null);
-        rews.set("commands", context.getSessionData(CK.REW_COMMAND) != null 
+        rewards.set("commands", context.getSessionData(CK.REW_COMMAND) != null
                 ? context.getSessionData(CK.REW_COMMAND) : null);
-        rews.set("commands-override-display", context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null 
+        rewards.set("commands-override-display", context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) != null
                 ? context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY) : null);
-        rews.set("permissions", context.getSessionData(CK.REW_PERMISSION) != null 
+        rewards.set("permissions", context.getSessionData(CK.REW_PERMISSION) != null
                 ? context.getSessionData(CK.REW_PERMISSION) : null);
-        rews.set("permission-worlds", context.getSessionData(CK.REW_PERMISSION_WORLDS) != null 
+        rewards.set("permission-worlds", context.getSessionData(CK.REW_PERMISSION_WORLDS) != null
                 ? context.getSessionData(CK.REW_PERMISSION_WORLDS) : null);
-        rews.set("mcmmo-skills", context.getSessionData(CK.REW_MCMMO_SKILLS) != null 
+        rewards.set("mcmmo-skills", context.getSessionData(CK.REW_MCMMO_SKILLS) != null
                 ? context.getSessionData(CK.REW_MCMMO_SKILLS) : null);
-        rews.set("mcmmo-levels", context.getSessionData(CK.REW_MCMMO_AMOUNTS) != null 
+        rewards.set("mcmmo-levels", context.getSessionData(CK.REW_MCMMO_AMOUNTS) != null
                 ? context.getSessionData(CK.REW_MCMMO_AMOUNTS) : null);
-        rews.set("heroes-exp-classes", context.getSessionData(CK.REW_HEROES_CLASSES) != null 
+        rewards.set("heroes-exp-classes", context.getSessionData(CK.REW_HEROES_CLASSES) != null
                 ? context.getSessionData(CK.REW_HEROES_CLASSES) : null);
-        rews.set("heroes-exp-amounts", context.getSessionData(CK.REW_HEROES_AMOUNTS) != null 
+        rewards.set("heroes-exp-amounts", context.getSessionData(CK.REW_HEROES_AMOUNTS) != null
                 ? context.getSessionData(CK.REW_HEROES_AMOUNTS) : null);
-        rews.set("parties-experience", context.getSessionData(CK.REW_PARTIES_EXPERIENCE) != null
+        rewards.set("parties-experience", context.getSessionData(CK.REW_PARTIES_EXPERIENCE) != null
                 ? context.getSessionData(CK.REW_PARTIES_EXPERIENCE) : null);
-        rews.set("phat-loots", context.getSessionData(CK.REW_PHAT_LOOTS) != null 
+        rewards.set("phat-loots", context.getSessionData(CK.REW_PHAT_LOOTS) != null
                 ? context.getSessionData(CK.REW_PHAT_LOOTS) : null);
-        final LinkedList<String> customRews = context.getSessionData(CK.REW_CUSTOM) != null 
+        final LinkedList<String> customRewards = context.getSessionData(CK.REW_CUSTOM) != null
                 ? (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM) : null;
-        final LinkedList<Map<String, Object>> customRewsData = context.getSessionData(CK.REW_CUSTOM_DATA) != null 
+        final LinkedList<Map<String, Object>> customRewardsData = context.getSessionData(CK.REW_CUSTOM_DATA) != null
                 ? (LinkedList<Map<String, Object>>) context.getSessionData(CK.REW_CUSTOM_DATA) : null;
-        if (customRews != null && customRewsData != null) {
-            final ConfigurationSection customRewsSec = rews.createSection("custom-rewards");
-            for (int i = 0; i < customRews.size(); i++) {
-                final ConfigurationSection customRewSec = customRewsSec.createSection("req" + (i + 1));
-                customRewSec.set("name", customRews.get(i));
-                customRewSec.set("data", customRewsData.get(i));
+        if (customRewards != null && customRewardsData != null) {
+            final ConfigurationSection customRewardsSec = rewards.createSection("custom-rewards");
+            for (int i = 0; i < customRewards.size(); i++) {
+                final ConfigurationSection customRewSec = customRewardsSec.createSection("req" + (i + 1));
+                customRewSec.set("name", customRewards.get(i));
+                customRewSec.set("data", customRewardsData.get(i));
             }
         }
-        rews.set("details-override", context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null 
+        rewards.set("details-override", context.getSessionData(CK.REW_DETAILS_OVERRIDE) != null
                 ? context.getSessionData(CK.REW_DETAILS_OVERRIDE) : null);
-        if (rews.getKeys(false).isEmpty()) {
+        if (rewards.getKeys(false).isEmpty()) {
             section.set("rewards", null);
         }
     }

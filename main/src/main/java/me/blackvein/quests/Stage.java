@@ -28,17 +28,17 @@ import java.util.Map.Entry;
 
 public class Stage {
 
-    protected LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToDamage = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToConsume = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
+    protected LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToDamage = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToPlace = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToUse = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToCut = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToCraft = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToBrew = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToConsume = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<>();
     protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = -2774443496142382127L;
@@ -59,7 +59,7 @@ public class Stage {
             return true;
         }
     };
-    protected  LinkedList<String> deliverMessages = new LinkedList<String>();
+    protected  LinkedList<String> deliverMessages = new LinkedList<>();
     protected LinkedList<Integer> citizensToInteract = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = -4086855121042524435L;
@@ -100,43 +100,43 @@ public class Stage {
             return true;
         }
     };
-    protected LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
-    protected LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-    protected LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-    protected LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-    protected LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-    protected LinkedList<String> killNames = new LinkedList<String>();
-    protected LinkedList<EntityType> mobsToTame = new LinkedList<EntityType>();
-    protected LinkedList<Integer> mobNumToTame = new LinkedList<Integer>();
+    protected LinkedList<Integer> citizenNumToKill = new LinkedList<>();
+    protected LinkedList<EntityType> mobsToKill = new LinkedList<>();
+    protected LinkedList<Integer> mobNumToKill = new LinkedList<>();
+    protected LinkedList<Location> locationsToKillWithin = new LinkedList<>();
+    protected LinkedList<Integer> radiiToKillWithin = new LinkedList<>();
+    protected LinkedList<String> killNames = new LinkedList<>();
+    protected LinkedList<EntityType> mobsToTame = new LinkedList<>();
+    protected LinkedList<Integer> mobNumToTame = new LinkedList<>();
     protected Integer fishToCatch;
     protected Integer cowsToMilk;
-    protected LinkedList<DyeColor> sheepToShear = new LinkedList<DyeColor>();
-    protected LinkedList<Integer> sheepNumToShear = new LinkedList<Integer>();
+    protected LinkedList<DyeColor> sheepToShear = new LinkedList<>();
+    protected LinkedList<Integer> sheepNumToShear = new LinkedList<>();
     protected Integer playersToKill;
-    protected LinkedList<Location> locationsToReach = new LinkedList<Location>();
-    protected LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
-    protected LinkedList<World> worldsToReachWithin = new LinkedList<World>();
-    protected LinkedList<String> locationNames = new LinkedList<String>();
-    protected LinkedList<String> passwordDisplays = new LinkedList<String>();
-    protected LinkedList<String> passwordPhrases = new LinkedList<String>();
+    protected LinkedList<Location> locationsToReach = new LinkedList<>();
+    protected LinkedList<Integer> radiiToReachWithin = new LinkedList<>();
+    protected LinkedList<World> worldsToReachWithin = new LinkedList<>();
+    protected LinkedList<String> locationNames = new LinkedList<>();
+    protected LinkedList<String> passwordDisplays = new LinkedList<>();
+    protected LinkedList<String> passwordPhrases = new LinkedList<>();
     protected String script;
     protected Action startAction = null;
     protected Action finishAction = null;
     protected Action failAction = null;
     protected Action deathAction = null;
-    protected Map<String, Action> chatActions = new HashMap<String, Action>();
-    protected Map<String, Action> commandActions = new HashMap<String, Action>();
+    protected Map<String, Action> chatActions = new HashMap<>();
+    protected Map<String, Action> commandActions = new HashMap<>();
     protected Action disconnectAction = null;
     protected Condition condition = null;
     protected long delay = -1;
     protected String delayMessage = null;
     protected String completeMessage = null;
     protected String startMessage = null;
-    protected LinkedList<String> objectiveOverrides = new LinkedList<String>();
-    protected LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
-    protected LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
-    protected LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
-    protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<Entry<String, Object>>();
+    protected LinkedList<String> objectiveOverrides = new LinkedList<>();
+    protected LinkedList<CustomObjective> customObjectives = new LinkedList<>();
+    protected LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
+    protected LinkedList<String> customObjectiveDisplays = new LinkedList<>();
+    protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
     
     public LinkedList<ItemStack> getBlocksToBreak() {
         return blocksToBreak;
@@ -566,8 +566,7 @@ public class Stage {
         if (!mobsToTame.isEmpty()) { return true; }
         if (!sheepToShear.isEmpty()) { return true; }
         if (!passwordDisplays.isEmpty()) { return true; }
-        if (!customObjectives.isEmpty()) { return true; }
-        return false;
+        return !customObjectives.isEmpty();
     }
     
     /**

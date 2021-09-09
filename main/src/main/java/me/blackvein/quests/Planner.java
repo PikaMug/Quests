@@ -31,8 +31,8 @@ public class Planner {
         }
         final Calendar cal = Calendar.getInstance();
         final String[] s = start.split(":");
-        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
         final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();
@@ -52,8 +52,8 @@ public class Planner {
         }
         final Calendar cal = Calendar.getInstance();
         final String[] s = end.split(":");
-        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
         final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();
