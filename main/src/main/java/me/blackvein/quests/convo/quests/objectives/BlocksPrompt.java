@@ -360,19 +360,18 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 } else {
                     two = 0;
                 }
-                if (one == two) {                    
+                if (one == two) {
                     final int missing;
-                    final LinkedList<Short> durability
+                    LinkedList<Short> durability
                             = (LinkedList<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
                     if (durability != null) {
                         missing = one - durability.size();
                     } else {
                         missing = one;
+                        durability = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (durability != null) {
-                            durability.add((short) 0);
-                        }
+                        durability.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
@@ -733,17 +732,16 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> durability
+                    LinkedList<Short> durability
                             = (LinkedList<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
                     if (durability != null) {
                         missing = one - durability.size();
                     } else {
                         missing = one;
+                        durability = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (durability != null) {
-                            durability.add((short) 0);
-                        }
+                        durability.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
@@ -1102,17 +1100,16 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> durability
+                    LinkedList<Short> durability
                             = (LinkedList<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
                     if (durability != null) {
                         missing = one - durability.size();
                     } else {
                         missing = one;
+                        durability = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (durability != null) {
-                            durability.add((short) 0);
-                        }
+                        durability.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);
@@ -1469,17 +1466,16 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (one == two) {
                     final int missing;
-                    final LinkedList<Short> durability
+                    LinkedList<Short> durability
                             = (LinkedList<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
                     if (durability != null) {
                         missing = one - durability.size();
                     } else {
                         missing = one;
+                        durability = new LinkedList<>();
                     }
                     for (int i = 0; i < missing; i++) {
-                        if (durability != null) {
-                            durability.add((short) 0);
-                        }
+                        durability.add((short) 0);
                     }
                     context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
                     return new BlocksPrompt(stageNum, context);

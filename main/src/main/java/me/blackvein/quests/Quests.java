@@ -152,7 +152,12 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
-        localeManager = new LocaleManager();
+        try {
+            Class.forName("me.pikamug.LocaleLib");
+            localeManager = new LocaleManager();
+        } catch (Exception ignored) {
+            getLogger().info("LocaleLib not present. Is this a debug environment?");
+        }
         blockListener = new BlockListener(this);
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
