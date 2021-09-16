@@ -17,3 +17,4 @@ questInvalidLocation: "Не можеш започети <quest> на овој л
 questInvalidDeliveryItem: "<item> није потребан за овај Задатак!"
 questSelectedLocation: "Изабрана локација"
 questDisplayHelp: "- Приказати ову помоћ"
+charSemi: ";"
