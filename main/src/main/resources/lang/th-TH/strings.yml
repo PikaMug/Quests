@@ -1,8 +1,8 @@
 ---
 COMMAND_LIST: "รายการ"
-COMMAND_LIST_HELP: "<command> [หน้า] - รายการมีเควส"
+COMMAND_LIST_HELP: "<command> [หน้า] - รายชื่อเควสที่ทำได้"
 COMMAND_TAKE: "ใช้"
-COMMAND_TAKE_HELP: "<command> [ชื่อเควส] - ยอมรับการแสวงหา"
+COMMAND_TAKE_HELP: "<command> [ชื่อเควส] - รับเควสด้วยคำสั่ง"
 COMMAND_TAKE_USAGE: "การใช้งาน: /quests ใช้ [ชื่อเควส]"
 COMMAND_QUIT: "ออกจาก"
 COMMAND_QUIT_HELP: "<command> [ชื่อเควส] - ปิดเควสท์ปัจจุบัน"
