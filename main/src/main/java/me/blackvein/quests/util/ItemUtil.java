@@ -96,7 +96,7 @@ public class ItemUtil {
             }
         }
         if (one.getItemMeta() != null || two.getItemMeta() != null) {
-            if (one.getItemMeta() != null && two.getItemMeta() != null) {
+            if (one.getItemMeta() != null && two.getItemMeta() == null) {
                 return -4;
             } else if (!one.hasItemMeta() && two.hasItemMeta()) {
                 return -4;
