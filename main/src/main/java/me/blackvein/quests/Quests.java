@@ -153,7 +153,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
         try {
-            Class.forName("me.pikamug.LocaleLib");
+            Class.forName("me.blackvein.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
         } catch (Exception ignored) {
             getLogger().info("LocaleLib not present. Is this a debug environment?");

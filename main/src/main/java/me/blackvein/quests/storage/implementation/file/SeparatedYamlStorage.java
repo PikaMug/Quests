@@ -241,7 +241,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     int index = 0;
                     for (final int amt : craftAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToCraft().get(index);
-                        final ItemStack temp = is.clone();
+                        final ItemStack temp = new ItemStack(is.clone());
                         temp.setAmount(amt);
                         if (quester.getQuestData(quest).getItemsCrafted().size() > 0) {
                             quester.getQuestData(quest).itemsCrafted.set(index, temp);
@@ -254,7 +254,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     int index = 0;
                     for (final int amt : smeltAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToSmelt().get(index);
-                        final ItemStack temp = is.clone();
+                        final ItemStack temp = new ItemStack(is.clone());
                         temp.setAmount(amt);
                         if (quester.getQuestData(quest).getItemsSmelted().size() > 0) {
                             quester.getQuestData(quest).itemsSmelted.set(index, temp);
@@ -267,7 +267,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     int index = 0;
                     for (final int amt : enchantAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToEnchant().get(index);
-                        final ItemStack temp = is.clone();
+                        final ItemStack temp = new ItemStack(is.clone());
                         temp.setAmount(amt);
                         if (quester.getQuestData(quest).getItemsEnchanted().size() > 0) {
                             quester.getQuestData(quest).itemsEnchanted.set(index, temp);
@@ -280,7 +280,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     int index = 0;
                     for (final int amt : brewAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToBrew().get(index);
-                        final ItemStack temp = is.clone();
+                        final ItemStack temp = new ItemStack(is.clone());
                         temp.setAmount(amt);
                         if (quester.getQuestData(quest).getItemsBrewed().size() > 0) {
                             quester.getQuestData(quest).itemsBrewed.set(index, temp);
@@ -293,7 +293,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     int index = 0;
                     for (final int amt : consumeAmounts) {
                         final ItemStack is = quester.getCurrentStage(quest).getItemsToConsume().get(index);
-                        final ItemStack temp = is.clone();
+                        final ItemStack temp = new ItemStack(is.clone());
                         temp.setAmount(amt);
                         if (quester.getQuestData(quest).getItemsConsumed().size() > 0) {
                             quester.getQuestData(quest).itemsConsumed.set(index, temp);
