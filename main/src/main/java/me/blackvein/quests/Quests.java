@@ -3840,18 +3840,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (data.contains(conditionKey + "check-placeholder-id")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "check-placeholder-id"), String.class)) {
-                if (data.contains(conditionKey + "check-placeholder-value")) {
-                    if (ConfigUtil.checkList(data.getList(conditionKey + "check-placeholder-value"), String.class)) {
-                        condition.setPlaceholdersCheckIdentifier((LinkedList<String>) data.getStringList(conditionKey
-                                + "check-placeholder-id"));
-                        condition.setPlaceholdersCheckValue((LinkedList<String>) data.getStringList(conditionKey
-                                + "check-placeholder-value"));
-                    } else {
-                        throw new ConditionFormatException("check-placeholder-value is not a list of values", conditionKey);
-                    }
-                }
+                final LinkedList<String> id = new LinkedList<>(data.getStringList(conditionKey
+                        + "check-placeholder-id"));
+                condition.setPlaceholdersCheckIdentifier(id);
             } else {
                 throw new ConditionFormatException("check-placeholder-id is not a list of identifiers", conditionKey);
+            }
+            if (ConfigUtil.checkList(data.getList(conditionKey + "check-placeholder-value"), String.class)) {
+                final LinkedList<String> val = new LinkedList<>(data.getStringList(conditionKey
+                        + "check-placeholder-value"));
+                condition.setPlaceholdersCheckValue(val);
+            } else {
+                throw new ConditionFormatException("check-placeholder-value is not a list of values", conditionKey);
             }
         }
         return condition;
