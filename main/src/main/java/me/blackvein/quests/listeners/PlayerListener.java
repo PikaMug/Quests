@@ -20,6 +20,7 @@ import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import me.blackvein.quests.util.UpdateChecker;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -848,14 +849,25 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester noobCheck = new Quester(plugin, evt.getPlayer().getUniqueId());
+        final Player player = evt.getPlayer();
+        if (player.hasPermission("quests.admin.update")) {
+            new UpdateChecker(plugin, 3711).getVersion(version -> {
+                if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
+                    evt.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
+                            + "] " + ChatColor.GREEN + Lang.get(player, "updateTo").replace("<version>",
+                            version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
+                            + plugin.getDescription().getWebsite()));
+                }
+            });
+        }
+        if (plugin.canUseQuests(player.getUniqueId())) {
+            final Quester noobCheck = new Quester(plugin, player.getUniqueId());
             if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
                 noobCheck.saveData();
             }
             
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                final CompletableFuture<Quester> cf = plugin.getStorage().loadQuester(evt.getPlayer().getUniqueId());
+                final CompletableFuture<Quester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
                     final Quester quester = cf.get();
                     if (quester == null) {

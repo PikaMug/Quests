@@ -43,6 +43,7 @@ public class Settings {
     private int topLimit = 150;
     private boolean translateNames = false;
     private boolean translateSubCommands = false;
+    private boolean updateCheck = true;
     
     public Settings(final Quests plugin) {
         this.plugin = plugin;
@@ -174,6 +175,12 @@ public class Settings {
     public void setTranslateSubCommands(final boolean translateSubCommands) {
         this.translateSubCommands = translateSubCommands;
     }
+    public boolean canUpdateCheck() {
+        return updateCheck;
+    }
+    public void setUpdateCheck(final boolean updateCheck) {
+        this.updateCheck = updateCheck;
+    }
     
     public void init() {
         final FileConfiguration config = plugin.getConfig();
@@ -204,6 +211,7 @@ public class Settings {
         topLimit = config.getInt("top-limit", 150);
         translateNames = config.getBoolean("translate-names", true);
         translateSubCommands = config.getBoolean("translate-subcommands", false);
+        updateCheck = config.getBoolean("update-check", true);
         try {
             config.save(new File(plugin.getDataFolder(), "config.yml"));
         } catch (final IOException e) {

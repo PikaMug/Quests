@@ -44,6 +44,7 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
+import me.blackvein.quests.util.UpdateChecker;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import net.citizensnpcs.api.CitizensAPI;
@@ -237,7 +238,15 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             getServer().getPluginManager().registerEvents(partiesListener, this);
         }
 
-        // 11 - Delay loading of Quests, Actions and modules
+        // 11 - Attempt to check for updates
+        new UpdateChecker(this, 3711).getVersion(version -> {
+            if (!getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
+                getLogger().info(ChatColor.DARK_GREEN + Lang.get("updateTo").replace("<version>",
+                        version).replace("<url>", ChatColor.AQUA + getDescription().getWebsite()));
+            }
+        });
+
+        // 12 - Delay loading of Quests, Actions and modules
         delayLoadQuestInfo();
     }
 
