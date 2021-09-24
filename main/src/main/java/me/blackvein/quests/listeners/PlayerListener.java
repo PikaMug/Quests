@@ -677,9 +677,11 @@ public class PlayerListener implements Listener {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
+                if (!quester.getCurrentQuests().containsKey(quest)) {
+                    continue;
+                }
                 
-                if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective(type)) {
+                if (quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.killMob(quest, target.getLocation(), target.getType());
                 }
                 
@@ -779,9 +781,11 @@ public class PlayerListener implements Listener {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
+                if (!quester.getCurrentQuests().containsKey(quest)) {
+                    continue;
+                }
                 
-                if (quester.getCurrentQuests().containsKey(quest) 
-                        && quester.getCurrentStage(quest).containsObjective(type)) {
+                if (quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.killPlayer(quest, (Player)target);
                 }
                 

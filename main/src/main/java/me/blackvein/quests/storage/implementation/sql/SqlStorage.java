@@ -425,7 +425,7 @@ public class SqlStorage implements StorageImplementation {
     }
     
     public ConcurrentHashMap<Quest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>();
+        final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -442,10 +442,9 @@ public class SqlStorage implements StorageImplementation {
         return currentQuests;
     }
 
-    @SuppressWarnings("unchecked")
     public ConcurrentHashMap<Quest, QuestData> getQuesterQuestData(final UUID uniqueId) throws Exception {
         final Quester quester = plugin.getQuester(uniqueId);
-        final ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<Quest, QuestData>();
+        final ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_DATA_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -499,7 +498,7 @@ public class SqlStorage implements StorageImplementation {
     }
     
     public ConcurrentSkipListSet<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
-        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<Quest>();
+        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -517,7 +516,7 @@ public class SqlStorage implements StorageImplementation {
     }
     
     public ConcurrentHashMap<Quest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<Quest, Long>();
+        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -535,7 +534,7 @@ public class SqlStorage implements StorageImplementation {
     }
     
     public ConcurrentHashMap<Quest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>();
+        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -554,12 +553,12 @@ public class SqlStorage implements StorageImplementation {
 
     @Override
     public Collection<UUID> getSavedUniqueIds() throws Exception {
-        final Collection<UUID> ids = new ConcurrentSkipListSet<UUID>();
+        final Collection<UUID> ids = new ConcurrentSkipListSet<>();
         try (Connection c = connectionFactory.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT_UUID))) {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        UUID id = null;
+                        UUID id;
                         try {
                             id = UUID.fromString(rs.getString("uuid"));
                         } catch (final IllegalArgumentException e) {
@@ -584,7 +583,7 @@ public class SqlStorage implements StorageImplementation {
     }
 
     public LinkedList<Integer> deserializeIntProgress(String string) {
-        LinkedList<Integer> list = new LinkedList<Integer>();
+        LinkedList<Integer> list = new LinkedList<>();
         if (string != null) {
             string = string.replace("{", "").replace("}", "");
             for (String section : string.split(",")) {
@@ -595,7 +594,7 @@ public class SqlStorage implements StorageImplementation {
     }
 
     public LinkedList<Boolean> deserializeBooleanProgress(String string) {
-        LinkedList<Boolean> list = new LinkedList<Boolean>();
+        LinkedList<Boolean> list = new LinkedList<>();
         if (string != null) {
             string = string.replace("{", "").replace("}", "");
             for (String section : string.split(",")) {
@@ -616,7 +615,7 @@ public class SqlStorage implements StorageImplementation {
     }
 
     public LinkedList<ItemStack> deserializeItemStackProgress(String string, LinkedList<ItemStack> objective) {
-        LinkedList<ItemStack> list = new LinkedList<ItemStack>();
+        LinkedList<ItemStack> list = new LinkedList<>();
         if (string != null) {
             string = string.replace("{", "").replace("}", "");
             int index = 0;
