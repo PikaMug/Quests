@@ -577,73 +577,6 @@ public class QuestData {
         }
     };
 
-    public LinkedList<Integer> citizensIdsKilled = new LinkedList<Integer>() {
-
-        private static final long serialVersionUID = -6054581494356961482L;
-
-        @Override
-        public boolean add(final Integer e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final Integer element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public Integer remove(final int index) {
-            final Integer s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public Integer set(final int index, final Integer element) {
-            final Integer s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-
     public LinkedList<Integer> citizensNumKilled = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = 1849192351499071688L;
@@ -705,73 +638,6 @@ public class QuestData {
         @Override
         public Integer set(final int index, final Integer element) {
             final Integer s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-    
-    public LinkedList<EntityType> mobTypesKilled = new LinkedList<EntityType>() {
-
-        private static final long serialVersionUID = 8178007458817522183L;
-
-        @Override
-        public boolean add(final EntityType e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final EntityType element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends EntityType> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends EntityType> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public EntityType remove(final int index) {
-            final EntityType s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public EntityType set(final int index, final EntityType element) {
-            final EntityType s = super.set(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
             return s;
@@ -1322,34 +1188,12 @@ public class QuestData {
         }
     }
 
-    public LinkedList<Integer> getCitizensIdsKilled() {
-        return citizensIdsKilled;
-    }
-
-    public void setCitizensIdsKilled(final LinkedList<Integer> citizensIdsKilled) {
-        this.citizensIdsKilled = citizensIdsKilled;
-        if (doJournalUpdate) {
-            quester.updateJournal();
-        }
-    }
-
     public LinkedList<Integer> getCitizensNumKilled() {
         return citizensNumKilled;
     }
 
     public void setCitizensNumKilled(final LinkedList<Integer> citizensNumKilled) {
         this.citizensNumKilled = citizensNumKilled;
-        if (doJournalUpdate) {
-            quester.updateJournal();
-        }
-    }
-
-    public LinkedList<EntityType> getMobTypesKilled() {
-        return mobTypesKilled;
-    }
-
-    public void setMobTypesKilled(final LinkedList<EntityType> mobTypesKilled) {
-        this.mobTypesKilled = mobTypesKilled;
         if (doJournalUpdate) {
             quester.updateJournal();
         }

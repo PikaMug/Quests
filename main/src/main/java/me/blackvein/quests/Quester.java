@@ -2239,11 +2239,11 @@ public class Quester implements Comparable<Quester> {
      * @param npc The NPC being killed
      */
     public void killNPC(final Quest quest, final NPC npc) {
-        if (!getQuestData(quest).citizensIdsKilled.contains(npc.getId())) {
+        if (!getCurrentStage(quest).getCitizensToKill().contains(npc.getId())) {
             return;
         }
         
-        final int index = getQuestData(quest).citizensIdsKilled.indexOf(npc.getId());
+        final int index = getCurrentStage(quest).getCitizensToKill().indexOf(npc.getId());
         final int npcsKilled = getQuestData(quest).citizensNumKilled.get(index);
         final int npcsToKill = getCurrentStage(quest).citizenNumToKill.get(index);
         
@@ -2389,8 +2389,7 @@ public class Quester implements Comparable<Quester> {
         if (currentStage.mobsToKill == null) {
             return;
         }
-        
-        final int index = questData.mobTypesKilled.indexOf(entityType);
+        final int index = currentStage.getMobsToKill().indexOf(entityType);
         if (index == -1) {
             return;
         }
@@ -2418,7 +2417,6 @@ public class Quester implements Comparable<Quester> {
                 return;
             }
         }
-        
         final ObjectiveType type = ObjectiveType.KILL_MOB;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new Objective(type, mobsKilled, mobsToKill));
@@ -3286,13 +3284,11 @@ public class Quester implements Comparable<Quester> {
         }
         if (!quest.getStage(stage).citizensToKill.isEmpty()) {
             for (final Integer toKill : quest.getStage(stage).citizensToKill) {
-                data.citizensIdsKilled.add(toKill);
                 data.citizensNumKilled.add(0);
             }
         }
         if (!quest.getStage(stage).mobsToKill.isEmpty()) {
             for (final EntityType toKill : quest.getStage(stage).mobsToKill) {
-                data.mobTypesKilled.add(toKill);
                 data.mobNumKilled.add(0);
             }
         }
@@ -3487,15 +3483,10 @@ public class Quester implements Comparable<Quester> {
                 if (!questData.citizensInteracted.isEmpty()) {
                     questSec.set("has-talked-to", questData.citizensInteracted);
                 }
-                if (!questData.citizensIdsKilled.isEmpty()) {
+                if (!questData.citizensNumKilled.isEmpty()) {
                     questSec.set("citizen-amounts-killed", questData.citizensNumKilled);
                 }
-                if (!questData.mobTypesKilled.isEmpty()) {
-                    final LinkedList<String> mobNames = new LinkedList<>();
-                    for (final EntityType e : questData.mobTypesKilled) {
-                        mobNames.add(MiscUtil.getPrettyMobName(e));
-                    }
-                    questSec.set("mobs-killed", mobNames);
+                if (!questData.mobNumKilled.isEmpty()) {
                     questSec.set("mobs-killed-amounts", questData.mobNumKilled);
                 }
                 if (!questData.mobsTamed.isEmpty()) {

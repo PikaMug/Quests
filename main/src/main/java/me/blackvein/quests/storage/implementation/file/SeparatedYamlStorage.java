@@ -320,14 +320,14 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
                     quester.getQuestData(quest).setCitizensInteracted(new LinkedList<>(talkAmount));
                 }
-                if (questSec.contains("citizen-ids-killed")) {
-                    final List<Integer> ids = questSec.getIntegerList("citizen-ids-killed");
-                    final List<Integer> num = questSec.getIntegerList("citizen-amounts-killed");
-                    quester.getQuestData(quest).citizensIdsKilled.clear();
-                    quester.getQuestData(quest).citizensNumKilled.clear();
-                    for (final int i : ids) {
-                        quester.getQuestData(quest).citizensIdsKilled.add(i);
-                        quester.getQuestData(quest).citizensNumKilled.add(num.get(ids.indexOf(i)));
+                if (questSec.contains("citizen-amounts-killed")) {
+                    final List<Integer> citizensAmounts = questSec.getIntegerList("citizen-amounts-killed");
+                    int index = 0;
+                    for (final int amt : citizensAmounts) {
+                        if (quester.getQuestData(quest).getCitizensNumKilled().size() > 0) {
+                            quester.getQuestData(quest).citizensNumKilled.set(index, amt);
+                        }
+                        index++;
                     }
                 }
                 if (questSec.contains("cows-milked")) {
@@ -339,20 +339,14 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 if (questSec.contains("players-killed")) {
                     quester.getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
                 }
-                if (questSec.contains("mobs-killed")) {
-                    final LinkedList<EntityType> mobs = new LinkedList<>();
-                    final List<Integer> amounts = questSec.getIntegerList("mobs-killed-amounts");
-                    for (final String s : questSec.getStringList("mobs-killed")) {
-                        final EntityType mob = MiscUtil.getProperMobType(s);
-                        if (mob != null) {
-                            mobs.add(mob);
+                if (questSec.contains("mobs-killed-amounts")) {
+                    final List<Integer> mobAmounts = questSec.getIntegerList("mobs-killed-amounts");
+                    int index = 0;
+                    for (final int amt : mobAmounts) {
+                        if (quester.getQuestData(quest).getMobNumKilled().size() > 0) {
+                            quester.getQuestData(quest).mobNumKilled.set(index, amt);
                         }
-                        quester.getQuestData(quest).mobTypesKilled.clear();
-                        quester.getQuestData(quest).mobNumKilled.clear();
-                        for (final EntityType e : mobs) {
-                            quester.getQuestData(quest).mobTypesKilled.add(e);
-                            quester.getQuestData(quest).mobNumKilled.add(amounts.get(mobs.indexOf(e)));
-                        }
+                        index++;
                     }
                 }
                 if (questSec.contains("locations-to-reach")) {
