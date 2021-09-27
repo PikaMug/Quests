@@ -3753,22 +3753,24 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         }
         if (data.contains(conditionKey + "ride-npc")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "ride-npc"), Integer.class)) {
-                final LinkedList<Integer> npcs = new LinkedList<>();
+                final LinkedList<Integer> npcList = new LinkedList<>();
                 for (final int i : data.getIntegerList(conditionKey + "ride-npc")) {
                     if (i < 0) {
                         throw new ConditionFormatException("ride-npc is not a valid NPC ID",
                                 conditionKey);
                     }
-                    npcs.add(i);
+                    npcList.add(i);
                 }
-                condition.setNpcsWhileRiding(npcs);
+                condition.setNpcsWhileRiding(npcList);
             } else {
                 throw new ConditionFormatException("ride-npc is not a list of NPC IDs", conditionKey);
             }
         }
         if (data.contains(conditionKey + "permission")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "permission"), String.class)) {
-                condition.setPermissions((LinkedList<String>) data.getStringList(conditionKey + "permission"));
+                final LinkedList<String> permissions
+                        = new LinkedList<>(data.getStringList(conditionKey + "permission"));
+                condition.setPermissions(permissions);
             } else {
                 throw new ConditionFormatException("permission is not a list of permissions", conditionKey);
             }
@@ -3776,8 +3778,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (data.contains(conditionKey + "hold-main-hand")) {
             final LinkedList<ItemStack> temp = new LinkedList<>();
             @SuppressWarnings("unchecked")
-            final
-            List<ItemStack> stackList = (List<ItemStack>) data.get(conditionKey + "hold-main-hand");
+            final List<ItemStack> stackList = (List<ItemStack>) data.get(conditionKey + "hold-main-hand");
             if (ConfigUtil.checkList(stackList, ItemStack.class)) {
                 for (final ItemStack stack : stackList) {
                     if (stack != null) {
