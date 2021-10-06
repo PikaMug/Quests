@@ -4180,13 +4180,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      * Checks if conversable is player in trial mode
      *
      * @param conversable the editor user to be checked
-     * @return {@code true} if user is a Player with quests.admin.trial permission
+     * @return {@code true} if user is a Player with quests.mode.trial permission
      */
     public boolean hasLimitedAccess(final Conversable conversable) {
         if (!(conversable instanceof Player)) {
             return false;
         }
-        return ((Player)conversable).hasPermission("quests.admin.trial");
+        return ((Player)conversable).hasPermission("quests.mode.trial");
     }
     
     /**

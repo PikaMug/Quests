@@ -79,7 +79,6 @@ permissions:
       quests.admin.reload: true
       quests.admin.drop: true
       quests.admin.update: true
-      quests.admin.trial: false
   quests.admin:
     description: Display administrator help
     default: op
@@ -128,7 +127,7 @@ permissions:
   quests.admin.update:
     description: Permit viewing of update check notices
     default: op
-  quests.admin.trial:
+  quests.mode.trial:
     description: Limit access to sensitive editor prompts
     default: false
   quests.editor.*:

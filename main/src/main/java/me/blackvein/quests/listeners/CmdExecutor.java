@@ -491,7 +491,7 @@ public class CmdExecutor implements CommandExecutor {
     private boolean questsActions(final CommandSender cs) {
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
                 || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
@@ -506,7 +506,7 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questsConditions(final CommandSender cs) {
         if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getConditionFactory().getConversationFactory().buildConversation(c).begin();
@@ -521,7 +521,7 @@ public class CmdExecutor implements CommandExecutor {
 
     private boolean questsEditor(final CommandSender cs) {
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 final Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
@@ -852,20 +852,20 @@ public class CmdExecutor implements CommandExecutor {
                     : "top") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_EDITOR")
                     : "editor") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
                 || cs.hasPermission("quests.events.editor") || cs.hasPermission("quests.actions.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
-                || cs.hasPermission("quests.admin.trial")) {
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_CONDITIONS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_CONDITIONS_EDITOR") : "conditions") + ChatColor.YELLOW));
