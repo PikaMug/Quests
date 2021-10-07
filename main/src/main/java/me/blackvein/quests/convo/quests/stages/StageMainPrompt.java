@@ -300,7 +300,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<String> passPhrases
                         = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES);
                 final LinkedList<String> passDisplays 
@@ -410,7 +410,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     final List<String> overrides
                             = (List<String>) context.getSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY);
                     if (overrides != null) {
-                        for (String override : overrides) {
+                        for (final String override : overrides) {
                             text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(override)
                                     .append("\n");
                         }
@@ -780,9 +780,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES, null);
                 return new ReachListPrompt(context);
             case 5:
-                int one;
-                int two;
-                int three;
+                final int one;
+                final int two;
+                final int three;
                 final List<String> locations
                         = (List<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS);
                 final List<Integer> radius
@@ -851,7 +851,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 final Block block = plugin.getQuestFactory().getSelectedReachLocations().get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    LinkedList<String> locations;
+                    final LinkedList<String> locations;
                     if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS) != null) {
                         locations = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS);
                     } else {
@@ -1096,8 +1096,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(stagePrefix + CK.S_PASSWORD_PHRASES, null);
                 return new PasswordListPrompt(context);
             case 4:
-                int one;
-                int two;
+                final int one;
+                final int two;
                 final List<String> displays
                         = (List<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS);
                 final List<String> phrases = (List<String>) context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES);
@@ -1904,8 +1904,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
-            StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -\n");
+
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -\n");
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
@@ -2047,8 +2047,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
-            StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -\n");
+
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -\n");
             if (plugin.getLoadedConditions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
@@ -2129,7 +2129,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("stageEditorDelayCleared"));
                     return new StageMainPrompt(stageNum, context);
                 }
-                long stageDelay;
+                final long stageDelay;
                 try {
                     final int i = Integer.parseInt(input);
                     stageDelay = i * 1000L;
@@ -2539,7 +2539,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         @SuppressWarnings("unchecked")
         @Override
         public @NotNull String getPromptText(final ConversationContext context) {
-            StringBuilder text = new StringBuilder(ChatColor.GOLD + "- ");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- ");
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
                     + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Entry<String, Object>> dataMapList
@@ -2604,7 +2604,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 final LinkedList<Entry<String, Object>> dataMapList = found.getData();
 
-                int numInput;
+                final int numInput;
                 try {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {

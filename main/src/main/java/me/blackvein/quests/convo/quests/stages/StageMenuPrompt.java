@@ -127,7 +127,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         int current = stageNum;
         String pref = "stage" + current;
         String newPref;
-        boolean last = stageNum == stages;
+        final boolean last = stageNum == stages;
         while (true) {
             if (!last) {
                 current++;
