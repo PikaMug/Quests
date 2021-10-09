@@ -26,7 +26,7 @@ public class UpdateChecker {
     private final Quests plugin;
     private final int resourceId;
 
-    public UpdateChecker(Quests plugin, int resourceId) {
+    public UpdateChecker(final Quests plugin, final int resourceId) {
         this.plugin = plugin;
         this.resourceId = resourceId;
     }
@@ -34,8 +34,8 @@ public class UpdateChecker {
     public void getVersion(final Consumer<String> consumer) {
         if (plugin.getSettings().canUpdateCheck()) {
             Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-                try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource="
-                        + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
+                try (final InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource="
+                        + this.resourceId).openStream(); final Scanner scanner = new Scanner(inputStream)) {
                     if (scanner.hasNext()) {
                         consumer.accept(scanner.next());
                     }

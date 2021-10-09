@@ -33,6 +33,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeSet;
 
 public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
@@ -387,7 +389,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 return new RequirementsPrompt(context);
             }
         case 9:
-            return new CustomRequirementsPrompt(context);
+            return new CustomRequirementModulePrompt(context);
         case 10:
             if (hasRequirement) {
                 return new OverridePrompt.Builder()
@@ -1389,10 +1391,88 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
+    public class CustomRequirementModulePrompt extends QuestsEditorStringPrompt {
+
+        public CustomRequirementModulePrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("stageEditorModules");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("stageEditorModulePrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(@NotNull final ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (plugin.getCustomRequirements().isEmpty()) {
+                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                        .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
+                        .append("\n");
+                text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+            } else {
+                for (final CustomRequirement cr : new TreeSet<>(plugin.getCustomRequirements())) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getModuleName()).append("\n");
+                }
+            }
+            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(@NotNull final ConversationContext context, @Nullable final String input) {
+            if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                String found = null;
+                // Check if we have a module with the specified name
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getModuleName().equalsIgnoreCase(input)) {
+                        found = cr.getModuleName();
+                        break;
+                    }
+                }
+                if (found == null) {
+                    // No? Check again, but with locale sensitivity
+                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                        if (cr.getModuleName().toLowerCase().contains(input.toLowerCase())) {
+                            found = cr.getModuleName();
+                            break;
+                        }
+                    }
+                }
+                if (found != null) {
+                    return new CustomRequirementsPrompt(found, context);
+                }
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                return new RequirementsPrompt(context);
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.REQ_CUSTOM, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA, null);
+                context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
+            }
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            return new CustomRequirementModulePrompt(context);
+        }
+    }
+
     public class CustomRequirementsPrompt extends QuestsEditorStringPrompt {
 
-        public CustomRequirementsPrompt(final ConversationContext context) {
+        private final String moduleName;
+
+        public CustomRequirementsPrompt(final String moduleName, final ConversationContext context) {
             super(context);
+            this.moduleName = moduleName;
         }
 
         @Override
@@ -1434,16 +1514,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 CustomRequirement found = null;
-                // Check if we have a custom requirement with the specified name
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
-                    if (cr.getName().equalsIgnoreCase(input)) {
-                        found = cr;
-                        break;
-                    }
-                }
-                if (found == null) {
-                    // No? Check again, but with locale sensitivity
-                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getModuleName().equals(moduleName)) {
                         if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;
                             break;
@@ -1465,7 +1537,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             // Already added, so inform user
                             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
-                            return new CustomRequirementsPrompt(context);
+                            return new CustomRequirementsPrompt(moduleName, context);
                         }
                     } else {
                         // The custom requirement hasn't been added yet, so let's do it
@@ -1483,7 +1555,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
-                    return new CustomRequirementsPrompt(context);
+                    return new CustomRequirementsPrompt(moduleName, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_CUSTOM, null);

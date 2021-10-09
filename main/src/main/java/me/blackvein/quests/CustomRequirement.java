@@ -14,6 +14,7 @@ package me.blackvein.quests;
 
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,11 @@ public abstract class CustomRequirement {
     private final Map<String, String> descriptions = new HashMap<>();
 
     public abstract boolean testRequirement(Player p, Map<String, Object> m);
+
+    public String getModuleName() {
+        return new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getName()
+                .replace(".jar", "");
+    }
 
     public String getName() {
         return name;

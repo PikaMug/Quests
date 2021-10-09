@@ -109,6 +109,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -156,7 +157,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         try {
             Class.forName("me.blackvein.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             getLogger().info("LocaleLib not present. Is this a debug environment?");
         }
         blockListener = new BlockListener(this);
@@ -929,8 +930,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     public void loadModule(final File jar) {
         try {
             @SuppressWarnings("resource")
-            final
-            JarFile jarFile = new JarFile(jar);
+            final JarFile jarFile = new JarFile(jar);
             final Enumeration<JarEntry> entry = jarFile.entries();
             final URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
             final ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
@@ -951,31 +951,31 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 if (c != null) {
                     if (CustomRequirement.class.isAssignableFrom(c)) {
                         final Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
-                        final Constructor<? extends CustomRequirement> cstrctr = requirementClass.getConstructor();
-                        final CustomRequirement requirement = cstrctr.newInstance();
-                        final Optional<CustomRequirement>oo=getCustomRequirement(requirement.getClass().getName());
+                        final Constructor<? extends CustomRequirement> constructor = requirementClass.getConstructor();
+                        final CustomRequirement requirement = constructor.newInstance();
+                        final Optional<CustomRequirement>oo = getCustomRequirement(requirement.getClass().getName());
                         oo.ifPresent(customRequirements::remove);
                         customRequirements.add(requirement);
                         final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
                         final String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
                         count++;
-                        getLogger().info("Loaded Module: " + name + " by " + author);
+                        getLogger().info("Loaded \"" + name + "\" by " + author);
                     } else if (CustomReward.class.isAssignableFrom(c)) {
                         final Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
-                        final Constructor<? extends CustomReward> cstrctr = rewardClass.getConstructor();
-                        final CustomReward reward = cstrctr.newInstance();
-                        final Optional<CustomReward>oo=getCustomReward(reward.getClass().getName());
+                        final Constructor<? extends CustomReward> constructor = rewardClass.getConstructor();
+                        final CustomReward reward = constructor.newInstance();
+                        final Optional<CustomReward>oo = getCustomReward(reward.getClass().getName());
                         oo.ifPresent(customRewards::remove);
                         customRewards.add(reward);
                         final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                         final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
                         count++;
-                        getLogger().info("Loaded Module: " + name + " by " + author);
+                        getLogger().info("Loaded \"" + name + "\" by " + author);
                     } else if (CustomObjective.class.isAssignableFrom(c)) {
                         final Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
-                        final Constructor<? extends CustomObjective> cstrctr = objectiveClass.getConstructor();
-                        final CustomObjective objective = cstrctr.newInstance();
-                        final Optional<CustomObjective>oo=getCustomObjective(objective.getClass().getName());
+                        final Constructor<? extends CustomObjective> constructor = objectiveClass.getConstructor();
+                        final CustomObjective objective = constructor.newInstance();
+                        final Optional<CustomObjective>oo = getCustomObjective(objective.getClass().getName());
                         if (oo.isPresent()) {
                             HandlerList.unregisterAll(oo.get());
                             customObjectives.remove(oo.get());
@@ -984,7 +984,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                         final String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
                         final String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
                         count++;
-                        getLogger().info("Loaded Module: " + name + " by " + author);
+                        getLogger().info("Loaded \"" + name + "\" by " + author);
                         try {
                             getServer().getPluginManager().registerEvents(objective, this);
                             getLogger().info("Registered events for custom objective \"" + name + "\"");
@@ -998,7 +998,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             }
             if (count == 0) {
                 getLogger().severe("Unable to load module from file: " + jar.getName() 
-                        + ", jar file is not a valid module!");
+                        + ", file is not a valid module!");
             }
         } catch (final Exception e) {
             getLogger().severe("Unable to load module from file: " + jar.getName());

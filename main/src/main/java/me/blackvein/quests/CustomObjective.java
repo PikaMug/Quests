@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,6 +39,11 @@ public abstract class CustomObjective implements Listener {
     private String countPrompt = "Enter number";
     private boolean showCount = true;
     private int count = 1;
+
+    public String getModuleName() {
+        return new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getName()
+                .replace(".jar", "");
+    }
 
     public String getName() {
         return name;

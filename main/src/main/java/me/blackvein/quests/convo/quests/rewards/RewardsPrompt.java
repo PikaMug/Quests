@@ -16,12 +16,15 @@ import com.codisimus.plugins.phatloots.PhatLoot;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+import me.blackvein.quests.CustomObjective;
+import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
+import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -34,6 +37,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeSet;
 
 public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
@@ -467,7 +472,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return new RewardsPrompt(context);
             }
         case 11:
-            return new CustomRewardsPrompt(context);
+            return new CustomRewardModulePrompt(context);
         case 12:
             if (hasReward) {
                 return new OverridePrompt.Builder()
@@ -1769,10 +1774,88 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class CustomRewardsPrompt extends QuestsEditorStringPrompt {
-        
-        public CustomRewardsPrompt(final ConversationContext context) {
+    public class CustomRewardModulePrompt extends QuestsEditorStringPrompt {
+
+        public CustomRewardModulePrompt(final ConversationContext context) {
             super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("stageEditorModules");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("stageEditorModulePrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(@NotNull final ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (plugin.getCustomRewards().isEmpty()) {
+                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                        .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
+                        .append("\n");
+                text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+            } else {
+                for (final CustomReward cr : new TreeSet<>(plugin.getCustomRewards())) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getModuleName()).append("\n");
+                }
+            }
+            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(@NotNull final ConversationContext context, @Nullable final String input) {
+            if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                String found = null;
+                // Check if we have a module with the specified name
+                for (final CustomReward cr : plugin.getCustomRewards()) {
+                    if (cr.getModuleName().equalsIgnoreCase(input)) {
+                        found = cr.getModuleName();
+                        break;
+                    }
+                }
+                if (found == null) {
+                    // No? Check again, but with locale sensitivity
+                    for (final CustomReward cr : plugin.getCustomRewards()) {
+                        if (cr.getModuleName().toLowerCase().contains(input.toLowerCase())) {
+                            found = cr.getModuleName();
+                            break;
+                        }
+                    }
+                }
+                if (found != null) {
+                    return new CustomRewardsPrompt(found, context);
+                }
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                return new RewardsPrompt(context);
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.REW_CUSTOM, null);
+                context.setSessionData(CK.REW_CUSTOM_DATA, null);
+                context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomCleared"));
+            }
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            return new CustomRewardModulePrompt(context);
+        }
+    }
+
+    public class CustomRewardsPrompt extends QuestsEditorStringPrompt {
+
+        private final String moduleName;
+        
+        public CustomRewardsPrompt(final String moduleName, final ConversationContext context) {
+            super(context);
+            this.moduleName = moduleName;
         }
 
         @Override
@@ -1794,13 +1877,16 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             }
             
             final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            if (plugin.getCustomRewards().isEmpty()) {
+            if (plugin.getCustomRequirements().isEmpty()) {
                 text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                         .append("https://pikamug.gitbook.io/quests/casual/modules\n").append(ChatColor.DARK_PURPLE)
                         .append("(").append(Lang.get("stageEditorNoModules")).append(") ");
             } else {
-                for (final CustomReward cr : plugin.getCustomRewards()) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
+                    if (cr.getModuleName().equals(moduleName)) {
+                        text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
+                    }
+
                 }
             }
             return text.toString() + ChatColor.YELLOW + getQueryText(context);
@@ -1814,16 +1900,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 CustomReward found = null;
-                // Check if we have a custom reward with the specified name
                 for (final CustomReward cr : plugin.getCustomRewards()) {
-                    if (cr.getName().equalsIgnoreCase(input)) {
-                        found = cr;
-                        break;
-                    }
-                }
-                if (found == null) {
-                    // No? Check again, but with locale sensitivity
-                    for (final CustomReward cr : plugin.getCustomRewards()) {
+                    if (cr.getModuleName().equals(moduleName)) {
                         if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;
                             break;
@@ -1845,7 +1923,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             // Already added, so inform user
                             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
-                            return new CustomRewardsPrompt(context);
+                            return new CustomRewardsPrompt(moduleName, context);
                         }
                     } else {
                         // The custom reward hasn't been added yet, so let's do it
@@ -1863,7 +1941,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
-                    return new CustomRewardsPrompt(context);
+                    return new CustomRewardsPrompt(moduleName, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REW_CUSTOM, null);

@@ -37,6 +37,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -44,7 +45,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class StageMainPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
@@ -478,7 +481,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         case 7:
             return new PasswordListPrompt(context);
         case 8:
-            return new CustomObjectivesPrompt(context);
+            return new CustomObjectiveModulePrompt(context);
         case 9:
             if (hasObjective) {
                 return new ActionListPrompt(context);
@@ -2356,10 +2359,89 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class CustomObjectivesPrompt extends QuestsEditorStringPrompt {
-        
-        public CustomObjectivesPrompt(final ConversationContext context) {
+    public class CustomObjectiveModulePrompt extends QuestsEditorStringPrompt {
+
+        public CustomObjectiveModulePrompt(final ConversationContext context) {
             super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("stageEditorModules");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("stageEditorModulePrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(@NotNull final ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (plugin.getCustomObjectives().isEmpty()) {
+                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                        .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
+                        .append("\n");
+                text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+            } else {
+                for (final String name : new TreeSet<>(plugin.getCustomObjectives().stream()
+                        .map(CustomObjective::getModuleName).collect(Collectors.toSet()))) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
+                }
+            }
+            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(@NotNull final ConversationContext context, @Nullable final String input) {
+            if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                String found = null;
+                // Check if we have a module with the specified name
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    if (co.getModuleName().equalsIgnoreCase(input)) {
+                        found = co.getModuleName();
+                        break;
+                    }
+                }
+                if (found == null) {
+                    // No? Check again, but with locale sensitivity
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                        if (co.getModuleName().toLowerCase().contains(input.toLowerCase())) {
+                            found = co.getModuleName();
+                            break;
+                        }
+                    }
+                }
+                if (found != null) {
+                    return new CustomObjectivesPrompt(found, context);
+                }
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                return new StageMainPrompt(stageNum, context);
+            } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES, null);
+                context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA, null);
+                context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCustomCleared"));
+            }
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            return new CustomObjectiveModulePrompt(context);
+        }
+    }
+
+    public class CustomObjectivesPrompt extends QuestsEditorStringPrompt {
+
+        private final String moduleName;
+
+        public CustomObjectivesPrompt(final String moduleName, final ConversationContext context) {
+            super(context);
+            this.moduleName = moduleName;
         }
 
         @Override
@@ -2387,7 +2469,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
             } else {
                 for (final CustomObjective co : plugin.getCustomObjectives()) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
+                    if (co.getModuleName().equals(moduleName)) {
+                        text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
+                    }
                 }
             }
             return text.toString() + ChatColor.YELLOW + getQueryText(context);
@@ -2399,16 +2483,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 CustomObjective found = null;
-                // Check if we have a custom objective with the specified name
                 for (final CustomObjective co : plugin.getCustomObjectives()) {
-                    if (co.getName().equalsIgnoreCase(input)) {
-                        found = co;
-                        break;
-                    }
-                }
-                if (found == null) {
-                    // No? Check again, but with locale sensitivity
-                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    if (co.getModuleName().equals(moduleName)) {
                         if (co.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = co;
                             break;
@@ -2437,7 +2513,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                             // Already added, so inform user
                             context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                                     + Lang.get("stageEditorCustomAlreadyAdded"));
-                            return new CustomObjectivesPrompt(context);
+                            return new CustomObjectivesPrompt(moduleName, context);
                         }
                     } else {
                         // The custom objective hasn't been added yet, so let's do it
@@ -2461,7 +2537,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
-                    return new CustomObjectivesPrompt(context);
+                    return new CustomObjectivesPrompt(moduleName, context);
                 }
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES, null);
