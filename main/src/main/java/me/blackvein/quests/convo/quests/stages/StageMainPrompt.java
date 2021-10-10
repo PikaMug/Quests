@@ -2444,6 +2444,10 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             this.moduleName = moduleName;
         }
 
+        public String getModuleName() {
+            return moduleName;
+        }
+
         @Override
         public String getTitle(final ConversationContext context) {
             return Lang.get("stageEditorCustom");
