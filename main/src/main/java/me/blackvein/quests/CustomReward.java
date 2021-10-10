@@ -34,6 +34,12 @@ public abstract class CustomReward {
                 .replace(".jar", "");
     }
 
+    public Map<String, Short> getModuleItem() {
+        final Map<String, Short> moduleItems = new HashMap<>();
+        moduleItems.put("IRON_INGOT", (short) 0);
+        return moduleItems;
+    }
+
     public String getName() {
         return name;
     }
