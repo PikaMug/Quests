@@ -15,6 +15,7 @@ package me.blackvein.quests;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public abstract class CustomReward {
     private String name = null;
     private String author = null;
     private String display = null;
-    private final Map<String, Short> items = new HashMap<>();
+    private Map.Entry<String, Short> item = new AbstractMap.SimpleEntry<>("BOOK", (short) 0);
     private final Map<String, Object> data = new HashMap<>();
     private final Map<String, String> descriptions = new HashMap<>();
 
@@ -34,10 +35,8 @@ public abstract class CustomReward {
                 .replace(".jar", "");
     }
 
-    public Map<String, Short> getModuleItem() {
-        final Map<String, Short> moduleItems = new HashMap<>();
-        moduleItems.put("IRON_INGOT", (short) 0);
-        return moduleItems;
+    public Map.Entry<String, Short> getModuleItem() {
+        return new AbstractMap.SimpleEntry<>("IRON_INGOT", (short) 0);
     }
 
     public String getName() {
@@ -63,13 +62,20 @@ public abstract class CustomReward {
     public void setDisplay(final String display) {
         this.display = display;
     }
-    
-    public Map<String, Short> getItems() {
-        return items;
+
+    public Map.Entry<String, Short> getItem() {
+        return item;
     }
-    
+
+    /**
+     * @deprecated Use {@link #setItem(String, short)}
+     */
     public void addItem(final String type, final short durability) {
-        this.items.put(type, durability);
+        setItem(type, durability);
+    }
+
+    public void setItem(final String type, final short durability) {
+        this.item = new AbstractMap.SimpleEntry<>(type, durability);
     }
     
     /**

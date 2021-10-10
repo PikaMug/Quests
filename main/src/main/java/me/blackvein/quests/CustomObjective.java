@@ -33,7 +33,7 @@ public abstract class CustomObjective implements Listener {
     private String name = null;
     private String author = null;
     private String display = "Progress: %count%";
-    private final Map<String, Short> items = new HashMap<>();
+    private Entry<String, Short> item = new AbstractMap.SimpleEntry<>("BOOK", (short) 0);
     private final LinkedList<Entry<String, Object>> data = new LinkedList<>();
     private final Map<String, String> descriptions = new HashMap<>();
     private String countPrompt = "Enter number";
@@ -45,10 +45,8 @@ public abstract class CustomObjective implements Listener {
                 .replace(".jar", "");
     }
 
-    public Map<String, Short> getModuleItem() {
-        final Map<String, Short> moduleItems = new HashMap<>();
-        moduleItems.put("IRON_INGOT", (short) 0);
-        return moduleItems;
+    public Entry<String, Short> getModuleItem() {
+        return new AbstractMap.SimpleEntry<>("IRON_INGOT", (short) 0);
     }
 
     public String getName() {
@@ -75,12 +73,19 @@ public abstract class CustomObjective implements Listener {
         this.display = display;
     }
 
-    public Map<String, Short> getItems() {
-        return items;
+    public Entry<String, Short> getItem() {
+        return item;
     }
-    
+
+    /**
+     * @deprecated Use {@link #setItem(String, short)}
+     */
     public void addItem(final String type, final short durability) {
-        this.items.put(type, durability);
+        setItem(type, durability);
+    }
+
+    public void setItem(final String type, final short durability) {
+        this.item = new AbstractMap.SimpleEntry<>(type, durability);
     }
 
     public LinkedList<Entry<String, Object>> getData() {
