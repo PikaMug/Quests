@@ -4081,9 +4081,18 @@ public class Quester implements Comparable<Quester> {
                                 if (!pp.getPlayerUUID().equals(getUUID())) {
                                     if (distanceSquared > 0) {
                                         final Player player = Bukkit.getPlayer(pp.getPlayerUUID());
-                                        if (player != null && distanceSquared >= getPlayer().getLocation()
-                                                .distanceSquared(player.getLocation())) {
-                                            mq.add(plugin.getQuester(pp.getPlayerUUID()));
+                                        if (player != null) {
+                                            final Location locationOne = getPlayer().getLocation();
+                                            final Location locationTwo = player.getLocation();
+                                            if (locationOne.getWorld() != null && locationTwo.getWorld() != null) {
+                                                if (locationOne.getWorld().getName().equals(locationTwo.getWorld()
+                                                        .getName())) {
+                                                    if (distanceSquared >= getPlayer().getLocation()
+                                                            .distanceSquared(player.getLocation())) {
+                                                        mq.add(plugin.getQuester(pp.getPlayerUUID()));
+                                                    }
+                                                }
+                                            }
                                         }
                                     } else {
                                         mq.add(plugin.getQuester(pp.getPlayerUUID()));
