@@ -2296,8 +2296,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         if (config.contains("quests." + questKey + ".options.ignore-silk-touch")) {
             opts.setIgnoreSilkTouch(config.getBoolean("quests." + questKey + ".options.ignore-silk-touch"));
         }
-        if (config.contains("quests." + questKey + ".options.use-dungeonsxl-plugin")) {
-            opts.setUseDungeonsXLPlugin(config.getBoolean("quests." + questKey + ".options.use-dungeonsxl-plugin"));
+        if (config.contains("quests." + questKey + ".options.external-party-plugin")) {
+            opts.setExternalPartyPlugin(config.getString("quests." + questKey + ".external-party-plugin"));
         }
         if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
             opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));

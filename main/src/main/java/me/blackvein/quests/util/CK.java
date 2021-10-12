@@ -143,7 +143,7 @@ public class CK {
     public static final String OPT_ALLOW_COMMANDS = "allowCommandsOpt";
     public static final String OPT_ALLOW_QUITTING = "allowQuittingOpt";
     public static final String OPT_IGNORE_SILK_TOUCH = "ignoreSilkTouchOpt";
-    public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
+    public static final String OPT_EXTERNAL_PARTY_PLUGIN = "externalPartyPluginOpt";
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
     public static final String OPT_SHARE_SAME_QUEST_ONLY = "shareSameQuestOnlyOpt";

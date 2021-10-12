@@ -16,7 +16,7 @@ public class Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
     private boolean ignoreSilkTouch = true;
-    private boolean useDungeonsXLPlugin = false;
+    private String externalPartyPlugin = null;
     private boolean usePartiesPlugin = true;
     private boolean handleOfflinePlayers = false;
     private double shareDistance = 0.0D;
@@ -46,13 +46,13 @@ public class Options {
     public void setIgnoreSilkTouch(final boolean ignoreSilkTouch) {
         this.ignoreSilkTouch = ignoreSilkTouch;
     }
-    
-    public boolean canUseDungeonsXLPlugin() {
-        return useDungeonsXLPlugin;
+
+    public String getExternalPartyPlugin() {
+        return externalPartyPlugin;
     }
-    
-    public void setUseDungeonsXLPlugin(final boolean useDungeonsXLPlugin) {
-        this.useDungeonsXLPlugin = useDungeonsXLPlugin;
+
+    public void setExternalPartyPlugin(final String externalPartyPlugin) {
+        this.externalPartyPlugin = externalPartyPlugin;
     }
     
     public boolean canUsePartiesPlugin() {

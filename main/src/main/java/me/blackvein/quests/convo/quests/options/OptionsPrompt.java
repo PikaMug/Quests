@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo.quests.options;
 
+import me.pikamug.unite.api.objects.PartyProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -26,6 +27,7 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class OptionsPrompt extends QuestsEditorNumericPrompt {
@@ -113,6 +115,78 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             return plugin.getQuestFactory().returnToMenu(context);
         default:
             return new OptionsPrompt(context);
+        }
+    }
+
+    public class OptionsPluginPrompt extends QuestsEditorStringPrompt {
+        public OptionsPluginPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("optPluginListTitle");
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("optExternalPartyPluginPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+                    + ChatColor.DARK_PURPLE);
+            boolean none = true;
+            for (final PartyProvider q : plugin.getDependencies().getPartyProviders()) {
+                text.append(q.getPluginName()).append(", ");
+                none = false;
+            }
+            if (none) {
+                text.append("(").append(Lang.get("none")).append(")\n");
+            } else {
+                text = new StringBuilder(text.substring(0, (text.length() - 2)));
+                text.append("\n");
+            }
+            text.append(ChatColor.YELLOW).append(getQueryText(context));
+            return text.toString();
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                if (input.equalsIgnoreCase("Quests")) {
+                    context.getForWhom().sendRawMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
+                            + "https://www.youtube.com/watch?v=gvdf5n-zI14");
+                    return new OptionsPluginPrompt(context);
+                }
+                String properCase = null;
+                for (final PartyProvider partyProvider : plugin.getDependencies().getPartyProviders()) {
+                    if (input.equalsIgnoreCase(partyProvider.getPluginName())) {
+                        properCase = partyProvider.getPluginName();
+                    }
+                }
+                if (properCase == null) {
+                    String text = Lang.get("optNotAPluginName");
+                    text = text.replace("<plugin>", ChatColor.LIGHT_PURPLE + input + ChatColor.RED);
+                    context.getForWhom().sendRawMessage(text);
+                    return new OptionsPluginPrompt(context);
+                }
+                context.setSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(tempKey, null);
+                return tempPrompt;
+            }
+            return tempPrompt;
         }
     }
     
@@ -512,7 +586,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Lang.get("optUseDungeonsXLPlugin");
+                return ChatColor.YELLOW + Lang.get("optExternalPartyPlugin");
             case 2:
                 return ChatColor.YELLOW + Lang.get("optUsePartiesPlugin");
             case 3:
@@ -534,16 +608,13 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                final Boolean dungeonsOpt = (Boolean) context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN);
-                if (dungeonsOpt == null) {
-                    final boolean defaultOpt = new Options().canUseDungeonsXLPlugin();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
-                            + Lang.get(String.valueOf(defaultOpt)) : ChatColor.RED 
-                            + Lang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                final String externalOpt = (String) context.getSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN);
+                if (plugin.getDependencies().getPartyProvider() == null) {
+                    return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
+                } else if (externalOpt != null){
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + externalOpt + ChatColor.GRAY + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + (dungeonsOpt ? ChatColor.GREEN 
-                            + Lang.get(String.valueOf(dungeonsOpt)) : ChatColor.RED 
-                            + Lang.get(String.valueOf(dungeonsOpt))) + ChatColor.GRAY + ")";
+                    return "";
                 }
             case 2:
                 final Boolean partiesOpt = (Boolean) context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN);
@@ -625,9 +696,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                tempKey = CK.OPT_USE_DUNGEONSXL_PLUGIN;
+                tempKey = CK.OPT_EXTERNAL_PARTY_PLUGIN;
                 tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                return new OptionsPluginPrompt(context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
                 tempPrompt = new OptionsMultiplayerPrompt(context);

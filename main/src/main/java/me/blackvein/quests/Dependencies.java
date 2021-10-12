@@ -38,8 +38,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import ro.nicuch.citizensbooks.CitizensBooksAPI;
 import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Dependencies {
     
@@ -47,6 +50,7 @@ public class Dependencies {
     private static Economy economy = null;
     private static Permission permission = null;
     private static PartyProvider partyProvider = null;
+    private static final Set<PartyProvider> partyProviders = new HashSet<>();
     private static WorldGuardAPI worldGuardApi = null;
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
@@ -86,6 +90,15 @@ public class Dependencies {
             }
         }
         return partyProvider;
+    }
+
+    public Set<PartyProvider> getPartyProviders() {
+        if (partyProvider == null && isPluginAvailable("Unite")) {
+            if (!setupParty()) {
+                plugin.getLogger().warning("Party providers not found.");
+            }
+        }
+        return partyProviders;
     }
     
     public WorldGuardAPI getWorldGuardApi() {
@@ -260,6 +273,12 @@ public class Dependencies {
                 .getRegistration(PartyProvider.class);
         if (rsp != null) {
             partyProvider = rsp.getProvider();
+            for (final RegisteredServiceProvider<PartyProvider> rsp2 : plugin.getServer().getServicesManager()
+                    .getRegistrations(PartyProvider.class)) {
+                if (rsp2 != null) {
+                    partyProviders.add(rsp2.getProvider());
+                }
+            }
         }
         return (partyProvider != null);
     }

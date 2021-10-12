@@ -285,7 +285,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
         context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
         context.setSessionData(CK.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
-        context.setSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN, opt.canUseDungeonsXLPlugin());
+        context.setSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN, opt.getExternalPartyPlugin());
         context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
         context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
         context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
@@ -907,8 +907,8 @@ public class QuestFactory implements ConversationAbandonedListener {
                 ? context.getSessionData(CK.OPT_ALLOW_QUITTING) : null);
         opts.set("ignore-silk-touch", context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) != null 
                 ? context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) : null);
-        opts.set("use-dungeonsxl-plugin", context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) != null 
-                ? context.getSessionData(CK.OPT_USE_DUNGEONSXL_PLUGIN) : null);
+        opts.set("external-party-plugin", context.getSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN) != null
+                ? context.getSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN) : null);
         opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null 
                 ? context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
         opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 

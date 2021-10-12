@@ -4030,7 +4030,7 @@ public class Quester implements Comparable<Quester> {
         if (plugin.getDependencies().getPartyProvider() != null) {
             final PartyProvider partyProvider = plugin.getDependencies().getPartyProvider();
             if (partyProvider != null) {
-                if (quest.getOptions().canUsePartiesPlugin() || quest.getOptions().canUseDungeonsXLPlugin()) {
+                if (quest.getOptions().canUsePartiesPlugin() || quest.getOptions().getExternalPartyPlugin() != null) {
                     if (getUUID() != null && partyProvider.getPartyId(getUUID()) != null) {
                         final String partyId = partyProvider.getPartyId(getUUID());
                         final double distanceSquared = quest.getOptions().getShareDistance()
