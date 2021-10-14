@@ -1,5 +1,5 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ****************************************************************************************************** */
+ */
 
 package me.blackvein.quests.particle;
 
@@ -29,9 +29,12 @@ public enum PreBuiltParticle {
     SPLASH("splash", 0, 0, 0, 1, 4, new Vector(0, .5, 0)),
     SMOKE("smoke", 0, 1, 0, 1, 20);
 
-    private String identifier;
-    private float offsetX, offsetY, offsetZ, speed;
-    private int count;
+    private final String identifier;
+    private final float offsetX;
+    private final float offsetY;
+    private final float offsetZ;
+    private final float speed;
+    private final int count;
     private Vector vector;
 
     PreBuiltParticle(final String identifier, final float offsetX, final float offsetY, final float offsetZ, final float speed, final int count) {

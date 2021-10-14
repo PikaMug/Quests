@@ -1,5 +1,5 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
  *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
@@ -8,16 +8,16 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ****************************************************************************************************** */
+ */
 
 package me.blackvein.quests.particle;
-
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 public abstract class ParticleProvider {
 
@@ -33,7 +33,7 @@ public abstract class ParticleProvider {
             } else {
                 loaded = new ParticleProvider_Bukkit();
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException 
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
             Bukkit.getLogger().severe("[Quests] Could not find a valid implementation for this server version.");
         }
@@ -70,14 +70,14 @@ public abstract class ParticleProvider {
      */
     public static void sendToPlayer(final Player player, final Location location, final String particleId, final float offsetX, final float offsetY,
             final float offsetZ, final float speed, final int count, final int[] data) {
-        Object particle;
+        final Object particle;
         final PreBuiltParticle pbp = PreBuiltParticle.fromIdentifier(particleId);
         if (pbp != null) {
             particle = loaded.getParticleMap().get(pbp);
         } else {
             try {
                 particle = Particle.valueOf(particleId);
-            } catch (final IllegalArgumentException e2) {
+            } catch (final IllegalArgumentException exception) {
                 return; // Fail silently
             }
         }
@@ -107,7 +107,7 @@ public abstract class ParticleProvider {
                 loaded.spawnParticle(player, location, Particle.valueOf(particleId), 0, 0, 0, 1, 3, null);
             } catch (final NoClassDefFoundError e1) {
                 Bukkit.getLogger().severe("[Quests] This protocol does not support npc-effect: " + particleId);
-            } catch (final IllegalArgumentException exception) {
+            } catch (final IllegalArgumentException e2) {
                 // Fail silently
             }
         }
@@ -128,7 +128,11 @@ public abstract class ParticleProvider {
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
         }
-        loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(),
-                particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(),particle.getCount(), null);
+        try {
+            loaded.spawnParticle(player, pos, loaded.getParticleMap().get(particle), particle.getOffsetX(),
+                    particle.getOffsetY(), particle.getOffsetZ(), particle.getSpeed(),particle.getCount(), null);
+        } catch (final IllegalArgumentException exception) {
+            // Fail silently
+        }
     }
 }

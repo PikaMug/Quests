@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,18 +8,11 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.storage;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.google.common.collect.ImmutableSet;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.custom.CustomStorageProviders;
@@ -27,6 +20,11 @@ import me.blackvein.quests.storage.implementation.file.SeparatedYamlStorage;
 import me.blackvein.quests.storage.implementation.sql.SqlStorage;
 import me.blackvein.quests.storage.implementation.sql.connection.hikari.MySqlConnectionFactory;
 import me.blackvein.quests.storage.misc.StorageCredentials;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.Set;
 
 public class StorageFactory {
     private final Quests plugin;
@@ -41,8 +39,7 @@ public class StorageFactory {
     }
 
     public Storage getInstance() {
-        Storage storage;
-
+        final Storage storage;
         final StorageType type = StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"), 
                 StorageType.YAML);
         plugin.getLogger().info("Loading storage implementation: " + type.name());

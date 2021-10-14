@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,15 +8,33 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
+import com.codisimus.plugins.phatloots.PhatLootsAPI;
+import com.codisimus.plugins.phatloots.loot.CommandLoot;
+import com.codisimus.plugins.phatloots.loot.LootBundle;
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.util.player.UserManager;
+import com.herocraftonline.heroes.characters.Hero;
+import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
+import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
+import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
+import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
+import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
+import me.blackvein.quests.util.ConfigUtil;
+import me.blackvein.quests.util.InventoryUtil;
+import me.blackvein.quests.util.ItemUtil;
+import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.RomanNumeral;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -32,26 +50,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.codisimus.plugins.phatloots.loot.CommandLoot;
-import com.codisimus.plugins.phatloots.loot.LootBundle;
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.util.player.UserManager;
-import com.herocraftonline.heroes.characters.Hero;
-
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.events.quester.QuesterPostChangeStageEvent;
-import me.blackvein.quests.events.quester.QuesterPostCompleteQuestEvent;
-import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
-import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
-import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
-import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
-import me.blackvein.quests.util.ConfigUtil;
-import me.blackvein.quests.util.InventoryUtil;
-import me.blackvein.quests.util.ItemUtil;
-import me.blackvein.quests.util.Lang;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.citizensnpcs.api.npc.NPC;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 public class Quest implements Comparable<Quest> {
 
@@ -61,15 +64,15 @@ public class Quest implements Comparable<Quest> {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private final LinkedList<Stage> orderedStages = new LinkedList<Stage>();
+    private final LinkedList<Stage> orderedStages = new LinkedList<>();
     protected NPC npcStart;
     protected Location blockStart;
     protected String regionStart = null;
     protected Action initialAction;
-    private final Requirements reqs = new Requirements();
-    private final Planner pln = new Planner();
-    private final Rewards rews = new Rewards();
-    private final Options opts = new Options();
+    private final Requirements requirements = new Requirements();
+    private final Planner planner = new Planner();
+    private final Rewards rewards = new Rewards();
+    private final Options options = new Options();
 
     @Override
     public int compareTo(final Quest quest) {
@@ -157,19 +160,19 @@ public class Quest implements Comparable<Quest> {
     }
     
     public Requirements getRequirements() {
-        return reqs;
+        return requirements;
     }
     
     public Planner getPlanner() {
-        return pln;
+        return planner;
     }
     
     public Rewards getRewards() {
-        return rews;
+        return rewards;
     }
     
     public Options getOptions() {
-        return opts;
+        return options;
     }
 
     /**
@@ -213,11 +216,11 @@ public class Quest implements Comparable<Quest> {
             }
             
             // Multiplayer
-            if (opts.getShareProgressLevel() == 3) {
+            if (allowSharedProgress && options.getShareProgressLevel() == 3) {
                 final List<Quester> mq = quester.getMultiplayerQuesters(this);
                 for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, allowSharedProgress);
+                        nextStage(qq, true);
                     }
                 }
             }
@@ -262,9 +265,8 @@ public class Quest implements Comparable<Quest> {
         updateCompass(quester, nextStage);
         if (player.isOnline()) {
             final Player p = quester.getPlayer();
-            String msg = Lang.get(p, "questObjectivesTitle");
-            msg = msg.replace("<quest>", name);
-            p.sendMessage(ChatColor.GOLD + msg);
+            final String msg = Lang.get(p, "objectives").replace("<quest>", name);
+            quester.sendMessage(ChatColor.GOLD + msg);
             plugin.showObjectives(this, quester, false);
             final String stageStartMessage = quester.getCurrentStage(this).startMessage;
             if (stageStartMessage != null) {
@@ -285,7 +287,7 @@ public class Quest implements Comparable<Quest> {
      * 
      * @param quester The online quester to have their compass updated
      * @param stage The stage to process for targets
-     * @return true if successful
+     * @return true if an attempt was made successfully
      */
     public boolean updateCompass(final Quester quester, final Stage stage) {
         if (quester == null) {
@@ -300,99 +302,121 @@ public class Quest implements Comparable<Quest> {
         if (!quester.getPlayer().hasPermission("quests.compass")) {
             return false;
         }
-        Location targetLocation = null;
-        if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
-        } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
-            targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
-        } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-            targetLocation = stage.locationsToReach.getFirst();
-        } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
-                    .getFirst());
-            targetLocation = npc.getStoredLocation();
-        } else if (stage.playersToKill != null && stage.playersToKill > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            for (final Player p : source.getWorld().getPlayers()) {
-                if (p.getUniqueId().equals(quester.getUUID())) {
-                    continue;
+        final Quest quest = this;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Location targetLocation = null;
+            if (stage.citizensToInteract != null && stage.citizensToInteract.size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToInteract.getFirst());
+            } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
+            } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
+                targetLocation = stage.locationsToReach.getFirst();
+            } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
+                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
+                        .getFirst());
+                targetLocation = npc.getStoredLocation();
+            } else if (stage.playersToKill != null && stage.playersToKill > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                if (source.getWorld() == null) {
+                    return;
                 }
-                final double new_distance = p.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = p.getLocation();
-                    old_distance = new_distance;
+                for (final Player p : source.getWorld().getPlayers()) {
+                    if (p.getUniqueId().equals(quester.getUUID())) {
+                        continue;
+                    }
+                    final double new_distance = p.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = p.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final EntityType et = stage.mobsToKill.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
+                    }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final EntityType et = stage.mobsToTame.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
+                    }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
+                final Location source = quester.getPlayer().getLocation();
+                Location nearest = null;
+                double old_distance = 30000000;
+                final DyeColor dc = stage.sheepToShear.getFirst();
+                if (source.getWorld() == null) {
+                    return;
+                }
+                for (final Entity e : source.getWorld().getEntities()) {
+                    if (!e.getType().equals(EntityType.SHEEP)) {
+                        continue;
+                    }
+                    final Sheep s = (Sheep)e;
+                    if (s.getColor()!= null && s.getColor().equals(dc)) {
+                        continue;
+                    }
+                    final double new_distance = e.getLocation().distanceSquared(source);
+                    if (new_distance < old_distance) {
+                        nearest = e.getLocation();
+                        old_distance = new_distance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
                 }
             }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final EntityType et = stage.mobsToKill.getFirst();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(et)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
+            if (targetLocation != null && targetLocation.getWorld() != null) {
+                if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
+                    final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
+                            targetLocation.getY(), targetLocation.getZ());
+                    final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(quest, quester, lockedTarget);
+                    plugin.getServer().getPluginManager().callEvent(event);
+                    if (event.isCancelled()) {
+                        return;
+                    }
+                    quester.getPlayer().setCompassTarget(lockedTarget);
                 }
             }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final EntityType et = stage.mobsToTame.keySet().iterator().next();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(et)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
-            final Location source = quester.getPlayer().getLocation();
-            Location nearest = null;
-            double old_distance = 30000000;
-            final DyeColor dc = stage.sheepToShear.keySet().iterator().next();
-            for (final Entity e : source.getWorld().getEntities()) {
-                if (!e.getType().equals(EntityType.SHEEP)) {
-                    continue;
-                }
-                final Sheep s = (Sheep)e;
-                if (s.getColor().equals(dc)) {
-                    continue;
-                }
-                final double new_distance = e.getLocation().distanceSquared(source);
-                if (new_distance < old_distance) {
-                    nearest = e.getLocation();
-                    old_distance = new_distance;
-                }
-            }
-            if (nearest != null) {
-                targetLocation = nearest;
-            }
-        }
-        if (targetLocation != null && targetLocation.getWorld() != null) {
-            if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
-                quester.getPlayer().setCompassTarget(targetLocation);
-            }
-        }
-        return targetLocation != null;
+        });
+        return true;
     }
     
     /**
@@ -417,38 +441,37 @@ public class Quest implements Comparable<Quest> {
      */
     protected boolean testRequirements(final OfflinePlayer player) {
         final Quester quester = plugin.getQuester(player.getUniqueId());
-        if (reqs.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
-            if (plugin.getDependencies().getVaultEconomy().getBalance(player) < reqs.getMoney()) {
+        if (requirements.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
+            if (plugin.getDependencies().getVaultEconomy().getBalance(player) < requirements.getMoney()) {
                 return false;
             }
         }
-        if (quester.questPoints < reqs.getQuestPoints()) {
+        if (quester.questPoints < requirements.getQuestPoints()) {
             return false;
         }
-        if (quester.completedQuests.containsAll(reqs.getNeededQuests()) == false) {
+        if (!quester.completedQuests.containsAll(requirements.getNeededQuests())) {
             return false;
         }
-        for (final Quest q : reqs.getBlockQuests()) {
+        for (final Quest q : requirements.getBlockQuests()) {
             if (quester.completedQuests.contains(q) || quester.currentQuests.containsKey(q)) {
                 return false;
             }
         }
-        for (final String s : reqs.getMcmmoSkills()) {
+        for (final String s : requirements.getMcmmoSkills()) {
             final SkillType st = Quests.getMcMMOSkill(s);
-            final int lvl = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(s));
+            final int lvl = requirements.getMcmmoAmounts().get(requirements.getMcmmoSkills().indexOf(s));
             if (UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(st) < lvl) {
                 return false;
             }
         }
-        if (reqs.getHeroesPrimaryClass() != null) {
-            if (plugin.getDependencies()
-                    .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId()) == false) {
+        if (requirements.getHeroesPrimaryClass() != null) {
+            if (!plugin.getDependencies().testPrimaryHeroesClass(requirements.getHeroesPrimaryClass(), player.getUniqueId())) {
                 return false;
             }
         }
-        if (reqs.getHeroesSecondaryClass() != null) {
-            if (plugin.getDependencies()
-                    .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId()) == false) {
+        if (requirements.getHeroesSecondaryClass() != null) {
+            if (!plugin.getDependencies().testSecondaryHeroesClass(requirements.getHeroesSecondaryClass(),
+                    player.getUniqueId())) {
                 return false;
             }
         }
@@ -456,19 +479,19 @@ public class Quest implements Comparable<Quest> {
             final Player p = (Player)player;
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
             fakeInv.setContents(p.getInventory().getContents().clone());
-            for (final ItemStack is : reqs.getItems()) {
+            for (final ItemStack is : requirements.getItems()) {
                 if (InventoryUtil.canRemoveItem(fakeInv, is)) {
                     InventoryUtil.removeItem(fakeInv, is);
                 } else {
                     return false;
                 }
             }
-            for (final String s : reqs.getPermissions()) {
-                if (p.hasPermission(s) == false) {
+            for (final String s : requirements.getPermissions()) {
+                if (!p.hasPermission(s)) {
                     return false;
                 }
             }
-            for (final String s : reqs.getCustomRequirements().keySet()) {
+            for (final String s : requirements.getCustomRequirements().keySet()) {
                 CustomRequirement found = null;
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(s)) {
@@ -477,7 +500,7 @@ public class Quest implements Comparable<Quest> {
                     }
                 }
                 if (found != null) {
-                    if (found.testRequirement(p, reqs.getCustomRequirements().get(s)) == false) {
+                    if (!found.testRequirement(p, requirements.getCustomRequirements().get(s))) {
                         return false;
                     }
                 } else {
@@ -491,68 +514,91 @@ public class Quest implements Comparable<Quest> {
     
     /**
      * Proceed to finish this quest, issuing applicable rewards
+     *
+     * @param quester The quester finishing this quest
+     */
+    public void completeQuest(final Quester quester) {
+        completeQuest(quester, true);
+    }
+    
+    /**
+     * Proceed to finish this quest, issuing applicable rewards
      * 
-     * @param q The quester finishing this quest
+     * @param quester The quester finishing this quest
+     * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final Quester q) {
-        final OfflinePlayer player = q.getOfflinePlayer();
+    public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
+        final OfflinePlayer player = quester.getOfflinePlayer();
+        boolean cancelled = false;
         if (player.isOnline()) {
-            final QuesterPreCompleteQuestEvent preEvent = new QuesterPreCompleteQuestEvent(q, this);
-            plugin.getServer().getPluginManager().callEvent(preEvent);
-            if (preEvent.isCancelled()) {
-                return;
+            if (Bukkit.isPrimaryThread()) {
+                final QuesterPreCompleteQuestEvent preEvent
+                        = new QuesterPreCompleteQuestEvent(quester, this, false);
+                plugin.getServer().getPluginManager().callEvent(preEvent);
+                if (preEvent.isCancelled()) {
+                    return;
+                }
+            } else {
+                final CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+                    final QuesterPreCompleteQuestEvent preEvent
+                            = new QuesterPreCompleteQuestEvent(quester, Quest.this, true);
+                    plugin.getServer().getPluginManager().callEvent(preEvent);
+                    return preEvent.isCancelled();
+                });
+
+                try {
+                    cancelled = future.get();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
-        q.hardQuit(this);
-        if (!q.completedQuests.contains(this)) {
-            q.completedQuests.add(this);
+        if (cancelled) {
+            return;
         }
-        for (final Map.Entry<Integer, Quest> entry : q.timers.entrySet()) {
+        quester.hardQuit(this);
+        quester.completedQuests.add(this);
+        for (final Map.Entry<Integer, Quest> entry : quester.timers.entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
-                q.timers.remove(entry.getKey());
+                quester.timers.remove(entry.getKey());
             }
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
-            final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA + finished, this, p);
-            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    p.sendMessage(ps);
-                }
-            }, 40);
+            final String[] ps = ConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA
+                    + finished, this, p);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(ps), 40);
         }
-        if (pln.getCooldown() > -1) {
-            q.completedTimes.put(this, System.currentTimeMillis());
-            if (q.amountsCompleted.containsKey(this)) {
-                q.amountsCompleted.put(this, q.amountsCompleted.get(this) + 1);
+        if (planner.getCooldown() > -1) {
+            quester.completedTimes.put(this, System.currentTimeMillis());
+            if (quester.amountsCompleted.containsKey(this)) {
+                quester.amountsCompleted.put(this, quester.amountsCompleted.get(this) + 1);
             } else {
-                q.amountsCompleted.put(this, 1);
+                quester.amountsCompleted.put(this, 1);
             }
         }
         
         // Issue rewards
+        final Dependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
-        if (rews.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
-            plugin.getDependencies().getVaultEconomy().depositPlayer(player, rews.getMoney());
+        if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
+            depends.getVaultEconomy().depositPlayer(player, rewards.getMoney());
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getMoney() 
-                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural());
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded "
+                        + depends.getVaultEconomy().format(rewards.getMoney()));
             }
         }
         if (player.isOnline()) {
-            final Player p = (Player)player;
-            for (final ItemStack i : rews.getItems()) {
+            for (final ItemStack i : rewards.getItems()) {
                 try {
-                    InventoryUtil.addItem(p, i);
+                    InventoryUtil.addItem(player.getPlayer(), i);
                 } catch (final Exception e) {
                     plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                             + player.getName() + " upon completion of quest " + name);
-                    p.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+                    quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
                             + "Please contact an administrator.");
                 }
                 issuedReward = true;
@@ -562,39 +608,37 @@ public class Quest implements Comparable<Quest> {
                 }
             }
         }
-        for (final String s : rews.getCommands()) {
+        for (final String s : rewards.getCommands()) {
+            if (player.getName() == null) {
+                continue;
+            }
             String temp = s.replace("<player>", player.getName());
-            if (plugin.getDependencies().getPlaceholderApi() != null && player.isOnline()) {
+            if (depends.getPlaceholderApi() != null && player.isOnline()) {
                 temp = PlaceholderAPI.setPlaceholders((Player)player, temp);
             }
             final String command = temp;
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
             } else {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-                    }
-                });
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+                        Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command));
             }
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded command " + s);
             }
         }
-        for (int i = 0; i < rews.getPermissions().size(); i++) {
-            if (plugin.getDependencies().getVaultPermission() != null) {
-                final String perm = rews.getPermissions().get(i);
+        for (int i = 0; i < rewards.getPermissions().size(); i++) {
+            if (depends.getVaultPermission() != null) {
+                final String perm = rewards.getPermissions().get(i);
                 String world = null;
-                if (i < rews.getPermissionWorlds().size()) {
-                    world = rews.getPermissionWorlds().get(i);
+                if (i < rewards.getPermissionWorlds().size()) {
+                    world = rewards.getPermissionWorlds().get(i);
                 }
                 if (world == null || world.equals("null")) {
-                    plugin.getDependencies().getVaultPermission().playerAdd(null, player, perm);
+                    depends.getVaultPermission().playerAdd(null, player, perm);
                 } else {
-                    plugin.getDependencies().getVaultPermission().playerAdd(world, player, perm);
+                    depends.getVaultPermission().playerAdd(world, player, perm);
                 }
                 if (plugin.getSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was rewarded permission " + perm);
@@ -602,8 +646,8 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
-        for (final String s : rews.getMcmmoSkills()) {
-            final int levels = rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s));
+        for (final String s : rewards.getMcmmoSkills()) {
+            final int levels = rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s));
             UserManager.getOfflinePlayer(player).getProfile().addLevels(Quests.getMcMMOSkill(s), levels);
             if (plugin.getSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
@@ -611,9 +655,9 @@ public class Quest implements Comparable<Quest> {
             issuedReward = true;
         }
         if (player.isOnline()) {
-            for (final String s : rews.getHeroesClasses()) {
+            for (final String s : rewards.getHeroesClasses()) {
                 final Hero hero = plugin.getDependencies().getHero(player.getUniqueId());
-                final double expChange = rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s));
+                final double expChange = rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s));
                 hero.addExp(expChange, plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
                 if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -622,10 +666,24 @@ public class Quest implements Comparable<Quest> {
                 issuedReward = true;
             }
         }
-        final LinkedList<ItemStack> phatLootItems = new LinkedList<ItemStack>();
+        if (rewards.getPartiesExperience() > 0 && depends.getPartiesApi() != null) {
+            final PartyPlayer partyPlayer = depends.getPartiesApi().getPartyPlayer(player.getUniqueId());
+            if (partyPlayer != null && partyPlayer.getPartyId() != null) {
+                final Party party = depends.getPartiesApi().getParty(partyPlayer.getPartyId());
+                if (party != null) {
+                    party.giveExperience(rewards.getPartiesExperience());
+                    issuedReward = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info(player.getUniqueId() + " was rewarded "
+                                + rewards.getPartiesExperience() + " party experience");
+                    }
+                }
+            }
+        }
+        final LinkedList<ItemStack> phatLootItems = new LinkedList<>();
         int phatLootExp = 0;
-        final LinkedList<String> phatLootMessages = new LinkedList<String>();
-        for (final String s : rews.getPhatLoots()) {
+        final LinkedList<String> phatLootMessages = new LinkedList<>();
+        for (final String s : rewards.getPhatLoots()) {
             final LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
             if (lb.getExp() > 0) {
                 phatLootExp += lb.getExp();
@@ -634,33 +692,31 @@ public class Quest implements Comparable<Quest> {
                 }
             }
             if (lb.getMoney() > 0) {
-                if (plugin.getDependencies().getVaultEconomy() != null) {
-                    plugin.getDependencies().getVaultEconomy()
-                            .depositPlayer(player, lb.getMoney());
+                if (depends.getVaultEconomy() != null) {
+                    depends.getVaultEconomy().depositPlayer(player, lb.getMoney());
                 }
             }
-            if (lb.getItemList().isEmpty() == false) {
+            if (!lb.getItemList().isEmpty()) {
                 phatLootItems.addAll(lb.getItemList());
                 if (player.isOnline()) {
-                    final Player p = (Player)player;
                     for (final ItemStack is : lb.getItemList()) {
                         try {
-                            InventoryUtil.addItem(p, is);
+                            InventoryUtil.addItem(player.getPlayer(), is);
                         } catch (final Exception e) {
-                            plugin.getLogger().severe("Unable to add PhatLoots item to inventory of " + p.getName() 
-                                    + " upon completion of quest " + name);
-                            p.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+                            plugin.getLogger().severe("Unable to add PhatLoots item to inventory of "
+                                    + player.getName() + " upon completion of quest " + name);
+                            quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
                                     + "Please contact an administrator.");
                         }
                     }
                 }
             }
-            if (lb.getCommandList().isEmpty() == false && player.isOnline()) {
+            if (!lb.getCommandList().isEmpty() && player.isOnline()) {
                 for (final CommandLoot cl : lb.getCommandList()) {
                     cl.execute((Player)player);
                 }
             }
-            if (lb.getMessageList().isEmpty() == false) {
+            if (!lb.getMessageList().isEmpty()) {
                 phatLootMessages.addAll(lb.getMessageList());
             }
             if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -668,25 +724,25 @@ public class Quest implements Comparable<Quest> {
             }
             issuedReward = true;
         }
-        if (rews.getExp() > 0 && player.isOnline()) {
-            ((Player)player).giveExp(rews.getExp());
+        if (rewards.getExp() > 0 && player.isOnline()) {
+            ((Player)player).giveExp(rewards.getExp());
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rews.getExp());
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rewards.getExp());
             }
             issuedReward = true;
         }
-        if (rews.getQuestPoints() > 0) {
-            q.questPoints += rews.getQuestPoints();
+        if (rewards.getQuestPoints() > 0) {
+            quester.questPoints += rewards.getQuestPoints();
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rews.getQuestPoints() 
+                plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rewards.getQuestPoints() + " "
                         + Lang.get("questPoints"));
             }
             issuedReward = true;
         }
-        if (rews.getCustomRewards().isEmpty() == false) {
+        if (!rewards.getCustomRewards().isEmpty()) {
             issuedReward = true;
             if (plugin.getSettings().getConsoleLogging() > 2) {
-                for (final String s : rews.getCustomRewards().keySet()) {
+                for (final String s : rewards.getCustomRewards().keySet()) {
                     plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
                 }
             }
@@ -695,174 +751,189 @@ public class Quest implements Comparable<Quest> {
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            p.sendMessage(ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>", ChatColor.YELLOW + name
-                    + ChatColor.GOLD));
+            Lang.send(p, ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
+                    ChatColor.YELLOW + name + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + p.getName()
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " title " + "{\"text\":\"" + Lang.get(p, "quest") + " " + Lang.get(p, "complete") 
                         +  "\",\"color\":\"gold\"}");
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + p.getName()
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
                         + " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
             }
-            p.sendMessage(ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
+            Lang.send(p, ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
             if (!issuedReward) {
                 p.sendMessage(ChatColor.GRAY + "- (" + Lang.get("none") + ")");
-            } else if (!rews.getDetailsOverride().isEmpty()) {
-                for (final String s: rews.getDetailsOverride()) {
+            } else if (!rewards.getDetailsOverride().isEmpty()) {
+                for (final String s: rewards.getDetailsOverride()) {
                     String message = ChatColor.DARK_GREEN + ConfigUtil.parseString(
                             ChatColor.translateAlternateColorCodes('&', s));
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(p, message);
                     }
-                    p.sendMessage("- " + message);
+                    quester.sendMessage("- " + message);
                 }
             } else {
-                if (rews.getQuestPoints() > 0) {
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getQuestPoints() + " " 
+                if (rewards.getQuestPoints() > 0) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
                             + Lang.get(p, "questPoints"));
                 }
-                for (final ItemStack i : rews.getItems()) {
-                    String text = "error";
-                    if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
+                for (final ItemStack i : rewards.getItems()) {
+                    StringBuilder text;
+                    if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
                         if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() 
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount();
-                        } else {
-                            text = "- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName() 
-                                    + ChatColor.RESET;            
-                            try {
-                                if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-                                    text +=  ChatColor.GRAY + " " + Lang.get(p, "with") + ChatColor.DARK_PURPLE;
-                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
-                                    }
-                                }
-                            } catch (final Throwable tr) {
-                                // Do nothing, hasItemFlag() not introduced until 1.8.6
-                            }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
-                        }
-                    } else if (i.getDurability() != 0) {
-                        if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY
-                                    + " x " + i.getAmount();
-                        } else {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() + ChatColor.GRAY
-                                    + " " + Lang.get(p, "with");
-                            for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
-                            }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
-                        }
-                    } else {
-                        if (i.getEnchantments().isEmpty()) {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " + i.getAmount();
-                        } else {
-                            text = "- " + ChatColor.DARK_GREEN + ItemUtil.getName(i);
-                            try {
-                                if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-                                    text += ChatColor.GRAY + " " + Lang.get(p, "with");
-                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
-                                        text += " " + ItemUtil.getPrettyEnchantmentName(e.getKey()) + ":" + e.getValue();
-                                    }
-                                }
-                            } catch (final Throwable tr) {
-                                // Do nothing, hasItemFlag() not introduced until 1.8.6
-                            }
-                            text += ChatColor.GRAY + " x " + i.getAmount();
-                        }
-                    }
-                    p.sendMessage(text);
-                }
-                for (final ItemStack i : phatLootItems) {
-                    if (i.hasItemMeta() && i.getItemMeta().hasDisplayName()) {
-                        if (i.getEnchantments().isEmpty()) {
-                            p.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
+                            text = new StringBuilder("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
                                     + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount());
                         } else {
-                            p.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
-                                    + ChatColor.RESET + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " 
-                                    + Lang.get(p, "enchantedItem"));
+                            text = new StringBuilder("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC + i.getItemMeta().getDisplayName()
+                                    + ChatColor.RESET);
+                            try {
+                                if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                                    text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with")).append(ChatColor.DARK_PURPLE);
+                                    for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                                        text.append(" ").append(ItemUtil.getPrettyEnchantmentName(e.getKey())).append(":").append(e.getValue());
+                                    }
+                                }
+                            } catch (final Throwable tr) {
+                                // Do nothing, hasItemFlag() not introduced until 1.8.6
+                            }
+                            text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
+                        }
+                    } else if (i.getDurability() != 0) {
+                        text = new StringBuilder("- " + ChatColor.DARK_GREEN + "<item>:" + i.getDurability());
+                        if (!i.getEnchantments().isEmpty()) {
+                            text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with"));
+                            for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
+                                text.append(" <enchantment> <level>");
+                            }
+                        }
+                        text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
+                    } else {
+                        text = new StringBuilder("- " + ChatColor.DARK_GREEN + "<item>");
+                        if (!i.getEnchantments().isEmpty()) {
+                            try {
+                                if (!i.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                                    text.append(ChatColor.GRAY).append(" ").append(Lang.get(p, "with"));
+                                    for (int iz = 0; iz < i.getEnchantments().size(); iz++) {
+                                        text.append(" <enchantment> <level>");
+                                    }
+                                }
+                            } catch (final Throwable tr) {
+                                // Do nothing, hasItemFlag() not introduced until 1.8.6
+                            }
+                        }
+                        text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
+                    }
+                    if (plugin.getSettings().canTranslateNames() && text.toString().contains("<item>")) {
+                        if (!plugin.getLocaleManager().sendMessage(p, text.toString(), i.getType(), i.getDurability(),
+                                i.getEnchantments())) {
+                            for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                                text = new StringBuilder(text.toString().replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                        e.getKey())));
+                                text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
+                            }
+                            quester.sendMessage(text.toString().replace("<item>", ItemUtil.getName(i)));
+                        }
+                    } else {
+                        for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
+                            text = new StringBuilder(text.toString().replaceFirst("<enchantment>", ItemUtil.getPrettyEnchantmentName(
+                                    e.getKey())));
+                            text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
+                        }
+                        quester.sendMessage(text.toString().replace("<item>", ItemUtil.getName(i)));
+                    }
+                }
+                for (final ItemStack i : phatLootItems) {
+                    if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
+                        if (i.getEnchantments().isEmpty()) {
+                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
+                                    + i.getAmount());
+                        } else {
+                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
+                                    + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
                         }
                     } else if (i.getDurability() != 0) {
                         if (i.getEnchantments().isEmpty()) {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() 
-                                    + ChatColor.GRAY + " x " + i.getAmount());
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
+                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
                         } else {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":" + i.getDurability() 
-                                    + ChatColor.GRAY + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " " 
-                                    + Lang.get(p, "enchantedItem"));
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
+                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount()
+                                    + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
                         }
                     } else {
                         if (i.getEnchantments().isEmpty()) {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " 
-                                    + i.getAmount());
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
+                                    + " x " + i.getAmount());
                         } else {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY + " x " 
-                                    + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
+                                    + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " "
+                                    + Lang.get(p, "enchantedItem"));
                         }
                     }
                 }
-                if (rews.getMoney() > 1) {
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                            + plugin.getDependencies().getCurrency(true));
-                } else if (rews.getMoney() == 1) {
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + rews.getMoney() + " " + ChatColor.DARK_PURPLE 
-                            + plugin.getDependencies().getCurrency(false));
+                if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN
+                            + depends.getVaultEconomy().format(rewards.getMoney()));
                 }
-                if (rews.getExp() > 0 || phatLootExp > 0) {
-                    final int tot = rews.getExp() + phatLootExp;
-                    p.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " " 
+                if (rewards.getExp() > 0 || phatLootExp > 0) {
+                    final int tot = rewards.getExp() + phatLootExp;
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " "
                             + Lang.get(p, "experience"));
                 }
-                if (rews.getCommands().isEmpty() == false) {
+                if (!rewards.getCommands().isEmpty()) {
                     int index = 0;
-                    for (final String s : rews.getCommands()) {
-                        if (rews.getCommandsOverrideDisplay().isEmpty() == false && rews.getCommandsOverrideDisplay().size() 
-                                > index) {
-                            if (!rews.getCommandsOverrideDisplay().get(index).trim().equals("")) {
-                                p.sendMessage("- " + ChatColor.DARK_GREEN 
-                                        + rews.getCommandsOverrideDisplay().get(index));
+                    for (final String s : rewards.getCommands()) {
+                        if (!rewards.getCommandsOverrideDisplay().isEmpty()
+                                && rewards.getCommandsOverrideDisplay().size() > index) {
+                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+                                quester.sendMessage("- " + ChatColor.DARK_GREEN
+                                        + rewards.getCommandsOverrideDisplay().get(index));
                             }
                         } else {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                         }
                         index++;
                     }
                 }
-                if (rews.getPermissions().isEmpty() == false) {
+                if (!rewards.getPermissions().isEmpty()) {
                     int index = 0;
-                    for (final String s : rews.getPermissions()) {
-                        if (rews.getPermissionWorlds() != null && rews.getPermissionWorlds().size() > index) {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + s + " (" + rews.getPermissionWorlds().get(index)
-                                    + ")");
+                    for (final String s : rewards.getPermissions()) {
+                        if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s + " ("
+                                    + rewards.getPermissionWorlds().get(index) + ")");
                         } else {
-                            p.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                             
                         }
                         index++;
                     }
                 }
-                if (rews.getMcmmoSkills().isEmpty() == false) {
-                    for (final String s : rews.getMcmmoSkills()) {
-                        p.sendMessage("- " + ChatColor.DARK_GREEN 
-                                + rews.getMcmmoAmounts().get(rews.getMcmmoSkills().indexOf(s)) + " " 
+                if (!rewards.getMcmmoSkills().isEmpty()) {
+                    for (final String s : rewards.getMcmmoSkills()) {
+                        quester.sendMessage("- " + ChatColor.DARK_GREEN
+                                + rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s)) + " "
                                 + ChatColor.DARK_PURPLE + s + " " + Lang.get(p, "experience"));
                     }
                 }
-                if (rews.getHeroesClasses().isEmpty() == false) {
-                    for (final String s : rews.getHeroesClasses()) {
-                        p.sendMessage("- " + ChatColor.AQUA 
-                                + rews.getHeroesAmounts().get(rews.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE 
+                if (!rewards.getHeroesClasses().isEmpty()) {
+                    for (final String s : rewards.getHeroesClasses()) {
+                        quester.sendMessage("- " + ChatColor.AQUA
+                                + rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE
                                 + s + " " + Lang.get(p, "experience"));
                     }
                 }
-                if (phatLootMessages.isEmpty() == false) {
+                if (rewards.getPartiesExperience() > 0) {
+                    p.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getPartiesExperience() + ChatColor.DARK_PURPLE
+                            + " " + Lang.get(p, "partiesExperience"));
+                }
+                if (!phatLootMessages.isEmpty()) {
                     for (final String s : phatLootMessages) {
-                        p.sendMessage("- " + s);
+                        quester.sendMessage("- " + s);
                     }
                 }
-                for (final String s : rews.getCustomRewards().keySet()) {
+                for (final String s : rewards.getCustomRewards().keySet()) {
                     CustomReward found = null;
                     for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getName().equalsIgnoreCase(s)) {
@@ -871,42 +942,45 @@ public class Quest implements Comparable<Quest> {
                         }
                     }
                     if (found != null) {
-                        final Map<String, Object> datamap = rews.getCustomRewards().get(found.getName());
+                        final Map<String, Object> dataMap = rewards.getCustomRewards().get(found.getName());
                         String message = found.getDisplay();
                         if (message != null) {
-                            for (final String key : datamap.keySet()) {
-                                message = message.replace("%" + key + "%", datamap.get(key).toString());
+                            for (final String key : dataMap.keySet()) {
+                                message = message.replace("%" + key + "%", dataMap.get(key).toString());
                             }
-                            p.sendMessage("- " + ChatColor.GOLD + message);
+                            quester.sendMessage("- " + ChatColor.GOLD + message);
                         } else {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
-                        found.giveReward(p, rews.getCustomRewards().get(s));
+                        found.giveReward(p, rewards.getCustomRewards().get(s));
                     } else {
-                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \"" + name 
-                                + "\", but the Custom Reward \"" + s + "\" could not be found. Does it still exist?");
+                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
+                                + name + "\", but the Custom Reward \"" + s
+                                + "\" could not be found. Does it still exist?");
                     }
                 }
             }
         }
-        q.saveData();
+        quester.saveData();
         if (player.isOnline()) {
-            ((Player)player).updateInventory();
+            if (player.getPlayer() != null) {
+                player.getPlayer().updateInventory();
+            }
         }
-        q.updateJournal();
-        q.findCompassTarget();
+        quester.updateJournal();
+        quester.findCompassTarget();
         if (player.isOnline()) {
-            final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(q, this);
+            final QuesterPostCompleteQuestEvent postEvent = new QuesterPostCompleteQuestEvent(quester, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
         
         // Multiplayer
-        if (opts.getShareProgressLevel() == 4) {
-            final List<Quester> mq = q.getMultiplayerQuesters(this);
+        if (allowMultiplayer && options.getShareProgressLevel() == 4) {
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
-                    completeQuest(qq);
+                    completeQuest(qq, false);
                 }
             }
         }
@@ -925,7 +999,7 @@ public class Quest implements Comparable<Quest> {
      * Force player to quit quest and inform them of their failure
      * 
      * @param quester The quester to be ejected
-     * @param ignoreFailAction Whether or not to ignore quest fail Action
+     * @param ignoreFailAction Whether to ignore quest fail Action
      */
     @SuppressWarnings("deprecation")
     public void failQuest(final Quester quester, final boolean ignoreFailAction) {
@@ -942,7 +1016,7 @@ public class Quest implements Comparable<Quest> {
             }
         }
         final String[] messages = {
-                ChatColor.GOLD + Lang.get(player, "questObjectivesTitle").replace("<quest>", name),
+                ChatColor.GOLD + Lang.get(player, "questCommandTitle").replace("<quest>", name),
                 ChatColor.RED + Lang.get(player, "questFailed")
         };
         quester.quitQuest(this, messages);
@@ -956,7 +1030,7 @@ public class Quest implements Comparable<Quest> {
     /**
      * Checks if quester is in WorldGuard region start
      * 
-     * @deprecated Use {@link #isInRegion(Quester)}
+     * @deprecated Use {@link #isInRegionStart(Quester)}
      * @param quester The quester to check
      * @return true if quester is in region
      */
@@ -998,10 +1072,7 @@ public class Quest implements Comparable<Quest> {
         if (regionStart == null) {
             return false;
         }
-        if (plugin.getDependencies().getWorldGuardApi()
-                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart)) {
-            return true;
-        }
-        return false;
+        return plugin.getDependencies().getWorldGuardApi()
+                .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart);
     }
 }

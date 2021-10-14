@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.exceptions;
 
@@ -25,20 +25,6 @@ public class StageFormatException extends Exception {
     public StageFormatException(final String message, final Quest quest, final int stage) {
         super(message + ", see quest " + quest.getName() + " stage " + stage);
         this.message = message + ", see quest " + quest.getName() + " stage " + stage;
-        this.quest = quest;
-        this.stage = stage;
-    }
-
-    /**
-     * Create a new instance of this class with the afflicted quest and stage number.
-     * 
-     * @deprecated Use {@link#StageFormatException(String, Quest, int)}
-     * @param quest The quest that an invalid stage id was set within.
-     * @param stage The invalid stage id that was set.
-     */
-    @Deprecated
-    public StageFormatException(final Quest quest, final int stage) {
-        this.message = "Failed to load quest " + quest.getName() + " stage " + stage;
         this.quest = quest;
         this.stage = stage;
     }

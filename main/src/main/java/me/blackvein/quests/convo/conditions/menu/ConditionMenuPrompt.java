@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,17 +8,9 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.convo.conditions.menu;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
@@ -31,6 +23,15 @@ import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNume
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     
@@ -89,15 +90,17 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
-        final ConditionsEditorPostOpenNumericPromptEvent event = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        final ConditionsEditorPostOpenNumericPromptEvent event 
+                = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
-        String text = ChatColor.GOLD + getTitle(context);
+        
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
         }
-        return text;
+        return text.toString();
     }
 
     @Override
@@ -114,7 +117,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
         case 2:
             if (cs.hasPermission("quests.conditions.edit")) {
-                if (plugin.getConditions().isEmpty()) {
+                if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToEdit"));
                     return new ConditionMenuPrompt(context);
@@ -127,7 +130,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
         case 3:
             if (cs.hasPermission("quests.conditions.delete")) {
-                if (plugin.getConditions().isEmpty()) {
+                if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
                             + Lang.get("conditionEditorNoneToDelete"));
                     return new ConditionMenuPrompt(context);
@@ -163,23 +166,23 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final String text = ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
-            return text;
+
+            return ChatColor.GOLD + getTitle(context) + "\n" + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, String input) {
             if (input == null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                 return new ConditionSelectCreatePrompt(context);
             }
             input = input.trim();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                for (final Condition c : plugin.getConditions()) {
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionSelectCreatePrompt(context);
@@ -225,19 +228,29 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
-            for (final Condition a : plugin.getConditions()) {
-                text += ChatColor.AQUA + a.getName() + ChatColor.GRAY + ", ";
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
+            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
+            for (int i = 0; i < names.size(); i++) {
+                text.append(ChatColor.AQUA).append(names.get(i));
+                if (i < (names.size() - 1)) {
+                    text.append(ChatColor.GRAY).append(", ");
+                }
             }
-            text = text.substring(0, text.length() - 2) + "\n";
-            text += ChatColor.YELLOW + getQueryText(context);
-            return text;
+            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return text.toString();
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
                     context.setSessionData(CK.C_OLD_CONDITION, c.getName());
@@ -270,23 +283,33 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GOLD + getTitle(context) + "\n";
-            for (final Condition c : plugin.getConditions()) {
-                text += ChatColor.AQUA + c.getName() + ChatColor.GRAY + ",";
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
+            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
+            for (int i = 0; i < names.size(); i++) {
+                text.append(ChatColor.AQUA).append(names.get(i));
+                if (i < (names.size() - 1)) {
+                    text.append(ChatColor.GRAY).append(", ");
+                }
             }
-            text = text.substring(0, text.length() - 1) + "\n";
-            text += ChatColor.YELLOW + getQueryText(context);
-            return text;
+            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return text.toString();
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> used = new LinkedList<String>();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                final LinkedList<String> used = new LinkedList<>();
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
-                    for (final Quest quest : plugin.getQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getCondition() != null 
                                     && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {
@@ -323,9 +346,37 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             super(context);
         }
         
+        private final int size = 2;
+        
+        public int getSize() {
+            return size;
+        }
+        
         @Override
         public String getTitle(final ConversationContext context) {
             return null;
+        }
+        
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN;
+            case 2:
+                return ChatColor.RED;
+            default:
+                return null;
+            }
+        }
+        
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+            case 1:
+                return ChatColor.GREEN + Lang.get("yesWord");
+            case 2:
+                return ChatColor.RED + Lang.get("noWord");
+            default:
+                return null;
+            }
         }
         
         @Override
@@ -334,17 +385,25 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            String text = ChatColor.GREEN + "" + ChatColor.BOLD + "1" + ChatColor.RESET + "" + ChatColor.GREEN + " - " 
-        + Lang.get("yesWord") + "\n";
-            text += ChatColor.RED + "" + ChatColor.BOLD + "2" + ChatColor.RESET + "" + ChatColor.RED + " - " 
-        + Lang.get("noWord");
-            return ChatColor.RED + Lang.get("confirmDelete") + " (" + ChatColor.YELLOW 
-                    + (String) context.getSessionData(CK.ED_CONDITION_DELETE) + ChatColor.RED + ")\n" + text;
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            final ConditionsEditorPostOpenStringPromptEvent event 
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            final StringBuilder text = new StringBuilder(ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW
+                    + context.getSessionData(CK.ED_CONDITION_DELETE) + ChatColor.RED + ")\n");
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+            }
+            return text.toString();
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get("yesWord"))) {
                 plugin.getConditionFactory().deleteCondition(context);
                 return Prompt.END_OF_CONVERSATION;

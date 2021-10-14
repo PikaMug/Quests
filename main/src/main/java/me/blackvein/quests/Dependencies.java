@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,42 +8,48 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests;
-
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.codisimus.plugins.phatloots.PhatLoots;
-import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
-
-import de.erethon.dungeonsxl.DungeonsXL;
+import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.Lang;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import ro.nicuch.citizensbooks.CitizensBooksAPI;
 import ro.nicuch.citizensbooks.CitizensBooksPlugin;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 public class Dependencies {
     
     private final Quests plugin;
     private static Economy economy = null;
     private static Permission permission = null;
+    private static PartyProvider partyProvider = null;
+    private static final Set<PartyProvider> partyProviders = new HashSet<>();
     private static WorldGuardAPI worldGuardApi = null;
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
@@ -52,7 +58,6 @@ public class Dependencies {
     private static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;
-    private static DungeonsXL dungeons = null;
     private static PartiesAPI parties = null;
     
     public Dependencies(final Quests plugin) {
@@ -62,7 +67,7 @@ public class Dependencies {
     public Economy getVaultEconomy() {
         if (economy == null && isPluginAvailable("Vault")) {
             if (!setupEconomy()) {
-                plugin.getLogger().warning("Economy not found.");
+                plugin.getLogger().warning("Economy provider not found.");
             }
         }
         return economy;
@@ -71,10 +76,28 @@ public class Dependencies {
     public Permission getVaultPermission() {
         if (permission == null && isPluginAvailable("Vault")) {
             if (!setupPermissions()) {
-                plugin.getLogger().warning("Permissions not found.");
+                plugin.getLogger().warning("Permission provider not found.");
             }
         }
         return permission;
+    }
+
+    public PartyProvider getPartyProvider() {
+        if (partyProvider == null && isPluginAvailable("Unite")) {
+            if (!setupParty()) {
+                plugin.getLogger().warning("Party provider not found.");
+            }
+        }
+        return partyProvider;
+    }
+
+    public Set<PartyProvider> getPartyProviders() {
+        if (partyProvider == null && isPluginAvailable("Unite")) {
+            if (!setupParty()) {
+                plugin.getLogger().warning("Party providers not found.");
+            }
+        }
+        return partyProviders;
     }
     
     public WorldGuardAPI getWorldGuardApi() {
@@ -85,7 +108,7 @@ public class Dependencies {
     }
     
     public mcMMO getMcmmoClassic() {
-        if (mcmmo == null && isPluginAvailable("Heroes")) {
+        if (mcmmo == null && isPluginAvailable("mcMMO")) {
             try {
                 Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
                 mcmmo = (mcMMO) plugin.getServer().getPluginManager().getPlugin("mcMMO");
@@ -124,20 +147,38 @@ public class Dependencies {
     }
     
     public CitizensPlugin getCitizens() {
-        if (citizens == null && isPluginAvailable("Citizens")) {
-            try {
-                citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
-                plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
-                plugin.getLogger().info("Successfully linked Quests with Citizens " 
-                        + citizens.getDescription().getVersion());
-            } catch (final Exception e) {
-                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
-            }
+        if (citizens == null) {
+            linkCitizens();
         }
         return citizens;
     }
     
-    public void disableCitizens() {
+    public void linkCitizens() {
+        if (isPluginAvailable("Citizens")) {
+            try {
+                citizens = (CitizensPlugin) plugin.getServer().getPluginManager().getPlugin("Citizens");
+                boolean found = false;
+                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
+                    if (listener.getListener() instanceof NpcListener) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    plugin.getServer().getPluginManager().registerEvents(plugin.getNpcListener(), plugin);
+                    if (plugin.getSettings().canNpcEffects()) {
+                        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
+                                20, 20);
+                    }
+                    plugin.getLogger().info("Successfully linked Quests with Citizens " 
+                            + citizens.getDescription().getVersion());
+                }
+            } catch (final Exception e) {
+                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+            }
+        }
+    }
+    
+    public void unlinkCitizens() {
         citizens = null;
     }
     
@@ -150,19 +191,16 @@ public class Dependencies {
     
     public CitizensBooksAPI getCitizensBooksApi() {
         if (citizensBooks == null && isPluginAvailable("CitizensBooks")) {
-            citizensBooks = ((CitizensBooksPlugin) plugin.getServer().getPluginManager().getPlugin("CitizensBooks"))
-                    .getAPI();
+            try {
+                citizensBooks = ((CitizensBooksPlugin) Objects.requireNonNull(plugin.getServer().getPluginManager()
+                        .getPlugin("CitizensBooks"))).getAPI();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
         return citizensBooks;
     }
-    
-    public DungeonsXL getDungeonsApi() {
-        if (dungeons == null && isPluginAvailable("DungeonsXL")) {
-            dungeons = DungeonsXL.getInstance();
-        }
-        return dungeons;
-    }
-    
+
     public PartiesAPI getPartiesApi() {
         if (parties == null && isPluginAvailable("Parties")) {
             try {
@@ -177,12 +215,17 @@ public class Dependencies {
     
     public boolean isPluginAvailable(final String pluginName) {
         if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
-            if (!plugin.getServer().getPluginManager().getPlugin(pluginName).isEnabled()) {
-                plugin.getLogger().warning(pluginName 
-                        + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
-            } else {
-                return true;
+            try {
+                if (!Objects.requireNonNull(plugin.getServer().getPluginManager().getPlugin(pluginName)).isEnabled()) {
+                    plugin.getLogger().warning(pluginName
+                            + " was detected, but is not enabled! Fix "+ pluginName + " to allow linkage.");
+                } else {
+                    return true;
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
+
         }
         return false;
     }
@@ -196,18 +239,18 @@ public class Dependencies {
         getPhatLoots();
         getPlaceholderApi();
         getCitizensBooksApi();
-        getDungeonsApi();
         getPartiesApi();
+        getPartyProvider();
         getVaultEconomy();
         getVaultPermission();
     }
 
     private boolean setupEconomy() {
         try {
-            final RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
-                    .getRegistration(net.milkbowl.vault.economy.Economy.class);
-            if (economyProvider != null) {
-                economy = economyProvider.getProvider();
+            final RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager()
+                    .getRegistration(Economy.class);
+            if (rsp != null) {
+                economy = rsp.getProvider();
             }
             return (economy != null);
         } catch (final Exception e) {
@@ -216,15 +259,34 @@ public class Dependencies {
     }
 
     private boolean setupPermissions() {
-        final RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
-                .getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
+        final RegisteredServiceProvider<Permission> rsp = plugin.getServer().getServicesManager()
+                .getRegistration(Permission.class);
+        if (rsp != null) {
+            permission = rsp.getProvider();
         }
         return (permission != null);
     }
-    
+
+    private boolean setupParty() {
+        final RegisteredServiceProvider<PartyProvider> rsp = plugin.getServer().getServicesManager()
+                .getRegistration(PartyProvider.class);
+        if (rsp != null) {
+            partyProvider = rsp.getProvider();
+            for (final RegisteredServiceProvider<PartyProvider> rsp2 : plugin.getServer().getServicesManager()
+                    .getRegistrations(PartyProvider.class)) {
+                if (rsp2 != null) {
+                    partyProviders.add(rsp2.getProvider());
+                }
+            }
+        }
+        return (partyProvider != null);
+    }
+
+    /**
+     * @deprecated Do not use. Will be removed in a future version.
+     **/
     public String getCurrency(final boolean plural) {
+        // TODO remove "money" from strings.yml
         if (getVaultEconomy() == null) {
             return Lang.get("money");
         }

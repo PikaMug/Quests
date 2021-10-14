@@ -9,6 +9,6 @@ labels: bug
 
 **What is your Quests version / build number (do _not_ say "latest")?**
 
-**Describe the problem and how to replicate it. Any console errors to post _using Pastebin.com_?**
+**Describe the problem and how to replicate it. Any console errors to post _using a pastebin_?**
 
-**If applicable, can you provide an example quest from quests.yml _using Pastebin.com_?**
+**If applicable, can you provide an example quest from quests.yml _using a pastebin_?**

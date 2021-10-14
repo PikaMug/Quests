@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.convo.quests.stages;
 
@@ -21,6 +21,7 @@ import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import org.jetbrains.annotations.NotNull;
 
 public class StageMenuPrompt extends QuestsEditorNumericPrompt {
 
@@ -46,11 +47,11 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         final int stages = getStages(context);
         if (number > 0) {
-            if (number < (stages + 1) && number > 0) {
+            if (number < stages + 1) {
                 return ChatColor.BLUE;
-            } else if (number == (stages + 1)) {
+            } else if (number == stages + 1) {
                 return ChatColor.BLUE;
-            } else if (number == (stages + 2)) {
+            } else if (number == stages + 2) {
                 return ChatColor.GREEN;
             }
         }
@@ -61,11 +62,11 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         final int stages = getStages(context);
         if (number > 0) {
-            if (number < (stages + 1) && number > 0) {
+            if (number < stages + 1) {
                 return ChatColor.GOLD + Lang.get("stageEditorEditStage") + " " + number;
-            } else if (number == (stages + 1)) {
+            } else if (number == stages + 1) {
                 return ChatColor.YELLOW + Lang.get("stageEditorNewStage");
-            } else if (number == (stages + 2)) {
+            } else if (number == stages + 2) {
                 return ChatColor.YELLOW + Lang.get("done");
             }
         }
@@ -78,24 +79,27 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        context.getPlugin().getServer().getPluginManager().callEvent(event);
-        
-        String text = ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -";
-        for (int i = 1; i <= (getStages(context) + size); i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i);
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        if (context.getPlugin() != null) {
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
-        return text;
+        
+        final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -");
+        for (int i = 1; i <= (getStages(context) + size); i++) {
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+        }
+        return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         final int i = input.intValue();
         final int stages = getStages(context);
         if (i > 0) {
-            if (i < (stages + 1) && i > 0) {
+            if (i < (stages + 1)) {
                 return new StageMainPrompt((i), context);
             } else if (i == (stages + 1)) {
                 return new StageMainPrompt((stages + 1), context);
@@ -123,10 +127,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         int current = stageNum;
         String pref = "stage" + current;
         String newPref;
-        boolean last = false;
-        if (stageNum == stages) {
-            last = true;
-        }
+        final boolean last = stageNum == stages;
         while (true) {
             if (!last) {
                 current++;

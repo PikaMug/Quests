@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,22 +8,13 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.Quests;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -31,14 +22,25 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import me.blackvein.quests.Quests;
-import me.clip.placeholderapi.PlaceholderAPI;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Lang {
 
     private static String iso = "en-US";
-    private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<String, String>();
-    private static Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<>();
+    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
     public static String getISO() {
         return iso;
@@ -55,12 +57,12 @@ public class Lang {
     /**
      * Get lang string AND pass Player for use with PlaceholderAPI, if installed
      * 
-     * @param p the Player whom will receive the string
+     * @param player the Player whom will receive the string
      * @param key label as it appears in lang file, such as "journalNoQuests"
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
-    public static String get(final Player p, final String key) {
-        return langMap.containsKey(key) ? LangToken.convertString(p, langMap.get(key)) : "NULL";
+    public static String get(final Player player, final String key) {
+        return langMap.containsKey(key) ? LangToken.convertString(player, langMap.get(key)) : "NULL";
     }
 
     /**
@@ -118,12 +120,10 @@ public class Lang {
         return orig;
     }
     
-    /**
-     * @deprecated Use {@link #init(Quests)}
-     */
-    @Deprecated
-    public static void loadLang(final Quests plugin) throws InvalidConfigurationException, IOException {
-        init(plugin);
+    public static void send(final Player player, final String message) {
+        if (message != null && !ChatColor.stripColor(message).equals("")) {
+            player.sendMessage(message);
+        }
     }
 
     public static void init(final Quests plugin) throws InvalidConfigurationException, IOException {
@@ -132,14 +132,14 @@ public class Lang {
         final File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings_new.yml");
         final boolean exists_new = langFile_new.exists();
-        final LinkedHashMap<String, String> allStrings = new LinkedHashMap<String, String>();
-        if (langFile.exists()) {
+        final LinkedHashMap<String, String> allStrings = new LinkedHashMap<>();
+        if (langFile.exists() && iso.split("-").length > 1) {
             final FileConfiguration config= YamlConfiguration
-                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
+                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
             FileConfiguration config_new = null;
             if (exists_new) {
-                config_new = YamlConfiguration
-                        .loadConfiguration(new InputStreamReader(new FileInputStream(langFile_new), "UTF-8"));
+                config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
+                        new FileInputStream(langFile_new), StandardCharsets.UTF_8));
             }
             // Load user's lang file and determine new strings
             for (final String key : config.getKeys(false)) {
@@ -173,8 +173,8 @@ public class Lang {
             plugin.getLogger()
                     .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
             iso = "en-US";
-            final FileConfiguration config = YamlConfiguration
-                    .loadConfiguration(new InputStreamReader(plugin.getResource("strings.yml"), "UTF-8"));
+            final FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
+                    .requireNonNull(plugin.getResource("strings.yml")), StandardCharsets.UTF_8));
             for (final String key : config.getKeys(false)) {
                 allStrings.put(key, config.getString(key));
             }
@@ -217,7 +217,7 @@ public class Lang {
 
     private static class LangToken {
 
-        static Map<String, String> tokenMap = new HashMap<String, String>();
+        static Map<String, String> tokenMap = new HashMap<>();
 
         public static void init() {
             tokenMap.put("%br%", "\n");
@@ -260,8 +260,8 @@ public class Lang {
                 final StringBuilder hex = new StringBuilder();
                 hex.append(ChatColor.COLOR_CHAR + "x");
                 final char[] chars = matcher.group(1).toCharArray();
-                for (int index = 0; index < chars.length; index++) {
-                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(chars[index]));
+                for (final char aChar : chars) {
+                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
                 }
                 s = s.replace(matcher.group(), hex.toString());
             }
@@ -274,7 +274,7 @@ public class Lang {
             }
             s = convertString(s);
             if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
-                if (!Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
+                if (Dependencies.placeholder.isEnabled()) {
                     s = PlaceholderAPI.setPlaceholders(p, s);
                 }
             }

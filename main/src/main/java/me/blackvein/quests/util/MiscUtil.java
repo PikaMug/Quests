@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,17 +8,17 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.util;
-
-import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
+
+import java.util.LinkedList;
 
 public class MiscUtil {
     
@@ -91,8 +91,7 @@ public class MiscUtil {
         }
         final String firstLetter = input.substring(0, 1);
         final String remainder = input.substring(1);
-        final String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
-        return capitalized;
+        return firstLetter.toUpperCase() + remainder.toLowerCase();
     }
     
     /**
@@ -122,7 +121,7 @@ public class MiscUtil {
     /**
      * Convert text from snake_case to UpperCamelCase
      * 
-     * @param type To convert
+     * @param input To convert
      * @return Converted text
      */
     public static String snakeCaseToUpperCamelCase(final String input) {
@@ -152,7 +151,7 @@ public class MiscUtil {
     }
 
     /**
-     * Gets living EntityType from name
+     * Gets EntityType from name
      * 
      * @param properName Name to get type from
      * @return EntityType or null if invalid
@@ -160,7 +159,7 @@ public class MiscUtil {
     public static EntityType getProperMobType(String properName) {
         properName = properName.replace("_", "").replace(" ", "").toUpperCase();
         for (final EntityType et : EntityType.values()) {
-            if (et.isAlive() && et.name().replace("_", "").equalsIgnoreCase(properName)) {
+            if (et.name().replace("_", "").equalsIgnoreCase(properName)) {
                 return et;
             }
         }
@@ -186,7 +185,7 @@ public class MiscUtil {
     /**
      * Gets player-friendly name from type. 'LIGHT_BLUE' becomes 'Light Blue'
      * 
-     * @param type any dye type, ideally
+     * @param color any dye type, ideally
      * @return cleaned-up string, or 'White' if null
      */
     public static String getPrettyDyeColorName(final DyeColor color) {
@@ -253,32 +252,33 @@ public class MiscUtil {
      * @param lineColor Color to use at start of each new line
      * @return Converted text
      */
-    public static LinkedList<String> makeLines(final String input, final String wordDelimiter, final int lineLength
-            , final ChatColor lineColor) {
-        final LinkedList<String> toReturn = new LinkedList<String>();
+    public static LinkedList<String> makeLines(final String input, final String wordDelimiter, final int lineLength,
+                                               final ChatColor lineColor) {
+        final LinkedList<String> toReturn = new LinkedList<>();
         final String[] split = input.split(wordDelimiter);
-        String line = "";
+        StringBuilder line = new StringBuilder();
         int currentLength = 0;
         for (final String piece : split) {
             if ((currentLength + piece.length()) > (lineLength + 1)) {
                 // TODO - determine whether replaceAll and carots (^) are necessary here
+                final String s = line.toString().replaceAll("^" + wordDelimiter, "");
                 if (lineColor != null) {
-                    toReturn.add(lineColor + line.replaceAll("^" + wordDelimiter, ""));
+                    toReturn.add(lineColor + s);
                 } else {
-                    toReturn.add(line.replaceAll("^" + wordDelimiter, ""));
+                    toReturn.add(s);
                 }
-                line = piece + wordDelimiter;
+                line = new StringBuilder(piece + wordDelimiter);
                 currentLength = piece.length() + 1;
             } else {
-                line += piece + wordDelimiter;
+                line.append(piece).append(wordDelimiter);
                 currentLength += piece.length() + 1;
             }
         }
-        if (line.equals("") == false)
+        if (!line.toString().equals(""))
             if (lineColor != null) {
-                toReturn.add(lineColor + line);
+                toReturn.add(lineColor + line.toString());
             } else {
-                toReturn.add(line);
+                toReturn.add(line.toString());
             }
         return toReturn;
     }
@@ -288,7 +288,7 @@ public class MiscUtil {
      * 
      * Unused internally. Left for external use
      * 
-     * @param s string to process
+     * @param input string to process
      * @return processed string
      */
     public static String capitalsToSpaces(String input) {
@@ -306,7 +306,7 @@ public class MiscUtil {
     /**
      * Capitalize character after space
      * 
-     * @param s string to process
+     * @param input string to process
      * @return processed string
      */
     public static String spaceToCapital(String input) {

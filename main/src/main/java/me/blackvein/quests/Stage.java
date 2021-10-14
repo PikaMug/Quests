@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,42 +8,37 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.conditions.Condition;
-import me.blackvein.quests.enums.ObjectiveType;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Stage {
 
-    protected LinkedList<ItemStack> blocksToBreak = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToDamage = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToPlace = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToUse = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> blocksToCut = new LinkedList<ItemStack>();
-    protected Integer cowsToMilk;
-    protected Integer fishToCatch;
-    protected Integer playersToKill;
-    protected LinkedList<ItemStack> itemsToCraft = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToBrew = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToConsume = new LinkedList<ItemStack>();
-    protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<ItemStack>();
+    protected LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToDamage = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToPlace = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToUse = new LinkedList<>();
+    protected LinkedList<ItemStack> blocksToCut = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToCraft = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToSmelt = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToEnchant = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToBrew = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToConsume = new LinkedList<>();
+    protected LinkedList<ItemStack> itemsToDeliver = new LinkedList<>();
     protected LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = -2774443496142382127L;
@@ -64,7 +59,7 @@ public class Stage {
             return true;
         }
     };
-    protected  LinkedList<String> deliverMessages = new LinkedList<String>();
+    protected  LinkedList<String> deliverMessages = new LinkedList<>();
     protected LinkedList<Integer> citizensToInteract = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = -4086855121042524435L;
@@ -105,38 +100,43 @@ public class Stage {
             return true;
         }
     };
-    protected LinkedList<Integer> citizenNumToKill = new LinkedList<Integer>();
-    protected LinkedList<EntityType> mobsToKill = new LinkedList<EntityType>();
-    protected LinkedList<Integer> mobNumToKill = new LinkedList<Integer>();
-    protected LinkedList<Location> locationsToKillWithin = new LinkedList<Location>();
-    protected LinkedList<Integer> radiiToKillWithin = new LinkedList<Integer>();
-    protected LinkedList<String> killNames = new LinkedList<String>();
-    protected LinkedList<Location> locationsToReach = new LinkedList<Location>();
-    protected LinkedList<Integer> radiiToReachWithin = new LinkedList<Integer>();
-    protected LinkedList<World> worldsToReachWithin = new LinkedList<World>();
-    protected LinkedList<String> locationNames = new LinkedList<String>();
-    protected Map<EntityType, Integer> mobsToTame = new EnumMap<EntityType, Integer>(EntityType.class);
-    protected Map<DyeColor, Integer> sheepToShear = new EnumMap<DyeColor, Integer>(DyeColor.class);
-    protected LinkedList<String> passwordDisplays = new LinkedList<String>();
-    protected LinkedList<LinkedList<String>> passwordPhrases = new LinkedList<LinkedList<String>>();
+    protected LinkedList<Integer> citizenNumToKill = new LinkedList<>();
+    protected LinkedList<EntityType> mobsToKill = new LinkedList<>();
+    protected LinkedList<Integer> mobNumToKill = new LinkedList<>();
+    protected LinkedList<Location> locationsToKillWithin = new LinkedList<>();
+    protected LinkedList<Integer> radiiToKillWithin = new LinkedList<>();
+    protected LinkedList<String> killNames = new LinkedList<>();
+    protected LinkedList<EntityType> mobsToTame = new LinkedList<>();
+    protected LinkedList<Integer> mobNumToTame = new LinkedList<>();
+    protected Integer fishToCatch;
+    protected Integer cowsToMilk;
+    protected LinkedList<DyeColor> sheepToShear = new LinkedList<>();
+    protected LinkedList<Integer> sheepNumToShear = new LinkedList<>();
+    protected Integer playersToKill;
+    protected LinkedList<Location> locationsToReach = new LinkedList<>();
+    protected LinkedList<Integer> radiiToReachWithin = new LinkedList<>();
+    protected LinkedList<World> worldsToReachWithin = new LinkedList<>();
+    protected LinkedList<String> locationNames = new LinkedList<>();
+    protected LinkedList<String> passwordDisplays = new LinkedList<>();
+    protected LinkedList<String> passwordPhrases = new LinkedList<>();
     protected String script;
     protected Action startAction = null;
     protected Action finishAction = null;
     protected Action failAction = null;
     protected Action deathAction = null;
-    protected Map<String, Action> chatActions = new HashMap<String, Action>();
-    protected Map<String, Action> commandActions = new HashMap<String, Action>();
+    protected Map<String, Action> chatActions = new HashMap<>();
+    protected Map<String, Action> commandActions = new HashMap<>();
     protected Action disconnectAction = null;
     protected Condition condition = null;
     protected long delay = -1;
     protected String delayMessage = null;
     protected String completeMessage = null;
     protected String startMessage = null;
-    protected LinkedList<String> objectiveOverrides = new LinkedList<String>();
-    protected LinkedList<CustomObjective> customObjectives = new LinkedList<CustomObjective>();
-    protected LinkedList<Integer> customObjectiveCounts = new LinkedList<Integer>();
-    protected LinkedList<String> customObjectiveDisplays = new LinkedList<String>();
-    protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<Entry<String, Object>>();
+    protected LinkedList<String> objectiveOverrides = new LinkedList<>();
+    protected LinkedList<CustomObjective> customObjectives = new LinkedList<>();
+    protected LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
+    protected LinkedList<String> customObjectiveDisplays = new LinkedList<>();
+    protected LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
     
     public LinkedList<ItemStack> getBlocksToBreak() {
         return blocksToBreak;
@@ -178,30 +178,6 @@ public class Stage {
         this.blocksToCut = blocksToCut;
     }
     
-    public Integer getCowsToMilk() {
-        return cowsToMilk;
-    }
-
-    public void setCowsToMilk(final Integer cowsToMilk) {
-        this.cowsToMilk = cowsToMilk;
-    }
-
-    public Integer getFishToCatch() {
-        return fishToCatch;
-    }
-
-    public void setFishToCatch(final Integer fishToCatch) {
-        this.fishToCatch = fishToCatch;
-    }
-
-    public Integer getPlayersToKill() {
-        return playersToKill;
-    }
-
-    public void setPlayersToKill(final Integer playersToKill) {
-        this.playersToKill = playersToKill;
-    }
-    
     public LinkedList<ItemStack> getItemsToCraft() {
         return itemsToCraft;
     }
@@ -235,11 +211,11 @@ public class Stage {
     }
     
     public LinkedList<ItemStack> getItemsToConsume() {
-        return itemsToBrew;
+        return itemsToConsume;
     }
 
-    public void setItemsToConsume(final LinkedList<ItemStack> itemsToBrew) {
-        this.itemsToBrew = itemsToBrew;
+    public void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume) {
+        this.itemsToBrew = itemsToConsume;
     }
 
     public LinkedList<ItemStack> getItemsToDeliver() {
@@ -362,20 +338,60 @@ public class Stage {
         this.locationNames = locationNames;
     }
 
-    public Map<EntityType, Integer> getMobsToTame() {
+    public LinkedList<EntityType> getMobsToTame() {
         return mobsToTame;
     }
 
-    public void setMobsToTame(final Map<EntityType, Integer> mobsToTame) {
+    public void setMobsToTame(final LinkedList<EntityType> mobsToTame) {
         this.mobsToTame = mobsToTame;
     }
 
-    public Map<DyeColor, Integer> getSheepToShear() {
+    public LinkedList<Integer> getMobNumToTame() {
+        return mobNumToTame;
+    }
+
+    public void setMobNumToTame(final LinkedList<Integer> mobNumToTame) {
+        this.mobNumToTame = mobNumToTame;
+    }
+
+    public Integer getFishToCatch() {
+        return fishToCatch;
+    }
+
+    public void setFishToCatch(final Integer fishToCatch) {
+        this.fishToCatch = fishToCatch;
+    }
+
+    public Integer getCowsToMilk() {
+        return cowsToMilk;
+    }
+
+    public void setCowsToMilk(final Integer cowsToMilk) {
+        this.cowsToMilk = cowsToMilk;
+    }
+
+    public Integer getPlayersToKill() {
+        return playersToKill;
+    }
+
+    public void setPlayersToKill(final Integer playersToKill) {
+        this.playersToKill = playersToKill;
+    }
+
+    public LinkedList<DyeColor> getSheepToShear() {
         return sheepToShear;
     }
 
-    public void setSheepToShear(final Map<DyeColor, Integer> sheepToShear) {
+    public void setSheepToShear(final LinkedList<DyeColor> sheepToShear) {
         this.sheepToShear = sheepToShear;
+    }
+
+    public LinkedList<Integer> getSheepNumToShear() {
+        return sheepNumToShear;
+    }
+
+    public void setSheepNumToShear(final LinkedList<Integer> sheepNumToShear) {
+        this.sheepNumToShear = sheepNumToShear;
     }
 
     public LinkedList<String> getPasswordDisplays() {
@@ -386,11 +402,11 @@ public class Stage {
         this.passwordDisplays = passwordDisplays;
     }
 
-    public LinkedList<LinkedList<String>> getPasswordPhrases() {
+    public LinkedList<String> getPasswordPhrases() {
         return passwordPhrases;
     }
 
-    public void setPasswordPhrases(final LinkedList<LinkedList<String>> passwordPhrases) {
+    public void setPasswordPhrases(final LinkedList<String> passwordPhrases) {
         this.passwordPhrases = passwordPhrases;
     }
 
@@ -530,28 +546,27 @@ public class Stage {
      * @return true if stage contains an objective
      */
     public boolean hasObjective() {
-        if (blocksToBreak.isEmpty() == false) { return true; }
-        if (blocksToDamage.isEmpty() == false) { return true; }
-        if (blocksToPlace.isEmpty() == false) { return true; }
-        if (blocksToUse.isEmpty() == false) { return true; }
-        if (blocksToCut.isEmpty() == false) { return true; }
+        if (!blocksToBreak.isEmpty()) { return true; }
+        if (!blocksToDamage.isEmpty()) { return true; }
+        if (!blocksToPlace.isEmpty()) { return true; }
+        if (!blocksToUse.isEmpty()) { return true; }
+        if (!blocksToCut.isEmpty()) { return true; }
         if (cowsToMilk != null) { return true; }
         if (fishToCatch != null) { return true; }
         if (playersToKill != null) { return true; }
-        if (itemsToCraft.isEmpty() == false) { return true; }
-        if (itemsToSmelt.isEmpty() == false) { return true; }
-        if (itemsToEnchant.isEmpty() == false) { return true; }
-        if (itemsToBrew.isEmpty() == false) { return true; }
-        if (itemsToConsume.isEmpty() == false) { return true; }
-        if (itemsToDeliver.isEmpty() == false) { return true; }
-        if (citizensToInteract.isEmpty() == false) { return true; }
-        if (citizensToKill.isEmpty() == false) { return true; }
-        if (locationsToReach.isEmpty() == false) { return true; }
-        if (mobsToTame.isEmpty() == false) { return true; }
-        if (sheepToShear.isEmpty() == false) { return true; }
-        if (passwordDisplays.isEmpty() == false) { return true; }
-        if (customObjectives.isEmpty() == false) { return true; }
-        return false;
+        if (!itemsToCraft.isEmpty()) { return true; }
+        if (!itemsToSmelt.isEmpty()) { return true; }
+        if (!itemsToEnchant.isEmpty()) { return true; }
+        if (!itemsToBrew.isEmpty()) { return true; }
+        if (!itemsToConsume.isEmpty()) { return true; }
+        if (!itemsToDeliver.isEmpty()) { return true; }
+        if (!citizensToInteract.isEmpty()) { return true; }
+        if (!citizensToKill.isEmpty()) { return true; }
+        if (!locationsToReach.isEmpty()) { return true; }
+        if (!mobsToTame.isEmpty()) { return true; }
+        if (!sheepToShear.isEmpty()) { return true; }
+        if (!passwordDisplays.isEmpty()) { return true; }
+        return !customObjectives.isEmpty();
     }
     
     /**

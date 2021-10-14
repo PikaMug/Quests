@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests;
 
@@ -118,6 +118,9 @@ public class QuestMob {
     @SuppressWarnings("deprecation")
     public void spawn() {
         final World world = spawnLocation.getWorld();
+        if (world == null) {
+            return;
+        }
         for (int i = 0; i < spawnAmounts; i++) {
             final LivingEntity entity = (LivingEntity) world.spawnEntity(spawnLocation, entityType);
             if (name != null) {
@@ -125,6 +128,9 @@ public class QuestMob {
                 entity.setCustomNameVisible(true);
             }
             final EntityEquipment eq = entity.getEquipment();
+            if (eq == null) {
+                return;
+            }
             eq.setItemInHand(inventory[0]);
             eq.setBoots(inventory[1]);
             eq.setLeggings(inventory[2]);
@@ -252,7 +258,7 @@ public class QuestMob {
                 }
             }
         }
-        final QuestMob qm = new QuestMob(entityType, loc, amounts);
+        final QuestMob qm = new QuestMob(entityType, loc, amounts != null ? amounts : 1);
         qm.setName(name);
         qm.inventory = inventory;
         qm.dropChances = dropChances;

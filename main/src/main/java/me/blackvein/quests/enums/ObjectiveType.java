@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.enums;
 
@@ -40,11 +40,11 @@ public enum ObjectiveType {
     PASSWORD(21, "Password"),
     CUSTOM(127, "Custom");
     
-    private String name;
-    private byte typeId;
+    private final String name;
+    private final byte typeId;
     
-    private static final Map<String, ObjectiveType> NAME_MAP = new HashMap<String, ObjectiveType>();
-    private static final Map<Byte, ObjectiveType> ID_MAP = new HashMap<Byte, ObjectiveType>();
+    private static final Map<String, ObjectiveType> NAME_MAP = new HashMap<>();
+    private static final Map<Byte, ObjectiveType> ID_MAP = new HashMap<>();
     
     static {
         for (final ObjectiveType type : values()) {
@@ -66,6 +66,10 @@ public enum ObjectiveType {
     public static ObjectiveType fromName(final String name) {
         if (name == null) {
             return null;
+        }
+        // Return custom for legacy reasons
+        if (name.startsWith("custom")) {
+            return CUSTOM;
         }
         return NAME_MAP.get(name.toLowerCase());
     }

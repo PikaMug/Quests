@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,17 +8,9 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.convo.conditions.tasks;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -29,6 +21,14 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPrompt
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class PlayerPrompt extends QuestsEditorNumericPrompt {
     
@@ -83,25 +83,32 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
-                for (final String s: (List<String>) context.getSessionData(CK.C_WHILE_PERMISSION)) {
-                    // We replace the standard period character to prevent clickable links
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + s.replace(".", "\uFF0E") + "\n";
+                final StringBuilder text = new StringBuilder("\n");
+                final List<String> whilePermission = (List<String>) context.getSessionData(CK.C_WHILE_PERMISSION);
+                if (whilePermission != null) {
+                    for (final String s: whilePermission) {
+                        // Replace standard period characters to prevent clickable links
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                .append(s.replace(".", "\uFF0E")).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 2:
             if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
-                final LinkedList<ItemStack> items 
+                final StringBuilder text = new StringBuilder("\n");
+                final LinkedList<ItemStack> whileHoldingMainHand
                         = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
-                for (int i = 0; i < items.size(); i++) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.BLUE + ItemUtil.getName(items.get(i)) 
-                            + ChatColor.GRAY + " x " + ChatColor.AQUA + items.get(i).getAmount() + "\n";
+                if (whileHoldingMainHand != null) {
+                    for (final ItemStack item : whileHoldingMainHand) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
+                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 3:
             return "";
@@ -112,31 +119,36 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final ConversationContext context) {
         // Check/add newly made item
-        if (context.getSessionData("newItem") != null) {
+        if (context.getSessionData("tempStack") != null) {
             if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
                 final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
-                items.add((ItemStack) context.getSessionData("tempStack"));
-                context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
+                if (items != null) {
+                    items.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
+                }
             }
-            context.setSessionData("newItem", null);
-            context.setSessionData("tempStack", null);
+            ItemStackPrompt.clearSessionData(context);
+        }
+
+        if (context.getPlugin() != null) {
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
         
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-        context.getPlugin().getServer().getPluginManager().callEvent(event);
-        
-        String text = ChatColor.AQUA + "- " + getTitle(context) + " -";
+        final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        return text;
+        return text.toString();
     }
     
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
             return new PermissionsPrompt(context);
@@ -171,18 +183,23 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
             
             return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> permissions = new LinkedList<String>();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                final LinkedList<String> permissions = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     permissions.add(s.trim());
                 }
@@ -246,11 +263,16 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND)) {
-                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    final List<ItemStack> whileHoldingMainHand
+                            = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
+                    if (whileHoldingMainHand != null) {
+                        for (final ItemStack is : whileHoldingMainHand) {
+                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
+                                    .append("\n");
+                        }
                     }
-                    return text;
+                    return text.toString();
                 }
             case 2:
             case 3:
@@ -264,33 +286,39 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
-                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
-                    items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
+                    final List<ItemStack> items
+                            = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
+                    if (items != null) {
+                        items.add((ItemStack) context.getSessionData("tempStack"));
+                        context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
+                    }
                 } else {
                     final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
-            
-            final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
 
-            String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
-            for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenNumericPromptEvent event
+                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            return text;
+
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
+            }
+            return text.toString();
         }
         
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, ItemsInMainHandListPrompt.this);

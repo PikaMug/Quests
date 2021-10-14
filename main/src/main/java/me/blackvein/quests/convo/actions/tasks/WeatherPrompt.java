@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,21 +8,9 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.convo.actions.tasks;
-
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
@@ -34,6 +22,19 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WeatherPrompt extends ActionsEditorNumericPrompt {
     
@@ -94,28 +95,36 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_STORM) 
-                        + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + MiscUtil.getTime(Long.valueOf((int)context
-                        .getSessionData(CK.E_WORLD_STORM_DURATION) * 1000)) + ChatColor.GRAY + ")";
+                final Integer duration = (Integer) context.getSessionData(CK.E_WORLD_STORM_DURATION);
+                if (duration != null) {
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_WORLD_STORM)
+                            + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + MiscUtil.getTime(duration * 1000L)
+                            + ChatColor.GRAY + ")";
+                }
             }
         case 2:
             if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + (String) context.getSessionData(CK.E_WORLD_THUNDER) 
-                        + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + MiscUtil.getTime(Long.valueOf((int)context
-                        .getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000)) + ChatColor.GRAY + ")";
+                final Integer duration = (Integer) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
+                if (duration != null) {
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_WORLD_THUNDER)
+                            + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + MiscUtil.getTime(duration * 1000L)
+                            + ChatColor.GRAY + ")";
+                }
             }
         case 3:
             if (context.getSessionData(CK.E_LIGHTNING) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
-                for (final String loc : locations) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + loc + "\n";
+                if (locations != null) {
+                    for (final String loc : locations) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 4:
             return "";
@@ -125,32 +134,38 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        return text;
+        return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new StormPrompt(context);
         case 2:
             return new ThunderPrompt(context);
         case 3:
-            final Map<UUID, Block> selectedLightningLocations 
-                    = plugin.getActionFactory().getSelectedLightningLocations();
-            selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
-            plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
-            return new LightningPrompt(context);
+            if (context.getForWhom() instanceof Player) {
+                final Map<UUID, Block> selectedLightningLocations 
+                        = plugin.getActionFactory().getSelectedLightningLocations();
+                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
+                return new LightningPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
+                return new WeatherPrompt(context);
+            }
         case 4:
             return new ActionMainPrompt(context);
         default:
@@ -214,16 +229,18 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + ((String) context.getSessionData(CK.E_WORLD_STORM)) 
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_WORLD_STORM)
                             + ChatColor.GRAY + ")";
                 }
             case 2:
                 if (context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA 
-                            +  MiscUtil.getTime((int)context.getSessionData(CK.E_WORLD_STORM_DURATION) * 1000) 
-                            + ChatColor.GRAY + ")";
+                    final Integer duration = (Integer) context.getSessionData(CK.E_WORLD_STORM_DURATION);
+                    if (duration != null) {
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(duration * 1000L)
+                                + ChatColor.GRAY + ")";
+                    }
                 }
             case 3:
             case 4:
@@ -234,21 +251,22 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle(context);
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
-            return text;
+            return text.toString();
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new StormWorldPrompt(context);
@@ -292,27 +310,31 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String effects = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n" + ChatColor.DARK_PURPLE;
+            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+                    + ChatColor.DARK_PURPLE);
             for (final World w : plugin.getServer().getWorlds()) {
-                effects += w.getName() + ", ";
+                effects.append(w.getName()).append(", ");
             }
-            effects = effects.substring(0, effects.length());
-            return ChatColor.YELLOW + effects + getQueryText(context);
+            effects = new StringBuilder(effects.substring(0, effects.length()));
+            return ChatColor.YELLOW + effects.toString() + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
-                    context.setSessionData(CK.E_WORLD_STORM, plugin.getServer().getWorld(input).getName());
+                    context.setSessionData(CK.E_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
+                            .getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidWorld"));
                     return new StormWorldPrompt(context);
                 }
@@ -338,7 +360,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -347,9 +369,9 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             try {
-                final Integer i = Integer.parseInt(input);
+                final int i = Integer.parseInt(input);
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
                             + Lang.get("invalidMinimum").replace("<number>", "1"));
@@ -421,16 +443,18 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + ((String) context.getSessionData(CK.E_WORLD_THUNDER))
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_WORLD_THUNDER)
                             + ChatColor.GRAY + ")";
                 }
             case 2:
                 if (context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA 
-                            +  MiscUtil.getTime((int)context.getSessionData(CK.E_WORLD_THUNDER_DURATION) * 1000) 
-                            + ChatColor.GRAY + ")";
+                    final Integer duration = (Integer) context.getSessionData(CK.E_WORLD_THUNDER_DURATION);
+                    if (duration != null) {
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + MiscUtil.getTime(duration * 1000L)
+                                + ChatColor.GRAY + ")";
+                    }
                 }
             case 3:
             case 4:
@@ -441,21 +465,22 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle(context);
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
-            return text;
+            return text.toString();
         }
         
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new ThunderWorldPrompt(context);
@@ -502,27 +527,31 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String effects = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n" + ChatColor.DARK_PURPLE;
+            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+                    + ChatColor.DARK_PURPLE);
             for (final World w : plugin.getServer().getWorlds()) {
-                effects += w.getName() + ", ";
+                effects.append(w.getName()).append(", ");
             }
-            effects = effects.substring(0, effects.length());
-            return ChatColor.YELLOW + effects + getQueryText(context);
+            effects = new StringBuilder(effects.substring(0, effects.length()));
+            return ChatColor.YELLOW + effects.toString() + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
-                    context.setSessionData(CK.E_WORLD_THUNDER, plugin.getServer().getWorld(input).getName());
+                    context.setSessionData(CK.E_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
+                            .getWorld(input)).getName());
                 } else {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
+                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("eventEditorInvalidWorld"));
                     return new ThunderWorldPrompt(context);
                 }
@@ -548,7 +577,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -557,9 +586,9 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             try {
-                final Integer i = Integer.parseInt(input);
+                final int i = Integer.parseInt(input);
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
                             + Lang.get("invalidMinimum").replace("<number>", "1"));
@@ -592,7 +621,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -602,7 +631,10 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedLightningLocations 
@@ -610,14 +642,16 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 final Block block = selectedLightningLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    LinkedList<String> locs;
+                    final LinkedList<String> locations;
                     if (context.getSessionData(CK.E_LIGHTNING) != null) {
-                        locs = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
+                        locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
                     } else {
-                        locs = new LinkedList<String>();
+                        locations = new LinkedList<>();
                     }
-                    locs.add(ConfigUtil.getLocationInfo(loc));
-                    context.setSessionData(CK.E_LIGHTNING, locs);
+                    if (locations != null) {
+                        locations.add(ConfigUtil.getLocationInfo(loc));
+                    }
+                    context.setSessionData(CK.E_LIGHTNING, locations);
                     selectedLightningLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 } else {

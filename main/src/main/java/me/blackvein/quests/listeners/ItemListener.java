@@ -1,7 +1,6 @@
-/*******************************************************************************************************
-
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -9,26 +8,29 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.listeners;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.enums.ObjectiveType;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ItemListener implements Listener {
     
@@ -40,15 +42,19 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onCraftItem(final CraftItemEvent evt) {
+        if (evt.getAction().equals(InventoryAction.NOTHING)) {
+            return;
+        }
         if (evt.getWhoClicked() instanceof Player) {
             final Player player = (Player) evt.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(evt);
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
-                for (final Quest quest : plugin.getQuests()) {
+                final Set<String> dispatchedQuestIDs = new HashSet<>();
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
-                        return;
+                        continue;
                     }
                     
                     if (quester.getCurrentQuests().containsKey(quest) 
@@ -56,10 +62,12 @@ public class ItemListener implements Listener {
                         quester.craftItem(quest, craftedItem);
                     }
                     
-                    quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                        q.craftItem(quest, craftedItem);
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.craftItem(cq, craftedItem);
+                        }
                         return null;
-                    });
+                    }));
                 }
             }
         }
@@ -70,10 +78,13 @@ public class ItemListener implements Listener {
         if (evt.isShiftClick()) {
             final ItemStack recipeResult = evt.getRecipe().getResult();
             final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
-            int leastIngredient = 1;
+            int leastIngredient = -1;
             for (final ItemStack item : evt.getInventory().getMatrix()) {
                 if (item != null && !item.getType().equals(Material.AIR)) {
-                    leastIngredient = item.getAmount() * resultAmt;
+                    final int re = item.getAmount() * resultAmt;
+                    if (leastIngredient == -1 || re < leastIngredient) {
+                        leastIngredient = re;
+                    }
                 }
             }
             return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
@@ -91,9 +102,10 @@ public class ItemListener implements Listener {
                 if (evt.getSlotType() == SlotType.RESULT) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
-                    for (final Quest quest : plugin.getQuests()) {
+                    final Set<String> dispatchedQuestIDs = new HashSet<>();
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
-                            return;
+                            continue;
                         }
                         
                         if (quester.getCurrentQuests().containsKey(quest) 
@@ -101,19 +113,22 @@ public class ItemListener implements Listener {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                            q.smeltItem(quest, evt.getCurrentItem());
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.smeltItem(cq, evt.getCurrentItem());
+                            }
                             return null;
-                        });
+                        }));
                     }
                 }
             } else if (evt.getInventory().getType() == InventoryType.BREWING) {
                 if (evt.getSlotType() == SlotType.CRAFTING) {
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
-                    for (final Quest quest : plugin.getQuests()) {
+                    final Set<String> dispatchedQuestIDs = new HashSet<>();
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
-                            return;
+                            continue;
                         }
                         
                         if (quester.getCurrentQuests().containsKey(quest) 
@@ -121,10 +136,12 @@ public class ItemListener implements Listener {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
                         
-                        quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                            q.brewItem(quest, evt.getCurrentItem());
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.brewItem(cq, evt.getCurrentItem());
+                            }
                             return null;
-                        });
+                        }));
                     }
                 }
             }
@@ -143,9 +160,10 @@ public class ItemListener implements Listener {
             }
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
-            for (final Quest quest : plugin.getQuests()) {
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -153,10 +171,12 @@ public class ItemListener implements Listener {
                     quester.enchantItem(quest, enchantedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.enchantItem(quest, enchantedItem);
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.enchantItem(cq, enchantedItem);
+                    }
                     return null;
-                });
+                }));
             }
         }
     }
@@ -169,9 +189,10 @@ public class ItemListener implements Listener {
             consumedItem.setAmount(1);
             final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
-            for (final Quest quest : plugin.getQuests()) {
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
-                    return;
+                    continue;
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
@@ -179,10 +200,12 @@ public class ItemListener implements Listener {
                     quester.consumeItem(quest, consumedItem);
                 }
                 
-                quester.dispatchMultiplayerEverything(quest, type, (final Quester q) -> {
-                    q.consumeItem(quest, consumedItem);
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
+                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                        q.consumeItem(cq, consumedItem);
+                    }
                     return null;
-                });
+                }));
             }
         }
     }

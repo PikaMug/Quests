@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,39 +8,9 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.listeners;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
@@ -57,11 +27,38 @@ import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class CmdExecutor implements CommandExecutor {
     private final Quests plugin;
-    private final Map<String, Integer> commands = new HashMap<String, Integer>();
-    private final Map<String, Integer> adminCommands = new HashMap<String, Integer>();
+    private final Map<String, Integer> commands = new HashMap<>();
+    private final Map<String, Integer> adminCommands = new HashMap<>();
     
     public CmdExecutor(final Quests plugin) {
         this.plugin = plugin;
@@ -69,7 +66,8 @@ public class CmdExecutor implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(final CommandSender cs, final Command cmd, final String label, final String[] args) {
+    public boolean onCommand(final @NotNull CommandSender cs, final @NotNull Command cmd,
+                             final @NotNull String label, final String[] args) {
         if (plugin.isLoading()) {
             cs.sendMessage(ChatColor.RED + Lang.get("errorLoading"));
             return true;
@@ -195,18 +193,18 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questCommandHandler(final CommandSender cs, final String[] args) {
         if (cs instanceof Player) {
-            if (((Player) cs).hasPermission("quests.quest")) {
+            if (cs.hasPermission("quests.quest")) {
                 if (args.length == 0) {
                     final Player player = (Player) cs;
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    if (quester.getCurrentQuests().isEmpty() == false) {
+                    if (!quester.getCurrentQuests().isEmpty()) {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
-                                String msg = Lang.get(player, "questObjectivesTitle");
-                                msg = msg.replace("<quest>", q.getName());
-                                player.sendMessage(ChatColor.GOLD + msg);
+                                final String msg = Lang.get(player, "questObjectivesTitle")
+                                        .replace("<quest>", q.getName());
+                                Lang.send(player, ChatColor.GOLD + msg);
                                 plugin.showObjectives(q, quester, false);
                             } else {
                                 final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
@@ -214,11 +212,11 @@ public class CmdExecutor implements CommandExecutor {
                                         +  Lang.get(player, "plnTooEarly");
                                 msg = msg.replace("<quest>", q.getName());
                                 msg = msg.replace("<time>", MiscUtil.getTime(time));
-                                player.sendMessage(msg);
+                                Lang.send(player, msg);
                             }
                         }
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
                     }
                 } else {
                     showQuestDetails(cs, args);
@@ -331,36 +329,27 @@ public class CmdExecutor implements CommandExecutor {
     }
     
     public void showQuestDetails(final CommandSender cs, final String[] args) {
-        if (((Player) cs).hasPermission("quests.questinfo")) {
-            String name = "";
+        if (cs.hasPermission("quests.questinfo")) {
+            StringBuilder name = new StringBuilder();
             if (args.length == 1) {
-                name = args[0].toLowerCase();
+                name = new StringBuilder(args[0].toLowerCase());
             } else {
                 int index = 0;
                 for (final String s : args) {
                     if (index == (args.length - 1)) {
-                        name = name + s.toLowerCase();
+                        name.append(s.toLowerCase());
                     } else {
-                        name = name + s.toLowerCase() + " ";
+                        name.append(s.toLowerCase()).append(" ");
                     }
                     index++;
                 }
             }
-            final Quest q = plugin.getQuest(name);
+            final Quest q = plugin.getQuest(name.toString());
             if (q != null) {
                 final Player player = (Player) cs;
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 cs.sendMessage(ChatColor.GOLD + "- " + q.getName() + " -");
                 cs.sendMessage(" ");
-                /*if (q.redoDelay > -1) {
-                    if (q.redoDelay == 0) {
-                        cs.sendMessage(ChatColor.DARK_AQUA + Lang.get("readoable"));
-                    } else {
-                        String msg = Lang.get("redoableEvery");
-                        msg = msg.replace("<time>", ChatColor.AQUA + getTime(q.redoDelay) + ChatColor.DARK_AQUA);
-                        cs.sendMessage(ChatColor.DARK_AQUA + msg);
-                    }
-                }*/
                 if (q.getNpcStart() != null) {
                     String msg = Lang.get("speakTo");
                     msg = msg.replace("<npc>", q.getNpcStart().getName());
@@ -369,10 +358,10 @@ public class CmdExecutor implements CommandExecutor {
                     cs.sendMessage(ChatColor.YELLOW + q.getDescription());
                 }
                 cs.sendMessage(" ");
-                if (plugin.getSettings().canShowQuestReqs() == true) {
+                if (plugin.getSettings().canShowQuestReqs()) {
                     cs.sendMessage(ChatColor.GOLD + Lang.get("requirements"));
                     final Requirements reqs = q.getRequirements();
-                    if (reqs.getPermissions().isEmpty() == false) {
+                    if (!reqs.getPermissions().isEmpty()) {
                         for (final String perm : reqs.getPermissions()) {
                             if (plugin.getDependencies().getVaultPermission().has(player, perm)) {
                                 cs.sendMessage(ChatColor.GREEN + Lang.get("permissionDisplay") + " " + perm);
@@ -401,7 +390,7 @@ public class CmdExecutor implements CommandExecutor {
                                 + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Lang.get("heroesClass"));
                         }
                     }
-                    if (reqs.getMcmmoSkills().isEmpty() == false) {
+                    if (!reqs.getMcmmoSkills().isEmpty()) {
                         for (final String skill : reqs.getMcmmoSkills()) {
                             final int level = plugin.getDependencies().getMcmmoSkillLevel(Quests
                                     .getMcMMOSkill(skill), player.getName());
@@ -443,16 +432,16 @@ public class CmdExecutor implements CommandExecutor {
                             }
                         }
                     }
-                    if (reqs.getItems().isEmpty() == false) {
+                    if (!reqs.getItems().isEmpty()) {
                         for (final ItemStack is : reqs.getItems()) {
-                            if (plugin.getQuester(player.getUniqueId()).hasItem(is) == true) {
+                            if (plugin.getQuester(player.getUniqueId()).hasItem(is)) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + ItemUtil.getString(is));
                             } else {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + ItemUtil.getString(is));
                             }
                         }
                     }
-                    if (reqs.getNeededQuests().isEmpty() == false) {
+                    if (!reqs.getNeededQuests().isEmpty()) {
                         for (final Quest quest : reqs.getNeededQuests()) {
                             if (quester.getCompletedQuests().contains(quest)) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Lang.get("complete") + " " 
@@ -463,7 +452,7 @@ public class CmdExecutor implements CommandExecutor {
                             }
                         }
                     }
-                    if (reqs.getBlockQuests().isEmpty() == false) {
+                    if (!reqs.getBlockQuests().isEmpty()) {
                         for (final Quest quest : reqs.getBlockQuests()) {
                             if (quester.getCompletedQuests().contains(quest)) {
                                 String msg = Lang.get("haveCompleted");
@@ -489,19 +478,20 @@ public class CmdExecutor implements CommandExecutor {
     
     private boolean questsInfo(final CommandSender cs) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("quests") + " " + ChatColor.GOLD 
+            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD 
                     + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
-                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug");
+                    + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
             cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                    + "https://www.spigotmc.org/resources/quests.3711/");
+                    + "https://github.com/PikaMug/Quests");
         }
         return true;
     }
 
     private boolean questsActions(final CommandSender cs) {
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
-                || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")) {
+                || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
@@ -515,7 +505,8 @@ public class CmdExecutor implements CommandExecutor {
     }
     
     private boolean questsConditions(final CommandSender cs) {
-        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")) {
+        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getConditionFactory().getConversationFactory().buildConversation(c).begin();
@@ -529,7 +520,8 @@ public class CmdExecutor implements CommandExecutor {
     }
 
     private boolean questsEditor(final CommandSender cs) {
-        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 final Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
@@ -557,7 +549,7 @@ public class CmdExecutor implements CommandExecutor {
             if (args.length > 2) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TOP_USAGE"));
             } else {
-                int topNumber;
+                final int topNumber;
                 if (args.length == 1) {
                     topNumber = 5; // default
                 } else {
@@ -573,41 +565,36 @@ public class CmdExecutor implements CommandExecutor {
                             .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
                     return true;
                 }
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        final File folder = new File(plugin.getDataFolder(), "data");
-                        final File[] playerFiles = folder.listFiles();
-                        final Map<String, Integer> questPoints = new HashMap<String, Integer>();
-                        if (playerFiles != null) {
-                            for (final File f : playerFiles) {
-                                if (!f.isDirectory()) {
-                                    final FileConfiguration data = new YamlConfiguration();
-                                    try {
-                                        data.load(f);
-                                    } catch (final IOException e) {
-                                        e.printStackTrace();
-                                    } catch (final InvalidConfigurationException e) {
-                                        e.printStackTrace();
-                                    }
-                                    questPoints.put(data.getString("lastKnownName", "Unknown"), 
-                                            data.getInt("quest-points", 0));
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    final File folder = new File(plugin.getDataFolder(), "data");
+                    final File[] playerFiles = folder.listFiles();
+                    final Map<String, Integer> questPoints = new HashMap<>();
+                    if (playerFiles != null) {
+                        for (final File f : playerFiles) {
+                            if (!f.isDirectory()) {
+                                final FileConfiguration data = new YamlConfiguration();
+                                try {
+                                    data.load(f);
+                                } catch (final IOException | InvalidConfigurationException e) {
+                                    e.printStackTrace();
                                 }
+                                questPoints.put(data.getString("lastKnownName", "Unknown"),
+                                        data.getInt("quest-points", 0));
                             }
                         }
-                        final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
-                        int numPrinted = 0;
-                        String msg = Lang.get("topQuestersTitle");
-                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
-                        cs.sendMessage(ChatColor.GOLD + msg);
-                        for (final Entry<String, Integer> entry : sortedMap.entrySet()) {
-                            numPrinted++;
-                            cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - " 
-                                    + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " " 
-                                    + Lang.get("questPoints"));
-                            if (numPrinted == topNumber) {
-                                break;
-                            }
+                    }
+                    final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
+                    int numPrinted = 0;
+                    String msg = Lang.get("topQuestersTitle");
+                    msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg);
+                    for (final Entry<String, Integer> entry : sortedMap.entrySet()) {
+                        numPrinted++;
+                        cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - "
+                                + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " "
+                                + Lang.get("questPoints"));
+                        if (numPrinted == topNumber) {
+                            break;
                         }
                     }
                 });
@@ -655,10 +642,10 @@ public class CmdExecutor implements CommandExecutor {
                 final StringBuilder completed = new StringBuilder(" ");
                 int index = 1;
                 for (final Quest q : quester.getCompletedQuests()) {
-                    
-                    completed.append(ChatColor.DARK_PURPLE + q.getName());
+                    completed.append(ChatColor.DARK_PURPLE).append(q.getName());
                     if (quester.getAmountsCompleted().containsKey(q) && quester.getAmountsCompleted().get(q) > 1) {
-                        completed.append(ChatColor.LIGHT_PURPLE + " (x" + quester.getAmountsCompleted().get(q) + ")");
+                        completed.append(ChatColor.LIGHT_PURPLE).append(" (x").append(quester.getAmountsCompleted()
+                                .get(q)).append(")");
                     }
                     if (index < (quester.getCompletedQuests().size())) {
                         completed.append(", ");
@@ -684,28 +671,26 @@ public class CmdExecutor implements CommandExecutor {
             final int index = quester.getJournalIndex();
             if (index != -1) {
                 inv.setItem(index, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalPutAway")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalPutAway")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
-            } else if (player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) {
+            } else if (player.getItemInHand().getType().equals(Material.AIR)) {
                 final QuestJournal journal = new QuestJournal(quester);
                 player.setItemInHand(journal.toItemStack());
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
-                //quester.updateJournal();
             } else if (inv.firstEmpty() != -1) {
                 final ItemStack[] arr = inv.getContents();
                 for (int i = 0; i < arr.length; i++) {
                     if (arr[i] == null) {
                         final QuestJournal journal = new QuestJournal(quester);
                         inv.setItem(i, journal.toItemStack());
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                                 .replace("<journal>", Lang.get(player, "journalTitle")));
-                        //quester.updateJournal();
                         break;
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
             }
         }
@@ -714,11 +699,11 @@ public class CmdExecutor implements CommandExecutor {
     private void questsQuit(final Player player, final String[] args) {
         if (player.hasPermission("quests.quit")) {
             if (args.length == 1) {
-                player.sendMessage(ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
+                Lang.send(player, ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
                 return;
             }
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() == false) {
+            if (!quester.getCurrentQuests().isEmpty()) {
                 final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
@@ -731,45 +716,44 @@ public class CmdExecutor implements CommandExecutor {
                         msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
                         quester.quitQuest(quest, msg);
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
                     }
                 } else {
-                    player.sendMessage(ChatColor.RED + Lang.get(player, "questNotFound"));
+                    Lang.send(player, ChatColor.RED + Lang.get(player, "questNotFound"));
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "noActiveQuest"));
             }
         } else {
-            player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
+            Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));
         }
     }
 
     private void questsTake(final Player player, final String[] args) {
-        if (plugin.getSettings().canAllowCommands() == true) {
+        if (plugin.getSettings().canAllowCommands()) {
             if (player.hasPermission("quests.take")) {
                 if (args.length == 1) {
-                    player.sendMessage(ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
                 } else {
                     final Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     if (questToFind != null) {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             if (q.getId().equals(questToFind.getId())) {
-                                player.sendMessage(ChatColor.RED + Lang.get(player, "questAlreadyOn"));
+                                Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
                                 return;
                             }
                         }
-                        //quester.setQuestToTake(questToFind);
                         quester.offerQuest(questToFind, true);
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questNotFound"));
+                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questNotFound"));
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.RED + Lang.get(player, "noPermission"));
+                Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));
             }
         } else {
-            player.sendMessage(ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
+            Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
         }
     }
 
@@ -778,7 +762,7 @@ public class CmdExecutor implements CommandExecutor {
             if (!(cs instanceof Player)) {
                 int num = 1;
                 cs.sendMessage(ChatColor.GOLD + Lang.get("questListTitle"));
-                for (final Quest q : plugin.getQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     cs.sendMessage(ChatColor.YELLOW + "" + num + ". " + q.getName());
                     num++;
                 }
@@ -795,12 +779,11 @@ public class CmdExecutor implements CommandExecutor {
                 
                 plugin.listQuests(quester, 1);
             } else if (args.length == 2) {
-                int page = 1;
+                final int page;
                 try {
                     page = Integer.parseInt(args[1]);
                     if (page < 1) {
                         cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionPosNum"));
-                        return;
                     } else {
                         final Quester quester = plugin.getQuester(player.getUniqueId());
                         final QuestsCommandPreQuestsListEvent preEvent = new QuestsCommandPreQuestsListEvent(quester, page);
@@ -813,7 +796,6 @@ public class CmdExecutor implements CommandExecutor {
                     }
                 } catch (final NumberFormatException e) {
                     cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionNum"));
-                    return;
                 }
             }
         } else {
@@ -869,19 +851,21 @@ public class CmdExecutor implements CommandExecutor {
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_TOP")
                     : "top") + ChatColor.YELLOW));
         }
-        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")) {
+        if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Lang.get("COMMAND_EDITOR")
                     : "editor") + ChatColor.YELLOW));
         }
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*") 
-                || cs.hasPermission("quests.events.editor") || cs.hasPermission("quests.actions.editor")) {
+                || cs.hasPermission("quests.events.editor") || cs.hasPermission("quests.actions.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_EVENTS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_EVENTS_EDITOR") : "actions") + ChatColor.YELLOW));
         }
-        if (cs.hasPermission("quests.conditions.*") 
-                || cs.hasPermission("quests.conditions.editor")) {
+        if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
+                || cs.hasPermission("quests.mode.trial")) {
             cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("COMMAND_CONDITIONS_EDITOR_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands
                     ? Lang.get("COMMAND_CONDITIONS_EDITOR") : "conditions") + ChatColor.YELLOW));
@@ -922,18 +906,15 @@ public class CmdExecutor implements CommandExecutor {
 
     private void adminReload(final CommandSender cs) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
-            final ReloadCallback<Boolean> callback = new ReloadCallback<Boolean>() {
-                @Override
-                public void execute(final Boolean response) {
-                    if (response) {
-                        cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
-                        String msg = Lang.get("numQuestsLoaded");
-                        msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getQuests().size())
-                                + ChatColor.GOLD);
-                        cs.sendMessage(ChatColor.GOLD + msg);
-                    } else {
-                        cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
-                    }
+            final ReloadCallback<Boolean> callback = response -> {
+                if (response) {
+                    cs.sendMessage(ChatColor.GOLD + Lang.get("questsReloaded"));
+                    String msg = Lang.get("numQuestsLoaded");
+                    msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getLoadedQuests().size())
+                            + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg);
+                } else {
+                    cs.sendMessage(ChatColor.RED + Lang.get("unknownError"));
                 }
             };
             plugin.reload(callback);
@@ -953,7 +934,7 @@ public class CmdExecutor implements CommandExecutor {
                     return;
                 }
             }
-            int points;
+            final int points;
             try {
                 points = Integer.parseInt(args[2]);
             } catch (final NumberFormatException e) {
@@ -990,7 +971,7 @@ public class CmdExecutor implements CommandExecutor {
                     return;
                 }
             }
-            int points;
+            final int points;
             try {
                 points = Integer.parseInt(args[2]);
             } catch (final NumberFormatException e) {
@@ -1027,7 +1008,7 @@ public class CmdExecutor implements CommandExecutor {
                     return;
                 }
             }
-            int points;
+            final int points;
             try {
                 points = Integer.parseInt(args[2]);
             } catch (final NumberFormatException e) {
@@ -1064,21 +1045,21 @@ public class CmdExecutor implements CommandExecutor {
                     return;
                 }
             }
-            Quest questToGive;
-            String name = "";
+            final Quest questToGive;
+            StringBuilder name = new StringBuilder();
             if (args.length == 3) {
-                name = args[2].toLowerCase();
+                name = new StringBuilder(args[2].toLowerCase());
             } else {
                 for (int i = 2; i < args.length; i++) {
                     final int lastIndex = args.length - 1;
                     if (i == lastIndex) {
-                        name = name + args[i].toLowerCase();
+                        name.append(args[i].toLowerCase());
                     } else {
-                        name = name + args[i].toLowerCase() + " ";
+                        name.append(args[i].toLowerCase()).append(" ");
                     }
                 }
             }
-            questToGive = plugin.getQuest(name);
+            questToGive = plugin.getQuest(name.toString());
             if (questToGive == null) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
             } else {
@@ -1131,55 +1112,40 @@ public class CmdExecutor implements CommandExecutor {
             for (final Quester q : plugin.getOfflineQuesters()) {
                 q.setQuestPoints(amount);
             }
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    final File questerFolder = new File(plugin.getDataFolder(), "data");
-                    if (questerFolder.exists() && questerFolder.isDirectory()) {
-                        final FileConfiguration data = new YamlConfiguration();
-                        final File[] files = questerFolder.listFiles();
-                        int failCount = 0;
-                        boolean suppressed = false;
-                        if (files != null) {
-                            for (final File f : files) {
-                                try {
-                                    data.load(f);
-                                    data.set("quest-points", amount);
-                                    data.save(f);
-                                } catch (final IOException e) {
-                                    if (failCount < 10) {
-                                        String msg = Lang.get("errorReading");
-                                        msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-                                        cs.sendMessage(ChatColor.RED + msg);
-                                        failCount++;
-                                    } else if (suppressed == false) {
-                                        String msg = Lang.get("errorReadingSuppress");
-                                        msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-                                        cs.sendMessage(ChatColor.RED + msg);
-                                        suppressed = true;
-                                    }
-                                } catch (final InvalidConfigurationException e) {
-                                    if (failCount < 10) {
-                                        String msg = Lang.get("errorReading");
-                                        msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-                                        cs.sendMessage(ChatColor.RED + msg);
-                                        failCount++;
-                                    } else if (suppressed == false) {
-                                        String msg = Lang.get("errorReadingSuppress");
-                                        msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
-                                        cs.sendMessage(ChatColor.RED + msg);
-                                        suppressed = true;
-                                    }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                final File questerFolder = new File(plugin.getDataFolder(), "data");
+                if (questerFolder.exists() && questerFolder.isDirectory()) {
+                    final FileConfiguration data = new YamlConfiguration();
+                    final File[] files = questerFolder.listFiles();
+                    int failCount = 0;
+                    boolean suppressed = false;
+                    if (files != null) {
+                        for (final File f : files) {
+                            try {
+                                data.load(f);
+                                data.set("quest-points", amount);
+                                data.save(f);
+                            } catch (final IOException | InvalidConfigurationException e) {
+                                if (failCount < 10) {
+                                    String msg = Lang.get("errorReading");
+                                    msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
+                                    failCount++;
+                                } else if (!suppressed) {
+                                    String msg = Lang.get("errorReadingSuppress");
+                                    msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
+                                    cs.sendMessage(ChatColor.RED + msg);
+                                    suppressed = true;
                                 }
                             }
                         }
-                        cs.sendMessage(ChatColor.GREEN + Lang.get("done"));
-                        String msg = Lang.get("allQuestPointsSet").replace("<points>", Lang.get("questPoints"));
-                        msg = msg.replace("<number>", ChatColor.AQUA + "" + amount + ChatColor.GOLD);
-                        plugin.getServer().broadcastMessage(ChatColor.YELLOW + "" + ChatColor.GOLD + msg);
-                    } else {
-                        cs.sendMessage(ChatColor.RED + Lang.get("errorDataFolder"));
                     }
+                    cs.sendMessage(ChatColor.GREEN + Lang.get("done"));
+                    String msg = Lang.get("allQuestPointsSet").replace("<points>", Lang.get("questPoints"));
+                    msg = msg.replace("<number>", ChatColor.AQUA + "" + amount + ChatColor.GOLD);
+                    plugin.getServer().broadcastMessage(ChatColor.YELLOW + "" + ChatColor.GOLD + msg);
+                } else {
+                    cs.sendMessage(ChatColor.RED + Lang.get("errorDataFolder"));
                 }
             });
         } else {
@@ -1199,7 +1165,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty()) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1251,7 +1217,7 @@ public class CmdExecutor implements CommandExecutor {
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty()) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1287,7 +1253,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty()) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1328,7 +1294,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty()) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1365,11 +1331,7 @@ public class CmdExecutor implements CommandExecutor {
             }
             final UUID id = target.getUniqueId();
             final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
-            for (final Iterator<Quester> itr = temp.iterator(); itr.hasNext();) {
-                if (itr.next().getUUID().equals(id)) {
-                    itr.remove();
-                }
-            }
+            temp.removeIf(quester -> quester.getUUID().equals(id));
             plugin.setOfflineQuesters(temp);
             Quester quester = plugin.getQuester(id);
             try {
@@ -1377,7 +1339,7 @@ public class CmdExecutor implements CommandExecutor {
                 quester.saveData();
                 quester.updateJournal();
                 final Storage storage = plugin.getStorage();
-                storage.deleteQuesterData(id);
+                storage.deleteQuester(id);
                 String msg = Lang.get("questReset");
                 if (target.getName() != null) {
                     msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
@@ -1387,7 +1349,7 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.GOLD + msg);
                 cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + id);
             } catch (final Exception e) {
-                plugin.getLogger().info("Data file does not exist for " + id.toString());
+                plugin.getLogger().info("Data file does not exist for " + id);
             }
             quester = new Quester(plugin, id);
             quester.saveData();
@@ -1528,23 +1490,13 @@ public class CmdExecutor implements CommandExecutor {
     }
     
     private static Map<String, Integer> sort(final Map<String, Integer> unsortedMap) {
-        final List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortedMap.entrySet());
-        Collections.sort(list, new Comparator<Entry<String, Integer>>() {
-
-            @Override
-            public int compare(final Entry<String, Integer> o1, final Entry<String, Integer> o2) {
-                final int i = o1.getValue();
-                final int i2 = o2.getValue();
-                if (i < i2) {
-                    return 1;
-                } else if (i == i2) {
-                    return 0;
-                } else {
-                    return -1;
-                }
-            }
+        final List<Entry<String, Integer>> list = new LinkedList<>(unsortedMap.entrySet());
+        list.sort((o1, o2) -> {
+            final int i = o1.getValue();
+            final int i2 = o2.getValue();
+            return Integer.compare(i2, i);
         });
-        final Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> sortedMap = new LinkedHashMap<>();
         for (final Entry<String, Integer> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
@@ -1560,13 +1512,14 @@ public class CmdExecutor implements CommandExecutor {
      * @param delimiter the character for which the array was split
      * @return a String or null
      */
-    private static String concatArgArray(final String[] args, final int startingIndex, final int endingIndex, final char delimiter) {
-        String s = "";
+    private static String concatArgArray(final String[] args, final int startingIndex, final int endingIndex,
+                                         final char delimiter) {
+        StringBuilder s = new StringBuilder();
         for (int i = startingIndex; i <= endingIndex; i++) {
-            s += args[i] + delimiter;
+            s.append(args[i]).append(delimiter);
         }
-        s = s.substring(0, s.length());
-        return s.trim().equals("") ? null : s.trim();
+        s = new StringBuilder(s.substring(0, s.length()));
+        return s.toString().trim().equals("") ? null : s.toString().trim();
     }
     
     /**

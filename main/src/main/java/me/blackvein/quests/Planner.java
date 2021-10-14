@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests;
 
@@ -31,8 +31,8 @@ public class Planner {
         }
         final Calendar cal = Calendar.getInstance();
         final String[] s = start.split(":");
-        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
         final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();
@@ -52,8 +52,8 @@ public class Planner {
         }
         final Calendar cal = Calendar.getInstance();
         final String[] s = end.split(":");
-        cal.set(Integer.valueOf(s[2]), Integer.valueOf(s[1]), Integer.valueOf(s[0]),
-                Integer.valueOf(s[3]), Integer.valueOf(s[4]), Integer.valueOf(s[5]));
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
         final TimeZone tz = TimeZone.getTimeZone(s[6]);
         cal.setTimeZone(tz);
         return cal.getTimeInMillis();

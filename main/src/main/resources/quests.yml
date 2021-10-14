@@ -27,10 +27,6 @@ quests:
     name: 'Mob Hunter'
     ask-message: '<yellow>Kill an assortment of Mobs.'
     finish-message: '<yellow>Excellent. Here is a <pink>Diamond Sword<yellow>.'
-    requirements:
-      quests:
-        - Iron Miner
-      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> first.'
     stages:
       ordered:
         1:
@@ -62,19 +58,11 @@ quests:
     name: 'Catch Fish'
     ask-message: '<yellow>Catch some fish!'
     finish-message: '<yellow>Good job. Here is some <green>experience<yellow>.'
-    requirements:
-      quests:
-        - Iron Miner
-      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> first.'
     stages:
       ordered:
         1:
-          start-event: RodStart
+          start-event: GiveRod
           death-event: DeathFail
-          chat-events:
-            - "GiveRod"
-          chat-event-triggers:
-            - "rod"
           fish-to-catch: 5
     rewards:
       exp: 250
@@ -82,6 +70,9 @@ quests:
     name: 'Timed Quest'
     ask-message: '<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!'
     finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
+    requirements:
+      quest-points: 1
+      fail-requirement-message: '<red>Complete <pink>Iron Miner<red> or <pink>Mob Hunter<red> first.'
     stages:
       ordered:
         '1':

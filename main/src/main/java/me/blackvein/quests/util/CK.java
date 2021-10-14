@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,7 +8,7 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.util;
 
@@ -69,9 +69,6 @@ public class CK {
     public static final String S_SMELT_ITEMS = "smeltItems";
     public static final String S_CONSUME_ITEMS = "consumeItems";
     public static final String S_ENCHANT_ITEMS = "enchantItems";
-    //public static final String S_ENCHANT_TYPES = "enchantTypes";
-    //public static final String S_ENCHANT_NAMES = "enchantNames";
-    //public static final String S_ENCHANT_AMOUNTS = "enchantAmounts";
     public static final String S_BREW_ITEMS = "brewItems";
     public static final String S_DELIVERY_ITEMS = "deliveryItems";
     public static final String S_DELIVERY_NPCS = "deliveryNPCs";
@@ -129,6 +126,7 @@ public class CK {
     public static final String REW_MCMMO_AMOUNTS = "mcMMOSkillAmounts";
     public static final String REW_HEROES_CLASSES = "heroesClassRews";
     public static final String REW_HEROES_AMOUNTS = "heroesAmountRews";
+    public static final String REW_PARTIES_EXPERIENCE = "partiesExperienceRews";
     public static final String REW_PHAT_LOOTS = "phatLootRews";
     public static final String REW_CUSTOM = "customRews";
     public static final String REW_CUSTOM_DATA = "customRewData";
@@ -145,10 +143,12 @@ public class CK {
     public static final String OPT_ALLOW_COMMANDS = "allowCommandsOpt";
     public static final String OPT_ALLOW_QUITTING = "allowQuittingOpt";
     public static final String OPT_IGNORE_SILK_TOUCH = "ignoreSilkTouchOpt";
-    public static final String OPT_USE_DUNGEONSXL_PLUGIN = "useDungeonsXLPluginOpt";
+    public static final String OPT_EXTERNAL_PARTY_PLUGIN = "externalPartyPluginOpt";
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
-    public static final String OPT_REQUIRE_SAME_QUEST = "requireSameQuestOpt";
+    public static final String OPT_SHARE_SAME_QUEST_ONLY = "shareSameQuestOnlyOpt";
+    public static final String OPT_SHARE_DISTANCE = "shareDistance";
+    public static final String OPT_HANDLE_OFFLINE_PLAYERS = "handleOfflinePlayers";
     // Actions
     public static final String E_OLD_EVENT = "oldEvent";
     public static final String E_NAME = "evtName";
@@ -182,6 +182,7 @@ public class CK {
     public static final String C_NAME = "conName";
     public static final String C_FAIL_QUEST = "conFailQuest";
     public static final String C_WHILE_RIDING_ENTITY = "conRidingEntity";
+    public static final String C_WHILE_RIDING_NPC = "conRidingNpc";
     public static final String C_WHILE_PERMISSION = "conPermission";
     public static final String C_WHILE_HOLDING_MAIN_HAND = "conHoldingMainHand";
     public static final String C_WHILE_WITHIN_WORLD = "conWithinWorld";

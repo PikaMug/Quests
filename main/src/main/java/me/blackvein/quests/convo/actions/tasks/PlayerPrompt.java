@@ -1,6 +1,6 @@
-/*******************************************************************************************************
- * Continued by PikaMug (formerly HappyPikachu) with permission from _Blackvein_. All rights reserved.
- * 
+/*
+ * Copyright (c) 2014 PikaMug and contributors. All rights reserved.
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
  * NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
@@ -8,24 +8,9 @@
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ */
 
 package me.blackvein.quests.convo.actions.tasks;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
@@ -40,6 +25,22 @@ import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerPrompt extends ActionsEditorNumericPrompt {
     
@@ -126,31 +127,36 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
-                for (final ItemStack is : items) {
-                    if (is != null) {
-                        text += ChatColor.GRAY + "     - " + ItemUtil.getString(is) + "\n";
+                if (items != null) {
+                    for (final ItemStack is : items) {
+                        if (is != null) {
+                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getString(is)).append("\n");
+                        }
                     }
+                    return text.toString();
                 }
-                return text;
             }
         case 4:
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
+                final StringBuilder text = new StringBuilder("\n");
                 final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
                 final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
                 final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGTH);
                 int index = -1;
-                for (final String type : types) {
-                    index++;
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + type + ChatColor.DARK_PURPLE + " " 
-                            + RomanNumeral.getNumeral(mags.get(index)) + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA 
-                            + MiscUtil.getTime(durations.get(index) * 50L) + "\n";
+                if (types != null && durations != null && mags != null) {
+                    for (final String type : types) {
+                        index++;
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(type)
+                                .append(ChatColor.DARK_PURPLE).append(" ").append(RomanNumeral.getNumeral(mags
+                                .get(index))).append(ChatColor.GRAY).append(" -> ").append(ChatColor.DARK_AQUA)
+                                .append(MiscUtil.getTime(durations.get(index) * 50L)).append("\n");
+                    }
                 }
-                return text;
+                return text.toString();
             }
         case 5:
             if (context.getSessionData(CK.E_HUNGER) == null) {
@@ -184,11 +190,12 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_COMMANDS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                String text = "\n";
-                for (final String s : (LinkedList<String>) context.getSessionData(CK.E_COMMANDS)) {
-                    text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                final StringBuilder text = new StringBuilder("\n");
+                for (final String s : (LinkedList<String>) Objects.requireNonNull(context
+                        .getSessionData(CK.E_COMMANDS))) {
+                    text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                 }
-                return text;
+                return text.toString();
             }
         case 10:
             return "";
@@ -198,7 +205,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
         }
@@ -207,25 +214,28 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        String text = ChatColor.GOLD + "- " + getTitle(context) + " -";
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
-            text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                    + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
-        return text;
+        return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
             return new PlayerMessagePrompt(context);
         case 2:
             final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
-            if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
-            } else {
-                context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
+            if (s != null) {
+                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
+                } else {
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
+                }
             }
             return new ActionMainPrompt(context);
         case 3:
@@ -249,7 +259,12 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return new PlayerPrompt(context);
             }
         case 9:
-            return new PlayerCommandsPrompt(context);
+            if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                return new PlayerCommandsPrompt(context);
+            } else {
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
+                return new PlayerPrompt(context);
+            }
         case 10:
             return new ActionMainPrompt(context);
         default:
@@ -274,7 +289,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -283,9 +298,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_MESSAGE, input);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_MESSAGE, null);
@@ -347,11 +364,13 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final ItemStack is : (List<ItemStack>) context.getSessionData(CK.E_ITEMS)) {
-                        text += ChatColor.GRAY + "     - " + ItemUtil.getDisplayString(is) + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final ItemStack is : (List<ItemStack>) Objects.requireNonNull(context
+                            .getSessionData(CK.E_ITEMS))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
+                                .append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 2:
             case 3:
@@ -363,20 +382,21 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final ConversationContext context) {
             // Check/add newly made item
-            if (context.getSessionData("newItem") != null) {
+            if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.E_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.E_ITEMS);
-                    items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.E_ITEMS, items);
+                    if (items != null) {
+                        items.add((ItemStack) context.getSessionData("tempStack"));
+                        context.setSessionData(CK.E_ITEMS, items);
+                    }
                 } else {
-                    final LinkedList<ItemStack> itemRews = new LinkedList<ItemStack>();
-                    itemRews.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(CK.E_ITEMS, itemRews);
+                    final LinkedList<ItemStack> itemRewards = new LinkedList<>();
+                    itemRewards.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(CK.E_ITEMS, itemRewards);
                 }
-                context.setSessionData("newItem", null);
-                context.setSessionData("tempStack", null);
+                ItemStackPrompt.clearSessionData(context);
             }
             
             final ActionsEditorPostOpenNumericPromptEvent event
@@ -384,16 +404,17 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             
-            String text = ChatColor.GOLD + getTitle(context);
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
-            return text;
+            return text.toString();
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
                 return new ItemStackPrompt(context, PlayerItemListPrompt.this);
@@ -469,31 +490,36 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final String s : (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.AQUA + s + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final String s : (LinkedList<String>) Objects.requireNonNull(context
+                            .getSessionData(CK.E_POTION_TYPES))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 2:
                 if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final Long l : (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_AQUA + MiscUtil.getTime(l * 50L) + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final Long l : (LinkedList<Long>) Objects.requireNonNull(context
+                            .getSessionData(CK.E_POTION_DURATIONS))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_AQUA)
+                                .append(MiscUtil.getTime(l * 50L)).append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 3:
                 if (context.getSessionData(CK.E_POTION_STRENGTH) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    String text = "\n";
-                    for (final int i : (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGTH)) {
-                        text += ChatColor.GRAY + "     - " + ChatColor.DARK_PURPLE + i + "\n";
+                    final StringBuilder text = new StringBuilder("\n");
+                    for (final int i : (LinkedList<Integer>) Objects.requireNonNull(context
+                            .getSessionData(CK.E_POTION_STRENGTH))) {
+                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_PURPLE).append(i)
+                                .append("\n");
                     }
-                    return text;
+                    return text.toString();
                 }
             case 4:
             case 5:
@@ -504,22 +530,23 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = ChatColor.GOLD + getTitle(context);
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text += "\n" + getNumberColor(context, i) + "" + ChatColor.BOLD + i + ChatColor.RESET + " - " 
-                        + getSelectionText(context, i) + " " + getAdditionalText(context, i);
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
-            return text;
+            return text.toString();
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
                 return new PlayerPotionTypesPrompt(context);
@@ -549,21 +576,24 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 context.setSessionData(CK.E_POTION_STRENGTH, null);
                 return new PlayerPotionEffectPrompt(context);
             case 5:
-                int one;
-                int two;
-                int three;
-                if (context.getSessionData(CK.E_POTION_TYPES) != null) {
-                    one = ((List<String>) context.getSessionData(CK.E_POTION_TYPES)).size();
+                final int one;
+                final int two;
+                final int three;
+                final List<String> types = (List<String>) context.getSessionData(CK.E_POTION_TYPES);
+                final List<Long> durations = (List<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
+                final List<Integer> strength = (List<Integer>) context.getSessionData(CK.E_POTION_STRENGTH);
+                if (types != null) {
+                    one = types.size();
                 } else {
                     one = 0;
                 }
-                if (context.getSessionData(CK.E_POTION_DURATIONS) != null) {
-                    two = ((List<Long>) context.getSessionData(CK.E_POTION_DURATIONS)).size();
+                if (durations != null) {
+                    two = durations.size();
                 } else {
                     two = 0;
                 }
-                if (context.getSessionData(CK.E_POTION_STRENGTH) != null) {
-                    three = ((List<Integer>) context.getSessionData(CK.E_POTION_STRENGTH)).size();
+                if (strength != null) {
+                    three = strength.size();
                 } else {
                     three = 0;
                 }
@@ -596,29 +626,31 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String effs = ChatColor.LIGHT_PURPLE + getTitle(context) + "\n";
+            final StringBuilder effs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             for (final PotionEffectType pet : PotionEffectType.values()) {
-                effs += (pet != null && pet.getName() != null) ? (ChatColor.DARK_PURPLE + pet.getName() + "\n") : "";
+                effs.append(pet != null ? ChatColor.DARK_PURPLE + pet.getName() + "\n" : "");
             }
-            return effs + ChatColor.YELLOW + getQueryText(context);
+            return effs.toString() + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<String> effTypes = new LinkedList<String>();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                final LinkedList<String> effTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
-                    if (PotionEffectType.getByName(s.toUpperCase()) != null) {
-                        effTypes.add(PotionEffectType.getByName(s.toUpperCase()).getName());
+                    if (s != null && PotionEffectType.getByName(s.toUpperCase()) != null) {
+                        effTypes.add(Objects.requireNonNull(PotionEffectType.getByName(s.toUpperCase())).getName());
                         context.setSessionData(CK.E_POTION_TYPES, effTypes);
                     } else {
-                        player.sendMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
+                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                + Lang.get("eventEditorInvalidPotionType"));
                         return new PlayerPotionTypesPrompt(context);
                     }
@@ -645,7 +677,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -654,21 +686,25 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<Long> effDurations = new LinkedList<Long>();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                final LinkedList<Long> effDurations = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     try {
                         final int i = Integer.parseInt(s);
-                        final long l = i * 1000;
+                        final long l = i * 1000L;
                         if (l < 1000) {
-                            player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                    .replace("<number>", "1"));
                             return new PlayerPotionDurationsPrompt(context);
                         }
                         effDurations.add(l / 50L);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", s));
                         return new PlayerPotionDurationsPrompt(context);
                     }
                 }
@@ -695,7 +731,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -704,20 +740,24 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false) {
-                final LinkedList<Integer> magAmounts = new LinkedList<Integer>();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                final LinkedList<Integer> magAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     try {
                         final int i = Integer.parseInt(s);
                         if (i < 1) {
-                            player.sendMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                                    .replace("<number>", "1"));
                             return new PlayerPotionMagnitudesPrompt(context);
                         }
                         magAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", s));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", s));
                         return new PlayerPotionMagnitudesPrompt(context);
                     }
                 }
@@ -744,7 +784,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -753,12 +793,15 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerHungerPrompt(context);
                     } else {
@@ -793,7 +836,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -802,12 +845,15 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerSaturationPrompt(context);
                     } else {
@@ -842,7 +888,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -851,12 +897,15 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        ((Player) context.getForWhom()).sendMessage(ChatColor.RED
+                        context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
                         return new PlayerHealthPrompt(context);
                     } else {
@@ -891,7 +940,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -900,7 +949,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
                 final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
@@ -949,7 +1001,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -958,12 +1010,13 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            if (input.equalsIgnoreCase(Lang.get("cmdCancel")) == false 
-                    && input.equalsIgnoreCase(Lang.get("cmdClear")) == false) {
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 final String[] commands = input.split(Lang.get("charSemi"));
-                final LinkedList<String> cmdList = new LinkedList<String>();
-                cmdList.addAll(Arrays.asList(commands));
+                final LinkedList<String> cmdList = new LinkedList<>(Arrays.asList(commands));
                 context.setSessionData(CK.E_COMMANDS, cmdList);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_COMMANDS, null);
