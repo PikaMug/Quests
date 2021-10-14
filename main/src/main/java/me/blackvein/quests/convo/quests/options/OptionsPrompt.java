@@ -12,11 +12,6 @@
 
 package me.blackvein.quests.convo.quests.options;
 
-import me.pikamug.unite.api.objects.PartyProvider;
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 import me.blackvein.quests.Options;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -25,9 +20,12 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromp
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import me.pikamug.unite.api.objects.PartyProvider;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
 import java.util.Objects;
 
 public class OptionsPrompt extends QuestsEditorNumericPrompt {
@@ -677,7 +675,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() == null) {
+            if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
