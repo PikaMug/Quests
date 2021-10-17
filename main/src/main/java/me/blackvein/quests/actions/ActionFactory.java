@@ -388,10 +388,9 @@ public class ActionFactory implements ConversationAbandonedListener {
                         ss = section.createSection("mob-spawns." + count);
                     }
                     final QuestMob questMob = QuestMob.fromString(s);
-                    if (questMob.getName() == null) {
-                        continue;
+                    if (questMob.getName() != null) {
+                        ss.set("name", questMob.getName());
                     }
-                    ss.set("name", questMob.getName());
                     ss.set("spawn-location", ConfigUtil.getLocationInfo(questMob.getSpawnLocation()));
                     ss.set("mob-type", questMob.getType().name());
                     ss.set("spawn-amounts", questMob.getSpawnAmounts());
