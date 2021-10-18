@@ -431,7 +431,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptBasicText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
         if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
             if (input.equalsIgnoreCase(Lang.get("clear"))) {
@@ -731,7 +731,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1064,7 +1064,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1366,7 +1366,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);

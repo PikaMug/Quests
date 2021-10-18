@@ -16,6 +16,7 @@ import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.tasks.EntityPrompt;
@@ -25,9 +26,12 @@ import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNume
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -121,7 +125,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         final ConditionsEditorPostOpenNumericPromptEvent event
                 = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -325,7 +329,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final ConditionsEditorPostOpenNumericPromptEvent event
                         = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
@@ -550,7 +554,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override
@@ -631,7 +638,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override

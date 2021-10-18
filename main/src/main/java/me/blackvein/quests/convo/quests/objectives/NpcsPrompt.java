@@ -166,7 +166,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptBasicText(final ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
 
         if (context.getPlugin() != null) {
@@ -331,7 +331,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptBasicText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null) {
@@ -661,7 +661,7 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);

@@ -127,7 +127,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -247,7 +247,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);

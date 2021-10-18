@@ -12,12 +12,22 @@
 
 package me.blackvein.quests.convo;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class QuestsNumericPrompt extends NumericPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
-    
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\d+) - ");
     public QuestsNumericPrompt() {
     }
     
@@ -31,5 +41,33 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
      
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+    
+    @Override
+    public String getPromptText(ConversationContext cc) {
+        Player player = (Player)cc.getForWhom();
+        player.spigot().sendMessage(makeSelectionClickable(getPromptBasicText(cc)));
+        return "";
+    }
+    
+    public abstract String getPromptBasicText(ConversationContext cc);
+    public static TextComponent makeSelectionClickable(String input) {
+        String[] basicText = input.split("\n");
+        TextComponent component = new TextComponent("");
+        boolean first = true;
+        for (String line : basicText) {
+            Matcher matcher = NUMBER_PATTERN.matcher(ChatColor.stripColor(line));
+            TextComponent lineComponent = new TextComponent(TextComponent.fromLegacyText(line));
+            if (matcher.find()) {
+                lineComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, matcher.group(1)));
+            }
+            if (first) {
+                first = false;
+            } else {
+                component.addExtra("\n");
+            }
+            component.addExtra(lineComponent);
+        }
+        return component;
     }
 }

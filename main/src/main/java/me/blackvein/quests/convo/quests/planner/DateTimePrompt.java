@@ -182,7 +182,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         if (context.getPlugin() != null) {
             final QuestsEditorPostOpenNumericPromptEvent event
                     = new QuestsEditorPostOpenNumericPromptEvent(context, this);

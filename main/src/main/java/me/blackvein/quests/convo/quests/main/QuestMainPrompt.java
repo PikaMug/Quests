@@ -15,6 +15,7 @@ package me.blackvein.quests.convo.quests.main;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -30,6 +31,8 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.CitizensAPI;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -236,7 +239,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
@@ -720,7 +723,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptBasicText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
@@ -832,7 +835,10 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override
@@ -956,7 +962,10 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override

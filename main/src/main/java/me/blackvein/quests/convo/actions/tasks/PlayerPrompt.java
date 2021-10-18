@@ -205,7 +205,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptBasicText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
         }
@@ -382,7 +382,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getPromptBasicText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.E_ITEMS) != null) {
@@ -530,7 +530,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);

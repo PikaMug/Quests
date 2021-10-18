@@ -17,6 +17,7 @@ import me.blackvein.quests.QuestMob;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import me.blackvein.quests.convo.actions.tasks.EffectPrompt;
@@ -31,6 +32,8 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -178,7 +181,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
@@ -369,7 +372,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             final ActionsEditorPostOpenNumericPromptEvent event
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
@@ -545,7 +548,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
             if (questMob == null) {
                 questMob = new QuestMob();
             }
@@ -1082,7 +1085,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override
@@ -1162,7 +1168,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
+            Player player = (Player) context.getForWhom();
+            player.spigot().sendMessage(clickableSelection);
+            return "";
         }
 
         @Override

@@ -119,7 +119,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptBasicText(final ConversationContext context) {
         // Check/add newly made item
         if (context.getSessionData("tempStack") != null) {
             if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
@@ -284,7 +284,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getPromptText(final ConversationContext context) {
+        public String getPromptBasicText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {

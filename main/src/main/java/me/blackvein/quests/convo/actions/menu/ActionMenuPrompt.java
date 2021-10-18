@@ -23,10 +23,13 @@ import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPro
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -90,7 +93,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event 
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -233,17 +236,11 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
             final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
-            for (int i = 0; i < names.size(); i++) {
-                text.append(ChatColor.AQUA).append(names.get(i));
-                if (i < (names.size() - 1)) {
-                    text.append(ChatColor.GRAY).append(", ");
-                }
-            }
-            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
+            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
+            final Player player = (Player)context.getForWhom();
+            player.spigot().sendMessage(text);
+            return "";
         }
 
         @Override
@@ -288,17 +285,11 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
             final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
-            for (int i = 0; i < names.size(); i++) {
-                text.append(ChatColor.AQUA).append(names.get(i));
-                if (i < (names.size() - 1)) {
-                    text.append(ChatColor.GRAY).append(", ");
-                }
-            }
-            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
+            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
+            Player player = (Player)context.getForWhom();
+            player.spigot().sendMessage(text);
+            return "";
         }
 
         @Override
