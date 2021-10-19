@@ -69,9 +69,15 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME) + "" + ChatColor.GRAY 
-                + (context.getSessionData(CK.Q_ID) != null ? " (" + Lang.get("id") + ":" 
-                + context.getSessionData(CK.Q_ID) + ")": "");
+        final StringBuilder title = new StringBuilder(Lang.get("quest") + ": " + context.getSessionData(CK.Q_NAME));
+
+        if (plugin.hasLimitedAccess(context.getForWhom())) {
+            title.append(ChatColor.RED).append(" (").append(Lang.get("trialMode")).append(")");
+        } else if (context.getSessionData(CK.Q_ID) != null) {
+            title.append(ChatColor.GRAY).append(" (").append(Lang.get("id")).append(":")
+                    .append(context.getSessionData(CK.Q_ID)).append(")");
+        }
+        return title.toString();
     }
     
     @Override

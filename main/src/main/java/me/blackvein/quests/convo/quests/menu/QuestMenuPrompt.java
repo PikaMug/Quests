@@ -49,7 +49,9 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("questEditorTitle");
+        final String title = Lang.get("questEditorTitle");
+        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + Lang.get("trialMode")
+                + ")" : "");
     }
     
     @Override

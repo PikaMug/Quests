@@ -51,7 +51,9 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("conditionEditorTitle");
+        final String title = Lang.get("conditionEditorTitle");
+        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + Lang.get("trialMode")
+                + ")" : "");
     }
     
     @Override

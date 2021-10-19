@@ -51,7 +51,9 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Lang.get("eventEditorTitle");
+        final String title = Lang.get("eventEditorTitle");
+        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + Lang.get("trialMode")
+                + ")" : "");
     }
     
     @Override
