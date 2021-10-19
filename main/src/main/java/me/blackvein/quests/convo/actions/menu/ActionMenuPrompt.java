@@ -93,7 +93,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         final ActionsEditorPostOpenNumericPromptEvent event 
                 = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -237,10 +237,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
-            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
-            final Player player = (Player)context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override
@@ -286,10 +283,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
-            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
-            Player player = (Player)context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override

@@ -93,7 +93,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         final ConditionsEditorPostOpenNumericPromptEvent event 
                 = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -236,10 +236,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
-            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
-            final Player player = (Player) context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override
@@ -285,10 +282,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
-            final TextComponent text = makeClickableMenu(getTitle(context), names, getQueryText(context));
-            Player player = (Player) context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override

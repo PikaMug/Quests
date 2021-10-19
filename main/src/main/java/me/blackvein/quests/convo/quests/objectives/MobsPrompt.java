@@ -203,7 +203,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final ConversationContext context) {
+    public @NotNull String getBasicPromptText(final ConversationContext context) {
         context.setSessionData(pref, Boolean.TRUE);
 
         if (context.getPlugin() != null) {
@@ -394,7 +394,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
@@ -972,7 +972,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
@@ -1247,7 +1247,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);

@@ -91,7 +91,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         final QuestsEditorPostOpenNumericPromptEvent event 
                 = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -221,11 +221,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> questNames = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());;
-            final TextComponent text = makeClickableMenu(getTitle(context), questNames, getQueryText(context));
-            final Player player = (Player)context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override
@@ -267,11 +264,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> questNames = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());;
-            final TextComponent text = makeClickableMenu(getTitle(context), questNames, getQueryText(context));
-            final Player player = (Player)context.getForWhom();
-            player.spigot().sendMessage(text);
-            return "";
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override

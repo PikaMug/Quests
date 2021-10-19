@@ -15,8 +15,8 @@ package me.blackvein.quests.convo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.entity.Player;
@@ -45,13 +45,16 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     
     @Override
     public String getPromptText(ConversationContext cc) {
-        Player player = (Player)cc.getForWhom();
-        player.spigot().sendMessage(makeSelectionClickable(getPromptBasicText(cc)));
-        return "";
+        return sendClickableSelection(getBasicPromptText(cc), cc.getForWhom());
     }
     
-    public abstract String getPromptBasicText(ConversationContext cc);
-    public static TextComponent makeSelectionClickable(String input) {
+    public abstract String getBasicPromptText(ConversationContext cc);
+    
+    // returns any text that still needs delivery
+    public static String sendClickableSelection(String input, Conversable forWhom) {
+        if (!(forWhom instanceof Player)) {
+            return input;
+        }
         String[] basicText = input.split("\n");
         TextComponent component = new TextComponent("");
         boolean first = true;
@@ -68,6 +71,8 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
             }
             component.addExtra(lineComponent);
         }
-        return component;
+        Player player = (Player)forWhom;
+        player.spigot().sendMessage(component);
+        return "";
     }
 }

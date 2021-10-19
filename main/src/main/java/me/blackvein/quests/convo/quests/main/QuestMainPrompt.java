@@ -239,7 +239,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
@@ -723,7 +723,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptBasicText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
@@ -835,10 +835,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
-            Player player = (Player) context.getForWhom();
-            player.spigot().sendMessage(clickableSelection);
-            return "";
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
         }
 
         @Override
@@ -962,10 +959,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            TextComponent clickableSelection = QuestsNumericPrompt.makeSelectionClickable(text.toString());
-            Player player = (Player) context.getForWhom();
-            player.spigot().sendMessage(clickableSelection);
-            return "";
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
         }
 
         @Override

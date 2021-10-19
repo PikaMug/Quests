@@ -79,7 +79,7 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptBasicText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         if (context.getPlugin() != null) {
             final QuestsEditorPostOpenNumericPromptEvent event
                     = new QuestsEditorPostOpenNumericPromptEvent(context, this);

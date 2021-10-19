@@ -13,7 +13,10 @@
 package me.blackvein.quests.convo;
 
 import java.util.List;
+
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import net.md_5.bungee.api.ChatColor;
@@ -38,7 +41,11 @@ public abstract class QuestsStringPrompt extends StringPrompt {
         return HANDLERS;
     }
 
-    protected TextComponent makeClickableMenu(String header, List<String> list, String footer) {
+    // returns any text that still needs delivery
+    protected String sendClickableMenu(String header, List<String> list, String footer, Conversable forWhom) {
+        if (!(forWhom instanceof Player)) {
+            return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
+        }
         final TextComponent component = new TextComponent(header + "\n");
         component.setColor(ChatColor.GOLD);
         final TextComponent footerComponent = new TextComponent("\n" + footer);
@@ -55,6 +62,8 @@ public abstract class QuestsStringPrompt extends StringPrompt {
             }
         }
         component.addExtra(footerComponent);
-        return component;
+        Player player = (Player)forWhom;
+        player.spigot().sendMessage(component);
+        return "";
     }
 }
