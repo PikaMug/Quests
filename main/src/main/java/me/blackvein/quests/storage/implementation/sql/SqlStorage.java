@@ -180,7 +180,7 @@ public class SqlStorage implements StorageImplementation {
                     + "`items_delivered` VARCHAR(100) NULL,"
                     + "`npcs_interacted` VARCHAR(100) NULL,"
                     + "`npcs_killed` VARCHAR(100) NULL,"
-                    + "`mobs_killed` INT NULL,"
+                    + "`mobs_killed` VARCHAR(100) NULL,"
                     + "`mobs_tamed` INT NULL,"
                     + "`fish_caught` INT NULL,"
                     + "`cows_milked` INT NULL,"
