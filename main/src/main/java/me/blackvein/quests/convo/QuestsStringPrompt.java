@@ -41,7 +41,18 @@ public abstract class QuestsStringPrompt extends StringPrompt {
         return HANDLERS;
     }
 
-    // returns any text that still needs delivery
+    /**
+     * Takes a header, footer, and a list of names, formats them in Quests
+     * style, and decides how to deliver the result. Players are sent
+     * clickable text, all others (i.e. console) are sent plain text,
+     * which is returned to be delivered through the Conversations API.
+     * 
+     * @param header  the menu header
+     * @param list    a list of strings to display
+     * @param footer  the menu footer
+     * @param forWhom the conversation participant
+     * @return        plain text to deliver
+     */
     protected String sendClickableMenu(String header, List<String> list, String footer, Conversable forWhom) {
         if (!(forWhom instanceof Player)) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;

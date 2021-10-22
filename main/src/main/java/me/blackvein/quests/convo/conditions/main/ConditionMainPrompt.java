@@ -26,8 +26,6 @@ import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNume
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;

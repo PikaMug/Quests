@@ -50,7 +50,16 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     
     public abstract String getBasicPromptText(ConversationContext cc);
     
-    // returns any text that still needs delivery
+    /**
+     * Takes a Quests-styled conversation interface and decides how to send it
+     * to the target. Players receive clickable text, others (i.e. console)
+     * receive plain text, which is returned to be delivered through the
+     * Conversations API.
+     * 
+     * @param input   the Quests-styled conversation interface
+     * @param forWhom the conversation participant 
+     * @return        plain text to deliver
+     */
     public static String sendClickableSelection(String input, Conversable forWhom) {
         if (!(forWhom instanceof Player)) {
             return input;

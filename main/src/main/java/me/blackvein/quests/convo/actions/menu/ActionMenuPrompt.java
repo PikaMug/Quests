@@ -23,8 +23,6 @@ import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPro
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
