@@ -16,6 +16,7 @@ import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -2341,7 +2342,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(context, i)).append("\n");
             }
-            return text.toString();
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
         }
 
         @Override
