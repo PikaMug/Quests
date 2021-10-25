@@ -388,7 +388,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getBasicPromptText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
         if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
             if (input.equalsIgnoreCase(Lang.get("clear"))) {
@@ -748,7 +748,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(CK.REW_ITEMS) != null) {
@@ -969,7 +969,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1217,7 +1217,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1478,7 +1478,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);

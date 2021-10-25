@@ -16,6 +16,7 @@ import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
@@ -431,7 +432,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getBasicPromptText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
         if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
             if (input.equalsIgnoreCase(Lang.get("clear"))) {
@@ -731,7 +732,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1064,7 +1065,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -1366,7 +1367,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
                 final QuestsEditorPostOpenNumericPromptEvent event
                         = new QuestsEditorPostOpenNumericPromptEvent(context, this);
@@ -2341,7 +2342,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(context, i)).append("\n");
             }
-            return text.toString();
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
         }
 
         @Override

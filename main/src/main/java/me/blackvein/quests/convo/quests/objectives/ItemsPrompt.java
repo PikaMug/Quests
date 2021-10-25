@@ -177,7 +177,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getBasicPromptText(final ConversationContext context) {
         // Check/add newly made item
         if (context.getSessionData("tempStack") != null) {
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
@@ -311,7 +311,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null) {
@@ -433,7 +433,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_SMELT_ITEMS) != null) {
@@ -555,7 +555,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null) {
@@ -675,7 +675,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_BREW_ITEMS) != null) {
@@ -795,7 +795,7 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public @NotNull String getBasicPromptText(final ConversationContext context) {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null) {

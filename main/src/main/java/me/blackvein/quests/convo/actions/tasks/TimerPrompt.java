@@ -98,7 +98,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
+    public @NotNull String getBasicPromptText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
             context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
         }

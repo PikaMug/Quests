@@ -14,6 +14,7 @@ package me.blackvein.quests.convo.quests.menu;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
@@ -25,6 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -90,7 +92,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         final QuestsEditorPostOpenNumericPromptEvent event 
                 = new QuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -220,17 +222,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
-            for (int i = 0; i < names.size(); i++) {
-                text.append(ChatColor.AQUA).append(names.get(i));
-                if (i < (names.size() - 1)) {
-                    text.append(ChatColor.GRAY).append(", ");
-                }
-            }
-            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override
@@ -272,18 +265,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
-            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
-                    .collect(Collectors.toList());
-            for (int i = 0; i < names.size(); i++) {
-                text.append(ChatColor.AQUA).append(names.get(i));
-                if (i < (names.size() - 1)) {
-                    text.append(ChatColor.GRAY).append(", ");
-                }
-            }
-            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
         }
 
         @Override
@@ -381,7 +364,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return text.toString();
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
         }
 
         @Override

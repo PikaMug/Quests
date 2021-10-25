@@ -12,8 +12,16 @@
 
 package me.blackvein.quests.convo;
 
+import java.util.List;
+
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class QuestsStringPrompt extends StringPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -31,5 +39,42 @@ public abstract class QuestsStringPrompt extends StringPrompt {
      
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+
+    /**
+     * Takes a header, footer, and a list of names, formats them in Quests
+     * style, and decides how to deliver the result. Players are sent
+     * clickable text, all others (i.e. console) are sent plain text,
+     * which is returned to be delivered through the Conversations API.
+     * 
+     * @param header  the menu header
+     * @param list    a list of strings to display
+     * @param footer  the menu footer
+     * @param forWhom the conversation participant
+     * @return        plain text to deliver
+     */
+    protected String sendClickableMenu(String header, List<String> list, String footer, Conversable forWhom) {
+        if (!(forWhom instanceof Player)) {
+            return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
+        }
+        final TextComponent component = new TextComponent(header + "\n");
+        component.setColor(ChatColor.GOLD);
+        final TextComponent footerComponent = new TextComponent("\n" + footer);
+        footerComponent.setColor(ChatColor.YELLOW);
+        final TextComponent separator = new TextComponent(", ");
+        separator.setColor(ChatColor.GRAY);
+        for (int i = 0; i < list.size(); i++) {
+            final TextComponent questName = new TextComponent(list.get(i));
+            questName.setColor(ChatColor.AQUA);
+            questName.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, list.get(i)));
+            component.addExtra(questName);
+            if (i < (list.size() - 1)) {
+                component.addExtra(separator);
+            }
+        }
+        component.addExtra(footerComponent);
+        Player player = (Player)forWhom;
+        player.spigot().sendMessage(component);
+        return "";
     }
 }
