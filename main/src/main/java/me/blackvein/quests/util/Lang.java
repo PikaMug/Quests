@@ -173,6 +173,10 @@ public class Lang {
             plugin.getLogger()
                     .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
             iso = "en-US";
+            plugin.getLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
+                    .toString());
+            plugin.getLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
+                    .getLocation().getPath());
             final FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
                     .requireNonNull(plugin.getResource("strings.yml")), StandardCharsets.UTF_8));
             for (final String key : config.getKeys(false)) {
