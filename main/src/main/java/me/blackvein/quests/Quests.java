@@ -696,8 +696,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     private void setupLang() throws IOException, URISyntaxException {
         final String path = "lang";
-        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-                .replace("%20", " "));
+        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
         if (jarFile.isFile()) {
             final JarFile jar = new JarFile(jarFile);
             final Enumeration<JarEntry> entries = jar.entries();
