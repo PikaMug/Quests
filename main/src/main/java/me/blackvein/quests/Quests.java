@@ -109,7 +109,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -697,12 +696,13 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
      */
     private void setupLang() throws IOException, URISyntaxException {
         final String path = "lang";
-        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
+                .replace("%20", " "));
         if (jarFile.isFile()) {
             final JarFile jar = new JarFile(jarFile);
             final Enumeration<JarEntry> entries = jar.entries();
             final Set<String> results = new HashSet<>();
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 final String name = entries.nextElement().getName();
                 if (name.startsWith(path + "/") && name.contains("strings.yml")) {
                     results.add(name);
