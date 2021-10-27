@@ -1162,12 +1162,11 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     final List<String> displays = (List<String>) context.getSessionData(stagePrefix
                             + CK.S_PASSWORD_DISPLAYS);
                     if (displays != null) {
-                        displays.add(input);
+                        displays.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
                     }
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS, displays);
                 } else {
-                    final List<String> displays = new LinkedList<>();
-                    displays.add(input);
+                    final List<String> displays = new LinkedList<>(Arrays.asList(input.split(Lang.get("charSemi"))));
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS, displays);
                 }
             }
@@ -1211,12 +1210,11 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     final List<String> phrases = (List<String>) context.getSessionData(stagePrefix
                             + CK.S_PASSWORD_PHRASES);
                     if (phrases != null) {
-                        phrases.add(input);
+                        phrases.addAll(Arrays.asList(input.split(Lang.get("charSemi"))));
                     }
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_PHRASES, phrases);
                 } else {
-                    final List<String> phrases = new LinkedList<>();
-                    phrases.add(input);
+                    final List<String> phrases = new LinkedList<>(Arrays.asList(input.split(Lang.get("charSemi"))));
                     context.setSessionData(stagePrefix + CK.S_PASSWORD_PHRASES, phrases);
                 }
             }
