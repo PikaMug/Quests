@@ -173,13 +173,16 @@ public class ItemUtil {
             return -5;
         }
         if (one.getType().equals(Material.ENCHANTED_BOOK)) {
-            final EnchantmentStorageMeta esMeta1 = (EnchantmentStorageMeta) one.getItemMeta();
-            final EnchantmentStorageMeta esMeta2 = (EnchantmentStorageMeta) two.getItemMeta();
-            if (esMeta1.hasStoredEnchants() && !esMeta2.hasStoredEnchants()) {
-                return -6;
-            }
-            if (!esMeta1.getStoredEnchants().equals(esMeta2.getStoredEnchants())) {
-                return -6;
+            if (one.getItemMeta() instanceof EnchantmentStorageMeta
+                    && two.getItemMeta() instanceof EnchantmentStorageMeta) {
+                final EnchantmentStorageMeta esMeta1 = (EnchantmentStorageMeta) one.getItemMeta();
+                final EnchantmentStorageMeta esMeta2 = (EnchantmentStorageMeta) two.getItemMeta();
+                if (esMeta1.hasStoredEnchants() && !esMeta2.hasStoredEnchants()) {
+                    return -6;
+                }
+                if (!esMeta1.getStoredEnchants().equals(esMeta2.getStoredEnchants())) {
+                    return -6;
+                }
             }
         }
         return 0;
@@ -453,45 +456,39 @@ public class ItemUtil {
      * @return formatted string, or null if invalid stack
      */
     public static String serializeItemStack(final ItemStack is) {
-        String serial;
+        final StringBuilder serial;
         if (is == null) {
             return null;
         }
-        serial = "name-" + is.getType().name();
-        serial += ":amount-" + is.getAmount();
+        serial = new StringBuilder("name-" + is.getType().name());
+        serial.append(":amount-").append(is.getAmount());
         if (is.getDurability() != 0) {
-            serial += ":data-" + is.getDurability();
+            serial.append(":data-").append(is.getDurability());
         }
         if (!is.getEnchantments().isEmpty()) {
             for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
-                serial += ":enchantment-" + e.getKey().getName() + " " + e.getValue();
+                serial.append(":enchantment-").append(e.getKey().getName()).append(" ").append(e.getValue());
             }
         }
         if (is.hasItemMeta()) {
             final ItemMeta meta = is.getItemMeta();
             if (meta.hasDisplayName()) {
-                serial += ":displayname-" + meta.getDisplayName();
+                serial.append(":displayname-").append(meta.getDisplayName());
             }
             if (meta.hasLore()) {
                 for (final String s : meta.getLore()) {
-                    serial += ":lore-" + s;
+                    serial.append(":lore-").append(s);
                 }
             }
 
-            final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.putAll(meta.serialize());
-
-            if (map.containsKey("lore")) {
-                map.remove("lore");
-            }
-            if (map.containsKey("display-name")) {
-                map.remove("display-name");
-            }
+            final LinkedHashMap<String, Object> map = new LinkedHashMap<>(meta.serialize());
+            map.remove("lore");
+            map.remove("display-name");
             for (final String key : map.keySet()) {
-                serial += ":" + key + "-" + map.get(key).toString().replace("minecraft:", "minecraft|");
+                serial.append(":").append(key).append("-").append(map.get(key).toString().replace("minecraft:", "minecraft|"));
             }
         }
-        return serial;
+        return serial.toString();
     }
 
     /**
@@ -516,7 +513,7 @@ public class ItemUtil {
      * @return true display or item name, plus durability and amount, plus enchantments
      */
     public static String getDisplayString(final ItemStack is) {
-        StringBuilder text;
+        final StringBuilder text;
         if (is == null) {
             return null;
         }
@@ -576,7 +573,7 @@ public class ItemUtil {
         if (is == null) {
             return null;
         }
-        String text = "";
+        final String text;
         if (is.getItemMeta() != null && is.getItemMeta().hasDisplayName()) {
             text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
         } else {

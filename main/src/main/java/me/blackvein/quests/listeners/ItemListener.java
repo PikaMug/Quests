@@ -153,11 +153,7 @@ public class ItemListener implements Listener {
         if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
             final ItemStack enchantedItem = evt.getItem().clone();
             enchantedItem.setAmount(1);
-            try {
-                enchantedItem.addEnchantments(evt.getEnchantsToAdd());
-            } catch (final IllegalArgumentException e) {
-                // Ignore
-            }
+            enchantedItem.addUnsafeEnchantments(evt.getEnchantsToAdd());
             final Quester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -168,12 +164,20 @@ public class ItemListener implements Listener {
                 
                 if (quester.getCurrentQuests().containsKey(quest) 
                         && quester.getCurrentStage(quest).containsObjective(type)) {
-                    quester.enchantItem(quest, enchantedItem);
+                    if (enchantedItem.getType().equals(Material.BOOK)) {
+                        quester.enchantBook(quest, enchantedItem, evt.getEnchantsToAdd());
+                    } else {
+                        quester.enchantItem(quest, enchantedItem);
+                    }
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final Quester q, final Quest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.enchantItem(cq, enchantedItem);
+                        if (enchantedItem.getType().equals(Material.BOOK)) {
+                            q.enchantBook(cq, enchantedItem, evt.getEnchantsToAdd());
+                        } else {
+                            q.enchantItem(cq, enchantedItem);
+                        }
                     }
                     return null;
                 }));

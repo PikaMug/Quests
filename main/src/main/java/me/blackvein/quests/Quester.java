@@ -54,6 +54,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Crops;
 import org.jetbrains.annotations.NotNull;
@@ -429,7 +430,6 @@ public class Quester implements Comparable<Quester> {
      * @param quest The quest to start
      * @param ignoreRequirements Whether to ignore Requirements
      */
-    @SuppressWarnings("deprecation")
     public void takeQuest(final Quest quest, final boolean ignoreRequirements) {
         if (quest == null) {
             return;
@@ -1927,6 +1927,67 @@ public class Quester implements Comparable<Quester> {
     }
 
     /**
+     * Mark book as enchanted if Quester has such an objective
+     *
+     * @param quest The quest for which the item is being enchanted
+     * @param itemStack The book being enchanted
+     */
+    public void enchantBook(final Quest quest, final ItemStack itemStack,
+                            final Map<Enchantment, Integer> enchantsToAdd) {
+        int currentIndex = -1;
+        final LinkedList<Integer> matches = new LinkedList<>();
+        for (final ItemStack is : getQuestData(quest).itemsEnchanted) {
+            currentIndex++;
+            if (is.getItemMeta() instanceof EnchantmentStorageMeta) {
+                if (((EnchantmentStorageMeta)is.getItemMeta()).getStoredEnchants().equals(enchantsToAdd)) {
+                    matches.add(currentIndex);
+                }
+            }
+        }
+        if (matches.isEmpty()) {
+            return;
+        }
+        for (final Integer match : matches) {
+            final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsEnchanted);
+            final ItemStack found = items.get(match);
+            final int amount = found.getAmount();
+            final int toEnchant = getCurrentStage(quest).itemsToEnchant.get(match).getAmount();
+
+            final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
+            final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
+                    new Objective(type, amount, toEnchant));
+            plugin.getServer().getPluginManager().callEvent(preEvent);
+
+            final int newAmount = itemStack.getAmount() + amount;
+            final Material m = itemStack.getType();
+            if (amount < toEnchant) {
+                if (newAmount >= toEnchant) {
+                    found.setAmount(toEnchant);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
+                    finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null, null,
+                            null, null, null);
+
+                    // Multiplayer
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                        q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
+                        q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
+                                null, null, null, null);
+                        return null;
+                    });
+                } else {
+                    found.setAmount(newAmount);
+                    getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
+                }
+                return;
+            }
+
+            final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest,
+                    new Objective(type, itemStack.getAmount() + amount, toEnchant));
+            plugin.getServer().getPluginManager().callEvent(postEvent);
+        }
+    }
+
+    /**
      * Mark item as enchanted if Quester has such an objective
      * 
      * @param quest The quest for which the item is being enchanted
@@ -1935,15 +1996,17 @@ public class Quester implements Comparable<Quester> {
     public void enchantItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        for (final ItemStack is : getQuestData(quest).itemsEnchanted) {
-            currentIndex++;
-            if (!is.getEnchantments().isEmpty()) {
-                if (ItemUtil.compareItems(itemStack, is, true) == 0) {
-                    matches.add(currentIndex);
-                }
-            } else {
-                if (ItemUtil.compareItems(itemStack, is, true) == -4) {
-                    matches.add(currentIndex);
+        if (!itemStack.getType().equals(Material.BOOK)) {
+            for (final ItemStack is : getQuestData(quest).itemsEnchanted) {
+                currentIndex++;
+                if (!is.getEnchantments().isEmpty()) {
+                    if (ItemUtil.compareItems(itemStack, is, true) == 0) {
+                        matches.add(currentIndex);
+                    }
+                } else {
+                    if (ItemUtil.compareItems(itemStack, is, true) == -4) {
+                        matches.add(currentIndex);
+                    }
                 }
             }
         }
@@ -2113,7 +2176,6 @@ public class Quester implements Comparable<Quester> {
      * @param npc The NPC being delivered to
      * @param itemStack The item being delivered
      */
-    @SuppressWarnings("deprecation")
     public void deliverToNPC(final Quest quest, final NPC npc, final ItemStack itemStack) {
         if (npc == null) {
             return;
@@ -3283,12 +3345,12 @@ public class Quester implements Comparable<Quester> {
             }
         }
         if (!quest.getStage(stage).citizensToKill.isEmpty()) {
-            for (final Integer toKill : quest.getStage(stage).citizensToKill) {
+            for (final Integer ignored : quest.getStage(stage).citizensToKill) {
                 data.citizensNumKilled.add(0);
             }
         }
         if (!quest.getStage(stage).mobsToKill.isEmpty()) {
-            for (final EntityType toKill : quest.getStage(stage).mobsToKill) {
+            for (final EntityType ignored : quest.getStage(stage).mobsToKill) {
                 data.mobNumKilled.add(0);
             }
         }

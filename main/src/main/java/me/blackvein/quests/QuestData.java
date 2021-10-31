@@ -12,12 +12,14 @@
 
 package me.blackvein.quests;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * Quest objective data for a specified Quester
+ */
 public class QuestData {
 
     private final Quester quester;
