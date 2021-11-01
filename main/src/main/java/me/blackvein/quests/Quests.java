@@ -49,6 +49,8 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -642,8 +644,18 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
             getServer().getPluginManager().callEvent(event);
 
-            return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
-                    + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
+            final TextComponent component = new TextComponent("");
+            component.addExtra(ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN);
+            final TextComponent yes = new TextComponent(getSelectionText(context, 1));
+            yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, Lang.get("yesWord")));
+            component.addExtra(yes);
+            component.addExtra(ChatColor.RESET + " / ");
+            final TextComponent no = new TextComponent(getSelectionText(context, 2));
+            no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, Lang.get("noWord")));
+            component.addExtra(no);
+
+            ((Player)context.getForWhom()).spigot().sendMessage(component);
+            return "";
         }
 
         @Override
@@ -653,7 +665,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 return Prompt.END_OF_CONVERSATION;
             }
             final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
+                    || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
                 Quester quester = getQuester(player.getUniqueId());
                 if (quester == null) {
                     // Must be new player
@@ -678,7 +691,8 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                     e.printStackTrace();
                 }
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Lang.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
+                    || input.equalsIgnoreCase(Lang.get("noWord"))) {
                 Lang.send(player, ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
             } else {

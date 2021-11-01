@@ -12,16 +12,15 @@
 
 package me.blackvein.quests.convo;
 
-import java.util.List;
-
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.List;
 
 public abstract class QuestsStringPrompt extends StringPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -53,7 +52,8 @@ public abstract class QuestsStringPrompt extends StringPrompt {
      * @param forWhom the conversation participant
      * @return        plain text to deliver
      */
-    protected String sendClickableMenu(String header, List<String> list, String footer, Conversable forWhom) {
+    protected String sendClickableMenu(final String header, final List<String> list, final String footer,
+                                       final Conversable forWhom) {
         if (!(forWhom instanceof Player)) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
         }
@@ -73,8 +73,7 @@ public abstract class QuestsStringPrompt extends StringPrompt {
             }
         }
         component.addExtra(footerComponent);
-        Player player = (Player)forWhom;
-        player.spigot().sendMessage(component);
+        ((Player)forWhom).spigot().sendMessage(component);
         return "";
     }
 }

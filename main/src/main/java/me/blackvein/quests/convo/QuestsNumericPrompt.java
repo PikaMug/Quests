@@ -12,22 +12,23 @@
 
 package me.blackvein.quests.convo;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class QuestsNumericPrompt extends NumericPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\d+) - ");
+
     public QuestsNumericPrompt() {
     }
     
@@ -44,7 +45,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     }
     
     @Override
-    public String getPromptText(ConversationContext cc) {
+    public @NotNull String getPromptText(@NotNull ConversationContext cc) {
         return sendClickableSelection(getBasicPromptText(cc), cc.getForWhom());
     }
     
@@ -60,16 +61,16 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
      * @param forWhom the conversation participant 
      * @return        plain text to deliver
      */
-    public static String sendClickableSelection(String input, Conversable forWhom) {
+    public static String sendClickableSelection(final String input, final Conversable forWhom) {
         if (!(forWhom instanceof Player)) {
             return input;
         }
-        String[] basicText = input.split("\n");
-        TextComponent component = new TextComponent("");
+        final String[] basicText = input.split("\n");
+        final TextComponent component = new TextComponent("");
         boolean first = true;
-        for (String line : basicText) {
-            Matcher matcher = NUMBER_PATTERN.matcher(ChatColor.stripColor(line));
-            TextComponent lineComponent = new TextComponent(TextComponent.fromLegacyText(line));
+        for (final String line : basicText) {
+            final Matcher matcher = NUMBER_PATTERN.matcher(ChatColor.stripColor(line));
+            final TextComponent lineComponent = new TextComponent(TextComponent.fromLegacyText(line));
             if (matcher.find()) {
                 lineComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, matcher.group(1)));
             }
@@ -80,8 +81,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
             }
             component.addExtra(lineComponent);
         }
-        Player player = (Player)forWhom;
-        player.spigot().sendMessage(component);
+        ((Player)forWhom).spigot().sendMessage(component);
         return "";
     }
 }
