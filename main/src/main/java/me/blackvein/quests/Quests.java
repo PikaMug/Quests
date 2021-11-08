@@ -3147,14 +3147,19 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                                     + stageNum + ".sheep-to-shear");
                             final List<Integer> shearAmounts = config.getIntegerList("quests." + questKey
                                     + ".stages.ordered." + stageNum + ".sheep-amounts");
-                            for (final String color : sheep) {
+                            for (String color : sheep) {
                                 DyeColor dc = null;
                                 if (color.equalsIgnoreCase("NULL")) {
                                     dc = DyeColor.WHITE;
                                 }
                                 try {
                                     if (dc == null) {
-                                        dc = DyeColor.valueOf(color.toUpperCase());
+                                        for (final DyeColor val : DyeColor.values()) {
+                                            if (val.name().replace("_", "").equalsIgnoreCase(color.replace("_", ""))) {
+                                                dc = val;
+                                                break;
+                                            }
+                                        }
                                     }
                                 } catch (final IllegalArgumentException e) {
                                     // Fail silently
