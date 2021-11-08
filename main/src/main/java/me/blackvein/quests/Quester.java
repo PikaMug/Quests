@@ -77,8 +77,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-//import de.erethon.dungeonsxl.player.DGroup;
-
 public class Quester implements Comparable<Quester> {
 
     private final Quests plugin;
@@ -2217,7 +2215,7 @@ public class Quester implements Comparable<Quester> {
                 }
                 if (newAmount >= toDeliver) {
                     found.setAmount(toDeliver);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
                     if ((itemStack.getAmount() + amount) >= toDeliver) {
                         // Take away remaining amount to be delivered
                         final ItemStack clone = itemStack.clone();
@@ -2232,14 +2230,14 @@ public class Quester implements Comparable<Quester> {
                     
                     // Multiplayer
                     dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
+                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
                         q.finishObjective(quest, new Objective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
                         return null;
                     });
                 } else {
                     found.setAmount(newAmount);
-                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found);
+                    getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
                     player.getInventory().setItem(index, null);
                     player.updateInventory();
                     final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
