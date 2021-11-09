@@ -15,6 +15,7 @@ package me.blackvein.quests.convo.quests.requirements;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomRequirement;
+import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class RequirementsPrompt extends QuestsEditorNumericPrompt {
 
@@ -1422,8 +1424,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         .append("\n");
                 text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
             } else {
-                for (final CustomRequirement cr : new TreeSet<>(plugin.getCustomRequirements())) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getModuleName()).append("\n");
+                for (final String name : plugin.getCustomRequirements().stream().map(CustomRequirement::getModuleName)
+                        .collect(Collectors.toCollection(TreeSet::new))) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                 }
             }
             return text.toString() + ChatColor.YELLOW + getQueryText(context);

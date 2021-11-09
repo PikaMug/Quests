@@ -2389,8 +2389,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         .append("\n");
                 text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
             } else {
-                for (final String name : new TreeSet<>(plugin.getCustomObjectives().stream()
-                        .map(CustomObjective::getModuleName).collect(Collectors.toSet()))) {
+                for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
+                        .collect(Collectors.toCollection(TreeSet::new))) {
                     text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                 }
             }

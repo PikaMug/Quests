@@ -16,7 +16,6 @@ import com.codisimus.plugins.phatloots.PhatLoot;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quests;
@@ -24,7 +23,6 @@ import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
-import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -46,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class RewardsPrompt extends QuestsEditorNumericPrompt {
 
@@ -1805,8 +1804,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         .append("\n");
                 text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
             } else {
-                for (final CustomReward cr : new TreeSet<>(plugin.getCustomRewards())) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getModuleName()).append("\n");
+                for (final String name : plugin.getCustomRewards().stream().map(CustomReward::getModuleName)
+                        .collect(Collectors.toCollection(TreeSet::new))) {
+                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                 }
             }
             return text.toString() + ChatColor.YELLOW + getQueryText(context);
