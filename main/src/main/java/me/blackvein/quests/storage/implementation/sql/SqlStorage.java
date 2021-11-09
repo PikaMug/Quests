@@ -385,7 +385,7 @@ public class SqlStorage implements StorageImplementation {
 
     @Override
     public void deleteQuester(final UUID uniqueId) throws Exception {
-        try (Connection c = connectionFactory.getConnection()) {
+        try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_DELETE))) {
                 ps.setString(1, uniqueId.toString());
                 ps.execute();
@@ -614,6 +614,7 @@ public class SqlStorage implements StorageImplementation {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public LinkedList<ItemStack> deserializeItemStackProgress(String string, final LinkedList<ItemStack> objective) {
         final LinkedList<ItemStack> list = new LinkedList<>();
         if (string != null) {
@@ -622,8 +623,9 @@ public class SqlStorage implements StorageImplementation {
             for (final String section : string.split(",")) {
                 final int amt = Integer.parseInt(section);
                 final ItemStack is = objective.get(index);
-                final ItemStack temp = is.clone();
-                temp.setAmount(amt);
+                final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
+                temp.addUnsafeEnchantments(is.getEnchantments());
+                temp.setItemMeta(is.getItemMeta());
                 list.add(temp);
                 index++;
             }

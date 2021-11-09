@@ -67,7 +67,6 @@ public class NpcListener implements Listener {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             for (final Quest quest : quester.getCurrentQuests().keySet()) {
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
-                    player.getItemInHand();
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
                     final LinkedList<Integer> matches = new LinkedList<>();
