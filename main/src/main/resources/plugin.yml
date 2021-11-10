@@ -27,6 +27,7 @@ permissions:
       quests.events.*: true
       quests.actions.*: true
       quests.conditions.*: true
+      quests.mode.trial: false
   quests.quest:
     description: View current quest objectives
     default: true
