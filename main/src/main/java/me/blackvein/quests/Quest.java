@@ -754,11 +754,8 @@ public class Quest implements Comparable<Quest> {
             Lang.send(p, ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
                     ChatColor.YELLOW + name + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
-                        + " title " + "{\"text\":\"" + Lang.get(p, "quest") + " " + Lang.get(p, "complete") 
-                        +  "\",\"color\":\"gold\"}");
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "title " + player.getName()
-                        + " subtitle " + "{\"text\":\"" + name + "\",\"color\":\"yellow\"}");
+                p.sendTitle(ChatColor.GOLD + Lang.get(p, "quest") + " " + Lang.get(p, "complete"),
+                        ChatColor.YELLOW + name);
             }
             Lang.send(p, ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
             if (!issuedReward) {

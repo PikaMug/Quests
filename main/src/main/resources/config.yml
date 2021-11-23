@@ -6,7 +6,7 @@ allow-pranks: true
 allow-quitting: true
 ask-confirmation: true
 console-logging: 2
-disable-command-feedback: true
+disable-command-feedback: false
 generate-files-on-join: true
 ignore-locked-quests: false
 kill-delay: 600

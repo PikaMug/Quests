@@ -428,6 +428,7 @@ public class Quester implements Comparable<Quester> {
      * @param quest The quest to start
      * @param ignoreRequirements Whether to ignore Requirements
      */
+    @SuppressWarnings("deprecation")
     public void takeQuest(final Quest quest, final boolean ignoreRequirements) {
         if (quest == null) {
             return;
@@ -562,12 +563,8 @@ public class Quester implements Comparable<Quester> {
                         sendMessage(ChatColor.GREEN + accepted);
                         p.sendMessage("");
                         if (plugin.getSettings().canShowQuestTitles()) {
-                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title "
-                                    + offlinePlayer.getName() + " title " + "{\"text\":\"" + Lang.get(p, "quest")
-                                    + " " + Lang.get(p, "accepted") +  "\",\"color\":\"gold\"}");
-                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "title "
-                                    + offlinePlayer.getName() + " subtitle " + "{\"text\":\"" + quest.getName()
-                                    + "\",\"color\":\"yellow\"}");
+                            p.sendTitle(ChatColor.GOLD + Lang.get(p, "quest") + " " + Lang.get(p, "accepted"),
+                                    ChatColor.YELLOW + quest.getName());
                         }
                     }
                 }
