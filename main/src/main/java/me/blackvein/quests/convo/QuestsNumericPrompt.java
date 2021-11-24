@@ -45,7 +45,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     }
     
     @Override
-    public @NotNull String getPromptText(@NotNull ConversationContext cc) {
+    public @NotNull String getPromptText(@NotNull final ConversationContext cc) {
         return sendClickableSelection(getBasicPromptText(cc), cc.getForWhom());
     }
     

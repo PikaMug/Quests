@@ -4195,7 +4195,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     }
 
     /**
-     * Checks if conversable is non-OP player in trial mode
+     * Checks if conversable is non-op, non-* player in Trial Mode
      *
      * @param conversable the editor user to be checked
      * @return {@code true} if user is a Player with quests.mode.trial permission
@@ -4205,7 +4205,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
             return false;
         }
         final Player player = ((Player)conversable);
-        if (player.isOp()) {
+        if (player.isOp() || player.hasPermission("*")) {
             return false;
         }
         return player.hasPermission("quests.mode.trial");
