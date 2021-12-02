@@ -29,6 +29,7 @@ import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
 import me.blackvein.quests.listeners.CmdExecutor;
+import me.blackvein.quests.listeners.ConvoListener;
 import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
@@ -66,8 +67,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
@@ -116,7 +115,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public class Quests extends JavaPlugin implements ConversationAbandonedListener {
+public class Quests extends JavaPlugin {
 
     private boolean loading = true;
     private String bukkitVersion = "0";
@@ -136,6 +135,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
     private QuestFactory questFactory;
     private ActionFactory actionFactory;
     private ConditionFactory conditionFactory;
+    private ConvoListener convoListener;
     private BlockListener blockListener;
     private ItemListener itemListener;
     private NpcListener npcListener;
@@ -161,6 +161,7 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         } catch (final Exception ignored) {
             getLogger().info("LocaleLib not present. Is this a debug environment?");
         }
+        convoListener = new ConvoListener();
         blockListener = new BlockListener(this);
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
@@ -220,10 +221,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
                 .withPrefix(context -> ChatColor.GRAY.toString())
                 .withFirstPrompt(new QuestAcceptPrompt()).withTimeout(settings.getAcceptTimeout())
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
-                .addConversationAbandonedListener(this);
+                .addConversationAbandonedListener(convoListener);
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
                 .withFirstPrompt(new NpcOfferQuestPrompt()).withTimeout(settings.getAcceptTimeout())
-                .withLocalEcho(false).addConversationAbandonedListener(this);
+                .withLocalEcho(false).addConversationAbandonedListener(convoListener);
 
         // 10 - Register listeners
         getServer().getPluginManager().registerEvents(getBlockListener(), this);
@@ -533,6 +534,10 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
         return conditionFactory;
     }
 
+    public ConvoListener getConvoListener() {
+        return convoListener;
+    }
+
     public BlockListener getBlockListener() {
         return blockListener;
     }
@@ -575,18 +580,6 @@ public class Quests extends JavaPlugin implements ConversationAbandonedListener 
 
     public Storage getStorage() {
         return storage;
-    }
-
-    @Override
-    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
-        if (!abandonedEvent.gracefulExit()) {
-            try {
-                abandonedEvent.getContext().getForWhom().sendRawMessage(ChatColor.YELLOW
-                        + Lang.get((Player) abandonedEvent.getContext().getForWhom(), "questTimeout"));
-            } catch (final Exception e) {
-                // Do nothing
-            }
-        }
     }
 
     public class QuestAcceptPrompt extends MiscStringPrompt {
