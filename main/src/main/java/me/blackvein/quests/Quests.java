@@ -128,7 +128,7 @@ public class Quests extends JavaPlugin {
     private final Collection<Quest> quests = new ConcurrentSkipListSet<>();
     private Collection<Action> actions = new ConcurrentSkipListSet<>();
     private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
-    private LinkedList<NPC> questNpcs = new LinkedList<>();
+    private LinkedList<Integer> questNpcIds = new LinkedList<>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
     private ConversationFactory npcConversationFactory;
@@ -502,12 +502,12 @@ public class Quests extends JavaPlugin {
         this.questers = new ConcurrentSkipListSet<>(questers);
     }
 
-    public LinkedList<NPC> getQuestNpcs() {
-        return questNpcs;
+    public LinkedList<Integer> getQuestNpcIds() {
+        return questNpcIds;
     }
 
-    public void setQuestNpcs(final LinkedList<NPC> questNpcs) {
-        this.questNpcs = questNpcs;
+    public void setQuestNpcIds(final LinkedList<Integer> questNpcIds) {
+        this.questNpcIds = questNpcIds;
     }
 
     public CommandExecutor getCommandExecutor() {
@@ -1771,7 +1771,7 @@ public class Quests extends JavaPlugin {
             final int npcId = config.getInt("quests." + questKey + ".npc-giver-id");
             if (CitizensAPI.getNPCRegistry().getById(npcId) != null) {
                 quest.npcStart = CitizensAPI.getNPCRegistry().getById(npcId);
-                questNpcs.add(CitizensAPI.getNPCRegistry().getById(npcId));
+                questNpcIds.add(npcId);
             } else {
                 throw new QuestFormatException("npc-giver-id has invalid NPC ID " + npcId, questKey);
             }
@@ -2834,7 +2834,7 @@ public class Quests extends JavaPlugin {
                     for (final int i : npcIdsToTalkTo) {
                         if (getDependencies().getCitizens() != null) {
                             if (CitizensAPI.getNPCRegistry().getById(i) != null) {
-                                questNpcs.add(CitizensAPI.getNPCRegistry().getById(i));
+                                questNpcIds.add(i);
                             } else {
                                 throw new StageFormatException("npc-ids-to-talk-to has invalid NPC ID of " + i, quest, 
                                         stageNum);
@@ -2957,7 +2957,7 @@ public class Quests extends JavaPlugin {
                                     if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
                                         oStage.citizensToKill.add(i);
                                         oStage.citizenNumToKill.add(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
-                                        questNpcs.add(CitizensAPI.getNPCRegistry().getById(i));
+                                        questNpcIds.add(i);
                                     } else {
                                         throw new StageFormatException("npc-kill-amounts is not a positive number", 
                                                 quest, stageNum);

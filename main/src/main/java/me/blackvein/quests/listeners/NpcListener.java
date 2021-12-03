@@ -181,7 +181,7 @@ public class NpcListener implements Listener {
                     }
                 }
             }
-            if (plugin.getQuestNpcs().contains(evt.getNPC())) {
+            if (plugin.getQuestNpcIds().contains(evt.getNPC().getId())) {
                 boolean hasObjective = false;
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
