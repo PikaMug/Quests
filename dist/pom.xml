@@ -10,6 +10,11 @@
     <artifactId>quests-dist</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -42,7 +47,7 @@
     <dependencies>
         <dependency>
             <groupId>me.blackvein.quests</groupId>
-            <artifactId>quests-main</artifactId>
+            <artifactId>quests-api</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

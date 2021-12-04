@@ -1,5 +1,0 @@
-conditions:
-  RideThePig:
-    fail-quest: true
-    ride-entity:
-    - Pig
