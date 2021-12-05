@@ -579,7 +579,7 @@ public class Quester implements Comparable<Quester> {
                     p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, quest, getPlayer()));
                 }
                 final Condition c = stage.getCondition();
-                if (c != null) {
+                if (c != null && stage.getObjectiveOverrides().isEmpty()) {
                     sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions"));
                     if (!c.getEntitiesWhileRiding().isEmpty()) {
                         final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideEntity"));
