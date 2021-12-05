@@ -15,7 +15,6 @@ package me.blackvein.quests.convo.quests.requirements;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomRequirement;
-import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -1463,8 +1462,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REQ_CUSTOM_DATA, null);
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
+                return new RequirementsPrompt(context);
             }
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomNotFound"));
             return new CustomRequirementModulePrompt(context);
         }
     }
@@ -1561,7 +1561,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         return new RequirementCustomDataListPrompt();
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomNotFound"));
                     return new CustomRequirementsPrompt(moduleName, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {

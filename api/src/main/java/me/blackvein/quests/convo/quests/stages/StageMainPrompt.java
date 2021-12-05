@@ -2428,8 +2428,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA, null);
                 context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCustomCleared"));
+                return new StageMainPrompt(stageNum, context);
             }
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorModuleNotFound"));
             return new CustomObjectiveModulePrompt(context);
         }
     }
@@ -2539,7 +2540,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         return new ObjectiveCustomDataListPrompt();
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorModuleNotFound"));
                     return new CustomObjectivesPrompt(moduleName, context);
                 }
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {

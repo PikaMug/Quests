@@ -1843,8 +1843,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REW_CUSTOM_DATA, null);
                 context.setSessionData(CK.REW_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomCleared"));
+                return new RewardsPrompt(context);
             }
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorModuleNotFound"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewCustomNotFound"));
             return new CustomRewardModulePrompt(context);
         }
     }
@@ -1944,7 +1945,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         return new RewardCustomDataListPrompt();
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewCustomNotFound"));
                     return new CustomRewardsPrompt(moduleName, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
