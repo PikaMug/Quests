@@ -93,12 +93,12 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> whileRidingEntity = (List<String>) context.getSessionData(CK.C_WHILE_RIDING_ENTITY);
                 if (whileRidingEntity != null) {
                     for (final String s: whileRidingEntity) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
-                                .append(MiscUtil.getProperMobType(s)).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                .append(MiscUtil.getProperMobType(s));
                     }
                 }
                 return text.toString();
@@ -108,12 +108,12 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.C_WHILE_RIDING_NPC) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> whileRidingNpc = (List<Integer>) context.getSessionData(CK.C_WHILE_RIDING_NPC);
                     if (whileRidingNpc != null) {
                         for (final int i : whileRidingNpc) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
-                                    .append(CitizensAPI.getNPCRegistry().getById(i).getName()).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                    .append(CitizensAPI.getNPCRegistry().getById(i).getName());
                         }
                     }
                     return text.toString();

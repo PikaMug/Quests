@@ -83,13 +83,13 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> whilePermission = (List<String>) context.getSessionData(CK.C_WHILE_PERMISSION);
                 if (whilePermission != null) {
                     for (final String s: whilePermission) {
                         // Replace standard period characters to prevent clickable links
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
-                                .append(s.replace(".", "\uFF0E")).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                .append(s.replace(".", "\uFF0E"));
                     }
                 }
                 return text.toString();
@@ -98,14 +98,14 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> whileHoldingMainHand
                         = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                 if (whileHoldingMainHand != null) {
                     for (final ItemStack item : whileHoldingMainHand) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();

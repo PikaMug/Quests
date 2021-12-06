@@ -29,7 +29,6 @@ import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -288,11 +287,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         final List<String> id = (List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID);
-                        final StringBuilder text = new StringBuilder("\n");
+                        final StringBuilder text = new StringBuilder();
                         if (id != null) {
                             for (final String i : id) {
-                                text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i)
-                                        .append("\n");
+                                text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).
+                                        append(i);
                             }
                         }
                         return text.toString();
@@ -306,11 +305,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         final List<String> val = (List<String>) context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL);
-                        final StringBuilder text = new StringBuilder("\n");
+                        final StringBuilder text = new StringBuilder();
                         if (val != null) {
                             for (final String i : val) {
-                                text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i)
-                                        .append("\n");
+                                text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                        .append(i);
                             }
                         }
                         return text.toString();

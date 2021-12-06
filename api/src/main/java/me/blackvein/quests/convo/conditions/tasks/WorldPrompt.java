@@ -98,11 +98,11 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> whileWithinWorld = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_WORLD);
                 if (whileWithinWorld != null) {
                     for (final String s: whileWithinWorld) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s);
                     }
                 }
                 return text.toString();
@@ -111,11 +111,11 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> whileWithinBiome = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_BIOME);
                 if (whileWithinBiome != null) {
                     for (final String s: whileWithinBiome) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s);
                     }
                 }
                 return text.toString();
@@ -125,12 +125,12 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> whileWithinRegion
                             = (List<String>) context.getSessionData(CK.C_WHILE_WITHIN_REGION);
                     if (whileWithinRegion != null) {
                         for (final String s: whileWithinRegion) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(s);
                         }
                     }
                     return text.toString();

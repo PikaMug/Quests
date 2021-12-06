@@ -94,14 +94,14 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
                         = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -110,14 +110,14 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_SMELT_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
                         = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -126,13 +126,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -141,13 +141,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -156,14 +156,14 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
                         = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -290,13 +290,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_CRAFT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> craftItems
                             = (List<ItemStack>) context.getSessionData(pref + CK.S_CRAFT_ITEMS);
                     if (craftItems != null) {
                         for (final ItemStack is : craftItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -412,13 +412,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_SMELT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> smeltItems
                             = (List<ItemStack>) context.getSessionData(pref + CK.S_SMELT_ITEMS);
                     if (smeltItems != null) {
                         for (final ItemStack is : smeltItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -534,13 +534,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_ENCHANT_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> enchantItems
                             = (List<ItemStack>) context.getSessionData(pref + CK.S_ENCHANT_ITEMS);
                     if (enchantItems != null) {
                         for (final ItemStack is : enchantItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -656,11 +656,12 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_BREW_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> brewItems = (List<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                     if (brewItems != null) {
                         for (final ItemStack is : brewItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -774,13 +775,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + CK.S_CONSUME_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> consumeItems
                             = (List<ItemStack>) context.getSessionData(pref + CK.S_CONSUME_ITEMS);
                     if (consumeItems != null) {
                         for (final ItemStack is : consumeItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();

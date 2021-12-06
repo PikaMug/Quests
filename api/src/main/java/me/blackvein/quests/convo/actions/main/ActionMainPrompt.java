@@ -144,15 +144,16 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 if (types != null) {
                     for (final String s : types) {
                         final QuestMob qm = QuestMob.fromString(s);
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(qm.getType().name())
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                .append(qm.getType().name())
                                 .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "").append(ChatColor.GRAY)
                                 .append(" x ").append(ChatColor.DARK_AQUA).append(qm.getSpawnAmounts())
                                 .append(ChatColor.GRAY).append(" -> ").append(ChatColor.GREEN)
-                                .append(ConfigUtil.getLocationInfo(qm.getSpawnLocation())).append("\n");
+                                .append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()));
                     }
                 }
                 return text.toString();
@@ -348,15 +349,15 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     @SuppressWarnings("unchecked")
                     final
                     LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     if (types != null) {
                         for (final String type : types) {
                             final QuestMob qm = QuestMob.fromString(type);
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(qm.getType()
-                                    .name()).append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(qm.getType().name())
+                                    .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
                                     .append(" x ").append(qm.getSpawnAmounts()).append(ChatColor.GRAY).append(" -> ")
-                                    .append(ChatColor.GREEN).append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()))
-                                    .append("\n");
+                                    .append(ChatColor.GREEN).append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()));
                         }
                     }
                     return text.toString();

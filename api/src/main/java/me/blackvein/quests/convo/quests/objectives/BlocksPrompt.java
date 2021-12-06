@@ -92,15 +92,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_BREAK_NAMES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
                 final LinkedList<Integer> amounts
                         = (LinkedList<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
                 if (names != null && amounts != null) {
                     for (int i = 0; i < names.size(); i++) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getPrettyItemName(names.get(i))).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.DARK_AQUA).append(amounts.get(i)).append("\n");
+                                .append(ChatColor.DARK_AQUA).append(amounts.get(i));
                     }
                 }
                 return text.toString();
@@ -109,15 +109,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
                 final LinkedList<Integer> amounts
                         = (LinkedList<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
                 if (names != null && amounts != null) {
                     for (int i = 0; i < names.size(); i++) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getPrettyItemName(names.get(i))).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.DARK_AQUA).append(amounts.get(i)).append("\n");
+                                .append(ChatColor.DARK_AQUA).append(amounts.get(i));
                     }
                 }
                 return text.toString();
@@ -126,15 +126,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_PLACE_NAMES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_PLACE_NAMES);
                 final LinkedList<Integer> amounts
                         = (LinkedList<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
                 if (names != null && amounts != null) {
                     for (int i = 0; i < names.size(); i++) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getPrettyItemName(names.get(i))).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.DARK_AQUA).append(amounts.get(i)).append("\n");
+                                .append(ChatColor.DARK_AQUA).append(amounts.get(i));
                     }
                 }
                 return text.toString();
@@ -143,15 +143,15 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(pref + CK.S_USE_NAMES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> names = (LinkedList<String>) context.getSessionData(pref + CK.S_USE_NAMES);
                 final LinkedList<Integer> amounts
                         = (LinkedList<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
                 if (names != null && amounts != null) {
                     for (int i = 0; i < names.size(); i++) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getPrettyItemName(names.get(i))).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.DARK_AQUA).append(amounts.get(i)).append("\n");
+                                .append(ChatColor.DARK_AQUA).append(amounts.get(i));
                     }
                 }
                 return text.toString();
@@ -263,12 +263,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_BREAK_NAMES) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> breakNames = (List<String>) context.getSessionData(pref + CK.S_BREAK_NAMES);
                     if (breakNames != null) {
                         for (final String s : breakNames) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                    .append(ItemUtil.getPrettyItemName(s)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(ItemUtil.getPrettyItemName(s));
                         }
                     }
                     return text.toString();
@@ -277,12 +277,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> breakAmounts
                             = (List<Integer>) context.getSessionData(pref + CK.S_BREAK_AMOUNTS);
                     if (breakAmounts != null) {
                         for (final Integer i : breakAmounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
@@ -291,12 +291,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Short> breakDurability
                             = (List<Short>) context.getSessionData(pref + CK.S_BREAK_DURABILITY);
                     if (breakDurability != null) {
                         for (final Short s : breakDurability) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -634,12 +634,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> damageNames = (List<String>) context.getSessionData(pref + CK.S_DAMAGE_NAMES);
                     if (damageNames != null) {
                         for (final String s : damageNames) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                    .append(ItemUtil.getPrettyItemName(s)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(ItemUtil.getPrettyItemName(s));
                         }
                     }
                     return text.toString();
@@ -648,12 +648,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> damageAmounts
                             = (List<Integer>) context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS);
                     if (damageAmounts != null) {
                         for (final Integer i : damageAmounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
@@ -662,12 +662,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Short> damageDurability
                             = (List<Short>) context.getSessionData(pref + CK.S_DAMAGE_DURABILITY);
                     if (damageDurability != null) {
                         for (final Short s : damageDurability) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -1002,12 +1002,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_PLACE_NAMES) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> placeNames  = (List<String>) context.getSessionData(pref + CK.S_PLACE_NAMES);
                     if (placeNames != null) {
                         for (final String s : placeNames) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                    .append(ItemUtil.getPrettyItemName(s)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(ItemUtil.getPrettyItemName(s));
                         }
                     }
                     return text.toString();
@@ -1016,12 +1016,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> placeAmounts
                             = (List<Integer>) context.getSessionData(pref + CK.S_PLACE_AMOUNTS);
                     if (placeAmounts != null) {
                         for (final Integer i : placeAmounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
@@ -1030,12 +1030,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Short> placeDurability
                             = (List<Short>) context.getSessionData(pref + CK.S_PLACE_DURABILITY);
                     if (placeDurability != null) {
                         for (final Short s : placeDurability) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -1370,12 +1370,12 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + CK.S_USE_NAMES) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> useNames = (List<String>) context.getSessionData(pref + CK.S_USE_NAMES);
                     if (useNames != null) {
                         for (final String s : useNames) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                    .append(ItemUtil.getPrettyItemName(s)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(ItemUtil.getPrettyItemName(s));
                         }
                     }
                     return text.toString();
@@ -1384,11 +1384,11 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(pref + CK.S_USE_AMOUNTS) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> useAmounts = (List<Integer>) context.getSessionData(pref + CK.S_USE_AMOUNTS);
                     if (useAmounts != null) {
                         for (final Integer i : useAmounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
@@ -1397,11 +1397,11 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(pref + CK.S_USE_DURABILITY) != null) {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Short> useDurability = (List<Short>) context.getSessionData(pref + CK.S_USE_DURABILITY);
                     if (useDurability != null) {
                         for (final Short s : useDurability) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();

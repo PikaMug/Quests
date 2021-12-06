@@ -212,7 +212,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REW_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
@@ -221,7 +221,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                             plugin.getLogger().severe(ChatColor.RED + "Item reward was null while editing quest ID "
                                     + context.getSessionData(CK.Q_ID));
                         } else {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE).append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ").append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                    .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
+                                    .append(ChatColor.AQUA).append(item.getAmount());
                         }
                     }
                 }
@@ -238,20 +240,19 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REW_COMMAND) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> commands = (List<String>) context.getSessionData(CK.REW_COMMAND);
                 final List<String> overrides = (List<String>) context.getSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY);
                 int index = 0;
                 if (commands != null) {
                     for (final String cmd : commands) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(cmd);
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(cmd);
                         if (overrides != null) {
                             if (index < overrides.size()) {
                                 text.append(ChatColor.GRAY).append(" (\"").append(ChatColor.AQUA)
                                         .append(overrides.get(index)).append(ChatColor.GRAY).append("\")");
                             }
                         }
-                        text.append("\n");
                         index++;
                     }
                 }
@@ -261,20 +262,19 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REW_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> permissions = (List<String>) context.getSessionData(CK.REW_PERMISSION);
                 final List<String> worlds = (List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS);
                 int index = 0;
                 if (permissions != null) {
                     for (final String perm : permissions) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(perm);
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(perm);
                         if (worlds != null) {
                             if (index < worlds.size()) {
                                 text.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_AQUA)
                                         .append(worlds.get(index)).append(ChatColor.GRAY).append("]");
                             }
                         }
-                        text.append("\n");
                         index++;
                     }
                 }
@@ -285,14 +285,14 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                     final List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
                     if (skills != null && amounts != null) {
                         for (final String skill : skills) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(skill)
-                                    .append(ChatColor.GRAY).append(" x ").append(ChatColor.DARK_AQUA)
-                                    .append(amounts.get(skills.indexOf(skill))).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(skill).append(ChatColor.GRAY).append(" x ").append(ChatColor.DARK_AQUA)
+                                    .append(amounts.get(skills.indexOf(skill)));
                         }
                     }
                     return text.toString();
@@ -305,15 +305,15 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> heroClasses = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
                     final List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
                     if (heroClasses != null && amounts != null) {
                         for (final String heroClass : heroClasses) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                     .append(amounts.get(heroClasses.indexOf(heroClass))).append(" ")
                                     .append(ChatColor.DARK_AQUA).append(heroClass).append(" ")
-                                    .append(Lang.get("experience")).append("\n");
+                                    .append(Lang.get("experience"));
                         }
                     }
                     return text.toString();
@@ -333,12 +333,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
                     if (phatLoots != null) {
                         for (final String phatLoot : phatLoots) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(phatLoot)
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(phatLoot);
                         }
                     }
                     return text.toString();
@@ -350,12 +350,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REW_CUSTOM) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> customRew = (LinkedList<String>) context.getSessionData(CK.REW_CUSTOM);
                 if (customRew != null) {
                     for (final String s : customRew) {
-                        text.append(ChatColor.RESET).append(ChatColor.DARK_PURPLE).append("  - ")
-                                .append(ChatColor.LIGHT_PURPLE).append(s).append("\n");
+                        text.append("\n").append(ChatColor.LIGHT_PURPLE).append("     - ").append(s);
                     }
                 }
                 return text.toString();
@@ -368,12 +367,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> overrides = (List<String>) context.getSessionData(CK.REW_DETAILS_OVERRIDE);
                 if (overrides != null) {
                     for (final String override : overrides) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(override)
-                                .append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                .append(override);
                     }
                 }
                 return text.toString();
@@ -728,11 +727,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.REW_ITEMS);
                     if (items != null) {
                         for (final ItemStack is : items) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -931,11 +931,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_PERMISSION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> permission = (List<String>) context.getSessionData(CK.REW_PERMISSION);
                     if (permission != null) {
                         for (final String s : permission) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -947,13 +947,13 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (context.getSessionData(CK.REW_PERMISSION_WORLDS) == null) {
                         return ChatColor.YELLOW + "(" + Lang.get("stageEditorOptional") + ")";
                     } else {
-                        final StringBuilder text = new StringBuilder("\n");
+                        final StringBuilder text = new StringBuilder();
                         final List<String> permissionWorlds
                                 = (List<String>) context.getSessionData(CK.REW_PERMISSION_WORLDS);
                         if (permissionWorlds != null) {
                             for (final String s : permissionWorlds) {
-                                text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s)
-                                        .append("\n");
+                                text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                        .append(s);
                             }
                         }
                         return text.toString();
@@ -1185,11 +1185,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> skills = (List<String>) context.getSessionData(CK.REW_MCMMO_SKILLS);
                     if (skills != null) {
                         for (final String s : skills) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -1198,11 +1198,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_MCMMO_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REW_MCMMO_AMOUNTS);
                     if (amounts != null) {
                         for (final Integer i : amounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
@@ -1446,11 +1446,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_HEROES_CLASSES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> classes = (List<String>) context.getSessionData(CK.REW_HEROES_CLASSES);
                     if (classes != null) {
                         for (final String s : classes) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                         }
                     }
                     return text.toString();
@@ -1459,11 +1459,11 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REW_HEROES_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<Double> amounts = (List<Double>) context.getSessionData(CK.REW_HEROES_AMOUNTS);
                     if (amounts != null) {
                         for (final Double d : amounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(d).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(d);
                         }
                     }
                     return text.toString();

@@ -187,13 +187,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REQ_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                 .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
-                                .append(ChatColor.AQUA).append(item.getAmount()).append("\n");
+                                .append(ChatColor.AQUA).append(item.getAmount());
                     }
                 }
                 return text.toString();
@@ -202,11 +202,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REQ_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> perms = (List<String>) context.getSessionData(CK.REQ_PERMISSION);
                 if (perms != null) {
                     for (final String s : perms) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                 }
                 return text.toString();
@@ -215,14 +215,14 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REQ_QUEST) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> questReq = (List<String>) context.getSessionData(CK.REQ_QUEST);
                 if (questReq != null) {
                     for (String s : questReq) {
                         if (plugin.getQuestById(s) != null) {
                             s = plugin.getQuestById(s).getName();
                         }
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                 }
                 return text.toString();
@@ -231,14 +231,14 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData(CK.REQ_QUEST_BLOCK) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> questBlockReq = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
                 if (questBlockReq != null) {
                     for (String s : questBlockReq) {
                         if (plugin.getQuestById(s) != null) {
                             s = plugin.getQuestById(s).getName();
                         }
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                 }
                 return text.toString();
@@ -248,15 +248,15 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<String> skills = (List<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
                     final List<Integer> amounts = (List<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
                     if (skills != null && amounts != null) {
                         for (final String s : skills) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_GREEN).append(s)
-                                    .append(ChatColor.RESET).append(ChatColor.YELLOW).append(" ")
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_GREEN)
+                                    .append(s).append(ChatColor.RESET).append(ChatColor.YELLOW).append(" ")
                                     .append(Lang.get("mcMMOLevel")).append(" ").append(ChatColor.GREEN)
-                                    .append(amounts.get(skills.indexOf(s))).append("\n");
+                                    .append(amounts.get(skills.indexOf(s)));
                         }
                     }
                     return text.toString();
@@ -288,12 +288,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
            if (context.getSessionData(CK.REQ_CUSTOM) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
            } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> customReq = (LinkedList<String>) context.getSessionData(CK.REQ_CUSTOM);
                 if (customReq != null) {
                     for (final String s : customReq) {
-                        text.append(ChatColor.RESET).append(ChatColor.DARK_PURPLE).append("  - ")
-                                .append(ChatColor.LIGHT_PURPLE).append(s).append("\n");
+                        text.append("\n").append(ChatColor.LIGHT_PURPLE).append("     - ").append(s);
                     }
                 }
                 return text.toString();
@@ -306,11 +305,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 }
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final List<String> overrides = (List<String>) context.getSessionData(CK.REQ_FAIL_MESSAGE);
                 if (overrides != null) {
                     for (final String override : overrides) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(override).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                .append(override);
                     }
                 }
                 return text.toString();
@@ -608,12 +608,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> reqItems = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
                     if (reqItems != null) {
                         for (final ItemStack is : reqItems) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();
@@ -625,13 +625,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     if (context.getSessionData(CK.REQ_ITEMS_REMOVE) == null) {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
-                        final StringBuilder text = new StringBuilder("\n");
+                        final StringBuilder text = new StringBuilder();
                         final List<Boolean> reqItemsRemove = (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
                         if (reqItemsRemove != null) {
                             for (final Boolean b : reqItemsRemove) {
-                                text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                        .append(b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord"))
-                                        .append("\n");
+                                text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                        .append(b.equals(Boolean.TRUE) ? Lang.get("yesWord") : Lang.get("noWord"));
                             }
                         }
                         return text.toString();
@@ -956,12 +955,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REQ_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final LinkedList<String> skills = (LinkedList<String>) context.getSessionData(CK.REQ_MCMMO_SKILLS);
                     if (skills != null) {
                         for (final String skill : skills) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(skill)
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
+                                    .append(skill);
                         }
                     }
                     return text.toString();
@@ -970,12 +969,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS) == null) {
                     return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final LinkedList<Integer> skillAmounts
                             = (LinkedList<Integer>) context.getSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS);
                     if (skillAmounts != null) {
                         for (final int i : skillAmounts) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
                         }
                     }
                     return text.toString();
