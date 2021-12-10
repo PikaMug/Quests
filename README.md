@@ -16,6 +16,7 @@ Download
 ---
 
 Distributed through these fine vendors:
+- CurseForge (https://www.curseforge.com/minecraft/bukkit-plugins/quests/)
 - SpigotMC (https://www.spigotmc.org/resources/quests.3711/)
 - MC-Market (https://www.mc-market.org/resources/19187/)
 
