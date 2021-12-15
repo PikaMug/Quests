@@ -237,7 +237,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
@@ -283,7 +283,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
@@ -382,7 +382,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override

@@ -223,7 +223,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
@@ -266,7 +266,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context.getForWhom());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
@@ -364,7 +364,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override

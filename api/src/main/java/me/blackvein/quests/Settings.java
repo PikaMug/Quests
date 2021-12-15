@@ -27,6 +27,7 @@ public class Settings {
     private boolean allowCommandsForNpcQuests = false;
     private boolean allowPranks = true;
     private boolean askConfirmation = true;
+    private boolean clickablePrompts = true;
     private int consoleLogging = 1;
     private boolean disableCommandFeedback = true;
     private boolean genFilesOnJoin = true;
@@ -78,6 +79,12 @@ public class Settings {
     }
     public void setAskConfirmation(final boolean askConfirmation) {
         this.askConfirmation = askConfirmation;
+    }
+    public boolean canClickablePrompts() {
+        return clickablePrompts;
+    }
+    public void setClickablePrompts(boolean clickablePrompts) {
+        this.clickablePrompts = clickablePrompts;
     }
     public int getConsoleLogging() {
         return consoleLogging;
@@ -189,6 +196,7 @@ public class Settings {
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
         allowPranks = config.getBoolean("allow-pranks", true);
         askConfirmation = config.getBoolean("ask-confirmation", true);
+        clickablePrompts = config.getBoolean("clickable-prompts", true);
         consoleLogging = config.getInt("console-logging", 1);
         disableCommandFeedback = config.getBoolean("disable-command-feedback", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);

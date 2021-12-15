@@ -637,6 +637,11 @@ public class Quests extends JavaPlugin {
             final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
             getServer().getPluginManager().callEvent(event);
 
+            if (!getSettings().canClickablePrompts()) {
+                return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
+                        + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
+            }
+
             final TextComponent component = new TextComponent("");
             component.addExtra(ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN);
             final TextComponent yes = new TextComponent(getSelectionText(context, 1));
