@@ -2342,7 +2342,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(context, i)).append("\n");
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override

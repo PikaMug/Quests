@@ -15,12 +15,13 @@ package me.blackvein.quests.convo;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import me.blackvein.quests.Quests;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     
     @Override
     public @NotNull String getPromptText(@NotNull final ConversationContext cc) {
-        return sendClickableSelection(getBasicPromptText(cc), cc.getForWhom());
+        return sendClickableSelection(getBasicPromptText(cc), cc);
     }
     
     public abstract String getBasicPromptText(ConversationContext cc);
@@ -58,11 +59,11 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
      * Conversations API.
      * 
      * @param input   the Quests-styled conversation interface
-     * @param forWhom the conversation participant 
+     * @param context the conversation context
      * @return        plain text to deliver
      */
-    public static String sendClickableSelection(final String input, final Conversable forWhom) {
-        if (!(forWhom instanceof Player)) {
+    public static String sendClickableSelection(final String input, final ConversationContext context) {
+        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
             return input;
         }
         final String[] basicText = input.split("\n");
@@ -81,7 +82,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
             }
             component.addExtra(lineComponent);
         }
-        ((Player)forWhom).spigot().sendMessage(component);
+        ((Player)context.getForWhom()).spigot().sendMessage(component);
         return "";
     }
 }

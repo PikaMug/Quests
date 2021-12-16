@@ -5,6 +5,7 @@ allow-command-quests-with-npcs: false
 allow-pranks: true
 allow-quitting: true
 ask-confirmation: true
+clickable-prompts: true
 console-logging: 2
 disable-command-feedback: false
 generate-files-on-join: true

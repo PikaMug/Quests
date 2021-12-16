@@ -1084,7 +1084,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override
@@ -1164,7 +1164,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context.getForWhom());
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override
