@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo;
 
+import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -63,6 +64,9 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
      * @return        plain text to deliver
      */
     public static String sendClickableSelection(final String input, final ConversationContext context) {
+        if (context.getPlugin() == null) {
+            return Lang.get("itemCreateCriticalError");
+        }
         if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
             return input;
         }

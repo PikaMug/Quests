@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo;
 
+import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -57,6 +58,9 @@ public abstract class QuestsStringPrompt extends StringPrompt {
      */
     protected String sendClickableMenu(final String header, final List<String> list, final String footer,
                                        final ConversationContext context) {
+        if (context.getPlugin() == null) {
+            return Lang.get("itemCreateCriticalError");
+        }
         if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
         }

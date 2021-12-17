@@ -17,6 +17,10 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.misc.MiscPostNpcOfferQuestEvent;
 import me.blackvein.quests.util.Lang;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -137,15 +141,25 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle(context));
+        final TextComponent component = new TextComponent(getTitle(context));
+        component.setColor(net.md_5.bungee.api.ChatColor.WHITE);
         size = quests.size();
+        final TextComponent line = new TextComponent("");
         for (int i = 1; i <= size + 1; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(". ")
-                    .append(ChatColor.RESET).append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            final TextComponent choice = new TextComponent("\n" + getNumberColor(context, i) + ChatColor.BOLD + i + ". "
+                    + ChatColor.RESET + getSelectionText(context, i));
+            choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.valueOf(i)));
+            if (plugin.getSettings().canShowQuestReqs() && i <= size) {
+                choice.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        new ComponentBuilder(quests.get(i - 1).getDescription()).create()));
+            }
+            line.addExtra(choice);
+            line.addExtra(getAdditionalText(context, i));
         }
-        text.append("\n").append(ChatColor.WHITE).append(getQueryText(context));
-        return text.toString();
+        component.addExtra(line);
+        component.addExtra("\n" + ChatColor.WHITE + getQueryText(context));
+        ((Player)context.getForWhom()).spigot().sendMessage(component);
+        return "";
     }
 
     @SuppressWarnings("unchecked")
