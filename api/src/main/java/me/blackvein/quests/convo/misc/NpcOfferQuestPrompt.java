@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class NpcOfferQuestPrompt extends MiscStringPrompt {
@@ -137,6 +138,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         if (plugin == null || quests == null || npc == null) {
             return ChatColor.YELLOW + Lang.get("unknownError");
         }
+        quests.sort(Comparator.comparing(Quest::getName));
 
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
