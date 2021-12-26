@@ -15,6 +15,13 @@ body:
       required: true
   - type: 'textarea'
     attributes:
+      label: 'Describe the problem and how to replicate it.'
+      description: 'Be as detailed as possible.'
+      placeholder: "What happened was..."
+    validations:
+      required: true
+  - type: 'textarea'
+    attributes:
       label: 'Describe the problem and how to replicate it. Any console errors to share?'
       description: 'Paste the error into the field below.'
       render: shell
