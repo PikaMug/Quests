@@ -1,0 +1,22 @@
+name: Suggest a feature
+description: once you know all the details.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your idea! Please answer the following questions:
+  - type: 'textarea'
+    attributes:
+      label: 'What does your feature do?'
+      description: 'Be certain it does not already exist.'
+      placeholder: 'My new idea is...'
+    validations:
+      required: true
+  - type: 'textarea'
+    attributes:
+      label: 'How would people use it?'
+      description: 'Consider ways it would benefit all.'
+      placeholder: 'It would be used when...'
+    validations:
+      required: true

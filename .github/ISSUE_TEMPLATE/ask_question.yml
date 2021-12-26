@@ -1,0 +1,22 @@
+name: Ask a question
+description: if it's complex or code-related.
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for inquiring about the project! Please answer the following questions:
+  - type: 'textarea'
+    attributes:
+      label: 'Where else have you looked for answers to this question?'
+      description: 'Such as the documentation or an Internet search.'
+      placeholder: 'I looked for an answer in...'
+    validations:
+      required: true
+  - type: 'textarea'
+    attributes:
+      label: 'Share your question with as much detail as possible.'
+      description: 'Every question is a cry to understand the world.'
+      placeholder: 'I could not figure out...'
+    validations:
+      required: true
