@@ -1,6 +1,6 @@
 name: Report a bug
 description: when something isn't working right.
-labels: bug
+labels: [bug]
 body:
   - type: markdown
     attributes:
@@ -15,17 +15,15 @@ body:
       required: true
   - type: 'textarea'
     attributes:
-      label: 'Describe the problem and how to replicate it. Any console errors to post _using a paste service_?'
-      description: 'Popular services include Pastebin and Hastebin.'
-      placeholder: 'A problem I found is...'
+      label: 'Describe the problem and how to replicate it. Any console errors to share?'
+      description: 'Paste the error into the field below.'
       render: shell
     validations:
       required: true
   - type: 'textarea'
     attributes:
-      label: 'If applicable, can you provide an example quest from quests.yml _using a paste service_?'
+      label: 'If applicable, can you provide an example quest from quests.yml?'
       description: 'Do not upload the file itself.'
-      placeholder: 'A problem I found is...'
       render: shell
     validations:
       required: false
