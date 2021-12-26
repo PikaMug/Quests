@@ -18,6 +18,7 @@ body:
       label: 'Describe the problem and how to replicate it. Any console errors to post _using a paste service_?'
       description: 'Popular services include Pastebin and Hastebin.'
       placeholder: 'A problem I found is...'
+      render: shell
     validations:
       required: true
   - type: 'textarea'
@@ -25,5 +26,6 @@ body:
       label: 'If applicable, can you provide an example quest from quests.yml _using a paste service_?'
       description: 'Do not upload the file itself.'
       placeholder: 'A problem I found is...'
+      render: shell
     validations:
       required: false
