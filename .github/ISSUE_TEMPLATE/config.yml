@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    about: 'Check the Quests docs before reporting issues.'
+    about: 'to read before reporting issues.'
     url: 'https://pikamug.gitbook.io/quests/'
   - name: Discord
-    about: 'Ask your questions here!'
+    about: 'for quick answers to basic questions.'
     url: 'https://discordapp.com/invite/QdJAv2G7qg'
   - name: Development Builds
-    about: 'Remember to make a backup before updating.'
+    about: 'to try after backing up your server.'
     url: 'https://ci.codemc.io/job/PikaMug/job/Quests/'
