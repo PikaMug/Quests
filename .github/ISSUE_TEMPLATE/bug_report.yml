@@ -22,8 +22,8 @@ body:
       required: true
   - type: 'textarea'
     attributes:
-      label: 'Describe the problem and how to replicate it. Any console errors to share?'
-      description: 'Paste the error into the field below.'
+      label: 'Any console errors to share?'
+      description: 'Paste into the field below.'
       render: shell
     validations:
       required: true
