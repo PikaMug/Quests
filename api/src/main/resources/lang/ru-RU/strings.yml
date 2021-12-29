@@ -47,8 +47,8 @@ COMMAND_QUESTADMIN_SETSTAGE_HELP: "<command> [игрок] [квест] [этап
 COMMAND_QUESTADMIN_SETSTAGE_USAGE: 'Использование: /questadmin setstage [игрок] [квест] [этап]'
 COMMAND_QUESTADMIN_RESET: "reset"
 COMMAND_QUESTADMIN_RESET_HELP: "<command> [игрок] - Удалить все данные о квестах игрока"
-COMMAND_QUESTADMIN_REMOVE: "remove"
-COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [игрок] [квест] - Удалить завершенный квест игрока"
+COMMAND_QUESTADMIN_REMOVE: "удалить"
+COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - Удалить завершенный квест у игрока"
 COMMAND_QUESTADMIN_RELOAD: "reload"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - Безопасно перезагрузить плагин"
 questEditorCreate: "Создать новый квест"
