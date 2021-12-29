@@ -1927,7 +1927,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                             context.setSessionData(CK.REW_CUSTOM_DATA, dataMapList);
                         } else {
                             // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewCustomAlreadyAdded"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("rewCustomAlreadyAdded"));
                             return new CustomRewardsPrompt(moduleName, context);
                         }
                     } else {

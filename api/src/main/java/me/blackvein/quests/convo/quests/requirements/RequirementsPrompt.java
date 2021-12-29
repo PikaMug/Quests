@@ -1542,7 +1542,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                             context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
                         } else {
                             // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomAlreadyAdded"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomAlreadyAdded"));
                             return new CustomRequirementsPrompt(moduleName, context);
                         }
                     } else {

@@ -2517,7 +2517,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                             context.setSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
                         } else {
                             // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.YELLOW 
+                            context.getForWhom().sendRawMessage(ChatColor.RED
                                     + Lang.get("stageEditorCustomAlreadyAdded"));
                             return new CustomObjectivesPrompt(moduleName, context);
                         }
@@ -2625,7 +2625,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final LinkedList<String> list = (LinkedList<String>) context.getSessionData(stagePrefix 
                     + CK.S_CUSTOM_OBJECTIVES);
             final LinkedList<Entry<String, Object>> dataMapList
-                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix
                     + CK.S_CUSTOM_OBJECTIVES_DATA);
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
@@ -2748,7 +2748,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             @SuppressWarnings("unchecked")
             final
             LinkedList<Entry<String, Object>> dataMapList
-                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix 
+                    = (LinkedList<Entry<String, Object>>) context.getSessionData(stagePrefix
                     + CK.S_CUSTOM_OBJECTIVES_DATA);
             final LinkedList<Entry<String, Object>> promptList = new LinkedList<>();
             final String temp = (String) context.getSessionData(stagePrefix + CK.S_CUSTOM_OBJECTIVES_DATA_TEMP);
