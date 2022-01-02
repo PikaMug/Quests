@@ -712,8 +712,8 @@ public class CmdExecutor implements CommandExecutor {
                         if (event.isCancelled()) {
                             return;
                         }
-                        String msg = Lang.get("questQuit");
-                        msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+                        final String msg = ChatColor.YELLOW + Lang.get("questQuit").replace("<quest>",
+                                ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
                         quester.quitQuest(quest, msg);
                     } else {
                         Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
