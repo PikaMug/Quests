@@ -3,7 +3,6 @@ accept-timeout: 20
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 allow-pranks: true
-allow-quitting: true
 ask-confirmation: true
 clickable-prompts: true
 console-logging: 2
