@@ -99,6 +99,18 @@ public class Storage {
         });
     }
 
+    public CompletableFuture<Void> saveOfflineQuesters() {
+        return makeFuture(() -> {
+            try {
+                for (Quester quester : plugin.getOfflineQuesters()) {
+                    implementation.saveQuester(quester);
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public CompletableFuture<Void> deleteQuester(final UUID uniqueId) {
         return makeFuture(() -> {
             try {

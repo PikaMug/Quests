@@ -111,6 +111,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutionException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -1647,13 +1648,15 @@ public class Quests extends JavaPlugin {
      * Reload quests, actions, config settings, lang and modules, and player data
      */
     public void reload(final ReloadCallback<Boolean> callback) {
+        if (loading) {
+            getLogger().warning(ChatColor.YELLOW + Lang.get("errorLoading"));
+            return;
+        }
         loading = true;
         reloadConfig();
+        final CompletableFuture<Void> saveFuture = getStorage().saveOfflineQuesters();
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
-                for (final Quester quester : questers) {
-                    quester.saveData();
-                }
                 Lang.clear();
                 settings.init();
                 Lang.init(Quests.this);
@@ -1663,32 +1666,48 @@ public class Quests extends JavaPlugin {
                 loadQuests();
                 loadActions();
                 loadConditions();
-                for (final Quester quester : questers) {
-                    final CompletableFuture<Quester> cf = getStorage().loadQuester(quester.getUUID());
-                    final Quester loaded = cf.get();
-                    for (final Quest q : loaded.currentQuests.keySet()) {
-                        loaded.checkQuest(q);
+                final CompletableFuture<Void> loadFuture = saveFuture.thenRunAsync(() -> {
+                    try {
+                        for (final Quester quester : questers) {
+                            final CompletableFuture<Quester> cf = getStorage().loadQuester(quester.getUUID());
+                            final Quester loaded = cf.get();
+                            for (final Quest q : loaded.currentQuests.keySet()) {
+                                loaded.checkQuest(q);
+                            }
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        finishLoading(callback, false, e);
                     }
-                }
-                loadModules();
-                importQuests();
-                if (callback != null) {
-                    Bukkit.getScheduler().runTask(Quests.this, () -> {
-                        loading = false;
-                        callback.execute(true);
-                    });
-                }
+                });
+                loadFuture.thenRunAsync(() -> {
+                    loadModules();
+                    importQuests();
+                    finishLoading(callback, true, null);
+                });
             } catch (final Exception e) {
-                e.printStackTrace();
-                if (callback != null) {
-                    Bukkit.getScheduler().runTask(Quests.this, () -> {
-                        loading = false;
-                        callback.execute(false);
-                    });
-                }
+                finishLoading(callback, false, e);
             }
             loading = false;
         });
+    }
+
+    /**
+     * Execute finishing task and print provided exception
+     *
+     * @param callback Callback to execute
+     * @param result Result to pass through callback
+     * @param exception Exception to print, or null
+     */
+    private void finishLoading(final ReloadCallback<Boolean> callback, boolean result, final Exception exception) {
+        if (exception != null) {
+            exception.printStackTrace();
+        }
+        if (callback != null) {
+            Bukkit.getScheduler().runTask(Quests.this, () -> {
+                loading = false;
+                callback.execute(result);
+            });
+        }
     }
 
     /**
