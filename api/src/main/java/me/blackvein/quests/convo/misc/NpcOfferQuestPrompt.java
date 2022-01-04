@@ -143,6 +143,17 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
+        if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+            final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle(context));
+            size = quests.size();
+            for (int i = 1; i <= size + 1; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(". ")
+                        .append(ChatColor.RESET).append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
+            }
+            text.append("\n").append(ChatColor.WHITE).append(getQueryText(context));
+            return text.toString();
+        }
         final TextComponent component = new TextComponent(getTitle(context));
         component.setColor(net.md_5.bungee.api.ChatColor.WHITE);
         size = quests.size();

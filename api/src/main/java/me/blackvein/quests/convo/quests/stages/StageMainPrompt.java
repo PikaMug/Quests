@@ -30,6 +30,9 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -2383,20 +2386,44 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-
-            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (!(context.getForWhom() instanceof Player)
+                    || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+                if (plugin.getCustomObjectives().isEmpty()) {
+                    text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                            .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
+                            .append("\n");
+                    text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules"))
+                            .append(") ");
+                } else {
+                    for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
+                            .collect(Collectors.toCollection(TreeSet::new))) {
+                        text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
+                    }
+                }
+                return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            }
+            final TextComponent component = new TextComponent(getTitle(context) + "\n");
+            component.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
+            final TextComponent line = new TextComponent("");
             if (plugin.getCustomObjectives().isEmpty()) {
-                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
-                        .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
-                        .append("\n");
-                text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+                final TextComponent link = new TextComponent("https://pikamug.gitbook.io/quests/casual/modules\n");
+                link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                link.setUnderlined(true);
+                line.addExtra(link);
+                line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
             } else {
                 for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
-                    text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
+                    final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
+                    click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, name));
+                    line.addExtra(click);
                 }
             }
-            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            component.addExtra(line);
+            component.addExtra(ChatColor.YELLOW + getQueryText(context));
+            ((Player)context.getForWhom()).spigot().sendMessage(component);
+            return "";
         }
 
         @Override
@@ -2467,20 +2494,47 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
-            final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle(context) + " -\n");
+            if (!(context.getForWhom() instanceof Player)
+                    || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle(context)
+                        + " -\n");
+                if (plugin.getCustomObjectives().isEmpty()) {
+                    text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
+                            .append("https://pikamug.gitbook.io/quests/casual/modules\n");
+                    text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules"))
+                            .append(") ");
+                } else {
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                        if (co.getModuleName().equals(moduleName)) {
+                            text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
+                        }
+                    }
+                }
+                return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            }
+            final TextComponent component = new TextComponent(getTitle(context) + "\n");
+            component.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
+            final TextComponent line = new TextComponent("");
             if (plugin.getCustomObjectives().isEmpty()) {
-                text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
-                        .append("https://pikamug.gitbook.io/quests/casual/modules\n");
-                text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+                final TextComponent link = new TextComponent("https://pikamug.gitbook.io/quests/casual/modules\n");
+                link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                link.setUnderlined(true);
+                line.addExtra(link);
+                line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
             } else {
                 for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equals(moduleName)) {
-                        text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
+                        final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
+                                + "\n");
+                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, co.getName()));
+                        line.addExtra(click);
                     }
                 }
             }
-            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            component.addExtra(line);
+            component.addExtra(ChatColor.YELLOW + getQueryText(context));
+            ((Player)context.getForWhom()).spigot().sendMessage(component);
+            return "";
         }
 
         @SuppressWarnings("unchecked")
