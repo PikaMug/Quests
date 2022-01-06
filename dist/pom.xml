@@ -5,7 +5,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>4.1.3</version>
+        <version>4.2.0</version>
     </parent>
     <artifactId>quests-dist</artifactId>
     <packaging>pom</packaging>
@@ -63,6 +63,11 @@
         <dependency>
             <groupId>me.blackvein.quests</groupId>
             <artifactId>quests-v1_8_R1</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.blackvein.quests</groupId>
+            <artifactId>quests-core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>
