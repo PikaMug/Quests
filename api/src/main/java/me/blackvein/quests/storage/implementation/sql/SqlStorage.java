@@ -328,6 +328,14 @@ public class SqlStorage implements StorageImplementation {
                 }
             } else {
                 for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
+                    if (entry.getKey() == null) {
+                        plugin.getLogger().severe("Quest was null for completed times of quester " + quester.getUUID());
+                        return;
+                    }
+                    if (!quester.getAmountsCompleted().containsKey(entry.getKey())) {
+                        plugin.getLogger().warning("Quester " + quester.getUUID() + " is missing amounts completed for quest ID " + entry.getKey().getId());
+                        return;
+                    }
                     final int amount = quester.getAmountsCompleted().get(entry.getKey());
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
