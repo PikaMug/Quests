@@ -629,13 +629,17 @@ public class SqlStorage implements StorageImplementation {
             string = string.replace("{", "").replace("}", "");
             int index = 0;
             for (final String section : string.split(",")) {
-                final int amt = Integer.parseInt(section);
-                final ItemStack is = objective.get(index);
-                final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
-                temp.addUnsafeEnchantments(is.getEnchantments());
-                temp.setItemMeta(is.getItemMeta());
-                list.add(temp);
-                index++;
+                if (index < objective.size()) {
+                    final int amt = Integer.parseInt(section);
+                    final ItemStack is = objective.get(index);
+                    final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
+                    temp.addUnsafeEnchantments(is.getEnchantments());
+                    temp.setItemMeta(is.getItemMeta());
+                    list.add(temp);
+                    index++;
+                } else {
+                    break;
+                }
             }
         }
         return list;
