@@ -12,7 +12,6 @@
 
 package me.blackvein.quests.storage;
 
-import com.google.common.collect.ImmutableSet;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.custom.CustomStorageProviders;
@@ -23,19 +22,14 @@ import me.blackvein.quests.storage.misc.StorageCredentials;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StorageFactory {
     private final Quests plugin;
 
     public StorageFactory(final Quests plugin) {
         this.plugin = plugin;
-    }
-
-    public Set<StorageType> getRequiredTypes() {
-        return ImmutableSet.of(StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"), 
-                StorageType.YAML));
     }
 
     public Storage getInstance() {
@@ -71,14 +65,20 @@ public class StorageFactory {
                 fc.getInt("storage-data.pool-size", 10));
         final int minIdle = fc.getInt("storage-data.pool-settings.min-idle", maxPoolSize);
         final int maxLifetime = fc.getInt("storage-data.pool-settings.max-lifetime", 1800000);
+        final int keepAliveTime = fc.getInt("storage-data.pool-settings.keepalive-time", 0);
         final int connectionTimeout = fc.getInt("storage-data.pool-settings.connection-timeout", 5000);
+        final boolean useUnicode = fc.getBoolean("storage-data.pool-settings.properties.useUnicode", true);
+        final String characterEncoding = fc.getString("storage-data.pool-settings.properties.characterEncoding", "utf8");
+        Map<String, String> props = new HashMap<>();
+        props.put("useUnicode", String.valueOf(useUnicode));
+        props.put("characterEncoding", characterEncoding);
 
         return new StorageCredentials(
                 fc.getString("storage-data.address", null),
                 fc.getString("storage-data.database", null),
                 fc.getString("storage-data.username", null),
                 fc.getString("storage-data.password", null),
-                maxPoolSize, minIdle, maxLifetime, connectionTimeout, Collections.singletonMap("true", "utf8")
+                maxPoolSize, minIdle, maxLifetime, keepAliveTime, connectionTimeout, props
         );
     }
 }

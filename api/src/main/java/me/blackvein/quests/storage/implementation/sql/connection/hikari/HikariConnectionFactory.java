@@ -101,6 +101,7 @@ public abstract class HikariConnectionFactory implements ConnectionFactory {
         config.setMaximumPoolSize(this.configuration.getMaxPoolSize());
         config.setMinimumIdle(this.configuration.getMinIdleConnections());
         config.setMaxLifetime(this.configuration.getMaxLifetime());
+        //config.setKeepaliveTime(this.configuration.getKeepAliveTime());
         config.setConnectionTimeout(this.configuration.getConnectionTimeout());
 
         hikari = new HikariDataSource(config);

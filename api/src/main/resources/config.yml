@@ -29,7 +29,11 @@ storage-data:
     max-pool-size: 10
     min-idle: 10
     max-lifetime: 1800000
+    keepalive-time: 0
     connection-timeout: 5000
+    properties:
+      useUnicode: true
+      characterEncoding: utf8
 storage-method:
   player-data: yaml
 trial-save: false
