@@ -28,9 +28,9 @@
             <url>https://repo.citizensnpcs.co/</url>
         </repository>
         <repository>
-            <!-- WorldEdit -->
-            <id>sk89q-repo</id>
-            <url>https://maven.sk89q.com/repo/</url>
+            <!-- WorldEdit, WorldGuard -->
+            <id>enginehub-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <!-- Parties -->
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.5-SNAPSHOT</version>
+            <version>7.2.8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -147,7 +147,8 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.0</version>
+            <!-- Do not update until Java 11 is min -->
+            <version>4.0.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
