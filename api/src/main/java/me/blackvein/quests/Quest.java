@@ -3,54 +3,77 @@ package me.blackvein.quests;
 import me.blackvein.quests.actions.Action;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 
-public interface Quest {
-    public String getId();
+public interface Quest extends Comparable<Quest> {
+    String getId();
 
-    public String getName();
+    String getName();
 
-    public void setName(final String name);
+    void setName(final String name);
 
-    public String getDescription();
+    String getDescription();
 
-    public void setDescription(final String description);
+    void setDescription(final String description);
 
-    public String getFinished();
+    String getFinished();
 
-    public void setFinished(final String finished);
+    void setFinished(final String finished);
 
-    public String getRegionStart();
+    String getRegionStart();
 
-    public void setRegionStart(final String regionStart);
+    void setRegionStart(final String regionStart);
 
-    public ItemStack getGUIDisplay();
+    ItemStack getGUIDisplay();
 
-    public void setGUIDisplay(final ItemStack guiDisplay);
+    void setGUIDisplay(final ItemStack guiDisplay);
 
-    public Stage getStage(final int index);
+    Stage getStage(final int index);
 
-    public LinkedList<Stage> getStages();
+    LinkedList<Stage> getStages();
 
-    public NPC getNpcStart();
+    NPC getNpcStart();
 
-    public void setNpcStart(final NPC npcStart);
+    void setNpcStart(final NPC npcStart);
 
-    public Location getBlockStart();
+    Location getBlockStart();
 
-    public void setBlockStart(final Location blockStart);
+    void setBlockStart(final Location blockStart);
 
-    public Action getInitialAction();
+    Action getInitialAction();
 
-    public void setInitialAction(final Action initialAction);
+    void setInitialAction(final Action initialAction);
 
-    public Requirements getRequirements();
+    Requirements getRequirements();
 
-    public Planner getPlanner();
+    Planner getPlanner();
 
-    public Rewards getRewards();
+    Rewards getRewards();
 
-    public Options getOptions();
+    Options getOptions();
+
+    void nextStage(final Quester quester, final boolean allowSharedProgress);
+
+    void setStage(final Quester quester, final int stage);
+
+    boolean updateCompass(final Quester quester, final Stage stage);
+
+    boolean testRequirements(final Quester quester);
+
+    boolean testRequirements(final OfflinePlayer player);
+
+    void completeQuest(final Quester quester);
+
+    void completeQuest(final Quester quester, final boolean allowMultiplayer);
+
+    void failQuest(final Quester quester);
+
+    void failQuest(final Quester quester, final boolean ignoreFailAction);
+
+    boolean isInRegion(final Quester quester);
+
+    boolean isInRegionStart(final Quester quester);
 }

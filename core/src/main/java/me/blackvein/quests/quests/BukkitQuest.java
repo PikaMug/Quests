@@ -20,19 +20,18 @@ import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
-import me.blackvein.quests.Quester;
-import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.CustomReward;
 import me.blackvein.quests.Dependencies;
 import me.blackvein.quests.Options;
 import me.blackvein.quests.Planner;
 import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.Requirements;
 import me.blackvein.quests.Rewards;
 import me.blackvein.quests.Stage;
-import me.blackvein.quests.player.BukkitQuester;
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.BukkitAction;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
@@ -70,9 +69,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
+public class BukkitQuest implements Quest {
 
     protected Quests plugin;
     protected String id;
@@ -81,7 +81,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
     protected String finished;
     protected ItemStack guiDisplay = null;
     private final LinkedList<Stage> orderedStages = new LinkedList<>();
-    protected NPC npcStart;
+    protected UUID npcStart;
     protected Location blockStart;
     protected String regionStart = null;
     protected BukkitAction initialAction;
@@ -91,13 +91,27 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
     private final BukkitOptions options = new BukkitOptions();
 
     @Override
-    public int compareTo(final BukkitQuest quest) {
+    public int compareTo(final Quest quest) {
         return id.compareTo(quest.getId());
+    }
+
+    public Quests getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(Quests plugin) {
+        this.plugin = plugin;
     }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        if (plugin != null) {
+            this.id = id;
+        }
     }
 
     @Override
@@ -166,12 +180,15 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
 
     @Override
     public NPC getNpcStart() {
-        return npcStart;
+        if (CitizensAPI.getNPCRegistry().getByUniqueId(npcStart) != null) {
+            return CitizensAPI.getNPCRegistry().getByUniqueId(npcStart);
+        }
+        return null;
     }
 
     @Override
     public void setNpcStart(final NPC npcStart) {
-        this.npcStart = npcStart;
+        this.npcStart = npcStart.getUniqueId();
     }
 
     @Override
@@ -186,7 +203,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
 
     @Override
     public Action getInitialAction() {
-        return (Action) initialAction;
+        return initialAction;
     }
 
     @Override
@@ -220,7 +237,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param quester Player to force
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
-    public void nextStage(final BukkitQuester quester, final boolean allowSharedProgress) {
+    public void nextStage(final Quester quester, final boolean allowSharedProgress) {
         final Stage currentStage = quester.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
@@ -256,8 +273,8 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
             
             // Multiplayer
             if (allowSharedProgress && options.getShareProgressLevel() == 3) {
-                final List<BukkitQuester> mq = quester.getMultiplayerQuesters(this);
-                for (final BukkitQuester qq : mq) {
+                final List<Quester> mq = quester.getMultiplayerQuesters(this);
+                for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
                         nextStage(qq, true);
                     }
@@ -276,7 +293,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param stage Stage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
-    public void setStage(final BukkitQuester quester, final int stage) throws IndexOutOfBoundsException {
+    public void setStage(final Quester quester, final int stage) throws IndexOutOfBoundsException {
         final OfflinePlayer player = quester.getOfflinePlayer();
         if (orderedStages.size() - 1 < stage) {
             final String msg = "Tried to set invalid stage number of " + stage + " for quest " + getName() + " on " 
@@ -412,15 +429,15 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
             Location targetLocation = null;
             if (stage.getCitizensToInteract() != null && stage.getCitizensToInteract().size() > 0) {
                 targetLocation = plugin.getDependencies().getNPCLocation(stage.getCitizensToInteract().getFirst());
-            } else if (stage.citizensToKill != null && stage.citizensToKill.size() > 0) {
-                targetLocation = plugin.getDependencies().getNPCLocation(stage.citizensToKill.getFirst());
-            } else if (stage.locationsToReach != null && stage.locationsToReach.size() > 0) {
-                targetLocation = stage.locationsToReach.getFirst();
-            } else if (stage.itemDeliveryTargets != null && stage.itemDeliveryTargets.size() > 0) {
-                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage.itemDeliveryTargets
-                        .getFirst());
+            } else if (stage.getCitizensToKill() != null && stage.getCitizensToKill().size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.getCitizensToKill().getFirst());
+            } else if (stage.getLocationsToReach() != null && stage.getLocationsToReach().size() > 0) {
+                targetLocation = stage.getLocationsToReach().getFirst();
+            } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
+                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage
+                        .getItemDeliveryTargets().getFirst());
                 targetLocation = npc.getStoredLocation();
-            } else if (stage.playersToKill != null && stage.playersToKill > 0) {
+            } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
@@ -440,11 +457,11 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
                 if (nearest != null) {
                     targetLocation = nearest;
                 }
-            } else if (stage.mobsToKill != null && stage.mobsToKill.size() > 0) {
+            } else if (stage.getMobsToKill() != null && stage.getMobsToKill().size() > 0) {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final EntityType et = stage.mobsToKill.getFirst();
+                final EntityType et = stage.getMobsToKill().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }
@@ -461,11 +478,11 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
                 if (nearest != null) {
                     targetLocation = nearest;
                 }
-            } else if (stage.mobsToTame != null && stage.mobsToTame.size() > 0) {
+            } else if (stage.getMobsToTame() != null && stage.getMobsToTame().size() > 0) {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final EntityType et = stage.mobsToTame.getFirst();
+                final EntityType et = stage.getMobsToTame().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }
@@ -482,11 +499,11 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
                 if (nearest != null) {
                     targetLocation = nearest;
                 }
-            } else if (stage.sheepToShear != null && stage.sheepToShear.size() > 0) {
+            } else if (stage.getSheepToShear() != null && stage.getSheepToShear().size() > 0) {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final DyeColor dc = stage.sheepToShear.getFirst();
+                final DyeColor dc = stage.getSheepToShear().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }
@@ -532,7 +549,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param quester The quester to check
      * @return true if all Requirements have been met
      */
-    public boolean testRequirements(final BukkitQuester quester) {
+    public boolean testRequirements(final Quester quester) {
         return testRequirements(quester.getOfflinePlayer());
     }
     
@@ -544,8 +561,8 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param player The player to check
      * @return true if all Requirements have been met
      */
-    protected boolean testRequirements(final OfflinePlayer player) {
-        final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
+    public boolean testRequirements(final OfflinePlayer player) {
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (requirements.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
             if (plugin.getDependencies().getVaultEconomy().getBalance(player) < requirements.getMoney()) {
                 return false;
@@ -622,7 +639,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      *
      * @param quester The quester finishing this quest
      */
-    public void completeQuest(final BukkitQuester quester) {
+    public void completeQuest(final Quester quester) {
         completeQuest(quester, true);
     }
     
@@ -633,7 +650,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final BukkitQuester quester, final boolean allowMultiplayer) {
+    public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
         final OfflinePlayer player = quester.getOfflinePlayer();
         boolean cancelled = false;
         if (player.isOnline()) {
@@ -664,7 +681,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
         }
         quester.hardQuit(this);
         quester.getCompletedQuests().add(this);
-        for (final Map.Entry<Integer, BukkitQuest> entry : quester.getTimers().entrySet()) {
+        for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
                 quester.getTimers().remove(entry.getKey());
@@ -1079,8 +1096,8 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
         
         // Multiplayer
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
-            final List<BukkitQuester> mq = quester.getMultiplayerQuesters(this);
-            for (final BukkitQuester qq : mq) {
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
                     completeQuest(qq, false);
                 }
@@ -1093,7 +1110,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * 
      * @param quester The quester to be ejected
      */
-    public void failQuest(final BukkitQuester quester) {
+    public void failQuest(final Quester quester) {
         failQuest(quester, false);
     }
     
@@ -1103,8 +1120,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param quester The quester to be ejected
      * @param ignoreFailAction Whether to ignore quest fail Action
      */
-    @SuppressWarnings("deprecation")
-    public void failQuest(final BukkitQuester quester, final boolean ignoreFailAction) {
+    public void failQuest(final Quester quester, final boolean ignoreFailAction) {
         final QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent(quester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
@@ -1132,12 +1148,12 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
     /**
      * Checks if quester is in WorldGuard region start
      * 
-     * @deprecated Use {@link #isInRegionStart(BukkitQuester)}
+     * @deprecated Use {@link #isInRegionStart(Quester)}
      * @param quester The quester to check
      * @return true if quester is in region
      */
     @Deprecated
-    public boolean isInRegion(final BukkitQuester quester) {
+    public boolean isInRegion(final Quester quester) {
         return isInRegionStart(quester);
     }
 
@@ -1160,7 +1176,7 @@ public class BukkitQuest implements Quest, Comparable<BukkitQuest> {
      * @param quester The quester to check
      * @return true if quester is in region
      */
-    public boolean isInRegionStart(final BukkitQuester quester) {
+    public boolean isInRegionStart(final Quester quester) {
         return isInRegionStart(quester.getPlayer());
     }
 

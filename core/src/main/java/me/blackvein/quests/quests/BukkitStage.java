@@ -15,7 +15,6 @@ package me.blackvein.quests.quests;
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Stage;
 import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.DyeColor;
@@ -145,12 +144,22 @@ public class BukkitStage implements Stage {
         return blocksToBreak;
     }
 
+    @Override
+    public boolean addBlockToBreak(ItemStack blockToBreak) {
+        return blocksToBreak.add(blockToBreak);
+    }
+
     public void setBlocksToBreak(final LinkedList<ItemStack> blocksToBreak) {
         this.blocksToBreak = blocksToBreak;
     }
 
     public LinkedList<ItemStack> getBlocksToDamage() {
         return blocksToDamage;
+    }
+
+    @Override
+    public boolean addBlockToDamage(ItemStack blockToDamage) {
+        return blocksToDamage.add(blockToDamage);
     }
 
     public void setBlocksToDamage(final LinkedList<ItemStack> blocksToDamage) {
@@ -161,12 +170,22 @@ public class BukkitStage implements Stage {
         return blocksToPlace;
     }
 
+    @Override
+    public boolean addBlockToPlace(ItemStack blockToPlace) {
+        return blocksToPlace.add(blockToPlace);
+    }
+
     public void setBlocksToPlace(final LinkedList<ItemStack> blocksToPlace) {
         this.blocksToPlace = blocksToPlace;
     }
 
     public LinkedList<ItemStack> getBlocksToUse() {
         return blocksToUse;
+    }
+
+    @Override
+    public boolean addBlockToUse(ItemStack blockToUse) {
+        return blocksToUse.add(blockToUse);
     }
 
     public void setBlocksToUse(final LinkedList<ItemStack> blocksToUse) {
@@ -177,12 +196,22 @@ public class BukkitStage implements Stage {
         return blocksToCut;
     }
 
+    @Override
+    public boolean addBlockToCut(ItemStack blockToCut) {
+        return blocksToCut.add(blockToCut);
+    }
+
     public void setBlocksToCut(final LinkedList<ItemStack> blocksToCut) {
         this.blocksToCut = blocksToCut;
     }
     
     public LinkedList<ItemStack> getItemsToCraft() {
         return itemsToCraft;
+    }
+
+    @Override
+    public boolean addItemToCraft(ItemStack itemToCraft) {
+        return itemsToCraft.add(itemToCraft);
     }
 
     public void setItemsToCraft(final LinkedList<ItemStack> itemsToCraft) {
@@ -193,12 +222,22 @@ public class BukkitStage implements Stage {
         return itemsToSmelt;
     }
 
+    @Override
+    public boolean addItemToSmelt(ItemStack itemToSmelt) {
+        return itemsToSmelt.add(itemToSmelt);
+    }
+
     public void setItemsToSmelt(final LinkedList<ItemStack> itemsToSmelt) {
         this.itemsToSmelt = itemsToSmelt;
     }
 
     public LinkedList<ItemStack> getItemsToEnchant() {
         return itemsToEnchant;
+    }
+
+    @Override
+    public boolean addItemToEnchant(ItemStack itemToEnchant) {
+        return itemsToEnchant.add(itemToEnchant);
     }
 
     public void setItemsToEnchant(final LinkedList<ItemStack> itemsToEnchant) {
@@ -209,12 +248,22 @@ public class BukkitStage implements Stage {
         return itemsToBrew;
     }
 
+    @Override
+    public boolean addItemsToBrew(ItemStack itemToBrew) {
+        return itemsToBrew.add(itemToBrew);
+    }
+
     public void setItemsToBrew(final LinkedList<ItemStack> itemsToBrew) {
         this.itemsToBrew = itemsToBrew;
     }
     
     public LinkedList<ItemStack> getItemsToConsume() {
         return itemsToConsume;
+    }
+
+    @Override
+    public boolean addItemToConsume(ItemStack itemToConsume) {
+        return itemsToConsume.add(itemToConsume);
     }
 
     public void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume) {
@@ -225,12 +274,22 @@ public class BukkitStage implements Stage {
         return itemsToDeliver;
     }
 
+    @Override
+    public boolean addItemToDeliver(ItemStack itemToDeliver) {
+        return itemsToDeliver.add(itemToDeliver);
+    }
+
     public void setItemsToDeliver(final LinkedList<ItemStack> itemsToDeliver) {
         this.itemsToDeliver = itemsToDeliver;
     }
 
     public LinkedList<Integer> getItemDeliveryTargets() {
         return itemDeliveryTargets;
+    }
+
+    @Override
+    public boolean addItemDeliveryTarget(Integer itemDeliveryTarget) {
+        return itemDeliveryTargets.add(itemDeliveryTarget);
     }
 
     public void setItemDeliveryTargets(final LinkedList<Integer> itemDeliveryTargets) {
@@ -241,12 +300,22 @@ public class BukkitStage implements Stage {
         return deliverMessages;
     }
 
+    @Override
+    public boolean addDeliverMessage(String deliverMessage) {
+        return deliverMessages.add(deliverMessage);
+    }
+
     public void setDeliverMessages(final LinkedList<String> deliverMessages) {
         this.deliverMessages = deliverMessages;
     }
 
     public LinkedList<Integer> getCitizensToInteract() {
         return citizensToInteract;
+    }
+
+    @Override
+    public boolean addCitizenToInteract(Integer citizenToInteract) {
+        return citizensToInteract.add(citizenToInteract);
     }
 
     public void setCitizensToInteract(final LinkedList<Integer> citizensToInteract) {
@@ -257,12 +326,22 @@ public class BukkitStage implements Stage {
         return citizensToKill;
     }
 
+    @Override
+    public boolean addCitizenToKill(Integer citizenToKill) {
+        return citizensToKill.add(citizenToKill);
+    }
+
     public void setCitizensToKill(final LinkedList<Integer> citizensToKill) {
         this.citizensToKill = citizensToKill;
     }
 
     public LinkedList<Integer> getCitizenNumToKill() {
         return citizenNumToKill;
+    }
+
+    @Override
+    public boolean addCitizenNumToKill(Integer citizenNumToKill) {
+        return this.citizenNumToKill.add(citizenNumToKill);
     }
 
     public void setCitizenNumToKill(final LinkedList<Integer> citizenNumToKill) {
@@ -273,12 +352,22 @@ public class BukkitStage implements Stage {
         return mobsToKill;
     }
 
+    @Override
+    public boolean addMobToKill(EntityType mobToKill) {
+        return mobsToKill.add(mobToKill);
+    }
+
     public void setMobsToKill(final LinkedList<EntityType> mobsToKill) {
         this.mobsToKill = mobsToKill;
     }
 
     public LinkedList<Integer> getMobNumToKill() {
         return mobNumToKill;
+    }
+
+    @Override
+    public boolean addMobNumToKill(Integer mobNumToKill) {
+        return this.mobNumToKill.add(mobNumToKill);
     }
 
     public void setMobNumToKill(final LinkedList<Integer> mobNumToKill) {
@@ -289,12 +378,22 @@ public class BukkitStage implements Stage {
         return locationsToKillWithin;
     }
 
+    @Override
+    public boolean addLocationToKillWithin(Location locationToKillWithin) {
+        return locationsToKillWithin.add(locationToKillWithin);
+    }
+
     public void setLocationsToKillWithin(final LinkedList<Location> locationsToKillWithin) {
         this.locationsToKillWithin = locationsToKillWithin;
     }
 
     public LinkedList<Integer> getRadiiToKillWithin() {
         return radiiToKillWithin;
+    }
+
+    @Override
+    public boolean addRadiusToKillWithin(Integer radiusToKillWithin) {
+        return radiiToKillWithin.add(radiusToKillWithin);
     }
 
     public void setRadiiToKillWithin(final LinkedList<Integer> radiiToKillWithin) {
@@ -305,12 +404,22 @@ public class BukkitStage implements Stage {
         return killNames;
     }
 
+    @Override
+    public boolean addKillName(String killName) {
+        return killNames.add(killName);
+    }
+
     public void setKillNames(final LinkedList<String> killNames) {
         this.killNames = killNames;
     }
 
     public LinkedList<Location> getLocationsToReach() {
         return locationsToReach;
+    }
+
+    @Override
+    public boolean addLocationToReach(Location locationToReach) {
+        return locationsToReach.add(locationToReach);
     }
 
     public void setLocationsToReach(final LinkedList<Location> locationsToReach) {
@@ -321,12 +430,22 @@ public class BukkitStage implements Stage {
         return radiiToReachWithin;
     }
 
+    @Override
+    public boolean addRadiusToReachWithin(Integer radiusToReachWithin) {
+        return radiiToReachWithin.add(radiusToReachWithin);
+    }
+
     public void setRadiiToReachWithin(final LinkedList<Integer> radiiToReachWithin) {
         this.radiiToReachWithin = radiiToReachWithin;
     }
 
     public LinkedList<World> getWorldsToReachWithin() {
         return worldsToReachWithin;
+    }
+
+    @Override
+    public boolean addWorldToReachWithin(World worldToReachWithin) {
+        return worldsToReachWithin.add(worldToReachWithin);
     }
 
     public void setWorldsToReachWithin(final LinkedList<World> worldsToReachWithin) {
@@ -337,6 +456,11 @@ public class BukkitStage implements Stage {
         return locationNames;
     }
 
+    @Override
+    public boolean addLocationName(String locationName) {
+        return locationNames.add(locationName);
+    }
+
     public void setLocationNames(final LinkedList<String> locationNames) {
         this.locationNames = locationNames;
     }
@@ -345,12 +469,22 @@ public class BukkitStage implements Stage {
         return mobsToTame;
     }
 
+    @Override
+    public boolean addMobToTame(EntityType mobToTame) {
+        return mobsToTame.add(mobToTame);
+    }
+
     public void setMobsToTame(final LinkedList<EntityType> mobsToTame) {
         this.mobsToTame = mobsToTame;
     }
 
     public LinkedList<Integer> getMobNumToTame() {
         return mobNumToTame;
+    }
+
+    @Override
+    public boolean addMobNumToTame(Integer mobNumToTame) {
+        return this.mobNumToTame.add(mobNumToTame);
     }
 
     public void setMobNumToTame(final LinkedList<Integer> mobNumToTame) {
@@ -385,12 +519,22 @@ public class BukkitStage implements Stage {
         return sheepToShear;
     }
 
+    @Override
+    public boolean addSheepToShear(DyeColor sheepToShear) {
+        return this.sheepToShear.add(sheepToShear);
+    }
+
     public void setSheepToShear(final LinkedList<DyeColor> sheepToShear) {
         this.sheepToShear = sheepToShear;
     }
 
     public LinkedList<Integer> getSheepNumToShear() {
         return sheepNumToShear;
+    }
+
+    @Override
+    public boolean addSheepNumToShear(Integer sheepNumToShear) {
+        return this.sheepNumToShear.add(sheepNumToShear);
     }
 
     public void setSheepNumToShear(final LinkedList<Integer> sheepNumToShear) {
@@ -401,12 +545,22 @@ public class BukkitStage implements Stage {
         return passwordDisplays;
     }
 
+    @Override
+    public boolean addPasswordDisplay(String passwordDisplay) {
+        return passwordDisplays.add(passwordDisplay);
+    }
+
     public void setPasswordDisplays(final LinkedList<String> passwordDisplays) {
         this.passwordDisplays = passwordDisplays;
     }
 
     public LinkedList<String> getPasswordPhrases() {
         return passwordPhrases;
+    }
+
+    @Override
+    public boolean addPasswordPhrase(String passwordPhrase) {
+        return passwordPhrases.add(passwordPhrase);
     }
 
     public void setPasswordPhrases(final LinkedList<String> passwordPhrases) {
@@ -457,12 +611,22 @@ public class BukkitStage implements Stage {
         return chatActions;
     }
 
+    @Override
+    public void addChatAction(Entry<String, Action> chatAction) {
+        chatActions.put(chatAction.getKey(), chatAction.getValue());
+    }
+
     public void setChatActions(final Map<String, Action> chatActions) {
         this.chatActions = chatActions;
     }
 
     public Map<String, Action> getCommandActions() {
         return commandActions;
+    }
+
+    @Override
+    public void addCommandAction(Entry<String, Action> commandAction) {
+        commandActions.put(commandAction.getKey(), commandAction.getValue());
     }
 
     public void setCommandActions(final Map<String, Action> commandActions) {
@@ -521,6 +685,11 @@ public class BukkitStage implements Stage {
         return objectiveOverrides;
     }
 
+    @Override
+    public boolean addObjectiveOverride(String objectiveOverride) {
+        return objectiveOverrides.add(objectiveOverride);
+    }
+
     public void setObjectiveOverrides(final LinkedList<String> objectiveOverrides) {
         this.objectiveOverrides = objectiveOverrides;
     }
@@ -529,16 +698,32 @@ public class BukkitStage implements Stage {
         return customObjectives;
     }
 
+    public void clearCustomObjectives() {
+        customObjectives.clear();
+    }
+
     public LinkedList<Integer> getCustomObjectiveCounts() {
         return customObjectiveCounts;
+    }
+
+    public void clearCustomObjectiveCounts() {
+        customObjectiveCounts.clear();
     }
 
     public LinkedList<String> getCustomObjectiveDisplays() {
         return customObjectiveDisplays;
     }
 
+    public void clearCustomObjectiveDisplays() {
+        customObjectiveDisplays.clear();
+    }
+
     public LinkedList<Entry<String, Object>> getCustomObjectiveData() {
         return customObjectiveData;
+    }
+
+    public void clearCustomObjectiveData() {
+        customObjectiveData.clear();
     }
 
     /**

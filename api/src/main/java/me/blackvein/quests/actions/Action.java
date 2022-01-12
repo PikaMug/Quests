@@ -2,6 +2,7 @@ package me.blackvein.quests.actions;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import me.blackvein.quests.entity.QuestMob;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;

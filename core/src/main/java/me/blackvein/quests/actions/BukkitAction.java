@@ -11,10 +11,10 @@
  */
 package me.blackvein.quests.actions;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.QuestMob;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.entity.QuestMob;
 import me.blackvein.quests.tasks.ActionTimer;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class BukkitAction implements Comparable<BukkitAction> {
+public class BukkitAction implements Action, Comparable<BukkitAction> {
 
     private final Quests plugin;
     private String name = "";
@@ -88,191 +88,237 @@ public class BukkitAction implements Comparable<BukkitAction> {
         return name.compareTo(action.getName());
     }
 
+    @Override
     public String getName() {
         return name;
     }
-    
+
+    @Override
     public void setName(final String name) {
         this.name = name;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
 
+    @Override
     public void setMessage(final String message) {
         this.message = message;
     }
 
+    @Override
     public boolean isClearInv() {
         return clearInv;
     }
 
+    @Override
     public void setClearInv(final boolean clearInv) {
         this.clearInv = clearInv;
     }
 
+    @Override
     public boolean isFailQuest() {
         return failQuest;
     }
 
+    @Override
     public void setFailQuest(final boolean failQuest) {
         this.failQuest = failQuest;
     }
 
+    @Override
     public LinkedList<Location> getExplosions() {
         return explosions;
     }
 
+    @Override
     public void setExplosions(final LinkedList<Location> explosions) {
         this.explosions = explosions;
     }
 
+    @Override
     public Map<Location, Effect> getEffects() {
         return effects;
     }
 
+    @Override
     public void setEffects(final Map<Location, Effect> effects) {
         this.effects = effects;
     }
 
+    @Override
     public LinkedList<ItemStack> getItems() {
         return items;
     }
 
+    @Override
     public void setItems(final LinkedList<ItemStack> items) {
         this.items = items;
     }
 
+    @Override
     public World getStormWorld() {
         return stormWorld;
     }
 
+    @Override
     public void setStormWorld(final World stormWorld) {
         this.stormWorld = stormWorld;
     }
 
+    @Override
     public int getStormDuration() {
         return stormDuration;
     }
 
+    @Override
     public void setStormDuration(final int stormDuration) {
         this.stormDuration = stormDuration;
     }
 
+    @Override
     public World getThunderWorld() {
         return thunderWorld;
     }
 
+    @Override
     public void setThunderWorld(final World thunderWorld) {
         this.thunderWorld = thunderWorld;
     }
 
+    @Override
     public int getThunderDuration() {
         return thunderDuration;
     }
 
+    @Override
     public void setThunderDuration(final int thunderDuration) {
         this.thunderDuration = thunderDuration;
     }
 
+    @Override
     public int getTimer() {
         return timer;
     }
 
+    @Override
     public void setTimer(final int timer) {
         this.timer = timer;
     }
 
+    @Override
     public boolean isCancelTimer() {
         return cancelTimer;
     }
 
+    @Override
     public void setCancelTimer(final boolean cancelTimer) {
         this.cancelTimer = cancelTimer;
     }
 
+    @Override
     public LinkedList<QuestMob> getMobSpawns() {
         return mobSpawns;
     }
 
+    @Override
     public void setMobSpawns(final LinkedList<QuestMob> mobSpawns) {
         this.mobSpawns = mobSpawns;
     }
 
+    @Override
     public LinkedList<Location> getLightningStrikes() {
         return lightningStrikes;
     }
 
+    @Override
     public void setLightningStrikes(final LinkedList<Location> lightningStrikes) {
         this.lightningStrikes = lightningStrikes;
     }
 
+    @Override
     public LinkedList<String> getCommands() {
         return commands;
     }
 
+    @Override
     public void setCommands(final LinkedList<String> commands) {
         this.commands = commands;
     }
 
+    @Override
     public LinkedList<PotionEffect> getPotionEffects() {
         return potionEffects;
     }
 
+    @Override
     public void setPotionEffects(final LinkedList<PotionEffect> potionEffects) {
         this.potionEffects = potionEffects;
     }
 
+    @Override
     public int getHunger() {
         return hunger;
     }
 
+    @Override
     public void setHunger(final int hunger) {
         this.hunger = hunger;
     }
 
+    @Override
     public int getSaturation() {
         return saturation;
     }
 
+    @Override
     public void setSaturation(final int saturation) {
         this.saturation = saturation;
     }
 
+    @Override
     public float getHealth() {
         return health;
     }
 
+    @Override
     public void setHealth(final float health) {
         this.health = health;
     }
 
+    @Override
     public Location getTeleport() {
         return teleport;
     }
 
+    @Override
     public void setTeleport(final Location teleport) {
         this.teleport = teleport;
     }
 
+    @Override
     public String getBook() {
         return book;
     }
 
+    @Override
     public void setBook(final String book) {
         this.book = book;
     }
-    
+
+    @Override
     public String getDenizenScript() {
         return book;
     }
 
+    @Override
     public void setDenizenScript(final String scriptName) {
         this.denizenScript = scriptName;
     }
 
-    public void fire(final BukkitQuester quester, final BukkitQuest quest) {
+    public void fire(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
         if (message != null) {
             player.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
@@ -406,7 +452,7 @@ public class BukkitAction implements Comparable<BukkitAction> {
                     .runTaskLater(plugin, timer * 20L).getTaskId(), quest);
         }
         if (cancelTimer) {
-            for (final Map.Entry<Integer, BukkitQuest> entry : quester.getTimers().entrySet()) {
+            for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
                 if (entry.getValue().getName().equals(quest.getName())) {
                     plugin.getServer().getScheduler().cancelTask(entry.getKey());
                     quester.getTimers().remove(entry.getKey());

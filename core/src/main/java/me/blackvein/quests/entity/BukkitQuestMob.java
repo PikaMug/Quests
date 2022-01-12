@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests;
+package me.blackvein.quests.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +24,7 @@ import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
 
-public class QuestMob {
+public class BukkitQuestMob implements QuestMob {
 
     private String name = null;
     private EntityType entityType = null;
@@ -33,10 +33,10 @@ public class QuestMob {
     private ItemStack[] inventory = new ItemStack[5];
     private Float[] dropChances = new Float[5];
     
-    public QuestMob(){
+    public BukkitQuestMob(){
     }
 
-    public QuestMob(final EntityType entityType, final Location spawnLocation, final int spawnAmounts) {
+    public BukkitQuestMob(final EntityType entityType, final Location spawnLocation, final int spawnAmounts) {
         this.entityType = entityType;
         this.spawnLocation = spawnLocation;
         this.spawnAmounts = spawnAmounts;
@@ -189,7 +189,7 @@ public class QuestMob {
         return string;
     }
 
-    public static QuestMob fromString(final String str) {
+    public static BukkitQuestMob fromString(final String str) {
         String name = null;
         EntityType entityType = null;
         Location loc = null;
@@ -258,7 +258,7 @@ public class QuestMob {
                 }
             }
         }
-        final QuestMob qm = new QuestMob(entityType, loc, amounts != null ? amounts : 1);
+        final BukkitQuestMob qm = new BukkitQuestMob(entityType, loc, amounts != null ? amounts : 1);
         qm.setName(name);
         qm.inventory = inventory;
         qm.dropChances = dropChances;

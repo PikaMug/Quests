@@ -15,13 +15,13 @@ package me.blackvein.quests.convo.quests;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 
-import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 
 public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     private final ConversationContext context;
-    private QuestFactory factory;
+    private BukkitQuestFactory factory;
     
     public QuestsEditorNumericPrompt(final ConversationContext context) {
         this.context = context;
@@ -31,7 +31,7 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     }
     
     @Deprecated
-    public QuestsEditorNumericPrompt(final ConversationContext context, final QuestFactory factory) {
+    public QuestsEditorNumericPrompt(final ConversationContext context, final BukkitQuestFactory factory) {
         this.context = context;
         this.factory = factory;
     }
@@ -45,7 +45,7 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
         return context;
     }
     
-    public QuestFactory getQuestFactory() {
+    public BukkitQuestFactory getQuestFactory() {
         return factory;
     }
     

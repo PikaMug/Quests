@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.storage.implementation;
 
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
 import java.util.Collection;
@@ -27,9 +27,9 @@ public interface StorageImplementation {
 
     void close();
     
-    BukkitQuester loadQuester(UUID uniqueId) throws Exception;
+    Quester loadQuester(UUID uniqueId) throws Exception;
 
-    void saveQuester(BukkitQuester quester) throws Exception;
+    void saveQuester(Quester quester) throws Exception;
 
     void deleteQuester(UUID uniqueId) throws Exception;
 

@@ -12,10 +12,11 @@
 
 package me.blackvein.quests.storage.implementation.file;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.BukkitStage;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.player.BukkitQuester;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -65,9 +66,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
     
     @SuppressWarnings("deprecation")
     @Override
-    public BukkitQuester loadQuester(final UUID uniqueId) throws Exception {
+    public Quester loadQuester(final UUID uniqueId) throws Exception {
         final FileConfiguration data = new YamlConfiguration();
-        BukkitQuester quester = plugin.getQuester(uniqueId);
+        Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {
@@ -87,7 +88,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         if (data.contains("completedRedoableQuests")) {
             final List<String> questIds = data.getStringList("completedRedoableQuests");
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
-            final ConcurrentHashMap<BukkitQuest, Long> completedTimes = quester.getCompletedTimes();
+            final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
             for (int i = 0; i < questIds.size(); i++) {
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     completedTimes.put(plugin.getQuestById(questIds.get(i)), questTimes.get(i));
@@ -101,7 +102,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         if (data.contains("amountsCompletedQuests")) {
             final List<String> questIds = data.getStringList("amountsCompletedQuests");
             final List<Integer> questAmounts = data.getIntegerList("amountsCompleted");
-            final ConcurrentHashMap<BukkitQuest, Integer> amountsCompleted = quester.getAmountsCompleted();
+            final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmounts.get(i));
@@ -114,10 +115,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final ConcurrentSkipListSet<BukkitQuest> completedQuests = quester.getCompletedQuests();
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
-                for (final BukkitQuest q : plugin.getLoadedQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getId().equals(s)) {
                         if (!quester.getCompletedQuests().contains(q)) {
                             completedQuests.add(q);
@@ -138,7 +139,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             final int maxSize = Math.min(questIds.size(), questStages.size());
-            final ConcurrentHashMap<BukkitQuest, Integer> currentQuests = quester.getCurrentQuests();
+            final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     currentQuests.put(plugin.getQuestById(questIds.get(i)), questStages.get(i));
@@ -154,11 +155,11 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
-                final BukkitQuest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
+                final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
                 if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
-                final BukkitStage stage = quester.getCurrentStage(quest);
+                final Stage stage = quester.getCurrentStage(quest);
                 if (stage == null) {
                     quest.completeQuest(quester);
                     plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + uniqueId + "\" on Quest \"" 
@@ -376,7 +377,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final BukkitQuester quester) throws Exception {
+    public void saveQuester(final Quester quester) throws Exception {
         final FileConfiguration data = quester.getBaseData();
         try {
             data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
@@ -434,7 +435,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
      * 
      * @return file if exists, otherwise null
      */
-    public File getDataFile(final BukkitQuester quester) {
+    public File getDataFile(final Quester quester) {
         File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID().toString() + ".yml");
         if (!dataFile.exists()) {
             final OfflinePlayer p = quester.getOfflinePlayer();

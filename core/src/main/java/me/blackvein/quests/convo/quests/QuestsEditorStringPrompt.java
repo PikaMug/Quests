@@ -14,13 +14,13 @@ package me.blackvein.quests.convo.quests;
 
 import org.bukkit.conversations.ConversationContext;
 
-import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsStringPrompt;
 
 public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     private final ConversationContext context;
-    private QuestFactory factory;
+    private BukkitQuestFactory factory;
     
     public QuestsEditorStringPrompt(final ConversationContext context) {
         this.context = context;
@@ -30,7 +30,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     }
     
     @Deprecated
-    public QuestsEditorStringPrompt(final ConversationContext context, final QuestFactory factory) {
+    public QuestsEditorStringPrompt(final ConversationContext context, final BukkitQuestFactory factory) {
         this.context = context;
         this.factory = factory;
     }
@@ -44,7 +44,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
         return context;
     }
     
-    public QuestFactory getQuestFactory() {
+    public BukkitQuestFactory getQuestFactory() {
         return factory;
     }
     

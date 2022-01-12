@@ -12,21 +12,20 @@
 
 package me.blackvein.quests.tasks;
 
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
-import me.blackvein.quests.util.Lang;
-
 public class ActionTimer extends BukkitRunnable {
 
-    private final BukkitQuester quester;
-    private final BukkitQuest quest;
+    private final Quester quester;
+    private final Quest quest;
     private final int time;
     private final boolean last;
 
-    public ActionTimer(final BukkitQuester quester, final BukkitQuest quest, final int time, final boolean last) {
+    public ActionTimer(final Quester quester, final Quest quest, final int time, final boolean last) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;

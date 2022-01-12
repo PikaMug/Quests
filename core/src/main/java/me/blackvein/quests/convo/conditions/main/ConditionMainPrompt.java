@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.conditions.main;
 
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.BukkitStage;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.conditions.BukkitCondition;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -204,14 +204,14 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Condition c : plugin.getLoadedConditions()) {
+                for (final BukkitCondition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionNamePrompt(context);
                     }
                 }
-                final List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
-                if (actionNames.contains(input)) {
+                final List<String> conditionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
+                if (conditionNames.contains(input)) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorBeingEdited"));
                     return new ConditionNamePrompt(context);
                 }
@@ -219,10 +219,10 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidQuestName"));
                     return new ConditionNamePrompt(context);
                 }
-                actionNames.remove((String) context.getSessionData(CK.C_NAME));
+                conditionNames.remove((String) context.getSessionData(CK.C_NAME));
                 context.setSessionData(CK.C_NAME, input);
-                actionNames.add(input);
-                plugin.getConditionFactory().setNamesOfConditionsBeingEdited(actionNames);
+                conditionNames.add(input);
+                plugin.getConditionFactory().setNamesOfConditionsBeingEdited(conditionNames);
             }
             return new ConditionMainPrompt(context);
         }
@@ -482,8 +482,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final BukkitQuest q : plugin.getLoadedQuests()) {
-                    for (final BukkitStage s : q.getStages()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

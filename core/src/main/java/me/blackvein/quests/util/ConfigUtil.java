@@ -13,7 +13,7 @@
 package me.blackvein.quests.util;
 
 import me.blackvein.quests.Dependencies;
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -100,7 +100,7 @@ public class ConfigUtil {
                 + loc.getZ();
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final BukkitQuest quest, final Player player) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -115,7 +115,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final BukkitQuest quest) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -135,7 +135,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String parseString(final String s, final BukkitQuest quest) {
+    public static String parseString(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -147,7 +147,7 @@ public class ConfigUtil {
         return parsed;
     }
     
-    public static String parseString(final String s, final BukkitQuest quest, final Player player) {
+    public static String parseString(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s, quest);
         if (Dependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);

@@ -12,12 +12,13 @@
 
 package me.blackvein.quests.actions;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.QuestMob;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.main.ActionMainPrompt;
 import me.blackvein.quests.convo.actions.menu.ActionMenuPrompt;
+import me.blackvein.quests.entity.BukkitQuestMob;
+import me.blackvein.quests.entity.QuestMob;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
@@ -53,7 +54,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ActionFactory implements ConversationAbandonedListener {
+public class BukkitActionFactory implements ActionFactory, ConversationAbandonedListener {
 
     private final Quests plugin;
     private final ConversationFactory conversationFactory;
@@ -64,7 +65,7 @@ public class ActionFactory implements ConversationAbandonedListener {
     private Map<UUID, Block> selectedTeleportLocations = new HashMap<>();
     private List<String> editingActionNames = new LinkedList<>();
 
-    public ActionFactory(final Quests plugin) {
+    public BukkitActionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
         this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
@@ -151,68 +152,68 @@ public class ActionFactory implements ConversationAbandonedListener {
         return new ActionMainPrompt(context);
     }
     
-    public void loadData(final BukkitAction event, final ConversationContext context) {
-        if (event.message != null) {
-            context.setSessionData(CK.E_MESSAGE, event.message);
+    public void loadData(final Action event, final ConversationContext context) {
+        if (event.getMessage() != null) {
+            context.setSessionData(CK.E_MESSAGE, event.getMessage());
         }
-        if (event.clearInv) {
+        if (event.isClearInv()) {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
         } else {
             context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
         }
-        if (event.failQuest) {
+        if (event.isFailQuest()) {
             context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
         } else {
             context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
         }
-        if (event.items != null && !event.items.isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(event.items);
+        if (event.getItems() != null && !event.getItems().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(event.getItems());
             context.setSessionData(CK.E_ITEMS, items);
         }
-        if (event.explosions != null && !event.explosions.isEmpty()) {
+        if (event.getExplosions() != null && !event.getExplosions().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
-            for (final Location loc : event.explosions) {
+            for (final Location loc : event.getExplosions()) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_EXPLOSIONS, locs);
         }
-        if (event.effects != null && !event.effects.isEmpty()) {
+        if (event.getEffects() != null && !event.getEffects().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
             final LinkedList<String> effs = new LinkedList<>();
-            for (final Entry<Location, Effect> e : event.effects.entrySet()) {
+            for (final Entry<Location, Effect> e : event.getEffects().entrySet()) {
                 locs.add(ConfigUtil.getLocationInfo(e.getKey()));
                 effs.add(e.getValue().toString());
             }
             context.setSessionData(CK.E_EFFECTS, effs);
             context.setSessionData(CK.E_EFFECTS_LOCATIONS, locs);
         }
-        if (event.stormWorld != null) {
-            context.setSessionData(CK.E_WORLD_STORM, event.stormWorld.getName());
-            context.setSessionData(CK.E_WORLD_STORM_DURATION, event.stormDuration);
+        if (event.getStormWorld() != null) {
+            context.setSessionData(CK.E_WORLD_STORM, event.getStormWorld().getName());
+            context.setSessionData(CK.E_WORLD_STORM_DURATION, event.getStormDuration());
         }
-        if (event.thunderWorld != null) {
-            context.setSessionData(CK.E_WORLD_THUNDER, event.thunderWorld.getName());
-            context.setSessionData(CK.E_WORLD_THUNDER_DURATION, event.thunderDuration);
+        if (event.getThunderWorld() != null) {
+            context.setSessionData(CK.E_WORLD_THUNDER, event.getThunderWorld().getName());
+            context.setSessionData(CK.E_WORLD_THUNDER_DURATION, event.getThunderDuration());
         }
-        if (event.mobSpawns != null && !event.mobSpawns.isEmpty()) {
+        if (event.getMobSpawns() != null && !event.getMobSpawns().isEmpty()) {
             final LinkedList<String> questMobs = new LinkedList<>();
-            for (final QuestMob questMob : event.mobSpawns) {
+            for (final QuestMob questMob : event.getMobSpawns()) {
                 questMobs.add(questMob.serialize());
             }
             context.setSessionData(CK.E_MOB_TYPES, questMobs);
         }
-        if (event.lightningStrikes != null && !event.lightningStrikes.isEmpty()) {
+        if (event.getLightningStrikes() != null && !event.getLightningStrikes().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
-            for (final Location loc : event.lightningStrikes) {
+            for (final Location loc : event.getLightningStrikes()) {
                 locs.add(ConfigUtil.getLocationInfo(loc));
             }
             context.setSessionData(CK.E_LIGHTNING, locs);
         }
-        if (event.potionEffects != null && !event.potionEffects.isEmpty()) {
+        if (event.getPotionEffects() != null && !event.getPotionEffects().isEmpty()) {
             final LinkedList<String> types = new LinkedList<>();
             final LinkedList<Long> durations = new LinkedList<>();
             final LinkedList<Integer> mags = new LinkedList<>();
-            for (final PotionEffect pe : event.potionEffects) {
+            for (final PotionEffect pe : event.getPotionEffects()) {
                 types.add(pe.getType().getName());
                 durations.add((long) pe.getDuration());
                 mags.add(pe.getAmplifier());
@@ -221,25 +222,25 @@ public class ActionFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.E_POTION_DURATIONS, durations);
             context.setSessionData(CK.E_POTION_STRENGTH, mags);
         }
-        if (event.hunger > -1) {
-            context.setSessionData(CK.E_HUNGER, event.hunger);
+        if (event.getHunger() > -1) {
+            context.setSessionData(CK.E_HUNGER, event.getHunger());
         }
-        if (event.saturation > -1) {
-            context.setSessionData(CK.E_SATURATION, event.saturation);
+        if (event.getSaturation() > -1) {
+            context.setSessionData(CK.E_SATURATION, event.getSaturation());
         }
-        if (event.health > -1) {
-            context.setSessionData(CK.E_HEALTH, event.health);
+        if (event.getHealth() > -1) {
+            context.setSessionData(CK.E_HEALTH, event.getHealth());
         }
-        if (event.teleport != null) {
-            context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(event.teleport));
+        if (event.getTeleport() != null) {
+            context.setSessionData(CK.E_TELEPORT, ConfigUtil.getLocationInfo(event.getTeleport()));
         }
-        if (event.commands != null) {
-            context.setSessionData(CK.E_COMMANDS, event.commands);
+        if (event.getCommands() != null) {
+            context.setSessionData(CK.E_COMMANDS, event.getCommands());
         }
-        if (event.timer > 0) {
-            context.setSessionData(CK.E_TIMER, event.timer);
+        if (event.getTimer() > 0) {
+            context.setSessionData(CK.E_TIMER, event.getTimer());
         }
-        if (event.cancelTimer) {
+        if (event.isCancelTimer()) {
             context.setSessionData(CK.E_CANCEL_TIMER, true);
         }
     }
@@ -312,8 +313,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted action " + action);
         }
-        for (final BukkitQuester q : plugin.getOfflineQuesters()) {
-            for (final BukkitQuest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -387,7 +388,7 @@ public class ActionFactory implements ConversationAbandonedListener {
                     if (ss == null) {
                         ss = section.createSection("mob-spawns." + count);
                     }
-                    final QuestMob questMob = QuestMob.fromString(s);
+                    final QuestMob questMob = BukkitQuestMob.fromString(s);
                     if (questMob.getName() != null) {
                         ss.set("name", questMob.getName());
                     }
@@ -469,8 +470,8 @@ public class ActionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved action " + context.getSessionData(CK.E_NAME));
         }
-        for (final BukkitQuester q : plugin.getOfflineQuesters()) {
-            for (final BukkitQuest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }

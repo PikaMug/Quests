@@ -10,18 +10,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests;
+package me.blackvein.quests.quests;
 
+import me.blackvein.quests.CustomObjective;
+import me.blackvein.quests.Options;
+import me.blackvein.quests.Planner;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Requirements;
+import me.blackvein.quests.Rewards;
+import me.blackvein.quests.Stage;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
 import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.quests.BukkitOptions;
-import me.blackvein.quests.quests.BukkitPlanner;
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.quests.BukkitRequirements;
-import me.blackvein.quests.quests.BukkitRewards;
-import me.blackvein.quests.quests.BukkitStage;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.FakeConversable;
@@ -59,7 +62,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class QuestFactory implements ConversationAbandonedListener {
+public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedListener {
 
     private final Quests plugin;
     private final ConversationFactory conversationFactory;
@@ -69,7 +72,7 @@ public class QuestFactory implements ConversationAbandonedListener {
     private Set<UUID> selectingNpcs = new HashSet<>();
     private List<String> editingQuestNames = new LinkedList<>();
     
-    public QuestFactory(final Quests plugin) {
+    public BukkitQuestFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
         this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
@@ -182,7 +185,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (q.getGUIDisplay() != null) {
             context.setSessionData(CK.Q_GUIDISPLAY, q.getGUIDisplay());
         }
-        final BukkitRequirements requirements = q.getRequirements();
+        final Requirements requirements = q.getRequirements();
         if (requirements.getMoney() != 0) {
             context.setSessionData(CK.REQ_MONEY, requirements.getMoney());
         }
@@ -194,11 +197,11 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
         }
         if (!requirements.getNeededQuests().isEmpty()) {
-            final List<String> ids = requirements.getNeededQuests().stream().map(BukkitQuest::getId).collect(Collectors.toList());
+            final List<String> ids = requirements.getNeededQuests().stream().map(Quest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST, ids);
         }
         if (!requirements.getBlockQuests().isEmpty()) {
-            final List<String> ids = requirements.getBlockQuests().stream().map(BukkitQuest::getId).collect(Collectors.toList());
+            final List<String> ids = requirements.getBlockQuests().stream().map(Quest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
         }
         if (!requirements.getMcmmoSkills().isEmpty()) {
@@ -227,7 +230,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (!requirements.getDetailsOverride().isEmpty()) {
             context.setSessionData(CK.REQ_FAIL_MESSAGE, requirements.getDetailsOverride());
         }
-        final BukkitRewards rewards = q.getRewards();
+        final Rewards rewards = q.getRewards();
         if (rewards.getMoney() != 0) {
             context.setSessionData(CK.REW_MONEY, rewards.getMoney());
         }
@@ -273,7 +276,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         if (!rewards.getDetailsOverride().isEmpty()) {
             context.setSessionData(CK.REW_DETAILS_OVERRIDE, rewards.getDetailsOverride());
         }
-        final BukkitPlanner pln = q.getPlanner();
+        final Planner pln = q.getPlanner();
         if (pln.getStart() != null) {
             context.setSessionData(CK.PLN_START_DATE, pln.getStart());
         }
@@ -287,7 +290,7 @@ public class QuestFactory implements ConversationAbandonedListener {
             context.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
         }
         context.setSessionData(CK.PLN_OVERRIDE, pln.getOverride());
-        final BukkitOptions opt = q.getOptions();
+        final Options opt = q.getOptions();
         context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
         context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
         context.setSessionData(CK.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
@@ -299,7 +302,7 @@ public class QuestFactory implements ConversationAbandonedListener {
         context.setSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS, opt.canHandleOfflinePlayers());
         // Stages (Objectives)
         int index = 1;
-        for (final BukkitStage stage : q.getStages()) {
+        for (final Stage stage : q.getStages()) {
             final String pref = "stage" + index;
             index++;
             context.setSessionData(pref, Boolean.TRUE);
@@ -454,7 +457,7 @@ public class QuestFactory implements ConversationAbandonedListener {
                     colors.add(MiscUtil.getPrettyDyeColorName(d));
 
                 }
-                final LinkedList<Integer> amounts = new LinkedList<>(stage.sheepNumToShear);
+                final LinkedList<Integer> amounts = new LinkedList<>(stage.getSheepNumToShear());
                 context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
                 context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
             }

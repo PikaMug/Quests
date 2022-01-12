@@ -12,11 +12,10 @@
 
 package me.blackvein.quests.convo.actions.main;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.QuestMob;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.BukkitStage;
-import me.blackvein.quests.actions.BukkitAction;
+import me.blackvein.quests.Stage;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -25,6 +24,7 @@ import me.blackvein.quests.convo.actions.tasks.PlayerPrompt;
 import me.blackvein.quests.convo.actions.tasks.TimerPrompt;
 import me.blackvein.quests.convo.actions.tasks.WeatherPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
+import me.blackvein.quests.entity.BukkitQuestMob;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -147,7 +147,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 final StringBuilder text = new StringBuilder();
                 if (types != null) {
                     for (final String s : types) {
-                        final QuestMob qm = QuestMob.fromString(s);
+                        final BukkitQuestMob qm = BukkitQuestMob.fromString(s);
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                 .append(qm.getType().name())
                                 .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "").append(ChatColor.GRAY)
@@ -181,7 +181,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final ActionsEditorPostOpenNumericPromptEvent event = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        final ActionsEditorPostOpenNumericPromptEvent event
+                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": "
@@ -271,7 +272,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
@@ -352,7 +353,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     final StringBuilder text = new StringBuilder();
                     if (types != null) {
                         for (final String type : types) {
-                            final QuestMob qm = QuestMob.fromString(type);
+                            final BukkitQuestMob qm = BukkitQuestMob.fromString(type);
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                     .append(qm.getType().name())
                                     .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
@@ -404,11 +405,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobPrompt extends ActionsEditorNumericPrompt {
 
-        private QuestMob questMob;
+        private BukkitQuestMob questMob;
         private Integer itemIndex = -1;
         private final Integer mobIndex;
 
-        public ActionMobPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
+        public ActionMobPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -549,7 +550,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (questMob == null) {
-                questMob = new QuestMob();
+                questMob = new BukkitQuestMob();
             }
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
@@ -656,10 +657,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobNamePrompt extends ActionsEditorStringPrompt {
 
-        private final QuestMob questMob;
+        private final BukkitQuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobNamePrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
+        public ActionMobNamePrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -677,7 +678,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final ActionsEditorPostOpenStringPromptEvent event
+                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
             if (context.getPlugin() != null) {
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
@@ -705,10 +707,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobTypePrompt extends ActionsEditorStringPrompt {
 
-        private final QuestMob questMob;
+        private final BukkitQuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobTypePrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
+        public ActionMobTypePrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -768,10 +770,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobAmountPrompt extends ActionsEditorStringPrompt {
 
-        private final QuestMob questMob;
+        private final BukkitQuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobAmountPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
+        public ActionMobAmountPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -825,10 +827,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobLocationPrompt extends ActionsEditorStringPrompt {
 
-        private final QuestMob questMob;
+        private final BukkitQuestMob questMob;
         private final Integer mobIndex;
 
-        public ActionMobLocationPrompt(final ConversationContext context, final int mobIndex, final QuestMob questMob) {
+        public ActionMobLocationPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -887,11 +889,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
     public class ActionMobDropPrompt extends ActionsEditorStringPrompt {
 
-        private final QuestMob questMob;
+        private final BukkitQuestMob questMob;
         private final Integer mobIndex;
         private final Integer invIndex;
 
-        public ActionMobDropPrompt(final ConversationContext context, final int invIndex, final int mobIndex, final QuestMob questMob) {
+        public ActionMobDropPrompt(final ConversationContext context, final int invIndex, final int mobIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
             this.mobIndex = mobIndex;
@@ -1013,8 +1015,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final BukkitQuest q : plugin.getLoadedQuests()) {
-                    for (final BukkitStage s : q.getStages()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class Condition implements Comparable<Condition> {
+public class BukkitCondition implements Condition, Comparable<BukkitCondition> {
 
     private final Quests plugin;
     private String name = "";
@@ -39,105 +39,128 @@ public class Condition implements Comparable<Condition> {
     private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<>();
     private LinkedList<String> placeholdersCheckValue = new LinkedList<>();
 
-    public Condition(final Quests plugin) {
+    public BukkitCondition(final Quests plugin) {
         this.plugin = plugin;
     }
     
     @Override
-    public int compareTo(final Condition condition) {
+    public int compareTo(final BukkitCondition condition) {
         return name.compareTo(condition.getName());
     }
 
+    @Override
     public String getName() {
         return name;
     }
-    
+
+    @Override
     public void setName(final String name) {
         this.name = name;
     }
-    
+
+    @Override
     public boolean isFailQuest() {
         return failQuest;
     }
 
+    @Override
     public void setFailQuest(final boolean failQuest) {
         this.failQuest = failQuest;
     }
-    
+
+    @Override
     public LinkedList<String> getEntitiesWhileRiding() {
         return entitiesWhileRiding;
     }
-    
+
+    @Override
     public void setEntitiesWhileRiding(final LinkedList<String> entitiesWhileRiding) {
         this.entitiesWhileRiding = entitiesWhileRiding;
     }
-    
+
+    @Override
     public LinkedList<Integer> getNpcsWhileRiding() {
         return npcsWhileRiding;
     }
-    
+
+    @Override
     public void setNpcsWhileRiding(final LinkedList<Integer> npcsWhileRiding) {
         this.npcsWhileRiding = npcsWhileRiding;
     }
-    
+
+    @Override
     public LinkedList<String> getPermissions() {
         return permissions;
     }
-    
+
+    @Override
     public void setPermissions(final LinkedList<String> permissions) {
         this.permissions = permissions;
     }
 
+    @Override
     public LinkedList<ItemStack> getItemsWhileHoldingMainHand() {
         return itemsWhileHoldingMainHand;
     }
 
+    @Override
     public void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand) {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
     }
-    
+
+    @Override
     public LinkedList<String> getWorldsWhileStayingWithin() {
         return worldsWhileStayingWithin;
     }
-    
+
+    @Override
     public void setWorldsWhileStayingWithin(final LinkedList<String> worldsWhileStayingWithin) {
         this.worldsWhileStayingWithin = worldsWhileStayingWithin;
     }
-    
+
+    @Override
     public LinkedList<String> getBiomesWhileStayingWithin() {
         return biomesWhileStayingWithin;
     }
-    
+
+    @Override
     public void setBiomesWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
         this.biomesWhileStayingWithin = biomesWhileStayingWithin;
     }
-    
+
+    @Override
     public LinkedList<String> getRegionsWhileStayingWithin() {
         return regionsWhileStayingWithin;
     }
-    
+
+    @Override
     public void setRegionsWhileStayingWithin(final LinkedList<String> biomesWhileStayingWithin) {
         this.regionsWhileStayingWithin = biomesWhileStayingWithin;
     }
-    
+
+    @Override
     public LinkedList<String> getPlaceholdersCheckIdentifier() {
         return placeholdersCheckIdentifier;
     }
-    
+
+    @Override
     public void setPlaceholdersCheckIdentifier(final LinkedList<String> placeholdersCheckIdentifier) {
         this.placeholdersCheckIdentifier = placeholdersCheckIdentifier;
     }
-    
+
+    @Override
     public LinkedList<String> getPlaceholdersCheckValue() {
         return placeholdersCheckValue;
     }
-    
+
+    @Override
     public void setPlaceholdersCheckValue(final LinkedList<String> placeholdersCheckValue) {
         this.placeholdersCheckValue = placeholdersCheckValue;
     }
 
     @SuppressWarnings("deprecation")
-    public boolean check(final BukkitQuester quester, final BukkitQuest quest) {
+    @Override
+    public boolean check(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
         if (!entitiesWhileRiding.isEmpty()) {
             for (final String e : entitiesWhileRiding) {

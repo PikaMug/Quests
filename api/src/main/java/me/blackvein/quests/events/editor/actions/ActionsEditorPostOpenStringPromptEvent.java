@@ -12,10 +12,9 @@
 
 package me.blackvein.quests.events.editor.actions;
 
+import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
-
-import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {

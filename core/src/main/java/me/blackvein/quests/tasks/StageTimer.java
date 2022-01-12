@@ -12,17 +12,17 @@
 
 package me.blackvein.quests.tasks;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 
 public class StageTimer implements Runnable {
 
-    private final BukkitQuester quester;
+    private final Quester quester;
     private final Quests plugin;
-    private final BukkitQuest quest;
+    private final Quest quest;
 
-    public StageTimer(final Quests plugin, final BukkitQuester quester, final BukkitQuest quest) {
+    public StageTimer(final Quests plugin, final Quester quester, final Quest quest) {
         this.quester = quester;
         this.quest = quest;
         this.plugin = plugin;

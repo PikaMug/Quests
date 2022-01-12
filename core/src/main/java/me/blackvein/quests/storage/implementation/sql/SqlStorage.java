@@ -12,9 +12,9 @@
 
 package me.blackvein.quests.storage.implementation.sql;
 
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestData;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import me.blackvein.quests.storage.implementation.sql.connection.ConnectionFactory;
@@ -221,8 +221,8 @@ public class SqlStorage implements StorageImplementation {
     }
     
     @Override
-    public BukkitQuester loadQuester(final UUID uniqueId) throws Exception {
-        final BukkitQuester quester = plugin.getQuester(uniqueId);
+    public Quester loadQuester(final UUID uniqueId) throws Exception {
+        final Quester quester = plugin.getQuester(uniqueId);
         if (quester == null) {
             return null;
         }
@@ -248,21 +248,21 @@ public class SqlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final BukkitQuester quester) throws Exception {
+    public void saveQuester(final Quester quester) throws Exception {
         final UUID uniqueId = quester.getUUID();
         final String lastKnownName = quester.getLastKnownName();
         final String oldLastKnownName = getQuesterLastKnownName(uniqueId);
-        final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
+        final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
-        final Set<String> completedQuests = quester.getCompletedQuests().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(BukkitQuest::getId).collect(Collectors.toSet());
+        final Set<String> completedQuests = quester.getCompletedQuests().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(Quest::getId).collect(Collectors.toSet());
         oldCompletedQuests.removeAll(completedQuests);
-        final Set<String> redoableQuests = quester.getCompletedTimes().keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
+        final Set<String> redoableQuests = quester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldRedoableQuests.removeAll(redoableQuests);
-        final Set<String> questData = quester.getQuestData().keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldQuestData = getQuesterQuestData(uniqueId).keySet().stream().map(BukkitQuest::getId).collect(Collectors.toSet());
+        final Set<String> questData = quester.getQuestData().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldQuestData = getQuesterQuestData(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldQuestData.removeAll(questData);
         
         try (final Connection c = connectionFactory.getConnection()) {
@@ -290,7 +290,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<BukkitQuest, Integer> entry : quester.getCurrentQuests().entrySet()) {
+                for (final Entry<Quest, Integer> entry : quester.getCurrentQuests().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
@@ -309,7 +309,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final BukkitQuest quest : quester.getCompletedQuests()) {
+                for (final Quest quest : quester.getCompletedQuests()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, quest.getId());
@@ -327,7 +327,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<BukkitQuest, Long> entry : quester.getCompletedTimes().entrySet()) {
+                for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
                     final int amount = quester.getAmountsCompleted().get(entry.getKey());
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
@@ -348,7 +348,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<BukkitQuest, QuestData> entry : quester.getQuestData().entrySet()) {
+                for (final Entry<Quest, QuestData> entry : quester.getQuestData().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_DATA_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
@@ -424,14 +424,14 @@ public class SqlStorage implements StorageImplementation {
         return null;
     }
     
-    public ConcurrentHashMap<BukkitQuest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<BukkitQuest, Integer> currentQuests = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final BukkitQuest quest = plugin.getQuestById(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             currentQuests.put(quest, rs.getInt("stageNum"));
                         }
@@ -442,15 +442,15 @@ public class SqlStorage implements StorageImplementation {
         return currentQuests;
     }
 
-    public ConcurrentHashMap<BukkitQuest, QuestData> getQuesterQuestData(final UUID uniqueId) throws Exception {
-        final BukkitQuester quester = plugin.getQuester(uniqueId);
-        final ConcurrentHashMap<BukkitQuest, QuestData> questData = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, QuestData> getQuesterQuestData(final UUID uniqueId) throws Exception {
+        final Quester quester = plugin.getQuester(uniqueId);
+        final ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_DATA_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final BukkitQuest quest = plugin.getQuestById(rs.getString("quest_id"));
+                        final Quest quest = plugin.getQuestById(rs.getString("quest_id"));
                         final QuestData data = new QuestData(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
                             data.blocksBroken.addAll(deserializeItemStackProgress(rs.getString("blocks_broken"),
@@ -497,14 +497,14 @@ public class SqlStorage implements StorageImplementation {
         return questData;
     }
     
-    public ConcurrentSkipListSet<BukkitQuest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
-        final ConcurrentSkipListSet<BukkitQuest> completedQuests = new ConcurrentSkipListSet<>();
+    public ConcurrentSkipListSet<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws Exception {
+        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final BukkitQuest quest = plugin.getQuestById(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             completedQuests.add(quest);
                         }
@@ -515,14 +515,14 @@ public class SqlStorage implements StorageImplementation {
         return completedQuests;
     }
     
-    public ConcurrentHashMap<BukkitQuest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<BukkitQuest, Long> completedTimes = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final BukkitQuest quest = plugin.getQuestById(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             completedTimes.put(quest, rs.getLong("lasttime"));
                         }
@@ -533,14 +533,14 @@ public class SqlStorage implements StorageImplementation {
         return completedTimes;
     }
     
-    public ConcurrentHashMap<BukkitQuest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws Exception {
-        final ConcurrentHashMap<BukkitQuest, Integer> amountsCompleted = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws Exception {
+        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final BukkitQuest quest = plugin.getQuestById(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             amountsCompleted.put(quest, rs.getInt("amount"));
                         }

@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
@@ -43,13 +43,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class ConditionFactory implements ConversationAbandonedListener {
+public class BukkitConditionFactory implements ConditionFactory, ConversationAbandonedListener {
 
     private final Quests plugin;
     private final ConversationFactory conversationFactory;
     private List<String> editingConditionNames = new LinkedList<>();
 
-    public ConditionFactory(final Quests plugin) {
+    public BukkitConditionFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
         this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
@@ -85,7 +85,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         return new ConditionMainPrompt(context);
     }
     
-    public void loadData(final Condition condition, final ConversationContext context) {
+    public void loadData(final BukkitCondition condition, final ConversationContext context) {
         if (condition.isFailQuest()) {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
         } else {
@@ -179,8 +179,8 @@ public class ConditionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted condition " + condition);
         }
-        for (final BukkitQuester q : plugin.getOfflineQuesters()) {
-            for (final BukkitQuest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -201,7 +201,7 @@ public class ConditionFactory implements ConversationAbandonedListener {
         if (context.getSessionData(CK.C_OLD_CONDITION) != null
                 && !((String) Objects.requireNonNull(context.getSessionData(CK.C_OLD_CONDITION))).isEmpty()) {
             data.set("conditions." + context.getSessionData(CK.C_OLD_CONDITION), null);
-            final Collection<Condition> temp = plugin.getLoadedConditions();
+            final Collection<BukkitCondition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
             plugin.setLoadedConditions(temp);
         }
@@ -267,8 +267,8 @@ public class ConditionFactory implements ConversationAbandonedListener {
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved condition " + context.getSessionData(CK.C_NAME));
         }
-        for (final BukkitQuester q : plugin.getOfflineQuesters()) {
-            for (final BukkitQuest quest : q.getCurrentQuests().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }

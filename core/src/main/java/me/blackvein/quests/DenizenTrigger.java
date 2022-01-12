@@ -12,15 +12,13 @@
 
 package me.blackvein.quests;
 
-import me.blackvein.quests.player.BukkitQuester;
-
 public class DenizenTrigger {
     private final Quests plugin;
     
     public DenizenTrigger(final Quests plugin) {
         this.plugin = plugin;
     }
-    public boolean runDenizenScript(final String scriptName, final BukkitQuester quester) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester) {
         if (scriptName == null) {
             return false;
         }

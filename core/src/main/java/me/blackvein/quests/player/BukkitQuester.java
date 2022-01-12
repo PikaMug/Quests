@@ -19,6 +19,8 @@ import com.gmail.nossr50.util.player.UserManager;
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.CustomRequirement;
 import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.Objective;
+import me.blackvein.quests.Planner;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.QuestData;
 import me.blackvein.quests.Quester;
@@ -35,10 +37,7 @@ import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.quests.BukkitObjective;
-import me.blackvein.quests.quests.BukkitPlanner;
 import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.quests.BukkitRequirements;
-import me.blackvein.quests.quests.BukkitStage;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.tasks.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
@@ -91,7 +90,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
+public class BukkitQuester implements Quester {
 
     private final Quests plugin;
     private UUID id;
@@ -100,7 +99,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     protected int questPoints = 0;
     private String compassTargetQuestId;
     private long lastNotifiedCondition = 0L;
-    protected ConcurrentHashMap<Integer, BukkitQuest> timers = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 6361484975823846780L;
@@ -169,13 +168,13 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
             return b;
         }
     };
-    protected ConcurrentHashMap<BukkitQuest, Long> completedTimes = new ConcurrentHashMap<>();
-    protected ConcurrentHashMap<BukkitQuest, Integer> amountsCompleted = new ConcurrentHashMap<BukkitQuest, Integer>() {
+    protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 5475202358792520975L;
 
         @Override
-        public Integer put(final @NotNull BukkitQuest key, final @NotNull Integer val) {
+        public Integer put(final @NotNull Quest key, final @NotNull Integer val) {
             final Integer data = super.put(key, val);
             updateJournal();
             return data;
@@ -195,17 +194,17 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
 
         @Override
-        public void putAll(final Map<? extends BukkitQuest, ? extends Integer> m) {
+        public void putAll(final Map<? extends Quest, ? extends Integer> m) {
             super.putAll(m);
             updateJournal();
         }
     };
-    protected ConcurrentHashMap<BukkitQuest, QuestData> questData = new ConcurrentHashMap<BukkitQuest, QuestData>() {
+    protected ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<Quest, QuestData>() {
 
         private static final long serialVersionUID = -4607112433003926066L;
 
         @Override
-        public QuestData put(final @NotNull BukkitQuest key, final @NotNull QuestData val) {
+        public QuestData put(final @NotNull Quest key, final @NotNull QuestData val) {
             final QuestData data = super.put(key, val);
             updateJournal();
             return data;
@@ -225,7 +224,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
 
         @Override
-        public void putAll(final Map<? extends BukkitQuest, ? extends QuestData> m) {
+        public void putAll(final Map<? extends Quest, ? extends QuestData> m) {
             super.putAll(m);
             updateJournal();
         }
@@ -248,40 +247,48 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
             this.lastKnownName = getOfflinePlayer().getName();
         }
     }
-    
+
     @Override
-    public int compareTo(final BukkitQuester quester) {
+    public int compareTo(final Quester quester) {
         return id.compareTo(quester.getUUID());
     }
 
+    @Override
     public UUID getUUID() {
         return id;
     }
 
+    @Override
     public void setUUID(final UUID id) {
         this.id = id;
     }
 
+    @Override
     public String getQuestIdToTake() {
         return questIdToTake;
     }
 
+    @Override
     public void setQuestIdToTake(final String questIdToTake) {
         this.questIdToTake = questIdToTake;
     }
-    
+
+    @Override
     public String getLastKnownName() {
         return lastKnownName;
     }
 
+    @Override
     public void setLastKnownName(final String lastKnownName) {
         this.lastKnownName = lastKnownName;
     }
-    
+
+    @Override
     public int getQuestPoints() {
         return questPoints;
     }
 
+    @Override
     public void setQuestPoints(final int questPoints) {
         this.questPoints = questPoints;
     }
@@ -291,6 +298,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @return Quest or null
      */
+    @Override
     public BukkitQuest getCompassTarget() {
         return compassTargetQuestId != null ? plugin.getQuestById(compassTargetQuestId) : null;
     }
@@ -300,77 +308,95 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @param quest The target quest
      */
-    public void setCompassTarget(final BukkitQuest quest) {
+    @Override
+    public void setCompassTarget(final Quest quest) {
         compassTargetQuestId = quest.getId();
     }
 
-    public ConcurrentHashMap<Integer, BukkitQuest> getTimers() {
+    @Override
+    public ConcurrentHashMap<Integer, Quest> getTimers() {
         return timers;
     }
 
-    public void setTimers(final ConcurrentHashMap<Integer, BukkitQuest> timers) {
+    @Override
+    public void setTimers(final ConcurrentHashMap<Integer, Quest> timers) {
         this.timers = timers;
     }
-    
+
+    @Override
     public void removeTimer(final Integer timerId) {
         this.timers.remove(timerId);
     }
 
-    public ConcurrentHashMap<BukkitQuest, Integer> getCurrentQuests() {
+    @Override
+    public ConcurrentHashMap<Quest, Integer> getCurrentQuests() {
         return currentQuests;
     }
 
-    public void setCurrentQuests(final ConcurrentHashMap<BukkitQuest, Integer> currentQuests) {
+    @Override
+    public void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests) {
         this.currentQuests = currentQuests;
     }
 
-    public ConcurrentSkipListSet<BukkitQuest> getCompletedQuests() {
+    @Override
+    public ConcurrentSkipListSet<Quest> getCompletedQuests() {
         return completedQuests;
     }
 
-    public void setCompletedQuests(final ConcurrentSkipListSet<BukkitQuest> completedQuests) {
+    @Override
+    public void setCompletedQuests(final ConcurrentSkipListSet<Quest> completedQuests) {
         this.completedQuests = completedQuests;
     }
 
-    public ConcurrentHashMap<BukkitQuest, Long> getCompletedTimes() {
+    @Override
+    public ConcurrentHashMap<Quest, Long> getCompletedTimes() {
         return completedTimes;
     }
 
-    public void setCompletedTimes(final ConcurrentHashMap<BukkitQuest, Long> completedTimes) {
+    @Override
+    public void setCompletedTimes(final ConcurrentHashMap<Quest, Long> completedTimes) {
         this.completedTimes = completedTimes;
     }
 
-    public ConcurrentHashMap<BukkitQuest, Integer> getAmountsCompleted() {
+    @Override
+    public ConcurrentHashMap<Quest, Integer> getAmountsCompleted() {
         return amountsCompleted;
     }
 
-    public void setAmountsCompleted(final ConcurrentHashMap<BukkitQuest, Integer> amountsCompleted) {
+    @Override
+    public void setAmountsCompleted(final ConcurrentHashMap<Quest, Integer> amountsCompleted) {
         this.amountsCompleted = amountsCompleted;
     }
 
-    public ConcurrentHashMap<BukkitQuest, QuestData> getQuestData() {
+    @Override
+    public ConcurrentHashMap<Quest, QuestData> getQuestData() {
         return questData;
     }
 
-    public void setQuestData(final ConcurrentHashMap<BukkitQuest, QuestData> questData) {
+    @Override
+    public void setQuestData(final ConcurrentHashMap<Quest, QuestData> questData) {
         this.questData = questData;
     }
 
+    @Override
     public Player getPlayer() {
         return plugin.getServer().getPlayer(id);
     }
 
+    @Override
     public OfflinePlayer getOfflinePlayer() {
         return plugin.getServer().getOfflinePlayer(id);
     }
-    
+
+    @Override
     public void sendMessage(final String message) {
         if (getPlayer() == null || !getPlayer().isOnline() || message.trim().isEmpty()) {
             return;
         }
         getPlayer().sendMessage(message);
     }
-    
+
+    @Override
     public Stage getCurrentStage(final Quest quest) {
         if (currentQuests.containsKey(quest)) {
             return quest.getStage(currentQuests.get(quest));
@@ -378,8 +404,9 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         return null;
     }
 
-    public QuestData getQuestData(final BukkitQuest quest) {
-        for (final BukkitQuest q : questData.keySet()) {
+    @Override
+    public QuestData getQuestData(final Quest quest) {
+        for (final Quest q : questData.keySet()) {
             if (q.getId().equals(quest.getId())) {
                 return questData.get(q);
             }
@@ -389,11 +416,13 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
         return new QuestData(this);
     }
-    
+
+    @Override
     public boolean hasJournal() {
         return getJournal() != null;
     }
-    
+
+    @Override
     public ItemStack getJournal() {
         if (getPlayer() == null || !getPlayer().isOnline()) {
             return null;
@@ -405,7 +434,8 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
         return null;
     }
-    
+
+    @Override
     public int getJournalIndex() {
         if (getPlayer() == null || !getPlayer().isOnline()) {
             return -1;
@@ -421,6 +451,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         return -1;
     }
 
+    @Override
     public void updateJournal() {
         if (getPlayer() == null) {
             return;
@@ -443,7 +474,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param ignoreRequirements Whether to ignore Requirements
      */
     @SuppressWarnings("deprecation")
-    public void takeQuest(final BukkitQuest quest, final boolean ignoreRequirements) {
+    public void takeQuest(final Quest quest, final boolean ignoreRequirements) {
         if (quest == null) {
             return;
         }
@@ -454,7 +485,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
         final OfflinePlayer offlinePlayer = getOfflinePlayer();
         if (offlinePlayer.isOnline()) {
-            final BukkitPlanner pln = quest.getPlanner();
+            final Planner pln = quest.getPlanner();
             final long currentTime = System.currentTimeMillis();
             final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
             final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
@@ -688,7 +719,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param message Message to inform player, can be left null or empty
      * @since 3.8.6
      */
-    public void quitQuest(final BukkitQuest quest, final String message) {
+    public void quitQuest(final Quest quest, final String message) {
         quitQuest(quest, new String[] {message});
     }
     
@@ -699,7 +730,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param messages Messages to inform player, can be left null or empty
      * @since 3.8.6
      */
-    public void quitQuest(final BukkitQuest quest, final String[] messages) {
+    public void quitQuest(final Quest quest, final String[] messages) {
         if (quest == null) {
             return;
         }
@@ -716,11 +747,11 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         updateJournal();
     }
     
-    public LinkedList<String> getCurrentRequirements(final BukkitQuest quest, final boolean ignoreOverrides) {
+    public LinkedList<String> getCurrentRequirements(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
             return new LinkedList<>();
         }
-        final BukkitRequirements requirements = quest.getRequirements();
+        final Requirements requirements = quest.getRequirements();
         if (!ignoreOverrides) {
             if (requirements.getDetailsOverride() != null && !requirements.getDetailsOverride().isEmpty()) {
                 final LinkedList<String> current = new LinkedList<>();
@@ -757,7 +788,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                 finishedRequirements.add(ChatColor.GRAY + "" + requirements.getQuestPoints() + " " + Lang.get("questPoints"));
             }
         }
-        for (final BukkitQuest q : requirements.getNeededQuests()) {
+        for (final Quest q : requirements.getNeededQuests()) {
             if (q != null) {
                 if (getCompletedQuests().contains(q)) {
                     finishedRequirements.add(ChatColor.GREEN + q.getName());
@@ -766,7 +797,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                 }
             }
         }
-        for (final BukkitQuest q : requirements.getBlockQuests()) {
+        for (final Quest q : requirements.getBlockQuests()) {
             if (q != null) {
                 if (completedQuests.contains(q) || currentQuests.containsKey(q)) {
                     current.add(ChatColor.RED + quest.getName());
@@ -855,7 +886,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @return List of detailed objectives
      */
     @SuppressWarnings("deprecation")
-    public LinkedList<String> getCurrentObjectives(final BukkitQuest quest, final boolean ignoreOverrides) {
+    public LinkedList<String> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
             plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
             return new LinkedList<>();
@@ -881,7 +912,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
             return objectives;
         }
         final QuestData data = getQuestData(quest);
-        final BukkitStage stage = getCurrentStage(quest);
+        final Stage stage = getCurrentStage(quest);
         final LinkedList<String> objectives = new LinkedList<>();
         for (final ItemStack e : stage.getBlocksToBreak()) {
             for (final ItemStack e2 : data.blocksBroken) {
@@ -1322,13 +1353,13 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     /**
      * Get current objectives for a quest, both finished and unfinished
      * 
-     * @deprecated Use {@link #getCurrentObjectives(BukkitQuest, boolean)}
+     * @deprecated Use {@link #getCurrentObjectives(Quest, boolean)}
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
      * @return List of detailed objectives
      */
     @Deprecated
-    public LinkedList<String> getObjectives(final BukkitQuest quest, final boolean ignoreOverrides) {
+    public LinkedList<String> getObjectives(final Quest quest, final boolean ignoreOverrides) {
         return getCurrentObjectives(quest, ignoreOverrides);
     }
     
@@ -1340,13 +1371,13 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
      * killNPC, tameMob, shearSheep, password, reachLocation
      * 
-     * @deprecated Use {@link BukkitStage#containsObjective(ObjectiveType)}
+     * @deprecated Use {@link Stage#containsObjective(ObjectiveType)}
      * @param quest The quest to check objectives of
      * @param name The type of objective to check for
      * @return true if stage contains specified objective
      */
     @Deprecated
-    public boolean containsObjective(final BukkitQuest quest, final String name) {
+    public boolean containsObjective(final Quest quest, final String name) {
         if (quest == null || getCurrentStage(quest) == null) {
             return false;
         }
@@ -1360,7 +1391,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param name The exact name of custom objective to check for
      * @return true if stage contains specified objective
      */
-    public boolean hasCustomObjective(final BukkitQuest quest, final String name) {
+    public boolean hasCustomObjective(final Quest quest, final String name) {
         if (quest == null || getCurrentStage(quest) == null) {
             return false;
         }
@@ -1379,7 +1410,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param itemStack The block being broken
      */
     @SuppressWarnings("deprecation")
-    public void breakBlock(final BukkitQuest quest, final ItemStack itemStack) {
+    public void breakBlock(final Quest quest, final ItemStack itemStack) {
         itemStack.setAmount(0);
         ItemStack broken = itemStack;
         ItemStack toBreak = itemStack;
@@ -1462,7 +1493,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                     // Multiplayer
                     final ItemStack finalBroken = broken;
                     final ItemStack finalToBreak = toBreak;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksBroken.set(getQuestData(quest).blocksBroken
                                 .indexOf(finalBroken), newBroken);
                         q.finishObjective(quest, new BukkitObjective(type, itemStack, finalToBreak), null, null, null, null, null,
@@ -1485,7 +1516,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param itemStack The block being damaged
      */
     @SuppressWarnings("deprecation")
-    public void damageBlock(final BukkitQuest quest, final ItemStack itemStack) {
+    public void damageBlock(final Quest quest, final ItemStack itemStack) {
         itemStack.setAmount(0);
         ItemStack damaged = itemStack;
         ItemStack toDamage = itemStack;
@@ -1549,7 +1580,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                     // Multiplayer
                     final ItemStack finalDamaged = damaged;
                     final ItemStack finalToDamage = toDamage;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksDamaged.set(getQuestData(quest).blocksDamaged
                                 .indexOf(finalDamaged), newDamaged);
                         q.finishObjective(quest, new BukkitObjective(type, itemStack, finalToDamage), null, null, null, null, null,
@@ -1572,7 +1603,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param itemStack The block being placed
      */
     @SuppressWarnings("deprecation")
-    public void placeBlock(final BukkitQuest quest, final ItemStack itemStack) {
+    public void placeBlock(final Quest quest, final ItemStack itemStack) {
         itemStack.setAmount(0);
         ItemStack placed = itemStack;
         ItemStack toPlace = itemStack;
@@ -1635,7 +1666,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                     // Multiplayer
                     final ItemStack finalPlaced = placed;
                     final ItemStack finalToPlace = toPlace;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksPlaced.set(getQuestData(quest).blocksPlaced
                                 .indexOf(finalPlaced), newPlaced);
                         q.finishObjective(quest, new BukkitObjective(type, itemStack, finalToPlace), null, null, null, null, null,
@@ -1658,7 +1689,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param itemStack The block being used
      */
     @SuppressWarnings("deprecation")
-    public void useBlock(final BukkitQuest quest, final ItemStack itemStack) {
+    public void useBlock(final Quest quest, final ItemStack itemStack) {
         itemStack.setAmount(0);
         ItemStack used = itemStack;
         ItemStack toUse = itemStack;
@@ -1721,7 +1752,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                     // Multiplayer
                     final ItemStack finalUsed = used;
                     final ItemStack finalToUse = toUse;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksUsed.set(getQuestData(quest).blocksUsed
                                 .indexOf(finalUsed), newUsed);
                         q.finishObjective(quest, new BukkitObjective(type, itemStack, finalToUse), null, null, null, null, null, null,
@@ -1744,7 +1775,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param itemStack The block being cut
      */
     @SuppressWarnings("deprecation")
-    public void cutBlock(final BukkitQuest quest, final ItemStack itemStack) {
+    public void cutBlock(final Quest quest, final ItemStack itemStack) {
         itemStack.setAmount(0);
         ItemStack cut = itemStack;
         ItemStack toCut = itemStack;
@@ -1807,7 +1838,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                     // Multiplayer
                     final ItemStack finalCut = cut;
                     final ItemStack finalToCut = toCut;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).blocksCut.set(getQuestData(quest).blocksCut.indexOf(finalCut), newCut);
                         q.finishObjective(quest, new BukkitObjective(type, itemStack, finalToCut), null, null, null, null, null, null,
                                 null);
@@ -1828,7 +1859,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being crafted
      * @param itemStack The item being crafted
      */
-    public void craftItem(final BukkitQuest quest, final ItemStack itemStack) {
+    public void craftItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsCrafted) {
@@ -1861,7 +1892,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
 
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsCrafted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -1886,7 +1917,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being smelted
      * @param itemStack The item being smelted
      */
-    public void smeltItem(final BukkitQuest quest, final ItemStack itemStack) {
+    public void smeltItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsSmelted) {
@@ -1919,7 +1950,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
 
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsSmelted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -1944,7 +1975,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being enchanted
      * @param itemStack The book being enchanted
      */
-    public void enchantBook(final BukkitQuest quest, final ItemStack itemStack,
+    public void enchantBook(final Quest quest, final ItemStack itemStack,
                             final Map<Enchantment, Integer> enchantsToAdd) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
@@ -1980,7 +2011,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
 
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -2005,7 +2036,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being enchanted
      * @param itemStack The item being enchanted
      */
-    public void enchantItem(final BukkitQuest quest, final ItemStack itemStack) {
+    public void enchantItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         if (!itemStack.getType().equals(Material.BOOK)) {
@@ -2046,7 +2077,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
 
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsEnchanted.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -2071,7 +2102,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being brewed
      * @param itemStack The item being brewed
      */
-    public void brewItem(final BukkitQuest quest, final ItemStack itemStack) {
+    public void brewItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsBrewed) {
@@ -2104,7 +2135,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
 
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsBrewed.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -2129,7 +2160,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the item is being consumed
      * @param itemStack The item being consumed
      */
-    public void consumeItem(final BukkitQuest quest, final ItemStack itemStack) {
+    public void consumeItem(final Quest quest, final ItemStack itemStack) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsConsumed) {
@@ -2162,7 +2193,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
                     
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsConsumed.set(items.indexOf(found), found);
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -2188,7 +2219,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param npc The NPC being delivered to
      * @param itemStack The item being delivered
      */
-    public void deliverToNPC(final BukkitQuest quest, final NPC npc, final ItemStack itemStack) {
+    public void deliverToNPC(final Quest quest, final NPC npc, final ItemStack itemStack) {
         if (npc == null) {
             return;
         }
@@ -2243,7 +2274,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             null, null, null);
                     
                     // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                         q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
                         q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
                                 null, null, null, null);
@@ -2274,7 +2305,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the NPC is being interacted with
      * @param npc The NPC being interacted with
      */
-    public void interactWithNPC(final BukkitQuest quest, final NPC npc) {
+    public void interactWithNPC(final Quest quest, final NPC npc) {
         if (!getCurrentStage(quest).getCitizensToInteract().contains(npc.getId())) {
             return;
         }
@@ -2293,7 +2324,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                             new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
             
             // Multiplayer
-            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 q.getQuestData(quest).citizensInteracted.set(index, true);
                 q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
@@ -2312,7 +2343,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the NPC is being killed
      * @param npc The NPC being killed
      */
-    public void killNPC(final BukkitQuest quest, final NPC npc) {
+    public void killNPC(final Quest quest, final NPC npc) {
         if (!getCurrentStage(quest).getCitizensToKill().contains(npc.getId())) {
             return;
         }
@@ -2334,7 +2365,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).citizensNumKilled.set(index, getQuestData(quest).citizensNumKilled
                             .get(index));
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
@@ -2354,12 +2385,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @param quest The quest for which the fish is being caught
      */
-    public void milkCow(final BukkitQuest quest) {
+    public void milkCow(final Quest quest) {
         final QuestData questData = getQuestData(quest);
         if (questData == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2384,7 +2415,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setCowsMilked(cowsToMilk);
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
@@ -2403,12 +2434,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @param quest The quest for which the fish is being caught
      */
-    public void catchFish(final BukkitQuest quest) {
+    public void catchFish(final Quest quest) {
         final QuestData questData = getQuestData(quest);
         if (questData == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2433,7 +2464,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setFishCaught(fishToCatch);
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
@@ -2454,12 +2485,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param killedLocation The optional location to kill at
      * @param entityType The mob to be killed
      */
-    public void killMob(final BukkitQuest quest, final Location killedLocation, final EntityType entityType) {
+    public void killMob(final Quest quest, final Location killedLocation, final EntityType entityType) {
         final QuestData questData = getQuestData(quest);
         if (entityType == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage.getMobsToKill() == null) {
             return;
         }
@@ -2504,7 +2535,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, currentStage, (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, currentStage, (final Quester q) -> {
                     q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
@@ -2524,12 +2555,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the player is being killed
      * @param player The player to be killed
      */
-    public void killPlayer(final BukkitQuest quest, final Player player) {
+    public void killPlayer(final Quest quest, final Player player) {
         final QuestData questData = getQuestData(quest);
         if (questData == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2553,7 +2584,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled());
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
@@ -2573,7 +2604,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the location is being reached
      * @param location The location being reached
      */
-    public void reachLocation(final BukkitQuest quest, final Location location) {
+    public void reachLocation(final Quest quest, final Location location) {
         if (getQuestData(quest) == null || getCurrentStage(quest) == null
                 || getCurrentStage(quest).getLocationsToReach() == null
                 || getQuestData(quest).locationsReached == null) {
@@ -2616,7 +2647,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         
                         // Multiplayer
                         final int finalIndex = index;
-                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                             q.getQuestData(quest).locationsReached.set(finalIndex, true);
                             q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                                     new ItemStack(Material.AIR, 1)), null, null, null, toReach, null,
@@ -2652,12 +2683,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the mob is being tamed
      * @param entityType The type of mob being tamed
      */
-    public void tameMob(final BukkitQuest quest, final EntityType entityType) {
+    public void tameMob(final Quest quest, final EntityType entityType) {
         final QuestData questData = getQuestData(quest);
         if (entityType == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage.getMobsToTame() == null) {
             return;
         }
@@ -2683,7 +2714,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).mobsTamed.set(index, newMobsToTame);
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
@@ -2703,12 +2734,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the sheep is being sheared
      * @param color The wool color of the sheep being sheared
      */
-    public void shearSheep(final BukkitQuest quest, final DyeColor color) {
+    public void shearSheep(final Quest quest, final DyeColor color) {
         final QuestData questData = getQuestData(quest);
         if (color == null) {
             return;
         }
-        final BukkitStage currentStage = getCurrentStage(quest);
+        final Stage currentStage = getCurrentStage(quest);
         if (currentStage.getSheepToShear() == null) {
             return;
         }
@@ -2734,7 +2765,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                         new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
                 
                 // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                     q.getQuestData(quest).sheepSheared.set(index, newSheepSheared);
                     q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
@@ -2754,7 +2785,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest for which the password is being entered
      * @param evt The event during which the password was entered
      */
-    public void sayPassword(final BukkitQuest quest, final AsyncPlayerChatEvent evt) {
+    public void sayPassword(final Quest quest, final AsyncPlayerChatEvent evt) {
         final ObjectiveType type = ObjectiveType.PASSWORD;
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
@@ -2773,7 +2804,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                                 new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
 
                         // Multiplayer
-                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final BukkitQuester q) -> {
+                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                             q.getQuestData(quest).passwordsSaid.set(finalIndex, true);
                             q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                                     new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
@@ -2814,7 +2845,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      *            Custom objective, if any. See {@link CustomObjective}
      */
     @SuppressWarnings("deprecation")
-    public void finishObjective(final BukkitQuest quest, final BukkitObjective objective, final EntityType mob,
+    public void finishObjective(final Quest quest, final Objective objective, final EntityType mob,
                                 final String extra, final NPC npc, final Location location, final DyeColor color,
                                 final String pass, final CustomObjective co) {
         if (objective == null) {
@@ -3187,7 +3218,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     /**
      * Complete quest objective
      * 
-     * @deprecated Use {@link #finishObjective(BukkitQuest, BukkitObjective, EntityType,
+     * @deprecated Use {@link #finishObjective(Quest, Objective, EntityType,
      * String, NPC, Location, DyeColor, String, CustomObjective)}
      * 
      * @param quest
@@ -3216,7 +3247,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      *            See CustomObjective class
      */
     @Deprecated
-    public void finishObjective(final BukkitQuest quest, final String objective, final ItemStack increment,
+    public void finishObjective(final Quest quest, final String objective, final ItemStack increment,
                                 final ItemStack goal, final Enchantment enchantment, final EntityType mob,
                                 final String extra, final NPC npc, final Location location, final DyeColor color,
                                 final String pass, final CustomObjective co) {
@@ -3238,7 +3269,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest with the current stage being checked
      * @return true if all stage objectives are marked complete
      */
-    public boolean testComplete(final BukkitQuest quest) {
+    public boolean testComplete(final Quest quest) {
         for (final String s : getCurrentObjectives(quest, true)) {
             if (s.startsWith(ChatColor.GREEN.toString())) {
                 return false;
@@ -3254,7 +3285,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param stage Where first stage is '0'
      */
     @SuppressWarnings("deprecation")
-    public void addEmptiesFor(final BukkitQuest quest, final int stage) {
+    public void addEmptiesFor(final Quest quest, final int stage) {
         final QuestData data = new QuestData(this);
         data.setDoJournalUpdate(false);
         if (quest == null) {
@@ -3432,7 +3463,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest to get the last completed time of
      * @return Difference between now and then in milliseconds
      */
-    public long getCompletionDifference(final BukkitQuest quest) {
+    public long getCompletionDifference(final Quest quest) {
         final long currentTime = System.currentTimeMillis();
         final long lastTime;
         if (!completedTimes.containsKey(quest)) {
@@ -3445,24 +3476,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     }
     
     /**
-     * Get the difference between player cooldown and time since last completion of a quest
-     * 
-     * @deprecated Use {@link #getRemainingCooldown(BukkitQuest)}
-     * @param quest The quest to get the last completed time of
-     * @return Difference between now and then in milliseconds
-     */
-    @Deprecated
-    public long getCooldownDifference(final BukkitQuest quest) {
-        return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
-    }
-    
-    /**
      * Get the amount of time left before Quester may take a completed quest again
      * 
      * @param quest The quest to calculate the cooldown for
      * @return Length of time in milliseconds
      */
-    public long getRemainingCooldown(final BukkitQuest quest) {
+    public long getRemainingCooldown(final Quest quest) {
         return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
     }
 
@@ -3471,7 +3490,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         if (!currentQuests.isEmpty()) {
             final ArrayList<String> questIds = new ArrayList<>();
             final ArrayList<Integer> questStages = new ArrayList<>();
-            for (final BukkitQuest quest : currentQuests.keySet()) {
+            for (final Quest quest : currentQuests.keySet()) {
                 questIds.add(quest.getId());
                 questStages.add(currentQuests.get(quest));
             }
@@ -3479,7 +3498,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
             data.set("currentStages", questStages);
             data.set("quest-points", questPoints);
             final ConfigurationSection dataSec = data.createSection("questData");
-            for (final BukkitQuest quest : currentQuests.keySet()) {
+            for (final Quest quest : currentQuests.keySet()) {
                 if (quest.getName() == null || quest.getName().isEmpty()) {
                     plugin.getLogger().severe("Quest name was null or empty while loading data");
                     return null;
@@ -3578,7 +3597,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                 if (!questData.mobsTamed.isEmpty()) {
                     questSec.set("mob-tame-amounts", questData.mobsTamed);
                 }
-                final BukkitStage stage = getCurrentStage(quest);
+                final Stage stage = getCurrentStage(quest);
                 if (stage != null) {
                     if (stage.getFishToCatch() != null) {
                         questSec.set("fish-caught", questData.getFishCaught());
@@ -3623,7 +3642,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         if (!completedTimes.isEmpty()) {
             final List<String> questIds = new LinkedList<>();
             final List<Long> questTimes = new LinkedList<>();
-            for (final Entry<BukkitQuest, Long> entry : completedTimes.entrySet()) {
+            for (final Entry<Quest, Long> entry : completedTimes.entrySet()) {
                 questIds.add(entry.getKey().getId());
                 questTimes.add(entry.getValue());
             }
@@ -3633,7 +3652,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         if (!amountsCompleted.isEmpty()) {
             final List<String> questIds = new LinkedList<>();
             final List<Integer> questAmounts = new LinkedList<>();
-            for (final Entry<BukkitQuest, Integer> entry : amountsCompleted.entrySet()) {
+            for (final Entry<Quest, Integer> entry : amountsCompleted.entrySet()) {
                 questIds.add(entry.getKey().getId());
                 questAmounts.add(entry.getValue());
             }
@@ -3682,7 +3701,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * Initiate the stage timer
      * @param quest The quest of which the timer is for
      */
-    public void startStageTimer(final BukkitQuest quest) {
+    public void startStageTimer(final Quest quest) {
         if (getQuestData(quest).getDelayTimeLeft() > -1) {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new StageTimer(plugin, this, quest), 
                     (long) (getQuestData(quest).getDelayTimeLeft() * 0.02));
@@ -3704,7 +3723,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * Pause the stage timer. Useful when a player quits
      * @param quest The quest of which the timer is for
      */
-    public void stopStageTimer(final BukkitQuest quest) {
+    public void stopStageTimer(final Quest quest) {
         if (getQuestData(quest).getDelayTimeLeft() > -1) {
             getQuestData(quest).setDelayTimeLeft(getQuestData(quest).getDelayTimeLeft() - (System.currentTimeMillis() 
                     - getQuestData(quest).getDelayStartTime()));
@@ -3719,7 +3738,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest of which the timer is for
      * @return Remaining time in milliseconds
      */
-    public long getStageTime(final BukkitQuest quest) {
+    public long getStageTime(final Quest quest) {
         if (getQuestData(quest).getDelayTimeLeft() > -1) {
             return getQuestData(quest).getDelayTimeLeft() - (System.currentTimeMillis() 
                     - getQuestData(quest).getDelayStartTime());
@@ -3734,12 +3753,12 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @param quest The quest to check
      */
-    public void checkQuest(final BukkitQuest quest) {
+    public void checkQuest(final Quest quest) {
         if (quest != null) {
             boolean exists = false;
-            for (final BukkitQuest q : plugin.getLoadedQuests()) {
+            for (final Quest q : plugin.getLoadedQuests()) {
                 if (q.getId().equalsIgnoreCase(quest.getId())) {
-                    final BukkitStage stage = getCurrentStage(quest);
+                    final Stage stage = getCurrentStage(quest);
                     if (stage != null) {
                         quest.updateCompass(this, stage);
                         // TODO - decide whether or not to handle this
@@ -3821,16 +3840,16 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     /**
      * Force Quester to quit the specified quest (canceling any timers), then update Quest Journal<p>
      * 
-     * Does not save changes to disk. Consider {@link #quitQuest(BukkitQuest, String)} or {@link #quitQuest(BukkitQuest, String[])}
+     * Does not save changes to disk. Consider {@link #quitQuest(Quest, String)} or {@link #quitQuest(Quest, String[])}
      * 
      * @param quest The quest to quit
      */
-    public void hardQuit(final BukkitQuest quest) {
+    public void hardQuit(final Quest quest) {
         try {
             currentQuests.remove(quest);
             questData.remove(quest);
             if (!timers.isEmpty()) {
-                for (final Map.Entry<Integer, BukkitQuest> entry : timers.entrySet()) {
+                for (final Map.Entry<Integer, Quest> entry : timers.entrySet()) {
                     if (entry.getValue().getName().equals(quest.getName())) {
                         plugin.getServer().getScheduler().cancelTask(entry.getKey());
                         timers.remove(entry.getKey());
@@ -3849,7 +3868,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * 
      * @param quest The quest to remove
      */
-    public void hardRemove(final BukkitQuest quest) {
+    public void hardRemove(final Quest quest) {
         try {
             completedQuests.remove(quest);
         } catch (final Exception ex) {
@@ -3880,7 +3899,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param key The quest to set stage of
      * @param val The stage number to set
      */
-    public void hardStagePut(final BukkitQuest key, final Integer val) {
+    public void hardStagePut(final Quest key, final Integer val) {
         try {
             currentQuests.put(key, val);
         } catch (final Exception ex) {
@@ -3896,7 +3915,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param key The quest to set stage of
      * @param val The data to set
      */
-    public void hardDataPut(final BukkitQuest key, final QuestData val) {
+    public void hardDataPut(final Quest key, final QuestData val) {
         try {
             questData.put(key, val);
         } catch (final Exception ex) {
@@ -3942,8 +3961,8 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         if (!canUseCompass()) {
             return;
         }
-        for (final BukkitQuest quest : currentQuests.keySet()) {
-            final BukkitStage stage = getCurrentStage(quest);
+        for (final Quest quest : currentQuests.keySet()) {
+            final Stage stage = getCurrentStage(quest);
             if (stage != null && quest.updateCompass(this, stage)) {
                 break;
             }
@@ -3961,7 +3980,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             final LinkedList<String> list = currentQuests.keySet().stream()
-                    .sorted(Comparator.comparing(BukkitQuest::getName)).map(BukkitQuest::getId)
+                    .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
                     .collect(Collectors.toCollection(LinkedList::new));
             int index = 0;
             if (compassTargetQuestId != null) {
@@ -3974,9 +3993,9 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
                 }
             }
             if (list.size() > 0) {
-                final BukkitQuest quest = plugin.getQuestById(list.get(index));
+                final Quest quest = plugin.getQuestById(list.get(index));
                 compassTargetQuestId = quest.getId();
-                final BukkitStage stage = getCurrentStage(quest);
+                final Stage stage = getCurrentStage(quest);
                 if (stage != null) {
                     quest.updateCompass(BukkitQuester.this, stage);
                     if (notify) {
@@ -4012,40 +4031,21 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
     
     /**
      * Dispatch player event to fellow questers<p>
-     * 
-     * Accepted strings are: breakBlock, damageBlock, placeBlock, useBlock,
-     * cutBlock, craftItem, smeltItem, enchantItem, brewItem, consumeItem,
-     * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
-     * killNPC, tameMob, shearSheep, password, reachLocation
-     * 
-     * @deprecated Use {@link #dispatchMultiplayerEverything(BukkitQuest, ObjectiveType, BiFunction)}
-     *
-     * @param objectiveType The type of objective to progress
-     * @param fun The function to execute, the event call
-     */
-    @Deprecated
-    public void dispatchMultiplayerEverything(final BukkitQuest quest, final String objectiveType,
-                                              final BiFunction<BukkitQuester, BukkitQuest, Void> fun) {
-        dispatchMultiplayerEverything(quest, ObjectiveType.fromName(objectiveType), fun);
-    }
-    
-    /**
-     * Dispatch player event to fellow questers<p>
      *
      * @param type The type of objective to progress
      * @param fun The function to execute, the event call
      */
-    public Set<String> dispatchMultiplayerEverything(final BukkitQuest quest, final ObjectiveType type,
-                                                     final BiFunction<BukkitQuester, BukkitQuest, Void> fun) {
+    public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
+                                                     final BiFunction<Quester, Quest, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
             try {
                 if (quest.getOptions().getShareProgressLevel() == 1) {
-                    final List<BukkitQuester> mq = getMultiplayerQuesters(quest);
+                    final List<Quester> mq = getMultiplayerQuesters(quest);
                     if (mq == null) {
                         return appliedQuestIDs;
                     }
-                    for (final BukkitQuester q : mq) {
+                    for (final Quester q : mq) {
                         if (q == null) {
                             continue;
                         }
@@ -4081,15 +4081,15 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param currentStage The current stage of the quest
      * @param fun The function to execute, the event call
      */
-    public Set<String> dispatchMultiplayerObjectives(final BukkitQuest quest, final BukkitStage currentStage,
-                                                     final Function<BukkitQuester, Void> fun) {
+    public Set<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
+                                                     final Function<Quester, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest.getOptions().getShareProgressLevel() == 2) {
-            final List<BukkitQuester> mq = getMultiplayerQuesters(quest);
+            final List<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
                 return appliedQuestIDs;
             }
-            for (final BukkitQuester q : mq) {
+            for (final Quester q : mq) {
                 if (q == null) {
                     continue;
                 }
@@ -4109,11 +4109,11 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
      * @return Potentially empty list of Questers or null for invalid quest
      */
-    public List<BukkitQuester> getMultiplayerQuesters(final BukkitQuest quest) {
+    public List<Quester> getMultiplayerQuesters(final Quest quest) {
         if (quest == null) {
             return null;
         }
-        final List<BukkitQuester> mq = new LinkedList<>();
+        final List<Quester> mq = new LinkedList<>();
         if (plugin.getDependencies().getPartyProvider() != null) {
             final PartyProvider partyProvider = plugin.getDependencies().getPartyProvider();
             if (partyProvider != null) {
@@ -4202,7 +4202,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param giveReason Whether to inform Quester of unavailability
      * @return true if successful
      */
-    public boolean offerQuest(final BukkitQuest quest, final boolean giveReason) {
+    public boolean offerQuest(final Quest quest, final boolean giveReason) {
         if (quest == null) {
             return false;
         }
@@ -4241,7 +4241,7 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
      * @param giveReason Whether to inform Quester of unavailability
      * @return true if available
      */
-    public boolean canAcceptOffer(final BukkitQuest quest, final boolean giveReason) {
+    public boolean canAcceptOffer(final Quest quest, final boolean giveReason) {
         if (quest == null) {
             return false;
         }
@@ -4309,8 +4309,8 @@ public class BukkitQuester implements Quester, Comparable<BukkitQuester> {
         return true;
     }
     
-    public boolean meetsCondition(final BukkitQuest quest, final boolean giveReason) {
-        final BukkitStage stage = getCurrentStage(quest);
+    public boolean meetsCondition(final Quest quest, final boolean giveReason) {
+        final Stage stage = getCurrentStage(quest);
         if (stage != null && stage.getCondition() != null && !stage.getCondition().check(this, quest)) {
             if (stage.getCondition().isFailQuest()) {
                 if (giveReason) {

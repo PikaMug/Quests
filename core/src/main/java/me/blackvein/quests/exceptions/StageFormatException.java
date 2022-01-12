@@ -12,17 +12,17 @@
 
 package me.blackvein.quests.exceptions;
 
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 
 public class StageFormatException extends Exception {
     
     private static final long serialVersionUID = -8217391053042612896L;
     private final String message;
-    private final BukkitQuest quest;
+    private final Quest quest;
     private final int stage;
     
     
-    public StageFormatException(final String message, final BukkitQuest quest, final int stage) {
+    public StageFormatException(final String message, final Quest quest, final int stage) {
         super(message + ", see quest " + quest.getName() + " stage " + stage);
         this.message = message + ", see quest " + quest.getName() + " stage " + stage;
         this.quest = quest;
@@ -44,7 +44,7 @@ public class StageFormatException extends Exception {
      * 
      * @return The quest that an invalid stage id was set within.
      */
-    public BukkitQuest getQuest() {
+    public Quest getQuest() {
         return quest;
     }
 
