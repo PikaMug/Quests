@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests;
+package me.blackvein.quests.dependencies;
 
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
@@ -21,8 +21,10 @@ import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
+import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.listeners.NpcListener;
-import me.blackvein.quests.player.BukkitQuester;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.Lang;
@@ -44,7 +46,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class Dependencies {
+public class BukkitDependencies implements Dependencies {
     
     private final Quests plugin;
     private static Economy economy = null;
@@ -61,7 +63,7 @@ public class Dependencies {
     private static CitizensBooksAPI citizensBooks = null;
     private static PartiesAPI parties = null;
     
-    public Dependencies(final Quests plugin) {
+    public BukkitDependencies(final Quests plugin) {
         this.plugin = plugin;
     }
     
@@ -71,6 +73,7 @@ public class Dependencies {
                 plugin.getLogger().warning("Economy provider not found.");
             }
         }
+        placeholder.isEnabled();
         return economy;
     }
     
@@ -230,21 +233,6 @@ public class Dependencies {
         }
         return false;
     }
-    
-    void init() {
-        getCitizens();
-        getWorldGuardApi();
-        getDenizenApi();
-        getMcmmoClassic();
-        getHeroes();
-        getPhatLoots();
-        getPlaceholderApi();
-        getCitizensBooksApi();
-        getPartiesApi();
-        getPartyProvider();
-        getVaultEconomy();
-        getVaultPermission();
-    }
 
     private boolean setupEconomy() {
         try {
@@ -306,7 +294,7 @@ public class Dependencies {
         }
     }
     
-    public boolean runDenizenScript(final String scriptName, final BukkitQuester quester) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
     }
     
@@ -343,5 +331,20 @@ public class Dependencies {
     public boolean testSecondaryHeroesClass(final String secondaryClass, final UUID uuid) {
         final Hero hero = getHero(uuid);
         return hero.getSecondClass().getName().equalsIgnoreCase(secondaryClass);
+    }
+
+    public void init() {
+        getCitizens();
+        getWorldGuardApi();
+        getDenizenApi();
+        getMcmmoClassic();
+        getHeroes();
+        getPhatLoots();
+        getPlaceholderApi();
+        getCitizensBooksApi();
+        getPartiesApi();
+        getPartyProvider();
+        getVaultEconomy();
+        getVaultPermission();
     }
 }

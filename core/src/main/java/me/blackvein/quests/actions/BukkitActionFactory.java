@@ -340,7 +340,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         if (context.getSessionData(CK.E_OLD_EVENT) != null
                 && !((String) Objects.requireNonNull(context.getSessionData(CK.E_OLD_EVENT))).isEmpty()) {
             data.set(key + "." + context.getSessionData(CK.E_OLD_EVENT), null);
-            final Collection<BukkitAction> temp = plugin.getLoadedActions();
+            final Collection<Action> temp = plugin.getLoadedActions();
             temp.remove(plugin.getAction((String) context.getSessionData(CK.E_OLD_EVENT)));
             plugin.setLoadedActions(temp);
         }

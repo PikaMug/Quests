@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.quests.requirements;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomRequirement;
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
@@ -173,8 +173,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
-                            + (moneyReq > 1 ? plugin.getDependencies().getCurrency(true) 
-                            : plugin.getDependencies().getCurrency(false)) + ChatColor.GRAY + ")";
+                            + (moneyReq > 1 ? plugin.getDependencies().getVaultEconomy().currencyNamePlural()
+                            : plugin.getDependencies().getVaultEconomy().currencyNameSingular() + ChatColor.GRAY + ")");
                 }
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
@@ -854,7 +854,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
                     + ChatColor.DARK_PURPLE);
             boolean none = true;
-            for (final BukkitQuest q : plugin.getLoadedQuests()) {
+            for (final Quest q : plugin.getLoadedQuests()) {
                 text.append(q.getName()).append(", ");
                 none = false;
             }

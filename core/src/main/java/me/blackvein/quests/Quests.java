@@ -21,9 +21,13 @@ import me.blackvein.quests.actions.BukkitAction;
 import me.blackvein.quests.actions.BukkitActionFactory;
 import me.blackvein.quests.conditions.BukkitCondition;
 import me.blackvein.quests.conditions.BukkitConditionFactory;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.conditions.ConditionFactory;
+import me.blackvein.quests.config.BukkitSettings;
 import me.blackvein.quests.convo.misc.MiscStringPrompt;
 import me.blackvein.quests.convo.misc.NpcOfferQuestPrompt;
+import me.blackvein.quests.dependencies.BukkitDependencies;
+import me.blackvein.quests.dependencies.DenizenTrigger;
 import me.blackvein.quests.entity.BukkitQuestMob;
 import me.blackvein.quests.entity.QuestMob;
 import me.blackvein.quests.events.misc.MiscPostQuestAcceptEvent;
@@ -40,7 +44,9 @@ import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.listeners.UniteListener;
+import me.blackvein.quests.module.BukkitCustomObjective;
 import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.quests.BukkitQuest;
 import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.quests.BukkitStage;
 import me.blackvein.quests.statistics.Metrics;
@@ -135,8 +141,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     private final List<CustomReward> customRewards = new LinkedList<>();
     private Collection<Quester> questers = new ConcurrentSkipListSet<>();
     private final Collection<Quest> quests = new ConcurrentSkipListSet<>();
-    private Collection<BukkitAction> actions = new ConcurrentSkipListSet<>();
-    private Collection<BukkitCondition> conditions = new ConcurrentSkipListSet<>();
+    private Collection<Action> actions = new ConcurrentSkipListSet<>();
+    private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
     private LinkedList<Integer> questNpcIds = new LinkedList<>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
@@ -163,7 +169,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
         // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        settings = new Settings(this);
+        settings = new BukkitSettings(this);
         try {
             Class.forName("me.blackvein.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
@@ -182,7 +188,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         questFactory = new BukkitQuestFactory(this);
         actionFactory = new BukkitActionFactory(this);
         conditionFactory = new BukkitConditionFactory(this);
-        depends = new Dependencies(this);
+        depends = new BukkitDependencies(this);
         trigger = new DenizenTrigger(this);
         final Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SimplePie("language", Lang::getISO));
@@ -280,7 +286,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         return loading;
     }
 
-    public String getDetectedBukkitVersion() {
+    public String getDetectedServerSoftwareVersion() {
         return bukkitVersion;
     }
 
@@ -337,17 +343,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     /**
      * Get every Quest loaded in memory
      *
-     * @deprecated Use {@link #getLoadedQuests()}
-     * @return a list of all Quests
-     */
-    @Deprecated
-    public LinkedList<Quest> getQuests() {
-        return new LinkedList<>(quests);
-    }
-
-    /**
-     * Get every Quest loaded in memory
-     *
      * @return a collection of all Quests
      */
     public Collection<Quest> getLoadedQuests() {
@@ -357,20 +352,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     /**
      * Get every Action loaded in memory
      *
-     * @deprecated Use {@link #getLoadedActions()}
-     * @return a list of all Actions
-     */
-    @Deprecated
-    public LinkedList<BukkitAction> getActions() {
-        return new LinkedList<>(actions);
-    }
-
-    /**
-     * Get every Action loaded in memory
-     *
      * @return a collection of all Actions
      */
-    public Collection<BukkitAction> getLoadedActions() {
+    public Collection<Action> getLoadedActions() {
         return actions;
     }
 
@@ -380,7 +364,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @deprecated Use {@link #setLoadedActions(Collection)}
      */
     @Deprecated
-    public void setActions(final LinkedList<BukkitAction> actions) {
+    public void setActions(final LinkedList<Action> actions) {
         this.actions = actions;
     }
 
@@ -388,19 +372,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * Set every Action loaded in memory
      *
      */
-    public void setLoadedActions(final Collection<BukkitAction> actions) {
+    public void setLoadedActions(final Collection<Action> actions) {
         this.actions = actions;
-    }
-
-    /**
-     * Get every Action loaded in memory
-     *
-     * @deprecated Use {@link #getLoadedConditions()}
-     * @return a list of all Conditions
-     */
-    @Deprecated
-    public LinkedList<BukkitCondition> getConditions() {
-        return new LinkedList<>(conditions);
     }
 
     /**
@@ -408,7 +381,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      *
      * @return a collection of all Conditions
      */
-    public Collection<BukkitCondition> getLoadedConditions() {
+    public Collection<Condition> getLoadedConditions() {
         return conditions;
     }
 
@@ -418,7 +391,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @deprecated Use {@link #setLoadedConditions(Collection)}
      */
     @Deprecated
-    public void setConditions(final LinkedList<BukkitCondition> conditions) {
+    public void setConditions(final LinkedList<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -426,7 +399,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * Set every Condition loaded in memory
      *
      */
-    public void setLoadedConditions(final Collection<BukkitCondition> conditions) {
+    public void setLoadedConditions(final Collection<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -455,28 +428,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         final Quester q = new BukkitQuester(this, id);
         questers.add(q);
         return q;
-    }
-
-    /**
-     * Get every Quester that has ever played on this server
-     *
-     * @deprecated Use {@link #getOfflineQuesters()}
-     * @return a list of all Questers
-     */
-    @Deprecated
-    public LinkedList<Quester> getQuesters() {
-        return new LinkedList<>(questers);
-    }
-
-    /**
-     * Set every Quester that has ever played on this server
-     *
-     * @deprecated Use {@link #setOfflineQuesters(Collection)}
-     * @param questers a list of Questers
-     */
-    @Deprecated
-    public void setQuesters(final LinkedList<Quester> questers) {
-        this.questers = new ConcurrentSkipListSet<>(questers);
     }
 
     /**
@@ -879,7 +830,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                     if (config.contains("quests." + questKey + ".options")) {
                         loadQuestOptions(config, quest, questKey);
                     }
-                    quest.plugin = this;
+                    quest.setPlugin(this);
                     loadQuestStages(quest, config, questKey);
                     loadQuestRewards(config, quest, questKey);
                     quests.add(quest);
@@ -976,7 +927,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         final Class<? extends CustomRequirement> requirementClass = c.asSubclass(CustomRequirement.class);
                         final Constructor<? extends CustomRequirement> constructor = requirementClass.getConstructor();
                         final CustomRequirement requirement = constructor.newInstance();
-                        final Optional<CustomRequirement>oo = getCustomRequirement(requirement.getClass().getName());
+                        final Optional<CustomRequirement> oo = getCustomRequirement(requirement.getClass().getName());
                         oo.ifPresent(customRequirements::remove);
                         customRequirements.add(requirement);
                         final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
@@ -987,7 +938,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         final Class<? extends CustomReward> rewardClass = c.asSubclass(CustomReward.class);
                         final Constructor<? extends CustomReward> constructor = rewardClass.getConstructor();
                         final CustomReward reward = constructor.newInstance();
-                        final Optional<CustomReward>oo = getCustomReward(reward.getClass().getName());
+                        final Optional<CustomReward> oo = getCustomReward(reward.getClass().getName());
                         oo.ifPresent(customRewards::remove);
                         customRewards.add(reward);
                         final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
@@ -995,12 +946,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         count++;
                         getLogger().info("Loaded \"" + name + "\" by " + author);
                     } else if (CustomObjective.class.isAssignableFrom(c)) {
-                        final Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
-                        final Constructor<? extends CustomObjective> constructor = objectiveClass.getConstructor();
-                        final CustomObjective objective = constructor.newInstance();
-                        final Optional<CustomObjective>oo = getCustomObjective(objective.getClass().getName());
-                        if (oo.isPresent()) {
-                            HandlerList.unregisterAll(oo.get());
+                        final Class<? extends BukkitCustomObjective> objectiveClass = c.asSubclass(BukkitCustomObjective.class);
+                        final Constructor<? extends BukkitCustomObjective> constructor = objectiveClass.getConstructor();
+                        final BukkitCustomObjective objective = constructor.newInstance();
+                        final Optional<CustomObjective> oo = getCustomObjective(objective.getClass().getName());
+                        if (oo.isPresent() && oo.get() instanceof BukkitCustomObjective) {
+                            HandlerList.unregisterAll((BukkitCustomObjective)oo.get());
                             customObjectives.remove(oo.get());
                         }
                         customObjectives.add(objective);
@@ -1636,9 +1587,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 int fromOrder = (page - 1) * rows;
                 final List<Quest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {
-                    subQuests = getQuests().subList((fromOrder), (fromOrder + rows));
+                    subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), (fromOrder + rows));
                 } else {
-                    subQuests = getQuests().subList((fromOrder), quests.size());
+                    subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), quests.size());
                 }
                 fromOrder++;
                 for (final Quest q : subQuests) {
@@ -1786,7 +1737,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     @SuppressWarnings("deprecation")
     private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
             ActionFormatException {
-        final Quest quest = new Quest();
+        final Quest quest = new BukkitQuest(this);
         quest.setId(questKey);
         if (config.contains("quests." + questKey + ".name")) {
             quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
@@ -2461,7 +2412,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                     is = ItemUtil.processItemStack(s, breakAmounts.get(breakIndex), (short) 0);
                 }
                 if (Material.matchMaterial(s) != null) {
-                    oStage.addBlocksToBreak(is);
+                    oStage.addBlockToBreak(is);
                 } else {
                     throw new StageFormatException("break-block-names has invalid item name " + s, quest, stageNum);
                 }
@@ -3969,12 +3920,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                                 }
                             }
                             if (found.isPresent()) {
-                                oStage.customObjectives.add(found.get());
-                                oStage.customObjectiveCounts.add(Math.max(count, 0));
+                                oStage.addCustomObjectives(found.get());
+                                oStage.addCustomObjectiveCounts(Math.max(count, 0));
                                 final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
                                 for (final Entry<String,Object> prompt : found.get().getData()) {
                                     final Entry<String, Object> data = populateCustoms(sec2, prompt);
-                                    oStage.customObjectiveData.add(data);
+                                    oStage.addCustomObjectiveData(data);
                                 }
                             } else {
                                 throw new QuestFormatException(name + " custom objective not found for Stage "
@@ -4314,21 +4265,21 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param name Name of the action
      * @return Closest match or null if not found
      */
-    public BukkitAction getAction(final String name) {
+    public Action getAction(final String name) {
         if (name == null) {
             return null;
         }
-        for (final BukkitAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return a;
             }
         }
-        for (final BukkitAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
         }
-        for (final BukkitAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
@@ -4342,21 +4293,21 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param name Name of the condition
      * @return Closest match or null if not found
      */
-    public BukkitCondition getCondition(final String name) {
+    public Condition getCondition(final String name) {
         if (name == null) {
             return null;
         }
-        for (final BukkitCondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return c;
             }
         }
-        for (final BukkitCondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }
         }
-        for (final BukkitCondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }

@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo;
 
+import me.blackvein.quests.QuestsAPI;
 import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,8 +22,6 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import me.blackvein.quests.Quests;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +66,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
         if (context.getPlugin() == null) {
             return Lang.get("itemCreateCriticalError");
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+        if (!(context.getForWhom() instanceof Player) || !((QuestsAPI)context.getPlugin()).getSettings().canClickablePrompts()) {
             return input;
         }
         final String[] basicText = input.split("\n");

@@ -85,7 +85,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         return new ConditionMainPrompt(context);
     }
     
-    public void loadData(final BukkitCondition condition, final ConversationContext context) {
+    public void loadData(final Condition condition, final ConversationContext context) {
         if (condition.isFailQuest()) {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
         } else {
@@ -201,7 +201,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         if (context.getSessionData(CK.C_OLD_CONDITION) != null
                 && !((String) Objects.requireNonNull(context.getSessionData(CK.C_OLD_CONDITION))).isEmpty()) {
             data.set("conditions." + context.getSessionData(CK.C_OLD_CONDITION), null);
-            final Collection<BukkitCondition> temp = plugin.getLoadedConditions();
+            final Collection<Condition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
             plugin.setLoadedConditions(temp);
         }

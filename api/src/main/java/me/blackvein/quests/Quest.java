@@ -5,11 +5,18 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
 
 public interface Quest extends Comparable<Quest> {
+    Plugin getPlugin();
+
+    void setPlugin(Plugin plugin);
+
     String getId();
+
+    void setId(String id);
 
     String getName();
 

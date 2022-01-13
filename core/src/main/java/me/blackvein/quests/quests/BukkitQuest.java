@@ -64,6 +64,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -90,6 +91,10 @@ public class BukkitQuest implements Quest {
     private final BukkitRewards rewards = new BukkitRewards();
     private final BukkitOptions options = new BukkitOptions();
 
+    public BukkitQuest(final Quests plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public int compareTo(final Quest quest) {
         return id.compareTo(quest.getId());
@@ -99,8 +104,10 @@ public class BukkitQuest implements Quest {
         return plugin;
     }
 
-    public void setPlugin(Quests plugin) {
-        this.plugin = plugin;
+    public void setPlugin(Plugin plugin) {
+        if (plugin instanceof Quests) {
+            this.plugin = (Quests)plugin;
+        }
     }
 
     @Override
@@ -108,6 +115,7 @@ public class BukkitQuest implements Quest {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         if (plugin != null) {
             this.id = id;

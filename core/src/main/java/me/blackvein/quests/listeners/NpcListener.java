@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.util.ItemUtil;
@@ -64,8 +64,8 @@ public class NpcListener implements Listener {
         }
         if (!evt.getClicker().isConversing()) {
             final Player player = evt.getClicker();
-            final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
-            for (final BukkitQuest quest : quester.getCurrentQuests().keySet()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : quester.getCurrentQuests().keySet()) {
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
@@ -183,7 +183,7 @@ public class NpcListener implements Listener {
             }
             if (plugin.getQuestNpcIds().contains(evt.getNPC().getId())) {
                 boolean hasObjective = false;
-                for (final BukkitQuest quest : quester.getCurrentQuests().keySet()) {
+                for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
                         final int npcIndex
                                 = quester.getCurrentStage(quest).getCitizensToInteract().indexOf(evt.getNPC().getId());
@@ -196,8 +196,8 @@ public class NpcListener implements Listener {
                 }
                 if (!hasObjective) {
                     boolean hasAtLeastOneGUI = false;
-                    final LinkedList<BukkitQuest> npcQuests = new LinkedList<>();
-                    for (final BukkitQuest q : plugin.getLoadedQuests()) {
+                    final LinkedList<Quest> npcQuests = new LinkedList<>();
+                    for (final Quest q : plugin.getLoadedQuests()) {
                         if (quester.getCurrentQuests().containsKey(q))
                             continue;
                         if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
@@ -219,7 +219,7 @@ public class NpcListener implements Listener {
                         }
                     }
                     if (npcQuests.size() == 1) {
-                        final BukkitQuest q = npcQuests.get(0);
+                        final Quest q = npcQuests.get(0);
                         if (quester.canAcceptOffer(q, true)) {
                             quester.setQuestIdToTake(q.getId());
                             if (!plugin.getSettings().canAskConfirmation()) {
@@ -289,8 +289,8 @@ public class NpcListener implements Listener {
                 player = (Player) damager;
             }
             if (player != null) {
-                final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
-                for (final BukkitQuest quest : quester.getCurrentQuests().keySet()) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
+                for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -301,7 +301,7 @@ public class NpcListener implements Listener {
                     }
 
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                            (final BukkitQuester q, final BukkitQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
                                     q.killNPC(cq, evt.getNPC());
                                 }
@@ -312,8 +312,8 @@ public class NpcListener implements Listener {
         }
     }
 
-    private String extracted(final BukkitQuester quester) {
-        final BukkitQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
+    private String extracted(final Quester quester) {
+        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

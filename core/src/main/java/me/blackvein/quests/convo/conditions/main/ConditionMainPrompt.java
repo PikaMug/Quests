@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.conditions.main;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.Stage;
-import me.blackvein.quests.conditions.BukkitCondition;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -204,7 +204,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final BukkitCondition c : plugin.getLoadedConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionNamePrompt(context);

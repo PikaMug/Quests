@@ -10,8 +10,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests;
+package me.blackvein.quests.config;
 
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.Settings;
 import me.blackvein.quests.util.Lang;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -19,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Settings {
+public class BukkitSettings implements Settings {
     
     private final Quests plugin;
     private int acceptTimeout = 20;
@@ -46,7 +48,7 @@ public class Settings {
     private boolean translateSubCommands = false;
     private boolean updateCheck = true;
     
-    public Settings(final Quests plugin) {
+    public BukkitSettings(final Quests plugin) {
         this.plugin = plugin;
     }
     

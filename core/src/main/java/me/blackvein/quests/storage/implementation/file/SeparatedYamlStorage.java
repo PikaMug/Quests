@@ -394,7 +394,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
 
     @Override
     public String getQuesterLastKnownName(final UUID uniqueId) throws Exception {
-        BukkitQuester quester = plugin.getQuester(uniqueId);
+        Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {

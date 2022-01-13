@@ -14,14 +14,14 @@ package me.blackvein.quests.module;
 
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quest;
-import me.blackvein.quests.quests.BukkitObjective;
-import me.blackvein.quests.quests.BukkitQuest;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.BukkitStage;
+import me.blackvein.quests.Stage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
+import me.blackvein.quests.quests.BukkitObjective;
+import me.blackvein.quests.quests.BukkitQuest;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -165,9 +165,9 @@ public abstract class BukkitCustomObjective implements CustomObjective, Listener
     @Override
     public Map<String, Object> getDataForPlayer(final Player player, final CustomObjective customObj,
                                                 final Quest quest) {
-        final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
-            final BukkitStage currentStage = quester.getCurrentStage((BukkitQuest) quest);
+            final Stage currentStage = quester.getCurrentStage((BukkitQuest) quest);
             if (currentStage == null) {
                 return null;
             }
@@ -197,8 +197,8 @@ public abstract class BukkitCustomObjective implements CustomObjective, Listener
 
     @Override
     public void incrementObjective(final Player player, final CustomObjective obj, final int count, final Quest quest) {
-        final BukkitQuest bQuest = (BukkitQuest) quest;
-        final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
+        final Quest bQuest = (BukkitQuest) quest;
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             if (quester.hasCustomObjective(bQuest, obj.getName())) {
                 int index = -1;
@@ -232,7 +232,7 @@ public abstract class BukkitCustomObjective implements CustomObjective, Listener
 
                         // Multiplayer
                         final int finalIndex = index;
-                        quester.dispatchMultiplayerObjectives(bQuest, quester.getCurrentStage(bQuest), (final BukkitQuester q) -> {
+                        quester.dispatchMultiplayerObjectives(bQuest, quester.getCurrentStage(bQuest), (final Quester q) -> {
                             final int old = q.getQuestData(bQuest).customObjectiveCounts.get(finalIndex);
                             q.getQuestData(bQuest).customObjectiveCounts.set(finalIndex, old + count);
                             q.finishObjective(bQuest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),

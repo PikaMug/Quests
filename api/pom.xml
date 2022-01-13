@@ -15,7 +15,7 @@
     
     <repositories>
         <repository>
-            <!-- CitizensBooks, DungeonsXL, GPS, LocaleLib, mcMMO Classic, PhatLoots -->
+            <!-- CitizensBooks, DungeonsXL, GPS, mcMMO Classic, PhatLoots -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -129,39 +129,6 @@
             <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.PikaMug</groupId>
-            <artifactId>LocaleLib</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <!-- Do not update until Java 11 is min -->
-            <version>4.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.32</version>
-        </dependency>
     </dependencies>
     
     <build>
@@ -183,55 +150,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>false</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-                
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>me.*</include>
-                            <include>com.github.PikaMug:LocaleLib</include>
-                            <include>com.zaxxer:HikariCP</include>
-                            <include>org.slf4j:slf4j-simple</include>
-                            <include>org.slf4j:slf4j-api</include>
-                            <include>mysql</include>
-                        </includes>
-                    </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>me.pikamug.localelib</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.localelib</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.hikari</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.slf4j</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.slf4j</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.mysql</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.mysql</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
             </plugin>
         </plugins>
     </build>

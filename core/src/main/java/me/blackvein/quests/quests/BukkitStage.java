@@ -698,12 +698,20 @@ public class BukkitStage implements Stage {
         return customObjectives;
     }
 
+    public boolean addCustomObjectives(final CustomObjective customObjective) {
+        return customObjectives.add(customObjective);
+    }
+
     public void clearCustomObjectives() {
         customObjectives.clear();
     }
 
     public LinkedList<Integer> getCustomObjectiveCounts() {
         return customObjectiveCounts;
+    }
+
+    public boolean addCustomObjectiveCounts(final Integer customObjectiveCount) {
+        return customObjectiveCounts.add(customObjectiveCount);
     }
 
     public void clearCustomObjectiveCounts() {
@@ -720,6 +728,10 @@ public class BukkitStage implements Stage {
 
     public LinkedList<Entry<String, Object>> getCustomObjectiveData() {
         return customObjectiveData;
+    }
+
+    public boolean addCustomObjectiveData(final Entry<String, Object> customObjectiveDatum) {
+        return this.customObjectiveData.add(customObjectiveDatum);
     }
 
     public void clearCustomObjectiveData() {

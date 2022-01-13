@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class BukkitCondition implements Condition, Comparable<BukkitCondition> {
+public class BukkitCondition implements Condition {
 
     private final Quests plugin;
     private String name = "";
@@ -44,7 +44,7 @@ public class BukkitCondition implements Condition, Comparable<BukkitCondition> {
     }
     
     @Override
-    public int compareTo(final BukkitCondition condition) {
+    public int compareTo(final Condition condition) {
         return name.compareTo(condition.getName());
     }
 

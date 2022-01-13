@@ -275,9 +275,13 @@ public interface Stage {
 
     LinkedList<CustomObjective> getCustomObjectives();
 
+    boolean addCustomObjectives(final CustomObjective customObjective);
+
     void clearCustomObjectives();
 
     LinkedList<Integer> getCustomObjectiveCounts();
+
+    boolean addCustomObjectiveCounts(final Integer customObjectiveCount);
 
     void clearCustomObjectiveCounts();
 
@@ -286,6 +290,8 @@ public interface Stage {
     void clearCustomObjectiveDisplays();
 
     LinkedList<Map.Entry<String, Object>> getCustomObjectiveData();
+
+    boolean addCustomObjectiveData(final Map.Entry<String, Object> customObjectiveDatum);
 
     void clearCustomObjectiveData();
 

@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 
-public interface Condition {
+public interface Condition extends Comparable<Condition> {
     String getName();
 
     void setName(final String name);

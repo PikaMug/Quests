@@ -14,8 +14,8 @@ package me.blackvein.quests.convo.quests.stages;
 
 import me.blackvein.quests.CustomObjective;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.actions.BukkitAction;
-import me.blackvein.quests.conditions.BukkitCondition;
+import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -1438,7 +1438,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1450,8 +1450,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1505,7 +1505,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1517,8 +1517,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1572,7 +1572,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1584,8 +1584,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1639,7 +1639,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1651,8 +1651,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1706,7 +1706,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1718,8 +1718,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1773,7 +1773,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1785,8 +1785,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1915,7 +1915,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1927,8 +1927,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitAction found = null;
-                for (final BukkitAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -2058,7 +2058,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedConditions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final BukkitCondition c : plugin.getLoadedConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     text.append(ChatColor.GREEN).append("- ").append(c.getName()).append("\n");
                 }
             }
@@ -2070,8 +2070,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                BukkitCondition found = null;
-                for (final BukkitCondition c : plugin.getLoadedConditions()) {
+                Condition found = null;
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         found = c;
                         break;

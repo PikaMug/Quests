@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class BukkitAction implements Action, Comparable<BukkitAction> {
+public class BukkitAction implements Action {
 
     private final Quests plugin;
     private String name = "";
@@ -82,9 +82,9 @@ public class BukkitAction implements Action, Comparable<BukkitAction> {
     public BukkitAction(final Quests plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
-    public int compareTo(final BukkitAction action) {
+    public int compareTo(final Action action) {
         return name.compareTo(action.getName());
     }
 

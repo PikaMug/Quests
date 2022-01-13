@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffect;
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface Action {
+public interface Action extends Comparable<Action> {
     String getName();
 
     void setName(final String name);

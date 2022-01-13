@@ -119,22 +119,6 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     public void setSelectingNpcs(final Set<UUID> selectingNpcs) {
         this.selectingNpcs = selectingNpcs;
     }
-
-    /**
-     * @deprecated Use {@link#getNamesOfQuestsBeingEdited}
-     */
-    @Deprecated
-    public List<String> getNames() {
-        return editingQuestNames;
-    }
-
-    /**
-     * @deprecated Use {@link#setNamesOfQuestsBeingEdited}
-     */
-    @Deprecated
-    public void setNames(final List<String> names) {
-        this.editingQuestNames = names;
-    }
     
     public List<String> getNamesOfQuestsBeingEdited() {
         return editingQuestNames;
@@ -166,7 +150,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     }
     
     @SuppressWarnings("deprecation")
-    public void loadQuest(final ConversationContext context, final BukkitQuest q) {
+    public void loadQuest(final ConversationContext context, final Quest q) {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
         context.setSessionData(CK.Q_ID, q.getId());
         context.setSessionData(CK.Q_NAME, q.getName());

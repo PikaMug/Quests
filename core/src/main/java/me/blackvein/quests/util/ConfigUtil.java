@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.util;
 
-import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.dependencies.BukkitDependencies;
 import me.blackvein.quests.Quest;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -109,7 +109,7 @@ public class ConfigUtil {
                 Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }
         }
-        if (Dependencies.placeholder != null && player != null) {
+        if (BukkitDependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
         }
         return parsed.split("\n");
@@ -149,7 +149,7 @@ public class ConfigUtil {
     
     public static String parseString(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s, quest);
-        if (Dependencies.placeholder != null && player != null) {
+        if (BukkitDependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
         }
         return parsed;

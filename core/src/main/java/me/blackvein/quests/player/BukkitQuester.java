@@ -37,7 +37,6 @@ import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.quests.BukkitObjective;
-import me.blackvein.quests.quests.BukkitQuest;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.tasks.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
@@ -299,7 +298,7 @@ public class BukkitQuester implements Quester {
      * @return Quest or null
      */
     @Override
-    public BukkitQuest getCompassTarget() {
+    public Quest getCompassTarget() {
         return compassTargetQuestId != null ? plugin.getQuestById(compassTargetQuestId) : null;
     }
     
@@ -771,10 +770,10 @@ public class BukkitQuester implements Quester {
         final LinkedList<String> finishedRequirements = new LinkedList<>();
         final LinkedList<String> current = new LinkedList<>();
         final OfflinePlayer player = getPlayer();
-        if (requirements.getMoney() > 0) {
-            final String currency = plugin.getDependencies().getCurrency(requirements.getMoney() != 1);
-            if (plugin.getDependencies().getVaultEconomy() != null
-                    && plugin.getDependencies().getVaultEconomy().getBalance(player) >= requirements.getMoney()) {
+        if (requirements.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
+            final String currency = requirements.getMoney() > 1 ? plugin.getDependencies().getVaultEconomy()
+                    .currencyNamePlural() : plugin.getDependencies().getVaultEconomy().currencyNameSingular();
+            if (plugin.getDependencies().getVaultEconomy().getBalance(player) >= requirements.getMoney()) {
                 unfinishedRequirements.add(ChatColor.GREEN + "" + requirements.getMoney() + " " + currency);
             } else {
                 finishedRequirements.add(ChatColor.GRAY + "" + requirements.getMoney() + " " + currency);

@@ -165,7 +165,7 @@
         <dependency>
             <groupId>me.blackvein.quests</groupId>
             <artifactId>quests-api</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

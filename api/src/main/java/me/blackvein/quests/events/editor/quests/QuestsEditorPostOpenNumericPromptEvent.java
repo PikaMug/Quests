@@ -12,10 +12,9 @@
 
 package me.blackvein.quests.events.editor.quests;
 
+import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.HandlerList;
-
-import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import org.jetbrains.annotations.NotNull;
 
 public class QuestsEditorPostOpenNumericPromptEvent extends QuestsEditorEvent {
