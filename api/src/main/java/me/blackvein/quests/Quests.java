@@ -3164,16 +3164,18 @@ public class Quests extends JavaPlugin {
                                     + stageNum + ".sheep-to-shear");
                             final List<Integer> shearAmounts = config.getIntegerList("quests." + questKey
                                     + ".stages.ordered." + stageNum + ".sheep-amounts");
-                            for (String color : sheep) {
+                            for (String sheepColor : sheep) {
+                                final String originalColor = sheepColor;
                                 DyeColor dc = null;
-                                if (color.equalsIgnoreCase("NULL")) {
+                                if (sheepColor.equalsIgnoreCase("NULL")) {
                                     dc = DyeColor.WHITE;
                                 }
-                                color = color.replace(" ", "_");
+                                sheepColor = sheepColor.replace(" ", "_");
                                 try {
                                     if (dc == null) {
                                         for (final DyeColor val : DyeColor.values()) {
-                                            if (val.name().replace("_", "").equalsIgnoreCase(color.replace("_", ""))) {
+                                            if (val.name().replace("_", "").equalsIgnoreCase(sheepColor
+                                                    .replace("_", ""))) {
                                                 dc = val;
                                                 break;
                                             }
@@ -3185,45 +3187,45 @@ public class Quests extends JavaPlugin {
                                 if (dc != null) {
                                     oStage.sheepToShear.add(dc);
                                 // Legacy start -->
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_BLACK"))) {
                                     oStage.sheepToShear.add(DyeColor.BLACK);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_BLUE"))) {
                                     oStage.sheepToShear.add(DyeColor.BLUE);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_BROWN"))) {
                                     oStage.sheepToShear.add(DyeColor.BROWN);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_CYAN"))) {
                                     oStage.sheepToShear.add(DyeColor.CYAN);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_GRAY"))) {
                                     oStage.sheepToShear.add(DyeColor.GRAY);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_GREEN"))) {
                                     oStage.sheepToShear.add(DyeColor.GREEN);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_LIGHT_BLUE"))) {
                                     oStage.sheepToShear.add(DyeColor.LIGHT_BLUE);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_LIME"))) {
                                     oStage.sheepToShear.add(DyeColor.LIME);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_MAGENTA"))) {
                                     oStage.sheepToShear.add(DyeColor.MAGENTA);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_ORANGE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_ORANGE"))) {
                                     oStage.sheepToShear.add(DyeColor.ORANGE);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_PINK"))) {
                                     oStage.sheepToShear.add(DyeColor.PINK);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_PURPLE"))) {
                                     oStage.sheepToShear.add(DyeColor.PURPLE);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_RED"))) {
                                     oStage.sheepToShear.add(DyeColor.RED);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_SILVER"))) {
                                     // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
                                     oStage.sheepToShear.add(DyeColor.getByColor(Color.SILVER));
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_WHITE"))) {
                                     oStage.sheepToShear.add(DyeColor.WHITE);
-                                } else if (color.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
+                                } else if (sheepColor.equalsIgnoreCase(Lang.get("COLOR_YELLOW"))) {
                                     oStage.sheepToShear.add(DyeColor.YELLOW);
                                 // <-- Legacy end
                                 } else {
-                                    throw new StageFormatException("sheep-to-shear has invalid color " + color, quest,
-                                            stageNum);
+                                    throw new StageFormatException("sheep-to-shear has invalid color " + sheepColor,
+                                            quest, stageNum);
                                 }
-                                oStage.sheepNumToShear.add(shearAmounts.get(sheep.indexOf(color)));
+                                oStage.sheepNumToShear.add(shearAmounts.get(sheep.indexOf(originalColor)));
                             }
                         } else {
                             throw new StageFormatException("sheep-amounts is not a list of numbers", quest, stageNum);
@@ -3239,8 +3241,8 @@ public class Quests extends JavaPlugin {
                 final List<String> displays = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
                         + ".password-displays");
                 if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".password-phrases")) {
-                    final List<String> phrases = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".password-phrases");
+                    final List<String> phrases = config.getStringList("quests." + questKey + ".stages.ordered."
+                            + stageNum + ".password-phrases");
                     if (displays.size() == phrases.size()) {
                         for (int passIndex = 0; passIndex < displays.size(); passIndex++) {
                             oStage.passwordDisplays.add(displays.get(passIndex));
