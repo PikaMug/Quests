@@ -271,6 +271,12 @@ public class Quest implements Comparable<Quest> {
             final String title = Lang.get(p, "objectives").replace("<quest>", name);
             quester.sendMessage(ChatColor.GOLD + title);
             plugin.showObjectives(this, quester, false);
+            if (quester.getCurrentStage(this) == null) {
+                quester.sendMessage(ChatColor.RED + "itemCreateCriticalError");
+                plugin.getLogger().severe("Could not set stage for quest ID " + getId()
+                        + " because the current stage for player " + quester.getLastKnownName() + " was null");
+                return;
+            }
             final String stageStartMessage = quester.getCurrentStage(this).startMessage;
             if (stageStartMessage != null) {
                 p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, this, p));

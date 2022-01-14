@@ -3392,11 +3392,11 @@ public class Quests extends JavaPlugin {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".delay")) {
-                if (config.getLong("quests." + questKey + ".stages.ordered." + stageNum + ".delay", -999) != -999) {
-                    oStage.delay = config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".delay")
-                            * 1000L;
-                } else {
-                    throw new StageFormatException("delay is not a number", quest, stageNum);
+                final int delay = config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".delay", -999);
+                if (delay > 0) {
+                    oStage.delay = delay * 1000L;
+                } else if (delay != -999) {
+                    throw new StageFormatException("delay is not a positive number", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".delay-message")) {
