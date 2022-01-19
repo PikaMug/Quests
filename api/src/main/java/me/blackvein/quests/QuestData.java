@@ -12,6 +12,7 @@
 
 package me.blackvein.quests;
 
+import me.blackvein.quests.player.IQuester;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -22,9 +23,9 @@ import java.util.LinkedList;
  */
 public class QuestData {
 
-    private final Quester quester;
+    private final IQuester quester;
 
-    public QuestData(final Quester quester) {
+    public QuestData(final IQuester quester) {
         this.quester = quester;
     }
     

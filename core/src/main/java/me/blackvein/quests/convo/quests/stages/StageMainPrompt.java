@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.quests.stages;
 
-import me.blackvein.quests.CustomObjective;
+import me.blackvein.quests.actions.IAction;
+import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -1438,7 +1438,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1450,8 +1450,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1505,7 +1505,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1517,8 +1517,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1572,7 +1572,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1584,8 +1584,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1639,7 +1639,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1651,8 +1651,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1706,7 +1706,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1718,8 +1718,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1773,7 +1773,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1785,8 +1785,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1915,7 +1915,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none"));
             } else {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1927,8 +1927,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Action found = null;
-                for (final Action a : plugin.getLoadedActions()) {
+                IAction found = null;
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -2058,7 +2058,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedConditions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Lang.get("none")).append("\n");
             } else {
-                for (final Condition c : plugin.getLoadedConditions()) {
+                for (final ICondition c : plugin.getLoadedConditions()) {
                     text.append(ChatColor.GREEN).append("- ").append(c.getName()).append("\n");
                 }
             }
@@ -2070,8 +2070,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                Condition found = null;
-                for (final Condition c : plugin.getLoadedConditions()) {
+                ICondition found = null;
+                for (final ICondition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         found = c;
                         break;
@@ -2395,7 +2395,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules"))
                             .append(") ");
                 } else {
-                    for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
+                    for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
                             .collect(Collectors.toCollection(TreeSet::new))) {
                         text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                     }
@@ -2412,7 +2412,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
             } else {
-                for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
+                for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
                     click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, name));
@@ -2431,7 +2431,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 String found = null;
                 // Check if we have a module with the specified name
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equalsIgnoreCase(input)) {
                         found = co.getModuleName();
                         break;
@@ -2439,7 +2439,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (found == null) {
                     // No? Check again, but with locale sensitivity
-                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getModuleName().toLowerCase().contains(input.toLowerCase())) {
                             found = co.getModuleName();
                             break;
@@ -2503,7 +2503,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules"))
                             .append(") ");
                 } else {
-                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getModuleName().equals(moduleName)) {
                             text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
                         }
@@ -2521,7 +2521,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
             } else {
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
@@ -2541,8 +2541,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                CustomObjective found = null;
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                ICustomObjective found = null;
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equals(moduleName)) {
                         if (co.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = co;
@@ -2619,8 +2619,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
                 text.append(objName).append(" -\n");
-                CustomObjective found = null;
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                ICustomObjective found = null;
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;
@@ -2645,8 +2645,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 if (counts != null && list != null && plugin != null) {
                     counts.set(counts.size() - 1, num);
                     final String objName = list.getLast();
-                    CustomObjective found = null;
-                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    ICustomObjective found = null;
+                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getName().equals(objName)) {
                             found = co;
                             break;
@@ -2682,8 +2682,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     + CK.S_CUSTOM_OBJECTIVES_DATA);
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
-                CustomObjective found = null;
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                ICustomObjective found = null;
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;
@@ -2726,8 +2726,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     + CK.S_CUSTOM_OBJECTIVES);
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
-                CustomObjective found = null;
-                for (final CustomObjective co : plugin.getCustomObjectives()) {
+                ICustomObjective found = null;
+                for (final ICustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;

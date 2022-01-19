@@ -12,7 +12,6 @@
 
 package me.blackvein.quests.quests;
 
-import me.blackvein.quests.Objective;
 import org.bukkit.inventory.ItemStack;
 
 import me.blackvein.quests.enums.ObjectiveType;

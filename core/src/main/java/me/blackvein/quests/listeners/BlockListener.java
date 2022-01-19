@@ -12,10 +12,11 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
@@ -62,7 +63,7 @@ public class BlockListener implements Listener {
             final Set<String> dispatchedBreakQuestIDs = new HashSet<>();
             final Set<String> dispatchedPlaceQuestIDs = new HashSet<>();
             final Set<String> dispatchedCutQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!evt.isCancelled()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -84,7 +85,7 @@ public class BlockListener implements Listener {
 
                                 // Multiplayer
                                 dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
-                                        (final Quester q, final Quest cq) -> {
+                                        (final IQuester q, final IQuest cq) -> {
                                             if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
                                                 q.breakBlock(cq, blockItemStack);
                                             }
@@ -120,7 +121,7 @@ public class BlockListener implements Listener {
                             }
                         }
                         dispatchedPlaceQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, placeType,
-                                (final Quester q, final Quest cq) -> {
+                                (final IQuester q, final IQuest cq) -> {
                                     if (!dispatchedPlaceQuestIDs.contains(cq.getId())) {
                                         for (final ItemStack is : q.getQuestData(cq).blocksPlaced) {
                                             if (evt.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
@@ -132,7 +133,7 @@ public class BlockListener implements Listener {
                                                 }
 
                                                 final QuesterPreUpdateObjectiveEvent preEvent
-                                                        = new QuesterPreUpdateObjectiveEvent(q, cq,
+                                                        = new QuesterPreUpdateObjectiveEvent((Quester) q, cq,
                                                         new BukkitObjective(placeType, is.getAmount(), toPlace.getAmount()));
                                                 plugin.getServer().getPluginManager().callEvent(preEvent);
 
@@ -142,7 +143,7 @@ public class BlockListener implements Listener {
                                                 q.getQuestData(cq).blocksPlaced.set(index, is);
 
                                                 final QuesterPostUpdateObjectiveEvent postEvent
-                                                        = new QuesterPostUpdateObjectiveEvent(q, cq,
+                                                        = new QuesterPostUpdateObjectiveEvent((Quester) q, cq,
                                                         new BukkitObjective(placeType, newAmount, toPlace.getAmount()));
                                                 plugin.getServer().getPluginManager().callEvent(postEvent);
                                             }
@@ -156,7 +157,7 @@ public class BlockListener implements Listener {
                             }
                         }
                         dispatchedCutQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, cutType,
-                                (final Quester q, final Quest cq) -> {
+                                (final IQuester q, final IQuest cq) -> {
                                     if (!dispatchedCutQuestIDs.contains(cq.getId())) {
                                         if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                                             q.cutBlock(cq, blockItemStack);
@@ -177,10 +178,10 @@ public class BlockListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -191,7 +192,7 @@ public class BlockListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final Quester q, final Quest cq) -> {
+                        (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.placeBlock(cq, blockItemStack);
                     }
@@ -208,10 +209,10 @@ public class BlockListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.PLACE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!evt.isCancelled()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
@@ -223,7 +224,7 @@ public class BlockListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.placeBlock(cq, blockItemStack);
                         }
@@ -246,7 +247,7 @@ public class BlockListener implements Listener {
         if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                final Quester quester = plugin.getQuester(player.getUniqueId());
+                final IQuester quester = plugin.getQuester(player.getUniqueId());
                 if (quester.isSelectingBlock()) {
                     return;
                 }
@@ -256,7 +257,7 @@ public class BlockListener implements Listener {
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
-                        for (final Quest quest : plugin.getLoadedQuests()) {
+                        for (final IQuest quest : plugin.getLoadedQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 continue;
                             }
@@ -267,7 +268,7 @@ public class BlockListener implements Listener {
                             }
                             
                             dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                                    (final Quester q, final Quest cq) -> {
+                                    (final IQuester q, final IQuest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
                                     q.useBlock(cq, blockItemStack);
                                 }

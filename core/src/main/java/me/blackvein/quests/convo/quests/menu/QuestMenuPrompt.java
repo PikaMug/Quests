@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.convo.quests.menu;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -169,7 +169,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Quest q : plugin.getLoadedQuests()) {
+                for (final IQuest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorNameExists"));
                         return new QuestSelectCreatePrompt(context);
@@ -221,7 +221,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -231,7 +231,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final Quest q = plugin.getQuest(input);
+                final IQuest q = plugin.getQuest(input);
                 if (q != null) {
                     plugin.getQuestFactory().loadQuest(context, q);
                     return new QuestMainPrompt(context);
@@ -264,7 +264,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -275,9 +275,9 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
-                final Quest found = plugin.getQuest(input);
+                final IQuest found = plugin.getQuest(input);
                 if (found != null) {
-                    for (final Quest q : plugin.getLoadedQuests()) {
+                    for (final IQuest q : plugin.getLoadedQuests()) {
                         if (q.getRequirements().getNeededQuests().contains(q) 
                                 || q.getRequirements().getBlockQuests().contains(q)) {
                             used.add(q.getName());

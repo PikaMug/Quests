@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BukkitRewards {
+public class BukkitRewards implements Rewards {
     private int money = 0;
     private int questPoints = 0;
     private int exp = 0;
@@ -124,7 +124,7 @@ public class BukkitRewards {
     public Map<String, Map<String, Object>> getCustomRewards() {
         return customRewards;
     }
-    protected void setCustomRewards(final Map<String, Map<String, Object>> customRewards) {
+    public void setCustomRewards(final Map<String, Map<String, Object>> customRewards) {
         this.customRewards = customRewards;
     }
     public List<String> getDetailsOverride() {

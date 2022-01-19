@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
@@ -85,7 +85,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         return new ConditionMainPrompt(context);
     }
     
-    public void loadData(final Condition condition, final ConversationContext context) {
+    public void loadData(final ICondition condition, final ConversationContext context) {
         if (condition.isFailQuest()) {
             context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
         } else {
@@ -179,8 +179,8 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted condition " + condition);
         }
-        for (final Quester q : plugin.getOfflineQuesters()) {
-            for (final Quest quest : q.getCurrentQuests().keySet()) {
+        for (final IQuester q : plugin.getOfflineQuesters()) {
+            for (final IQuest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -201,7 +201,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         if (context.getSessionData(CK.C_OLD_CONDITION) != null
                 && !((String) Objects.requireNonNull(context.getSessionData(CK.C_OLD_CONDITION))).isEmpty()) {
             data.set("conditions." + context.getSessionData(CK.C_OLD_CONDITION), null);
-            final Collection<Condition> temp = plugin.getLoadedConditions();
+            final Collection<ICondition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) context.getSessionData(CK.C_OLD_CONDITION)));
             plugin.setLoadedConditions(temp);
         }
@@ -267,8 +267,8 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved condition " + context.getSessionData(CK.C_NAME));
         }
-        for (final Quester q : plugin.getOfflineQuesters()) {
-            for (final Quest quest : q.getCurrentQuests().keySet()) {
+        for (final IQuester q : plugin.getOfflineQuesters()) {
+            for (final IQuest quest : q.getCurrentQuests().keySet()) {
                 q.checkQuest(quest);
             }
         }

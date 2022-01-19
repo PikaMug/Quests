@@ -12,10 +12,9 @@
 
 package me.blackvein.quests.quests;
 
-import me.blackvein.quests.CustomObjective;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.actions.Action;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.actions.IAction;
+import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.enums.ObjectiveType;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -122,20 +121,20 @@ public class BukkitStage implements Stage {
     private LinkedList<String> passwordDisplays = new LinkedList<>();
     private LinkedList<String> passwordPhrases = new LinkedList<>();
     private String script;
-    private Action startAction = null;
-    private Action finishAction = null;
-    private Action failAction = null;
-    private Action deathAction = null;
-    private Map<String, Action> chatActions = new HashMap<>();
-    private Map<String, Action> commandActions = new HashMap<>();
-    private Action disconnectAction = null;
-    private Condition condition = null;
+    private IAction startAction = null;
+    private IAction finishAction = null;
+    private IAction failAction = null;
+    private IAction deathAction = null;
+    private Map<String, IAction> chatActions = new HashMap<>();
+    private Map<String, IAction> commandActions = new HashMap<>();
+    private IAction disconnectAction = null;
+    private ICondition condition = null;
     private long delay = -1;
     private String delayMessage = null;
     private String completeMessage = null;
     private String startMessage = null;
     private LinkedList<String> objectiveOverrides = new LinkedList<>();
-    private LinkedList<CustomObjective> customObjectives = new LinkedList<>();
+    private LinkedList<ICustomObjective> customObjectives = new LinkedList<>();
     private LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
     private LinkedList<String> customObjectiveDisplays = new LinkedList<>();
     private LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
@@ -575,77 +574,77 @@ public class BukkitStage implements Stage {
         this.script = script;
     }
 
-    public Action getStartAction() {
+    public IAction getStartAction() {
         return startAction;
     }
 
-    public void setStartAction(final Action startAction) {
+    public void setStartAction(final IAction startAction) {
         this.startAction = startAction;
     }
     
-    public Action getFinishAction() {
+    public IAction getFinishAction() {
         return finishAction;
     }
 
-    public void setFinishAction(final Action finishAction) {
+    public void setFinishAction(final IAction finishAction) {
         this.finishAction = finishAction;
     }
     
-    public Action getFailAction() {
+    public IAction getFailAction() {
         return failAction;
     }
 
-    public void setFailAction(final Action failAction) {
+    public void setFailAction(final IAction failAction) {
         this.failAction = failAction;
     }
 
-    public Action getDeathAction() {
+    public IAction getDeathAction() {
         return deathAction;
     }
 
-    public void setDeathAction(final Action deathAction) {
+    public void setDeathAction(final IAction deathAction) {
         this.deathAction = deathAction;
     }
 
-    public Map<String, Action> getChatActions() {
+    public Map<String, IAction> getChatActions() {
         return chatActions;
     }
 
     @Override
-    public void addChatAction(Entry<String, Action> chatAction) {
+    public void addChatAction(Entry<String, IAction> chatAction) {
         chatActions.put(chatAction.getKey(), chatAction.getValue());
     }
 
-    public void setChatActions(final Map<String, Action> chatActions) {
+    public void setChatActions(final Map<String, IAction> chatActions) {
         this.chatActions = chatActions;
     }
 
-    public Map<String, Action> getCommandActions() {
+    public Map<String, IAction> getCommandActions() {
         return commandActions;
     }
 
     @Override
-    public void addCommandAction(Entry<String, Action> commandAction) {
+    public void addCommandAction(Entry<String, IAction> commandAction) {
         commandActions.put(commandAction.getKey(), commandAction.getValue());
     }
 
-    public void setCommandActions(final Map<String, Action> commandActions) {
+    public void setCommandActions(final Map<String, IAction> commandActions) {
         this.commandActions = commandActions;
     }
 
-    public Action getDisconnectAction() {
+    public IAction getDisconnectAction() {
         return disconnectAction;
     }
 
-    public void setDisconnectAction(final Action disconnectAction) {
+    public void setDisconnectAction(final IAction disconnectAction) {
         this.disconnectAction = disconnectAction;
     }
     
-    public Condition getCondition() {
+    public ICondition getCondition() {
         return condition;
     }
     
-    public void setCondition(final Condition condition) {
+    public void setCondition(final ICondition condition) {
         this.condition = condition;
     }
 
@@ -694,11 +693,11 @@ public class BukkitStage implements Stage {
         this.objectiveOverrides = objectiveOverrides;
     }
     
-    public LinkedList<CustomObjective> getCustomObjectives() {
+    public LinkedList<ICustomObjective> getCustomObjectives() {
         return customObjectives;
     }
 
-    public boolean addCustomObjectives(final CustomObjective customObjective) {
+    public boolean addCustomObjectives(final ICustomObjective customObjective) {
         return customObjectives.add(customObjective);
     }
 

@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.util;
 
-import me.blackvein.quests.dependencies.BukkitDependencies;
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.Dependencies;
+import me.blackvein.quests.quests.IQuest;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -100,7 +100,7 @@ public class ConfigUtil {
                 + loc.getZ();
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final Player player) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final IQuest quest, final Player player) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -109,13 +109,13 @@ public class ConfigUtil {
                 Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }
         }
-        if (BukkitDependencies.placeholder != null && player != null) {
+        if (Dependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
         }
         return parsed.split("\n");
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final IQuest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -135,7 +135,7 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String parseString(final String s, final Quest quest) {
+    public static String parseString(final String s, final IQuest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -147,9 +147,9 @@ public class ConfigUtil {
         return parsed;
     }
     
-    public static String parseString(final String s, final Quest quest, final Player player) {
+    public static String parseString(final String s, final IQuest quest, final Player player) {
         String parsed = parseString(s, quest);
-        if (BukkitDependencies.placeholder != null && player != null) {
+        if (Dependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
         }
         return parsed;

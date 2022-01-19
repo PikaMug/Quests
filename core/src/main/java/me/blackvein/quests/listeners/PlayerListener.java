@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.enums.ObjectiveType;
-import me.blackvein.quests.player.BukkitQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -120,12 +120,12 @@ public class PlayerListener implements Listener {
                 return;
             }
         }
-        final Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+        final IQuester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
         final Player player = (Player) evt.getWhoClicked();
         if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
             final ItemStack clicked = evt.getCurrentItem();
             if (ItemUtil.isItem(clicked)) {
-                for (final Quest quest : plugin.getLoadedQuests()) {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
                             if (quester.canAcceptOffer(quest, true)) {
@@ -214,12 +214,12 @@ public class PlayerListener implements Listener {
                 }
             }
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+                final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
                 final Player player = evt.getPlayer();
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     boolean hasObjective = false;
                     if (!evt.isCancelled()) {
-                        for (final Quest quest : plugin.getLoadedQuests()) {
+                        for (final IQuest quest : plugin.getLoadedQuests()) {
                             if (quester.getCurrentQuests().containsKey(quest) 
                                     && quester.getCurrentStage(quest).containsObjective(ObjectiveType.USE_BLOCK)) {
                                 hasObjective = true;
@@ -364,7 +364,7 @@ public class PlayerListener implements Listener {
                             }
                             evt.setCancelled(true);
                         } else if (!player.isConversing()) {
-                            for (final Quest q : plugin.getLoadedQuests()) {
+                            for (final IQuest q : plugin.getLoadedQuests()) {
                                 if (q.getBlockStart() != null && evt.getClickedBlock() != null) {
                                     if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() 
@@ -398,7 +398,7 @@ public class PlayerListener implements Listener {
                                             if (!plugin.getSettings().canAskConfirmation()) {
                                                 quester.takeQuest(q, false);
                                             } else {
-                                                final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
+                                                final IQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
                                                         + quest.getName() + ChatColor.GOLD + " -\n" + "\n" 
                                                         + ChatColor.RESET + quest.getDescription() + "\n";
@@ -450,10 +450,10 @@ public class PlayerListener implements Listener {
         if (evt.getItemStack() != null && evt.getItemStack().getType() == Material.MILK_BUCKET) {
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final Quester quester = plugin.getQuester(player.getUniqueId());
+                final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.MILK_COW;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final Quest quest : plugin.getLoadedQuests()) {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -464,7 +464,7 @@ public class PlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.milkCow(cq);
                         }
@@ -478,8 +478,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChat(final AsyncPlayerChatEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -516,7 +516,7 @@ public class PlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.sayPassword(cq, evt);
                         }
@@ -530,9 +530,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             if (!quester.getCurrentQuests().isEmpty()) {
-                for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                for (final IQuest quest : quester.getCurrentQuests().keySet()) {
                     if (!quest.getOptions().canAllowCommands()) {
                         if (!evt.getMessage().startsWith("/quest")) {
                             final Player player = evt.getPlayer();
@@ -570,10 +570,10 @@ public class PlayerListener implements Listener {
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Sheep sheep = (Sheep) evt.getEntity();
-                final Quester quester = plugin.getQuester(player.getUniqueId());
+                final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final Quest quest : plugin.getLoadedQuests()) {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -584,7 +584,7 @@ public class PlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.shearSheep(cq, sheep.getColor());
                         }
@@ -600,10 +600,10 @@ public class PlayerListener implements Listener {
         if (evt.getOwner() instanceof Player) {
             final Player player = (Player) evt.getOwner();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final Quester quester = plugin.getQuester(player.getUniqueId());
+                final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final Quest quest : plugin.getLoadedQuests()) {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -614,7 +614,7 @@ public class PlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.tameMob(cq, evt.getEntityType());
                         }
@@ -645,7 +645,7 @@ public class PlayerListener implements Listener {
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
-                    final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                    final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                     if (quester != null) {
                         preKillPlayer(quester.getPlayer(), evt.getEntity());
                     }
@@ -671,10 +671,10 @@ public class PlayerListener implements Listener {
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 return;
             }
-            final Quester quester = plugin.getQuester(damager.getUniqueId());
+            final IQuester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_MOB;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -687,7 +687,7 @@ public class PlayerListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final Quester q, final Quest cq) -> {
+                        (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.killMob(cq, target.getLocation(), target.getType());
                     }
@@ -722,7 +722,7 @@ public class PlayerListener implements Listener {
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
-                    final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                    final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                     preKillPlayer(quester.getPlayer(), evt.getEntity());
                 }
             } else {
@@ -732,8 +732,8 @@ public class PlayerListener implements Listener {
             
         final Player target = evt.getEntity();
         if (plugin.canUseQuests(target.getUniqueId())) {
-            final Quester quester = plugin.getQuester(target.getUniqueId());
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
+            final IQuester quester = plugin.getQuester(target.getUniqueId());
+            for (final IQuest quest : quester.getCurrentQuests().keySet()) {
                 final Stage stage = quester.getCurrentStage(quest);
                 if (stage != null && stage.getDeathAction() != null) {
                     quester.getCurrentStage(quest).getDeathAction().fire(quester, quest);
@@ -775,10 +775,10 @@ public class PlayerListener implements Listener {
                     return;
                 }
             }
-            final Quester quester = plugin.getQuester(damager.getUniqueId());
+            final IQuester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -791,7 +791,7 @@ public class PlayerListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final Quester q, final Quest cq) -> {
+                        (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.killPlayer(cq, (Player)target);
                     }
@@ -805,10 +805,10 @@ public class PlayerListener implements Listener {
     public void onPlayerFish(final PlayerFishEvent evt) {
         final Player player = evt.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -820,7 +820,7 @@ public class PlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final Quester q, final Quest cq) -> {
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.catchFish(cq);
                         }
@@ -835,9 +835,9 @@ public class PlayerListener implements Listener {
     public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             quester.findCompassTarget();
-            for (final Quest quest : plugin.getLoadedQuests()) {
+            for (final IQuest quest : plugin.getLoadedQuests()) {
                 quester.meetsCondition(quest, true);
             }
         }
@@ -847,7 +847,7 @@ public class PlayerListener implements Listener {
     public void onPlayerRespawn(final PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(plugin, quester::findCompassTarget, 10);
         }
     }
@@ -866,29 +866,29 @@ public class PlayerListener implements Listener {
             });
         }
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final Quester noobCheck = new BukkitQuester(plugin, player.getUniqueId());
+            final IQuester noobCheck = new Quester(plugin, player.getUniqueId());
             if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
                 noobCheck.saveData();
             }
             
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                final CompletableFuture<Quester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
+                final CompletableFuture<IQuester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
-                    final Quester quester = cf.get();
+                    final IQuester quester = cf.get();
                     if (quester == null) {
                         return;
                     }
-                    for (final Quest q : quester.getCompletedQuests()) {
+                    for (final IQuest q : quester.getCompletedQuests()) {
                         if (q != null) {
                             if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
                                 quester.getCompletedTimes().put(q, System.currentTimeMillis());
                             }
                         }
                     }
-                    for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
                         quester.checkQuest(quest);
                     }
-                    for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
                         if (quester.getCurrentStage(quest).getDelay() > -1) {
                             quester.startStageTimer(quest);
                         }
@@ -911,8 +911,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final Quester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
+            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            for (final IQuest quest : quester.getCurrentQuests().keySet()) {
                 final Stage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
                     plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
@@ -946,7 +946,7 @@ public class PlayerListener implements Listener {
                 temp.remove(evt.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
+            final ConcurrentSkipListSet<IQuester> temp = (ConcurrentSkipListSet<IQuester>) plugin.getOfflineQuesters();
             temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
             plugin.setOfflineQuesters(temp);
         }
@@ -979,12 +979,12 @@ public class PlayerListener implements Listener {
      */
     public void playerMove(final UUID uuid, final Location location) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            final Quester quester = plugin.getQuester(uuid);
+            final IQuester quester = plugin.getQuester(uuid);
             if (quester != null) {
                 if (plugin.canUseQuests(uuid)) {
                     final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
-                    for (final Quest quest : plugin.getLoadedQuests()) {
+                    for (final IQuest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -998,7 +998,7 @@ public class PlayerListener implements Listener {
                         }
 
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                                (final Quester q, final Quest cq) -> {
+                                (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 plugin.getServer().getScheduler().runTask(plugin, () -> q
                                         .reachLocation(cq, location));

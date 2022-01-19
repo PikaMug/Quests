@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.events.editor.quests;
 
-import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.quests.QuestFactory;
 import me.blackvein.quests.QuestsAPI;
 import me.blackvein.quests.events.QuestsEvent;
 import org.bukkit.conversations.ConversationContext;

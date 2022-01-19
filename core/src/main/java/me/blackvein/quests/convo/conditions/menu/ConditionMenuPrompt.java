@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.conditions.menu;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -185,7 +185,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Condition c : plugin.getLoadedConditions()) {
+                for (final ICondition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionSelectCreatePrompt(context);
@@ -235,7 +235,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             final ConditionsEditorPostOpenStringPromptEvent event 
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedConditions().stream().map(ICondition::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -245,7 +245,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final Condition c = plugin.getCondition(input);
+                final ICondition c = plugin.getCondition(input);
                 if (c != null) {
                     context.setSessionData(CK.C_OLD_CONDITION, c.getName());
                     context.setSessionData(CK.C_NAME, c.getName());
@@ -281,7 +281,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             final ConditionsEditorPostOpenStringPromptEvent event 
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName)
+            final List<String> names = plugin.getLoadedConditions().stream().map(ICondition::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
@@ -293,9 +293,9 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
-                final Condition c = plugin.getCondition(input);
+                final ICondition c = plugin.getCondition(input);
                 if (c != null) {
-                    for (final Quest quest : plugin.getLoadedQuests()) {
+                    for (final IQuest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getCondition() != null 
                                     && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {

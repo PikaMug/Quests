@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.actions.main;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.actions.IAction;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -272,7 +272,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
@@ -565,11 +565,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(context, i)).append(ChatColor.GRAY).append(" ")
-                        .append(getAdditionalText(context, i)).append("\n");
+                        .append(getAdditionalText(context, i));
             }
             return text.toString();
         }
@@ -1015,7 +1015,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final Quest q : plugin.getLoadedQuests()) {
+                for (final IQuest q : plugin.getLoadedQuests()) {
                     for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {

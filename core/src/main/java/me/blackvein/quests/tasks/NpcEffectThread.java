@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.tasks;
 
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.particle.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
@@ -33,7 +33,7 @@ public class NpcEffectThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
+            final IQuester quester = plugin.getQuester(player.getUniqueId());
             final List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
             if (!nearby.isEmpty()) {
                 for (final Entity e : nearby) {

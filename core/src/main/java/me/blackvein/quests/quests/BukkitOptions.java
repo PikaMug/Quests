@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.quests;
 
-public class BukkitOptions {
+public class BukkitOptions implements Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
     private boolean ignoreSilkTouch = true;

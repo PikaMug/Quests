@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.convo.quests;
 
-import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.quests.QuestFactory;
 import me.blackvein.quests.QuestsAPI;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import org.bukkit.ChatColor;

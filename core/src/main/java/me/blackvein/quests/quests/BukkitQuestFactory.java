@@ -12,15 +12,8 @@
 
 package me.blackvein.quests.quests;
 
-import me.blackvein.quests.CustomObjective;
-import me.blackvein.quests.Options;
-import me.blackvein.quests.Planner;
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.QuestFactory;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Requirements;
-import me.blackvein.quests.Rewards;
-import me.blackvein.quests.Stage;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
 import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
@@ -150,7 +143,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     }
     
     @SuppressWarnings("deprecation")
-    public void loadQuest(final ConversationContext context, final Quest q) {
+    public void loadQuest(final ConversationContext context, final IQuest q) {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
         context.setSessionData(CK.Q_ID, q.getId());
         context.setSessionData(CK.Q_NAME, q.getName());
@@ -181,11 +174,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
         }
         if (!requirements.getNeededQuests().isEmpty()) {
-            final List<String> ids = requirements.getNeededQuests().stream().map(Quest::getId).collect(Collectors.toList());
+            final List<String> ids = requirements.getNeededQuests().stream().map(IQuest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST, ids);
         }
         if (!requirements.getBlockQuests().isEmpty()) {
-            final List<String> ids = requirements.getBlockQuests().stream().map(Quest::getId).collect(Collectors.toList());
+            final List<String> ids = requirements.getBlockQuests().stream().map(IQuest::getId).collect(Collectors.toList());
             context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
         }
         if (!requirements.getMcmmoSkills().isEmpty()) {
@@ -762,8 +755,8 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
                     sec2.set("name", customObj.get(index));
                     sec2.set("count", customObjCounts.get(index));
-                    CustomObjective found = null;
-                    for (final CustomObjective co : plugin.getCustomObjectives()) {
+                    ICustomObjective found = null;
+                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getName().equals(customObj.get(index))) {
                             found = co;
                             break;

@@ -12,8 +12,8 @@
 
 package me.blackvein.quests.item;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 
 public class QuestJournal {
     
-    final Quester owner;
+    final IQuester owner;
     ItemStack journal = new ItemStack(Material.WRITTEN_BOOK);
     
-    public QuestJournal(final Quester owner) {
+    public QuestJournal(final IQuester owner) {
         this.owner = owner;
         final BookMeta book = (BookMeta) journal.getItemMeta();
         if (book != null) {
@@ -45,10 +45,10 @@ public class QuestJournal {
                 int currentLength = 0;
                 int currentLines = 0;
                 StringBuilder page = new StringBuilder();
-                final List<Quest> sortedList = owner.getCurrentQuests().keySet().stream()
-                        .sorted(Comparator.comparing(Quest::getName))
+                final List<IQuest> sortedList = owner.getCurrentQuests().keySet().stream()
+                        .sorted(Comparator.comparing(IQuest::getName))
                         .collect(Collectors.toList());
-                for (final Quest quest : sortedList) {
+                for (final IQuest quest : sortedList) {
                     if ((currentLength + quest.getName().length() > 240) || (currentLines
                             + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19)
                             : ((quest.getName().length() / 19) + 1))) > 13) {
@@ -90,7 +90,7 @@ public class QuestJournal {
         }
     }
     
-    public Quester getOwner() {
+    public IQuester getOwner() {
         return owner;
     }
     

@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.conditions.main;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -204,7 +204,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Condition c : plugin.getLoadedConditions()) {
+                for (final ICondition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorExists"));
                         return new ConditionNamePrompt(context);
@@ -482,7 +482,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final Quest q : plugin.getLoadedQuests()) {
+                for (final IQuest q : plugin.getLoadedQuests()) {
                     for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {

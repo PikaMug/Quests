@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.quests.requirements;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomRequirement;
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.generic.OverridePrompt;
@@ -854,7 +854,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
                     + ChatColor.DARK_PURPLE);
             boolean none = true;
-            for (final Quest q : plugin.getLoadedQuests()) {
+            for (final IQuest q : plugin.getLoadedQuests()) {
                 text.append(q.getName()).append(", ");
                 none = false;
             }

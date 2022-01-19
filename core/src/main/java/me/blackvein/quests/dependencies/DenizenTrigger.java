@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.dependencies;
 
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 
 public class DenizenTrigger {
@@ -21,7 +21,7 @@ public class DenizenTrigger {
     public DenizenTrigger(final Quests plugin) {
         this.plugin = plugin;
     }
-    public boolean runDenizenScript(final String scriptName, final Quester quester) {
+    public boolean runDenizenScript(final String scriptName, final IQuester quester) {
         if (scriptName == null) {
             return false;
         }

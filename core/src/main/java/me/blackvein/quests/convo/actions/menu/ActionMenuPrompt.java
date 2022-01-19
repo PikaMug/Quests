@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.convo.actions.menu;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.actions.IAction;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.Stage;
-import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -186,7 +186,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Action a : plugin.getLoadedActions()) {
+                for (final IAction a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorExists"));
                         return new ActionSelectCreatePrompt(context);
@@ -236,7 +236,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(IAction::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -246,7 +246,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final Action a = plugin.getAction(input);
+                final IAction a = plugin.getAction(input);
                 if (a != null) {
                     context.setSessionData(CK.E_OLD_EVENT, a.getName());
                     context.setSessionData(CK.E_NAME, a.getName());
@@ -282,7 +282,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(IAction::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -293,9 +293,9 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<String>();
-                final Action a = plugin.getAction(input);
+                final IAction a = plugin.getAction(input);
                 if (a != null) {
-                    for (final Quest quest : plugin.getLoadedQuests()) {
+                    for (final IQuest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getFinishAction() != null 
                                     && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {

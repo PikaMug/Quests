@@ -13,7 +13,7 @@
 package me.blackvein.quests.convo.quests.main;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
@@ -341,7 +341,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                for (final Quest q : plugin.getLoadedQuests()) {
+                for (final IQuest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         String s = null;
                         if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -732,7 +732,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
                 boolean failed = false;
-                for (final Quest quest : plugin.getLoadedQuests()) {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
                             String error = Lang.get("questGUIError");

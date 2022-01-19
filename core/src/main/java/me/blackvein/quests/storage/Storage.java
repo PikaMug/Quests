@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.storage;
 
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 
@@ -85,11 +85,11 @@ public class Storage {
         }
     }
     
-    public CompletableFuture<Quester> loadQuester(final UUID uniqueId) {
+    public CompletableFuture<IQuester> loadQuester(final UUID uniqueId) {
         return makeFuture(() -> implementation.loadQuester(uniqueId));
     }
 
-    public CompletableFuture<Void> saveQuester(final Quester quester) {
+    public CompletableFuture<Void> saveQuester(final IQuester quester) {
         return makeFuture(() -> {
             try {
                 implementation.saveQuester(quester);
@@ -102,7 +102,7 @@ public class Storage {
     public CompletableFuture<Void> saveOfflineQuesters() {
         return makeFuture(() -> {
             try {
-                for (Quester quester : plugin.getOfflineQuesters()) {
+                for (IQuester quester : plugin.getOfflineQuesters()) {
                     implementation.saveQuester(quester);
                 }
             } catch (final Exception e) {

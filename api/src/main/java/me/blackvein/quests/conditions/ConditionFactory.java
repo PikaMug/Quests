@@ -15,7 +15,7 @@ public interface ConditionFactory {
 
     Prompt returnToMenu(final ConversationContext context);
 
-    void loadData(final Condition condition, final ConversationContext context);
+    void loadData(final ICondition condition, final ConversationContext context);
 
     void clearData(final ConversationContext context);
 

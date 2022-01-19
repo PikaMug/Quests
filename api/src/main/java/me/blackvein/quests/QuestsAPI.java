@@ -1,9 +1,15 @@
 package me.blackvein.quests;
 
-import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.actions.ActionFactory;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.conditions.ConditionFactory;
+import me.blackvein.quests.config.ISettings;
+import me.blackvein.quests.dependencies.IDependencies;
+import me.blackvein.quests.module.ICustomObjective;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.QuestFactory;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.plugin.Plugin;
@@ -19,29 +25,29 @@ public interface QuestsAPI extends Plugin {
 
     String getDetectedServerSoftwareVersion();
 
-    Dependencies getDependencies();
+    IDependencies getDependencies();
 
-    Settings getSettings();
+    ISettings getSettings();
 
-    List<CustomObjective> getCustomObjectives();
+    List<ICustomObjective> getCustomObjectives();
 
     List<CustomReward> getCustomRewards();
 
     List<CustomRequirement> getCustomRequirements();
 
-    Collection<Quest> getLoadedQuests();
+    Collection<IQuest> getLoadedQuests();
 
-    Collection<Action> getLoadedActions();
+    Collection<IAction> getLoadedActions();
 
-    Collection<Condition> getLoadedConditions();
+    Collection<ICondition> getLoadedConditions();
 
-    Quester getQuester(final UUID id);
+    IQuester getQuester(final UUID id);
 
-    Collection<Quester> getOnlineQuesters();
+    Collection<IQuester> getOnlineQuesters();
 
-    Collection<Quester> getOfflineQuesters();
+    Collection<IQuester> getOfflineQuesters();
 
-    void setOfflineQuesters(final Collection<Quester> questers);
+    void setOfflineQuesters(final Collection<IQuester> questers);
 
     LinkedList<Integer> getQuestNpcIds();
 

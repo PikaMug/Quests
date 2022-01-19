@@ -19,13 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BukkitRequirements {
+public class BukkitRequirements implements Requirements {
     private int money = 0;
     private int questPoints = 0;
     private List<ItemStack> items = new LinkedList<>();
     private List<Boolean> removeItems = new LinkedList<>();
-    private List<BukkitQuest> neededQuests = new LinkedList<>();
-    private List<BukkitQuest> blockQuests = new LinkedList<>();
+    private List<IQuest> neededQuests = new LinkedList<>();
+    private List<IQuest> blockQuests = new LinkedList<>();
     private List<String> permissions = new LinkedList<>();
     private List<String> mcmmoSkills = new LinkedList<>();
     private List<Integer> mcmmoAmounts = new LinkedList<>();
@@ -58,16 +58,16 @@ public class BukkitRequirements {
     public void setRemoveItems(final List<Boolean> removeItems) {
         this.removeItems = removeItems;
     }
-    public List<BukkitQuest> getNeededQuests() {
+    public List<IQuest> getNeededQuests() {
         return neededQuests;
     }
-    public void setNeededQuests(final List<BukkitQuest> neededQuests) {
+    public void setNeededQuests(final List<IQuest> neededQuests) {
         this.neededQuests = neededQuests;
     }
-    public List<BukkitQuest> getBlockQuests() {
+    public List<IQuest> getBlockQuests() {
         return blockQuests;
     }
-    public void setBlockQuests(final List<BukkitQuest> blockQuests) {
+    public void setBlockQuests(final List<IQuest> blockQuests) {
         this.blockQuests = blockQuests;
     }
     public List<String> getPermissions() {
@@ -103,7 +103,7 @@ public class BukkitRequirements {
     public Map<String, Map<String, Object>> getCustomRequirements() {
         return customRequirements;
     }
-    protected void setCustomRequirements(final Map<String, Map<String, Object>> customRequirements) {
+    public void setCustomRequirements(final Map<String, Map<String, Object>> customRequirements) {
         this.customRequirements = customRequirements;
     }
     public List<String> getDetailsOverride() {

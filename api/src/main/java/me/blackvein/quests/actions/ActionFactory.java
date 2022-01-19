@@ -38,7 +38,7 @@ public interface ActionFactory {
 
     Prompt returnToMenu(final ConversationContext context);
 
-    void loadData(final Action event, final ConversationContext context);
+    void loadData(final IAction event, final ConversationContext context);
 
     void clearData(final ConversationContext context);
 

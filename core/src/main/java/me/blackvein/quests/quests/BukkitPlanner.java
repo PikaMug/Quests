@@ -15,7 +15,7 @@ package me.blackvein.quests.quests;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-public class BukkitPlanner {
+public class BukkitPlanner implements Planner {
     public String start = null;
     public String end = null;
     public long repeat = -1;

@@ -15,19 +15,19 @@ package me.blackvein.quests;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.actions.ActionFactory;
-import me.blackvein.quests.actions.BukkitAction;
+import me.blackvein.quests.actions.Action;
 import me.blackvein.quests.actions.BukkitActionFactory;
-import me.blackvein.quests.conditions.BukkitCondition;
-import me.blackvein.quests.conditions.BukkitConditionFactory;
 import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.conditions.BukkitConditionFactory;
+import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.conditions.ConditionFactory;
-import me.blackvein.quests.config.BukkitSettings;
+import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.MiscStringPrompt;
 import me.blackvein.quests.convo.misc.NpcOfferQuestPrompt;
-import me.blackvein.quests.dependencies.BukkitDependencies;
 import me.blackvein.quests.dependencies.DenizenTrigger;
+import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.entity.BukkitQuestMob;
 import me.blackvein.quests.entity.QuestMob;
 import me.blackvein.quests.events.misc.MiscPostQuestAcceptEvent;
@@ -44,11 +44,17 @@ import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.listeners.UniteListener;
-import me.blackvein.quests.module.BukkitCustomObjective;
-import me.blackvein.quests.player.BukkitQuester;
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.module.ICustomObjective;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.quests.BukkitStage;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.Options;
+import me.blackvein.quests.quests.Planner;
+import me.blackvein.quests.quests.QuestFactory;
+import me.blackvein.quests.quests.Requirements;
+import me.blackvein.quests.quests.Rewards;
+import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.storage.StorageFactory;
@@ -134,15 +140,15 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     private boolean loading = true;
     private String bukkitVersion = "0";
-    private Dependencies depends;
-    private Settings settings;
-    private final List<CustomObjective> customObjectives = new LinkedList<>();
+    private IDependencies depends;
+    private ISettings settings;
+    private final List<ICustomObjective> customObjectives = new LinkedList<>();
     private final List<CustomRequirement> customRequirements = new LinkedList<>();
     private final List<CustomReward> customRewards = new LinkedList<>();
-    private Collection<Quester> questers = new ConcurrentSkipListSet<>();
-    private final Collection<Quest> quests = new ConcurrentSkipListSet<>();
-    private Collection<Action> actions = new ConcurrentSkipListSet<>();
-    private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
+    private Collection<IQuester> questers = new ConcurrentSkipListSet<>();
+    private final Collection<IQuest> quests = new ConcurrentSkipListSet<>();
+    private Collection<IAction> actions = new ConcurrentSkipListSet<>();
+    private Collection<ICondition> conditions = new ConcurrentSkipListSet<>();
     private LinkedList<Integer> questNpcIds = new LinkedList<>();
     private CommandExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
@@ -169,7 +175,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
         // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        settings = new BukkitSettings(this);
+        settings = new Settings(this);
         try {
             Class.forName("me.blackvein.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
@@ -188,7 +194,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         questFactory = new BukkitQuestFactory(this);
         actionFactory = new BukkitActionFactory(this);
         conditionFactory = new BukkitConditionFactory(this);
-        depends = new BukkitDependencies(this);
+        depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
         final Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SimplePie("language", Lang::getISO));
@@ -272,7 +278,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     public void onDisable() {
         getLogger().info("Saving Quester data...");
         for (final Player p : getServer().getOnlinePlayers()) {
-            final Quester quester = getQuester(p.getUniqueId());
+            final IQuester quester = getQuester(p.getUniqueId());
             quester.saveData();
         }
         Bukkit.getScheduler().cancelTasks(this);
@@ -291,20 +297,20 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     public Dependencies getDependencies() {
-        return depends;
+        return (Dependencies) depends;
     }
 
     public Settings getSettings() {
-        return settings;
+        return (Settings) settings;
     }
 
     @Override
-    public List<CustomObjective> getCustomObjectives() {
+    public List<ICustomObjective> getCustomObjectives() {
         return customObjectives;
     }
 
-    public Optional<CustomObjective> getCustomObjective(final String className) {
-        for (final CustomObjective co : customObjectives) {
+    public Optional<ICustomObjective> getCustomObjective(final String className) {
+        for (final ICustomObjective co : customObjectives) {
             if (co.getClass().getName().equals(className)) {
                 return Optional.of(co);
             }
@@ -343,63 +349,108 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     /**
      * Get every Quest loaded in memory
      *
+     * @deprecated Use {@link #getLoadedQuests()}
+     * @return a list of all Quests
+     */
+    @Deprecated
+    public LinkedList<Quest> getQuests() {
+        final LinkedList<Quest> list = new LinkedList<>();
+        for (IQuest q : quests) {
+            list.add((Quest) q);
+        }
+        return list;
+    }
+
+    /**
+     * Get every Quest loaded in memory
+     *
      * @return a collection of all Quests
      */
-    public Collection<Quest> getLoadedQuests() {
+    public Collection<IQuest> getLoadedQuests() {
         return quests;
     }
 
     /**
      * Get every Action loaded in memory
      *
+     * @deprecated Use {@link #getLoadedActions()}
+     * @return a list of all Actions
+     */
+    @Deprecated
+    public LinkedList<Action> getActions() {
+        final LinkedList<Action> list = new LinkedList<>();
+        for (IAction a : actions) {
+            list.add((Action) a);
+        }
+        return list;
+    }
+
+    /**
+     * Get every IAction loaded in memory
+     *
      * @return a collection of all Actions
      */
-    public Collection<Action> getLoadedActions() {
+    public Collection<IAction> getLoadedActions() {
         return actions;
     }
 
     /**
-     * Set every Action loaded in memory
+     * Set every IAction loaded in memory
      *
      * @deprecated Use {@link #setLoadedActions(Collection)}
      */
     @Deprecated
-    public void setActions(final LinkedList<Action> actions) {
+    public void setActions(final LinkedList<IAction> actions) {
         this.actions = actions;
     }
 
     /**
-     * Set every Action loaded in memory
+     * Set every IAction loaded in memory
      *
      */
-    public void setLoadedActions(final Collection<Action> actions) {
+    public void setLoadedActions(final Collection<IAction> actions) {
         this.actions = actions;
     }
 
     /**
      * Get every Condition loaded in memory
      *
+     * @deprecated Use {@link #getLoadedConditions()}
+     * @return a list of all Actions
+     */
+    @Deprecated
+    public LinkedList<Condition> getConditions() {
+        final LinkedList<Condition> list = new LinkedList<>();
+        for (ICondition c : conditions) {
+            list.add((Condition) c);
+        }
+        return list;
+    }
+
+    /**
+     * Get every ICondition loaded in memory
+     *
      * @return a collection of all Conditions
      */
-    public Collection<Condition> getLoadedConditions() {
+    public Collection<ICondition> getLoadedConditions() {
         return conditions;
     }
 
     /**
-     * Set every Condition loaded in memory
+     * Set every ICondition loaded in memory
      *
      * @deprecated Use {@link #setLoadedConditions(Collection)}
      */
     @Deprecated
-    public void setConditions(final LinkedList<Condition> conditions) {
+    public void setConditions(final LinkedList<ICondition> conditions) {
         this.conditions = conditions;
     }
 
     /**
-     * Set every Condition loaded in memory
+     * Set every ICondition loaded in memory
      *
      */
-    public void setLoadedConditions(final Collection<Condition> conditions) {
+    public void setLoadedConditions(final Collection<ICondition> conditions) {
         this.conditions = conditions;
     }
 
@@ -413,19 +464,19 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         if (id == null) {
             return null;
         }
-        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
-        for (final Quester q: set) {
+        final ConcurrentSkipListSet<IQuester> set = (ConcurrentSkipListSet<IQuester>) questers;
+        for (final IQuester q: set) {
             if (q != null && q.getUUID().equals(id)) {
-                return q;
+                return (Quester) q;
             }
         }
-        final Quester quester = new BukkitQuester(this, id);
+        final Quester quester = new Quester(this, id);
         if (depends.getCitizens() != null) {
             if (depends.getCitizens().getNPCRegistry().getByUniqueId(id) != null) {
                 return quester;
             }
         }
-        final Quester q = new BukkitQuester(this, id);
+        final Quester q = new Quester(this, id);
         questers.add(q);
         return q;
     }
@@ -435,9 +486,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      *
      * @return a collection of all online Questers
      */
-    public Collection<Quester> getOnlineQuesters() {
-        final Collection<Quester> questers = new ConcurrentSkipListSet<>();
-        for (final Quester q : getOfflineQuesters()) {
+    public Collection<IQuester> getOnlineQuesters() {
+        final Collection<IQuester> questers = new ConcurrentSkipListSet<>();
+        for (final IQuester q : getOfflineQuesters()) {
             if (q.getOfflinePlayer().isOnline()) {
                 // Workaround for issues with the compass on fast join
                 q.findCompassTarget();
@@ -452,7 +503,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      *
      * @return a collection of all Questers
      */
-    public Collection<Quester> getOfflineQuesters() {
+    public Collection<IQuester> getOfflineQuesters() {
         return questers;
     }
 
@@ -461,7 +512,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      *
      * @param questers a collection of Questers
      */
-    public void setOfflineQuesters(final Collection<Quester> questers) {
+    public void setOfflineQuesters(final Collection<IQuester> questers) {
         this.questers = new ConcurrentSkipListSet<>(questers);
     }
 
@@ -628,10 +679,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
                     || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
-                Quester quester = getQuester(player.getUniqueId());
+                IQuester quester = getQuester(player.getUniqueId());
                 if (quester == null) {
                     // Must be new player
-                    quester = new BukkitQuester(Quests.this, player.getUniqueId());
+                    quester = new Quester(Quests.this, player.getUniqueId());
                     if (quester.saveData()) {
                         getLogger().info("Created new data for player " + player.getName());
                     } else {
@@ -755,10 +806,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             loadQuests();
             loadActions();
             loadConditions();
-            getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
-                    + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
+            getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " IAction(s), "
+                    + conditions.size() + " ICondition(s) and " + Lang.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
-                final Quester quester =  new BukkitQuester(Quests.this, p.getUniqueId());
+                final IQuester quester =  new Quester(Quests.this, p.getUniqueId());
                 if (!quester.hasData()) {
                     quester.saveData();
                 }
@@ -815,12 +866,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             int count = 0;
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    for (final Quest lq : getLoadedQuests()) {
+                    for (final IQuest lq : getLoadedQuests()) {
                         if (lq.getId().equals(questKey)) {
                             throw new QuestFormatException("id already exists", questKey);
                         }
                     }
-                    final Quest quest = loadQuest(config, questKey);
+                    final IQuest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -945,13 +996,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
                         count++;
                         getLogger().info("Loaded \"" + name + "\" by " + author);
-                    } else if (CustomObjective.class.isAssignableFrom(c)) {
-                        final Class<? extends BukkitCustomObjective> objectiveClass = c.asSubclass(BukkitCustomObjective.class);
-                        final Constructor<? extends BukkitCustomObjective> constructor = objectiveClass.getConstructor();
-                        final BukkitCustomObjective objective = constructor.newInstance();
-                        final Optional<CustomObjective> oo = getCustomObjective(objective.getClass().getName());
-                        if (oo.isPresent() && oo.get() instanceof BukkitCustomObjective) {
-                            HandlerList.unregisterAll((BukkitCustomObjective)oo.get());
+                    } else if (ICustomObjective.class.isAssignableFrom(c)) {
+                        final Class<? extends CustomObjective> objectiveClass = c.asSubclass(CustomObjective.class);
+                        final Constructor<? extends CustomObjective> constructor = objectiveClass.getConstructor();
+                        final CustomObjective objective = constructor.newInstance();
+                        final Optional<ICustomObjective> oo = getCustomObjective(objective.getClass().getName());
+                        if (oo.isPresent() && oo.get() instanceof CustomObjective) {
+                            HandlerList.unregisterAll((CustomObjective)oo.get());
                             customObjectives.remove(oo.get());
                         }
                         customObjectives.add(objective);
@@ -990,7 +1041,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param ignoreOverrides Whether to ignore objective-overrides
      */
     @SuppressWarnings("deprecation")
-    public void showObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides) {
+    public void showObjectives(final IQuest quest, final IQuester quester, final boolean ignoreOverrides) {
         if (quest == null) {
             getLogger().severe("Quest was null when getting objectives for " + quester.getLastKnownName());
             return;
@@ -1497,7 +1548,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             passIndex++;
         }
         int customIndex = 0;
-        for (final CustomObjective co : stage.getCustomObjectives()) {
+        for (final ICustomObjective co : stage.getCustomObjectives()) {
             int cleared = 0;
             if (data.customObjectiveCounts.size() > customIndex) {
                 cleared = data.customObjectiveCounts.get(customIndex);
@@ -1535,14 +1586,14 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param quester Quester to show the list
      * @param page Page to display, with 7 quests per page
      */
-    public void listQuests(final Quester quester, final int page) {
+    public void listQuests(final IQuester quester, final int page) {
         // Although we could copy the quests list to a new object, we instead opt to
         // duplicate code to improve efficiency if ignore-locked-quests is set to 'false'
         final int rows = 7;
         final Player player = quester.getPlayer();
         if (getSettings().canIgnoreLockedQuests()) {
-            final LinkedList<Quest> available = new LinkedList<>();
-            for (final Quest q : quests) {
+            final LinkedList<IQuest> available = new LinkedList<>();
+            for (final IQuest q : quests) {
                 if (!quester.getCompletedQuests().contains(q)) {
                     if (q.testRequirements(player)) {
                         available.add(q);
@@ -1558,14 +1609,14 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             } else {
                 Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
-                final List<Quest> subQuests;
+                final List<IQuest> subQuests;
                 if (available.size() >= (fromOrder + rows)) {
                     subQuests = available.subList((fromOrder), (fromOrder + rows));
                 } else {
                     subQuests = available.subList((fromOrder), available.size());
                 }
                 fromOrder++;
-                for (final Quest q : subQuests) {
+                for (final IQuest q : subQuests) {
                     if (quester.canAcceptOffer(q, false)) {
                         quester.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
                     } else {
@@ -1585,14 +1636,14 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             } else {
                 Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
-                final List<Quest> subQuests;
+                final List<IQuest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {
                     subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), (fromOrder + rows));
                 } else {
                     subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), quests.size());
                 }
                 fromOrder++;
-                for (final Quest q : subQuests) {
+                for (final IQuest q : subQuests) {
                     if (quester.canAcceptOffer(q, false)) {
                         Lang.send(player, ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
                     } else {
@@ -1633,10 +1684,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 loadConditions();
                 final CompletableFuture<Void> loadFuture = saveFuture.thenRunAsync(() -> {
                     try {
-                        for (final Quester quester : questers) {
-                            final CompletableFuture<Quester> cf = getStorage().loadQuester(quester.getUUID());
-                            final Quester loaded = cf.get();
-                            for (final Quest q : loaded.getCurrentQuests().keySet()) {
+                        for (final IQuester quester : questers) {
+                            final CompletableFuture<IQuester> cf = getStorage().loadQuester(quester.getUUID());
+                            final IQuester loaded = cf.get();
+                            for (final IQuest q : loaded.getCurrentQuests().keySet()) {
                                 loaded.checkQuest(q);
                             }
                         }
@@ -1702,7 +1753,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    final Quest quest = loadQuest(config, questKey);
+                    final IQuest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -1735,9 +1786,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     @SuppressWarnings("deprecation")
-    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
+    private IQuest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
             ActionFormatException {
-        final Quest quest = new BukkitQuest(this);
+        final IQuest quest = new Quest(this);
         quest.setId(questKey);
         if (config.contains("quests." + questKey + ".name")) {
             quest.setName(ConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
@@ -1826,14 +1877,14 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
         }
         if (config.contains("quests." + questKey + ".action")) {
-            final Action action = loadAction(config.getString("quests." + questKey + ".action"));
+            final IAction action = loadAction(config.getString("quests." + questKey + ".action"));
             if (action != null) {
                 quest.setInitialAction(action);
             } else {
                 throw new QuestFormatException("action failed to load", questKey);
             }
         } else if (config.contains("quests." + questKey + ".event")) {
-            final Action action = loadAction(config.getString("quests." + questKey + ".event"));
+            final IAction action = loadAction(config.getString("quests." + questKey + ".event"));
             if (action != null) {
                 quest.setInitialAction(action);
             } else {
@@ -1844,7 +1895,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
-    private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey)
+    private void loadQuestRewards(final FileConfiguration config, final IQuest quest, final String questKey)
             throws QuestFormatException {
         final Rewards rewards = quest.getRewards();
         if (config.contains("quests." + questKey + ".rewards.items")) {
@@ -2031,7 +2082,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     private void loadQuestRequirements(final FileConfiguration config, final ConfigurationSection questsSection,
-                                       final Quest quest, final String questKey) throws QuestFormatException {
+                                       final IQuest quest, final String questKey) throws QuestFormatException {
         final Requirements requires = quest.getRequirements();
         if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
             final Object o = config.get("quests." + questKey + ".requirements.fail-requirement-message");
@@ -2107,7 +2158,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<Quest> temp = new LinkedList<>();
+                final List<IQuest> temp = new LinkedList<>();
                 for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
@@ -2146,7 +2197,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quests");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<Quest> temp = new LinkedList<>();
+                final List<IQuest> temp = new LinkedList<>();
                 for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
@@ -2248,7 +2299,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
     }
     
-    private void loadQuestPlanner(final FileConfiguration config, final Quest quest, final String questKey)
+    private void loadQuestPlanner(final FileConfiguration config, final IQuest quest, final String questKey)
             throws QuestFormatException {
         final Planner pln = quest.getPlanner();
         if (config.contains("quests." + questKey + ".planner.start")) {
@@ -2276,7 +2327,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
     }
     
-    private void loadQuestOptions(final FileConfiguration config, final Quest quest, final String questKey)
+    private void loadQuestOptions(final FileConfiguration config, final IQuest quest, final String questKey)
             throws QuestFormatException {
         final Options opts = quest.getOptions();
         if (config.contains("quests." + questKey + ".options.allow-commands")) {
@@ -2312,7 +2363,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     @SuppressWarnings({ "unchecked", "unused", "deprecation" })
-    private void loadQuestStages(final Quest quest, final FileConfiguration config, final String questKey)
+    private void loadQuestStages(final IQuest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, ActionFormatException, ConditionFormatException {
         final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
                 + ".stages.ordered");
@@ -3249,7 +3300,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".start-event")) {
-                final BukkitAction action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
                         + ".start-event"));
                 if (action != null) {
                     oStage.setStartAction(action);
@@ -3258,7 +3309,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".finish-event")) {
-                final BukkitAction action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
                         + ".finish-event"));
                 if (action != null) {
                     oStage.setFinishAction(action);
@@ -3267,7 +3318,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".fail-event")) {
-                final BukkitAction action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
                         + ".fail-event"));
                 if (action != null) {
                     oStage.setFailAction(action);
@@ -3276,7 +3327,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".death-event")) {
-                final BukkitAction action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
                         + ".death-event"));
                 if (action != null) {
                     oStage.setDeathAction(action);
@@ -3285,7 +3336,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".disconnect-event")) {
-                final BukkitAction action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
+                final Action action = loadAction(config.getString("quests." + questKey + ".stages.ordered." + stageNum
                         + ".disconnect-event"));
                 if (action != null) {
                     oStage.setDisconnectAction(action);
@@ -3304,7 +3355,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             final List<String> chatEventTriggers = config.getStringList("quests." + questKey 
                                     + ".stages.ordered." + stageNum + ".chat-event-triggers");
                             for (int i = 0; i < chatEvents.size(); i++) {
-                                final BukkitAction action = loadAction(chatEvents.get(i));
+                                final Action action = loadAction(chatEvents.get(i));
                                 if (action != null) {
                                     if (i < chatEventTriggers.size()) {
                                         oStage.addChatAction(new AbstractMap.SimpleEntry<>(chatEventTriggers.get(i),
@@ -3340,7 +3391,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             final List<String> commandEventTriggers = config.getStringList("quests." + questKey 
                                     + ".stages.ordered." + stageNum + ".command-event-triggers");
                             for (int i = 0; i < commandEvents.size(); i++) {
-                                final BukkitAction action = loadAction(commandEvents.get(i));
+                                final Action action = loadAction(commandEvents.get(i));
                                 if (action != null) {
                                     if (i < commandEventTriggers.size()) {
                                         oStage.addCommandAction(new AbstractMap.SimpleEntry<>(commandEventTriggers
@@ -3366,7 +3417,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".condition")) {
-                final BukkitCondition condition = loadCondition(config.getString("quests." + questKey + ".stages.ordered."
+                final Condition condition = loadCondition(config.getString("quests." + questKey + ".stages.ordered."
                         + stageNum + ".condition"));
                 if (condition != null) {
                     oStage.setCondition(condition);
@@ -3399,7 +3450,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
-    protected BukkitAction loadAction(final String name) throws ActionFormatException {
+    protected Action loadAction(final String name) throws ActionFormatException {
         if (name == null) {
             return null;
         }
@@ -3420,7 +3471,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         if (data.contains(legacyName)) {
             actionKey = legacyName + ".";
         }
-        final BukkitAction action = new BukkitAction(this);
+        final Action action = new Action(this);
         action.setName(name);
         if (data.contains(actionKey + "message")) {
             action.setMessage(ConfigUtil.parseString(data.getString(actionKey + "message")));
@@ -3731,7 +3782,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         return action;
     }
     
-    protected BukkitCondition loadCondition(final String name) throws ConditionFormatException {
+    protected Condition loadCondition(final String name) throws ConditionFormatException {
         if (name == null) {
             return null;
         }
@@ -3745,7 +3796,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             e.printStackTrace();
         }
         final String conditionKey = "conditions." + name + ".";
-        final BukkitCondition condition = new BukkitCondition(this);
+        final Condition condition = new Condition(this);
         condition.setName(name);
         if (data.contains(conditionKey + "fail-quest")) {
             if (data.isBoolean(conditionKey + "fail-quest")) {
@@ -3886,7 +3937,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         return condition;
     }
     
-    private void loadCustomSections(final Quest quest, final FileConfiguration config, final String questKey)
+    private void loadCustomSections(final IQuest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, QuestFormatException {
         final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
         if (questStages != null) {
@@ -3912,8 +3963,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         for (final String path : sec.getKeys(false)) {
                             final String name = sec.getString(path + ".name");
                             final int count = sec.getInt(path + ".count");
-                            Optional<CustomObjective> found = Optional.empty();
-                            for (final CustomObjective cr : customObjectives) {
+                            Optional<ICustomObjective> found = Optional.empty();
+                            for (final ICustomObjective cr : customObjectives) {
                                 if (cr.getName().equalsIgnoreCase(name)) {
                                     found = Optional.of(cr);
                                     break;
@@ -3943,10 +3994,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 if (sec != null) {
                     for (final String path : sec.getKeys(false)) {
                         final String name = sec.getString(path + ".name");
-                        Optional<CustomReward>found = Optional.empty();
+                        Optional<CustomReward> found = Optional.empty();
                         for (final CustomReward cr : customRewards) {
                             if (cr.getName().equalsIgnoreCase(name)) {
-                                found=Optional.of(cr);
+                                found = Optional.of(cr);
                                 break;
                             }
                         }
@@ -3969,16 +4020,16 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 if (sec != null) {
                     for (final String path : sec.getKeys(false)) {
                         final String name = sec.getString(path + ".name");
-                        Optional<CustomRequirement>found=Optional.empty();
+                        Optional<CustomRequirement> found = Optional.empty();
                         for (final CustomRequirement cr : customRequirements) {
                             if (cr.getName().equalsIgnoreCase(name)) {
-                                found=Optional.of(cr);
+                                found = Optional.of(cr);
                                 break;
                             }
                         }
                         if (found.isPresent()) {
                             final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            final Map<String, Object> data = populateCustoms(sec2,found.get().getData());
+                            final Map<String, Object> data = populateCustoms(sec2, found.get().getData());
                             temp.put(name, data);
                         } else {
                             throw new QuestFormatException(name + " custom requirement not found", questKey);
@@ -4074,7 +4125,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             if (sec != null) {
                 for (final String s : sec.getKeys(false)) {
-                    BukkitAction action = null;
+                    Action action = null;
                     try {
                         action = loadAction(s);
                     } catch (final ActionFormatException e) {
@@ -4083,7 +4134,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                     if (action != null) {
                         actions.add(action);
                     } else {
-                        getLogger().log(Level.SEVERE, "Failed to load Action \"" + s + "\". Skipping.");
+                        getLogger().log(Level.SEVERE, "Failed to load IAction \"" + s + "\". Skipping.");
                     }
                 }
             } else {
@@ -4112,7 +4163,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             final ConfigurationSection sec = config.getConfigurationSection("conditions");
             if (sec != null) {
                 for (final String s : sec.getKeys(false)) {
-                    BukkitCondition condition = null;
+                    Condition condition = null;
                     try {
                         condition = loadCondition(s);
                     } catch (final ConditionFormatException e) {
@@ -4121,7 +4172,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                     if (condition != null) {
                         conditions.add(condition);
                     } else {
-                        getLogger().log(Level.SEVERE, "Failed to load Condition \"" + s + "\". Skipping.");
+                        getLogger().log(Level.SEVERE, "Failed to load ICondition \"" + s + "\". Skipping.");
                     }
                 }
             } else {
@@ -4219,11 +4270,11 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @return Exact match or null if not found
      * @since 3.8.6
      */
-    public Quest getQuestById(final String id) {
+    public IQuest getQuestById(final String id) {
         if (id == null) {
             return null;
         }
-        for (final Quest q : quests) {
+        for (final IQuest q : quests) {
             if (q.getId().equals(id)) {
                 return q;
             }
@@ -4237,21 +4288,21 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param name Name of the quest
      * @return Closest match or null if not found
      */
-    public Quest getQuest(final String name) {
+    public IQuest getQuest(final String name) {
         if (name == null) {
             return null;
         }
-        for (final Quest q : quests) {
+        for (final IQuest q : quests) {
             if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return q;
             }
         }
-        for (final Quest q : quests) {
+        for (final IQuest q : quests) {
             if (q.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (final Quest q : quests) {
+        for (final IQuest q : quests) {
             if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
@@ -4260,26 +4311,26 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
     
     /**
-     * Get an Action by name
+     * Get an IAction by name
      * 
      * @param name Name of the action
      * @return Closest match or null if not found
      */
-    public Action getAction(final String name) {
+    public IAction getAction(final String name) {
         if (name == null) {
             return null;
         }
-        for (final Action a : actions) {
+        for (final IAction a : actions) {
             if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return a;
             }
         }
-        for (final Action a : actions) {
+        for (final IAction a : actions) {
             if (a.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
         }
-        for (final Action a : actions) {
+        for (final IAction a : actions) {
             if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
@@ -4288,26 +4339,26 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
     
     /**
-     * Get a Condition by name
+     * Get a ICondition by name
      * 
      * @param name Name of the condition
      * @return Closest match or null if not found
      */
-    public Condition getCondition(final String name) {
+    public ICondition getCondition(final String name) {
         if (name == null) {
             return null;
         }
-        for (final Condition c : conditions) {
+        for (final ICondition c : conditions) {
             if (c.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return c;
             }
         }
-        for (final Condition c : conditions) {
+        for (final ICondition c : conditions) {
             if (c.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }
         }
-        for (final Condition c : conditions) {
+        for (final ICondition c : conditions) {
             if (c.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }
@@ -4322,8 +4373,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param quester The player to check
      * @return true if at least one available quest has not yet been completed
      */
-    public boolean hasQuest(final NPC npc, final Quester quester) {
-        for (final Quest q : quests) {
+    public boolean hasQuest(final NPC npc, final IQuester quester) {
+        for (final IQuest q : quests) {
             if (q.getNpcStart() != null && !quester.getCompletedQuests().contains(q)) {
                 if (q.getNpcStart().getId() == npc.getId()) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
@@ -4344,8 +4395,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param quester The player to check
      * @return true if at least one available quest has been completed
      */
-    public boolean hasCompletedQuest(final NPC npc, final Quester quester) {
-        for (final Quest q : quests) {
+    public boolean hasCompletedQuest(final NPC npc, final IQuester quester) {
+        for (final IQuest q : quests) {
             if (q.getNpcStart() != null && quester.getCompletedQuests().contains(q)) {
                 if (q.getNpcStart().getId() == npc.getId()) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
@@ -4365,8 +4416,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * @param quester The player to check
      * @return true if at least one available, redoable quest has been completed
      */
-    public boolean hasCompletedRedoableQuest(final NPC npc, final Quester quester) {
-        for (final Quest q : quests) {
+    public boolean hasCompletedRedoableQuest(final NPC npc, final IQuester quester) {
+        for (final IQuest q : quests) {
             if (q.getNpcStart() != null && quester.getCompletedQuests().contains(q)
                     && q.getPlanner().getCooldown() > -1) {
                 if (q.getNpcStart().getId() == npc.getId()) {

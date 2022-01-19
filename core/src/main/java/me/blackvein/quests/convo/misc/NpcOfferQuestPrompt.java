@@ -12,11 +12,11 @@
 
 package me.blackvein.quests.convo.misc;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.misc.MiscPostNpcOfferQuestEvent;
-import me.blackvein.quests.quests.BukkitQuest;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -65,12 +65,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final Quest quest = quests.get(number - 1);
+                    final IQuest quest = quests.get(number - 1);
                     if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN;
                     } else {
@@ -88,12 +88,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     public String getSelectionText(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final Quest quest = quests.get(number - 1);
+                    final IQuest quest = quests.get(number - 1);
                     if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
                     } else {
@@ -110,12 +110,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     public String getAdditionalText(final ConversationContext context, final int number) {
         final Quests plugin = (Quests)context.getPlugin();
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final Quest quest = quests.get(number - 1);
+                    final IQuest quest = quests.get(number - 1);
                     if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN + "" + Lang.get("redoCompleted");
                     }
@@ -134,12 +134,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     public @Nonnull String getPromptText(final ConversationContext context) {
         this.cc = context;
         final Quests plugin = (Quests)context.getPlugin();
-        final LinkedList<BukkitQuest> quests = (LinkedList<BukkitQuest>) context.getSessionData("npcQuests");
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");
         if (plugin == null || quests == null || npc == null) {
             return ChatColor.YELLOW + Lang.get("unknownError");
         }
-        quests.sort(Comparator.comparing(BukkitQuest::getName));
+        quests.sort(Comparator.comparing(Quest::getName));
 
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -180,11 +180,11 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @Override
     public Prompt acceptInput(final ConversationContext context, final String input) {
         final Quests plugin = (Quests)context.getPlugin();
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin == null || quests == null) {
             return Prompt.END_OF_CONVERSATION;
         }
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
@@ -195,15 +195,15 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
-            Quest q = null;
-            for (final Quest quest : quests) {
+            IQuest q = null;
+            for (final IQuest quest : quests) {
                 if (quest.getName().equalsIgnoreCase(input)) {
                     q = quest;
                     break;
                 }
             }
             if (q == null) {
-                for (final Quest quest : quests) {
+                for (final IQuest quest : quests) {
                     if (numInput == (quests.indexOf(quest) + 1)) {
                         q = quest;
                         break;
@@ -211,7 +211,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                 }
             }
             if (q == null) {
-                for (final Quest quest : quests) {
+                for (final IQuest quest : quests) {
                     if (quest.getName().toLowerCase().contains(input.toLowerCase())) {
                         q = quest;
                         break;
@@ -239,8 +239,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         }
     }
 
-    private String extracted(final Quests plugin, final Quester quester) {
-        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
+    private String extracted(final Quests plugin, final IQuester quester) {
+        final IQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }
