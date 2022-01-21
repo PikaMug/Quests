@@ -67,7 +67,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("eventEditorSetTimer");
         case 2:
-            return ChatColor.YELLOW + Lang.get("eventEditorCancelTimer") + ":";
+            return ChatColor.YELLOW + Lang.get("eventEditorCancelTimer");
         case 3:
             return ChatColor.GREEN + Lang.get("done");
         default:
@@ -89,7 +89,8 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
                 }
             }
         case 2:
-            return ChatColor.AQUA + "" + context.getSessionData(CK.E_CANCEL_TIMER);
+            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_CANCEL_TIMER) + ChatColor.GRAY
+                    + ")";
         case 3:
             return "";
         default:

@@ -117,11 +117,11 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_LIGHTNING) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_LIGHTNING);
                 if (locations != null) {
                     for (final String loc : locations) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc);
                     }
                 }
                 return text.toString();
@@ -315,10 +315,10 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context)
                     + ChatColor.DARK_PURPLE);
             for (final World w : plugin.getServer().getWorlds()) {
-                effects.append(w.getName()).append(", ");
+                effects.append("\n").append(w.getName()).append(", ");
             }
             effects = new StringBuilder(effects.substring(0, effects.length()));
             return ChatColor.YELLOW + effects.toString() + getQueryText(context);
@@ -532,10 +532,10 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context)
                     + ChatColor.DARK_PURPLE);
             for (final World w : plugin.getServer().getWorlds()) {
-                effects.append(w.getName()).append(", ");
+                effects.append("\n").append(w.getName()).append(", ");
             }
             effects = new StringBuilder(effects.substring(0, effects.length()));
             return ChatColor.YELLOW + effects.toString() + getQueryText(context);

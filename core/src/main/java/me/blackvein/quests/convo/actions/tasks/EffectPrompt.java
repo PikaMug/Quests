@@ -93,15 +93,15 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_EFFECTS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS);
                 final LinkedList<String> locations
                         = (LinkedList<String>) context.getSessionData(CK.E_EFFECTS_LOCATIONS);
                 if (effects != null && locations != null) {
                     for (final String effect : effects) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(effect)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(effect)
                                 .append(ChatColor.GRAY).append(" at ").append(ChatColor.DARK_AQUA)
-                                .append(locations.get(effects.indexOf(effect))).append("\n");
+                                .append(locations.get(effects.indexOf(effect)));
                     }
                 }
                 return text.toString();
@@ -110,11 +110,11 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_EXPLOSIONS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(CK.E_EXPLOSIONS);
                 if (locations != null) {
                     for (final String loc : locations) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc);
                     }
                 }
                 return text.toString();
@@ -221,9 +221,9 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_EFFECTS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(CK.E_EFFECTS))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
@@ -231,10 +231,10 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_EFFECTS_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final String s : (List<String>) Objects.requireNonNull(context
                             .getSessionData(CK.E_EFFECTS_LOCATIONS))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
@@ -335,7 +335,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
+
             final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final Effect[] values = Effect.values();
             for (int i = 0; i < values.length; i++) {
@@ -345,7 +345,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     effects.append(MiscUtil.snakeCaseToUpperCamelCase(eff.name())).append("\n");
                 }
-                
+
             }
             return effects.toString() + ChatColor.YELLOW + getQueryText(context);
         }

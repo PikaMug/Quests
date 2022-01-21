@@ -89,21 +89,21 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("eventEditorSetMessage");
         case 2:
-            return ChatColor.YELLOW + Lang.get("eventEditorClearInv");
-        case 3:
             return ChatColor.YELLOW + Lang.get("eventEditorSetItems");
-        case 4:
+        case 3:
             return ChatColor.YELLOW + Lang.get("eventEditorSetPotionEffects");
-        case 5:
+        case 4:
             return ChatColor.YELLOW + Lang.get("eventEditorSetHunger");
-        case 6:
+        case 5:
             return ChatColor.YELLOW + Lang.get("eventEditorSetSaturation");
-        case 7:
+        case 6:
             return ChatColor.YELLOW + Lang.get("eventEditorSetHealth");
-        case 8:
+        case 7:
             return ChatColor.YELLOW + Lang.get("eventEditorSetTeleport");
-        case 9:
+        case 8:
             return ChatColor.YELLOW + Lang.get("eventEditorSetCommands");
+        case 9:
+            return ChatColor.YELLOW + Lang.get("eventEditorClearInv");
         case 10:
             return ChatColor.GREEN + Lang.get("done");
         default:
@@ -122,27 +122,25 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_MESSAGE) + ChatColor.GRAY + ")";
             }
         case 2:
-            return ChatColor.AQUA + "" + context.getSessionData(CK.E_CLEAR_INVENTORY);
-        case 3:
             if (context.getSessionData(CK.E_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(CK.E_ITEMS);
                 if (items != null) {
                     for (final ItemStack is : items) {
                         if (is != null) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getString(is)).append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ItemUtil.getString(is));
                         }
                     }
                     return text.toString();
                 }
             }
-        case 4:
+        case 3:
             if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 final LinkedList<String> types = (LinkedList<String>) context.getSessionData(CK.E_POTION_TYPES);
                 final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(CK.E_POTION_DURATIONS);
                 final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(CK.E_POTION_STRENGTH);
@@ -150,53 +148,56 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (types != null && durations != null && mags != null) {
                     for (final String type : types) {
                         index++;
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(type)
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(type)
                                 .append(ChatColor.DARK_PURPLE).append(" ").append(RomanNumeral.getNumeral(mags
                                 .get(index))).append(ChatColor.GRAY).append(" -> ").append(ChatColor.DARK_AQUA)
-                                .append(MiscUtil.getTime(durations.get(index) * 50L)).append("\n");
+                                .append(MiscUtil.getTime(durations.get(index) * 50L));
                     }
                 }
                 return text.toString();
             }
-        case 5:
+        case 4:
             if (context.getSessionData(CK.E_HUNGER) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_HUNGER) + ChatColor.GRAY 
                         + ")";
             }
-        case 6:
+        case 5:
             if (context.getSessionData(CK.E_SATURATION) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_SATURATION) + ChatColor.GRAY 
                         + ")";
             }
-        case 7:
+        case 6:
             if (context.getSessionData(CK.E_HEALTH) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_HEALTH) + ChatColor.GRAY 
                         + ")";
             }
-        case 8:
+        case 7:
             if (context.getSessionData(CK.E_TELEPORT) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_TELEPORT) + ChatColor.GRAY 
                         + ")";
             }
-        case 9:
+        case 8:
             if (context.getSessionData(CK.E_COMMANDS) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
-                final StringBuilder text = new StringBuilder("\n");
+                final StringBuilder text = new StringBuilder();
                 for (final String s : (LinkedList<String>) Objects.requireNonNull(context
                         .getSessionData(CK.E_COMMANDS))) {
-                    text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                    text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                 }
                 return text.toString();
             }
+        case 9:
+            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_CLEAR_INVENTORY) + ChatColor.GRAY
+                    + ")";
         case 10:
             return "";
         default:
@@ -229,26 +230,16 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return new PlayerMessagePrompt(context);
         case 2:
-            final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
-            if (s != null) {
-                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
-                } else {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
-                }
-            }
-            return new ActionMainPrompt(context);
-        case 3:
             return new PlayerItemListPrompt(context);
+        case 3:
+            return new PlayerPotionListPrompt(context);
         case 4:
-            return new PlayerPotionEffectPrompt(context);
-        case 5:
             return new PlayerHungerPrompt(context);
-        case 6:
+        case 5:
             return new PlayerSaturationPrompt(context);
-        case 7:
+        case 6:
             return new PlayerHealthPrompt(context);
-        case 8:
+        case 7:
             if (context.getForWhom() instanceof Player) {
                 final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
@@ -258,13 +249,23 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                 return new PlayerPrompt(context);
             }
-        case 9:
+        case 8:
             if (!plugin.hasLimitedAccess(context.getForWhom())) {
                 return new PlayerCommandsPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
                 return new PlayerPrompt(context);
             }
+        case 9:
+            final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
+            if (s != null) {
+                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
+                } else {
+                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
+                }
+            }
+            return new PlayerPrompt(context);
         case 10:
             return new ActionMainPrompt(context);
         default:
@@ -364,11 +365,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final ItemStack is : (List<ItemStack>) Objects.requireNonNull(context
                             .getSessionData(CK.E_ITEMS))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                .append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                .append(ItemUtil.getDisplayString(is));
                     }
                     return text.toString();
                 }
@@ -430,9 +431,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class PlayerPotionEffectPrompt extends ActionsEditorNumericPrompt {
+    public class PlayerPotionListPrompt extends ActionsEditorNumericPrompt {
 
-        public PlayerPotionEffectPrompt(final ConversationContext context) {
+        public PlayerPotionListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -490,10 +491,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final String s : (LinkedList<String>) Objects.requireNonNull(context
                             .getSessionData(CK.E_POTION_TYPES))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
@@ -501,11 +502,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final Long l : (LinkedList<Long>) Objects.requireNonNull(context
                             .getSessionData(CK.E_POTION_DURATIONS))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_AQUA)
-                                .append(MiscUtil.getTime(l * 50L)).append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_AQUA)
+                                .append(MiscUtil.getTime(l * 50L));
                     }
                     return text.toString();
                 }
@@ -513,11 +514,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_POTION_STRENGTH) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     for (final int i : (LinkedList<Integer>) Objects.requireNonNull(context
                             .getSessionData(CK.E_POTION_STRENGTH))) {
-                        text.append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_PURPLE).append(i)
-                                .append("\n");
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_PURPLE)
+                                .append(i);
                     }
                     return text.toString();
                 }
@@ -553,7 +554,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             case 2:
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetPotionTypesFirst"));
-                    return new PlayerPotionEffectPrompt(context);
+                    return new PlayerPotionListPrompt(context);
                 } else {
                     return new PlayerPotionDurationsPrompt(context);
                 }
@@ -561,11 +562,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
-                    return new PlayerPotionEffectPrompt(context);
+                    return new PlayerPotionListPrompt(context);
                 } else if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionDurationsFirst"));
-                    return new PlayerPotionEffectPrompt(context);
+                    return new PlayerPotionListPrompt(context);
                 } else {
                     return new PlayerPotionMagnitudesPrompt(context);
                 }
@@ -574,7 +575,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 context.setSessionData(CK.E_POTION_TYPES, null);
                 context.setSessionData(CK.E_POTION_DURATIONS, null);
                 context.setSessionData(CK.E_POTION_STRENGTH, null);
-                return new PlayerPotionEffectPrompt(context);
+                return new PlayerPotionListPrompt(context);
             case 5:
                 final int one;
                 final int two;
@@ -601,10 +602,10 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorListSizeMismatch"));
-                    return new PlayerPotionEffectPrompt(context);
+                    return new PlayerPotionListPrompt(context);
                 }
             default:
-                return new PlayerPotionEffectPrompt(context);
+                return new PlayerPotionListPrompt(context);
             }
         }
     }
@@ -631,9 +632,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder effs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final StringBuilder effs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context));
             for (final PotionEffectType pet : PotionEffectType.values()) {
-                effs.append(pet != null ? ChatColor.DARK_PURPLE + pet.getName() + "\n" : "");
+                effs.append(pet != null ? "\n" + ChatColor.DARK_PURPLE + pet.getName() : "");
             }
             return effs.toString() + ChatColor.YELLOW + getQueryText(context);
         }
@@ -656,7 +657,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     }
                 }
             }
-            return new PlayerPotionEffectPrompt(context);
+            return new PlayerPotionListPrompt(context);
         }
     }
 
@@ -710,7 +711,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 }
                 context.setSessionData(CK.E_POTION_DURATIONS, effDurations);
             }
-            return new PlayerPotionEffectPrompt(context);
+            return new PlayerPotionListPrompt(context);
         }
     }
 
@@ -763,7 +764,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 }
                 context.setSessionData(CK.E_POTION_STRENGTH, magAmounts);
             }
-            return new PlayerPotionEffectPrompt(context);
+            return new PlayerPotionListPrompt(context);
         }
     }
     

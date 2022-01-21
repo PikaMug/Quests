@@ -333,11 +333,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             
-            final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context) + "\n");
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
-                        .append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i)).append("\n");
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
             return text.toString();
         }

@@ -806,8 +806,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             loadQuests();
             loadActions();
             loadConditions();
-            getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " IAction(s), "
-                    + conditions.size() + " ICondition(s) and " + Lang.size() + " Phrase(s)");
+            getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
+                    + conditions.size() + " Condition(s) and " + Lang.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
                 final IQuester quester =  new Quester(Quests.this, p.getUniqueId());
                 if (!quester.hasData()) {

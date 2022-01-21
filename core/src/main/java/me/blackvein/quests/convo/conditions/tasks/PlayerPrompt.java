@@ -263,13 +263,13 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
-                    final StringBuilder text = new StringBuilder("\n");
+                    final StringBuilder text = new StringBuilder();
                     final List<ItemStack> whileHoldingMainHand
                             = (List<ItemStack>) context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND);
                     if (whileHoldingMainHand != null) {
                         for (final ItemStack is : whileHoldingMainHand) {
-                            text.append(ChatColor.GRAY).append("     - ").append(ItemUtil.getDisplayString(is))
-                                    .append("\n");
+                            text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                    .append(ItemUtil.getDisplayString(is));
                         }
                     }
                     return text.toString();

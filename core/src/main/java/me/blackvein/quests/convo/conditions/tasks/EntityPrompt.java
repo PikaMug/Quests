@@ -187,7 +187,7 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
+
             final StringBuilder mobs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
             final List<EntityType> toRemove = new LinkedList<>();
@@ -201,7 +201,7 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
             for (int i = 0; i < mobArr.size(); i++) {
                 mobs.append(ChatColor.AQUA).append(MiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()));
                 if (i < (mobArr.size() - 1)) {
-                     mobs.append(ChatColor.GRAY).append(", ");
+                    mobs.append(ChatColor.GRAY).append(", ");
                 }
             }
             mobs.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
@@ -266,8 +266,7 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + getQueryText(context) + "\n" 
-                        + ChatColor.GOLD + Lang.get("npcHint");
+                return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + Lang.get("npcHint");
             } else {
                 return ChatColor.YELLOW + getQueryText(context);
             }

@@ -117,7 +117,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return ChatColor.YELLOW + Lang.get("stageEditorDenizenScript");
             }
         case 8:
-            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
+            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest");
         case 9:
             return ChatColor.GREEN + Lang.get("save");
         case 10:
@@ -173,7 +173,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
                 context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
             }
-            return "" + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST);
+            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST) + ChatColor.GRAY
+                    + ")";
         default:
             return null;
         }
@@ -377,11 +378,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
-                        .append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i)).append("\n");
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
             return text.toString();
         }
@@ -499,46 +500,46 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             switch (number) {
             case 1:
                 return "(" + (questMob.getName() == null ? Lang.get("noneSet") : ChatColor.AQUA + questMob.getName()) 
-                        + ChatColor.GRAY + ")\n";
+                        + ChatColor.GRAY + ")";
             case 2:
                 return "(" + (questMob.getType() == null ? Lang.get("noneSet") : ChatColor.AQUA 
-                        + questMob.getType().name()) + ChatColor.GRAY + ")\n";
+                        + questMob.getType().name()) + ChatColor.GRAY + ")";
             case 3:
                 return "(" + (questMob.getSpawnLocation() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ConfigUtil.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")\n";
+                        + ConfigUtil.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")";
             case 4:
                 return "(" + (questMob.getSpawnAmounts() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")";
             case 5:
                 return "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")\n";
+                        + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")";
             case 6:
                 return "(" + (questMob.getDropChances()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")";
             case 7:
                 return "(" + (questMob.getInventory()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")\n";
+                        + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")";
             case 8:
                 return "(" + (questMob.getDropChances()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")";
             case 9:
                 return "(" + (questMob.getInventory()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")\n";
+                        + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")";
             case 10:
                 return "(" + (questMob.getDropChances()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")";
             case 11:
                 return "(" + (questMob.getInventory()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")\n";
+                        + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")";
             case 12:
                 return "(" + (questMob.getDropChances()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")";
             case 13:
                 return "(" + (questMob.getInventory()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")\n";
+                        + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")";
             case 14:
                 return "(" + (questMob.getDropChances()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")\n";
+                        + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")";
             case 15:
             case 16:
                 return "";
@@ -567,9 +568,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
-                        .append(" - ").append(getSelectionText(context, i)).append(ChatColor.GRAY).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i))
+                        .append(ChatColor.GRAY).append(" ").append(getAdditionalText(context, i));
             }
             return text.toString();
         }
@@ -733,7 +734,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (context.getPlugin() != null) {
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            
+
             final StringBuilder mobs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final EntityType[] mobArr = EntityType.values();
             for (int i = 0; i < mobArr.length; i++) {
@@ -973,10 +974,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             
-            final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + "- " + getTitle(context) + " -\n");
-            if (plugin.getDependencies().getDenizenApi().getScriptNames() != null) {
+            final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + "- " + getTitle(context) + " -");
+            if (plugin.getDependencies().getDenizenApi() != null
+                    && plugin.getDependencies().getDenizenApi().getScriptNames() != null) {
                 for (final String s : plugin.getDependencies().getDenizenApi().getScriptNames()) {
-                    text.append(ChatColor.AQUA).append("- ").append(s).append("\n");
+                    text.append("\n").append(ChatColor.AQUA).append("- ").append(s);
                 }
             }
             return text.toString() + ChatColor.YELLOW + getQueryText(context);
@@ -1164,7 +1166,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
             return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
