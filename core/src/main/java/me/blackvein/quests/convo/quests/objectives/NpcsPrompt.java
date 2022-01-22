@@ -300,9 +300,10 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                             = (List<Integer>) context.getSessionData(pref + CK.S_DELIVERY_NPCS);
                     if (deliveryNpcs != null) {
                         for (final int i : deliveryNpcs) {
-                            text.append(")\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i)
-                                    .append(" (").append(plugin.getDependencies().getCitizens().getNPCRegistry()
-                                    .getById(i).getName());
+                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i)
+                                    .append(ChatColor.GRAY).append(" (").append(ChatColor.AQUA)
+                                    .append(plugin.getDependencies().getCitizens().getNPCRegistry()
+                                    .getById(i).getName()).append(ChatColor.GRAY).append(")");
                         }
                     }
                     return text.toString();

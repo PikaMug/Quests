@@ -15,14 +15,14 @@ package me.blackvein.quests;
 import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import me.blackvein.quests.actions.IAction;
-import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.actions.ActionFactory;
 import me.blackvein.quests.actions.BukkitActionFactory;
-import me.blackvein.quests.conditions.Condition;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.conditions.BukkitConditionFactory;
-import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.conditions.Condition;
 import me.blackvein.quests.conditions.ConditionFactory;
+import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.MiscStringPrompt;
 import me.blackvein.quests.convo.misc.NpcOfferQuestPrompt;
@@ -44,6 +44,7 @@ import me.blackvein.quests.listeners.NpcListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.listeners.UniteListener;
+import me.blackvein.quests.logging.QuestsLog4JFilter;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitQuestFactory;
@@ -72,6 +73,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -271,6 +273,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         });
 
         // 12 - Delay loading of Quests, Actions and modules
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
         delayLoadQuestInfo();
     }
 
