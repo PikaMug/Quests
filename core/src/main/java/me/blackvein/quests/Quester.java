@@ -2494,16 +2494,6 @@ public class Quester implements IQuester {
         if (index == -1) {
             return;
         }
-        if (index >= questData.mobNumKilled.size()) {
-            plugin.getLogger().warning(getLastKnownName() + " has invalid num of mobs killed for quest ID "
-                    + quest.getId());
-            return;
-        }
-        if (index >= currentStage.mobNumToKill.size()) {
-            plugin.getLogger().warning(getLastKnownName() + " has invalid num of mobs to kill for quest ID "
-                    + quest.getId());
-            return;
-        }
         final int mobsKilled = questData.mobNumKilled.get(index);
         final int mobsToKill = currentStage.getMobNumToKill().get(index);
         if (!currentStage.getLocationsToKillWithin().isEmpty()) {
