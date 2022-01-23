@@ -12,8 +12,7 @@
 
 package me.blackvein.quests.util;
 
-import me.blackvein.quests.Dependencies;
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.QuestsAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -126,7 +125,7 @@ public class Lang {
         }
     }
 
-    public static void init(final Quests plugin) throws InvalidConfigurationException, IOException {
+    public static void init(final QuestsAPI plugin) throws InvalidConfigurationException, IOException {
         final File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
         final File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
@@ -278,7 +277,7 @@ public class Lang {
             }
             s = convertString(s);
             if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null ) {
-                if (Dependencies.placeholder.isEnabled()) {
+                if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled()) {
                     s = PlaceholderAPI.setPlaceholders(p, s);
                 }
             }

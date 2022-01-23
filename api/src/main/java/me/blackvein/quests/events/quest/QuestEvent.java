@@ -14,7 +14,7 @@ package me.blackvein.quests.events.quest;
 
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.events.QuestsEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,13 +23,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class QuestEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Quest quest;
+    private final IQuest quest;
     
-    public QuestEvent(final Quest quest) {
+    public QuestEvent(final IQuest quest) {
         this.quest = quest;
     }
     
-    public QuestEvent(final Quest quest, final boolean async) {
+    public QuestEvent(final IQuest quest, final boolean async) {
         super(async);
         this.quest = quest;
     }
@@ -39,7 +39,7 @@ public abstract class QuestEvent extends QuestsEvent {
      * 
      * @return Quest which is involved in this event
      */
-    public final Quest getQuest() {
+    public final IQuest getQuest() {
         return quest;
     }
     

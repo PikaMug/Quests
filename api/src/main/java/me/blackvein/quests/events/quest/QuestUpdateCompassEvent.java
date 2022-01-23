@@ -16,8 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-import me.blackvein.quests.Quest;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.player.IQuester;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuestUpdateCompassEvent extends QuestEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Quester quester;
+    private final IQuester quester;
     private final Location target;
     private boolean cancel = false;
 
-    public QuestUpdateCompassEvent(final Quest quest, final Quester who, final Location target) {
+    public QuestUpdateCompassEvent(final IQuest quest, final IQuester who, final Location target) {
         super(quest);
         this.quester = who;
         this.target = target;
@@ -40,7 +40,7 @@ public class QuestUpdateCompassEvent extends QuestEvent implements Cancellable {
      * 
      * @return Quester who is involved in this event
      */
-    public Quester getQuester() {
+    public IQuester getQuester() {
         return quester;
     }
     

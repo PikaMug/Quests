@@ -12,12 +12,11 @@
 
 package me.blackvein.quests.convo.quests;
 
+import me.blackvein.quests.quests.QuestFactory;
+import me.blackvein.quests.QuestsAPI;
+import me.blackvein.quests.convo.QuestsNumericPrompt;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-
-import me.blackvein.quests.QuestFactory;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.convo.QuestsNumericPrompt;
 
 public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     private final ConversationContext context;
@@ -26,7 +25,7 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     public QuestsEditorNumericPrompt(final ConversationContext context) {
         this.context = context;
         if (context != null && context.getPlugin() != null) {
-            factory = ((Quests)context.getPlugin()).getQuestFactory();
+            factory = ((QuestsAPI)context.getPlugin()).getQuestFactory();
         }
     }
     

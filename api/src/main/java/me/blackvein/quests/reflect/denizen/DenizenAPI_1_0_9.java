@@ -12,7 +12,7 @@
 
 package me.blackvein.quests.reflect.denizen;
 
-import me.blackvein.quests.Quests;
+import me.blackvein.quests.QuestsAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,7 +27,7 @@ import java.util.logging.Level;
 
 public class DenizenAPI_1_0_9 {
     
-    private static final Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+    private static final QuestsAPI quests = (QuestsAPI) Bukkit.getPluginManager().getPlugin("Quests");
     private static final DenizenAPI api = quests != null ? quests.getDependencies().getDenizenApi() : null;
     
     public static boolean containsScript(final String input) {

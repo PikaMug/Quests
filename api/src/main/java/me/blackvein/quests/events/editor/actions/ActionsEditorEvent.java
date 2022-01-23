@@ -12,13 +12,12 @@
 
 package me.blackvein.quests.events.editor.actions;
 
+import me.blackvein.quests.QuestsAPI;
+import me.blackvein.quests.actions.ActionFactory;
+import me.blackvein.quests.events.QuestsEvent;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.event.HandlerList;
-
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.actions.ActionFactory;
-import me.blackvein.quests.events.QuestsEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -34,14 +33,14 @@ public abstract class ActionsEditorEvent extends QuestsEvent {
     
     public ActionsEditorEvent(final ConversationContext context, final Prompt prompt) {
         this.context = context;
-        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getActionFactory();
+        this.factory = ((QuestsAPI) Objects.requireNonNull(context.getPlugin())).getActionFactory();
         this.prompt = prompt;
     }
     
     public ActionsEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
         super(async);
         this.context = context;
-        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getActionFactory();
+        this.factory = ((QuestsAPI) Objects.requireNonNull(context.getPlugin())).getActionFactory();
         this.prompt = prompt;
     }
     

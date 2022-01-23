@@ -12,17 +12,15 @@
 
 package me.blackvein.quests.convo;
 
+import me.blackvein.quests.QuestsAPI;
 import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-
-import me.blackvein.quests.Quests;
 
 import java.util.List;
 
@@ -61,7 +59,7 @@ public abstract class QuestsStringPrompt extends StringPrompt {
         if (context.getPlugin() == null) {
             return Lang.get("itemCreateCriticalError");
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+        if (!(context.getForWhom() instanceof Player) || !((QuestsAPI)context.getPlugin()).getSettings().canClickablePrompts()) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
         }
         final TextComponent component = new TextComponent(header + "\n");
