@@ -16,7 +16,7 @@ import me.blackvein.quests.Quester;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
@@ -69,7 +69,7 @@ public class BlockListener implements Listener {
                         continue;
                     }
                     if (quester.getCurrentQuests().containsKey(quest)) {
-                        final Stage currentStage = quester.getCurrentStage(quest);
+                        final IStage currentStage = quester.getCurrentStage(quest);
                         if (currentStage == null) {
                             plugin.getLogger().severe("Player " + player.getName() + " (" + player.getUniqueId()
                                     + ") has invalid stage for quest " + quest.getName() + " (" + quest.getId() + ")");

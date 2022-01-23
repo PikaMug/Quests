@@ -10,12 +10,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests.quests;
+package me.blackvein.quests;
 
 import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.quests.IStage;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,7 +28,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class BukkitStage implements Stage {
+public class Stage implements IStage {
 
     private LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
     private LinkedList<ItemStack> blocksToDamage = new LinkedList<>();

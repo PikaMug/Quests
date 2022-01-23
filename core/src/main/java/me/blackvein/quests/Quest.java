@@ -37,11 +37,11 @@ import me.blackvein.quests.quests.BukkitPlanner;
 import me.blackvein.quests.quests.BukkitRequirements;
 import me.blackvein.quests.quests.BukkitRewards;
 import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.quests.Options;
 import me.blackvein.quests.quests.Planner;
 import me.blackvein.quests.quests.Requirements;
 import me.blackvein.quests.quests.Rewards;
-import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -82,7 +82,7 @@ public class Quest implements IQuest {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private final LinkedList<Stage> orderedStages = new LinkedList<>();
+    private final LinkedList<IStage> orderedStages = new LinkedList<>();
     protected UUID npcStart;
     protected Location blockStart;
     protected String regionStart = null;
@@ -174,7 +174,7 @@ public class Quest implements IQuest {
     }
 
     @Override
-    public Stage getStage(final int index) {
+    public IStage getStage(final int index) {
         try {
             return orderedStages.get(index);
         } catch (final Exception e) {
@@ -183,7 +183,7 @@ public class Quest implements IQuest {
     }
 
     @Override
-    public LinkedList<Stage> getStages() {
+    public LinkedList<IStage> getStages() {
         return orderedStages;
     }
 
@@ -247,7 +247,7 @@ public class Quest implements IQuest {
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
     public void nextStage(final IQuester quester, final boolean allowSharedProgress) {
-        final Stage currentStage = quester.getCurrentStage(this);
+        final IStage currentStage = quester.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
             return;
@@ -299,7 +299,7 @@ public class Quest implements IQuest {
      * Force player to proceed to the specified stage
      * 
      * @param quester Player to force
-     * @param stage Stage number to specify
+     * @param stage IStage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
     public void setStage(final IQuester quester, final int stage) throws IndexOutOfBoundsException {
@@ -309,8 +309,8 @@ public class Quest implements IQuest {
                     + player.getName();
             throw new IndexOutOfBoundsException(msg);
         }
-        final Stage currentStage = quester.getCurrentStage(this);
-        final Stage nextStage = getStage(stage);
+        final IStage currentStage = quester.getCurrentStage(this);
+        final IStage nextStage = getStage(stage);
         if (player.isOnline()) {
             final QuesterPreChangeStageEvent preEvent
                     = new QuesterPreChangeStageEvent((Quester) quester, this, currentStage, nextStage);
@@ -422,7 +422,7 @@ public class Quest implements IQuest {
      * @param stage The stage to process for targets
      * @return true if an attempt was made successfully
      */
-    public boolean updateCompass(final IQuester quester, final Stage stage) {
+    public boolean updateCompass(final IQuester quester, final IStage stage) {
         if (quester == null) {
             return false;
         }
@@ -1139,7 +1139,7 @@ public class Quest implements IQuest {
         }
         final Player player = quester.getPlayer();
         if (!ignoreFailAction) {
-            final Stage stage = quester.getCurrentStage(this);
+            final IStage stage = quester.getCurrentStage(this);
             if (stage != null && stage.getFailAction() != null) {
                 quester.getCurrentStage(this).getFailAction().fire(quester, this);
             }

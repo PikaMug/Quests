@@ -15,7 +15,7 @@ package me.blackvein.quests.storage.implementation.file;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.storage.implementation.StorageImplementation;
 import org.bukkit.OfflinePlayer;
@@ -159,7 +159,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
-                final Stage stage = quester.getCurrentStage(quest);
+                final IStage stage = quester.getCurrentStage(quest);
                 if (stage == null) {
                     quest.completeQuest(quester);
                     plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + uniqueId + "\" on Quest \"" 

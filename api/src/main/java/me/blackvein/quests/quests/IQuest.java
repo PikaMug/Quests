@@ -39,9 +39,9 @@ public interface IQuest extends Comparable<IQuest> {
 
     void setGUIDisplay(final ItemStack guiDisplay);
 
-    Stage getStage(final int index);
+    IStage getStage(final int index);
 
-    LinkedList<Stage> getStages();
+    LinkedList<IStage> getStages();
 
     NPC getNpcStart();
 
@@ -67,7 +67,7 @@ public interface IQuest extends Comparable<IQuest> {
 
     void setStage(final IQuester quester, final int stage);
 
-    boolean updateCompass(final IQuester quester, final Stage stage);
+    boolean updateCompass(final IQuester quester, final IStage stage);
 
     boolean testRequirements(final IQuester quester);
 

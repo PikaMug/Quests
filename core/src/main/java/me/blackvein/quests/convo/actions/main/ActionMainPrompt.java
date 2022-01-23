@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.actions.main;
 import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -1018,7 +1018,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (modifiedName != null) {
                 modName = modifiedName;
                 for (final IQuest q : plugin.getLoadedQuests()) {
-                    for (final Stage s : q.getStages()) {
+                    for (final IStage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

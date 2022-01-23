@@ -30,10 +30,10 @@ import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitObjective;
 import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.quests.Objective;
 import me.blackvein.quests.quests.Planner;
 import me.blackvein.quests.quests.Requirements;
-import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.tasks.StageTimer;
 import me.blackvein.quests.util.ConfigUtil;
@@ -393,7 +393,7 @@ public class Quester implements IQuester {
     }
 
     @Override
-    public Stage getCurrentStage(final IQuest quest) {
+    public IStage getCurrentStage(final IQuest quest) {
         if (currentQuests.containsKey(quest)) {
             return quest.getStage(currentQuests.get(quest));
         }
@@ -574,7 +574,7 @@ public class Quester implements IQuester {
                 plugin.getLogger().severe("Unable to add quest" + quest.getName() + " for player " + offlinePlayer.getName()
                         + ". Consider resetting player data or report on Github");
             }
-            final Stage stage = quest.getStage(0);
+            final IStage stage = quest.getStage(0);
             if (!ignoreRequirements) {
                 final Requirements requirements = quest.getRequirements();
                 if (requirements.getMoney() > 0) {
@@ -908,7 +908,7 @@ public class Quester implements IQuester {
             return objectives;
         }
         final QuestData data = getQuestData(quest);
-        final Stage stage = getCurrentStage(quest);
+        final IStage stage = getCurrentStage(quest);
         final LinkedList<String> objectives = new LinkedList<>();
         for (final ItemStack e : stage.getBlocksToBreak()) {
             for (final ItemStack e2 : data.blocksBroken) {
@@ -1367,7 +1367,7 @@ public class Quester implements IQuester {
      * milkCow, catchFish, killMob, deliverItem, killPlayer, talkToNPC,
      * killNPC, tameMob, shearSheep, password, reachLocation
      * 
-     * @deprecated Use {@link Stage#containsObjective(ObjectiveType)}
+     * @deprecated Use {@link IStage#containsObjective(ObjectiveType)}
      * @param quest The quest to check objectives of
      * @param name The type of objective to check for
      * @return true if stage contains specified objective
@@ -2386,7 +2386,7 @@ public class Quester implements IQuester {
         if (questData == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2435,7 +2435,7 @@ public class Quester implements IQuester {
         if (questData == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2486,7 +2486,7 @@ public class Quester implements IQuester {
         if (entityType == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage.getMobsToKill() == null) {
             return;
         }
@@ -2556,7 +2556,7 @@ public class Quester implements IQuester {
         if (questData == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage == null) {
             return;
         }
@@ -2684,7 +2684,7 @@ public class Quester implements IQuester {
         if (entityType == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage.getMobsToTame() == null) {
             return;
         }
@@ -2735,7 +2735,7 @@ public class Quester implements IQuester {
         if (color == null) {
             return;
         }
-        final Stage currentStage = getCurrentStage(quest);
+        final IStage currentStage = getCurrentStage(quest);
         if (currentStage.getSheepToShear() == null) {
             return;
         }
@@ -3289,7 +3289,7 @@ public class Quester implements IQuester {
             return;
         }
         if (quest.getStage(stage) == null) {
-            plugin.getLogger().severe("Unable to find Stage " + stage + " of quest ID " + quest.getId());
+            plugin.getLogger().severe("Unable to find IStage " + stage + " of quest ID " + quest.getId());
             return;
         }
         if (!quest.getStage(stage).getBlocksToBreak().isEmpty()) {
@@ -3593,7 +3593,7 @@ public class Quester implements IQuester {
                 if (!questData.mobsTamed.isEmpty()) {
                     questSec.set("mob-tame-amounts", questData.mobsTamed);
                 }
-                final Stage stage = getCurrentStage(quest);
+                final IStage stage = getCurrentStage(quest);
                 if (stage != null) {
                     if (stage.getFishToCatch() != null) {
                         questSec.set("fish-caught", questData.getFishCaught());
@@ -3754,7 +3754,7 @@ public class Quester implements IQuester {
             boolean exists = false;
             for (final IQuest q : plugin.getLoadedQuests()) {
                 if (q.getId().equalsIgnoreCase(quest.getId())) {
-                    final Stage stage = getCurrentStage(quest);
+                    final IStage stage = getCurrentStage(quest);
                     if (stage != null) {
                         quest.updateCompass(this, stage);
                         // TODO - decide whether or not to handle this
@@ -3962,7 +3962,7 @@ public class Quester implements IQuester {
             return;
         }
         for (final IQuest quest : currentQuests.keySet()) {
-            final Stage stage = getCurrentStage(quest);
+            final IStage stage = getCurrentStage(quest);
             if (stage != null && quest.updateCompass(this, stage)) {
                 break;
             }
@@ -3995,7 +3995,7 @@ public class Quester implements IQuester {
             if (list.size() > 0) {
                 final IQuest quest = plugin.getQuestById(list.get(index));
                 compassTargetQuestId = quest.getId();
-                final Stage stage = getCurrentStage(quest);
+                final IStage stage = getCurrentStage(quest);
                 if (stage != null) {
                     quest.updateCompass(Quester.this, stage);
                     if (notify) {
@@ -4081,7 +4081,7 @@ public class Quester implements IQuester {
      * @param currentStage The current stage of the quest
      * @param fun The function to execute, the event call
      */
-    public Set<String> dispatchMultiplayerObjectives(final IQuest quest, final Stage currentStage,
+    public Set<String> dispatchMultiplayerObjectives(final IQuest quest, final IStage currentStage,
                                                      final Function<IQuester, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest.getOptions().getShareProgressLevel() == 2) {
@@ -4310,7 +4310,7 @@ public class Quester implements IQuester {
     }
     
     public boolean meetsCondition(final IQuest quest, final boolean giveReason) {
-        final Stage stage = getCurrentStage(quest);
+        final IStage stage = getCurrentStage(quest);
         if (stage != null && stage.getCondition() != null && !stage.getCondition().check(this, quest)) {
             if (stage.getCondition().isFailQuest()) {
                 if (giveReason) {

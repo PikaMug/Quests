@@ -18,7 +18,7 @@ import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitObjective;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -163,7 +163,7 @@ public abstract class CustomObjective implements ICustomObjective, Listener {
                                                 final Quest quest) {
         final IQuester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
-            final Stage currentStage = quester.getCurrentStage(quest);
+            final IStage currentStage = quester.getCurrentStage(quest);
             if (currentStage == null) {
                 return null;
             }

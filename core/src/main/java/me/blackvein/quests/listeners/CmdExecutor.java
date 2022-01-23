@@ -15,8 +15,8 @@ package me.blackvein.quests.listeners;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.quests.Requirements;
-import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
@@ -200,7 +200,7 @@ public class CmdExecutor implements CommandExecutor {
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
                     if (!quester.getCurrentQuests().isEmpty()) {
                         for (final IQuest q : quester.getCurrentQuests().keySet()) {
-                            final Stage stage = quester.getCurrentStage(q);
+                            final IStage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
                                 final String msg = Lang.get(player, "questObjectivesTitle")

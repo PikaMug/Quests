@@ -23,8 +23,12 @@ public class QuestsLog4JFilter extends AbstractFilter {
         if (message == null) {
             return Result.NEUTRAL;
         }
+        // Hikari tries to nag author about unavoidable logger usage
+        if (message.contains("[PikaMug]")) {
+            return Result.DENY;
+        }
         // Paper outputs errors when dependencies for module events are missing
-        return message.contains("Plugin Quests") ? Result.DENY : Result.NEUTRAL;
+        return message.startsWith("Plugin Quests") ? Result.DENY : Result.NEUTRAL;
     }
 
     @Override

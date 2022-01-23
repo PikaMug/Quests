@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface Stage {
+public interface IStage {
     LinkedList<ItemStack> getBlocksToBreak();
 
     boolean addBlockToBreak(ItemStack blockToBreak);

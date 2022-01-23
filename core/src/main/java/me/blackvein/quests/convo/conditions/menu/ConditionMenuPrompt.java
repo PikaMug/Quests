@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.conditions.menu;
 import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -296,7 +296,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 final ICondition c = plugin.getCondition(input);
                 if (c != null) {
                     for (final IQuest quest : plugin.getLoadedQuests()) {
-                        for (final Stage stage : quest.getStages()) {
+                        for (final IStage stage : quest.getStages()) {
                             if (stage.getCondition() != null 
                                     && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {
                                 used.add(quest.getName());

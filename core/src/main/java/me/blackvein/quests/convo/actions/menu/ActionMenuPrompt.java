@@ -15,7 +15,7 @@ package me.blackvein.quests.convo.actions.menu;
 import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -296,7 +296,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 final IAction a = plugin.getAction(input);
                 if (a != null) {
                     for (final IQuest quest : plugin.getLoadedQuests()) {
-                        for (final Stage stage : quest.getStages()) {
+                        for (final IStage stage : quest.getStages()) {
                             if (stage.getFinishAction() != null 
                                     && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {
                                 used.add(quest.getName());

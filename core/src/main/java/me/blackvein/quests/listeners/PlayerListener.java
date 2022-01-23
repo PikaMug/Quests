@@ -15,7 +15,7 @@ package me.blackvein.quests.listeners;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.util.ItemUtil;
@@ -485,7 +485,7 @@ public class PlayerListener implements Listener {
                 }
                 
                 if (quester.getCurrentQuests().containsKey(quest)) {
-                    final Stage currentStage = quester.getCurrentStage(quest);
+                    final IStage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         continue;
                     }
@@ -545,7 +545,7 @@ public class PlayerListener implements Listener {
                             return;
                         }
                     }
-                    final Stage currentStage = quester.getCurrentStage(quest);
+                    final IStage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
                                + " on command for quest " + quest.getName());
@@ -734,7 +734,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(target.getUniqueId())) {
             final IQuester quester = plugin.getQuester(target.getUniqueId());
             for (final IQuest quest : quester.getCurrentQuests().keySet()) {
-                final Stage stage = quester.getCurrentStage(quest);
+                final IStage stage = quester.getCurrentStage(quest);
                 if (stage != null && stage.getDeathAction() != null) {
                     quester.getCurrentStage(quest).getDeathAction().fire(quester, quest);
                 }
@@ -913,7 +913,7 @@ public class PlayerListener implements Listener {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
             for (final IQuest quest : quester.getCurrentQuests().keySet()) {
-                final Stage currentStage = quester.getCurrentStage(quest);
+                final IStage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
                     plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
                             + " on quit for quest " + quest.getName());

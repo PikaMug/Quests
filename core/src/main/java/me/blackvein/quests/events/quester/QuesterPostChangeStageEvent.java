@@ -14,7 +14,7 @@ package me.blackvein.quests.events.quester;
 
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,10 +24,10 @@ import org.jetbrains.annotations.NotNull;
 public class QuesterPostChangeStageEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final IQuest quest;
-    private final Stage current;
-    private final Stage next;
+    private final IStage current;
+    private final IStage next;
     
-    public QuesterPostChangeStageEvent(final Quester quester, final IQuest quest, final Stage current, final Stage next) {
+    public QuesterPostChangeStageEvent(final Quester quester, final IQuest quest, final IStage current, final IStage next) {
         super(quester);
         this.quest = quest;
         this.current = current;
@@ -43,11 +43,11 @@ public class QuesterPostChangeStageEvent extends QuesterEvent {
         return quest;
     }
     
-    public Stage getCurrentStage() {
+    public IStage getCurrentStage() {
         return current;
     }
     
-    public Stage getNextStage() {
+    public IStage getNextStage() {
         return next;
     }
     

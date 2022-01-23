@@ -48,14 +48,13 @@ import me.blackvein.quests.logging.QuestsLog4JFilter;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitQuestFactory;
-import me.blackvein.quests.quests.BukkitStage;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.quests.Options;
 import me.blackvein.quests.quests.Planner;
 import me.blackvein.quests.quests.QuestFactory;
 import me.blackvein.quests.quests.Requirements;
 import me.blackvein.quests.quests.Rewards;
-import me.blackvein.quests.quests.Stage;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.storage.StorageFactory;
@@ -175,6 +174,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
 
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
+
         // 1 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
@@ -273,7 +274,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         });
 
         // 12 - Delay loading of Quests, Actions and modules
-        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
         delayLoadQuestInfo();
     }
 
@@ -1069,7 +1069,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             return;
         }
         final QuestData data = quester.getQuestData(quest);
-        final Stage stage = quester.getCurrentStage(quest);
+        final IStage stage = quester.getCurrentStage(quest);
         for (final ItemStack e : stage.getBlocksToBreak()) {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
@@ -2379,10 +2379,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             try {
                 stageNum = Integer.parseInt(stage);
             } catch (final NumberFormatException e) {
-                getLogger().severe("Stage key " + stage + "must be a number!");
+                getLogger().severe("IStage key " + stage + "must be a number!");
                 continue;
             }
-            final BukkitStage oStage = new BukkitStage();
+            final Stage oStage = new Stage();
             List<String> breakNames = new LinkedList<>();
             List<Integer> breakAmounts = new LinkedList<>();
             List<Short> breakDurability = new LinkedList<>();
@@ -3954,7 +3954,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             + " for " + quest.getName() + " was null");
                     return;
                 }
-                final Stage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
+                final IStage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
                 oStage.clearCustomObjectives();
                 oStage.clearCustomObjectiveCounts();
                 oStage.clearCustomObjectiveData();
@@ -3982,7 +3982,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                                     oStage.addCustomObjectiveData(data);
                                 }
                             } else {
-                                throw new QuestFormatException(name + " custom objective not found for Stage "
+                                throw new QuestFormatException(name + " custom objective not found for IStage "
                                         + stageNum, questKey);
                             }
                         }

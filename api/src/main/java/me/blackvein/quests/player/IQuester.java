@@ -1,9 +1,9 @@
 package me.blackvein.quests.player;
 
 import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.quests.Objective;
 import me.blackvein.quests.QuestData;
-import me.blackvein.quests.quests.Stage;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.module.ICustomObjective;
 import net.citizensnpcs.api.npc.NPC;
@@ -90,7 +90,7 @@ public interface IQuester extends Comparable<IQuester> {
 
     void sendMessage(final String message);
 
-    Stage getCurrentStage(final IQuest quest);
+    IStage getCurrentStage(final IQuest quest);
 
     QuestData getQuestData(final IQuest quest);
 
@@ -216,7 +216,7 @@ public interface IQuester extends Comparable<IQuester> {
     Set<String> dispatchMultiplayerEverything(final IQuest quest, final ObjectiveType type,
                                               final BiFunction<IQuester, IQuest, Void> fun);
 
-    Set<String> dispatchMultiplayerObjectives(final IQuest quest, final Stage currentStage,
+    Set<String> dispatchMultiplayerObjectives(final IQuest quest, final IStage currentStage,
                                               final Function<IQuester, Void> fun);
 
     List<IQuester> getMultiplayerQuesters(final IQuest quest);

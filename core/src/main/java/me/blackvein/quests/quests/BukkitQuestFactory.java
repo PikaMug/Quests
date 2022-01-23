@@ -279,7 +279,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         context.setSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS, opt.canHandleOfflinePlayers());
         // Stages (Objectives)
         int index = 1;
-        for (final Stage stage : q.getStages()) {
+        for (final IStage stage : q.getStages()) {
             final String pref = "stage" + index;
             index++;
             context.setSessionData(pref, Boolean.TRUE);
