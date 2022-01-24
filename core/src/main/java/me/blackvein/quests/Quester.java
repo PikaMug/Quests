@@ -4319,7 +4319,8 @@ public class Quester implements IQuester {
                 }
                 hardQuit(quest);
             } else if (giveReason) {
-                if (System.currentTimeMillis() - lastNotifiedCondition > 6000) {
+                if (System.currentTimeMillis() - lastNotifiedCondition > (plugin.getSettings().getConditionInterval()
+                        * 1000L)) {
                     getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
                             .replace("<quest>", quest.getName()));
                     lastNotifiedCondition = System.currentTimeMillis();

@@ -29,6 +29,7 @@ public class Settings implements ISettings {
     private boolean allowPranks = true;
     private boolean askConfirmation = true;
     private boolean clickablePrompts = true;
+    private int conditionInterval = 7;
     private int consoleLogging = 1;
     private boolean disableCommandFeedback = true;
     private boolean genFilesOnJoin = true;
@@ -86,6 +87,12 @@ public class Settings implements ISettings {
     }
     public void setClickablePrompts(boolean clickablePrompts) {
         this.clickablePrompts = clickablePrompts;
+    }
+    public int getConditionInterval() {
+        return conditionInterval;
+    }
+    public void setConditionInterval(final int conditionInterval) {
+        this.conditionInterval = conditionInterval;
     }
     public int getConsoleLogging() {
         return consoleLogging;
@@ -198,6 +205,11 @@ public class Settings implements ISettings {
         allowPranks = config.getBoolean("allow-pranks", true);
         askConfirmation = config.getBoolean("ask-confirmation", true);
         clickablePrompts = config.getBoolean("clickable-prompts", true);
+        conditionInterval = config.getInt("condition-interval", 8);
+        if (conditionInterval < 3 || conditionInterval > 180) {
+            plugin.getLogger().warning("Condition interval out of range, reverting to default of 8 seconds");
+            conditionInterval = 8;
+        }
         consoleLogging = config.getInt("console-logging", 1);
         disableCommandFeedback = config.getBoolean("disable-command-feedback", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);

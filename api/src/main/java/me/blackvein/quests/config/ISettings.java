@@ -13,6 +13,8 @@ public interface ISettings {
     void setAskConfirmation(final boolean askConfirmation);
     boolean canClickablePrompts();
     void setClickablePrompts(boolean clickablePrompts);
+    int getConditionInterval();
+    void setConditionInterval(final int conditionInterval);
     int getConsoleLogging();
     void setConsoleLogging(final int consoleLogging);
     boolean canDisableCommandFeedback();
