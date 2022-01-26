@@ -3,9 +3,10 @@ accept-timeout: 20
 allow-command-questing: true
 allow-command-quests-with-npcs: false
 allow-pranks: true
-ask-confirmation: true
 clickable-prompts: true
 condition-interval: 8
+confirm-abandon: true
+confirm-accept: true
 console-logging: 2
 disable-command-feedback: false
 generate-files-on-join: true

@@ -49,12 +49,12 @@ import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.quests.Options;
 import me.blackvein.quests.quests.Planner;
 import me.blackvein.quests.quests.QuestFactory;
 import me.blackvein.quests.quests.Requirements;
 import me.blackvein.quests.quests.Rewards;
-import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.statistics.Metrics;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.storage.StorageFactory;
@@ -97,7 +97,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -4190,47 +4189,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     public static SkillType getMcMMOSkill(final String s) {
         return SkillType.getSkill(s);
-    }
-
-    /**
-     * @deprecated Use InventoryUtil.removeItem(Inventory, ItemStack)
-     */
-    @Deprecated
-    public static boolean removeItem(final Inventory inventory, final ItemStack is) {
-        final int amount = is.getAmount();
-        final HashMap<Integer, ? extends ItemStack> allItems = inventory.all(is.getType());
-        final HashMap<Integer, Integer> removeFrom = new HashMap<>();
-        int foundAmount = 0;
-        for (final Map.Entry<Integer, ? extends ItemStack> item : allItems.entrySet()) {
-            if (ItemUtil.compareItems(is, item.getValue(), true) == 0) {
-                if (item.getValue().getAmount() >= amount - foundAmount) {
-                    removeFrom.put(item.getKey(), amount - foundAmount);
-                    foundAmount = amount;
-                } else {
-                    foundAmount += item.getValue().getAmount();
-                    removeFrom.put(item.getKey(), item.getValue().getAmount());
-                }
-                if (foundAmount >= amount) {
-                    break;
-                }
-            }
-        }
-        if (foundAmount == amount) {
-            for (final Map.Entry<Integer, Integer> toRemove : removeFrom.entrySet()) {
-                final ItemStack item = inventory.getItem(toRemove.getKey());
-                if (item == null) {
-                    continue;
-                }
-                if (item.getAmount() - toRemove.getValue() <= 0) {
-                    inventory.clear(toRemove.getKey());
-                } else {
-                    item.setAmount(item.getAmount() - toRemove.getValue());
-                    inventory.setItem(toRemove.getKey(), item);
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
     /**

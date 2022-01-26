@@ -30,6 +30,8 @@ public class Settings implements ISettings {
     private boolean askConfirmation = true;
     private boolean clickablePrompts = true;
     private int conditionInterval = 7;
+    private boolean confirmAbandon = true;
+    private boolean confirmAccept = true;
     private int consoleLogging = 1;
     private boolean disableCommandFeedback = true;
     private boolean genFilesOnJoin = true;
@@ -76,11 +78,18 @@ public class Settings implements ISettings {
     public void setAllowPranks(final boolean allowPranks) {
         this.allowPranks = allowPranks;
     }
+    /**
+     * @deprecated Use {@link #canConfirmAccept()}
+     */
     public boolean canAskConfirmation() {
         return askConfirmation;
     }
+    /**
+     * @deprecated Use {@link #setConfirmAccept(boolean)}
+     */
     public void setAskConfirmation(final boolean askConfirmation) {
         this.askConfirmation = askConfirmation;
+        this.confirmAccept = askConfirmation;
     }
     public boolean canClickablePrompts() {
         return clickablePrompts;
@@ -93,6 +102,19 @@ public class Settings implements ISettings {
     }
     public void setConditionInterval(final int conditionInterval) {
         this.conditionInterval = conditionInterval;
+    }
+    public boolean canConfirmAbandon() {
+        return confirmAbandon;
+    }
+    public void setConfirmAbandon(final boolean confirmAbandon) {
+        this.confirmAbandon = confirmAbandon;
+    }
+    public boolean canConfirmAccept() {
+        return confirmAccept;
+    }
+    public void setConfirmAccept(final boolean confirmAccept) {
+        this.askConfirmation = confirmAccept;
+        this.confirmAccept = confirmAccept;
     }
     public int getConsoleLogging() {
         return consoleLogging;
@@ -203,9 +225,11 @@ public class Settings implements ISettings {
         allowCommands = config.getBoolean("allow-command-questing", true);
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
         allowPranks = config.getBoolean("allow-pranks", true);
-        askConfirmation = config.getBoolean("ask-confirmation", true);
+        askConfirmation = config.getBoolean("confirm-accept", true);
         clickablePrompts = config.getBoolean("clickable-prompts", true);
         conditionInterval = config.getInt("condition-interval", 8);
+        confirmAbandon = config.getBoolean("confirm-abandon", true);
+        confirmAccept = config.getBoolean("confirm-accept", true);
         if (conditionInterval < 3 || conditionInterval > 180) {
             plugin.getLogger().warning("Condition interval out of range, reverting to default of 8 seconds");
             conditionInterval = 8;

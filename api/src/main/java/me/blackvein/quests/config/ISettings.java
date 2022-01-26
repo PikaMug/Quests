@@ -9,12 +9,14 @@ public interface ISettings {
     void setAllowCommandsForNpcQuests(final boolean allowCommandsForNpcQuests);
     boolean canAllowPranks();
     void setAllowPranks(final boolean allowPranks);
-    boolean canAskConfirmation();
-    void setAskConfirmation(final boolean askConfirmation);
     boolean canClickablePrompts();
     void setClickablePrompts(boolean clickablePrompts);
     int getConditionInterval();
     void setConditionInterval(final int conditionInterval);
+    boolean canConfirmAbandon();
+    void setConfirmAbandon(final boolean confirmAbandon);
+    boolean canConfirmAccept();
+    void setConfirmAccept(final boolean confirmAccept);
     int getConsoleLogging();
     void setConsoleLogging(final int consoleLogging);
     boolean canDisableCommandFeedback();

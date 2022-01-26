@@ -867,7 +867,7 @@ public class Quester implements IQuester {
         final ISettings settings = plugin.getSettings();
         if (getPlayer() != null) {
             setQuestIdToQuit(quest.getId());
-            if (settings.canAskConfirmation()) {
+            if (settings.canConfirmAbandon()) {
                 final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
                         .withPrefix(context -> ChatColor.GRAY.toString())
                         .withFirstPrompt(new QuestAbandonPrompt()).withTimeout(settings.getAcceptTimeout())
