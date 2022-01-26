@@ -36,6 +36,10 @@ public interface IQuester extends Comparable<IQuester> {
 
     void setQuestIdToTake(final String questIdToTake);
 
+    String getQuestIdToQuit();
+
+    void setQuestIdToQuit(final String questIdToQuit);
+
     String getLastKnownName();
 
     void setLastKnownName(final String lastKnownName);
@@ -102,7 +106,15 @@ public interface IQuester extends Comparable<IQuester> {
 
     void updateJournal();
 
+    boolean offerQuest(final IQuest quest, final boolean giveReason);
+
+    boolean canAcceptOffer(final IQuest quest, final boolean giveReason);
+
     void takeQuest(final IQuest quest, final boolean ignoreRequirements);
+
+    boolean abandonQuest(final IQuest quest, final String message);
+
+    boolean abandonQuest(final IQuest quest, final String[] messages);
 
     void quitQuest(final IQuest quest, final String message);
 
@@ -220,10 +232,6 @@ public interface IQuester extends Comparable<IQuester> {
                                               final Function<IQuester, Void> fun);
 
     List<IQuester> getMultiplayerQuesters(final IQuest quest);
-
-    boolean offerQuest(final IQuest quest, final boolean giveReason);
-
-    boolean canAcceptOffer(final IQuest quest, final boolean giveReason);
 
     boolean meetsCondition(final IQuest quest, final boolean giveReason);
 

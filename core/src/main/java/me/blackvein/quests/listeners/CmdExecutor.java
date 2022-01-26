@@ -12,18 +12,17 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.IStage;
-import me.blackvein.quests.quests.Requirements;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsEditorEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.blackvein.quests.events.command.QuestsCommandPreQuestsListEvent;
-import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.item.QuestJournal;
-import me.blackvein.quests.Quester;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
+import me.blackvein.quests.quests.Requirements;
 import me.blackvein.quests.storage.Storage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -702,14 +701,9 @@ public class CmdExecutor implements CommandExecutor {
                 final IQuest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
-                        final QuestQuitEvent event = new QuestQuitEvent(quest, quester);
-                        plugin.getServer().getPluginManager().callEvent(event);
-                        if (event.isCancelled()) {
-                            return;
-                        }
                         final String msg = ChatColor.YELLOW + Lang.get("questQuit").replace("<quest>",
                                 ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-                        quester.quitQuest(quest, msg);
+                        quester.abandonQuest(quest, msg);
                     } else {
                         Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questQuitDisabled"));
                     }
