@@ -797,7 +797,6 @@ requirementsItemFail: "Nem sikerült összegyűjteni a szükséges tárgyat. A b
 conditionFailQuit: "Feltétel nem sikerült. Kilépsz <quest>."
 conditionFailRetry: "A(z) <quest> ezen szakaszára még nem teljesült a feltétel."
 optionSilkTouchFail: "A Gyengéd Érintés varázslattal nem lehet előrehaladni a(z) <quest>-ben/ban."
-money: "Pénz"
 with: "Val vel"
 to: "nak nek"
 blocksWithin: "belül <összeg> blokkok"

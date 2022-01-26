@@ -797,7 +797,6 @@ requirementsItemFail: "Nie można odebrać wymaganego przedmiotu. Czy to w twoje
 conditionFailQuit: "Warunek nie powiódł się. Zakończyłeś <quest>."
 conditionFailRetry: "Warunek nie został jeszcze spełniony na tym etapie <quest>."
 optionSilkTouchFail: "Nie można przejść do <quest> z zaklęciem Jedwabny dotyk."
-money: "Pieniądze"
 with: "Z"
 to: "do"
 blocksWithin: "w obrębie <amount> bloków"

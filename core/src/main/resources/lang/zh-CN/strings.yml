@@ -797,7 +797,6 @@ requirementsItemFail: "无法收集必需的物品。是不是在您不那么占
 conditionFailQuit: "条件失败。您已放弃 <quest>。"
 conditionFailRetry: "未达成 <quest> 的此任务阶段的条件。"
 optionSilkTouchFail: "无法使用带有精准采集附魔的物品进行 <quest>。"
-money: "金币"
 with: "与"
 to: "到"
 blocksWithin: "在 <amount> 个方块内"

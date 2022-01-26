@@ -797,7 +797,6 @@ requirementsItemFail: "필요한 아이템을 수집 할 수 없습니다. 덜 �
 conditionFailQuit: "조건이 실패했습니다. <quest>를 종료했습니다."
 conditionFailRetry: "이 <quest> 단계의 조건이 아직 충족되지 않았습니다."
 optionSilkTouchFail: "섬세한 손길 마법으로 <quest>를 진행할 수 없습니다."
-money: "돈"
 with: "with"
 to: "to"
 blocksWithin: "<amount> 블럭 이내"

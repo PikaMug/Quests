@@ -797,7 +797,6 @@ requirementsItemFail: "Požadovanou položku nelze shromáždit. Je to ve vaší
 conditionFailQuit: "Podmínka se nezdařila. Ukončil jsi <quest>."
 conditionFailRetry: "Pro tuto fázi <quest> ještě nebyla splněna podmínka."
 optionSilkTouchFail: "Nelze pokračovat <quest> s očarováním Něžný dotek."
-money: "Peníze"
 with: "S"
 to: "na"
 blocksWithin: "do <amount> bloků z"

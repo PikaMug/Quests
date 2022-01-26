@@ -797,7 +797,6 @@ requirementsItemFail: "無法收集所需的物品。物品是否在你的非慣
 conditionFailQuit: "未能達成條件，因此你已退出任務 <quest>。"
 conditionFailRetry: "未達成任務 <quest> 中這個階段的條件。"
 optionSilkTouchFail: "無法使用帶有絲綢之觸附魔的物品進行 <quest>。"
-money: "金幣"
 with: "與"
 to: "到"
 blocksWithin: "在 <amount> 個方塊内"

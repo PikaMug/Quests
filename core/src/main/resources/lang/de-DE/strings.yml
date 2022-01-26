@@ -797,7 +797,6 @@ requirementsItemFail: "Erforderlicher Gegenstand kann nicht abgeholt werden. Ist
 conditionFailQuit: "Kondition fehlgeschlagen. Sie haben <quest> beendet."
 conditionFailRetry: "Kondition für diese Stufe von <quest> noch nicht erfüllt."
 optionSilkTouchFail: "<quest> kann mit der Behutsamkeit-Verzauberung nicht fortgesetzt werden."
-money: "Geld"
 with: "mit"
 to: "nach"
 blocksWithin: "innerhalb von <amount> Blöcken"

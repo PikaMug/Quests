@@ -797,7 +797,6 @@ requirementsItemFail: "Impossible de collecter l'élément requis. Est-ce dans v
 conditionFailQuit: "La condition a échoué. Vous avez quitté <quest>."
 conditionFailRetry: "Condition non encore remplie pour cette étape de <quest>."
 optionSilkTouchFail: "Impossible de progresser <quest> avec l'enchantement Toucher de soie."
-money: "Argent"
 with: "avec"
 to: "à"
 blocksWithin: "dans <amount> blocs de"

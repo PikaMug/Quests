@@ -797,7 +797,6 @@ requirementsItemFail: "Kan ikke indsamle den krævede vare. Er det i din off-han
 conditionFailQuit: "Tilstand mislykkedes. Du har afsluttet <quest>."
 conditionFailRetry: "Betingelse endnu ikke opfyldt for dette stadie af <quest>."
 optionSilkTouchFail: "Kunne ikke fortsætte <quest> med fortryllelsen Silkeberøring."
-money: "Penge"
 with: "med"
 to: "til"
 blocksWithin: "indenfor <amount> blokke"

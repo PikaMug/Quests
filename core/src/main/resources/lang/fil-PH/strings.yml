@@ -797,7 +797,6 @@ requirementsItemFail: "Hindi makolekta ang kinakailangang item. Nasa off-hand ka
 conditionFailQuit: "Nabigo ang kondisyon. Tumigil ka sa <quest>."
 conditionFailRetry: "Ang kondisyon ay hindi pa natutugunan para sa yugtong ito ng <quest>."
 optionSilkTouchFail: "Hindi maisulong ang <quest> gamit ang pagkaakit-akit na Alaga."
-money: "Pera"
 with: "Kasama"
 to: "para"
 blocksWithin: "sa loob ng <amount> ang harang ay"

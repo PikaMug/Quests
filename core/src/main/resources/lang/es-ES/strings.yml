@@ -797,7 +797,6 @@ requirementsItemFail: "No se puede obtener el objeto requerido. ¿Está en tu ma
 conditionFailQuit: "Condición fallida. Has salido de <quest>."
 conditionFailRetry: "Condición aún no cumplida para esta etapa de <quest>."
 optionSilkTouchFail: "No se puede progresar en <quest> con el encantamiento Toque de seda."
-money: "Dinero"
 with: "Con"
 to: "para"
 blocksWithin: "dentro de los bloques de <amount>"

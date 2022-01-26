@@ -797,7 +797,6 @@ requirementsItemFail: "Det går inte att samla in obligatorisk artikel. Är det 
 conditionFailQuit: "Koşul başarısız oldu. <quest> görevinden çıktınız."
 conditionFailRetry: "Bu <quest> aşaması için koşul henüz karşılanmadı."
 optionSilkTouchFail: "İpeksi Dokunuş büyüsüyle <quest> ilerleyemiyor."
-money: "Para"
 with: "ile"
 to: "için"
 blocksWithin: "<amount> blok içinde"

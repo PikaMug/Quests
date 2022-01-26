@@ -797,7 +797,6 @@ requirementsItemFail: "Kan het vereiste item niet verzamelen. Ligt het in uw han
 conditionFailQuit: "Conditie mislukt. U heeft <quest> verlaten."
 conditionFailRetry: "Aan conditie nog niet voldaan voor deze fase van <quest>."
 optionSilkTouchFail: "Kan niet verder gaan <quest> met de Zijden streling-betovering."
-money: "Geld"
 with: "met"
 to: "naar"
 blocksWithin: "binnen <amount> blokken van"

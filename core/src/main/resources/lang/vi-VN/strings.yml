@@ -797,7 +797,6 @@ requirementsItemFail: "Không thể thu thập các mục yêu cầu. Có phải
 conditionFailQuit: "Điều kiện không thành công. Bạn đã thoát khỏi <quest>."
 conditionFailRetry: "Điều kiện chưa được đáp ứng cho giai đoạn này của <quest>."
 optionSilkTouchFail: "Không thể tiến triển <quest> với bùa mê Độ mềm mại."
-money: "Tiền"
 with: "Với"
 to: "đến"
 blocksWithin: "trong phạm vi <amount> khối của"

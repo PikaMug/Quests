@@ -797,7 +797,6 @@ requirementsItemFail: "Impossibile raccogliere l'oggetto richiesto. E' nella tua
 conditionFailQuit: "Condizione fallita. Hai abbandonato <quest>."
 conditionFailRetry: "Condizione non ancora soddisfatta per questa fase di <quest>."
 optionSilkTouchFail: "Impossibile proseguire la <quest> con l'incantesimo Tocco di Velluto."
-money: "Denaro"
 with: "con"
 to: "a"
 blocksWithin: "entro <amount> blocchi di"

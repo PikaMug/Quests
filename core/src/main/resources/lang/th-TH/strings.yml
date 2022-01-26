@@ -797,7 +797,6 @@ requirementsItemFail: "ไม่สามารถรวบรวมรายก
 conditionFailQuit: "เงื่อนไขล้มเหลว คุณได้ออกจาก <quest>"
 conditionFailRetry: "ยังไม่ตรงตามเงื่อนไขสำหรับขั้นตอนของ <quest> นี้"
 optionSilkTouchFail: "ไม่สามารถดำเนินการ <quest> ด้วยการร่ายมนตร์นุ่มนวล"
-money: "เงิน"
 with: "กับ"
 to: "ถึง"
 blocksWithin: "ภายใน <amount> บล็อกของ"
