@@ -267,7 +267,7 @@ public class Stage implements IStage {
     }
 
     public void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume) {
-        this.itemsToBrew = itemsToConsume;
+        this.itemsToConsume = itemsToConsume;
     }
 
     public LinkedList<ItemStack> getItemsToDeliver() {
