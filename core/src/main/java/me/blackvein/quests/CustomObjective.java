@@ -18,6 +18,7 @@ import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitObjective;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.quests.IStage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class CustomObjective implements ICustomObjective, Listener {
+public class CustomObjective implements ICustomObjective, Listener {
 
     private final Quests plugin = Quests.getPlugin(Quests.class);
     private String name = null;
@@ -161,6 +162,14 @@ public abstract class CustomObjective implements ICustomObjective, Listener {
 
     public Map<String, Object> getDataForPlayer(final Player player, final CustomObjective customObj,
                                                 final Quest quest) {
+        return getDataForPlayerTemp(player, customObj, quest);
+    }
+
+    /**
+     * @deprecated Do not use
+     */
+    public Map<String, Object> getDataForPlayerTemp(final Player player, final ICustomObjective customObj,
+                                                final IQuest quest) {
         final IQuester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             final IStage currentStage = quester.getCurrentStage(quest);
@@ -191,7 +200,16 @@ public abstract class CustomObjective implements ICustomObjective, Listener {
         return null;
     }
 
-    public void incrementObjective(final Player player, final CustomObjective obj, final int count, final Quest quest) {
+    public void incrementObjective(final Player player, final CustomObjective obj, final int count,
+                                   final Quest quest) {
+        incrementObjectiveTemp(player, obj, count, quest);
+    }
+
+    /**
+     * @deprecated Do not use
+     */
+    public void incrementObjectiveTemp(final Player player, final ICustomObjective obj, final int count,
+                                   final IQuest quest) {
         final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             if (quester.hasCustomObjective(quest, obj.getName())) {

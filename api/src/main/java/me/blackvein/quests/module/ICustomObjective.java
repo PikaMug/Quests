@@ -83,7 +83,7 @@ public interface ICustomObjective {
      * @param quest Current me.blackvein.quests.Quest which includes this objective
      * @return data
      */
-    Map<String, Object> getDataForPlayer(final Player player, final ICustomObjective customObj, final IQuest quest);
+    Map<String, Object> getDataForPlayerTemp(final Player player, final ICustomObjective customObj, final IQuest quest);
 
-    void incrementObjective(final Player player, final ICustomObjective obj, final int count, final IQuest quest);
+    void incrementObjectiveTemp(final Player player, final ICustomObjective obj, final int count, final IQuest quest);
 }
