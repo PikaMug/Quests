@@ -68,7 +68,10 @@ public interface IQuester extends Comparable<IQuester> {
 
     void removeTimer(final Integer timerId);
 
-    ConcurrentHashMap<IQuest, Integer> getCurrentQuests();
+    /**
+     * @deprecated Do not use
+     */
+    ConcurrentHashMap<IQuest, Integer> getCurrentQuestsTemp();
 
     void setCurrentQuests(final ConcurrentHashMap<IQuest, Integer> currentQuests);
 

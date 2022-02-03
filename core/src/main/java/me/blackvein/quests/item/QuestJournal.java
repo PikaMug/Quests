@@ -39,13 +39,13 @@ public class QuestJournal {
             book.setDisplayName(ChatColor.LIGHT_PURPLE + title);
             book.setTitle(ChatColor.LIGHT_PURPLE + title);
             book.setAuthor(player.getName());
-            if (owner.getCurrentQuests().isEmpty()) {
+            if (owner.getCurrentQuestsTemp().isEmpty()) {
                 book.addPage(ChatColor.DARK_RED + Lang.get(player, "journalNoQuests").replace("<journal>", title));
             } else {
                 int currentLength = 0;
                 int currentLines = 0;
                 StringBuilder page = new StringBuilder();
-                final List<IQuest> sortedList = owner.getCurrentQuests().keySet().stream()
+                final List<IQuest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
                         .sorted(Comparator.comparing(IQuest::getName))
                         .collect(Collectors.toList());
                 for (final IQuest quest : sortedList) {

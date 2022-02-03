@@ -197,8 +197,8 @@ public class CmdExecutor implements CommandExecutor {
                 if (args.length == 0) {
                     final Player player = (Player) cs;
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
-                    if (!quester.getCurrentQuests().isEmpty()) {
-                        for (final IQuest q : quester.getCurrentQuests().keySet()) {
+                    if (!quester.getCurrentQuestsTemp().isEmpty()) {
+                        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
                             final IStage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
@@ -617,11 +617,11 @@ public class CmdExecutor implements CommandExecutor {
             cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");
             cs.sendMessage(ChatColor.YELLOW + Lang.get("questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
-            if (quester.getCurrentQuests().isEmpty()) {
+            if (quester.getCurrentQuestsTemp().isEmpty()) {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ Lang.get("none"));
             } else {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest"));
-                for (final Entry<IQuest, Integer> set : quester.getCurrentQuests().entrySet()) {
+                for (final Entry<IQuest, Integer> set : quester.getCurrentQuestsTemp().entrySet()) {
                     final IQuest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
                         + ChatColor.LIGHT_PURPLE + " (" + Lang.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
@@ -697,7 +697,7 @@ public class CmdExecutor implements CommandExecutor {
                 return;
             }
             final IQuester quester = plugin.getQuester(player.getUniqueId());
-            if (!quester.getCurrentQuests().isEmpty()) {
+            if (!quester.getCurrentQuestsTemp().isEmpty()) {
                 final IQuest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
@@ -727,7 +727,7 @@ public class CmdExecutor implements CommandExecutor {
                     final IQuest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
                     if (questToFind != null) {
-                        for (final IQuest q : quester.getCurrentQuests().keySet()) {
+                        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
                             if (q.getId().equals(questToFind.getId())) {
                                 Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
                                 return;
@@ -1054,7 +1054,7 @@ public class CmdExecutor implements CommandExecutor {
                 cs.sendMessage(ChatColor.YELLOW + Lang.get("questNotFound"));
             } else {
                 final IQuester quester = plugin.getQuester(target.getUniqueId());
-                for (final IQuest q : quester.getCurrentQuests().keySet()) {
+                for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
                     if (q.getName().equalsIgnoreCase(questToGive.getName())) {
                         String msg = Lang.get("questsPlayerHasQuestAlready");
                         msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()
@@ -1155,7 +1155,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final IQuester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1207,7 +1207,7 @@ public class CmdExecutor implements CommandExecutor {
                 return;
             }
             final IQuester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1243,7 +1243,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final IQuester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -1284,7 +1284,7 @@ public class CmdExecutor implements CommandExecutor {
                 }
             }
             final IQuester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
                 String msg = Lang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);

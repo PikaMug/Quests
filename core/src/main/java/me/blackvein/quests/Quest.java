@@ -267,13 +267,13 @@ public class Quest implements IQuest {
             if (currentStage.getFinishAction() != null) {
                 currentStage.getFinishAction().fire(quester, this);
             }
-            if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
+            if (quester.getCurrentQuestsTemp().get(this) == (orderedStages.size() - 1)) {
                 if (currentStage.getScript() != null) {
                     plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester);
                 }
                 completeQuest(quester);
             } else {
-                setStage(quester, quester.getCurrentQuests().get(this) + 1);
+                setStage(quester, quester.getCurrentQuestsTemp().get(this) + 1);
             }
             if (quester.getQuestData(this) != null) {
                 quester.getQuestData(this).setDelayStartTime(0);
@@ -592,7 +592,7 @@ public class Quest implements IQuest {
             return false;
         }
         for (final IQuest q : requirements.getBlockQuests()) {
-            if (quester.getCompletedQuests().contains(q) || quester.getCurrentQuests().containsKey(q)) {
+            if (quester.getCompletedQuests().contains(q) || quester.getCurrentQuestsTemp().containsKey(q)) {
                 return false;
             }
         }

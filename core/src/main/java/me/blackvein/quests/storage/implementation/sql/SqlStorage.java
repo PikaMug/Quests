@@ -252,7 +252,7 @@ public class SqlStorage implements StorageImplementation {
         final UUID uniqueId = quester.getUUID();
         final String lastKnownName = quester.getLastKnownName();
         final String oldLastKnownName = getQuesterLastKnownName(uniqueId);
-        final Set<String> currentQuests = quester.getCurrentQuests().keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
+        final Set<String> currentQuests = quester.getCurrentQuestsTemp().keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
         final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
         final Set<String> completedQuests = quester.getCompletedQuests().stream().map(IQuest::getId).collect(Collectors.toSet());
@@ -290,7 +290,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<IQuest, Integer> entry : quester.getCurrentQuests().entrySet()) {
+                for (final Entry<IQuest, Integer> entry : quester.getCurrentQuestsTemp().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());

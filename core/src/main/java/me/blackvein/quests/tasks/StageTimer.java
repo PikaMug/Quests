@@ -48,7 +48,7 @@ public class StageTimer implements Runnable {
             }
             quest.completeQuest(quester);
         } else {
-            final int stageNum = quester.getCurrentQuests().get(quest) + 1;
+            final int stageNum = quester.getCurrentQuestsTemp().get(quest) + 1;
             quester.getQuestData(quest).setDelayStartTime(0);
             quester.getQuestData(quest).setDelayTimeLeft(-1);
             try {

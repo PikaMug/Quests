@@ -57,7 +57,7 @@ public class ItemListener implements Listener {
                         continue;
                     }
                     
-                    if (quester.getCurrentQuests().containsKey(quest) 
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.craftItem(quest, craftedItem);
                     }
@@ -108,7 +108,7 @@ public class ItemListener implements Listener {
                             continue;
                         }
                         
-                        if (quester.getCurrentQuests().containsKey(quest) 
+                        if (quester.getCurrentQuestsTemp().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
                             quester.smeltItem(quest, evt.getCurrentItem());
                         }
@@ -131,7 +131,7 @@ public class ItemListener implements Listener {
                             continue;
                         }
                         
-                        if (quester.getCurrentQuests().containsKey(quest) 
+                        if (quester.getCurrentQuestsTemp().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
                             quester.brewItem(quest, evt.getCurrentItem());
                         }
@@ -162,7 +162,7 @@ public class ItemListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuests().containsKey(quest) 
+                if (quester.getCurrentQuestsTemp().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     if (enchantedItem.getType().equals(Material.BOOK)) {
                         quester.enchantBook(quest, enchantedItem, evt.getEnchantsToAdd());
@@ -199,7 +199,7 @@ public class ItemListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuests().containsKey(quest) 
+                if (quester.getCurrentQuestsTemp().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.consumeItem(quest, consumedItem);
                 }

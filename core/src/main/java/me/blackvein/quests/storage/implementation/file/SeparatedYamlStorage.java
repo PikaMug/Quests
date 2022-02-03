@@ -139,7 +139,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             final int maxSize = Math.min(questIds.size(), questStages.size());
-            final ConcurrentHashMap<IQuest, Integer> currentQuests = quester.getCurrentQuests();
+            final ConcurrentHashMap<IQuest, Integer> currentQuests = quester.getCurrentQuestsTemp();
             for (int i = 0; i < maxSize; i++) {
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     currentQuests.put(plugin.getQuestById(questIds.get(i)), questStages.get(i));
@@ -156,7 +156,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
                 final IQuest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
-                if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
+                if (quest == null || !quester.getCurrentQuestsTemp().containsKey(quest)) {
                     continue;
                 }
                 final IStage stage = quester.getCurrentStage(quest);
@@ -166,7 +166,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                             + quest.getName() + "\". Quest ended.");
                     continue;
                 }
-                quester.addEmptiesFor(quest, quester.getCurrentQuests().get(quest));
+                quester.addEmptiesFor(quest, quester.getCurrentQuestsTemp().get(quest));
                 if (questSec == null) {
                     continue;
                 }

@@ -65,7 +65,7 @@ public class NpcListener implements Listener {
         if (!evt.getClicker().isConversing()) {
             final Player player = evt.getClicker();
             final IQuester quester = plugin.getQuester(player.getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
@@ -183,7 +183,7 @@ public class NpcListener implements Listener {
             }
             if (plugin.getQuestNpcIds().contains(evt.getNPC().getId())) {
                 boolean hasObjective = false;
-                for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
                         final int npcIndex
                                 = quester.getCurrentStage(quest).getCitizensToInteract().indexOf(evt.getNPC().getId());
@@ -198,7 +198,7 @@ public class NpcListener implements Listener {
                     boolean hasAtLeastOneGUI = false;
                     final LinkedList<IQuest> npcQuests = new LinkedList<>();
                     for (final IQuest q : plugin.getLoadedQuests()) {
-                        if (quester.getCurrentQuests().containsKey(q))
+                        if (quester.getCurrentQuestsTemp().containsKey(q))
                             continue;
                         if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
                             if (plugin.getSettings().canIgnoreLockedQuests()
@@ -290,12 +290,12 @@ public class NpcListener implements Listener {
             }
             if (player != null) {
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
-                for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
 
-                    if (quester.getCurrentQuests().containsKey(quest)
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.killNPC(quest, evt.getNPC());
                     }

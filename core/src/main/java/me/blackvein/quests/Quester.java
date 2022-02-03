@@ -339,8 +339,20 @@ public class Quester implements IQuester {
         this.timers.remove(timerId);
     }
 
+    public ConcurrentHashMap<Quest, Integer> getCurrentQuests() {
+        final ConcurrentHashMap<Quest, Integer> map = new ConcurrentHashMap<>();
+        for (final Entry<IQuest, Integer> cq : currentQuests.entrySet()) {
+            final Quest q = (Quest) cq.getKey();
+            map.put(q, cq.getValue());
+        }
+        return map;
+    }
+
+    /**
+     * @deprecated Do not use
+     */
     @Override
-    public ConcurrentHashMap<IQuest, Integer> getCurrentQuests() {
+    public ConcurrentHashMap<IQuest, Integer> getCurrentQuestsTemp() {
         return currentQuests;
     }
 
@@ -528,7 +540,7 @@ public class Quester implements IQuester {
         if (quest == null) {
             return false;
         }
-        if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests()
+        if (getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests()
                 > 0) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "questMaxAllowed").replace("<number>",
@@ -536,7 +548,7 @@ public class Quester implements IQuester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCurrentQuests().containsKey(quest)) {
+        } else if (getCurrentQuestsTemp().containsKey(quest)) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "questAlreadyOn");
                 sendMessage(ChatColor.YELLOW + msg);
@@ -4229,7 +4241,7 @@ public class Quester implements IQuester {
                                 appliedQuestIDs.add(quest.getId());
                             }
                         }
-                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                        q.getCurrentQuestsTemp().forEach((otherQuest, i) -> {
                             if (otherQuest.getStage(i).containsObjective(type)) {
                                 if (!otherQuest.getOptions().canShareSameQuestOnly()) {
                                     fun.apply(q, otherQuest);
@@ -4269,7 +4281,7 @@ public class Quester implements IQuester {
                 }
                 // Share only same quest is not necessary here
                 // The function must be applied to the same quest
-                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
+                if ((q.getCurrentQuestsTemp().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
                     fun.apply(q);
                 }
             }

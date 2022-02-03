@@ -220,7 +220,7 @@ public class PlayerListener implements Listener {
                     boolean hasObjective = false;
                     if (!evt.isCancelled()) {
                         for (final IQuest quest : plugin.getLoadedQuests()) {
-                            if (quester.getCurrentQuests().containsKey(quest) 
+                            if (quester.getCurrentQuestsTemp().containsKey(quest)
                                     && quester.getCurrentStage(quest).containsObjective(ObjectiveType.USE_BLOCK)) {
                                 hasObjective = true;
                             }
@@ -367,7 +367,7 @@ public class PlayerListener implements Listener {
                             for (final IQuest q : plugin.getLoadedQuests()) {
                                 if (q.getBlockStart() != null && evt.getClickedBlock() != null) {
                                     if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
-                                        if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests() 
+                                        if (quester.getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
                                                 && plugin.getSettings().getMaxQuests() > 0) {
                                             String msg = Lang.get(player, "questMaxAllowed");
                                             msg = msg.replace("<number>", String
@@ -458,7 +458,7 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     
-                    if (quester.getCurrentQuests().containsKey(quest) 
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.milkCow(quest);
                     }
@@ -484,7 +484,7 @@ public class PlayerListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuests().containsKey(quest)) {
+                if (quester.getCurrentQuestsTemp().containsKey(quest)) {
                     final IStage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         continue;
@@ -531,8 +531,8 @@ public class PlayerListener implements Listener {
     public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            if (!quester.getCurrentQuests().isEmpty()) {
-                for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+            if (!quester.getCurrentQuestsTemp().isEmpty()) {
+                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quest.getOptions().canAllowCommands()) {
                         if (!evt.getMessage().startsWith("/quest")) {
                             final Player player = evt.getPlayer();
@@ -578,7 +578,7 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     
-                    if (quester.getCurrentQuests().containsKey(quest) 
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.shearSheep(quest, sheep.getColor());
                     }
@@ -608,7 +608,7 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     
-                    if (quester.getCurrentQuests().containsKey(quest) 
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.tameMob(quest, evt.getEntityType());
                     }
@@ -678,7 +678,7 @@ public class PlayerListener implements Listener {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
-                if (!quester.getCurrentQuests().containsKey(quest)) {
+                if (!quester.getCurrentQuestsTemp().containsKey(quest)) {
                     continue;
                 }
                 
@@ -733,7 +733,7 @@ public class PlayerListener implements Listener {
         final Player target = evt.getEntity();
         if (plugin.canUseQuests(target.getUniqueId())) {
             final IQuester quester = plugin.getQuester(target.getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                 final IStage stage = quester.getCurrentStage(quest);
                 if (stage != null && stage.getDeathAction() != null) {
                     quester.getCurrentStage(quest).getDeathAction().fire(quester, quest);
@@ -782,7 +782,7 @@ public class PlayerListener implements Listener {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
-                if (!quester.getCurrentQuests().containsKey(quest)) {
+                if (!quester.getCurrentQuestsTemp().containsKey(quest)) {
                     continue;
                 }
                 
@@ -814,7 +814,7 @@ public class PlayerListener implements Listener {
                 }
                 
                 if (evt.getState().equals(State.CAUGHT_FISH)) {
-                    if (quester.getCurrentQuests().containsKey(quest) 
+                    if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.catchFish(quest);
                     }
@@ -885,10 +885,10 @@ public class PlayerListener implements Listener {
                             }
                         }
                     }
-                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                    for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                         quester.checkQuest(quest);
                     }
-                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                    for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                         if (quester.getCurrentStage(quest).getDelay() > -1) {
                             quester.startStageTimer(quest);
                         }
@@ -912,7 +912,7 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent evt) {
         if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
             final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                 final IStage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
                     plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
@@ -989,7 +989,7 @@ public class PlayerListener implements Listener {
                             continue;
                         }
 
-                        if (quester.getCurrentQuests().containsKey(quest)) {
+                        if (quester.getCurrentQuestsTemp().containsKey(quest)) {
                             if (quester.getCurrentStage(quest) != null
                                     && quester.getCurrentStage(quest).containsObjective(type)) {
                                 plugin.getServer().getScheduler().runTask(plugin, () -> quester

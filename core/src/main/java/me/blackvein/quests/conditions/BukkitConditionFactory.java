@@ -180,7 +180,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             plugin.getLogger().info(identifier + " deleted condition " + condition);
         }
         for (final IQuester q : plugin.getOfflineQuesters()) {
-            for (final IQuest quest : q.getCurrentQuests().keySet()) {
+            for (final IQuest quest : q.getCurrentQuestsTemp().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -268,7 +268,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             plugin.getLogger().info(identifier + " saved condition " + context.getSessionData(CK.C_NAME));
         }
         for (final IQuester q : plugin.getOfflineQuesters()) {
-            for (final IQuest quest : q.getCurrentQuests().keySet()) {
+            for (final IQuest quest : q.getCurrentQuestsTemp().keySet()) {
                 q.checkQuest(quest);
             }
         }

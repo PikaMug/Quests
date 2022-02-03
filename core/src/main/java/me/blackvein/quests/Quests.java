@@ -1689,7 +1689,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         for (final IQuester quester : questers) {
                             final CompletableFuture<IQuester> cf = getStorage().loadQuester(quester.getUUID());
                             final IQuester loaded = cf.get();
-                            for (final IQuest q : loaded.getCurrentQuests().keySet()) {
+                            for (final IQuest q : loaded.getCurrentQuestsTemp().keySet()) {
                                 loaded.checkQuest(q);
                             }
                         }
