@@ -52,8 +52,9 @@ public interface IQuester extends Comparable<IQuester> {
      * Get compass target quest. Returns null if not set
      *
      * @return Quest or null
+     * @deprecated Do not use
      */
-    IQuest getCompassTarget();
+    IQuest getCompassTargetTemp();
 
     /**
      * Set compass target quest. Does not update in-game
@@ -75,7 +76,10 @@ public interface IQuester extends Comparable<IQuester> {
 
     void setCurrentQuests(final ConcurrentHashMap<IQuest, Integer> currentQuests);
 
-    ConcurrentSkipListSet<IQuest> getCompletedQuests();
+    /**
+     * @deprecated Do not use
+     */
+    ConcurrentSkipListSet<IQuest> getCompletedQuestsTemp();
 
     void setCompletedQuests(final ConcurrentSkipListSet<IQuest> completedQuests);
 

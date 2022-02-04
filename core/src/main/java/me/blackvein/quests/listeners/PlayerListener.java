@@ -374,7 +374,7 @@ public class PlayerListener implements Listener {
                                                     .valueOf(plugin.getSettings().getMaxQuests()));
                                             Lang.send(player, ChatColor.YELLOW + msg);
                                         } else {
-                                            if (quester.getCompletedQuests().contains(q)) {
+                                            if (quester.getCompletedQuestsTemp().contains(q)) {
                                                 if (q.getPlanner().getCooldown() > -1 
                                                         && (quester.getRemainingCooldown(q)) > 0) {
                                                     String early = Lang.get(player, "questTooEarly");
@@ -385,7 +385,7 @@ public class PlayerListener implements Listener {
                                                             + ChatColor.YELLOW);
                                                     Lang.send(player, ChatColor.YELLOW + early);
                                                     continue;
-                                                } else if (quester.getCompletedQuests().contains(q) 
+                                                } else if (quester.getCompletedQuestsTemp().contains(q)
                                                         && q.getPlanner().getCooldown() < 0) {
                                                     String completed = Lang.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
@@ -398,7 +398,7 @@ public class PlayerListener implements Listener {
                                             if (!plugin.getSettings().canAskConfirmation()) {
                                                 quester.takeQuest(q, false);
                                             } else {
-                                                final IQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
+                                                final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
                                                         + quest.getName() + ChatColor.GOLD + " -\n" + "\n" 
                                                         + ChatColor.RESET + quest.getDescription() + "\n";
@@ -878,7 +878,7 @@ public class PlayerListener implements Listener {
                     if (quester == null) {
                         return;
                     }
-                    for (final IQuest q : quester.getCompletedQuests()) {
+                    for (final IQuest q : quester.getCompletedQuestsTemp()) {
                         if (q != null) {
                             if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
                                 quester.getCompletedTimes().put(q, System.currentTimeMillis());
@@ -898,7 +898,7 @@ public class PlayerListener implements Listener {
                             quester.updateJournal();
                         }
                         if (quester.canUseCompass()) {
-                            quester.resetCompass();
+                            quester.findCompassTarget();
                         }
                     }, 40L);
                 } catch (final Exception e) {

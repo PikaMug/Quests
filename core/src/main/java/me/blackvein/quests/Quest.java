@@ -420,13 +420,13 @@ public class Quest implements IQuest {
     }
 
     /**
-     * Set location-objective target for compass.<p>
+     * Attempt to set location-objective target for compass.<p>
      * 
      * Method may be called as often as needed.
      * 
      * @param quester The online quester to have their compass updated
      * @param stage The stage to process for targets
-     * @return true if an attempt was made successfully
+     * @return true if quester is online and has permission
      */
     public boolean updateCompass(final IQuester quester, final IStage stage) {
         if (quester == null) {
@@ -551,6 +551,7 @@ public class Quest implements IQuest {
                     if (event.isCancelled()) {
                         return;
                     }
+                    quester.setCompassTarget(this);
                     quester.getPlayer().setCompassTarget(lockedTarget);
                 }
             }
@@ -588,11 +589,11 @@ public class Quest implements IQuest {
         if (quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
         }
-        if (!quester.getCompletedQuests().containsAll(requirements.getNeededQuests())) {
+        if (!quester.getCompletedQuestsTemp().containsAll(requirements.getNeededQuests())) {
             return false;
         }
         for (final IQuest q : requirements.getBlockQuests()) {
-            if (quester.getCompletedQuests().contains(q) || quester.getCurrentQuestsTemp().containsKey(q)) {
+            if (quester.getCompletedQuestsTemp().contains(q) || quester.getCurrentQuestsTemp().containsKey(q)) {
                 return false;
             }
         }
@@ -697,7 +698,7 @@ public class Quest implements IQuest {
             return;
         }
         quester.hardQuit(this);
-        quester.getCompletedQuests().add(this);
+        quester.getCompletedQuestsTemp().add(this);
         for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());

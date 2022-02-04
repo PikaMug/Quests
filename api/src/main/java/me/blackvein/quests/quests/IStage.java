@@ -306,6 +306,13 @@ public interface IStage {
     boolean hasObjective();
 
     /**
+     * Check if stage has at least one objective of which the target can be located easily<p>
+     *
+     * @return true if stage contains a locatable objective
+     */
+    boolean hasLocatableObjective();
+
+    /**
      * Check if stage has the specified type of objective<p>
      *
      * @param type The type of objective to check for

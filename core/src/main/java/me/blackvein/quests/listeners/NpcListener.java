@@ -202,7 +202,7 @@ public class NpcListener implements Listener {
                             continue;
                         if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
                             if (plugin.getSettings().canIgnoreLockedQuests()
-                                    && (!quester.getCompletedQuests().contains(q)
+                                    && (!quester.getCompletedQuestsTemp().contains(q)
                                     || q.getPlanner().getCooldown() > -1)) {
                                 if (q.testRequirements(quester)) {
                                     npcQuests.add(q);
@@ -210,7 +210,7 @@ public class NpcListener implements Listener {
                                         hasAtLeastOneGUI = true;
                                     }
                                 }
-                            } else if (!quester.getCompletedQuests().contains(q) || q.getPlanner().getCooldown() > -1) {
+                            } else if (!quester.getCompletedQuestsTemp().contains(q) || q.getPlanner().getCooldown() > -1) {
                                 npcQuests.add(q);
                                 if (q.getGUIDisplay() != null) {
                                     hasAtLeastOneGUI = true;
@@ -313,7 +313,7 @@ public class NpcListener implements Listener {
     }
 
     private String extracted(final IQuester quester) {
-        final IQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
+        final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

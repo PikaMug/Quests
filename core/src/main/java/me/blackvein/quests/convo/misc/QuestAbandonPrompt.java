@@ -107,7 +107,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
             }
             final String questIdToQuit = quester.getQuestIdToQuit();
             try {
-                IQuest quest = plugin.getQuestById(questIdToQuit);
+                IQuest quest = plugin.getQuestByIdTemp(questIdToQuit);
                 if (quest == null) {
                     plugin.getLogger().info(player.getName() + " attempted to quit quest ID \"" + questIdToQuit
                             + "\" but something went wrong");
@@ -116,7 +116,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
                 } else {
                     final String msg = ChatColor.YELLOW + Lang.get("questQuit").replace("<quest>",
                             ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-                    quester.quitQuest(plugin.getQuestById(questIdToQuit), msg);
+                    quester.quitQuest(plugin.getQuestByIdTemp(questIdToQuit), msg);
                 }
             } catch (final Exception e) {
                 e.printStackTrace();

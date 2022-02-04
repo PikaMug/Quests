@@ -222,8 +222,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 final List<String> questReq = (List<String>) context.getSessionData(CK.REQ_QUEST);
                 if (questReq != null) {
                     for (String s : questReq) {
-                        if (plugin.getQuestById(s) != null) {
-                            s = plugin.getQuestById(s).getName();
+                        if (plugin.getQuestByIdTemp(s) != null) {
+                            s = plugin.getQuestByIdTemp(s).getName();
                         }
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
@@ -238,8 +238,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 final List<String> questBlockReq = (List<String>) context.getSessionData(CK.REQ_QUEST_BLOCK);
                 if (questBlockReq != null) {
                     for (String s : questBlockReq) {
-                        if (plugin.getQuestById(s) != null) {
-                            s = plugin.getQuestById(s).getName();
+                        if (plugin.getQuestByIdTemp(s) != null) {
+                            s = plugin.getQuestByIdTemp(s).getName();
                         }
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
@@ -877,17 +877,17 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 final String[] args = input.split(Lang.get("charSemi"));
                 final LinkedList<String> questIds = new LinkedList<>();
                 for (final String s : args) {
-                    if (plugin.getQuest(s) == null) {
+                    if (plugin.getQuestTemp(s) == null) {
                         String text = Lang.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(text);
                         return new RequirementsQuestListPrompt(context, isRequiredQuest);
                     }
-                    if (questIds.contains(plugin.getQuest(s).getId())) {
+                    if (questIds.contains(plugin.getQuestTemp(s).getId())) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
                         return new RequirementsQuestListPrompt(context, isRequiredQuest);
                     }
-                    questIds.add(plugin.getQuest(s).getId());
+                    questIds.add(plugin.getQuestTemp(s).getId());
                 }
                 if (isRequiredQuest) {
                     context.setSessionData(CK.REQ_QUEST, questIds);

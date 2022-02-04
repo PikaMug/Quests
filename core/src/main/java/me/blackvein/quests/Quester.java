@@ -303,25 +303,37 @@ public class Quester implements IQuester {
     public void setQuestPoints(final int questPoints) {
         this.questPoints = questPoints;
     }
-    
+
     /**
      * Get compass target quest. Returns null if not set
-     * 
+     *
      * @return Quest or null
      */
-    @Override
-    public IQuest getCompassTarget() {
+    public Quest getCompassTarget() {
         return compassTargetQuestId != null ? plugin.getQuestById(compassTargetQuestId) : null;
     }
-    
+
+    /**
+     * Get compass target quest. Returns null if not set
+     *
+     * @return Quest or null
+     * @deprecated Do not use
+     */
+    @Override
+    public IQuest getCompassTargetTemp() {
+        return compassTargetQuestId != null ? plugin.getQuestByIdTemp(compassTargetQuestId) : null;
+    }
+
     /**
      * Set compass target quest. Does not update in-game
-     * 
+     *
      * @param quest The target quest
      */
     @Override
     public void setCompassTarget(final IQuest quest) {
-        compassTargetQuestId = quest.getId();
+        if (quest != null) {
+            compassTargetQuestId = quest.getId();
+        }
     }
 
     @Override
@@ -361,8 +373,20 @@ public class Quester implements IQuester {
         this.currentQuests = currentQuests;
     }
 
+    public ConcurrentSkipListSet<Quest> getCompletedQuests() {
+        final ConcurrentSkipListSet<Quest> set = new ConcurrentSkipListSet<>();
+        for (IQuest iq : completedQuests) {
+            final Quest q = (Quest) iq;
+            set.add(q);
+        }
+        return set;
+    }
+
+    /**
+     * @deprecated Do not use
+     */
     @Override
-    public ConcurrentSkipListSet<IQuest> getCompletedQuests() {
+    public ConcurrentSkipListSet<IQuest> getCompletedQuestsTemp() {
         return completedQuests;
     }
 
@@ -554,7 +578,7 @@ public class Quester implements IQuester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(quest) && quest.getPlanner().getCooldown() < 0) {
+        } else if (getCompletedQuestsTemp().contains(quest) && quest.getPlanner().getCooldown() < 0) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "questAlreadyCompleted")
                         .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
@@ -582,7 +606,7 @@ public class Quester implements IQuester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(quest) && getRemainingCooldown(quest) > 0
+        } else if (getCompletedQuestsTemp().contains(quest) && getRemainingCooldown(quest) > 0
                 && !quest.getPlanner().getOverride()) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "questTooEarly").replace("<quest>", ChatColor.AQUA
@@ -833,8 +857,9 @@ public class Quester implements IQuester {
             if (stage.getStartAction() != null) {
                 stage.getStartAction().fire(this, quest);
             }
-            quest.updateCompass(this, stage);
             saveData();
+            setCompassTarget(quest);
+            quest.updateCompass(this, stage);
         } else {
             if (offlinePlayer.isOnline()) {
                 sendMessage(ChatColor.DARK_AQUA + Lang.get("requirements"));
@@ -972,7 +997,7 @@ public class Quester implements IQuester {
         }
         for (final IQuest q : requirements.getNeededQuests()) {
             if (q != null) {
-                if (getCompletedQuests().contains(q)) {
+                if (getCompletedQuestsTemp().contains(q)) {
                     finishedRequirements.add(ChatColor.GREEN + q.getName());
                 } else {
                     unfinishedRequirements.add(ChatColor.GRAY + q.getName());
@@ -4149,7 +4174,13 @@ public class Quester implements IQuester {
         }
         for (final IQuest quest : currentQuests.keySet()) {
             final IStage stage = getCurrentStage(quest);
-            if (stage != null && quest.updateCompass(this, stage)) {
+            if (stage != null) {
+                if (stage.hasLocatableObjective()) {
+                    quest.updateCompass(this, stage);
+                } else {
+                    resetCompass();
+                    setCompassTarget(quest);
+                }
                 break;
             }
         }
@@ -4179,14 +4210,23 @@ public class Quester implements IQuester {
                 }
             }
             if (list.size() > 0) {
-                final IQuest quest = plugin.getQuestById(list.get(index));
+                final IQuest quest = plugin.getQuestByIdTemp(list.get(index));
                 compassTargetQuestId = quest.getId();
                 final IStage stage = getCurrentStage(quest);
                 if (stage != null) {
-                    quest.updateCompass(Quester.this, stage);
-                    if (notify) {
-                        sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
-                                .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                    if (stage.hasLocatableObjective()) {
+                        quest.updateCompass(Quester.this, stage);
+                        if (notify) {
+                            sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "compassSet")
+                                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                        }
+                    } else {
+                        resetCompass();
+                        setCompassTarget(quest);
+                        if (notify) {
+                            sendMessage(ChatColor.RED + Lang.get(getPlayer(), "compassNone")
+                                    .replace("<quest>", ChatColor.GRAY + quest.getName() + ChatColor.RED));
+                        }
                     }
                 }
             } else {

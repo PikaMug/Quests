@@ -763,10 +763,28 @@ public class Stage implements IStage {
         if (!citizensToInteract.isEmpty()) { return true; }
         if (!citizensToKill.isEmpty()) { return true; }
         if (!locationsToReach.isEmpty()) { return true; }
+        if (!mobsToKill.isEmpty()) {return true; }
         if (!mobsToTame.isEmpty()) { return true; }
         if (!sheepToShear.isEmpty()) { return true; }
         if (!passwordDisplays.isEmpty()) { return true; }
         return !customObjectives.isEmpty();
+    }
+
+    /**
+     * Check if stage has at least one objective of which the target can be easily located<p>
+     *
+     * @return true if stage contains a locatable objective
+     */
+    public boolean hasLocatableObjective() {
+        if (!citizensToInteract.isEmpty()) { return true; }
+        if (!citizensToKill.isEmpty()) { return true; }
+        if (!locationsToReach.isEmpty()) { return true; }
+        if (!itemDeliveryTargets.isEmpty()) { return true; }
+        if (playersToKill != null) { return true; }
+        if (!mobsToKill.isEmpty()) {return true; }
+        if (!mobsToTame.isEmpty()) { return true; }
+        if (!sheepToShear.isEmpty()) { return true; }
+        return false;
     }
     
     /**

@@ -71,7 +71,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final IQuest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuests().contains(quest)) {
+                    if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN;
                     } else {
                         return ChatColor.GOLD;
@@ -94,7 +94,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final IQuest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuests().contains(quest)) {
+                    if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
                     } else {
                         return ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName();
@@ -116,7 +116,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final IQuest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuests().contains(quest)) {
+                    if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN + "" + Lang.get("redoCompleted");
                     }
                 }
@@ -240,7 +240,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     }
 
     private String extracted(final Quests plugin, final IQuester quester) {
-        final IQuest quest = plugin.getQuestById(quester.getQuestIdToTake());
+        final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

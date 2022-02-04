@@ -231,7 +231,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final IQuest q = plugin.getQuest(input);
+                final IQuest q = plugin.getQuestTemp(input);
                 if (q != null) {
                     plugin.getQuestFactory().loadQuest(context, q);
                     return new QuestMainPrompt(context);
@@ -275,7 +275,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
-                final IQuest found = plugin.getQuest(input);
+                final IQuest found = plugin.getQuestTemp(input);
                 if (found != null) {
                     for (final IQuest q : plugin.getLoadedQuests()) {
                         if (q.getRequirements().getNeededQuests().contains(q) 
