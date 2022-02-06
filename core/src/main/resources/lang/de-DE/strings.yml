@@ -738,6 +738,7 @@ journalNoRoom: "Du hast keinen Platz in deinem Inventar für dein Quest-Tagebuch
 journalNoQuests: "Du hast aktuell keine Quests akzeptiert!"
 journalDenied: "Du kannst dies nicht mit deinem Quest-Tagebuch tun."
 compassSet: "Setze Kompassziel auf Quest <quest>."
+compassNone: "Pas de boussole pour la quête <quest>."
 compassReset: "Kompassziel zurücksetzen."
 timeZone: "Zeitzone"
 timeDay: "Tag"
