@@ -738,6 +738,7 @@ journalNoRoom: "¡No tienes espacio en tu inventario para las Diario de la Búsq
 journalNoQuests: "¡Usted no ha aceptado búsqueda!"
 journalDenied: "Usted no puede hacer eso con su Diario de la Misión."
 compassSet: "Establezca el objetivo de la brújula para quest <quest>."
+compassNone: "No hay objetivo de brújula para la búsqueda <quest>."
 compassReset: "Restablecer el objetivo de la brújula."
 timeZone: "Zona horaria"
 timeDay: "Día"
