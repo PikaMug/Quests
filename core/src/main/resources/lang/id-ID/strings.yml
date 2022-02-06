@@ -738,6 +738,7 @@ journalNoRoom: "Anda tidak memiliki ruangan dalam inventaris Anda untuk Jurnal P
 journalNoQuests: "Anda tidak memiliki Pencarian yang diterima!"
 journalDenied: "Anda tidak bisa melakukannya dengan Pencarian Jurnal Anda."
 compassSet: "Tetapkan target kompas ke pencarian <quest>."
+compassNone: "Tidak ada target kompas untuk pencarian <quest>."
 compassReset: "Atur ulang target kompas."
 timeZone: "Zona waktu"
 timeDay: "Hari"

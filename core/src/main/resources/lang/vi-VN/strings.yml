@@ -738,6 +738,7 @@ journalNoRoom: "Bạn không có chỗ trong hành trang của bạn để lấy
 journalNoQuests: "Bạn chưa nhận nhiệm vụ nào!"
 journalDenied: "Bạn không thể làm thế với Nhật ký Nhiệm vụ của bạn."
 compassSet: "Đặt mục tiêu la bàn cho nhiệm vụ <quest>."
+compassNone: "Không có mục tiêu la bàn cho nhiệm vụ <quest>."
 compassReset: "Đặt lại mục tiêu la bàn."
 timeZone: "Múi giờ"
 timeDay: "Ngày"

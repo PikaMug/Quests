@@ -738,6 +738,7 @@ journalNoRoom: "Você não tem espaço no seu inventário para seu Jornal de Mis
 journalNoQuests: "Você não tem missões aceitas!"
 journalDenied: "Você não pode fazer isso com seu Jornal de Missões."
 compassSet: "Defina o alvo da bússola para a missão <quest>."
+compassNone: "Nenhum alvo de bússola para a missão <quest>."
 compassReset: "Redefina o alvo da bússola."
 timeZone: "Fuso horário"
 timeDay: "Dia"

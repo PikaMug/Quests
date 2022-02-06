@@ -738,6 +738,7 @@ journalNoRoom: "Vous n'avez plus de place dans votre inventaire pour votre <jour
 journalNoQuests: "Vous n'avez acceptée aucune quêtes !"
 journalDenied: "Vous ne pouvez pas faire cela avec votre <journal>."
 compassSet: "Réglez la boussole sur la quête <quest>."
+compassNone: "Pas de boussole pour la quête <quest>."
 compassReset: "Réinitialiser la cible de la boussole."
 timeZone: "Fuseau horaire"
 timeDay: "Jour"

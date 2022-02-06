@@ -738,6 +738,7 @@ journalNoRoom: "Non hai spazio nell'inventario per il tuo diario delle missioni!
 journalNoQuests: "Non hai missioni accettate!"
 journalDenied: "Non puoi farlo con il tuo diario delle missioni."
 compassSet: "Imposta il bersaglio della bussola sulla quest <quest>."
+compassNone: "Nessun bersaglio della bussola per la missione <quest>."
 compassReset: "Reimposta il bersaglio della bussola."
 timeZone: "Fuso orario"
 timeDay: "Giorno"
