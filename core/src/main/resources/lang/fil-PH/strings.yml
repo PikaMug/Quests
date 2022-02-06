@@ -738,6 +738,7 @@ journalNoRoom: "Ikaw ay wala ng kwarto sa iyong inbentaryo para sa iyong talaara
 journalNoQuests: "Ikaw ay walang tinanggap na pagsusulit!"
 journalDenied: "Hindi mo magagawa iyan kahit meron kang Talaarawan sa Pagsusulit."
 compassSet: "Itakda ang target na kumpas sa paghahanap <quest>."
+compassNone: "Walang compass target para sa quest <quest>."
 compassReset: "I-reset ang target na kumpas."
 timeZone: "Time zone"
 timeDay: "Araw"
