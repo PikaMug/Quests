@@ -738,6 +738,7 @@ journalNoRoom: "인벤토리가 꽉차서 퀘스트 일지를 가질 수 없다!
 journalNoQuests: "수락 한 퀘스트가 없습니다."
 journalDenied: "당신은 퀘스트 일지로 그렇게 할 수 없습니다."
 compassSet: "나침반 대상을 퀘스트 <quest>로 설정하십시오."
+compassNone: "퀘스트 <quest>에 대한 나침반 목표가 없습니다."
 compassReset: "나침반 대상을 재설정합니다."
 timeZone: "시간대"
 timeDay: "일"
