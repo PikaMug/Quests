@@ -33,9 +33,16 @@ public class DenizenAPI_1_1_0 {
     
     private static final QuestsAPI quests = (QuestsAPI) Bukkit.getPluginManager().getPlugin("Quests");
     private static final DenizenAPI api = quests != null ? quests.getDependencies().getDenizenApi() : null;
-    
+
     public static boolean containsScript(final String input) {
-        return ScriptRegistry.containsScript(input);
+        if (quests == null || api.scriptRegistry == null || api.containsScriptMethod == null) return false;
+        boolean script = false;
+        try {
+            script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
+        } catch (final Exception e) {
+            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
+        }
+        return script;
     }
     
     @Nullable
@@ -67,7 +74,7 @@ public class DenizenAPI_1_1_0 {
     }
     
     public static @NotNull Object mirrorCitizensNPC(final NPC npc) {
-        return NPCTag.mirrorCitizensNPC(npc);
+        return NPCTag.fromEntity(npc.getEntity());
     }
     
     public static void runTaskScript(final String scriptName, final Player player) {

@@ -24,6 +24,7 @@ public class DenizenAPI {
     private Class<?> denizen_1_0_9 = null;
     private Class<?> denizen_1_1_0 = null;
     private Class<?> denizen_1_1_1 = null;
+    private Class<?> denizen_1_2_2 = null;
     protected Class<?> scriptRegistry = null;
     protected Method containsScriptMethod = null;
     protected Method getScriptNamesMethod = null;
@@ -39,11 +40,20 @@ public class DenizenAPI {
 
     public DenizenAPI() {
         try {
+            Class.forName("com.denizenscript.denizencore.utilities.ScriptUtilities");
+            denizen_1_2_2 = Class.forName("com.denizenscript.denizen.Denizen");
+            return;
+        } catch (final Exception e) {
+            // Fail silently
+        }
+        try {
             bukkitScriptEntryData 
                     = Class.forName("com.denizenscript.denizen.utilities.implementation.BukkitScriptEntryData");
             denizen_1_1_1 = Class.forName("com.denizenscript.denizen.Denizen");
+
+            containsScriptMethod = scriptRegistry.getMethod("containsScript", String.class);
             return;
-        } catch (final Exception e2) {
+        } catch (final Exception e) {
             // Fail silently
         }
         try {
@@ -57,10 +67,11 @@ public class DenizenAPI {
             scriptEntryData = Class.forName("com.denizenscript.denizencore.scripts.ScriptEntryData");
             bukkitScriptEntryData = Class.forName("com.denizenscript.denizen.BukkitScriptEntryData");
             denizen_1_1_0 = Class.forName("com.denizenscript.denizen.Denizen");
-            
+
+            containsScriptMethod = scriptRegistry.getMethod("containsScript", String.class);
             getScriptNamesMethod = scriptRegistry.getMethod("_getScriptNames");
             return;
-        } catch (final Exception e1) {
+        } catch (final Exception e) {
             // Fail silently
         }
         try {
@@ -86,12 +97,14 @@ public class DenizenAPI {
     }
     
     public boolean isEnabled() {
-        return denizen_1_1_1 != null || denizen_1_1_0 != null || denizen_1_0_9 != null;
+        return denizen_1_2_2 != null || denizen_1_1_1 != null || denizen_1_1_0 != null || denizen_1_0_9 != null;
     }
 
     @Nullable
     public Class<?> getDenizenClass() {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return denizen_1_2_2;
+        } else if (denizen_1_1_1 != null) {
             return denizen_1_1_1;
         } else if (denizen_1_1_0 != null) {
             return denizen_1_1_0;
@@ -102,7 +115,9 @@ public class DenizenAPI {
     }
     
     public boolean containsScript(final String input) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.containsScript(input);
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.containsScript(input);
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.containsScript(input);
@@ -114,7 +129,9 @@ public class DenizenAPI {
 
     @Nullable
     public String getScriptContainerName(final String input) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.getScriptContainerName(input);
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.getScriptContainerName(input);
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.getScriptContainerName(input);
@@ -126,7 +143,9 @@ public class DenizenAPI {
 
     @Nullable
     public Set<String> getScriptNames() {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.getScriptNames();
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.getScriptNames();
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.getScriptNames();
@@ -138,7 +157,9 @@ public class DenizenAPI {
 
     @Nullable
     public Object getScriptContainerAs(final String scriptName) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.getScriptContainerAs(scriptName);
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.getScriptContainerAs(scriptName);
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.getScriptContainerAs(scriptName);
@@ -150,7 +171,9 @@ public class DenizenAPI {
 
     @Nullable
     public Object mirrorBukkitPlayer(final Player player) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.mirrorBukkitPlayer(player);
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.mirrorBukkitPlayer(player);
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.mirrorBukkitPlayer(player);
@@ -162,7 +185,9 @@ public class DenizenAPI {
 
     @Nullable
     public Object mirrorCitizensNPC(final NPC npc) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            return DenizenAPI_1_2_2.mirrorCitizensNPC(npc);
+        } else if (denizen_1_1_1 != null) {
             return DenizenAPI_1_1_1.mirrorCitizensNPC(npc);
         } else if (denizen_1_1_0 != null) {
             return DenizenAPI_1_1_0.mirrorCitizensNPC(npc);
@@ -173,7 +198,9 @@ public class DenizenAPI {
     }
 
     public void runTaskScript(final String scriptName, final Player player) {
-        if (denizen_1_1_1 != null) {
+        if (denizen_1_2_2 != null) {
+            DenizenAPI_1_2_2.runTaskScript(scriptName, player);
+        } else if (denizen_1_1_1 != null) {
             DenizenAPI_1_1_1.runTaskScript(scriptName, player);
         } else if (denizen_1_1_0 != null) {
             DenizenAPI_1_1_0.runTaskScript(scriptName, player);
