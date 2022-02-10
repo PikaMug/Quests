@@ -412,6 +412,7 @@ public class Quest implements IQuest {
             }
         }
         quester.updateJournal();
+        quester.saveData();
         if (player.isOnline()) {
             final QuesterPostChangeStageEvent postEvent
                     = new QuesterPostChangeStageEvent((Quester) quester, this, currentStage, nextStage);
