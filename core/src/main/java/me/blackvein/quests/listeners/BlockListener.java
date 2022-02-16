@@ -194,7 +194,7 @@ public class BlockListener implements Listener {
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
                         (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.placeBlock(cq, blockItemStack);
+                        q.damageBlock(cq, blockItemStack);
                     }
                     return null;
                 }));
