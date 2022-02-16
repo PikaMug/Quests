@@ -72,6 +72,7 @@ permissions:
       quests.admin.points: true
       quests.admin.takepoints: true
       quests.admin.givepoints: true
+      quests.admin.pointsall: true
       quests.admin.finish: true
       quests.admin.nextstage: true
       quests.admin.setstage: true

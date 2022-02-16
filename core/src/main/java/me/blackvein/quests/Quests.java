@@ -37,7 +37,7 @@ import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
-import me.blackvein.quests.listeners.CmdExecutor;
+import me.blackvein.quests.listeners.CommandManager;
 import me.blackvein.quests.listeners.ConvoListener;
 import me.blackvein.quests.listeners.ItemListener;
 import me.blackvein.quests.listeners.NpcListener;
@@ -212,7 +212,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
 
         // 4 - Load command executor
-        cmdExecutor = new CmdExecutor(this);
+        cmdExecutor = new CommandManager(this);
         
         // 5 - Load soft-depends
         depends.init();
