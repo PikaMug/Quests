@@ -155,6 +155,7 @@ public class InventoryUtil {
                     allItems[toRemove.getKey()] = i;
                 }
             }
+            equipment.setArmorContents(allItems);
             return true;
         }
         return false;
