@@ -3943,16 +3943,18 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     
     private void loadCustomSections(final IQuest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, QuestFormatException {
-        final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
+        final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
+                + ".stages.ordered");
         if (questStages != null) {
             for (final String stageNum : questStages.getKeys(false)) {
                 if (quest == null) {
-                    getLogger().warning("Unable to load custom objectives because quest for " + questKey + " was null");
+                    getLogger().warning("Unable to consider custom objectives because quest for " + questKey
+                            + " was null");
                     return;
                 }
                 if (quest.getStage(Integer.parseInt(stageNum) - 1) == null) {
-                    getLogger().severe("Unable to load custom objectives because stage" + (Integer.parseInt(stageNum) - 1)
-                            + " for " + quest.getName() + " was null");
+                    getLogger().severe("Unable to load custom objectives because stage" + (Integer.parseInt(stageNum)
+                            - 1) + " for " + quest.getName() + " was null");
                     return;
                 }
                 final IStage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
@@ -3961,8 +3963,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 oStage.clearCustomObjectiveData();
                 oStage.clearCustomObjectiveDisplays();
                 if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".custom-objectives")) {
-                    final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey + ".stages.ordered."
-                            + stageNum + ".custom-objectives");
+                    final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey
+                            + ".stages.ordered." + stageNum + ".custom-objectives");
                     if (sec != null) {
                         for (final String path : sec.getKeys(false)) {
                             final String name = sec.getString(path + ".name");
