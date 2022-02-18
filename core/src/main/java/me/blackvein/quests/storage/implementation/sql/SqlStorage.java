@@ -332,7 +332,7 @@ public class SqlStorage implements StorageImplementation {
                         plugin.getLogger().severe("Quest was null for completed times of quester " + quester.getUUID());
                         return;
                     }
-                    if (!quester.getAmountsCompleted().containsKey(entry.getKey())) {
+                    if (!quester.getAmountsCompleted().containsKey(entry.getKey()) || quester.getAmountsCompleted().get(entry.getKey()) == null) {
                         plugin.getLogger().warning("Quester " + quester.getUUID() + " is missing amounts completed for quest ID " + entry.getKey().getId());
                         return;
                     }
