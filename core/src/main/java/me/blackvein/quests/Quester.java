@@ -2557,7 +2557,7 @@ public class Quester implements IQuester {
         
         final int index = getCurrentStage(quest).getCitizensToKill().indexOf(npc.getId());
         final int npcsKilled = getQuestData(quest).citizensNumKilled.get(index);
-        final int npcsToKill = getCurrentStage(quest).getMobNumToKill().get(index);
+        final int npcsToKill = getCurrentStage(quest).getCitizenNumToKill().get(index);
         
         final ObjectiveType type = ObjectiveType.KILL_NPC;
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
