@@ -187,11 +187,16 @@ public class Lang {
         final String cmdClear = allStrings.get("cmdClear");
         final String cmdCancel = allStrings.get("cmdCancel");
         final String cmdDone = allStrings.get("cmdDone");
-        
-        final String strAdd = allStrings.get("strAdd").replace("<command>", cmdAdd);
-        final String strClear = allStrings.get("strClear").replace("<command>", cmdClear);
-        final String strCancel = allStrings.get("strCancel").replace("<command>", cmdCancel);
-        final String strDone = allStrings.get("strDone").replace("<command>", cmdDone);
+
+        final String missing = "( Missing translation: https://crowdin.com/translate/translate-quests )";
+        final String strAdd = allStrings.get("strAdd") != null
+                ? allStrings.get("strAdd").replace("<command>", cmdAdd) : missing;
+        final String strClear = allStrings.get("strClear") != null
+                ? allStrings.get("strClear").replace("<command>", cmdAdd) : missing;
+        final String strCancel = allStrings.get("strCancel") != null
+                ? allStrings.get("strCancel").replace("<command>", cmdAdd) : missing;
+        final String strDone = allStrings.get("strDone") != null
+                ? allStrings.get("strDone").replace("<command>", cmdAdd) : missing;
         final String strSpace = allStrings.get("strSpace");
         final String strSemicolon = allStrings.get("strSemicolon");
         for (final Entry<String, String> entry : allStrings.entrySet()) {
