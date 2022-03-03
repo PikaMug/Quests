@@ -952,6 +952,9 @@ public class Quester implements IQuester {
         }
         saveData();
         updateJournal();
+        if (compassTargetQuestId != null && compassTargetQuestId.equals(quest.getId())) {
+            compassTargetQuestId = null;
+        }
     }
     
     public LinkedList<String> getCurrentRequirements(final IQuest quest, final boolean ignoreOverrides) {
