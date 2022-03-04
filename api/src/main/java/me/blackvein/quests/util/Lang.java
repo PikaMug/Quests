@@ -192,11 +192,11 @@ public class Lang {
         final String strAdd = allStrings.get("strAdd") != null
                 ? allStrings.get("strAdd").replace("<command>", cmdAdd) : missing;
         final String strClear = allStrings.get("strClear") != null
-                ? allStrings.get("strClear").replace("<command>", cmdAdd) : missing;
+                ? allStrings.get("strClear").replace("<command>", cmdClear) : missing;
         final String strCancel = allStrings.get("strCancel") != null
-                ? allStrings.get("strCancel").replace("<command>", cmdAdd) : missing;
+                ? allStrings.get("strCancel").replace("<command>", cmdCancel) : missing;
         final String strDone = allStrings.get("strDone") != null
-                ? allStrings.get("strDone").replace("<command>", cmdAdd) : missing;
+                ? allStrings.get("strDone").replace("<command>", cmdDone) : missing;
         final String strSpace = allStrings.get("strSpace");
         final String strSemicolon = allStrings.get("strSemicolon");
         for (final Entry<String, String> entry : allStrings.entrySet()) {
