@@ -350,6 +350,7 @@ eventEditorMustSetPotionDurationsFirst: "最初にポーション効果の持続
 eventEditorMustSetPotionTypesAndDurationsFirst: "最初にポーション効果の種類と持続時間を設定する必要があります！"
 eventEditorPotionsCleared: "ポーション効果をクリアしました。"
 eventEditorSelectBlockFirst: "最初にブロックを選択する必要があります。"
+eventEditorSetMessagePrompt: "メッセージを入力してください、<clear>、<cancel>"
 eventEditorSetMobTypesPrompt: "Mobの名前を入力してください、<cancel>"
 eventEditorSetMobAmountsPrompt: "Mobの数を入力してください、<cancel>"
 eventEditorSetMobNamePrompt: "このMobの名前を入力してください、<cancel>"
