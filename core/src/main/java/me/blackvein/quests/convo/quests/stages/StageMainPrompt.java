@@ -436,8 +436,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
     @Override
     public @NotNull String getBasicPromptText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
-        if (input != null && !input.equalsIgnoreCase(Lang.get("cancel"))) {
-            if (input.equalsIgnoreCase(Lang.get("clear"))) {
+        if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+            if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_OVERRIDE_DISPLAY, null);
             } else {
                 final LinkedList<String> overrides = new LinkedList<>();

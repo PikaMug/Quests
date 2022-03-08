@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.convo.generic;
 
+import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
+import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
-
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class OverridePrompt extends QuestsEditorStringPrompt {
@@ -60,8 +60,15 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     }
 
     @Override
-    public Prompt acceptInput(final ConversationContext context, final String input) {
-        context.setSessionData(classPrefix + "-override", input);
+    public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        if (input != null) {
+            if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorMessageCleared"));
+                context.setSessionData(classPrefix + "-override", Lang.get("cmdClear"));
+            } else if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                context.setSessionData(classPrefix + "-override", input);
+            }
+        }
         return oldPrompt;
     }
     
