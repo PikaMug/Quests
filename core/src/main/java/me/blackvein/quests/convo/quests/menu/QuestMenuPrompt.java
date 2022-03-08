@@ -236,6 +236,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     plugin.getQuestFactory().loadQuest(context, q);
                     return new QuestMainPrompt(context);
                 }
+                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorQuestNotFound"));
                 return new QuestSelectEditPrompt(context);
             } else {
                 return new QuestMenuPrompt(context);
