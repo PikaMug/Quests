@@ -23,14 +23,16 @@ Distributed through these fine vendors:
 Usage
 ---
 
-Documentation can be found in the Wiki: https://github.com/PikaMug/Quests/wiki
+Read about usage in the documentation: https://pikamug.gitbook.io/quests/
 
 Compile
 ---
 
-Requires Java 8 and Maven: https://github.com/PikaMug/Quests/wiki/Master-%E2%80%90-Plugin-Compilation
+Requires Java 8 and Maven: https://pikamug.gitbook.io/quests/master/plugin-compilation
 
 Translate
 ---
 
-Help localize into your language: https://crowdin.com/project/translate-quests
+Help localize into your language:
+- Project (https://crowdin.com/project/translate-quests)
+- Documentation (https://github.com/PikaMug/QuestsDoc)
