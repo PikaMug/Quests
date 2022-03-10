@@ -21,6 +21,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class QuestsTakeCommand extends QuestsSubCommand {
 
     private final Quests plugin;
@@ -85,5 +89,19 @@ public class QuestsTakeCommand extends QuestsSubCommand {
         } else {
             Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questTakeDisabled"));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            final List<String> results = new ArrayList<>();
+            for (final IQuest quest : plugin.getLoadedQuests()) {
+                if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    results.add(quest.getName());
+                }
+            }
+            return results;
+        }
+        return Collections.emptyList();
     }
 }

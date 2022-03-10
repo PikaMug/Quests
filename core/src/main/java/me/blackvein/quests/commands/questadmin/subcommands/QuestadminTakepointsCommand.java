@@ -22,6 +22,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class QuestadminTakepointsCommand extends QuestsSubCommand {
@@ -93,5 +95,13 @@ public class QuestadminTakepointsCommand extends QuestsSubCommand {
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            return null; // Shows online players
+        }
+        return Collections.emptyList();
     }
 }

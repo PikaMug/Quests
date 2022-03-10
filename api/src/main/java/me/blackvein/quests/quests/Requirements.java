@@ -69,4 +69,11 @@ public interface Requirements {
     List<String> getDetailsOverride();
 
     void setDetailsOverride(final List<String> detailsOverride);
+
+    /**
+     * Check if quest has at least one requirement
+     *
+     * @return true if quest contains an requirement
+     */
+    boolean hasRequirement();
 }

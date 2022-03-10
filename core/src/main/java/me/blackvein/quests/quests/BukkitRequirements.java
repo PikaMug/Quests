@@ -112,4 +112,20 @@ public class BukkitRequirements implements Requirements {
     public void setDetailsOverride(final List<String> detailsOverride) {
         this.detailsOverride = detailsOverride;
     }
+
+    @Override
+    public boolean hasRequirement() {
+        if (money != 0) { return true; }
+        if (questPoints != 0) { return true; }
+        if (!items.isEmpty()) { return true; }
+        if (!removeItems.isEmpty()) { return true; }
+        if (!neededQuests.isEmpty()) { return true; }
+        if (!blockQuests.isEmpty()) { return true; }
+        if (!permissions.isEmpty()) { return true; }
+        if (!mcmmoSkills.isEmpty()) { return true; }
+        if (!mcmmoAmounts.isEmpty()) { return true; }
+        if (heroesPrimaryClass != null) { return true; }
+        if (heroesSecondaryClass != null) { return true; }
+        return !customRequirements.isEmpty();
+    }
 }

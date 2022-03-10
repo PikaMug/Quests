@@ -50,4 +50,11 @@ public interface Rewards {
     void setCustomRewards(final Map<String, Map<String, Object>> customRewards);
     List<String> getDetailsOverride();
     void setDetailsOverride(final List<String> detailsOverride);
+
+    /**
+     * Check if quest has at least one reward
+     *
+     * @return true if quest contains an reward
+     */
+    boolean hasReward();
 }

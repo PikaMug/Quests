@@ -83,6 +83,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -150,7 +151,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     private Collection<IAction> actions = new ConcurrentSkipListSet<>();
     private Collection<ICondition> conditions = new ConcurrentSkipListSet<>();
     private LinkedList<Integer> questNpcIds = new LinkedList<>();
-    private CommandExecutor cmdExecutor;
+    private TabExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
     private ConversationFactory npcConversationFactory;
     private QuestFactory questFactory;
@@ -230,13 +231,16 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         
         // 8 - Setup commands
         if (getCommand("quests") != null) {
-            Objects.requireNonNull(getCommand("quests")).setExecutor(getCommandExecutor());
+            Objects.requireNonNull(getCommand("quests")).setExecutor(getTabExecutor());
+            Objects.requireNonNull(getCommand("quests")).setTabCompleter(getTabExecutor());
         }
         if (getCommand("questadmin") != null) {
-            Objects.requireNonNull(getCommand("questadmin")).setExecutor(getCommandExecutor());
+            Objects.requireNonNull(getCommand("questadmin")).setExecutor(getTabExecutor());
+            Objects.requireNonNull(getCommand("questadmin")).setTabCompleter(getTabExecutor());
         }
         if (getCommand("quest") != null) {
-            Objects.requireNonNull(getCommand("quest")).setExecutor(getCommandExecutor());
+            Objects.requireNonNull(getCommand("quest")).setExecutor(getTabExecutor());
+            Objects.requireNonNull(getCommand("quest")).setTabCompleter(getTabExecutor());
         }
         
         // 9 - Build conversation factories
@@ -527,6 +531,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     public CommandExecutor getCommandExecutor() {
+        return cmdExecutor;
+    }
+
+    public TabExecutor getTabExecutor() {
         return cmdExecutor;
     }
 

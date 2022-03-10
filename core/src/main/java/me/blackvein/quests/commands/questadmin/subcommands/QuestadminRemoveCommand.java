@@ -22,6 +22,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class QuestadminRemoveCommand extends QuestsSubCommand {
@@ -90,5 +93,21 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            return null; // Shows online players
+        } else if (args.length == 3) {
+            final List<String> results = new ArrayList<>();
+            for (final IQuest quest : plugin.getLoadedQuests()) {
+                if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                    results.add(quest.getName());
+                }
+            }
+            return results;
+        }
+        return Collections.emptyList();
     }
 }

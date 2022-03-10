@@ -23,6 +23,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -102,5 +104,13 @@ public class QuestadminResetCommand extends QuestsSubCommand {
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            return null; // Shows online players
+        }
+        return Collections.emptyList();
     }
 }

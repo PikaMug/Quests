@@ -29,6 +29,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,32 +69,25 @@ public class QuestsCommandHandler {
             }
         }
         cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
-        /*if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase(Lang.get("COMMAND_LIST"))) {
-            new QuestsListCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("take") || args[0].equalsIgnoreCase(Lang.get("COMMAND_TAKE"))) {
-            new QuestsTakeCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("quit") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUIT"))) {
-            new QuestsQuitCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase(Lang.get("COMMAND_STATS"))) {
-            new QuestsStatsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("journal") || args[0].equalsIgnoreCase(Lang.get("COMMAND_JOURNAL"))) {
-            new QuestsJournalCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("top") || args[0].equalsIgnoreCase(Lang.get("COMMAND_TOP"))) {
-            new QuestsTopCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("editor") || args[0].equalsIgnoreCase(Lang.get("COMMAND_EDITOR"))) {
-            new QuestsEditorCommand(plugin).execute(cs, args);
-        } else if (args[0].startsWith("action") || args[0].startsWith("event")
-                || args[0].startsWith(Lang.get("COMMAND_EVENTS_EDITOR"))) {
-            new QuestsActionsCommand(plugin).execute(cs, args);
-        } else if (args[0].startsWith("condition") || args[0].startsWith(Lang.get("COMMAND_CONDITIONS_EDITOR"))) {
-            new QuestsConditionsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase(Lang.get("COMMAND_INFO"))) {
-            new QuestsInfoCommand(plugin).execute(cs, args);
-        } else {
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
-            return true;
-        }*/
         return true;
+    }
+
+    public List<String> suggest(final CommandSender cs, final String[] args) {
+        if (args.length == 1) {
+            final List<String> results = new ArrayList<>();
+            for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
+                if (cmd.getKey().startsWith(args[0]) || cmd.getValue().getNameI18N().startsWith(args[0])) {
+                    results.add(cmd.getValue().getNameI18N());
+                }
+            }
+            return results;
+        }
+        for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
+            if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
+                return cmd.getValue().tabComplete(cs, args);
+            }
+        }
+        return Collections.emptyList();
     }
 
     private void printHelp(final CommandSender cs) {

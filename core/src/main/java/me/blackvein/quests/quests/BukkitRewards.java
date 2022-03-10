@@ -133,4 +133,21 @@ public class BukkitRewards implements Rewards {
     public void setDetailsOverride(final List<String> detailsOverride) {
         this.detailsOverride = detailsOverride;
     }
+
+    @Override
+    public boolean hasReward() {
+        if (money != 0) { return true; }
+        if (questPoints != 0) { return true; }
+        if (exp != 0) { return true; }
+        if (!commands.isEmpty()) { return true; }
+        if (!permissions.isEmpty()) { return true; }
+        if (!items.isEmpty()) { return true; }
+        if (!mcmmoSkills.isEmpty()) { return true; }
+        if (!mcmmoAmounts.isEmpty()) { return true; }
+        if (!heroesClasses.isEmpty()) { return true; }
+        if (!heroesAmounts.isEmpty()) { return true; }
+        if (partiesExperience != 0) { return true; }
+        if (!phatLoots.isEmpty()) { return true; }
+        return !customRewards.isEmpty();
+    }
 }

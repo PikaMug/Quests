@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.commands.questadmin.subcommands;
 
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.commands.QuestsSubCommand;
 import me.blackvein.quests.player.IQuester;
@@ -22,6 +23,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class QuestadminSetstageCommand extends QuestsSubCommand {
@@ -91,6 +95,20 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
                     cs.sendMessage(ChatColor.RED + Lang.get("questNotFound"));
                     return;
                 }
+                if (!quester.getCurrentQuestsTemp().containsKey(quest)) {
+                    String msg1 = Lang.get("questForceTake");
+                    msg1 = msg1.replace("<player>", ChatColor.GREEN + quester.getLastKnownName() + ChatColor.GOLD);
+                    msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                    cs.sendMessage(ChatColor.GOLD + msg1);
+                    if (quester.getPlayer() != null && quester.getPlayer().isOnline()) {
+                        String msg2 = Lang.get("questForcedTake");
+                        msg2 = msg2.replace("<player>", ChatColor.GREEN + quester.getLastKnownName() + ChatColor.GOLD);
+                        msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                        quester.sendMessage(ChatColor.GREEN + msg2);
+                    }
+                    quester.takeQuest(quest, true);
+                    quester.saveData();
+                }
                 try {
                     quest.setStage(quester, stage - 1);
                 } catch (final IndexOutOfBoundsException e) {
@@ -103,5 +121,30 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
         } else {
             cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            return null; // Shows online players
+        } else if (args.length == 3) {
+            final List<String> results = new ArrayList<>();
+            for (final IQuest quest : plugin.getLoadedQuests()) {
+                if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                    results.add(quest.getName());
+                }
+            }
+            return results;
+        } else if (args.length > 3) {
+            final Quest quest = plugin.getQuest(args[2]);
+            if (quest != null) {
+                final List<String> results = new ArrayList<>();
+                for (int i = 1; i <= quest.getStages().size(); i++) {
+                    results.add(String.valueOf(i));
+                }
+                return results;
+            }
+        }
+        return Collections.emptyList();
     }
 }

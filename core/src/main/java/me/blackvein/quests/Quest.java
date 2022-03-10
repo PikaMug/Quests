@@ -311,6 +311,9 @@ public class Quest implements IQuest {
         }
         final IStage currentStage = quester.getCurrentStage(this);
         final IStage nextStage = getStage(stage);
+        if (currentStage == null || nextStage == null) {
+            return;
+        }
         if (player.isOnline()) {
             final QuesterPreChangeStageEvent preEvent
                     = new QuesterPreChangeStageEvent((Quester) quester, this, currentStage, nextStage);

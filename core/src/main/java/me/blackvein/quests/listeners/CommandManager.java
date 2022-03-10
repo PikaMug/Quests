@@ -19,15 +19,17 @@ import me.blackvein.quests.commands.quests.QuestsCommandHandler;
 import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CommandManager implements CommandExecutor {
+public class CommandManager implements TabExecutor {
     private final Quests plugin;
     private final Map<String, Integer> commandSizes = new HashMap<>();
     private final Map<String, Integer> adminCommandSizes = new HashMap<>();
@@ -63,6 +65,22 @@ public class CommandManager implements CommandExecutor {
             return new QuestadminCommandHandler(plugin).check(cs, args);
         }
         return false;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender cs, @NotNull Command cmd,
+                                      @NotNull String label, @NotNull String[] args) {
+        if (args.length > 0) {
+            if (cmd.getName().equalsIgnoreCase("quest")) {
+                return new QuestCommandHandler(plugin).suggest(cs, args);
+            } else if (cmd.getName().equalsIgnoreCase("quests")) {
+                return new QuestsCommandHandler(plugin).suggest(cs, args);
+            } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
+                return new QuestadminCommandHandler(plugin).suggest(cs, args);
+            }
+        }
+        return null;
     }
     
     private void init() {

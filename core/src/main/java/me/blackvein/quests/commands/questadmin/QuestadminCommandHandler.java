@@ -31,6 +31,9 @@ import me.blackvein.quests.util.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,46 +74,25 @@ public class QuestadminCommandHandler {
             }
         }
         cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));
-        /*if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_STATS"))) {
-            new QuestadminStatsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVE"))) {
-            new QuestadminGiveCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("quit") || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_QUIT"))) {
-            new QuestadminQuitCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("points")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTS"))) {
-            new QuestadminPointsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("takepoints")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_TAKEPOINTS"))) {
-            new QuestadminTakepointsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("givepoints")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_GIVEPOINTS"))) {
-            new QuestadminGivepointsCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("pointsall")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_POINTSALL"))) {
-            new QuestadminPointsallCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("finish")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_FINISH"))) {
-            new QuestadminFinishCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("nextstage")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_NEXTSTAGE"))) {
-            new QuestadminNextstageCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("setstage")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_SETSTAGE"))) {
-            new QuestadminSetstageCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("reset")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RESET"))) {
-            new QuestadminResetCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("remove")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_REMOVE"))) {
-            new QuestadminRemoveCommand(plugin).execute(cs, args);
-        } else if (args[0].equalsIgnoreCase("reload")
-                || args[0].equalsIgnoreCase(Lang.get("COMMAND_QUESTADMIN_RELOAD"))) {
-            new QuestadminReloadCommand(plugin).execute(cs, args);
-        } else {
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownAdminCommand"));
-        }*/
         return true;
+    }
+
+    public List<String> suggest(final CommandSender cs, final String[] args) {
+        if (args.length == 1) {
+            final List<String> results = new ArrayList<>();
+            for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
+                if (cmd.getKey().startsWith(args[0]) || cmd.getValue().getNameI18N().startsWith(args[0])) {
+                    results.add(cmd.getValue().getNameI18N());
+                }
+            }
+            return results;
+        }
+        for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
+            if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
+                return cmd.getValue().tabComplete(cs, args);
+            }
+        }
+        return Collections.emptyList();
     }
 
     private void printAdminHelp(final CommandSender cs) {
