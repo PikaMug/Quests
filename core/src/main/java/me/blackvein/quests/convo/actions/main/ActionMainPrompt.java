@@ -981,7 +981,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     text.append("\n").append(ChatColor.AQUA).append("- ").append(s);
                 }
             }
-            return text.toString() + ChatColor.YELLOW + getQueryText(context);
+            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override

@@ -321,7 +321,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 effects.append("\n").append(w.getName()).append(", ");
             }
             effects = new StringBuilder(effects.substring(0, effects.length()));
-            return ChatColor.YELLOW + effects.toString() + getQueryText(context);
+            return effects + "\n" + ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
