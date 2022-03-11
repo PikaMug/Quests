@@ -11,14 +11,15 @@
  */
 package me.blackvein.quests.actions;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.entity.QuestMob;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.tasks.ActionTimer;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.InventoryUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -394,7 +395,7 @@ public class Action implements IAction {
         }
         if (teleport != null) {
             if (player.isDead()) {
-                plugin.getLogger().warning("Tried to fire IAction " + name + " but player " + player.getUniqueId()
+                plugin.getLogger().warning("Tried to fire Action " + name + " but player " + player.getUniqueId()
                 + " was dead (known Bukkit limitation).");
             } else {
                 player.teleport(teleport);
@@ -415,7 +416,7 @@ public class Action implements IAction {
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + Lang.get(player, "timerStart")
-                    .replace("<time>", ChatColor.RED + String.valueOf(timer) + ChatColor.GREEN));
+                    .replace("<time>", ChatColor.RED + MiscUtil.getTime(timer * 1000L) + ChatColor.GREEN));
             if (timer > 60) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
                         .runTaskLater(plugin, (timer - 60) * 20L).getTaskId(), quest);
