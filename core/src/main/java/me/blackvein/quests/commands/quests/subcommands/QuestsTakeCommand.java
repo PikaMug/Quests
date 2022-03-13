@@ -59,6 +59,11 @@ public class QuestsTakeCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 2;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (assertNonPlayer(cs)) {
             return;

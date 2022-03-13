@@ -62,6 +62,11 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 4;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
             OfflinePlayer target = getOfflinePlayer(args[1]);

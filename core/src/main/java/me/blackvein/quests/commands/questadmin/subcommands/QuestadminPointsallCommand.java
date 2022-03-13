@@ -60,6 +60,11 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 2;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {
             final int amount;

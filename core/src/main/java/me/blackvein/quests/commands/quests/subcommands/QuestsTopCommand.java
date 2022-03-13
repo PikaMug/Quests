@@ -62,6 +62,11 @@ public class QuestsTopCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 2;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission(getPermission())) {
             if (args.length > 2) {

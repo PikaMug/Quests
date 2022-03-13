@@ -37,6 +37,8 @@ public abstract class QuestsSubCommand {
 
     public abstract String getSyntax();
 
+    public abstract int getMaxArguments();
+
     public abstract void execute(CommandSender commandSender, String[] args);
 
     public List<String> tabComplete(CommandSender commandSender, String[] args) {

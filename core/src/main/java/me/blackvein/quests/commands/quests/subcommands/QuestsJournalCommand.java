@@ -58,6 +58,11 @@ public class QuestsJournalCommand extends QuestsSubCommand {
         return "/quests journal";
     }
 
+    @Override
+    public int getMaxArguments() {
+        return 1;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public void execute(CommandSender cs, String[] args) {

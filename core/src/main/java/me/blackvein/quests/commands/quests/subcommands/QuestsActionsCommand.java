@@ -53,6 +53,11 @@ public class QuestsActionsCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 1;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*")
                 || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")

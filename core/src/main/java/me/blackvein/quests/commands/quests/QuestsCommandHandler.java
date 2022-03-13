@@ -64,6 +64,9 @@ public class QuestsCommandHandler {
         }
         for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
             if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
+                if (args.length < cmd.getValue().getMaxArguments()) {
+                    cs.sendMessage(getCommandUsage(args[0]));
+                }
                 cmd.getValue().execute(cs, args);
                 return true;
             }
@@ -113,5 +116,10 @@ public class QuestsCommandHandler {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
                     + Lang.get("COMMAND_QUESTADMIN_HELP"));
         }
+    }
+
+    private String getCommandUsage(final String cmd) {
+        return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/quests "
+                + Lang.get(Lang.getKeyFromPrefix("COMMAND_", cmd) + "_HELP");
     }
 }

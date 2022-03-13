@@ -53,6 +53,11 @@ public class QuestadminReloadCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 1;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             final ReloadCallback<Boolean> callback = response -> {

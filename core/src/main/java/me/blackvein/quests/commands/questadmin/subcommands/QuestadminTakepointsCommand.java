@@ -60,6 +60,11 @@ public class QuestadminTakepointsCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 3;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
             OfflinePlayer target = getOfflinePlayer(args[1]);

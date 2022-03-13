@@ -51,6 +51,11 @@ public class QuestsInfoCommand extends QuestsSubCommand {
     }
 
     @Override
+    public int getMaxArguments() {
+        return 1;
+    }
+
+    @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.info")) {
             cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD
