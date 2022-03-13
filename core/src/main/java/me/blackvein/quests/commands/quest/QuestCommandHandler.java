@@ -47,7 +47,8 @@ public class QuestCommandHandler {
                         for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
                             final IStage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
-                            if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0) {
+                            if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0
+                                    || plugin.getQuester(player.getUniqueId()).getStageTime(q) < 0L) {
                                 final String msg = Lang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
                                 Lang.send(player, ChatColor.GOLD + msg);
