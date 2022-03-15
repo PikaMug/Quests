@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
-import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.IStage;
-import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.Quester;
+import me.blackvein.quests.Quests;
+import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -57,6 +57,7 @@ import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -853,24 +854,14 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent evt) {
+    public void onPlayerLogin(final PlayerLoginEvent evt) {
         final Player player = evt.getPlayer();
-        if (player.hasPermission("quests.admin.update")) {
-            new UpdateChecker(plugin, 3711).getVersion(version -> {
-                if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
-                    evt.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
-                            + "] " + ChatColor.GREEN + Lang.get(player, "updateTo").replace("<version>",
-                            version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                            + plugin.getDescription().getWebsite()));
-                }
-            });
-        }
         if (plugin.canUseQuests(player.getUniqueId())) {
             final IQuester noobCheck = new Quester(plugin, player.getUniqueId());
             if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
                 noobCheck.saveData();
             }
-            
+
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 final CompletableFuture<IQuester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
@@ -903,6 +894,21 @@ public class PlayerListener implements Listener {
                     }, 40L);
                 } catch (final Exception e) {
                     e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(final PlayerJoinEvent evt) {
+        final Player player = evt.getPlayer();
+        if (player.hasPermission("quests.admin.update")) {
+            new UpdateChecker(plugin, 3711).getVersion(version -> {
+                if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
+                    evt.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
+                            + "] " + ChatColor.GREEN + Lang.get(player, "updateTo").replace("<version>",
+                            version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
+                            + plugin.getDescription().getWebsite()));
                 }
             });
         }
