@@ -459,6 +459,9 @@ public class Quest implements IQuest {
                         .getItemDeliveryTargets().getFirst());
                 targetLocation = npc.getStoredLocation();
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
+                if (quester.getPlayer() == null) {
+                    return;
+                }
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
@@ -479,6 +482,9 @@ public class Quest implements IQuest {
                     targetLocation = nearest;
                 }
             } else if (stage.getMobsToKill() != null && stage.getMobsToKill().size() > 0) {
+                if (quester.getPlayer() == null) {
+                    return;
+                }
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
@@ -500,6 +506,9 @@ public class Quest implements IQuest {
                     targetLocation = nearest;
                 }
             } else if (stage.getMobsToTame() != null && stage.getMobsToTame().size() > 0) {
+                if (quester.getPlayer() == null) {
+                    return;
+                }
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
@@ -521,6 +530,9 @@ public class Quest implements IQuest {
                     targetLocation = nearest;
                 }
             } else if (stage.getSheepToShear() != null && stage.getSheepToShear().size() > 0) {
+                if (quester.getPlayer() == null) {
+                    return;
+                }
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
@@ -547,6 +559,9 @@ public class Quest implements IQuest {
                 }
             }
             if (targetLocation != null && targetLocation.getWorld() != null) {
+                if (quester.getPlayer() == null) {
+                    return;
+                }
                 if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
                     final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
                             targetLocation.getY(), targetLocation.getZ());
