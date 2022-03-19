@@ -862,6 +862,13 @@ public class PlayerListener implements Listener {
                 noobCheck.saveData();
             }
 
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(final PlayerJoinEvent evt) {
+        final Player player = evt.getPlayer();
+        
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 final CompletableFuture<IQuester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
@@ -895,13 +902,7 @@ public class PlayerListener implements Listener {
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
-            });
-        }
-    }
-
-    @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent evt) {
-        final Player player = evt.getPlayer();
+            },20L);
         if (player.hasPermission("quests.admin.update")) {
             new UpdateChecker(plugin, 3711).getVersion(version -> {
                 if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
