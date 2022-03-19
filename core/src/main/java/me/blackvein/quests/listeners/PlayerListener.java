@@ -862,7 +862,7 @@ public class PlayerListener implements Listener {
                 noobCheck.saveData();
             }
 
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
                 final CompletableFuture<IQuester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
                     final IQuester quester = cf.get();
@@ -895,7 +895,7 @@ public class PlayerListener implements Listener {
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
-            });
+            },20L);
         }
     }
 
