@@ -41,7 +41,7 @@ public class DenizenAPI_1_1_1 {
         try {
             script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
         }
         return script;
     }
@@ -82,7 +82,7 @@ public class DenizenAPI_1_1_1 {
             addEntries.invoke(queue, taskScript.getBaseEntries(entryData.clone()));
             queue.start();
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen InstantQueue#addEntries", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen InstantQueue#addEntries", e);
         }
     }
 }

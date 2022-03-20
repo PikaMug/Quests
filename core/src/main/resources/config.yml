@@ -20,7 +20,6 @@ npc-effects:
   redo-quest: heart
 show-requirements: true
 show-titles: true
-strict-player-movement: 0
 storage-data:
   address: localhost:3306
   database: minecraft
@@ -38,6 +37,7 @@ storage-data:
       characterEncoding: utf8
 storage-method:
   player-data: yaml
+strict-player-movement: 0
 trial-save: false
 top-limit: 150
 translate-names: true

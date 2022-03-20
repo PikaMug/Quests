@@ -37,6 +37,7 @@ import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
+import me.blackvein.quests.listeners.BungeeListener;
 import me.blackvein.quests.listeners.CommandManager;
 import me.blackvein.quests.listeners.ConvoListener;
 import me.blackvein.quests.listeners.ItemListener;
@@ -136,6 +137,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Quests extends JavaPlugin implements QuestsAPI {
 
@@ -159,6 +161,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     private ConditionFactory conditionFactory;
     private ConvoListener convoListener;
     private BlockListener blockListener;
+    private BungeeListener bungeeListener;
     private ItemListener itemListener;
     private NpcListener npcListener;
     private PlayerListener playerListener;
@@ -187,6 +190,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         convoListener = new ConvoListener();
         blockListener = new BlockListener(this);
+        bungeeListener = new BungeeListener(this);
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
         playerListener = new PlayerListener(this);
@@ -267,6 +271,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         } else if (depends.getPartiesApi() != null) {
             getServer().getPluginManager().registerEvents(getPartiesListener(), this);
         }
+        if (hasBungeeEnabled()) {
+            getServer().getMessenger().registerIncomingPluginChannel(this, "quests:update", bungeeListener);
+        }
 
         // 11 - Attempt to check for updates
         new UpdateChecker(this, 3711).getVersion(version -> {
@@ -276,7 +283,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
         });
 
-        // 12 - Delay loading of Quests, Actions and modules
+        // 12 - Delay loading of quests, actions and modules
         delayLoadQuestInfo();
     }
 
@@ -296,6 +303,18 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     public boolean isLoading() {
         return loading;
+    }
+
+    public File getPluginDataFolder() {
+        return getDataFolder();
+    }
+
+    public Logger getPluginLogger() {
+        return getLogger();
+    }
+
+    public InputStream getPluginResource(String filename) {
+        return getResource(filename);
     }
 
     public String getDetectedServerSoftwareVersion() {
@@ -726,7 +745,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
         }
     }
-    
+
+    private boolean hasBungeeEnabled() {
+        final ConfigurationSection section = getServer().spigot().getConfig().getConfigurationSection("settings");
+        return section != null && section.getBoolean("bungeecord");
+    }
+
     /**
      * Transfer language files from jar to disk
      */

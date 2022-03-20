@@ -36,7 +36,7 @@ public class DenizenAPI_1_0_9 {
         try {
             script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
         }
         return script;
     }
@@ -51,7 +51,7 @@ public class DenizenAPI_1_0_9 {
             instance = constructor.newInstance(null, input);
             name = (String)instance.getClass().getMethod("getName").invoke(api.scriptContainer);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptContainer#getName", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptContainer#getName", e);
         }
         return name;
     }
@@ -64,7 +64,7 @@ public class DenizenAPI_1_0_9 {
         try {
             names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
         }
         return names;
     }
@@ -76,7 +76,7 @@ public class DenizenAPI_1_0_9 {
         try {
             container = api.getScriptContainerAsMethod.invoke(api.scriptRegistry, scriptName, api.taskScriptContainer);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen #getScriptContainerAs", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen #getScriptContainerAs", e);
         }
         return container;
     }
@@ -88,7 +88,7 @@ public class DenizenAPI_1_0_9 {
         try {
             dp = api.mirrorBukkitPlayerMethod.invoke(api.dPlayer, player);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen dPlayer#mirrorBukkitPlayer", e);
         }
         return dp;
     }
@@ -100,7 +100,7 @@ public class DenizenAPI_1_0_9 {
         try {
             dp = api.mirrorCitizensNPCMethod.invoke(api.dNPC, npc);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen dNPC#mirrorCitizensNPC", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen dNPC#mirrorCitizensNPC", e);
         }
         return dp;
     }
@@ -115,7 +115,7 @@ public class DenizenAPI_1_0_9 {
                 runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
             }
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
         }
     }
 }

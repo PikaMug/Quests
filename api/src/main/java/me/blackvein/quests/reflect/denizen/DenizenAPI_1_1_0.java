@@ -40,7 +40,7 @@ public class DenizenAPI_1_1_0 {
         try {
             script = (boolean)api.containsScriptMethod.invoke(api.scriptRegistry, input);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#containsScript", e);
         }
         return script;
     }
@@ -58,7 +58,7 @@ public class DenizenAPI_1_1_0 {
         try {
             names = (Set<String>)api.getScriptNamesMethod.invoke(api.scriptRegistry);
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen ScriptRegistry#_getScriptNames", e);
         }
         return names;
     }
@@ -89,7 +89,7 @@ public class DenizenAPI_1_1_0 {
                 runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
             }
         } catch (final Exception e) {
-            quests.getLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
+            quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
         }
     }
 }

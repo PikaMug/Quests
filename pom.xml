@@ -27,6 +27,7 @@
         <module>v1_8_R3</module>
         <module>core</module>
         <module>dist</module>
+        <module>bungee</module>
     </modules>
 
     <repositories>

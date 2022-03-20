@@ -126,9 +126,9 @@ public class Lang {
     }
 
     public static void init(final QuestsAPI plugin) throws InvalidConfigurationException, IOException {
-        final File langFile = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
+        final File langFile = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
-        final File langFile_new = new File(plugin.getDataFolder(), File.separator + "lang" + File.separator + iso
+        final File langFile_new = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings_new.yml");
         final boolean exists_new = langFile_new.exists();
         final LinkedHashMap<String, String> allStrings = new LinkedHashMap<>();
@@ -153,7 +153,7 @@ public class Lang {
                     final String value = config_new.getString(key);
                     if (value != null) {
                         allStrings.put(key, value);
-                        plugin.getLogger().warning("There are new language phrases in /lang/" + iso
+                        plugin.getPluginLogger().warning("There are new language phrases in /lang/" + iso
                                 + "/strings_new.yml for the current version!"
                                 + " You must transfer them to, or regenerate, strings.yml to remove this warning!");
                     }
@@ -165,19 +165,19 @@ public class Lang {
                 config_new.save(langFile_new);
             }
         } else {
-            plugin.getLogger().severe("Failed loading lang files for " + iso 
+            plugin.getPluginLogger().severe("Failed loading lang files for " + iso 
                     + " because they were not found. Using default en-US");
-            plugin.getLogger()
+            plugin.getPluginLogger()
                     .info("If the plugin has not generated language files, ensure Quests has write permissions");
-            plugin.getLogger()
+            plugin.getPluginLogger()
                     .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
             iso = "en-US";
-            plugin.getLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
+            plugin.getPluginLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
                     .toString());
-            plugin.getLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
+            plugin.getPluginLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
                     .getLocation().getPath());
             final FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
-                    .requireNonNull(plugin.getResource("strings.yml")), StandardCharsets.UTF_8));
+                    .requireNonNull(plugin.getPluginResource("strings.yml")), StandardCharsets.UTF_8));
             for (final String key : config.getKeys(false)) {
                 allStrings.put(key, config.getString(key));
             }
@@ -220,7 +220,7 @@ public class Lang {
             }
         }
         langMap.putAll(allStrings);
-        plugin.getLogger().info("Loaded language " + iso + ". Translations via Crowdin");
+        plugin.getPluginLogger().info("Loaded language " + iso + ". Translations via Crowdin");
     }
 
     private static class LangToken {

@@ -12,30 +12,36 @@
 
 package me.blackvein.quests;
 
-import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.actions.ActionFactory;
-import me.blackvein.quests.conditions.ICondition;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.conditions.ConditionFactory;
+import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.quests.QuestFactory;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.plugin.Plugin;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-public interface QuestsAPI extends Plugin {
+public interface QuestsAPI {
 
     boolean isLoading();
 
     String getDetectedServerSoftwareVersion();
+
+    File getPluginDataFolder();
+
+    Logger getPluginLogger();
+
+    InputStream getPluginResource(String filename);
 
     IDependencies getDependencies();
 
@@ -64,12 +70,6 @@ public interface QuestsAPI extends Plugin {
     LinkedList<Integer> getQuestNpcIds();
 
     void setQuestNpcIds(final LinkedList<Integer> questNpcIds);
-
-    CommandExecutor getCommandExecutor();
-
-    ConversationFactory getConversationFactory();
-
-    ConversationFactory getNpcConversationFactory();
 
     QuestFactory getQuestFactory();
 
