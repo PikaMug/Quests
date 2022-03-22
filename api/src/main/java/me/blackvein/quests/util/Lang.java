@@ -212,10 +212,10 @@ public class Lang {
             if (entry.getValue().contains("<done>")) {
                 allStrings.put(entry.getKey(), entry.getValue().replace("<done>", strDone));
             } 
-            if (entry.getValue().contains("<space>")) {
+            if (strSpace != null && entry.getValue().contains("<space>")) {
                 allStrings.put(entry.getKey(), entry.getValue().replace("<space>", strSpace));
             }
-            if (entry.getValue().contains("<semicolon>")) {
+            if (strSemicolon != null && entry.getValue().contains("<semicolon>")) {
                 allStrings.put(entry.getKey(), entry.getValue().replace("<semicolon>", strSemicolon));
             }
         }
