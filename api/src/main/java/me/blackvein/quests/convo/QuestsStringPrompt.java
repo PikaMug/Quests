@@ -71,7 +71,7 @@ public abstract class QuestsStringPrompt extends StringPrompt {
         for (int i = 0; i < list.size(); i++) {
             final TextComponent questName = new TextComponent(list.get(i));
             questName.setColor(ChatColor.AQUA);
-            questName.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, list.get(i)));
+            questName.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ChatColor.stripColor(list.get(i))));
             component.addExtra(questName);
             if (i < (list.size() - 1)) {
                 component.addExtra(separator);
