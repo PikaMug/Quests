@@ -5,7 +5,7 @@
     <parent>
         <artifactId>quests-parent</artifactId>
         <groupId>me.blackvein.quests</groupId>
-        <version>4.2.2</version>
+        <version>4.2.3</version>
     </parent>
     <artifactId>quests-bungee</artifactId>
 
