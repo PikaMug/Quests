@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests.particle;
+package me.blackvein.quests.nms;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,9 +24,9 @@ public abstract class ParticleProvider {
     private static ParticleProvider loaded;
 
     static {
+        final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         try {
             final String packageName = ParticleProvider.class.getPackage().getName();
-            final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             if (internalsName.startsWith("v1_8_R")) {
                 loaded = (ParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName)
                         .newInstance();
@@ -35,7 +35,7 @@ public abstract class ParticleProvider {
             }
         } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
-            Bukkit.getLogger().severe("[Quests] Could not find a valid implementation for this server version.");
+            Bukkit.getLogger().severe("[Quests] No valid particle implementation for version " + internalsName);
         }
     }
 

@@ -272,7 +272,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             getServer().getPluginManager().registerEvents(getPartiesListener(), this);
         }
         if (hasBungeeEnabled()) {
-            getServer().getMessenger().registerIncomingPluginChannel(this, "quests:update", bungeeListener);
+            getServer().getMessenger().registerIncomingPluginChannel(this, "quests:update", getBungeeListener());
         }
 
         // 11 - Attempt to check for updates
@@ -583,6 +583,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     public BlockListener getBlockListener() {
         return blockListener;
+    }
+
+    public BungeeListener getBungeeListener() {
+        return bungeeListener;
     }
 
     public ItemListener getItemListener() {

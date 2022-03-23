@@ -14,7 +14,7 @@ package me.blackvein.quests.tasks;
 
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.particle.ParticleProvider;
+import me.blackvein.quests.nms.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

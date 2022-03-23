@@ -31,6 +31,7 @@ import me.blackvein.quests.events.quester.QuesterPostFailQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreChangeStageEvent;
 import me.blackvein.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreFailQuestEvent;
+import me.blackvein.quests.nms.TitleProvider;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitOptions;
 import me.blackvein.quests.quests.BukkitPlanner;
@@ -913,8 +914,9 @@ public class Quest implements IQuest {
             Lang.send(p, ChatColor.GOLD + Lang.get(p, "questCompleteTitle").replace("<quest>",
                     ChatColor.YELLOW + name + ChatColor.GOLD));
             if (plugin.getSettings().canShowQuestTitles()) {
-                p.sendTitle(ChatColor.GOLD + Lang.get(p, "quest") + " " + Lang.get(p, "complete"),
-                        ChatColor.YELLOW + name);
+                final String title = ChatColor.GOLD + Lang.get(p, "quest") + " " + Lang.get(p, "complete");
+                final String subtitle = ChatColor.YELLOW + name;
+                TitleProvider.sendTitle(p, title, subtitle);
             }
             Lang.send(p, ChatColor.GREEN + Lang.get(p, "questRewardsTitle"));
             if (!issuedReward) {
