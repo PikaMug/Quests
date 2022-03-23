@@ -368,7 +368,7 @@ completed: "Suoritettu"
 redoCompleted: "(Suoritettu)"
 consoleError: "Tämä toiminto voidaan suorittaa vain pelissä."
 noActiveQuest: "Sinulla ei tällä hetkellä ole aktiivisia tehtäviä."
-speakTo: 'Aloitus: Puhu <npc>:lle'
+speakTo: 'Aloitus: Puhu <npc> lle'
 mcMMOLevel: "taso"
 haveCompleted: "Olet suorittanut tehtävän <quest>"
 cannotComplete: "Ei voida suorittaa tehtävää <quest>"
