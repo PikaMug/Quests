@@ -850,22 +850,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
-                    + ChatColor.DARK_PURPLE);
-            boolean none = true;
-            for (final IQuest q : plugin.getLoadedQuests()) {
-                text.append(q.getName()).append(", ");
-                none = false;
-            }
-            if (none) {
-                text.append("(").append(Lang.get("none")).append(")\n");
-            } else {
-                text = new StringBuilder(text.substring(0, (text.length() - 2)));
-                text.append("\n");
-            }
-            text.append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
+            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
@@ -876,7 +862,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 final String[] args = input.split(Lang.get("charSemi"));
                 final LinkedList<String> questIds = new LinkedList<>();
-                for (final String s : args) {
+                for (String s : args) {
+                    s = s.trim();
                     if (plugin.getQuestTemp(s) == null) {
                         String text = Lang.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
