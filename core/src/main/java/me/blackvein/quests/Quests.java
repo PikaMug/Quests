@@ -4332,6 +4332,14 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 return q;
             }
         }
+        for (final IQuest iq : quests) {
+            // For tab completion
+            final Quest q = (Quest) iq;
+            if (ChatColor.stripColor(q.getName()).equals(ChatColor.stripColor(ChatColor
+                    .translateAlternateColorCodes('&', name)))) {
+                return q;
+            }
+        }
         return null;
     }
     
@@ -4357,6 +4365,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         for (final IQuest q : quests) {
             if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+                return q;
+            }
+        }
+        for (final IQuest q : quests) {
+            // For tab completion
+            if (ChatColor.stripColor(q.getName()).equals(ChatColor.stripColor(ChatColor
+                    .translateAlternateColorCodes('&', name)))) {
                 return q;
             }
         }
@@ -4388,6 +4403,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 return a;
             }
         }
+        for (final IAction a : actions) {
+            // For tab completion
+            if (ChatColor.stripColor(a.getName()).equals(ChatColor.stripColor(ChatColor.
+                    translateAlternateColorCodes('&', name)))) {
+                return a;
+            }
+        }
         return null;
     }
     
@@ -4413,6 +4435,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         for (final ICondition c : conditions) {
             if (c.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
+                return c;
+            }
+        }
+        for (final ICondition c : conditions) {
+            // For tab completion
+            if (ChatColor.stripColor(c.getName()).equals(ChatColor.stripColor(ChatColor
+                    .translateAlternateColorCodes('&', name)))) {
                 return c;
             }
         }

@@ -116,7 +116,7 @@ public class QuestadminFinishCommand extends QuestsSubCommand {
             final List<String> results = new ArrayList<>();
             for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
-                    results.add(quest.getName());
+                    results.add(ChatColor.stripColor(quest.getName()));
                 }
             }
             return results;
