@@ -12,10 +12,8 @@
 
 package me.blackvein.quests.convo.actions.main;
 
-import me.blackvein.quests.actions.IAction;
-import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.Quests;
-import me.blackvein.quests.quests.IStage;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -27,6 +25,8 @@ import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.entity.BukkitQuestMob;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.ItemUtil;
@@ -45,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 public class ActionMainPrompt extends ActionsEditorNumericPrompt {
@@ -152,7 +151,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                                 .append(qm.getType().name())
                                 .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "").append(ChatColor.GRAY)
                                 .append(" x ").append(ChatColor.DARK_AQUA).append(qm.getSpawnAmounts())
-                                .append(ChatColor.GRAY).append(" -> ").append(ChatColor.GREEN)
+                                .append("\n").append(ChatColor.GRAY).append("        \u2515 ").append(ChatColor.GREEN)
                                 .append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()));
                     }
                 }
@@ -358,8 +357,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                     .append(qm.getType().name())
                                     .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
-                                    .append(" x ").append(qm.getSpawnAmounts()).append(ChatColor.GRAY).append(" -> ")
-                                    .append(ChatColor.GREEN).append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()));
+                                    .append(" x ").append(qm.getSpawnAmounts()).append("\n").append(ChatColor.GRAY)
+                                    .append("        \u2515 ").append(ChatColor.GREEN)
+                                    .append(ConfigUtil.getLocationInfo(qm.getSpawnLocation()));
                         }
                     }
                     return text.toString();
@@ -391,7 +391,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ActionMobPrompt(context, 0, null);
+                return new ActionMobPrompt(context, null);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorMobSpawnsCleared"));
                 context.setSessionData(CK.E_MOB_TYPES, null);
@@ -408,12 +408,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         private BukkitQuestMob questMob;
         private Integer itemIndex = -1;
-        private final Integer mobIndex;
 
-        public ActionMobPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobPrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
         }
         
         private final int size = 16;
@@ -580,78 +578,68 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ActionMobNamePrompt(context, mobIndex, questMob);
+                return new ActionMobNamePrompt(context, questMob);
             case 2:
-                return new ActionMobTypePrompt(context, mobIndex, questMob);
+                return new ActionMobTypePrompt(context, questMob);
             case 3:
                 if (context.getForWhom() instanceof Player) {
                     final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                     selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
-                    return new ActionMobLocationPrompt(context, mobIndex, questMob);
+                    return new ActionMobLocationPrompt(context, questMob);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                     return new ActionMainPrompt(context);
                 }
             case 4:
-                return new ActionMobAmountPrompt(context, mobIndex, questMob);
+                return new ActionMobAmountPrompt(context, questMob);
             case 5:
                 itemIndex = 0;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
             case 6:
-                return new ActionMobDropPrompt(context, 0, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, 0, questMob);
             case 7:
                 itemIndex = 1;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
             case 8:
-                return new ActionMobDropPrompt(context, 1, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, 1, questMob);
             case 9:
                 itemIndex = 2;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
             case 10:
-                return new ActionMobDropPrompt(context, 2, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, 2, questMob);
             case 11:
                 itemIndex = 3;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
             case 12:
-                return new ActionMobDropPrompt(context, 3, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, 3, questMob);
             case 13:
                 itemIndex = 4;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
             case 14:
-                return new ActionMobDropPrompt(context, 4, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, 4, questMob);
             case 15:
                 if (questMob.getType() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobTypesFirst"));
-                    return new ActionMobPrompt(context, mobIndex, questMob);
+                    return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnLocation() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobLocationFirst"));
-                    return new ActionMobPrompt(context, mobIndex, questMob);
+                    return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnAmounts() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobAmountsFirst"));
-                    return new ActionMobPrompt(context, mobIndex, questMob);
+                    return new ActionMobPrompt(context, questMob);
                 }
-                if (context.getSessionData(CK.E_MOB_TYPES) == null || ((LinkedList<String>) Objects
-                        .requireNonNull(context.getSessionData(CK.E_MOB_TYPES))).isEmpty()) {
-                    final LinkedList<String> list = new LinkedList<>();
+                final LinkedList<String> list = context.getSessionData(CK.E_MOB_TYPES) == null ? new LinkedList<>()
+                        : (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
+                if (list != null) {
                     list.add(questMob.serialize());
                     context.setSessionData(CK.E_MOB_TYPES, list);
-                } else {
-                    final LinkedList<String> list = (LinkedList<String>) context.getSessionData(CK.E_MOB_TYPES);
-                    if (list != null) {
-                        if (mobIndex < list.size()) {
-                            list.set(mobIndex, questMob.serialize());
-                        } else {
-                            list.add(questMob.serialize());
-                        }
-                        context.setSessionData(CK.E_MOB_TYPES, list);
-                    }
                 }
                 return new ActionMobListPrompt(context);
             case 16:
                 return new ActionMobListPrompt(context);
             default:
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             }
         }
     }
@@ -659,12 +647,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public class ActionMobNamePrompt extends ActionsEditorStringPrompt {
 
         private final BukkitQuestMob questMob;
-        private final Integer mobIndex;
 
-        public ActionMobNamePrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobNamePrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
         }
         
         @Override
@@ -694,14 +680,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 questMob.setName(null);
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             } else {
                 input = ChatColor.translateAlternateColorCodes('&', input);
                 questMob.setName(input);
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             }
         }
     }
@@ -709,12 +695,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public class ActionMobTypePrompt extends ActionsEditorStringPrompt {
 
         private final BukkitQuestMob questMob;
-        private final Integer mobIndex;
 
-        public ActionMobTypePrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobTypePrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
         }
         
         @Override
@@ -762,22 +746,20 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
                             + Lang.get("stageEditorInvalidMob"));
-                    return new ActionMobTypePrompt(context, mobIndex, questMob);
+                    return new ActionMobTypePrompt(context, questMob);
                 }
             }
-            return new ActionMobPrompt(context, mobIndex, questMob);
+            return new ActionMobPrompt(context, questMob);
         }
     }
 
     public class ActionMobAmountPrompt extends ActionsEditorStringPrompt {
 
         private final BukkitQuestMob questMob;
-        private final Integer mobIndex;
 
-        public ActionMobAmountPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobAmountPrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
         }
         
         @Override
@@ -812,29 +794,27 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     if (i < 1) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                 .replace("<number>", "1"));
-                        return new ActionMobAmountPrompt(context, mobIndex, questMob);
+                        return new ActionMobAmountPrompt(context, questMob);
                     }
                     questMob.setSpawnAmounts(i);
-                    return new ActionMobPrompt(context, mobIndex, questMob);
+                    return new ActionMobPrompt(context, questMob);
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new ActionMobAmountPrompt(context, mobIndex, questMob);
+                    return new ActionMobAmountPrompt(context, questMob);
                 }
             }
-            return new ActionMobPrompt(context, mobIndex, questMob);
+            return new ActionMobPrompt(context, questMob);
         }
     }
 
     public class ActionMobLocationPrompt extends ActionsEditorStringPrompt {
 
         private final BukkitQuestMob questMob;
-        private final Integer mobIndex;
 
-        public ActionMobLocationPrompt(final ConversationContext context, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobLocationPrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
         }
         
         @Override
@@ -874,16 +854,16 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new ActionMobLocationPrompt(context, mobIndex, questMob);
+                    return new ActionMobLocationPrompt(context, questMob);
                 }
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                 selectedMobLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             } else {
-                return new ActionMobLocationPrompt(context, mobIndex, questMob);
+                return new ActionMobLocationPrompt(context, questMob);
             }
         }
     }
@@ -891,13 +871,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public class ActionMobDropPrompt extends ActionsEditorStringPrompt {
 
         private final BukkitQuestMob questMob;
-        private final Integer mobIndex;
         private final Integer invIndex;
 
-        public ActionMobDropPrompt(final ConversationContext context, final int invIndex, final int mobIndex, final BukkitQuestMob questMob) {
+        public ActionMobDropPrompt(final ConversationContext context, final int invIndex, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
-            this.mobIndex = mobIndex;
             this.invIndex = invIndex;
         }
         
@@ -928,7 +906,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new ActionMobPrompt(context, mobIndex, questMob);
+                return new ActionMobPrompt(context, questMob);
             }
             final float chance;
             try {
@@ -936,17 +914,17 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
-                return new ActionMobDropPrompt(context, invIndex, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, invIndex, questMob);
             }
             if (chance > 1 || chance < 0) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
-                return new ActionMobDropPrompt(context, invIndex, mobIndex, questMob);
+                return new ActionMobDropPrompt(context, invIndex, questMob);
             }
             final Float[] temp = questMob.getDropChances();
             temp[invIndex] = chance;
             questMob.setDropChances(temp);
-            return new ActionMobPrompt(context, mobIndex, questMob);
+            return new ActionMobPrompt(context, questMob);
         }
     }
     
