@@ -80,6 +80,7 @@ public class ItemUtil {
      * -7 if stack item flags are unequal
      * -8 if stack Written Book data is unequal
      * -9 if stack Potion type is unequal
+     * -10 if stack Tropical Fish variant is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, 
             final boolean ignoreDurability) {
@@ -156,6 +157,19 @@ public class ItemUtil {
                             return -9;
                         }
                     }
+                }
+            }
+            if (one.getItemMeta().toString().startsWith("TROPICAL_FISH_BUCKET_META")) {
+                final String meta1 = one.getItemMeta().toString();
+                final String meta2 = two.getItemMeta().toString();
+                if (meta1.contains("variant=") && meta2.contains("variant=")) {
+                    final String variant1 = meta1.substring(meta1.indexOf("variant="), meta1.length() - 1);
+                    final String variant2 = meta2.substring(meta2.indexOf("variant="), meta2.length() - 1);
+                    if (!variant1.equals(variant2)) {
+                        return -10;
+                    }
+                } else {
+                    return -10;
                 }
             }
         }

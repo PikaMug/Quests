@@ -157,6 +157,10 @@ public class NpcListener implements Listener {
                                         player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference")
                                                 .replace("<data>", "potion type"));
                                         break;
+                                    case -10:
+                                        player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference")
+                                                .replace("<data>", "fish variant"));
+                                        break;
                                     default:
                                         player.sendMessage(ChatColor.GRAY + Lang.get(player, "difference")
                                                 .replace("<data>", "unknown"));
