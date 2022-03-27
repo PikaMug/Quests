@@ -21,10 +21,23 @@ public class BungeePlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerLogin(ServerSwitchEvent evt) {
+    public void onPlayerLoginOrSwitch(ServerSwitchEvent evt) {
+        if (evt.getFrom() != null) {
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+            try {
+                System.out.println("Saved player data");
+                dataOutputStream.writeUTF("SaveData:" + evt.getPlayer().getUniqueId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            dispatchMessage(byteArrayOutputStream.toByteArray());
+        }
+
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
         try {
+            System.out.println("Loaded player data");
             dataOutputStream.writeUTF("LoadData:" + evt.getPlayer().getUniqueId());
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,6 +50,7 @@ public class BungeePlayerListener implements Listener {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
         try {
+            System.out.println("Saved player data");
             dataOutputStream.writeUTF("SaveData:" + evt.getPlayer().getUniqueId());
         } catch (IOException e) {
             e.printStackTrace();
