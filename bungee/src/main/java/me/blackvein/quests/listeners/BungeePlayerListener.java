@@ -1,6 +1,7 @@
 package me.blackvein.quests.listeners;
 
 import me.blackvein.quests.QuestsBungee;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
@@ -10,6 +11,7 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class BungeePlayerListener implements Listener {
     private static final String CHANNEL = "quests:update";
@@ -33,14 +35,17 @@ public class BungeePlayerListener implements Listener {
             dispatchMessage(byteArrayOutputStream.toByteArray());
         }
 
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-        try {
-            dataOutputStream.writeUTF("LoadData:" + evt.getPlayer().getUniqueId());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        dispatchMessage(byteArrayOutputStream.toByteArray());
+        ProxyServer.getInstance().getScheduler().schedule(plugin, () -> {
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+            try {
+                dataOutputStream.writeUTF("LoadData:" + evt.getPlayer().getUniqueId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            dispatchMessage(byteArrayOutputStream.toByteArray());
+        }, 1, TimeUnit.SECONDS);
+
     }
 
     @EventHandler
