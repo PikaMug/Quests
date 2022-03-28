@@ -36,17 +36,6 @@ public class BungeePlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerLoginOrSwitch(ServerSwitchEvent evt) {
-        if (evt.getFrom() != null) {
-            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-            try {
-                dataOutputStream.writeUTF("SaveData:" + evt.getPlayer().getUniqueId());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            dispatchMessage(byteArrayOutputStream.toByteArray());
-        }
-
         ProxyServer.getInstance().getScheduler().schedule(plugin, () -> {
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
@@ -56,7 +45,7 @@ public class BungeePlayerListener implements Listener {
                 e.printStackTrace();
             }
             dispatchMessage(byteArrayOutputStream.toByteArray());
-        }, 1, TimeUnit.SECONDS);
+        }, 2, TimeUnit.SECONDS);
     }
 
     @EventHandler
