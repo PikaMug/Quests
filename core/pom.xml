@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
-            <version>2.5</version>
+            <version>12e12cbadc</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
