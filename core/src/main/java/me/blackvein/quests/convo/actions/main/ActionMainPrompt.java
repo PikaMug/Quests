@@ -407,14 +407,13 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public class ActionMobPrompt extends ActionsEditorNumericPrompt {
 
         private BukkitQuestMob questMob;
-        private Integer itemIndex = -1;
 
         public ActionMobPrompt(final ConversationContext context, final BukkitQuestMob questMob) {
             super(context);
             this.questMob = questMob;
         }
         
-        private final int size = 16;
+        private final int size = 7;
         
         @Override
         public int getSize() {
@@ -434,19 +433,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 3:
             case 4:
             case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
                 return ChatColor.BLUE;
-            case 15:
+            case 6:
                 return ChatColor.RED;
-            case 16:
+            case 7:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -465,28 +455,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 4:
                 return ChatColor.YELLOW + Lang.get("eventEditorAddSpawnLocation");
             case 5:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobItemInHand");
+                return ChatColor.YELLOW + Lang.get("eventEditorSetEquipment");
             case 6:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobItemInHandDrop");
-            case 7:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobBoots");
-            case 8:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobBootsDrop");
-            case 9:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobLeggings");
-            case 10:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobLeggingsDrop");
-            case 11:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobChestPlate");
-            case 12:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobChestPlateDrop");
-            case 13:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobHelmet");
-            case 14:
-                return ChatColor.YELLOW + Lang.get("eventEditorSetMobHelmetDrop");
-            case 15:
                 return ChatColor.RED + Lang.get("cancel");
-            case 16:
+            case 7:
                 return ChatColor.GREEN + Lang.get("done");
             default:
                 return null;
@@ -512,34 +484,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
                         + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")";
             case 6:
-                return "(" + (questMob.getDropChances()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")";
             case 7:
-                return "(" + (questMob.getInventory()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")";
-            case 8:
-                return "(" + (questMob.getDropChances()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")";
-            case 9:
-                return "(" + (questMob.getInventory()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")";
-            case 10:
-                return "(" + (questMob.getDropChances()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")";
-            case 11:
-                return "(" + (questMob.getInventory()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")";
-            case 12:
-                return "(" + (questMob.getDropChances()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")";
-            case 13:
-                return "(" + (questMob.getInventory()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")";
-            case 14:
-                return "(" + (questMob.getDropChances()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
-                        + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")";
-            case 15:
-            case 16:
                 return "";
             default:
                 return null;
@@ -550,14 +495,6 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (questMob == null) {
                 questMob = new BukkitQuestMob();
-            }
-            // Check/add newly made item
-            if (context.getSessionData("tempStack") != null) {
-                if (itemIndex >= 0) {
-                    questMob.getInventory()[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
-                    itemIndex = -1;
-                }
-                ItemStackPrompt.clearSessionData(context);
             }
             
             final ActionsEditorPostOpenNumericPromptEvent event
@@ -594,33 +531,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     return new ActionMainPrompt(context);
                 }
             case 5:
-                itemIndex = 0;
-                return new ItemStackPrompt(context, ActionMobPrompt.this);
+                return new ActionMobEquipmentPrompt(context, questMob);
             case 6:
-                return new ActionMobDropPrompt(context, 0, questMob);
-            case 7:
-                itemIndex = 1;
-                return new ItemStackPrompt(context, ActionMobPrompt.this);
-            case 8:
-                return new ActionMobDropPrompt(context, 1, questMob);
-            case 9:
-                itemIndex = 2;
-                return new ItemStackPrompt(context, ActionMobPrompt.this);
-            case 10:
-                return new ActionMobDropPrompt(context, 2, questMob);
-            case 11:
-                itemIndex = 3;
-                return new ItemStackPrompt(context, ActionMobPrompt.this);
-            case 12:
-                return new ActionMobDropPrompt(context, 3, questMob);
-            case 13:
-                itemIndex = 4;
-                return new ItemStackPrompt(context, ActionMobPrompt.this);
-            case 14:
-                return new ActionMobDropPrompt(context, 4, questMob);
-            case 15:
                 return new ActionMobListPrompt(context);
-            case 16:
+            case 7:
                 if (questMob.getType() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobTypesFirst"));
                     return new ActionMobPrompt(context, questMob);
@@ -640,6 +554,196 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobListPrompt(context);
             default:
                 return new ActionMobPrompt(context, questMob);
+            }
+        }
+    }
+
+    public class ActionMobEquipmentPrompt extends ActionsEditorNumericPrompt {
+
+        private BukkitQuestMob questMob;
+        private Integer itemIndex = -1;
+
+        public ActionMobEquipmentPrompt(final ConversationContext context, final BukkitQuestMob questMob) {
+            super(context);
+            this.questMob = questMob;
+        }
+
+        private final int size = 12;
+
+        @Override
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("eventEditorAddEquipmentTitle");
+        }
+
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                    return ChatColor.BLUE;
+                case 11:
+                    return ChatColor.RED;
+                case 12:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobItemInHand");
+                case 2:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobItemInHandDrop");
+                case 3:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobBoots");
+                case 4:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobBootsDrop");
+                case 5:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobLeggings");
+                case 6:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobLeggingsDrop");
+                case 7:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobChestPlate");
+                case 8:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobChestPlateDrop");
+                case 9:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobHelmet");
+                case 10:
+                    return ChatColor.YELLOW + Lang.get("eventEditorSetMobHelmetDrop");
+                case 11:
+                    return ChatColor.RED + Lang.get("cancel");
+                case 12:
+                    return ChatColor.GREEN + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")";
+                case 2:
+                    return "(" + (questMob.getDropChances()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + "" + questMob.getDropChances()[0]) + ChatColor.GRAY + ")";
+                case 3:
+                    return "(" + (questMob.getInventory()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + ItemUtil.getDisplayString(questMob.getInventory()[1])) + ChatColor.GRAY + ")";
+                case 4:
+                    return "(" + (questMob.getDropChances()[1] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + "" + questMob.getDropChances()[1]) + ChatColor.GRAY + ")";
+                case 5:
+                    return "(" + (questMob.getInventory()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + ItemUtil.getDisplayString(questMob.getInventory()[2])) + ChatColor.GRAY + ")";
+                case 6:
+                    return "(" + (questMob.getDropChances()[2] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + "" + questMob.getDropChances()[2]) + ChatColor.GRAY + ")";
+                case 7:
+                    return "(" + (questMob.getInventory()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + ItemUtil.getDisplayString(questMob.getInventory()[3])) + ChatColor.GRAY + ")";
+                case 8:
+                    return "(" + (questMob.getDropChances()[3] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + "" + questMob.getDropChances()[3]) + ChatColor.GRAY + ")";
+                case 9:
+                    return "(" + (questMob.getInventory()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + ItemUtil.getDisplayString(questMob.getInventory()[4])) + ChatColor.GRAY + ")";
+                case 10:
+                    return "(" + (questMob.getDropChances()[4] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                            + "" + questMob.getDropChances()[4]) + ChatColor.GRAY + ")";
+                case 11:
+                case 12:
+                    return "";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+            if (questMob == null) {
+                questMob = new BukkitQuestMob();
+            }
+            // Check/add newly made item
+            if (context.getSessionData("tempStack") != null) {
+                if (itemIndex >= 0) {
+                    questMob.getInventory()[itemIndex] = ((ItemStack) context.getSessionData("tempStack"));
+                    try {
+                        if (questMob.getDropChances()[itemIndex] == null) {
+                            final Float[] chances = questMob.getDropChances();
+                            chances[itemIndex] = 1.0f;
+                            questMob.setDropChances(chances);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    itemIndex = -1;
+                }
+                ItemStackPrompt.clearSessionData(context);
+            }
+
+            final ActionsEditorPostOpenNumericPromptEvent event
+                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i))
+                        .append(ChatColor.GRAY).append(" ").append(getAdditionalText(context, i));
+            }
+            return text.toString();
+        }
+
+        @Override
+        public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+            switch (input.intValue()) {
+                case 1:
+                    itemIndex = 0;
+                    return new ItemStackPrompt(context, ActionMobEquipmentPrompt.this);
+                case 2:
+                    return new ActionMobDropPrompt(context, 0, questMob);
+                case 3:
+                    itemIndex = 1;
+                    return new ItemStackPrompt(context, ActionMobEquipmentPrompt.this);
+                case 4:
+                    return new ActionMobDropPrompt(context, 1, questMob);
+                case 5:
+                    itemIndex = 2;
+                    return new ItemStackPrompt(context, ActionMobEquipmentPrompt.this);
+                case 6:
+                    return new ActionMobDropPrompt(context, 2, questMob);
+                case 7:
+                    itemIndex = 3;
+                    return new ItemStackPrompt(context, ActionMobEquipmentPrompt.this);
+                case 8:
+                    return new ActionMobDropPrompt(context, 3, questMob);
+                case 9:
+                    itemIndex = 4;
+                    return new ItemStackPrompt(context, ActionMobEquipmentPrompt.this);
+                case 10:
+                    return new ActionMobDropPrompt(context, 4, questMob);
+                case 11:
+                    return new ActionMobListPrompt(context);
+                default:
+                    return new ActionMobPrompt(context, questMob);
             }
         }
     }
@@ -886,7 +990,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("eventEditorSetDropChance");
+            return Lang.get("eventEditorSetDropChance").replace("<least>", "0.0").replaceFirst("<greatest>", "1.0");
         }
 
         @Override
@@ -924,7 +1028,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             final Float[] temp = questMob.getDropChances();
             temp[invIndex] = chance;
             questMob.setDropChances(temp);
-            return new ActionMobPrompt(context, questMob);
+            return new ActionMobEquipmentPrompt(context, questMob);
         }
     }
     

@@ -155,38 +155,40 @@ public class BukkitQuestMob implements QuestMob {
     }
 
     public String serialize() {
-        String string = "";
-        string += "type-" + entityType.name();
+        final StringBuilder export = new StringBuilder();
+        if (entityType != null) {
+            export.append("type-").append(entityType.name());
+        }
         if (name != null) {
-            string += "::name-" + name;
+            export.append("::name-").append(name);
         }
         if (spawnLocation != null) {
-            string += "::spawn-" + ConfigUtil.getLocationInfo(spawnLocation);
+            export.append("::spawn-").append(ConfigUtil.getLocationInfo(spawnLocation));
         }
         if (spawnAmounts != null) {
-            string += "::amounts-" + spawnAmounts;
+            export.append("::amounts-").append(spawnAmounts);
         }
-        if (inventory[0] != null) {
-            string += "::hand-" + ItemUtil.serializeItemStack(inventory[0]);
-            string += "::hand_drop-" + dropChances[0];
+        if (inventory.length > 0 && inventory[0] != null) {
+            export.append("::hand-").append(ItemUtil.serializeItemStack(inventory[0]));
+            export.append("::hand_drop-").append(dropChances[0]);
         }
-        if (inventory[1] != null) {
-            string += "::boots-" + ItemUtil.serializeItemStack(inventory[1]);
-            string += "::boots_drop-" + dropChances[1];
+        if (inventory.length > 1 && inventory[1] != null) {
+            export.append("::boots-").append(ItemUtil.serializeItemStack(inventory[1]));
+            export.append("::boots_drop-").append(dropChances[1]);
         }
-        if (inventory[2] != null) {
-            string += "::leggings-" + ItemUtil.serializeItemStack(inventory[2]);
-            string += "::leggings_drop-" + dropChances[2];
+        if (inventory.length > 2 && inventory[2] != null) {
+            export.append("::leggings-").append(ItemUtil.serializeItemStack(inventory[2]));
+            export.append("::leggings_drop-").append(dropChances[2]);
         }
-        if (inventory[3] != null) {
-            string += "::chest-" + ItemUtil.serializeItemStack(inventory[3]);
-            string += "::chest_drop-" + dropChances[3];
+        if (inventory.length > 3 && inventory[3] != null) {
+            export.append("::chest-").append(ItemUtil.serializeItemStack(inventory[3]));
+            export.append("::chest_drop-").append(dropChances[3]);
         }
-        if (inventory[4] != null) {
-            string += "::helmet-" + ItemUtil.serializeItemStack(inventory[4]);
-            string += "::helmet_drop-" + dropChances[4];
+        if (inventory.length > 4 && inventory[4] != null) {
+            export.append("::helmet-").append(ItemUtil.serializeItemStack(inventory[4]));
+            export.append("::helmet_drop-").append(dropChances[4]);
         }
-        return string;
+        return export.toString();
     }
 
     public static BukkitQuestMob fromString(final String str) {
