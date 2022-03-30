@@ -5,7 +5,7 @@ Thank you for your interest in contributing to Quests! We appreciate your
 effort, but to make sure that the inclusion of your patch is a smooth process, we
 ask that you make note of the following guidelines.
 
-* **Target Java 16 for source and compilation.** Make sure to mark methods with
+* **Target Java 8 for source and compilation.** Make sure to mark methods with
   ` @Override` that override methods of parent classes, or that implement
   methods of interfaces.
 * **Use only spaces for indentation.** Our indents are 4-spaces long, and tabs
@@ -30,7 +30,7 @@ Branches
 ----------------
 When submitting a feature or bugfix, base your code on the newest development branch,
 and PR against that same branch. If such a branch does not exist, base your code
-against the `master` branch, and PR against that same branch.
+against the `main` branch, and PR against that same branch.
 
 
 Checklist
