@@ -445,9 +445,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 14:
                 return ChatColor.BLUE;
             case 15:
-                return ChatColor.GREEN;
-            case 16:
                 return ChatColor.RED;
+            case 16:
+                return ChatColor.GREEN;
             default:
                 return null;
             }
@@ -461,9 +461,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 2:
                 return ChatColor.YELLOW + Lang.get("eventEditorSetMobType");
             case 3:
-                return ChatColor.YELLOW + Lang.get("eventEditorAddSpawnLocation");
-            case 4:
                 return ChatColor.YELLOW + Lang.get("eventEditorSetMobSpawnAmount");
+            case 4:
+                return ChatColor.YELLOW + Lang.get("eventEditorAddSpawnLocation");
             case 5:
                 return ChatColor.YELLOW + Lang.get("eventEditorSetMobItemInHand");
             case 6:
@@ -485,9 +485,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 14:
                 return ChatColor.YELLOW + Lang.get("eventEditorSetMobHelmetDrop");
             case 15:
-                return ChatColor.GREEN + Lang.get("done");
-            case 16:
                 return ChatColor.RED + Lang.get("cancel");
+            case 16:
+                return ChatColor.GREEN + Lang.get("done");
             default:
                 return null;
             }
@@ -503,11 +503,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return "(" + (questMob.getType() == null ? Lang.get("noneSet") : ChatColor.AQUA 
                         + questMob.getType().name()) + ChatColor.GRAY + ")";
             case 3:
-                return "(" + (questMob.getSpawnLocation() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
-                        + ConfigUtil.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")";
-            case 4:
-                return "(" + (questMob.getSpawnAmounts() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
+                return "(" + (questMob.getSpawnAmounts() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
                         + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY + ")";
+            case 4:
+                return "(" + (questMob.getSpawnLocation() == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA
+                        + ConfigUtil.getLocationInfo(questMob.getSpawnLocation())) + ChatColor.GRAY + ")";
             case 5:
                 return "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY + Lang.get("noneSet") : ChatColor.AQUA 
                         + ItemUtil.getDisplayString(questMob.getInventory()[0])) + ChatColor.GRAY + ")";
@@ -582,6 +582,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 2:
                 return new ActionMobTypePrompt(context, questMob);
             case 3:
+                return new ActionMobAmountPrompt(context, questMob);
+            case 4:
                 if (context.getForWhom() instanceof Player) {
                     final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                     selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
@@ -591,8 +593,6 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
                     return new ActionMainPrompt(context);
                 }
-            case 4:
-                return new ActionMobAmountPrompt(context, questMob);
             case 5:
                 itemIndex = 0;
                 return new ItemStackPrompt(context, ActionMobPrompt.this);
@@ -619,6 +619,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 14:
                 return new ActionMobDropPrompt(context, 4, questMob);
             case 15:
+                return new ActionMobListPrompt(context);
+            case 16:
                 if (questMob.getType() == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetMobTypesFirst"));
                     return new ActionMobPrompt(context, questMob);
@@ -635,8 +637,6 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     list.add(questMob.serialize());
                     context.setSessionData(CK.E_MOB_TYPES, list);
                 }
-                return new ActionMobListPrompt(context);
-            case 16:
                 return new ActionMobListPrompt(context);
             default:
                 return new ActionMobPrompt(context, questMob);
