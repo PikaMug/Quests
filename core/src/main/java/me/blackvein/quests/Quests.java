@@ -37,7 +37,6 @@ import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
-import me.blackvein.quests.listeners.BungeeListener;
 import me.blackvein.quests.listeners.CommandManager;
 import me.blackvein.quests.listeners.ConvoListener;
 import me.blackvein.quests.listeners.ItemListener;
@@ -161,7 +160,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     private ConditionFactory conditionFactory;
     private ConvoListener convoListener;
     private BlockListener blockListener;
-    private BungeeListener bungeeListener;
     private ItemListener itemListener;
     private NpcListener npcListener;
     private PlayerListener playerListener;
@@ -190,7 +188,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         convoListener = new ConvoListener();
         blockListener = new BlockListener(this);
-        bungeeListener = new BungeeListener(this);
         itemListener = new ItemListener(this);
         npcListener = new NpcListener(this);
         playerListener = new PlayerListener(this);
@@ -270,9 +267,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             getServer().getPluginManager().registerEvents(getUniteListener(), this);
         } else if (depends.getPartiesApi() != null) {
             getServer().getPluginManager().registerEvents(getPartiesListener(), this);
-        }
-        if (hasBungeeEnabled()) {
-            getServer().getMessenger().registerIncomingPluginChannel(this, "quests:update", getBungeeListener());
         }
 
         // 11 - Attempt to check for updates
@@ -585,10 +579,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         return blockListener;
     }
 
-    public BungeeListener getBungeeListener() {
-        return bungeeListener;
-    }
-
     public ItemListener getItemListener() {
         return itemListener;
     }
@@ -748,11 +738,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 return new QuestAcceptPrompt(context);
             }
         }
-    }
-
-    private boolean hasBungeeEnabled() {
-        final ConfigurationSection section = getServer().spigot().getConfig().getConfigurationSection("settings");
-        return section != null && section.getBoolean("bungeecord");
     }
 
     /**

@@ -1,5 +1,0 @@
-name: QuestsBungee
-main: me.blackvein.quests.QuestsBungee
-version: ${project.version}-b${env.BUILD_NUMBER}
-description: An extensive questing system.
-author: PikaMug
