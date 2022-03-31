@@ -27,6 +27,7 @@ import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -631,12 +632,17 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder effs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context));
-            for (final PotionEffectType pet : PotionEffectType.values()) {
-                effs.append(pet != null ? "\n" + ChatColor.DARK_PURPLE + pet.getName() : "");
+
+            final StringBuilder potions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final PotionEffectType[] potionArr = PotionEffectType.values();
+            for (int i = 0; i < potionArr.length; i++) {
+                potions.append(ChatColor.AQUA).append(potionArr[i].getName());
+                if (i < (potionArr.length - 1)) {
+                    potions.append(ChatColor.GRAY).append(", ");
+                }
             }
-            return effs.toString() + ChatColor.YELLOW + getQueryText(context);
+            potions.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return potions.toString();
         }
 
         @Override

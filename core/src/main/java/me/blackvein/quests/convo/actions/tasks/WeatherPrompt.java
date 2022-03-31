@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -315,13 +316,16 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context)
-                    + ChatColor.DARK_PURPLE);
-            for (final World w : plugin.getServer().getWorlds()) {
-                effects.append("\n").append(w.getName()).append(", ");
+            final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final List<World> worldArr = plugin.getServer().getWorlds();
+            for (int i = 0; i < worldArr.size(); i++) {
+                worlds.append(ChatColor.AQUA).append(worldArr.get(i).getName());
+                if (i < (worldArr.size() - 1)) {
+                    worlds.append(ChatColor.GRAY).append(", ");
+                }
             }
-            effects = new StringBuilder(effects.substring(0, effects.length()));
-            return effects + "\n" + ChatColor.YELLOW + getQueryText(context);
+            worlds.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return worlds.toString();
         }
 
         @Override
@@ -531,14 +535,17 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context)
-                    + ChatColor.DARK_PURPLE);
-            for (final World w : plugin.getServer().getWorlds()) {
-                effects.append("\n").append(w.getName()).append(", ");
+
+            final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final List<World> worldArr = plugin.getServer().getWorlds();
+            for (int i = 0; i < worldArr.size(); i++) {
+                worlds.append(ChatColor.AQUA).append(worldArr.get(i).getName());
+                if (i < (worldArr.size() - 1)) {
+                    worlds.append(ChatColor.GRAY).append(", ");
+                }
             }
-            effects = new StringBuilder(effects.substring(0, effects.length()));
-            return ChatColor.YELLOW + effects.toString() + getQueryText(context);
+            worlds.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return worlds.toString();
         }
 
         @Override

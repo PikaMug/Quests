@@ -25,6 +25,7 @@ import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -180,7 +181,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Lang.get("eventEditorEffects");
+            return Lang.get("eventEditorEffectsTitle");
         }
         @Override
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
@@ -252,7 +253,7 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     = new ActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
     
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
@@ -337,17 +338,15 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final Effect[] values = Effect.values();
-            for (int i = 0; i < values.length; i++) {
-                final Effect eff = values[i];
-                if (i < (values.length - 1)) {
-                    effects.append(MiscUtil.snakeCaseToUpperCamelCase(eff.name())).append(", ");
-                } else {
-                    effects.append(MiscUtil.snakeCaseToUpperCamelCase(eff.name())).append("\n");
+            final Effect[] worldArr = Effect.values();
+            for (int i = 0; i < worldArr.length; i++) {
+                effects.append(ChatColor.AQUA).append(MiscUtil.snakeCaseToUpperCamelCase(worldArr[i].name()));
+                if (i < (worldArr.length - 1)) {
+                    effects.append(ChatColor.GRAY).append(", ");
                 }
-
             }
-            return effects.toString() + ChatColor.YELLOW + getQueryText(context);
+            effects.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return effects.toString();
         }
 
         @SuppressWarnings("unchecked")
