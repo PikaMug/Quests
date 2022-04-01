@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import xyz.upperlevel.spigot.book.BookUtil;
 
 public class QuestsJournalCommand extends QuestsSubCommand {
 
@@ -78,31 +79,36 @@ public class QuestsJournalCommand extends QuestsSubCommand {
                 return;
             }
 
-            final Inventory inv = player.getInventory();
-            final int index = quester.getJournalIndex();
-            if (index != -1) {
-                inv.setItem(index, null);
-                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalPutAway")
-                        .replace("<journal>", Lang.get(player, "journalTitle")));
-            } else if (player.getItemInHand().getType().equals(Material.AIR)) {
+            if (!plugin.getSettings().canGiveJournalItem()) {
                 final QuestJournal journal = new QuestJournal(quester);
-                player.setItemInHand(journal.toItemStack());
-                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
-                        .replace("<journal>", Lang.get(player, "journalTitle")));
-            } else if (inv.firstEmpty() != -1) {
-                final ItemStack[] arr = inv.getContents();
-                for (int i = 0; i < arr.length; i++) {
-                    if (arr[i] == null) {
-                        final QuestJournal journal = new QuestJournal(quester);
-                        inv.setItem(i, journal.toItemStack());
-                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
-                                .replace("<journal>", Lang.get(player, "journalTitle")));
-                        break;
-                    }
-                }
+                BookUtil.openPlayer(player, journal.toItemStack());
             } else {
-                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
-                        .replace("<journal>", Lang.get(player, "journalTitle")));
+                final Inventory inv = player.getInventory();
+                final int index = quester.getJournalIndex();
+                if (index != -1) {
+                    inv.setItem(index, null);
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalPutAway")
+                            .replace("<journal>", Lang.get(player, "journalTitle")));
+                } else if (player.getItemInHand().getType().equals(Material.AIR)) {
+                    final QuestJournal journal = new QuestJournal(quester);
+                    player.setItemInHand(journal.toItemStack());
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                            .replace("<journal>", Lang.get(player, "journalTitle")));
+                } else if (inv.firstEmpty() != -1) {
+                    final ItemStack[] arr = inv.getContents();
+                    for (int i = 0; i < arr.length; i++) {
+                        if (arr[i] == null) {
+                            final QuestJournal journal = new QuestJournal(quester);
+                            inv.setItem(i, journal.toItemStack());
+                            Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
+                                    .replace("<journal>", Lang.get(player, "journalTitle")));
+                            break;
+                        }
+                    }
+                } else {
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalNoRoom")
+                            .replace("<journal>", Lang.get(player, "journalTitle")));
+                }
             }
         }
     }

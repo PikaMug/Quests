@@ -135,6 +135,11 @@
             <version>12e12cbadc</version>
         </dependency>
         <dependency>
+            <groupId>xyz.upperlevel.spigot.book</groupId>
+            <artifactId>spigot-book-api</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.25</version>
@@ -244,9 +249,10 @@
                             <include>me.*</include>
                             <include>com.github.PikaMug:LocaleLib</include>
                             <include>com.zaxxer:HikariCP</include>
+                            <include>mysql</include>
                             <include>org.slf4j:slf4j-simple</include>
                             <include>org.slf4j:slf4j-api</include>
-                            <include>mysql</include>
+                            <include>xyz.upperlevel.spigot.book:spigot-book-api</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -259,12 +265,16 @@
                             <shadedPattern>me.blackvein.quests.libs.hikari</shadedPattern>
                         </relocation>
                         <relocation>
+                            <pattern>com.mysql</pattern>
+                            <shadedPattern>me.blackvein.quests.libs.mysql</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>me.blackvein.quests.libs.slf4j</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com.mysql</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.mysql</shadedPattern>
+                            <pattern>xyz.upperlevel.spigot.book</pattern>
+                            <shadedPattern>me.blackvein.quests.libs.bookutil</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
