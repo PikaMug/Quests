@@ -2458,6 +2458,7 @@ public class Quester implements IQuester {
             final int toDeliver = getCurrentStage(quest).getItemsToDeliver().get(match).getAmount();
             
             final ObjectiveType type = ObjectiveType.DELIVER_ITEM;
+            final Set<String> dispatchedQuestIDs = new HashSet<>();
             final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                     new BukkitObjective(type, amount, toDeliver));
             plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2484,14 +2485,6 @@ public class Quester implements IQuester {
                     player.updateInventory();
                     finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null, null,
                             null, null, null);
-                    
-                    // Multiplayer
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                        q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
-                        q.finishObjective(quest, new BukkitObjective(type, new ItemStack(m, 1), found), null, null, null,
-                                null, null, null, null);
-                        return null;
-                    });
                 } else {
                     found.setAmount(newAmount);
                     getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
@@ -2503,6 +2496,17 @@ public class Quester implements IQuester {
                             .getById(getCurrentStage(quest).getItemDeliveryTargets().get(items.indexOf(found))));
                     player.sendMessage(message);
                 }
+
+                dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, ObjectiveType.DELIVER_ITEM,
+                        (final IQuester q, final IQuest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.getQuestData(quest).itemsDelivered.set(items.indexOf(found), found.clone());
+                                if (q.testComplete(quest)) {
+                                    quest.nextStage(q, false);
+                                }
+                            }
+                            return null;
+                        }));
             }
             
             final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2526,6 +2530,7 @@ public class Quester implements IQuester {
         final boolean npcsInteracted = getQuestData(quest).citizensInteracted.get(index);
 
         final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
                 new BukkitObjective(type, 1, 1));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2534,14 +2539,17 @@ public class Quester implements IQuester {
             getQuestData(quest).citizensInteracted.set(index, true);
             finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
-            
-            // Multiplayer
-            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                q.getQuestData(quest).citizensInteracted.set(index, true);
-                q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
-                return null;
-            });
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).citizensInteracted.set(index, true);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
             
             final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
                     new BukkitObjective(type, 1, 1));
@@ -2565,6 +2573,7 @@ public class Quester implements IQuester {
         final int npcsToKill = getCurrentStage(quest).getCitizenNumToKill().get(index);
         
         final ObjectiveType type = ObjectiveType.KILL_NPC;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, npcsKilled, npcsToKill));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2575,16 +2584,18 @@ public class Quester implements IQuester {
             if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).citizensNumKilled.set(index, getQuestData(quest).citizensNumKilled
-                            .get(index));
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).citizensNumKilled.set(index, newNpcsKilled);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2614,6 +2625,7 @@ public class Quester implements IQuester {
         final int cowsToMilk = currentStage.getCowsToMilk();
         
         final ObjectiveType type = ObjectiveType.MILK_COW;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, cowsMilked, cowsToMilk));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2625,15 +2637,18 @@ public class Quester implements IQuester {
             if (newCowsMilked >= cowsToMilk) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).setCowsMilked(cowsToMilk);
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).setCowsMilked(newCowsMilked);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2663,6 +2678,7 @@ public class Quester implements IQuester {
         final int fishToCatch = currentStage.getFishToCatch();
         
         final ObjectiveType type = ObjectiveType.CATCH_FISH;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, fishCaught, fishToCatch));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2674,15 +2690,18 @@ public class Quester implements IQuester {
             if (newFishCaught >= fishToCatch) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).setFishCaught(fishToCatch);
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).setFishCaught(newFishCaught);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2735,6 +2754,7 @@ public class Quester implements IQuester {
             }
         }
         final ObjectiveType type = ObjectiveType.KILL_MOB;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, mobsKilled, mobsToKill));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2745,15 +2765,18 @@ public class Quester implements IQuester {
             if (newMobsKilled >= mobsToKill) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, currentStage, (final IQuester q) -> {
-                    q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2784,6 +2807,7 @@ public class Quester implements IQuester {
         final int playersToKill = currentStage.getPlayersToKill();
         
         final ObjectiveType type = ObjectiveType.KILL_PLAYER;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, playersKilled, playersToKill));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2794,15 +2818,18 @@ public class Quester implements IQuester {
             if (newPlayersKilled >= playersToKill) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).setPlayersKilled(getQuestData(quest).getPlayersKilled());
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).setPlayersKilled(newPlayersKilled);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2847,6 +2874,7 @@ public class Quester implements IQuester {
                 if (toReach.distanceSquared(location) <= radius * radius) {
                     if (!getQuestData(quest).locationsReached.get(index)) {
                         final ObjectiveType type = ObjectiveType.REACH_LOCATION;
+                        final Set<String> dispatchedQuestIDs = new HashSet<>();
                         final QuesterPreUpdateObjectiveEvent preEvent 
                                 = new QuesterPreUpdateObjectiveEvent(this, quest, 
                                 new BukkitObjective(type, locationsReached, locationsToReach));
@@ -2854,18 +2882,19 @@ public class Quester implements IQuester {
                         
                         getQuestData(quest).locationsReached.set(index, true);
                         finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                                new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null,
-                                null);
-                        
-                        // Multiplayer
-                        final int finalIndex = index;
-                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                            q.getQuestData(quest).locationsReached.set(finalIndex, true);
-                            q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                                    new ItemStack(Material.AIR, 1)), null, null, null, toReach, null,
-                                    null, null);
-                            return null;
-                        });
+                                new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null, null);
+
+                        int finalIndex = index;
+                        dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                                (final IQuester q, final IQuest cq) -> {
+                                    if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                        q.getQuestData(quest).locationsReached.set(finalIndex, true);
+                                        if (q.testComplete(quest)) {
+                                            quest.nextStage(q, false);
+                                        }
+                                    }
+                                    return null;
+                                }));
                         
                         final QuesterPostUpdateObjectiveEvent postEvent 
                                 = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2914,6 +2943,7 @@ public class Quester implements IQuester {
         final int mobsTamed = questData.mobsTamed.get(index);
         
         final ObjectiveType type = ObjectiveType.TAME_MOB;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
                 new BukkitObjective(type, mobsToTame, mobsTamed));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2924,15 +2954,18 @@ public class Quester implements IQuester {
             if (newMobsToTame >= mobsToTame) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).mobsTamed.set(index, newMobsToTame);
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).mobsTamed.set(index, newMobsToTame);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2965,6 +2998,7 @@ public class Quester implements IQuester {
         final int sheepSheared = questData.sheepSheared.get(index);
         
         final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest, 
                 new BukkitObjective(type, sheepSheared, sheepToShear));
         plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -2975,15 +3009,18 @@ public class Quester implements IQuester {
             if (newSheepSheared >= sheepToShear) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
-                
-                // Multiplayer
-                dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                    q.getQuestData(quest).sheepSheared.set(index, newSheepSheared);
-                    q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
-                    return null;
-                });
             }
+
+            dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                    (final IQuester q, final IQuest cq) -> {
+                        if (!dispatchedQuestIDs.contains(cq.getId())) {
+                            q.getQuestData(quest).sheepSheared.set(index, newSheepSheared);
+                            if (q.testComplete(quest)) {
+                                quest.nextStage(q, false);
+                            }
+                        }
+                        return null;
+                    }));
         }
         
         final QuesterPostUpdateObjectiveEvent postEvent = new QuesterPostUpdateObjectiveEvent(this, quest, 
@@ -2999,6 +3036,7 @@ public class Quester implements IQuester {
      */
     public void sayPassword(final IQuest quest, final AsyncPlayerChatEvent evt) {
         final ObjectiveType type = ObjectiveType.PASSWORD;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             final QuesterPreUpdateObjectiveEvent preEvent = new QuesterPreUpdateObjectiveEvent(this, quest,
                     new BukkitObjective(type, 1, 1));
@@ -3010,19 +3048,22 @@ public class Quester implements IQuester {
                     final String display = getCurrentStage(quest).getPasswordDisplays().get(index);
                     getQuestData(quest).passwordsSaid.set(index, true);
 
-                    final int finalIndex = index;
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                                 new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
-
-                        // Multiplayer
-                        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
-                            q.getQuestData(quest).passwordsSaid.set(finalIndex, true);
-                            q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                                    new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
-                            return null;
-                        });
                     });
+
+                    final int finalIndex = index;
+                    dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                            (final IQuester q, final IQuest cq) -> {
+                                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                    q.getQuestData(quest).passwordsSaid.set(finalIndex, true);
+                                    if (q.testComplete(quest)) {
+                                        quest.nextStage(q, false);
+                                    }
+                                }
+                                return null;
+                            }));
                     break;
                 }
                 index++;
@@ -3422,6 +3463,10 @@ public class Quester implements IQuester {
             }
             sendMessage(ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', message)));
         }
+        dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final IQuester q) -> {
+            q.finishObjective(quest, objective, mob, extra, npc, location, color, pass, co);
+            return null;
+        });
         if (testComplete(quest)) {
             quest.nextStage(this, true);
         }

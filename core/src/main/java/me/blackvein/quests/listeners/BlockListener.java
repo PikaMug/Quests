@@ -83,7 +83,6 @@ public class BlockListener implements Listener {
                             } else {
                                 quester.breakBlock(quest, blockItemStack);
 
-                                // Multiplayer
                                 dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
                                         (final IQuester q, final IQuest cq) -> {
                                             if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
