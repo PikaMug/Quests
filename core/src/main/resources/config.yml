@@ -10,6 +10,7 @@ confirm-accept: true
 console-logging: 2
 disable-command-feedback: false
 generate-files-on-join: true
+give-journal-item: false
 ignore-locked-quests: false
 kill-delay: 600
 language: en-US

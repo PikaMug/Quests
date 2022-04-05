@@ -244,6 +244,7 @@ public class Settings implements ISettings {
         consoleLogging = config.getInt("console-logging", 1);
         disableCommandFeedback = config.getBoolean("disable-command-feedback", true);
         genFilesOnJoin = config.getBoolean("generate-files-on-join", true);
+        giveJournalItem = config.getBoolean("give-journal-item", false);
         ignoreLockedQuests = config.getBoolean("ignore-locked-quests", false);
         killDelay = config.getInt("kill-delay", 600);
         if (Objects.requireNonNull(config.getString("language")).equalsIgnoreCase("en")) {

@@ -18,22 +18,48 @@ import me.blackvein.quests.enums.ObjectiveType;
 
 public class BukkitObjective implements Objective {
     private final ObjectiveType type;
+    private final String message;
     private final int progress;
     private final int goal;
     private final ItemStack progressStack;
     private final ItemStack goalStack;
-    
-    
+
+    /**
+     * @deprecated Use {@link #BukkitObjective(ObjectiveType, String, int, int)} with null message
+     */
     public BukkitObjective(final ObjectiveType type, final int progress, final int goal) {
         this.type = type;
+        this.message = null;
+        this.progress = progress;
+        this.goal = goal;
+        this.progressStack = null;
+        this.goalStack = null;
+    }
+
+    /**
+     * @deprecated Use {@link #BukkitObjective(ObjectiveType, String, ItemStack, ItemStack)} with null message
+     */
+    public BukkitObjective(final ObjectiveType type, final ItemStack progress, final ItemStack goal) {
+        this.type = type;
+        this.message = null;
+        this.progress = progress.getAmount();
+        this.goal = goal.getAmount();
+        this.progressStack = progress;
+        this.goalStack = goal;
+    }
+    
+    public BukkitObjective(final ObjectiveType type, final String message, final int progress, final int goal) {
+        this.type = type;
+        this.message = message;
         this.progress = progress;
         this.goal = goal;
         this.progressStack = null;
         this.goalStack = null;
     }
     
-    public BukkitObjective(final ObjectiveType type, final ItemStack progress, final ItemStack goal) {
+    public BukkitObjective(final ObjectiveType type, final String message, final ItemStack progress, final ItemStack goal) {
         this.type = type;
+        this.message = message;
         this.progress = progress.getAmount();
         this.goal = goal.getAmount();
         this.progressStack = progress;
@@ -42,6 +68,10 @@ public class BukkitObjective implements Objective {
     
     public ObjectiveType getType() {
         return type;
+    }
+
+    public String getMessage() {
+        return message;
     }
     
     public int getProgress() {

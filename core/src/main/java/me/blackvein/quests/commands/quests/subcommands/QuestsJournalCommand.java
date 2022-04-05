@@ -80,7 +80,7 @@ public class QuestsJournalCommand extends QuestsSubCommand {
             }
 
             if (!plugin.getSettings().canGiveJournalItem()) {
-                final QuestJournal journal = new QuestJournal(quester);
+                final QuestJournal journal = new QuestJournal(plugin, quester);
                 BookUtil.openPlayer(player, journal.toItemStack());
             } else {
                 final Inventory inv = player.getInventory();
@@ -90,7 +90,7 @@ public class QuestsJournalCommand extends QuestsSubCommand {
                     Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalPutAway")
                             .replace("<journal>", Lang.get(player, "journalTitle")));
                 } else if (player.getItemInHand().getType().equals(Material.AIR)) {
-                    final QuestJournal journal = new QuestJournal(quester);
+                    final QuestJournal journal = new QuestJournal(plugin, quester);
                     player.setItemInHand(journal.toItemStack());
                     Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                             .replace("<journal>", Lang.get(player, "journalTitle")));
@@ -98,7 +98,7 @@ public class QuestsJournalCommand extends QuestsSubCommand {
                     final ItemStack[] arr = inv.getContents();
                     for (int i = 0; i < arr.length; i++) {
                         if (arr[i] == null) {
-                            final QuestJournal journal = new QuestJournal(quester);
+                            final QuestJournal journal = new QuestJournal(plugin, quester);
                             inv.setItem(i, journal.toItemStack());
                             Lang.send(player, ChatColor.YELLOW + Lang.get(player, "journalTaken")
                                     .replace("<journal>", Lang.get(player, "journalTitle")));

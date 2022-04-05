@@ -35,6 +35,8 @@ public interface ISettings {
     void setDisableCommandFeedback(final boolean disableCommandFeedback);
     boolean canGenFilesOnJoin();
     void setGenFilesOnJoin(final boolean genFilesOnJoin);
+    boolean canGiveJournalItem();
+    void setGiveJournalItem(final boolean giveJournalItem);
     boolean canIgnoreLockedQuests();
     void setIgnoreLockedQuests(final boolean ignoreLockedQuests);
     int getKillDelay();

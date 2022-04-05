@@ -510,7 +510,7 @@ public class Quester implements IQuester {
         }
         final int index = getJournalIndex();
         if (index != -1) {
-            final QuestJournal journal = new QuestJournal(this);
+            final QuestJournal journal = new QuestJournal(plugin, this);
             getPlayer().getInventory().setItem(index, journal.toItemStack());
         }
     }
@@ -1089,10 +1089,10 @@ public class Quester implements IQuester {
         current.addAll(finishedRequirements);
         return current;
     }
-    
+
     /**
      * Get current objectives for a quest, both finished and unfinished
-     * 
+     *
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
      * @return List of detailed objectives
@@ -1557,6 +1557,529 @@ public class Quester implements IQuester {
                 message = message.replace("%count%", cleared + "/" + toClear);
             }
             objectives.add(ConfigUtil.parseString(message));
+            customIndex++;
+        }
+        return objectives;
+    }
+    
+    /**
+     * Get current objectives for a quest, both finished and unfinished
+     * 
+     * @param quest The quest to get objectives of
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     * @param formatItems Whether to format item names, if applicable
+     * @return List of detailed objectives
+     */
+    @SuppressWarnings("deprecation")
+    public LinkedList<Objective> getCurrentObjectivesTemp(final IQuest quest, final boolean ignoreOverrides,
+                                                   final boolean formatItems) {
+        if (quest == null) {
+            plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
+            return new LinkedList<>();
+        }
+        if (getQuestData(quest) == null) {
+            plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
+            return new LinkedList<>();
+        }
+        if (getCurrentStage(quest) == null) {
+            //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
+            return new LinkedList<>();
+        }
+        final IDependencies depends = plugin.getDependencies();
+        if (!ignoreOverrides && !getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
+            final LinkedList<Objective> objectives = new LinkedList<>();
+            for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
+                String message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                // TODO is this acceptable?
+                objectives.add(new BukkitObjective(ObjectiveType.CUSTOM, message, 0, 1));
+            }
+            return objectives;
+        }
+        final QuestData data = getQuestData(quest);
+        final IStage stage = getCurrentStage(quest);
+        final LinkedList<Objective> objectives = new LinkedList<>();
+        for (final ItemStack goal : stage.getBlocksToBreak()) {
+            for (final ItemStack progress : data.blocksBroken) {
+                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
+                    final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "break");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + progress.getAmount() + "/"
+                                + goal.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + color + ": " + progress.getAmount() + "/" + goal.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    if (formatItems) {
+                        message = message.replace("<item>", ItemUtil.getName(progress));
+                    }
+                    objectives.add(new BukkitObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
+                }
+            }
+        }
+        for (final ItemStack goal : stage.getBlocksToDamage()) {
+            for (final ItemStack progress : data.blocksDamaged) {
+                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
+                    final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    String message = color + Lang.get(getPlayer(), "damage");
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + progress.getAmount() + "/"
+                                + goal.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + color + ": " + progress.getAmount() + "/" + goal.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    if (formatItems) {
+                        message = message.replace("<item>", ItemUtil.getName(progress));
+                    }
+                    objectives.add(new BukkitObjective(ObjectiveType.DAMAGE_BLOCK, message, progress, goal));
+                }
+            }
+        }
+        for (final ItemStack goal : stage.getBlocksToPlace()) {
+            for (final ItemStack progress : data.blocksPlaced) {
+                final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "place");
+                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + progress.getAmount() + "/"
+                                + goal.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + color + ": " + progress.getAmount() + "/" + goal.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    if (formatItems) {
+                        message = message.replace("<item>", ItemUtil.getName(progress));
+                    }
+                    objectives.add(new BukkitObjective(ObjectiveType.PLACE_BLOCK, message, progress, goal));
+                }
+            }
+        }
+        for (final ItemStack goal : stage.getBlocksToUse()) {
+            for (final ItemStack progress : data.blocksUsed) {
+                final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "use");
+                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + progress.getAmount() + "/"
+                                + goal.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + progress.getAmount() + "/" + goal.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    if (formatItems) {
+                        message = message.replace("<item>", ItemUtil.getName(progress));
+                    }
+                    objectives.add(new BukkitObjective(ObjectiveType.USE_BLOCK, message, progress, goal));
+                }
+            }
+        }
+        for (final ItemStack goal : stage.getBlocksToCut()) {
+            for (final ItemStack progress : data.blocksCut) {
+                final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "cut");
+                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
+                    if (message.contains("<count>")) {
+                        message = message.replace("<count>", "" + color + progress.getAmount() + "/"
+                                + goal.getAmount());
+                    } else {
+                        // Legacy
+                        message += " <item>" + color + ": " + progress.getAmount() + "/" + goal.getAmount();
+                    }
+                    if (depends.getPlaceholderApi() != null) {
+                        message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                    }
+                    if (formatItems) {
+                        message = message.replace("<item>", ItemUtil.getName(progress));
+                    }
+                    objectives.add(new BukkitObjective(ObjectiveType.CUT_BLOCK, message, progress, goal));
+                }
+            }
+        }
+        int craftIndex = 0;
+        for (final ItemStack goal : stage.getItemsToCraft()) {
+            if (data.itemsCrafted.size() > craftIndex) {
+                final ItemStack progress = data.itemsCrafted.get(craftIndex);
+                final int crafted = progress.getAmount();
+                final int toCraft = goal.getAmount();
+                final ChatColor color = crafted < toCraft ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "craftItem");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + crafted + "/" + toCraft);
+                } else {
+                    // Legacy
+                    message += color + ": " + crafted + "/" + goal.getAmount();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.CRAFT_ITEM, message, progress, goal));
+            }
+            craftIndex++;
+        }
+        int smeltIndex = 0;
+        for (final ItemStack goal : stage.getItemsToSmelt()) {
+            if (data.itemsSmelted.size() > smeltIndex) {
+                final ItemStack progress = data.itemsSmelted.get(smeltIndex);
+                final int smelted = progress.getAmount();
+                final int toSmelt = goal.getAmount();
+                final ChatColor color = smelted < toSmelt ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "smeltItem");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + smelted + "/" + toSmelt);
+                } else {
+                    // Legacy
+                    message += color + ": " + smelted + "/" + goal.getAmount();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.SMELT_ITEM, message, progress, goal));
+            }
+            smeltIndex++;
+        }
+        int enchantIndex = 0;
+        for (final ItemStack goal : stage.getItemsToEnchant()) {
+            if (data.itemsEnchanted.size() > enchantIndex) {
+                final ItemStack progress = data.itemsEnchanted.get(enchantIndex);
+                final int enchanted = progress.getAmount();
+                final int toEnchant = goal.getAmount();
+                final ChatColor color = enchanted < toEnchant ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "enchItem");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + enchanted + "/" + toEnchant);
+                } else {
+                    // Legacy
+                    message += color + ": " + enchanted + "/" + goal.getAmount();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                if (goal.getEnchantments().isEmpty()) {
+                    objectives.add(new BukkitObjective(ObjectiveType.ENCHANT_ITEM,
+                            message.replace("<enchantment>", "")
+                                    .replace("<level>", "")
+                                    .replaceAll("\\s+", " "), progress, goal));
+                } else {
+                    for (final Entry<Enchantment, Integer> e : goal.getEnchantments().entrySet()) {
+                        objectives.add(new BukkitObjective(ObjectiveType.ENCHANT_ITEM,
+                                message.replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
+                                        .replace("<level>", RomanNumeral.getNumeral(e.getValue())), progress, goal));
+                    }
+                }
+            }
+            enchantIndex++;
+        }
+        int brewIndex = 0;
+        for (final ItemStack goal : stage.getItemsToBrew()) {
+            if (data.itemsBrewed.size() > brewIndex) {
+                final ItemStack progress = data.itemsBrewed.get(brewIndex);
+                final int brewed = progress.getAmount();
+                final int toBrew = goal.getAmount();
+                final ChatColor color = brewed < toBrew ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "brewItem");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + brewed + "/" + toBrew);
+                } else {
+                    // Legacy
+                    message += color + ": " + brewed + "/" + goal.getAmount();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.BREW_ITEM, message, progress, goal));
+            }
+            brewIndex++;
+        }
+        int consumeIndex = 0;
+        for (final ItemStack goal : stage.getItemsToConsume()) {
+            if (data.itemsConsumed.size() > consumeIndex) {
+                final ItemStack progress = data.itemsConsumed.get(consumeIndex);
+                final int consumed = progress.getAmount();
+                final int toConsume = goal.getAmount();
+                final ChatColor color = consumed < toConsume ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "consumeItem");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + consumed + "/" + toConsume);
+                } else {
+                    // Legacy
+                    message += color + ": " + consumed + "/" + goal.getAmount();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.CONSUME_ITEM, message, progress, goal));
+            }
+            consumeIndex++;
+        }
+        int deliverIndex = 0;
+        for (final ItemStack goal : stage.getItemsToDeliver()) {
+            if (data.itemsDelivered.size() > deliverIndex) {
+                final ItemStack progress = data.itemsDelivered.get(deliverIndex);
+                final int delivered = progress.getAmount();
+                final int toDeliver = goal.getAmount();
+                final Integer npc = stage.getItemDeliveryTargets().get(deliverIndex);
+                final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
+                } else {
+                    // Legacy
+                    message += color + ": " + delivered + "/" + toDeliver;
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                if (formatItems) {
+                    message = message.replace("<item>", ItemUtil.getName(goal));
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.DELIVER_ITEM, message, progress, goal));
+            }
+            deliverIndex++;
+        }
+        int interactIndex = 0;
+        for (final Integer n : stage.getCitizensToInteract()) {
+            boolean interacted = false;
+            if (data.citizensInteracted.size() > interactIndex) {
+                interacted = data.citizensInteracted.get(interactIndex);
+                final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "talkTo")
+                        .replace("<npc>", depends.getNPCName(n));
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+                }
+                objectives.add(new BukkitObjective(ObjectiveType.TALK_TO_NPC, message, 0, 1));
+            }
+            interactIndex++;
+        }
+        int npcKillIndex = 0;
+        for (final Integer n : stage.getCitizensToKill()) {
+            int npcKilled = 0;
+            if (data.citizensNumKilled.size() > npcKillIndex) {
+                npcKilled = data.citizensNumKilled.get(npcKillIndex);
+            }
+            final int toNpcKill = stage.getCitizenNumToKill().get(npcKillIndex);
+            final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "kill");
+            if (message.contains("<mob>")) {
+                message = message.replace("<mob>", depends.getNPCName(n));
+            } else {
+                message += " " + depends.getNPCName(n);
+            }
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + npcKilled + "/" + toNpcKill);
+            } else {
+                // Legacy
+                message += color + ": " + npcKilled + "/" + toNpcKill;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.KILL_NPC, message, npcKilled, toNpcKill));
+            npcKillIndex++;
+        }
+        int mobKillIndex = 0;
+        for (final EntityType e : stage.getMobsToKill()) {
+            int mobKilled = 0;
+            if (data.mobNumKilled.size() > mobKillIndex) {
+                mobKilled = data.mobNumKilled.get(mobKillIndex);
+            }
+            final int toMobKill = stage.getMobNumToKill().get(mobKillIndex);
+            final ChatColor color = mobKilled < toMobKill ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + "";
+            if (stage.getLocationsToKillWithin().isEmpty()) {
+                message += Lang.get(getPlayer(), "kill");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + mobKilled + "/" + toMobKill);
+                } else {
+                    // Legacy
+                    message += ChatColor.AQUA + " <mob>" + color + ": " + mobKilled + "/" + toMobKill;
+                }
+            } else {
+                message += Lang.get(getPlayer(), "killAtLocation").replace("<location>",
+                        stage.getKillNames().get(stage.getMobsToKill().indexOf(e)));
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + mobKilled + "/" + toMobKill);
+                } else {
+                    message += color + ": " + mobKilled + "/" + toMobKill;
+                }
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            message = message.replace("<mob>", MiscUtil.getProperMobName(e));
+            objectives.add(new BukkitObjective(ObjectiveType.KILL_MOB, message, mobKilled, toMobKill));
+            mobKillIndex++;
+        }
+        int tameIndex = 0;
+        for (final int toTame : stage.getMobNumToTame()) {
+            int tamed = 0;
+            if (data.mobsTamed.size() > tameIndex) {
+                tamed = data.mobsTamed.get(tameIndex);
+            }
+            final ChatColor color = tamed < toTame ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "tame");
+            if (!message.contains("<mob>")) {
+                message += " <mob>";
+            }
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + tamed + "/" + toTame);
+            } else {
+                // Legacy
+                message += color + ": " + tamed + "/" + toTame;
+            }
+            message = message.replace("<mob>", MiscUtil.getProperMobName(stage.getMobsToTame().get(tameIndex)));
+            objectives.add(new BukkitObjective(ObjectiveType.TAME_MOB, message, tamed, toTame));
+            tameIndex++;
+        }
+        if (stage.getFishToCatch() != null) {
+            final int caught = data.getFishCaught();
+            final int toCatch = stage.getFishToCatch();
+            final ChatColor color = caught < toCatch ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "catchFish");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + caught + "/" + toCatch);
+            } else {
+                // Legacy
+                message += color + ": " + caught + "/" + toCatch;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.CATCH_FISH, message, caught, toCatch));
+        }
+        if (stage.getCowsToMilk() != null) {
+            final int milked = data.getCowsMilked();
+            final int toMilk = stage.getCowsToMilk();
+            final ChatColor color = milked < toMilk ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "milkCow");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + milked + "/" + toMilk);
+            } else {
+                // Legacy
+                message += color + ": " + milked + "/" + toMilk;
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.MILK_COW, message, milked, toMilk));
+        }
+        int shearIndex = 0;
+        for (final int toShear : stage.getSheepNumToShear()) {
+            int sheared = 0;
+            if (data.sheepSheared.size() > shearIndex) {
+                sheared = data.sheepSheared.get(shearIndex);
+            }
+            final ChatColor color = sheared < toShear ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "shearSheep");
+            message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(stage.getSheepToShear()
+                    .get(shearIndex)));
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + sheared + "/" + toShear);
+            } else {
+                // Legacy
+                message += color + ": " + sheared + "/" + toShear;
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.SHEAR_SHEEP, message, sheared, toShear));
+            shearIndex++;
+        }
+        if (stage.getPlayersToKill() != null) {
+            final int killed = data.getPlayersKilled();
+            final int toKill = stage.getPlayersToKill();
+            final ChatColor color = data.getPlayersKilled() < stage.getPlayersToKill() ? ChatColor.GREEN
+                    : ChatColor.GRAY;
+            String message = color + Lang.get(getPlayer(), "killPlayer");
+            if (message.contains("<count>")) {
+                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/"
+                        + stage.getPlayersToKill());
+            } else {
+                // Legacy
+                message += color + ": " + data.getPlayersKilled() + "/" + stage.getPlayersToKill();
+            }
+            if (depends.getPlaceholderApi() != null) {
+                message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.KILL_PLAYER, message, killed, toKill));
+        }
+        for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
+            if (i < data.locationsReached.size()) {
+                final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
+                String message = color + Lang.get(getPlayer(), "goTo");
+                message = message.replace("<location>", stage.getLocationNames().get(i));
+                objectives.add(new BukkitObjective(ObjectiveType.REACH_LOCATION, message, 0, 1));
+            }
+        }
+        int passIndex = 0;
+        for (final String s : stage.getPasswordDisplays()) {
+            boolean said = false;
+            if (data.passwordsSaid.size() > passIndex) {
+                said = data.passwordsSaid.get(passIndex);
+            }
+            final ChatColor color = !said ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + s;
+            objectives.add(new BukkitObjective(ObjectiveType.PASSWORD, message, 0, 1));
+            passIndex++;
+        }
+        int customIndex = 0;
+        for (final ICustomObjective co : stage.getCustomObjectives()) {
+            int cleared = 0;
+            if (data.customObjectiveCounts.size() > customIndex) {
+                cleared = data.customObjectiveCounts.get(customIndex);
+            }
+            final int toClear = stage.getCustomObjectiveCounts().get(customIndex);
+            final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = color + co.getDisplay();
+            for (final Entry<String,Object> prompt : co.getData()) {
+                final String replacement = "%" + prompt.getKey() + "%";
+                try {
+                    for (final Entry<String, Object> e : stage.getCustomObjectiveData()) {
+                        if (e.getKey().equals(prompt.getKey())) {
+                            if (message.contains(replacement)) {
+                                message = message.replace(replacement, ((String) e.getValue()));
+                            }
+                        }
+                    }
+                } catch (final NullPointerException ne) {
+                    plugin.getLogger().severe("Unable to gather display for " + co.getName() + " on "
+                            + quest.getName());
+                    ne.printStackTrace();
+                }
+            }
+            if (co.canShowCount()) {
+                message = message.replace("%count%", cleared + "/" + toClear);
+            }
+            message = ConfigUtil.parseString(message);
+            objectives.add(new BukkitObjective(ObjectiveType.CUSTOM, message, cleared, toClear));
             customIndex++;
         }
         return objectives;

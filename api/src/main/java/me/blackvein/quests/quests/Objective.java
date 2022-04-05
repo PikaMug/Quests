@@ -18,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 public interface Objective {
     ObjectiveType getType();
 
+    String getMessage();
+
     int getProgress();
 
     int getGoal();

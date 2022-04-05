@@ -12,81 +12,86 @@
 
 package me.blackvein.quests.item;
 
-import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
+import me.blackvein.quests.quests.Objective;
+import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import xyz.upperlevel.spigot.book.BookUtil;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuestJournal {
-    
+
+    final Quests plugin;
     final IQuester owner;
-    ItemStack journal = new ItemStack(Material.WRITTEN_BOOK);
+    final ItemStack journal;
     
-    public QuestJournal(final IQuester owner) {
+    public QuestJournal(Quests plugin, final IQuester owner) {
+        this.plugin = plugin;
         this.owner = owner;
-        final BookMeta book = (BookMeta) journal.getItemMeta();
-        if (book != null) {
+        final Player player = owner.getPlayer();
+        final String title = ChatColor.LIGHT_PURPLE + Lang.get(player, "journalTitle");
+        journal = BookUtil.writtenBook()
+                .author(player.getName())
+                .title(title)
+                .pages(getPages())
+                .build();
+        if (journal.getItemMeta() != null) {
+            ItemMeta meta = journal.getItemMeta();
+            meta.setDisplayName(title);
+            journal.setItemMeta(meta);
+        }
+    }
+
+    public List<BaseComponent[]> getPages() {
+        if (owner.getCurrentQuestsTemp().isEmpty()) {
             final Player player = owner.getPlayer();
             final String title = Lang.get(player, "journalTitle");
-            book.setDisplayName(ChatColor.LIGHT_PURPLE + title);
-            book.setTitle(ChatColor.LIGHT_PURPLE + title);
-            book.setAuthor(player.getName());
-            if (owner.getCurrentQuestsTemp().isEmpty()) {
-                book.addPage(ChatColor.DARK_RED + Lang.get(player, "journalNoQuests").replace("<journal>", title));
-            } else {
-                int currentLength = 0;
-                int currentLines = 0;
-                StringBuilder page = new StringBuilder();
-                final List<IQuest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
-                        .sorted(Comparator.comparing(IQuest::getName))
-                        .collect(Collectors.toList());
-                for (final IQuest quest : sortedList) {
-                    if ((currentLength + quest.getName().length() > 240) || (currentLines
-                            + ((quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19)
-                            : ((quest.getName().length() / 19) + 1))) > 13) {
-                        book.addPage(page.toString());
-                        page.append(ChatColor.DARK_PURPLE).append(ChatColor.BOLD).append(quest.getName()).append("\n");
-                        currentLength = quest.getName().length();
-                        currentLines = (quest.getName().length() % 19) == 0 ? (quest.getName().length() / 19)
-                                : (quest.getName().length() + 1);
-                    } else {
-                        page.append(ChatColor.DARK_PURPLE).append(ChatColor.BOLD).append(quest.getName()).append("\n");
-                        currentLength += quest.getName().length();
-                        currentLines += (quest.getName().length() / 19);
-                    }
-                    if (owner.getCurrentObjectives(quest, false) != null) {
-                        for (final String obj : owner.getCurrentObjectives(quest, false)) {
-                            // Length/Line check
-                            if ((currentLength + obj.length() > 240) || (currentLines + ((obj.length() % 19)
-                                    == 0 ? (obj.length() / 19) : ((obj.length() / 19) + 1))) > 13) {
-                                book.addPage(page.toString());
-                                page = new StringBuilder(obj + "\n");
-                                currentLength = obj.length();
-                                currentLines = (obj.length() % 19) == 0 ? (obj.length() / 19) : (obj.length() + 1);
-                            } else {
-                                page.append(obj).append("\n");
-                                currentLength += obj.length();
-                                currentLines += (obj.length() / 19);
-                            }
+            return Collections.singletonList(new BookUtil.PageBuilder().add(new TextComponent(ChatColor.DARK_RED
+                    + Lang.get(player, "journalNoQuests").replace("<journal>", title))).build());
+        } else {
+            final List<BaseComponent[]> pages = new LinkedList<>();
+            final List<IQuest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
+                    .sorted(Comparator.comparing(IQuest::getName))
+                    .collect(Collectors.toList());
+            for (final IQuest quest : sortedList) {
+                final TextComponent title = new TextComponent(quest.getName());
+                title.setColor(net.md_5.bungee.api.ChatColor.DARK_PURPLE);
+                title.setBold(true);
+                final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
+                for (final Objective obj : owner.getCurrentObjectivesTemp(quest, false, false)) {
+                    if (obj.getMessage() != null && obj.getMessage().contains("<item>")) {
+                        final String[] split = obj.getMessage().split("<item>");
+                        builder.add(split[0]);
+                        if (plugin.getSettings().canTranslateNames() && obj.getItemGoal() != null) {
+                            final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                    .queryItemStack(obj.getItemGoal()));
+                            tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                            builder.add(tc);
+                        } else {
+                            builder.add(ItemUtil.getName(obj.getItemGoal()));
                         }
+                        builder.add(split[1]).newLine();
+                    } else {
+                        builder.add(obj.getMessage()).newLine();
                     }
-                    if (currentLines < 13)
-                        page.append("\n");
-                    book.addPage(page.toString());
-                    page = new StringBuilder();
-                    currentLines = 0;
-                    currentLength = 0;
                 }
+                pages.add(builder.build());
             }
-            journal.setItemMeta(book);
+            return pages;
         }
     }
     
