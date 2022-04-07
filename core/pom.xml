@@ -5,7 +5,7 @@
     <parent>
         <groupId>me.blackvein.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>4.2.4</version>
+        <version>4.3.0</version>
     </parent>
     <artifactId>quests-core</artifactId>
 
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
-            <version>5fb19ed10c</version>
+            <version>35b50bfd53</version>
         </dependency>
         <dependency>
             <groupId>xyz.upperlevel.spigot.book</groupId>

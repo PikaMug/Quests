@@ -20,9 +20,9 @@ import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.QuestAbandonPrompt;
 import me.blackvein.quests.dependencies.IDependencies;
-import me.blackvein.quests.events.quest.QuestQuitEvent;
-import me.blackvein.quests.module.ICustomObjective;
+import me.blackvein.quests.entity.CountableMob;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.events.quest.QuestQuitEvent;
 import me.blackvein.quests.events.quest.QuestTakeEvent;
 import me.blackvein.quests.events.quester.QuesterPostStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPostUpdateObjectiveEvent;
@@ -30,6 +30,7 @@ import me.blackvein.quests.events.quester.QuesterPreOpenGUIEvent;
 import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.item.QuestJournal;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.nms.TitleProvider;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitObjective;
@@ -1567,12 +1568,12 @@ public class Quester implements IQuester {
      * 
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
-     * @param formatItems Whether to format item names, if applicable
+     * @param formatNames Whether to format item/entity names, if applicable
      * @return List of detailed objectives
      */
     @SuppressWarnings("deprecation")
-    public LinkedList<Objective> getCurrentObjectivesTemp(final IQuest quest, final boolean ignoreOverrides,
-                                                   final boolean formatItems) {
+    public LinkedList<BukkitObjective> getCurrentObjectivesTemp(final IQuest quest, final boolean ignoreOverrides,
+                                                   final boolean formatNames) {
         if (quest == null) {
             plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
             return new LinkedList<>();
@@ -1587,7 +1588,7 @@ public class Quester implements IQuester {
         }
         final IDependencies depends = plugin.getDependencies();
         if (!ignoreOverrides && !getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
-            final LinkedList<Objective> objectives = new LinkedList<>();
+            final LinkedList<BukkitObjective> objectives = new LinkedList<>();
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
                 String message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
                 if (depends.getPlaceholderApi() != null) {
@@ -1600,7 +1601,7 @@ public class Quester implements IQuester {
         }
         final QuestData data = getQuestData(quest);
         final IStage stage = getCurrentStage(quest);
-        final LinkedList<Objective> objectives = new LinkedList<>();
+        final LinkedList<BukkitObjective> objectives = new LinkedList<>();
         for (final ItemStack goal : stage.getBlocksToBreak()) {
             for (final ItemStack progress : data.blocksBroken) {
                 if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
@@ -1616,7 +1617,7 @@ public class Quester implements IQuester {
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    if (formatItems) {
+                    if (formatNames) {
                         message = message.replace("<item>", ItemUtil.getName(progress));
                     }
                     objectives.add(new BukkitObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
@@ -1638,7 +1639,7 @@ public class Quester implements IQuester {
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    if (formatItems) {
+                    if (formatNames) {
                         message = message.replace("<item>", ItemUtil.getName(progress));
                     }
                     objectives.add(new BukkitObjective(ObjectiveType.DAMAGE_BLOCK, message, progress, goal));
@@ -1660,7 +1661,7 @@ public class Quester implements IQuester {
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    if (formatItems) {
+                    if (formatNames) {
                         message = message.replace("<item>", ItemUtil.getName(progress));
                     }
                     objectives.add(new BukkitObjective(ObjectiveType.PLACE_BLOCK, message, progress, goal));
@@ -1682,7 +1683,7 @@ public class Quester implements IQuester {
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    if (formatItems) {
+                    if (formatNames) {
                         message = message.replace("<item>", ItemUtil.getName(progress));
                     }
                     objectives.add(new BukkitObjective(ObjectiveType.USE_BLOCK, message, progress, goal));
@@ -1704,7 +1705,7 @@ public class Quester implements IQuester {
                     if (depends.getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                     }
-                    if (formatItems) {
+                    if (formatNames) {
                         message = message.replace("<item>", ItemUtil.getName(progress));
                     }
                     objectives.add(new BukkitObjective(ObjectiveType.CUT_BLOCK, message, progress, goal));
@@ -1728,7 +1729,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 objectives.add(new BukkitObjective(ObjectiveType.CRAFT_ITEM, message, progress, goal));
@@ -1752,7 +1753,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 objectives.add(new BukkitObjective(ObjectiveType.SMELT_ITEM, message, progress, goal));
@@ -1776,7 +1777,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 if (goal.getEnchantments().isEmpty()) {
@@ -1811,7 +1812,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 objectives.add(new BukkitObjective(ObjectiveType.BREW_ITEM, message, progress, goal));
@@ -1835,7 +1836,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 objectives.add(new BukkitObjective(ObjectiveType.CONSUME_ITEM, message, progress, goal));
@@ -1860,7 +1861,7 @@ public class Quester implements IQuester {
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                if (formatItems) {
+                if (formatNames) {
                     message = message.replace("<item>", ItemUtil.getName(goal));
                 }
                 objectives.add(new BukkitObjective(ObjectiveType.DELIVER_ITEM, message, progress, goal));
@@ -1937,16 +1938,20 @@ public class Quester implements IQuester {
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
             }
-            message = message.replace("<mob>", MiscUtil.getProperMobName(e));
-            objectives.add(new BukkitObjective(ObjectiveType.KILL_MOB, message, mobKilled, toMobKill));
+            if (formatNames) {
+                message = message.replace("<mob>", MiscUtil.getProperMobName(e));
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.KILL_MOB, message,
+                    new CountableMob(e, mobKilled), new CountableMob(e, toMobKill)));
             mobKillIndex++;
         }
         int tameIndex = 0;
-        for (final int toTame : stage.getMobNumToTame()) {
+        for (final EntityType e : stage.getMobsToTame()) {
             int tamed = 0;
             if (data.mobsTamed.size() > tameIndex) {
                 tamed = data.mobsTamed.get(tameIndex);
             }
+            final int toTame = stage.getMobNumToTame().get(tameIndex);
             final ChatColor color = tamed < toTame ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "tame");
             if (!message.contains("<mob>")) {
@@ -1958,8 +1963,11 @@ public class Quester implements IQuester {
                 // Legacy
                 message += color + ": " + tamed + "/" + toTame;
             }
-            message = message.replace("<mob>", MiscUtil.getProperMobName(stage.getMobsToTame().get(tameIndex)));
-            objectives.add(new BukkitObjective(ObjectiveType.TAME_MOB, message, tamed, toTame));
+            if (formatNames) {
+                message = message.replace("<mob>", MiscUtil.getProperMobName(stage.getMobsToTame().get(tameIndex)));
+            }
+            objectives.add(new BukkitObjective(ObjectiveType.TAME_MOB, message,
+                    new CountableMob(e, tamed), new CountableMob(e, toTame)));
             tameIndex++;
         }
         if (stage.getFishToCatch() != null) {
@@ -3629,9 +3637,9 @@ public class Quester implements IQuester {
         }
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
-        final ItemStack increment = objective.getItemProgress() != null ? objective.getItemProgress() 
+        final ItemStack increment = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective
                 : new ItemStack(Material.AIR, objective.getProgress());
-        final ItemStack goal = objective.getItemGoal() != null ? objective.getItemGoal() 
+        final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective
                 : new ItemStack(Material.AIR, objective.getGoal());
         if (!getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {

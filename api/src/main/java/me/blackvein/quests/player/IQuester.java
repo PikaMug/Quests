@@ -143,8 +143,6 @@ public interface IQuester extends Comparable<IQuester> {
 
     LinkedList<String> getCurrentObjectives(final IQuest quest, final boolean ignoreOverrides);
 
-    LinkedList<Objective> getCurrentObjectivesTemp(final IQuest quest, final boolean ignoreOverrides, final boolean formatItems);
-
     LinkedList<String> getObjectives(final IQuest quest, final boolean ignoreOverrides);
 
     boolean containsObjective(final IQuest quest, final String name);

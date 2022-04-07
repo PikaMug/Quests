@@ -10,21 +10,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.blackvein.quests.quests;
+package me.blackvein.quests.entity;
 
-import me.blackvein.quests.enums.ObjectiveType;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.entity.EntityType;
 
-public interface Objective {
-    ObjectiveType getType();
+public class CountableMob {
 
-    String getMessage();
+    private EntityType entityType;
+    private int count;
 
-    int getProgress();
+    public CountableMob(EntityType entityType, int count) {
+        this.entityType = entityType;
+        this.count = count;
+    }
 
-    int getGoal();
+    public EntityType getEntityType() {
+        return entityType;
+    }
 
-    @NotNull Object getProgressObject();
+    public void setEntityType(final EntityType entityType) {
+        this.entityType = entityType;
+    }
 
-    @NotNull Object getGoalObject();
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(final int count) {
+        this.count = count;
+    }
 }

@@ -12,12 +12,14 @@
 
 package me.blackvein.quests.item;
 
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.BukkitObjective;
 import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.quests.Objective;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
+import me.blackvein.quests.util.MiscUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
@@ -72,21 +74,38 @@ public class QuestJournal {
                 title.setColor(net.md_5.bungee.api.ChatColor.DARK_PURPLE);
                 title.setBold(true);
                 final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
-                for (final Objective obj : owner.getCurrentObjectivesTemp(quest, false, false)) {
-                    if (obj.getMessage() != null && obj.getMessage().contains("<item>")) {
-                        final String[] split = obj.getMessage().split("<item>");
-                        builder.add(split[0]);
-                        if (plugin.getSettings().canTranslateNames() && obj.getItemGoal() != null) {
-                            final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
-                                    .queryItemStack(obj.getItemGoal()));
-                            tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
-                            builder.add(tc);
-                        } else {
-                            builder.add(ItemUtil.getName(obj.getItemGoal()));
+                for (final BukkitObjective obj : ((Quester)owner).getCurrentObjectivesTemp(quest, false, false)) {
+                    if (obj.getMessage() != null) {
+                        String[] split = null;
+                        if (obj.getMessage().contains("<item>") && obj.getGoalAsItem() != null) {
+                            split = obj.getMessage().split("<item>");
+                            builder.add(split[0]);
+                            if (plugin.getSettings().canTranslateNames()) {
+                                final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                        .queryItemStack(obj.getGoalAsItem()));
+                                tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                                builder.add(tc);
+                            } else {
+                                builder.add(ItemUtil.getName(obj.getGoalAsItem()));
+                            }
+                            builder.add(split[1]).newLine();
                         }
-                        builder.add(split[1]).newLine();
-                    } else {
-                        builder.add(obj.getMessage()).newLine();
+                        if (obj.getMessage().contains("<mob>") && obj.getGoalAsMob() != null) {
+                            split = obj.getMessage().split("<mob>");
+                            builder.add(split[0]);
+                            if (plugin.getSettings().canTranslateNames()) {
+                                final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                        .queryEntityType(obj.getGoalAsMob().getEntityType(), null)); // TODO extra data
+                                tc.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
+                                builder.add(tc);
+                            } else {
+                                builder.add(MiscUtil.snakeCaseToUpperCamelCase(obj.getGoalAsMob().getEntityType().name()));
+                            }
+                            builder.add(split[1]).newLine();
+                        }
+                        if (split == null) {
+                            builder.add(obj.getMessage()).newLine();
+                        }
                     }
                 }
                 pages.add(builder.build());
