@@ -8,7 +8,7 @@ body:
         Thanks for submitting a bug report! Please answer the following questions:
   - type: 'textarea'
     attributes:
-      label: 'What is your Quests version / build number (do _not_ say "latest")?'
+      label: 'What is your Quests version / build number (do *not* say "latest")?'
       description: 'You can find this using the `/quests info` command.'
       placeholder: 'The version used is...'
     validations:
