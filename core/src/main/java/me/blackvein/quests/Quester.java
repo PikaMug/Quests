@@ -3637,9 +3637,9 @@ public class Quester implements IQuester {
         }
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
-        final ItemStack increment = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective
+        final ItemStack increment = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getProgressObject()
                 : new ItemStack(Material.AIR, objective.getProgress());
-        final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective
+        final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getGoalObject()
                 : new ItemStack(Material.AIR, objective.getGoal());
         if (!getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
