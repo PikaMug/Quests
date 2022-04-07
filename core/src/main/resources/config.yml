@@ -39,8 +39,8 @@ storage-data:
 storage-method:
   player-data: yaml
 strict-player-movement: 0
-trial-save: false
 top-limit: 150
+trial-save: false
 translate-names: true
 translate-subcommands: false
 update-check: true
