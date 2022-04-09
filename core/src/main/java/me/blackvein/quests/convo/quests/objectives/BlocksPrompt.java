@@ -426,7 +426,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         final Material m = Material.matchMaterial(s);
                         if (m != null) {
                             if (m.isBlock()) {
-                                names.add(s);
+                                names.add(m.name());
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
@@ -796,7 +796,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         final Material m = Material.matchMaterial(s);
                         if (m != null) {
                             if (m.isBlock()) {
-                                names.add(s);
+                                names.add(m.name());
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
@@ -1164,7 +1164,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         final Material m = Material.matchMaterial(s);
                         if (m != null) {
                             if (m.isBlock()) {
-                                names.add(s);
+                                names.add(m.name());
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
@@ -1530,7 +1530,7 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                         final Material m = Material.matchMaterial(s);
                         if (m != null) {
                             if (m.isBlock()) {
-                                names.add(s);
+                                names.add(m.name());
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
                                         + Lang.get("stageEditorNotSolid"));
