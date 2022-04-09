@@ -4,7 +4,7 @@ allow-command-questing: true
 allow-command-quests-with-npcs: false
 allow-pranks: true
 clickable-prompts: true
-condition-interval: 8
+condition-interval: 10
 confirm-abandon: true
 confirm-accept: true
 console-logging: 2

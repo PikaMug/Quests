@@ -31,6 +31,7 @@ import me.blackvein.quests.events.quester.QuesterPreStartQuestEvent;
 import me.blackvein.quests.events.quester.QuesterPreUpdateObjectiveEvent;
 import me.blackvein.quests.item.QuestJournal;
 import me.blackvein.quests.module.ICustomObjective;
+import me.blackvein.quests.nms.ActionBarProvider;
 import me.blackvein.quests.nms.TitleProvider;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.quests.BukkitObjective;
@@ -5014,8 +5015,8 @@ public class Quester implements IQuester {
             } else if (giveReason) {
                 if (System.currentTimeMillis() - lastNotifiedCondition > (plugin.getSettings().getConditionInterval()
                         * 1000L)) {
-                    getPlayer().sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "conditionFailRetry")
-                            .replace("<quest>", quest.getName()));
+                    ActionBarProvider.sendActionBar(getPlayer(), ChatColor.YELLOW + Lang.get(getPlayer(),
+                            "conditionFailRetry").replace("<quest>", quest.getName()));
                     lastNotifiedCondition = System.currentTimeMillis();
                 }
             }
