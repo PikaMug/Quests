@@ -12,24 +12,12 @@
 
 package me.blackvein.quests.quests;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
 import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
-import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.FakeConversable;
@@ -54,6 +42,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedListener {
 
     private final Quests plugin;
@@ -73,87 +74,82 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
     }
 
-    @Override
-    public Map<UUID, Block> getSelectedBlockStarts() {
-        return this.selectedBlockStarts;
+    public static class LineBreakPrefix implements ConversationPrefix {
+        @Override
+        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
+            return "\n";
+        }
     }
 
-    @Override
+    public Map<UUID, Block> getSelectedBlockStarts() {
+        return selectedBlockStarts;
+    }
+
     public void setSelectedBlockStarts(final Map<UUID, Block> selectedBlockStarts) {
         this.selectedBlockStarts = selectedBlockStarts;
     }
 
-    @Override
     public Map<UUID, Block> getSelectedKillLocations() {
-        return this.selectedKillLocations;
+        return selectedKillLocations;
     }
 
-    @Override
     public void setSelectedKillLocations(final Map<UUID, Block> selectedKillLocations) {
         this.selectedKillLocations = selectedKillLocations;
     }
 
-    @Override
     public Map<UUID, Block> getSelectedReachLocations() {
-        return this.selectedReachLocations;
+        return selectedReachLocations;
     }
 
-    @Override
     public void setSelectedReachLocations(final Map<UUID, Block> selectedReachLocations) {
         this.selectedReachLocations = selectedReachLocations;
     }
 
-    @Override
     public Set<UUID> getSelectingNpcs() {
-        return this.selectingNpcs;
+        return selectingNpcs;
     }
 
-    @Override
     public void setSelectingNpcs(final Set<UUID> selectingNpcs) {
         this.selectingNpcs = selectingNpcs;
     }
 
-    @Override
     public List<String> getNamesOfQuestsBeingEdited() {
-        return this.editingQuestNames;
+        return editingQuestNames;
     }
 
-    @Override
     public void setNamesOfQuestsBeingEdited(final List<String> questNames) {
         this.editingQuestNames = questNames;
     }
 
-    @Override
     public ConversationFactory getConversationFactory() {
-        return this.conversationFactory;
+        return conversationFactory;
     }
 
     @Override
     public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
         if (abandonedEvent.getContext().getSessionData(CK.Q_NAME) != null) {
-            this.editingQuestNames.remove((String) abandonedEvent.getContext().getSessionData(CK.Q_NAME));
+            editingQuestNames.remove((String) abandonedEvent.getContext().getSessionData(CK.Q_NAME));
         }
         if (abandonedEvent.getContext().getForWhom() instanceof Player) {
             final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
-            this.selectedBlockStarts.remove(uuid);
-            this.selectedKillLocations.remove(uuid);
-            this.selectedReachLocations.remove(uuid);
+            selectedBlockStarts.remove(uuid);
+            selectedKillLocations.remove(uuid);
+            selectedReachLocations.remove(uuid);
         }
     }
 
-    @Override
     public Prompt returnToMenu(final ConversationContext context) {
         return new QuestMainPrompt(context);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
     public void loadQuest(final ConversationContext context, final IQuest q) {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
         context.setSessionData(CK.Q_ID, q.getId());
         context.setSessionData(CK.Q_NAME, q.getName());
         context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
         context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
-        if (this.plugin.getDependencies().getCitizens() != null) {
+        if(plugin.getDependencies().getCitizens() != null) {
             if (q.getNpcStart() != null) {
                 context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
             }
@@ -519,10 +515,9 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         }
     }
 
-    @Override
     public void deleteQuest(final ConversationContext context) {
         final FileConfiguration data = new YamlConfiguration();
-        final File questsFile = new File(this.plugin.getDataFolder(), "quests.yml");
+        final File questsFile = new File(plugin.getDataFolder(), "quests.yml");
         try {
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -553,16 +548,15 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("unknownError"));
             }
         };
-        this.plugin.reload(callback);
+        plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
-        if (this.plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ?
-                    "Player " + ((Player) context.getForWhom()).getUniqueId() : "CONSOLE";
-            this.plugin.getLogger().info(identifier + " deleted quest " + quest);
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(identifier + " deleted quest " + quest);
         }
     }
 
-    @Override
     public void saveQuest(final ConversationContext context, final ConfigurationSection section) {
         String edit = null;
         if (context.getSessionData(CK.ED_QUEST_EDIT) != null) {
@@ -599,18 +593,19 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(CK.Q_REGION) : null);
         section.set("gui-display", context.getSessionData(CK.Q_GUIDISPLAY) != null
                 ? context.getSessionData(CK.Q_GUIDISPLAY) : null);
-        this.saveRequirements(context, section);
-        this.saveStages(context, section);
-        this.saveRewards(context, section);
-        this.savePlanner(context, section);
-        this.saveOptions(context, section);
-        if (this.plugin.getSettings().getConsoleLogging() > 0) {
+        saveRequirements(context, section);
+        saveStages(context, section);
+        saveRewards(context, section);
+        savePlanner(context, section);
+        saveOptions(context, section);
+        if (plugin.getSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ?
-                    "Player " + ((Player) context.getForWhom()).getUniqueId() : "CONSOLE";
-            this.plugin.getLogger().info(identifier + " saved quest " + context.getSessionData(CK.Q_NAME));
+                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+            plugin.getLogger().info(identifier + " saved quest " + context.getSessionData(CK.Q_NAME));
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveRequirements(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection requirements = section.createSection("requirements");
         requirements.set("money", context.getSessionData(CK.REQ_MONEY) != null
@@ -654,6 +649,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveStages(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection stages = section.createSection("stages");
         final ConfigurationSection ordered = stages.createSection("ordered");
@@ -762,7 +758,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     sec2.set("name", customObj.get(index));
                     sec2.set("count", customObjCounts.get(index));
                     ICustomObjective found = null;
-                    for (final ICustomObjective co : this.plugin.getCustomObjectives()) {
+                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getName().equals(customObj.get(index))) {
                             found = co;
                             break;
@@ -824,6 +820,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveRewards(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection rewards = section.createSection("rewards");
         rewards.set("items", context.getSessionData(CK.REW_ITEMS) != null
@@ -912,14 +909,6 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
-        }
-    }
-
-    public static class LineBreakPrefix implements ConversationPrefix {
-
-        @Override
-        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
-            return "\n";
         }
     }
 }
