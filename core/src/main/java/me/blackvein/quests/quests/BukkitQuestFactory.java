@@ -64,7 +64,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     private Map<UUID, Block> selectedReachLocations = new HashMap<>();
     private Set<UUID> selectingNpcs = new HashSet<>();
     private List<String> editingQuestNames = new LinkedList<>();
-    
+
     public BukkitQuestFactory(final Quests plugin) {
         this.plugin = plugin;
         // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
@@ -73,7 +73,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                         new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
     }
-    
+
     public static class LineBreakPrefix implements ConversationPrefix {
         @Override
         public @NotNull String getPrefix(final @NotNull ConversationContext context) {
@@ -104,7 +104,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     public void setSelectedReachLocations(final Map<UUID, Block> selectedReachLocations) {
         this.selectedReachLocations = selectedReachLocations;
     }
-    
+
     public Set<UUID> getSelectingNpcs() {
         return selectingNpcs;
     }
@@ -112,15 +112,15 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     public void setSelectingNpcs(final Set<UUID> selectingNpcs) {
         this.selectingNpcs = selectingNpcs;
     }
-    
+
     public List<String> getNamesOfQuestsBeingEdited() {
         return editingQuestNames;
     }
-    
+
     public void setNamesOfQuestsBeingEdited(final List<String> questNames) {
         this.editingQuestNames = questNames;
     }
-    
+
     public ConversationFactory getConversationFactory() {
         return conversationFactory;
     }
@@ -137,11 +137,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             selectedReachLocations.remove(uuid);
         }
     }
-    
+
     public Prompt returnToMenu(final ConversationContext context) {
         return new QuestMainPrompt(context);
     }
-    
+
     @SuppressWarnings("deprecation")
     public void loadQuest(final ConversationContext context, final IQuest q) {
         context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
@@ -149,8 +149,10 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         context.setSessionData(CK.Q_NAME, q.getName());
         context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
         context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
-        if (q.getNpcStart() != null) {
-            context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
+        if(plugin.getDependencies().getCitizens() != null) {
+            if (q.getNpcStart() != null) {
+                context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
+            }
         }
         context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());
         if (q.getInitialAction() != null) {
@@ -512,7 +514,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             }
         }
     }
-    
+
     public void deleteQuest(final ConversationContext context) {
         final FileConfiguration data = new YamlConfiguration();
         final File questsFile = new File(plugin.getDataFolder(), "quests.yml");
@@ -549,7 +551,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Lang.get("questDeleted"));
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String identifier = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ?
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted quest " + quest);
         }
@@ -574,22 +576,22 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 }
             }
         }
-        section.set("name", context.getSessionData(CK.Q_NAME) != null 
+        section.set("name", context.getSessionData(CK.Q_NAME) != null
                 ? context.getSessionData(CK.Q_NAME) : null);
-        section.set("ask-message", context.getSessionData(CK.Q_ASK_MESSAGE) != null 
+        section.set("ask-message", context.getSessionData(CK.Q_ASK_MESSAGE) != null
                 ? context.getSessionData(CK.Q_ASK_MESSAGE) : null);
-        section.set("finish-message", context.getSessionData(CK.Q_FINISH_MESSAGE) != null 
+        section.set("finish-message", context.getSessionData(CK.Q_FINISH_MESSAGE) != null
                 ? context.getSessionData(CK.Q_FINISH_MESSAGE) : null);
-        section.set("npc-giver-id", context.getSessionData(CK.Q_START_NPC) != null 
+        section.set("npc-giver-id", context.getSessionData(CK.Q_START_NPC) != null
                 ? context.getSessionData(CK.Q_START_NPC) : null);
-        section.set("block-start", context.getSessionData(CK.Q_START_BLOCK) != null 
+        section.set("block-start", context.getSessionData(CK.Q_START_BLOCK) != null
                 ? ConfigUtil.getLocationInfo((Location) Objects.requireNonNull(context
                 .getSessionData(CK.Q_START_BLOCK))) : null);
-        section.set("event", context.getSessionData(CK.Q_INITIAL_EVENT) != null 
+        section.set("event", context.getSessionData(CK.Q_INITIAL_EVENT) != null
                 ? context.getSessionData(CK.Q_INITIAL_EVENT) : null);
-        section.set("region", context.getSessionData(CK.Q_REGION) != null 
+        section.set("region", context.getSessionData(CK.Q_REGION) != null
                 ? context.getSessionData(CK.Q_REGION) : null);
-        section.set("gui-display", context.getSessionData(CK.Q_GUIDISPLAY) != null 
+        section.set("gui-display", context.getSessionData(CK.Q_GUIDISPLAY) != null
                 ? context.getSessionData(CK.Q_GUIDISPLAY) : null);
         saveRequirements(context, section);
         saveStages(context, section);
@@ -597,12 +599,12 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         savePlanner(context, section);
         saveOptions(context, section);
         if (plugin.getSettings().getConsoleLogging() > 0) {
-            final String identifier = context.getForWhom() instanceof Player ? 
+            final String identifier = context.getForWhom() instanceof Player ?
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + context.getSessionData(CK.Q_NAME));
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private void saveRequirements(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection requirements = section.createSection("requirements");
@@ -646,7 +648,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             section.set("requirements", null);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private void saveStages(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection stages = section.createSection("stages");
@@ -655,94 +657,94 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         for (int i = 1; i <= new StageMenuPrompt(context).getStages(context); i++) {
             pref = "stage" + i;
             final ConfigurationSection stage = ordered.createSection("" + i);
-            stage.set("break-block-names", context.getSessionData(pref + CK.S_BREAK_NAMES) != null 
+            stage.set("break-block-names", context.getSessionData(pref + CK.S_BREAK_NAMES) != null
                     ? context.getSessionData(pref + CK.S_BREAK_NAMES) : null);
-            stage.set("break-block-amounts", context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null 
+            stage.set("break-block-amounts", context.getSessionData(pref + CK.S_BREAK_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_BREAK_AMOUNTS) : null);
-            stage.set("break-block-durability", context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null 
+            stage.set("break-block-durability", context.getSessionData(pref + CK.S_BREAK_DURABILITY) != null
                     ? context.getSessionData(pref + CK.S_BREAK_DURABILITY) : null);
-            stage.set("damage-block-names", context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null 
+            stage.set("damage-block-names", context.getSessionData(pref + CK.S_DAMAGE_NAMES) != null
                     ? context.getSessionData(pref + CK.S_DAMAGE_NAMES) : null);
-            stage.set("damage-block-amounts", context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null 
+            stage.set("damage-block-amounts", context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_DAMAGE_AMOUNTS) : null);
-            stage.set("damage-block-durability", context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null 
+            stage.set("damage-block-durability", context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) != null
                     ? context.getSessionData(pref + CK.S_DAMAGE_DURABILITY) : null);
-            stage.set("place-block-names", context.getSessionData(pref + CK.S_PLACE_NAMES) != null 
+            stage.set("place-block-names", context.getSessionData(pref + CK.S_PLACE_NAMES) != null
                     ? context.getSessionData(pref + CK.S_PLACE_NAMES) : null);
-            stage.set("place-block-amounts", context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null 
+            stage.set("place-block-amounts", context.getSessionData(pref + CK.S_PLACE_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_PLACE_AMOUNTS) : null);
-            stage.set("place-block-durability", context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null 
+            stage.set("place-block-durability", context.getSessionData(pref + CK.S_PLACE_DURABILITY) != null
                     ? context.getSessionData(pref + CK.S_PLACE_DURABILITY) : null);
-            stage.set("use-block-names", context.getSessionData(pref + CK.S_USE_NAMES) != null 
+            stage.set("use-block-names", context.getSessionData(pref + CK.S_USE_NAMES) != null
                     ? context.getSessionData(pref + CK.S_USE_NAMES) : null);
-            stage.set("use-block-amounts", context.getSessionData(pref + CK.S_USE_AMOUNTS) != null 
+            stage.set("use-block-amounts", context.getSessionData(pref + CK.S_USE_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_USE_AMOUNTS) : null);
-            stage.set("use-block-durability", context.getSessionData(pref + CK.S_USE_DURABILITY) != null 
+            stage.set("use-block-durability", context.getSessionData(pref + CK.S_USE_DURABILITY) != null
                     ? context.getSessionData(pref + CK.S_USE_DURABILITY) : null);
-            stage.set("cut-block-names", context.getSessionData(pref + CK.S_CUT_NAMES) != null 
+            stage.set("cut-block-names", context.getSessionData(pref + CK.S_CUT_NAMES) != null
                     ? context.getSessionData(pref + CK.S_CUT_NAMES) : null);
-            stage.set("cut-block-amounts", context.getSessionData(pref + CK.S_CUT_AMOUNTS) != null 
+            stage.set("cut-block-amounts", context.getSessionData(pref + CK.S_CUT_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_CUT_AMOUNTS) : null);
-            stage.set("cut-block-durability", context.getSessionData(pref + CK.S_CUT_DURABILITY) != null 
+            stage.set("cut-block-durability", context.getSessionData(pref + CK.S_CUT_DURABILITY) != null
                     ? context.getSessionData(pref + CK.S_CUT_DURABILITY) : null);
-            stage.set("items-to-craft", context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null 
+            stage.set("items-to-craft", context.getSessionData(pref + CK.S_CRAFT_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_CRAFT_ITEMS) : null);
-            stage.set("items-to-smelt", context.getSessionData(pref + CK.S_SMELT_ITEMS) != null 
+            stage.set("items-to-smelt", context.getSessionData(pref + CK.S_SMELT_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_SMELT_ITEMS) : null);
-            stage.set("items-to-enchant", context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null 
+            stage.set("items-to-enchant", context.getSessionData(pref + CK.S_ENCHANT_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_ENCHANT_ITEMS) : null);
-            stage.set("items-to-brew", context.getSessionData(pref + CK.S_BREW_ITEMS) != null 
+            stage.set("items-to-brew", context.getSessionData(pref + CK.S_BREW_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_BREW_ITEMS) : null);
-            stage.set("items-to-consume", context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null 
+            stage.set("items-to-consume", context.getSessionData(pref + CK.S_CONSUME_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_CONSUME_ITEMS) : null);
-            stage.set("cows-to-milk", context.getSessionData(pref + CK.S_COW_MILK) != null 
+            stage.set("cows-to-milk", context.getSessionData(pref + CK.S_COW_MILK) != null
                     ? context.getSessionData(pref + CK.S_COW_MILK) : null);
-            stage.set("fish-to-catch", context.getSessionData(pref + CK.S_FISH) != null 
+            stage.set("fish-to-catch", context.getSessionData(pref + CK.S_FISH) != null
                     ? context.getSessionData(pref + CK.S_FISH) : null);
-            stage.set("players-to-kill", context.getSessionData(pref + CK.S_PLAYER_KILL) != null 
+            stage.set("players-to-kill", context.getSessionData(pref + CK.S_PLAYER_KILL) != null
                     ? context.getSessionData(pref + CK.S_PLAYER_KILL) : null);
-            stage.set("items-to-deliver", context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null 
+            stage.set("items-to-deliver", context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_ITEMS) : null);
-            stage.set("npc-delivery-ids", context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null 
+            stage.set("npc-delivery-ids", context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_NPCS) : null);
-            stage.set("delivery-messages", context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) != null 
+            stage.set("delivery-messages", context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) : null);
-            stage.set("npc-ids-to-talk-to", context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null 
+            stage.set("npc-ids-to-talk-to", context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) : null);
-            stage.set("npc-ids-to-kill", context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null 
+            stage.set("npc-ids-to-kill", context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_KILL) : null);
-            stage.set("npc-kill-amounts", context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) != null 
+            stage.set("npc-kill-amounts", context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) : null);
-            stage.set("mobs-to-kill", context.getSessionData(pref + CK.S_MOB_TYPES) != null 
+            stage.set("mobs-to-kill", context.getSessionData(pref + CK.S_MOB_TYPES) != null
                     ? context.getSessionData(pref + CK.S_MOB_TYPES) : null);
-            stage.set("mob-amounts", context.getSessionData(pref + CK.S_MOB_AMOUNTS) != null 
+            stage.set("mob-amounts", context.getSessionData(pref + CK.S_MOB_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_MOB_AMOUNTS) : null);
-            stage.set("locations-to-kill", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) != null 
+            stage.set("locations-to-kill", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) != null
                     ? context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS) : null);
-            stage.set("kill-location-radii", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) != null 
+            stage.set("kill-location-radii", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) != null
                     ? context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS) : null);
-            stage.set("kill-location-names", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) != null 
+            stage.set("kill-location-names", context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) != null
                     ? context.getSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES) : null);
-            stage.set("locations-to-reach", context.getSessionData(pref + CK.S_REACH_LOCATIONS) != null 
+            stage.set("locations-to-reach", context.getSessionData(pref + CK.S_REACH_LOCATIONS) != null
                     ? context.getSessionData(pref + CK.S_REACH_LOCATIONS) : null);
-            stage.set("reach-location-radii", context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) != null 
+            stage.set("reach-location-radii", context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) != null
                     ? context.getSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS) : null);
-            stage.set("reach-location-names", context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) != null 
+            stage.set("reach-location-names", context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) != null
                     ? context.getSessionData(pref + CK.S_REACH_LOCATIONS_NAMES) : null);
-            stage.set("mobs-to-tame", context.getSessionData(pref + CK.S_TAME_TYPES) != null 
+            stage.set("mobs-to-tame", context.getSessionData(pref + CK.S_TAME_TYPES) != null
                     ? context.getSessionData(pref + CK.S_TAME_TYPES) : null);
-            stage.set("mob-tame-amounts", context.getSessionData(pref + CK.S_TAME_AMOUNTS) != null 
+            stage.set("mob-tame-amounts", context.getSessionData(pref + CK.S_TAME_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_TAME_AMOUNTS) : null);
-            stage.set("sheep-to-shear", context.getSessionData(pref + CK.S_SHEAR_COLORS) != null 
+            stage.set("sheep-to-shear", context.getSessionData(pref + CK.S_SHEAR_COLORS) != null
                     ? context.getSessionData(pref + CK.S_SHEAR_COLORS) : null);
-            stage.set("sheep-amounts", context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) != null 
+            stage.set("sheep-amounts", context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) : null);
-            stage.set("password-displays", context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null 
+            stage.set("password-displays", context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) != null
                     ? context.getSessionData(pref + CK.S_PASSWORD_DISPLAYS) : null);
             stage.set("password-phrases", context.getSessionData(pref + CK.S_PASSWORD_PHRASES) != null
                     ? context.getSessionData(pref + CK.S_PASSWORD_PHRASES) : null);
             final LinkedList<String> customObj = (LinkedList<String>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES);
-            final LinkedList<Integer> customObjCounts 
+            final LinkedList<Integer> customObjCounts
                     = (LinkedList<Integer>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT);
             final LinkedList<Entry<String, Object>> customObjData
                     = (LinkedList<Entry<String, Object>>) context.getSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA);
@@ -775,27 +777,27 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     }
                 }
             }
-            stage.set("script-to-run", context.getSessionData(pref + CK.S_DENIZEN) != null 
+            stage.set("script-to-run", context.getSessionData(pref + CK.S_DENIZEN) != null
                     ? context.getSessionData(pref + CK.S_DENIZEN) : null);
-            stage.set("start-event", context.getSessionData(pref + CK.S_START_EVENT) != null 
+            stage.set("start-event", context.getSessionData(pref + CK.S_START_EVENT) != null
                     ? context.getSessionData(pref + CK.S_START_EVENT) : null);
-            stage.set("finish-event", context.getSessionData(pref + CK.S_FINISH_EVENT) != null 
+            stage.set("finish-event", context.getSessionData(pref + CK.S_FINISH_EVENT) != null
                     ? context.getSessionData(pref + CK.S_FINISH_EVENT) : null);
-            stage.set("fail-event", context.getSessionData(pref + CK.S_FAIL_EVENT) != null 
+            stage.set("fail-event", context.getSessionData(pref + CK.S_FAIL_EVENT) != null
                     ? context.getSessionData(pref + CK.S_FAIL_EVENT) : null);
-            stage.set("death-event", context.getSessionData(pref + CK.S_DEATH_EVENT) != null 
+            stage.set("death-event", context.getSessionData(pref + CK.S_DEATH_EVENT) != null
                     ? context.getSessionData(pref + CK.S_DEATH_EVENT) : null);
-            stage.set("disconnect-event", context.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null 
+            stage.set("disconnect-event", context.getSessionData(pref + CK.S_DISCONNECT_EVENT) != null
                     ? context.getSessionData(pref + CK.S_DISCONNECT_EVENT) : null);
-            stage.set("chat-events", context.getSessionData(pref + CK.S_CHAT_EVENTS) != null 
+            stage.set("chat-events", context.getSessionData(pref + CK.S_CHAT_EVENTS) != null
                     ? context.getSessionData(pref + CK.S_CHAT_EVENTS) : null);
-            stage.set("chat-event-triggers", context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS) != null 
+            stage.set("chat-event-triggers", context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS) != null
                     ? context.getSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS) : null);
-            stage.set("command-events", context.getSessionData(pref + CK.S_COMMAND_EVENTS) != null 
+            stage.set("command-events", context.getSessionData(pref + CK.S_COMMAND_EVENTS) != null
                     ? context.getSessionData(pref + CK.S_COMMAND_EVENTS) : null);
-            stage.set("command-event-triggers", context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) != null 
+            stage.set("command-event-triggers", context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) != null
                     ? context.getSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS) : null);
-            stage.set("condition", context.getSessionData(pref + CK.S_CONDITION) != null 
+            stage.set("condition", context.getSessionData(pref + CK.S_CONDITION) != null
                     ? context.getSessionData(pref + CK.S_CONDITION) : null);
             final Long delay = (Long) context.getSessionData(pref + CK.S_DELAY);
             if (delay != null) {
@@ -813,11 +815,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             if (completeMessage != null) {
                 stage.set("complete-message", completeMessage.replace("\\n", "\n"));
             }
-            stage.set("objective-override", context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null 
+            stage.set("objective-override", context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) != null
                     ? context.getSessionData(pref + CK.S_OVERRIDE_DISPLAY) : null);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private void saveRewards(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection rewards = section.createSection("rewards");
@@ -867,37 +869,37 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             section.set("rewards", null);
         }
     }
-    
+
     private void savePlanner(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection pln = section.createSection("planner");
-        pln.set("start", context.getSessionData(CK.PLN_START_DATE) != null 
+        pln.set("start", context.getSessionData(CK.PLN_START_DATE) != null
                 ? context.getSessionData(CK.PLN_START_DATE) : null);
-        pln.set("end", context.getSessionData(CK.PLN_END_DATE) != null 
+        pln.set("end", context.getSessionData(CK.PLN_END_DATE) != null
                 ? context.getSessionData(CK.PLN_END_DATE) : null);
         final Long repeatCycle = (Long) context.getSessionData(CK.PLN_REPEAT_CYCLE);
         pln.set("repeat", repeatCycle != null ? (repeatCycle / 1000L) : null);
         final Long cooldown = (Long) context.getSessionData(CK.PLN_COOLDOWN);
         pln.set("cooldown", cooldown != null ? (cooldown / 1000L) : null);
-        pln.set("override", context.getSessionData(CK.PLN_OVERRIDE) != null 
+        pln.set("override", context.getSessionData(CK.PLN_OVERRIDE) != null
                 ? context.getSessionData(CK.PLN_OVERRIDE) : null);
         if (pln.getKeys(false).isEmpty()) {
             section.set("planner", null);
         }
     }
-    
+
     private void saveOptions(final ConversationContext context, final ConfigurationSection section) {
         final ConfigurationSection opts = section.createSection("options");
-        opts.set("allow-commands", context.getSessionData(CK.OPT_ALLOW_COMMANDS) != null 
+        opts.set("allow-commands", context.getSessionData(CK.OPT_ALLOW_COMMANDS) != null
                 ? context.getSessionData(CK.OPT_ALLOW_COMMANDS) : null);
-        opts.set("allow-quitting", context.getSessionData(CK.OPT_ALLOW_QUITTING) != null 
+        opts.set("allow-quitting", context.getSessionData(CK.OPT_ALLOW_QUITTING) != null
                 ? context.getSessionData(CK.OPT_ALLOW_QUITTING) : null);
-        opts.set("ignore-silk-touch", context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) != null 
+        opts.set("ignore-silk-touch", context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) != null
                 ? context.getSessionData(CK.OPT_IGNORE_SILK_TOUCH) : null);
         opts.set("external-party-plugin", context.getSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN) != null
                 ? context.getSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN) : null);
-        opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null 
+        opts.set("use-parties-plugin", context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) != null
                 ? context.getSessionData(CK.OPT_USE_PARTIES_PLUGIN) : null);
-        opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null 
+        opts.set("share-progress-level", context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) != null
                 ? context.getSessionData(CK.OPT_SHARE_PROGRESS_LEVEL) : null);
         opts.set("same-quest-only", context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) != null
                 ? context.getSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY) : null);
