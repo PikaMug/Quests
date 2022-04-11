@@ -13,6 +13,7 @@
 package me.blackvein.quests.listeners;
 
 import me.blackvein.quests.Quester;
+import me.blackvein.quests.nms.ActionBarProvider;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
@@ -78,8 +79,8 @@ public class BlockListener implements Listener {
                         if (currentStage.containsObjective(breakType)) {
                             if (quest.getOptions().canIgnoreSilkTouch()
                                     && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
-                                Lang.send(player, ChatColor.RED + Lang.get(player, "optionSilkTouchFail")
-                                        .replace("<quest>", quest.getName()));
+                                ActionBarProvider.sendActionBar(player, ChatColor.RED + Lang
+                                        .get(player, "optionSilkTouchFail").replace("<quest>", quest.getName()));
                             } else {
                                 quester.breakBlock(quest, blockItemStack);
 
