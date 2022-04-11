@@ -14,14 +14,15 @@ package me.blackvein.quests;
 
 import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.conditions.ICondition;
-import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.quests.IStage;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -145,7 +146,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addBlockToBreak(ItemStack blockToBreak) {
+    public boolean addBlockToBreak(@NotNull ItemStack blockToBreak) {
         return blocksToBreak.add(blockToBreak);
     }
 
@@ -158,7 +159,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addBlockToDamage(ItemStack blockToDamage) {
+    public boolean addBlockToDamage(@NotNull ItemStack blockToDamage) {
         return blocksToDamage.add(blockToDamage);
     }
 
@@ -171,7 +172,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addBlockToPlace(ItemStack blockToPlace) {
+    public boolean addBlockToPlace(@NotNull ItemStack blockToPlace) {
         return blocksToPlace.add(blockToPlace);
     }
 
@@ -184,7 +185,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addBlockToUse(ItemStack blockToUse) {
+    public boolean addBlockToUse(@NotNull ItemStack blockToUse) {
         return blocksToUse.add(blockToUse);
     }
 
@@ -197,7 +198,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addBlockToCut(ItemStack blockToCut) {
+    public boolean addBlockToCut(@NotNull ItemStack blockToCut) {
         return blocksToCut.add(blockToCut);
     }
 
@@ -210,7 +211,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemToCraft(ItemStack itemToCraft) {
+    public boolean addItemToCraft(@NotNull ItemStack itemToCraft) {
         return itemsToCraft.add(itemToCraft);
     }
 
@@ -223,7 +224,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemToSmelt(ItemStack itemToSmelt) {
+    public boolean addItemToSmelt(@NotNull ItemStack itemToSmelt) {
         return itemsToSmelt.add(itemToSmelt);
     }
 
@@ -236,7 +237,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemToEnchant(ItemStack itemToEnchant) {
+    public boolean addItemToEnchant(@NotNull ItemStack itemToEnchant) {
         return itemsToEnchant.add(itemToEnchant);
     }
 
@@ -249,7 +250,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemsToBrew(ItemStack itemToBrew) {
+    public boolean addItemsToBrew(@NotNull ItemStack itemToBrew) {
         return itemsToBrew.add(itemToBrew);
     }
 
@@ -262,7 +263,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemToConsume(ItemStack itemToConsume) {
+    public boolean addItemToConsume(@NotNull ItemStack itemToConsume) {
         return itemsToConsume.add(itemToConsume);
     }
 
@@ -275,7 +276,7 @@ public class Stage implements IStage {
     }
 
     @Override
-    public boolean addItemToDeliver(ItemStack itemToDeliver) {
+    public boolean addItemToDeliver(@NotNull ItemStack itemToDeliver) {
         return itemsToDeliver.add(itemToDeliver);
     }
 
