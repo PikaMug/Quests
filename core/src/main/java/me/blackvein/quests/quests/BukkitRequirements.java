@@ -22,6 +22,7 @@ import java.util.Map;
 public class BukkitRequirements implements Requirements {
     private int money = 0;
     private int questPoints = 0;
+    private int exp = 0;
     private List<ItemStack> items = new LinkedList<>();
     private List<Boolean> removeItems = new LinkedList<>();
     private List<IQuest> neededQuests = new LinkedList<>();
@@ -45,6 +46,12 @@ public class BukkitRequirements implements Requirements {
     }
     public void setQuestPoints(final int questPoints) {
         this.questPoints = questPoints;
+    }
+    public int getExp() {
+        return exp;
+    }
+    public void setExp(final int exp) {
+        this.exp = exp;
     }
     public List<ItemStack> getItems() {
         return items;
@@ -117,6 +124,7 @@ public class BukkitRequirements implements Requirements {
     public boolean hasRequirement() {
         if (money != 0) { return true; }
         if (questPoints != 0) { return true; }
+        if (exp != 0) { return true; }
         if (!items.isEmpty()) { return true; }
         if (!removeItems.isEmpty()) { return true; }
         if (!neededQuests.isEmpty()) { return true; }

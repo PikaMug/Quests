@@ -34,6 +34,7 @@ public class CK {
     public static final String REQ_QUEST_POINTS = "questPointsReq";
     public static final String REQ_ITEMS = "itemReqs";
     public static final String REQ_ITEMS_REMOVE = "removeItemReqs";
+    public static final String REQ_EXP = "expReq";
     public static final String REQ_PERMISSION = "permissionReqs";
     public static final String REQ_MCMMO_SKILLS = "mcMMOSkillReqs";
     public static final String REQ_MCMMO_SKILL_AMOUNTS = "mcMMOSkillAmountReqs";

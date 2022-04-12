@@ -567,60 +567,6 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class RewardsExperiencePrompt extends QuestsEditorStringPrompt {
-
-        public RewardsExperiencePrompt(final ConversationContext context) {
-            super(context);
-        }
-
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("rewExperiencePrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
-            
-            return ChatColor.YELLOW + getQueryText(context);
-        }
-        
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                return null;
-            }
-            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                try {
-                    final int i = Integer.parseInt(input);
-                    if (i > 0) {
-                        context.setSessionData(CK.REW_EXP, i);
-                    } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new RewardsExperiencePrompt(context);
-                    }
-                } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
-                            .replace("<input>", input));
-                    return new RewardsExperiencePrompt(context);
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.REW_EXP, null);
-                return new RewardsPrompt(context);
-            }
-            return new RewardsPrompt(context);
-        }
-    }
-
     public class RewardsQuestPointsPrompt extends QuestsEditorStringPrompt {
         
         public RewardsQuestPointsPrompt(final ConversationContext context) {
@@ -795,6 +741,60 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             default:
                 return new RewardsItemListPrompt(context);
             }
+        }
+    }
+
+    public class RewardsExperiencePrompt extends QuestsEditorStringPrompt {
+
+        public RewardsExperiencePrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("rewExperiencePrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i > 0) {
+                        context.setSessionData(CK.REW_EXP, i);
+                    } else {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
+                        return new RewardsExperiencePrompt(context);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new RewardsExperiencePrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(CK.REW_EXP, null);
+                return new RewardsPrompt(context);
+            }
+            return new RewardsPrompt(context);
         }
     }
     

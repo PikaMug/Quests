@@ -26,6 +26,10 @@ public interface Requirements {
 
     void setQuestPoints(final int questPoints);
 
+    int getExp();
+
+    void setExp(final int exp);
+
     List<ItemStack> getItems();
 
     void setItems(final List<ItemStack> items);

@@ -171,6 +171,9 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         if (requirements.getQuestPoints() != 0) {
             context.setSessionData(CK.REQ_QUEST_POINTS, requirements.getQuestPoints());
         }
+        if (requirements.getExp() != 0) {
+            context.setSessionData(CK.REW_EXP, requirements.getExp());
+        }
         if (!requirements.getItems().isEmpty()) {
             context.setSessionData(CK.REQ_ITEMS, requirements.getItems());
             context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
@@ -612,6 +615,8 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(CK.REQ_MONEY) : null);
         requirements.set("quest-points", context.getSessionData(CK.REQ_QUEST_POINTS) != null
                 ? context.getSessionData(CK.REQ_QUEST_POINTS) : null);
+        requirements.set("exp", context.getSessionData(CK.REQ_EXP) != null
+                ? context.getSessionData(CK.REQ_EXP) : null);
         requirements.set("items", context.getSessionData(CK.REQ_ITEMS) != null
                 ? context.getSessionData(CK.REQ_ITEMS) : null);
         requirements.set("remove-items", context.getSessionData(CK.REQ_ITEMS_REMOVE) != null

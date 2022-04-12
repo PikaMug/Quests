@@ -136,10 +136,10 @@ public class Stage implements IStage {
     private String completeMessage = null;
     private String startMessage = null;
     private LinkedList<String> objectiveOverrides = new LinkedList<>();
-    private LinkedList<ICustomObjective> customObjectives = new LinkedList<>();
-    private LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
-    private LinkedList<String> customObjectiveDisplays = new LinkedList<>();
-    private LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
+    private final LinkedList<ICustomObjective> customObjectives = new LinkedList<>();
+    private final LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
+    private final LinkedList<String> customObjectiveDisplays = new LinkedList<>();
+    private final LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
     
     public LinkedList<ItemStack> getBlocksToBreak() {
         return blocksToBreak;

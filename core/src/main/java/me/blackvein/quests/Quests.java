@@ -1957,6 +1957,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 throw new QuestFormatException("Reward money is not a number", questKey);
             }
         }
+        if (config.contains("quests." + questKey + ".rewards.quest-points")) {
+            if (config.getInt("quests." + questKey + ".rewards.quest-points", -999) != -999) {
+                rewards.setQuestPoints(config.getInt("quests." + questKey + ".rewards.quest-points"));
+            } else {
+                throw new QuestFormatException("Reward quest-points is not a number", questKey);
+            }
+        }
         if (config.contains("quests." + questKey + ".rewards.exp")) {
             if (config.getInt("quests." + questKey + ".rewards.exp", -999) != -999) {
                 rewards.setExp(config.getInt("quests." + questKey + ".rewards.exp"));
@@ -1994,13 +2001,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 rewards.setPermissionWorlds(config.getStringList("quests." + questKey + ".rewards.permission-worlds"));
             } else {
                 throw new QuestFormatException("Reward permissions is not a list of worlds", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.quest-points")) {
-            if (config.getInt("quests." + questKey + ".rewards.quest-points", -999) != -999) {
-                rewards.setQuestPoints(config.getInt("quests." + questKey + ".rewards.quest-points"));
-            } else {
-                throw new QuestFormatException("Reward quest-points is not a number", questKey);
             }
         }
         if (depends.isPluginAvailable("mcMMO")) {
@@ -2173,6 +2173,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 requires.setQuestPoints(config.getInt("quests." + questKey + ".requirements.quest-points"));
             } else {
                 throw new QuestFormatException("Requirement quest-points is not a number", questKey);
+            }
+        }
+        if (config.contains("quests." + questKey + ".requirements.exp")) {
+            if (config.getInt("quests." + questKey + ".requirements.exp", -999) != -999) {
+                requires.setExp(config.getInt("quests." + questKey + ".requirements.exp"));
+            } else {
+                throw new QuestFormatException("Requirement exp is not a number", questKey);
             }
         }
         if (config.contains("quests." + questKey + ".requirements.quest-blocks")) {
