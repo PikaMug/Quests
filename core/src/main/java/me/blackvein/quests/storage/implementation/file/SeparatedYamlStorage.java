@@ -55,13 +55,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
 
     @Override
     public void init() throws Exception {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
     }
     
     @SuppressWarnings("deprecation")
@@ -377,7 +374,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final IQuester quester) throws Exception {
+    public void saveQuester(final IQuester quester) {
         final FileConfiguration data = quester.getBaseData();
         try {
             data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
@@ -387,13 +384,13 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void deleteQuester(final UUID uniqueId) throws Exception {
+    public void deleteQuester(final UUID uniqueId) {
         final File f = new File(directoryPath + File.separator + uniqueId + ".yml");
         f.delete();
     }
 
     @Override
-    public String getQuesterLastKnownName(final UUID uniqueId) throws Exception {
+    public String getQuesterLastKnownName(final UUID uniqueId) {
         IQuester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
@@ -404,7 +401,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
     
     @Override
-    public Collection<UUID> getSavedUniqueIds() throws Exception {
+    public Collection<UUID> getSavedUniqueIds() {
         final Collection<UUID> ids = new ConcurrentSkipListSet<>();
         final File folder = new File(directoryPath);
         if (!folder.exists()) {
