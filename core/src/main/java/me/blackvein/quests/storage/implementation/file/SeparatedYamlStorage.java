@@ -314,14 +314,24 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("has-talked-to")) {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
-                    quester.getQuestData(quest).setCitizensInteracted(new LinkedList<>(talkAmount));
+                    quester.getQuestData(quest).setNpcsInteracted(new LinkedList<>(talkAmount));
                 }
-                if (questSec.contains("citizen-amounts-killed")) {
-                    final List<Integer> citizensAmounts = questSec.getIntegerList("citizen-amounts-killed");
+                if (questSec.contains("npc-killed-amounts")) {
+                    final List<Integer> npcAmounts = questSec.getIntegerList("npc-killed-amounts");
                     int index = 0;
-                    for (final int amt : citizensAmounts) {
-                        if (quester.getQuestData(quest).getCitizensNumKilled().size() > 0) {
-                            quester.getQuestData(quest).citizensNumKilled.set(index, amt);
+                    for (final int amt : npcAmounts) {
+                        if (quester.getQuestData(quest).getNpcsNumKilled().size() > 0) {
+                            quester.getQuestData(quest).npcsNumKilled.set(index, amt);
+                        }
+                        index++;
+                    }
+                } else if (questSec.contains("citizen-amounts-killed")) {
+                    // Legacy
+                    final List<Integer> npcAmounts = questSec.getIntegerList("citizen-amounts-killed");
+                    int index = 0;
+                    for (final int amt : npcAmounts) {
+                        if (quester.getQuestData(quest).getNpcsNumKilled().size() > 0) {
+                            quester.getQuestData(quest).npcsNumKilled.set(index, amt);
                         }
                         index++;
                     }

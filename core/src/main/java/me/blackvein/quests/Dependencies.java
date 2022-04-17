@@ -271,13 +271,27 @@ public class Dependencies implements IDependencies {
     public boolean runDenizenScript(final String scriptName, final IQuester quester) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
     }
-    
+
+    /**
+     * @deprecated Use {@link #getNPCLocation(UUID)}
+     */
     public Location getNPCLocation(final int id) {
         return citizens.getNPCRegistry().getById(id).getStoredLocation();
     }
 
+    public Location getNPCLocation(final UUID uuid) {
+        return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
+    }
+
+    /**
+     * @deprecated Use {@link #getNPCName(UUID)}
+     */
     public String getNPCName(final int id) {
         return citizens.getNPCRegistry().getById(id).getName();
+    }
+
+    public String getNPCName(final UUID uuid) {
+        return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
     }
     
     public int getMcmmoSkillLevel(final SkillType st, final String player) {

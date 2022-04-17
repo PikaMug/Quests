@@ -71,6 +71,8 @@ public interface IDependencies {
 
     String getNPCName(final int id);
 
+    String getNPCName(final UUID uuid);
+
     int getMcmmoSkillLevel(final SkillType st, final String player);
 
     Hero getHero(final UUID uuid);

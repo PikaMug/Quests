@@ -438,8 +438,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockBreakNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockBreakNamesPrompt(context);
                     }
                 }
@@ -508,8 +508,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockBreakAmountsPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockBreakAmountsPrompt(context);
                     }
                 }
@@ -565,8 +565,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockBreakDurabilityPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockBreakDurabilityPrompt(context);
                     }
                 }
@@ -808,8 +808,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockDamageNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockDamageNamesPrompt(context);
                     }
                 }
@@ -877,8 +877,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockDamageAmountsPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockDamageAmountsPrompt(context);
                     }
                 }
@@ -933,8 +933,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockDamageDurabilityPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockDamageDurabilityPrompt(context);
                     }
                 }
@@ -1176,8 +1176,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockPlaceNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockPlaceNamesPrompt(context);
                     }
                 }
@@ -1245,8 +1245,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockPlaceAmountsPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockPlaceAmountsPrompt(context);
                     }
                 }
@@ -1301,8 +1301,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockPlaceDurabilityPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockPlaceDurabilityPrompt(context);
                     }
                 }
@@ -1542,8 +1542,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockUseNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockUseNamesPrompt(context);
                     }
                 }
@@ -1610,8 +1610,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockUseAmountsPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockUseAmountsPrompt(context);
                     }
                 }
@@ -1666,8 +1666,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             return new BlockUseDurabilityPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorNotListofNumbers"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfNumbers")
+                                .replace("<data>", s));
                         return new BlockUseDurabilityPrompt(context);
                     }
                 }

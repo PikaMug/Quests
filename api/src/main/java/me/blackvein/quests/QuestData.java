@@ -513,7 +513,7 @@ public class QuestData {
         }
     };
 
-    public LinkedList<Boolean> citizensInteracted = new LinkedList<Boolean>() {
+    public LinkedList<Boolean> npcsInteracted = new LinkedList<Boolean>() {
 
         private static final long serialVersionUID = 2447610341508300847L;
 
@@ -580,7 +580,7 @@ public class QuestData {
         }
     };
 
-    public LinkedList<Integer> citizensNumKilled = new LinkedList<Integer>() {
+    public LinkedList<Integer> npcsNumKilled = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = 1849192351499071688L;
 
@@ -1180,23 +1180,23 @@ public class QuestData {
         }
     }
 
-    public LinkedList<Boolean> getCitizensInteracted() {
-        return citizensInteracted;
+    public LinkedList<Boolean> getNpcsInteracted() {
+        return npcsInteracted;
     }
 
-    public void setCitizensInteracted(final LinkedList<Boolean> citizensInteracted) {
-        this.citizensInteracted = citizensInteracted;
+    public void setNpcsInteracted(final LinkedList<Boolean> npcsInteracted) {
+        this.npcsInteracted = npcsInteracted;
         if (doJournalUpdate) {
             quester.updateJournal();
         }
     }
 
-    public LinkedList<Integer> getCitizensNumKilled() {
-        return citizensNumKilled;
+    public LinkedList<Integer> getNpcsNumKilled() {
+        return npcsNumKilled;
     }
 
-    public void setCitizensNumKilled(final LinkedList<Integer> citizensNumKilled) {
-        this.citizensNumKilled = citizensNumKilled;
+    public void setNpcsNumKilled(final LinkedList<Integer> npcsNumKilled) {
+        this.npcsNumKilled = npcsNumKilled;
         if (doJournalUpdate) {
             quester.updateJournal();
         }

@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.quests;
 
-import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
 import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
 import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ConfigUtil;
 import me.blackvein.quests.util.FakeConversable;
@@ -144,377 +144,390 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
 
     @SuppressWarnings("deprecation")
     public void loadQuest(final ConversationContext context, final IQuest q) {
-        context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
-        context.setSessionData(CK.Q_ID, q.getId());
-        context.setSessionData(CK.Q_NAME, q.getName());
-        context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
-        context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
-        if (plugin.getDependencies().getCitizens() != null) {
-            if (q.getNpcStart() != null) {
-                context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getId());
-            }
-        }
-        context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());
-        if (q.getInitialAction() != null) {
-            context.setSessionData(CK.Q_INITIAL_EVENT, q.getInitialAction().getName());
-        }
-        if (q.getRegionStart() != null) {
-            context.setSessionData(CK.Q_REGION, q.getRegionStart());
-        }
-        if (q.getGUIDisplay() != null) {
-            context.setSessionData(CK.Q_GUIDISPLAY, q.getGUIDisplay());
-        }
-        final Requirements requirements = q.getRequirements();
-        if (requirements.getMoney() != 0) {
-            context.setSessionData(CK.REQ_MONEY, requirements.getMoney());
-        }
-        if (requirements.getQuestPoints() != 0) {
-            context.setSessionData(CK.REQ_QUEST_POINTS, requirements.getQuestPoints());
-        }
-        if (requirements.getExp() != 0) {
-            context.setSessionData(CK.REW_EXP, requirements.getExp());
-        }
-        if (!requirements.getItems().isEmpty()) {
-            context.setSessionData(CK.REQ_ITEMS, requirements.getItems());
-            context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
-        }
-        if (!requirements.getNeededQuests().isEmpty()) {
-            final List<String> ids = requirements.getNeededQuests().stream().map(IQuest::getId).collect(Collectors.toList());
-            context.setSessionData(CK.REQ_QUEST, ids);
-        }
-        if (!requirements.getBlockQuests().isEmpty()) {
-            final List<String> ids = requirements.getBlockQuests().stream().map(IQuest::getId).collect(Collectors.toList());
-            context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
-        }
-        if (!requirements.getMcmmoSkills().isEmpty()) {
-            context.setSessionData(CK.REQ_MCMMO_SKILLS, requirements.getMcmmoAmounts());
-            context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, requirements.getMcmmoAmounts());
-        }
-        if (!requirements.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REQ_PERMISSION, requirements.getPermissions());
-        }
-        if (requirements.getHeroesPrimaryClass() != null) {
-            context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, requirements.getHeroesPrimaryClass());
-        }
-        if (requirements.getHeroesSecondaryClass() != null) {
-            context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, requirements.getHeroesSecondaryClass());
-        }
-        if (!requirements.getCustomRequirements().isEmpty()) {
-            final LinkedList<String> list = new LinkedList<>();
-            final LinkedList<Map<String, Object>> dataMapList = new LinkedList<>();
-            for (final Entry<String, Map<String, Object>> entry : requirements.getCustomRequirements().entrySet()) {
-                list.add(entry.getKey());
-                dataMapList.add(entry.getValue());
-            }
-            context.setSessionData(CK.REQ_CUSTOM, list);
-            context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
-        }
-        if (!requirements.getDetailsOverride().isEmpty()) {
-            context.setSessionData(CK.REQ_FAIL_MESSAGE, requirements.getDetailsOverride());
-        }
-        final Rewards rewards = q.getRewards();
-        if (rewards.getMoney() != 0) {
-            context.setSessionData(CK.REW_MONEY, rewards.getMoney());
-        }
-        if (rewards.getQuestPoints() != 0) {
-            context.setSessionData(CK.REW_QUEST_POINTS, rewards.getQuestPoints());
-        }
-        if (rewards.getExp() != 0) {
-            context.setSessionData(CK.REW_EXP, rewards.getExp());
-        }
-        if (!rewards.getItems().isEmpty()) {
-            context.setSessionData(CK.REW_ITEMS, rewards.getItems());
-        }
-        if (!rewards.getCommands().isEmpty()) {
-            context.setSessionData(CK.REW_COMMAND, rewards.getCommands());
-        }
-        if (!rewards.getCommandsOverrideDisplay().isEmpty()) {
-            context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rewards.getCommandsOverrideDisplay());
-        }
-        if (!rewards.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REW_PERMISSION, rewards.getPermissions());
-        }
-        if (!rewards.getPermissions().isEmpty()) {
-            context.setSessionData(CK.REW_PERMISSION_WORLDS, rewards.getPermissionWorlds());
-        }
-        if (!rewards.getMcmmoSkills().isEmpty()) {
-            context.setSessionData(CK.REW_MCMMO_SKILLS, rewards.getMcmmoSkills());
-            context.setSessionData(CK.REW_MCMMO_AMOUNTS, rewards.getMcmmoAmounts());
-        }
-        if (!rewards.getHeroesClasses().isEmpty()) {
-            context.setSessionData(CK.REW_HEROES_CLASSES, rewards.getHeroesClasses());
-            context.setSessionData(CK.REW_HEROES_AMOUNTS, rewards.getHeroesAmounts());
-        }
-        if (rewards.getPartiesExperience() != 0) {
-            context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rewards.getPartiesExperience());
-        }
-        if (!rewards.getPhatLoots().isEmpty()) {
-            context.setSessionData(CK.REW_PHAT_LOOTS, rewards.getPhatLoots());
-        }
-        if (!rewards.getCustomRewards().isEmpty()) {
-            context.setSessionData(CK.REW_CUSTOM, new LinkedList<>(rewards.getCustomRewards().keySet()));
-            context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rewards.getCustomRewards().values()));
-        }
-        if (!rewards.getDetailsOverride().isEmpty()) {
-            context.setSessionData(CK.REW_DETAILS_OVERRIDE, rewards.getDetailsOverride());
-        }
-        final Planner pln = q.getPlanner();
-        if (pln.getStart() != null) {
-            context.setSessionData(CK.PLN_START_DATE, pln.getStart());
-        }
-        if (pln.getEnd() != null) {
-            context.setSessionData(CK.PLN_END_DATE, pln.getEnd());
-        }
-        if (pln.getRepeat() != -1) {
-            context.setSessionData(CK.PLN_REPEAT_CYCLE, pln.getRepeat());
-        }
-        if (pln.getCooldown() != -1) {
-            context.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
-        }
-        context.setSessionData(CK.PLN_OVERRIDE, pln.getOverride());
-        final Options opt = q.getOptions();
-        context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
-        context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
-        context.setSessionData(CK.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
-        context.setSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN, opt.getExternalPartyPlugin());
-        context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
-        context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
-        context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
-        context.setSessionData(CK.OPT_SHARE_DISTANCE, opt.getShareDistance());
-        context.setSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS, opt.canHandleOfflinePlayers());
-        // Stages (Objectives)
-        int index = 1;
-        for (final IStage stage : q.getStages()) {
-            final String pref = "stage" + index;
-            index++;
-            context.setSessionData(pref, Boolean.TRUE);
-            if (!stage.getBlocksToBreak().isEmpty()) {
-                final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                final LinkedList<Short> durability = new LinkedList<>();
-                for (final ItemStack e : stage.getBlocksToBreak()) {
-                    names.add(e.getType().name());
-                    amounts.add(e.getAmount());
-                    durability.add(e.getDurability());
+        try {
+            context.setSessionData(CK.ED_QUEST_EDIT, q.getName());
+            context.setSessionData(CK.Q_ID, q.getId());
+            context.setSessionData(CK.Q_NAME, q.getName());
+            context.setSessionData(CK.Q_ASK_MESSAGE, q.getDescription());
+            context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (q.getNpcStart() != null) {
+                    context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getUniqueId().toString());
                 }
-                context.setSessionData(pref + CK.S_BREAK_NAMES, names);
-                context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
-                context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
             }
-            if (!stage.getBlocksToDamage().isEmpty()) {
-                final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                final LinkedList<Short> durability = new LinkedList<>();
-                for (final ItemStack e : stage.getBlocksToDamage()) {
-                    names.add(e.getType().name());
-                    amounts.add(e.getAmount());
-                    durability.add(e.getDurability());
+            context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());
+            if (q.getInitialAction() != null) {
+                context.setSessionData(CK.Q_INITIAL_EVENT, q.getInitialAction().getName());
+            }
+            if (q.getRegionStart() != null) {
+                context.setSessionData(CK.Q_REGION, q.getRegionStart());
+            }
+            if (q.getGUIDisplay() != null) {
+                context.setSessionData(CK.Q_GUIDISPLAY, q.getGUIDisplay());
+            }
+            final Requirements requirements = q.getRequirements();
+            if (requirements.getMoney() != 0) {
+                context.setSessionData(CK.REQ_MONEY, requirements.getMoney());
+            }
+            if (requirements.getQuestPoints() != 0) {
+                context.setSessionData(CK.REQ_QUEST_POINTS, requirements.getQuestPoints());
+            }
+            if (requirements.getExp() != 0) {
+                context.setSessionData(CK.REW_EXP, requirements.getExp());
+            }
+            if (!requirements.getItems().isEmpty()) {
+                context.setSessionData(CK.REQ_ITEMS, requirements.getItems());
+                context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
+            }
+            if (!requirements.getNeededQuests().isEmpty()) {
+                final List<String> ids = requirements.getNeededQuests().stream().map(IQuest::getId).collect(Collectors.toList());
+                context.setSessionData(CK.REQ_QUEST, ids);
+            }
+            if (!requirements.getBlockQuests().isEmpty()) {
+                final List<String> ids = requirements.getBlockQuests().stream().map(IQuest::getId).collect(Collectors.toList());
+                context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
+            }
+            if (!requirements.getMcmmoSkills().isEmpty()) {
+                context.setSessionData(CK.REQ_MCMMO_SKILLS, requirements.getMcmmoAmounts());
+                context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, requirements.getMcmmoAmounts());
+            }
+            if (!requirements.getPermissions().isEmpty()) {
+                context.setSessionData(CK.REQ_PERMISSION, requirements.getPermissions());
+            }
+            if (requirements.getHeroesPrimaryClass() != null) {
+                context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, requirements.getHeroesPrimaryClass());
+            }
+            if (requirements.getHeroesSecondaryClass() != null) {
+                context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, requirements.getHeroesSecondaryClass());
+            }
+            if (!requirements.getCustomRequirements().isEmpty()) {
+                final LinkedList<String> list = new LinkedList<>();
+                final LinkedList<Map<String, Object>> dataMapList = new LinkedList<>();
+                for (final Entry<String, Map<String, Object>> entry : requirements.getCustomRequirements().entrySet()) {
+                    list.add(entry.getKey());
+                    dataMapList.add(entry.getValue());
                 }
-                context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
-                context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
-                context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
+                context.setSessionData(CK.REQ_CUSTOM, list);
+                context.setSessionData(CK.REQ_CUSTOM_DATA, dataMapList);
             }
-            if (!stage.getBlocksToPlace().isEmpty()) {
-                final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                final LinkedList<Short> durability = new LinkedList<>();
-                for (final ItemStack e : stage.getBlocksToPlace()) {
-                    names.add(e.getType().name());
-                    amounts.add(e.getAmount());
-                    durability.add(e.getDurability());
+            if (!requirements.getDetailsOverride().isEmpty()) {
+                context.setSessionData(CK.REQ_FAIL_MESSAGE, requirements.getDetailsOverride());
+            }
+            final Rewards rewards = q.getRewards();
+            if (rewards.getMoney() != 0) {
+                context.setSessionData(CK.REW_MONEY, rewards.getMoney());
+            }
+            if (rewards.getQuestPoints() != 0) {
+                context.setSessionData(CK.REW_QUEST_POINTS, rewards.getQuestPoints());
+            }
+            if (rewards.getExp() != 0) {
+                context.setSessionData(CK.REW_EXP, rewards.getExp());
+            }
+            if (!rewards.getItems().isEmpty()) {
+                context.setSessionData(CK.REW_ITEMS, rewards.getItems());
+            }
+            if (!rewards.getCommands().isEmpty()) {
+                context.setSessionData(CK.REW_COMMAND, rewards.getCommands());
+            }
+            if (!rewards.getCommandsOverrideDisplay().isEmpty()) {
+                context.setSessionData(CK.REW_COMMAND_OVERRIDE_DISPLAY, rewards.getCommandsOverrideDisplay());
+            }
+            if (!rewards.getPermissions().isEmpty()) {
+                context.setSessionData(CK.REW_PERMISSION, rewards.getPermissions());
+            }
+            if (!rewards.getPermissions().isEmpty()) {
+                context.setSessionData(CK.REW_PERMISSION_WORLDS, rewards.getPermissionWorlds());
+            }
+            if (!rewards.getMcmmoSkills().isEmpty()) {
+                context.setSessionData(CK.REW_MCMMO_SKILLS, rewards.getMcmmoSkills());
+                context.setSessionData(CK.REW_MCMMO_AMOUNTS, rewards.getMcmmoAmounts());
+            }
+            if (!rewards.getHeroesClasses().isEmpty()) {
+                context.setSessionData(CK.REW_HEROES_CLASSES, rewards.getHeroesClasses());
+                context.setSessionData(CK.REW_HEROES_AMOUNTS, rewards.getHeroesAmounts());
+            }
+            if (rewards.getPartiesExperience() != 0) {
+                context.setSessionData(CK.REW_PARTIES_EXPERIENCE, rewards.getPartiesExperience());
+            }
+            if (!rewards.getPhatLoots().isEmpty()) {
+                context.setSessionData(CK.REW_PHAT_LOOTS, rewards.getPhatLoots());
+            }
+            if (!rewards.getCustomRewards().isEmpty()) {
+                context.setSessionData(CK.REW_CUSTOM, new LinkedList<>(rewards.getCustomRewards().keySet()));
+                context.setSessionData(CK.REW_CUSTOM_DATA, new LinkedList<Object>(rewards.getCustomRewards().values()));
+            }
+            if (!rewards.getDetailsOverride().isEmpty()) {
+                context.setSessionData(CK.REW_DETAILS_OVERRIDE, rewards.getDetailsOverride());
+            }
+            final Planner pln = q.getPlanner();
+            if (pln.getStart() != null) {
+                context.setSessionData(CK.PLN_START_DATE, pln.getStart());
+            }
+            if (pln.getEnd() != null) {
+                context.setSessionData(CK.PLN_END_DATE, pln.getEnd());
+            }
+            if (pln.getRepeat() != -1) {
+                context.setSessionData(CK.PLN_REPEAT_CYCLE, pln.getRepeat());
+            }
+            if (pln.getCooldown() != -1) {
+                context.setSessionData(CK.PLN_COOLDOWN, pln.getCooldown());
+            }
+            context.setSessionData(CK.PLN_OVERRIDE, pln.getOverride());
+            final Options opt = q.getOptions();
+            context.setSessionData(CK.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
+            context.setSessionData(CK.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
+            context.setSessionData(CK.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
+            context.setSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN, opt.getExternalPartyPlugin());
+            context.setSessionData(CK.OPT_USE_PARTIES_PLUGIN, opt.canUsePartiesPlugin());
+            context.setSessionData(CK.OPT_SHARE_PROGRESS_LEVEL, opt.getShareProgressLevel());
+            context.setSessionData(CK.OPT_SHARE_SAME_QUEST_ONLY, opt.canShareSameQuestOnly());
+            context.setSessionData(CK.OPT_SHARE_DISTANCE, opt.getShareDistance());
+            context.setSessionData(CK.OPT_HANDLE_OFFLINE_PLAYERS, opt.canHandleOfflinePlayers());
+            // Stages (Objectives)
+            int index = 1;
+            for (final IStage stage : q.getStages()) {
+                final String pref = "stage" + index;
+                index++;
+                context.setSessionData(pref, Boolean.TRUE);
+                if (!stage.getBlocksToBreak().isEmpty()) {
+                    final LinkedList<String> names = new LinkedList<>();
+                    final LinkedList<Integer> amounts = new LinkedList<>();
+                    final LinkedList<Short> durability = new LinkedList<>();
+                    for (final ItemStack e : stage.getBlocksToBreak()) {
+                        names.add(e.getType().name());
+                        amounts.add(e.getAmount());
+                        durability.add(e.getDurability());
+                    }
+                    context.setSessionData(pref + CK.S_BREAK_NAMES, names);
+                    context.setSessionData(pref + CK.S_BREAK_AMOUNTS, amounts);
+                    context.setSessionData(pref + CK.S_BREAK_DURABILITY, durability);
                 }
-                context.setSessionData(pref + CK.S_PLACE_NAMES, names);
-                context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
-                context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
-            }
-            if (!stage.getBlocksToUse().isEmpty()) {
-                final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                final LinkedList<Short> durability = new LinkedList<>();
-                for (final ItemStack e : stage.getBlocksToUse()) {
-                    names.add(e.getType().name());
-                    amounts.add(e.getAmount());
-                    durability.add(e.getDurability());
+                if (!stage.getBlocksToDamage().isEmpty()) {
+                    final LinkedList<String> names = new LinkedList<>();
+                    final LinkedList<Integer> amounts = new LinkedList<>();
+                    final LinkedList<Short> durability = new LinkedList<>();
+                    for (final ItemStack e : stage.getBlocksToDamage()) {
+                        names.add(e.getType().name());
+                        amounts.add(e.getAmount());
+                        durability.add(e.getDurability());
+                    }
+                    context.setSessionData(pref + CK.S_DAMAGE_NAMES, names);
+                    context.setSessionData(pref + CK.S_DAMAGE_AMOUNTS, amounts);
+                    context.setSessionData(pref + CK.S_DAMAGE_DURABILITY, durability);
                 }
-                context.setSessionData(pref + CK.S_USE_NAMES, names);
-                context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
-                context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
-            }
-            if (!stage.getBlocksToCut().isEmpty()) {
-                final LinkedList<String> names = new LinkedList<>();
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                final LinkedList<Short> durability = new LinkedList<>();
-                for (final ItemStack e : stage.getBlocksToCut()) {
-                    names.add(e.getType().name());
-                    amounts.add(e.getAmount());
-                    durability.add(e.getDurability());
+                if (!stage.getBlocksToPlace().isEmpty()) {
+                    final LinkedList<String> names = new LinkedList<>();
+                    final LinkedList<Integer> amounts = new LinkedList<>();
+                    final LinkedList<Short> durability = new LinkedList<>();
+                    for (final ItemStack e : stage.getBlocksToPlace()) {
+                        names.add(e.getType().name());
+                        amounts.add(e.getAmount());
+                        durability.add(e.getDurability());
+                    }
+                    context.setSessionData(pref + CK.S_PLACE_NAMES, names);
+                    context.setSessionData(pref + CK.S_PLACE_AMOUNTS, amounts);
+                    context.setSessionData(pref + CK.S_PLACE_DURABILITY, durability);
                 }
-                context.setSessionData(pref + CK.S_CUT_NAMES, names);
-                context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
-                context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
-            }
-            if (!stage.getItemsToCraft().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToCraft());
-                context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
-            }
-            if (!stage.getItemsToSmelt().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToSmelt());
-                context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
-            }
-            if (!stage.getItemsToEnchant().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToEnchant());
-                context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
-            }
-            if (!stage.getItemsToBrew().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToBrew());
-                context.setSessionData(pref + CK.S_BREW_ITEMS, items);
-            }
-            if (!stage.getItemsToConsume().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToConsume());
-                context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
-            }
-            if (stage.getCowsToMilk() != null) {
-                context.setSessionData(pref + CK.S_COW_MILK, stage.getCowsToMilk());
-            }
-            if (stage.getFishToCatch() != null) {
-                context.setSessionData(pref + CK.S_FISH, stage.getFishToCatch());
-            }
-            if (stage.getPlayersToKill() != null) {
-                context.setSessionData(pref + CK.S_PLAYER_KILL, stage.getPlayersToKill());
-            }
-            if (!stage.getItemsToDeliver().isEmpty()) {
-                final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToDeliver());
-                final LinkedList<Integer> npcs = new LinkedList<>(stage.getItemDeliveryTargets());
-                context.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
-                context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
-                context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.getDeliverMessages());
-            }
-            if (!stage.getCitizensToInteract().isEmpty()) {
-                final LinkedList<Integer> npcs = new LinkedList<>(stage.getCitizensToInteract());
-                context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
-            }
-            if (!stage.getCitizensToKill().isEmpty()) {
-                final LinkedList<Integer> npcs = new LinkedList<>(stage.getCitizensToKill());
-                context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
-                context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.getCitizenNumToKill());
-            }
-            if (!stage.getMobsToKill().isEmpty()) {
-                final LinkedList<String> mobs = new LinkedList<>();
-                for (final EntityType et : stage.getMobsToKill()) {
-                    mobs.add(MiscUtil.getPrettyMobName(et));
+                if (!stage.getBlocksToUse().isEmpty()) {
+                    final LinkedList<String> names = new LinkedList<>();
+                    final LinkedList<Integer> amounts = new LinkedList<>();
+                    final LinkedList<Short> durability = new LinkedList<>();
+                    for (final ItemStack e : stage.getBlocksToUse()) {
+                        names.add(e.getType().name());
+                        amounts.add(e.getAmount());
+                        durability.add(e.getDurability());
+                    }
+                    context.setSessionData(pref + CK.S_USE_NAMES, names);
+                    context.setSessionData(pref + CK.S_USE_AMOUNTS, amounts);
+                    context.setSessionData(pref + CK.S_USE_DURABILITY, durability);
                 }
-                context.setSessionData(pref + CK.S_MOB_TYPES, mobs);
-                context.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.getMobNumToKill());
-                if (!stage.getLocationsToKillWithin().isEmpty()) {
+                if (!stage.getBlocksToCut().isEmpty()) {
+                    final LinkedList<String> names = new LinkedList<>();
+                    final LinkedList<Integer> amounts = new LinkedList<>();
+                    final LinkedList<Short> durability = new LinkedList<>();
+                    for (final ItemStack e : stage.getBlocksToCut()) {
+                        names.add(e.getType().name());
+                        amounts.add(e.getAmount());
+                        durability.add(e.getDurability());
+                    }
+                    context.setSessionData(pref + CK.S_CUT_NAMES, names);
+                    context.setSessionData(pref + CK.S_CUT_AMOUNTS, amounts);
+                    context.setSessionData(pref + CK.S_CUT_DURABILITY, durability);
+                }
+                if (!stage.getItemsToCraft().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToCraft());
+                    context.setSessionData(pref + CK.S_CRAFT_ITEMS, items);
+                }
+                if (!stage.getItemsToSmelt().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToSmelt());
+                    context.setSessionData(pref + CK.S_SMELT_ITEMS, items);
+                }
+                if (!stage.getItemsToEnchant().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToEnchant());
+                    context.setSessionData(pref + CK.S_ENCHANT_ITEMS, items);
+                }
+                if (!stage.getItemsToBrew().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToBrew());
+                    context.setSessionData(pref + CK.S_BREW_ITEMS, items);
+                }
+                if (!stage.getItemsToConsume().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToConsume());
+                    context.setSessionData(pref + CK.S_CONSUME_ITEMS, items);
+                }
+                if (stage.getCowsToMilk() != null) {
+                    context.setSessionData(pref + CK.S_COW_MILK, stage.getCowsToMilk());
+                }
+                if (stage.getFishToCatch() != null) {
+                    context.setSessionData(pref + CK.S_FISH, stage.getFishToCatch());
+                }
+                if (stage.getPlayersToKill() != null) {
+                    context.setSessionData(pref + CK.S_PLAYER_KILL, stage.getPlayersToKill());
+                }
+                if (!stage.getItemsToDeliver().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToDeliver());
+                    final LinkedList<String> npcs = new LinkedList<>();
+                    for (UUID uuid : stage.getItemDeliveryTargets()) {
+                        npcs.add(uuid.toString());
+                    }
+                    context.setSessionData(pref + CK.S_DELIVERY_ITEMS, items);
+                    context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
+                    context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, stage.getDeliverMessages());
+                }
+                if (!stage.getNpcsToInteract().isEmpty()) {
+                    final LinkedList<String> npcs = new LinkedList<>();
+                    for (UUID uuid : stage.getNpcsToInteract()) {
+                        npcs.add(uuid.toString());
+                    }
+                    context.setSessionData(pref + CK.S_NPCS_TO_TALK_TO, npcs);
+                }
+                if (!stage.getNpcsToKill().isEmpty()) {
+                    final LinkedList<String> npcs = new LinkedList<>();
+                    for (UUID uuid : stage.getNpcsToKill()) {
+                        npcs.add(uuid.toString());
+                    }
+                    context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
+                    context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, stage.getNpcNumToKill());
+                }
+                if (!stage.getMobsToKill().isEmpty()) {
+                    final LinkedList<String> mobs = new LinkedList<>();
+                    for (final EntityType et : stage.getMobsToKill()) {
+                        mobs.add(MiscUtil.getPrettyMobName(et));
+                    }
+                    context.setSessionData(pref + CK.S_MOB_TYPES, mobs);
+                    context.setSessionData(pref + CK.S_MOB_AMOUNTS, stage.getMobNumToKill());
+                    if (!stage.getLocationsToKillWithin().isEmpty()) {
+                        final LinkedList<String> locations = new LinkedList<>();
+                        for (final Location l : stage.getLocationsToKillWithin()) {
+                            locations.add(ConfigUtil.getLocationInfo(l));
+                        }
+                        context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locations);
+                        context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.getRadiiToKillWithin());
+                        context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.getKillNames());
+                    }
+                }
+                if (!stage.getLocationsToReach().isEmpty()) {
                     final LinkedList<String> locations = new LinkedList<>();
-                    for (final Location l : stage.getLocationsToKillWithin()) {
+                    for (final Location l : stage.getLocationsToReach()) {
                         locations.add(ConfigUtil.getLocationInfo(l));
                     }
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS, locations);
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_RADIUS, stage.getRadiiToKillWithin());
-                    context.setSessionData(pref + CK.S_MOB_KILL_LOCATIONS_NAMES, stage.getKillNames());
+                    context.setSessionData(pref + CK.S_REACH_LOCATIONS, locations);
+                    context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.getRadiiToReachWithin());
+                    context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.getLocationNames());
                 }
-            }
-            if (!stage.getLocationsToReach().isEmpty()) {
-                final LinkedList<String> locations = new LinkedList<>();
-                for (final Location l : stage.getLocationsToReach()) {
-                    locations.add(ConfigUtil.getLocationInfo(l));
+                if (!stage.getMobsToTame().isEmpty()) {
+                    final LinkedList<String> mobs = new LinkedList<>();
+                    for (final EntityType e : stage.getMobsToTame()) {
+                        mobs.add(MiscUtil.getPrettyMobName(e));
+                    }
+                    final LinkedList<Integer> amounts = new LinkedList<>(stage.getMobNumToTame());
+                    context.setSessionData(pref + CK.S_TAME_TYPES, mobs);
+                    context.setSessionData(pref + CK.S_TAME_AMOUNTS, amounts);
                 }
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS, locations);
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS_RADIUS, stage.getRadiiToReachWithin());
-                context.setSessionData(pref + CK.S_REACH_LOCATIONS_NAMES, stage.getLocationNames());
-            }
-            if (!stage.getMobsToTame().isEmpty()) {
-                final LinkedList<String> mobs = new LinkedList<>();
-                for (final EntityType e : stage.getMobsToTame()) {
-                    mobs.add(MiscUtil.getPrettyMobName(e));
-                }
-                final LinkedList<Integer> amounts = new LinkedList<>(stage.getMobNumToTame());
-                context.setSessionData(pref + CK.S_TAME_TYPES, mobs);
-                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amounts);
-            }
-            if (!stage.getSheepToShear().isEmpty()) {
-                final LinkedList<String> colors = new LinkedList<>();
-                for (final DyeColor d : stage.getSheepToShear()) {
-                    colors.add(MiscUtil.getPrettyDyeColorName(d));
+                if (!stage.getSheepToShear().isEmpty()) {
+                    final LinkedList<String> colors = new LinkedList<>();
+                    for (final DyeColor d : stage.getSheepToShear()) {
+                        colors.add(MiscUtil.getPrettyDyeColorName(d));
 
+                    }
+                    final LinkedList<Integer> amounts = new LinkedList<>(stage.getSheepNumToShear());
+                    context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
+                    context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
                 }
-                final LinkedList<Integer> amounts = new LinkedList<>(stage.getSheepNumToShear());
-                context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
-                context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
-            }
-            if (!stage.getPasswordDisplays().isEmpty()) {
-                context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
-                context.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.getPasswordPhrases());
-            }
-            if (!stage.getCustomObjectives().isEmpty()) {
-                final LinkedList<String> list = new LinkedList<>();
-                final LinkedList<Integer> countList = new LinkedList<>();
-                for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
-                    list.add(stage.getCustomObjectives().get(i).getName());
-                    countList.add(stage.getCustomObjectiveCounts().get(i));
+                if (!stage.getPasswordDisplays().isEmpty()) {
+                    context.setSessionData(pref + CK.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
+                    context.setSessionData(pref + CK.S_PASSWORD_PHRASES, stage.getPasswordPhrases());
                 }
-                final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(stage.getCustomObjectiveData());
-                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
-                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
-                context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
-            }
-            if (stage.getStartAction() != null) {
-                context.setSessionData(pref + CK.S_START_EVENT, stage.getStartAction().getName());
-            }
-            if (stage.getFinishAction() != null) {
-                context.setSessionData(pref + CK.S_FINISH_EVENT, stage.getFinishAction().getName());
-            }
-            if (stage.getFailAction() != null) {
-                context.setSessionData(pref + CK.S_FAIL_EVENT, stage.getFailAction().getName());
-            }
-            if (stage.getDeathAction() != null) {
-                context.setSessionData(pref + CK.S_DEATH_EVENT, stage.getDeathAction().getName());
-            }
-            if (stage.getDisconnectAction() != null) {
-                context.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.getDisconnectAction().getName());
-            }
-            if (!stage.getChatActions().isEmpty()) {
-                final LinkedList<String> chatEvents = new LinkedList<>();
-                final LinkedList<String> chatEventTriggers = new LinkedList<>();
-                for (final String s : stage.getChatActions().keySet()) {
-                    chatEventTriggers.add(s);
-                    chatEvents.add(stage.getChatActions().get(s).getName());
+                if (!stage.getCustomObjectives().isEmpty()) {
+                    final LinkedList<String> list = new LinkedList<>();
+                    final LinkedList<Integer> countList = new LinkedList<>();
+                    for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
+                        list.add(stage.getCustomObjectives().get(i).getName());
+                        countList.add(stage.getCustomObjectiveCounts().get(i));
+                    }
+                    final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(stage.getCustomObjectiveData());
+                    context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES, list);
+                    context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_COUNT, countList);
+                    context.setSessionData(pref + CK.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
                 }
-                context.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
-                context.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
-            }
-            if (!stage.getCommandActions().isEmpty()) {
-                final LinkedList<String> commandEvents = new LinkedList<>();
-                final LinkedList<String> commandEventTriggers = new LinkedList<>();
-                for (final String s : stage.getCommandActions().keySet()) {
-                    commandEventTriggers.add(s);
-                    commandEvents.add(stage.getCommandActions().get(s).getName());
+                if (stage.getStartAction() != null) {
+                    context.setSessionData(pref + CK.S_START_EVENT, stage.getStartAction().getName());
                 }
-                context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
-                context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
-            }
-            if (stage.getCondition() != null) {
-                context.setSessionData(pref + CK.S_CONDITION, stage.getCondition().getName());
-            }
-            if (stage.getDelay() != -1) {
-                context.setSessionData(pref + CK.S_DELAY, stage.getDelay());
-                if (stage.getDelayMessage() != null) {
-                    context.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.getDelayMessage());
+                if (stage.getFinishAction() != null) {
+                    context.setSessionData(pref + CK.S_FINISH_EVENT, stage.getFinishAction().getName());
+                }
+                if (stage.getFailAction() != null) {
+                    context.setSessionData(pref + CK.S_FAIL_EVENT, stage.getFailAction().getName());
+                }
+                if (stage.getDeathAction() != null) {
+                    context.setSessionData(pref + CK.S_DEATH_EVENT, stage.getDeathAction().getName());
+                }
+                if (stage.getDisconnectAction() != null) {
+                    context.setSessionData(pref + CK.S_DISCONNECT_EVENT, stage.getDisconnectAction().getName());
+                }
+                if (!stage.getChatActions().isEmpty()) {
+                    final LinkedList<String> chatEvents = new LinkedList<>();
+                    final LinkedList<String> chatEventTriggers = new LinkedList<>();
+                    for (final String s : stage.getChatActions().keySet()) {
+                        chatEventTriggers.add(s);
+                        chatEvents.add(stage.getChatActions().get(s).getName());
+                    }
+                    context.setSessionData(pref + CK.S_CHAT_EVENTS, chatEvents);
+                    context.setSessionData(pref + CK.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
+                }
+                if (!stage.getCommandActions().isEmpty()) {
+                    final LinkedList<String> commandEvents = new LinkedList<>();
+                    final LinkedList<String> commandEventTriggers = new LinkedList<>();
+                    for (final String s : stage.getCommandActions().keySet()) {
+                        commandEventTriggers.add(s);
+                        commandEvents.add(stage.getCommandActions().get(s).getName());
+                    }
+                    context.setSessionData(pref + CK.S_COMMAND_EVENTS, commandEvents);
+                    context.setSessionData(pref + CK.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
+                }
+                if (stage.getCondition() != null) {
+                    context.setSessionData(pref + CK.S_CONDITION, stage.getCondition().getName());
+                }
+                if (stage.getDelay() != -1) {
+                    context.setSessionData(pref + CK.S_DELAY, stage.getDelay());
+                    if (stage.getDelayMessage() != null) {
+                        context.setSessionData(pref + CK.S_DELAY_MESSAGE, stage.getDelayMessage());
+                    }
+                }
+                if (stage.getScript() != null) {
+                    context.setSessionData(pref + CK.S_DENIZEN, stage.getScript());
+                }
+                if (stage.getCompleteMessage() != null) {
+                    context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.getCompleteMessage());
+                }
+                if (stage.getStartMessage() != null) {
+                    context.setSessionData(pref + CK.S_START_MESSAGE, stage.getStartMessage());
+                }
+                if (!stage.getObjectiveOverrides().isEmpty()) {
+                    context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.getObjectiveOverrides());
                 }
             }
-            if (stage.getScript() != null) {
-                context.setSessionData(pref + CK.S_DENIZEN, stage.getScript());
-            }
-            if (stage.getCompleteMessage() != null) {
-                context.setSessionData(pref + CK.S_COMPLETE_MESSAGE, stage.getCompleteMessage());
-            }
-            if (stage.getStartMessage() != null) {
-                context.setSessionData(pref + CK.S_START_MESSAGE, stage.getStartMessage());
-            }
-            if (!stage.getObjectiveOverrides().isEmpty()) {
-                context.setSessionData(pref + CK.S_OVERRIDE_DISPLAY, stage.getObjectiveOverrides());
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -585,7 +598,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(CK.Q_ASK_MESSAGE) : null);
         section.set("finish-message", context.getSessionData(CK.Q_FINISH_MESSAGE) != null
                 ? context.getSessionData(CK.Q_FINISH_MESSAGE) : null);
-        section.set("npc-giver-id", context.getSessionData(CK.Q_START_NPC) != null
+        section.set("npc-giver-uuid", context.getSessionData(CK.Q_START_NPC) != null
                 ? context.getSessionData(CK.Q_START_NPC) : null);
         section.set("block-start", context.getSessionData(CK.Q_START_BLOCK) != null
                 ? ConfigUtil.getLocationInfo((Location) Objects.requireNonNull(context
@@ -710,13 +723,13 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     ? context.getSessionData(pref + CK.S_PLAYER_KILL) : null);
             stage.set("items-to-deliver", context.getSessionData(pref + CK.S_DELIVERY_ITEMS) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_ITEMS) : null);
-            stage.set("npc-delivery-ids", context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null
+            stage.set("npc-delivery-uuids", context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_NPCS) : null);
             stage.set("delivery-messages", context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) != null
                     ? context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) : null);
-            stage.set("npc-ids-to-talk-to", context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null
+            stage.set("npc-uuids-to-talk-to", context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_TALK_TO) : null);
-            stage.set("npc-ids-to-kill", context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null
+            stage.set("npc-uuids-to-kill", context.getSessionData(pref + CK.S_NPCS_TO_KILL) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_KILL) : null);
             stage.set("npc-kill-amounts", context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) != null
                     ? context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) : null);

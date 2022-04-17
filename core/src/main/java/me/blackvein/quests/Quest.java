@@ -449,14 +449,14 @@ public class Quest implements IQuest {
         final IQuest quest = this;
         Bukkit.getScheduler().runTask(plugin, () -> {
             Location targetLocation = null;
-            if (stage.getCitizensToInteract() != null && stage.getCitizensToInteract().size() > 0) {
-                targetLocation = plugin.getDependencies().getNPCLocation(stage.getCitizensToInteract().getFirst());
-            } else if (stage.getCitizensToKill() != null && stage.getCitizensToKill().size() > 0) {
-                targetLocation = plugin.getDependencies().getNPCLocation(stage.getCitizensToKill().getFirst());
+            if (stage.getNpcsToInteract() != null && stage.getNpcsToInteract().size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.getNpcsToInteract().getFirst());
+            } else if (stage.getNpcsToKill() != null && stage.getNpcsToKill().size() > 0) {
+                targetLocation = plugin.getDependencies().getNPCLocation(stage.getNpcsToKill().getFirst());
             } else if (stage.getLocationsToReach() != null && stage.getLocationsToReach().size() > 0) {
                 targetLocation = stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
-                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getById(stage
+                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(stage
                         .getItemDeliveryTargets().getFirst());
                 targetLocation = npc.getStoredLocation();
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {

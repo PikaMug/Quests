@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.UUID;
 
 public interface IStage {
     LinkedList<ItemStack> getBlocksToBreak();
@@ -92,11 +93,11 @@ public interface IStage {
 
     void setItemsToDeliver(final LinkedList<ItemStack> itemsToDeliver);
 
-    LinkedList<Integer> getItemDeliveryTargets();
+    LinkedList<UUID> getItemDeliveryTargets();
 
-    boolean addItemDeliveryTarget(Integer itemDeliveryTarget);
+    boolean addItemDeliveryTarget(UUID itemDeliveryTarget);
 
-    void setItemDeliveryTargets(final LinkedList<Integer> itemDeliveryTargets);
+    void setItemDeliveryTargets(final LinkedList<UUID> itemDeliveryTargets);
 
     LinkedList<String> getDeliverMessages();
 
@@ -104,23 +105,23 @@ public interface IStage {
 
     void setDeliverMessages(final LinkedList<String> deliverMessages);
 
-    LinkedList<Integer> getCitizensToInteract();
+    LinkedList<UUID> getNpcsToInteract();
 
-    boolean addCitizenToInteract(Integer citizenToInteract);
+    boolean addNpcToInteract(UUID npcToInteract);
 
-    void setCitizensToInteract(final LinkedList<Integer> citizensToInteract);
+    void setNpcsToInteract(final LinkedList<UUID> npcsToInteract);
 
-    LinkedList<Integer> getCitizensToKill();
+    LinkedList<UUID> getNpcsToKill();
 
-    boolean addCitizenToKill(Integer citizenToKill);
+    boolean addNpcToKill(UUID citizenToKill);
 
-    void setCitizensToKill(final LinkedList<Integer> citizensToKill);
+    void setNpcsToKill(final LinkedList<UUID> npcsToKill);
 
-    LinkedList<Integer> getCitizenNumToKill();
+    LinkedList<Integer> getNpcNumToKill();
 
-    boolean addCitizenNumToKill(Integer citizenNumToKill);
+    boolean addNpcNumToKill(Integer npcNumToKill);
 
-    void setCitizenNumToKill(final LinkedList<Integer> citizenNumToKill);
+    void setNpcNumToKill(final LinkedList<Integer> npcNumToKill);
 
     LinkedList<EntityType> getMobsToKill();
 

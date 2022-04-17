@@ -371,8 +371,8 @@ public class SqlStorage implements StorageImplementation {
                         ps.setString(11, serializeItemStackProgress(entry.getValue().getItemsBrewed()));
                         ps.setString(12, serializeItemStackProgress(entry.getValue().getItemsConsumed()));
                         ps.setString(13, serializeItemStackProgress(entry.getValue().getItemsDelivered()));
-                        ps.setString(14, serializeProgress(entry.getValue().getCitizensInteracted()));
-                        ps.setString(15, serializeProgress(entry.getValue().getCitizensNumKilled()));
+                        ps.setString(14, serializeProgress(entry.getValue().getNpcsInteracted()));
+                        ps.setString(15, serializeProgress(entry.getValue().getNpcsNumKilled()));
                         ps.setString(16, serializeProgress(entry.getValue().getMobNumKilled()));
                         ps.setString(17, serializeProgress(entry.getValue().getMobsTamed()));
                         ps.setInt(18, entry.getValue().getFishCaught());
@@ -483,8 +483,8 @@ public class SqlStorage implements StorageImplementation {
                                     quester.getCurrentStage(quest).getItemsToConsume()));
                             data.itemsDelivered.addAll(deserializeItemStackProgress(rs.getString("items_delivered"),
                                     quester.getCurrentStage(quest).getItemsToDeliver()));
-                            data.citizensInteracted.addAll(deserializeBooleanProgress(rs.getString("npcs_interacted")));
-                            data.citizensNumKilled.addAll(deserializeIntProgress(rs.getString("npcs_killed")));
+                            data.npcsInteracted.addAll(deserializeBooleanProgress(rs.getString("npcs_interacted")));
+                            data.npcsNumKilled.addAll(deserializeIntProgress(rs.getString("npcs_killed")));
                             data.mobNumKilled.addAll(deserializeIntProgress(rs.getString("mobs_killed")));
                             data.mobsTamed.addAll(deserializeIntProgress(rs.getString("mobs_tamed")));
                             data.setFishCaught(rs.getInt("fish_caught"));

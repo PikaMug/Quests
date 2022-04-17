@@ -1341,7 +1341,7 @@ public class Quester implements IQuester {
                 delivered = data.itemsDelivered.get(deliverIndex).getAmount();
             }
             final int toDeliver = is.getAmount();
-            final Integer npc = stage.getItemDeliveryTargets().get(deliverIndex);
+            final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
             if (message.contains("<count>")) {
@@ -1357,10 +1357,10 @@ public class Quester implements IQuester {
             deliverIndex++;
         }
         int interactIndex = 0;
-        for (final Integer n : stage.getCitizensToInteract()) {
+        for (final UUID n : stage.getNpcsToInteract()) {
             boolean interacted = false;
-            if (data.citizensInteracted.size() > interactIndex) {
-                interacted = data.citizensInteracted.get(interactIndex);
+            if (data.npcsInteracted.size() > interactIndex) {
+                interacted = data.npcsInteracted.get(interactIndex);
             }
             final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "talkTo")
@@ -1372,12 +1372,12 @@ public class Quester implements IQuester {
             interactIndex++;
         }
         int npcKillIndex = 0;
-        for (final Integer n : stage.getCitizensToKill()) {
+        for (final UUID n : stage.getNpcsToKill()) {
             int npcKilled = 0;
-            if (data.citizensNumKilled.size() > npcKillIndex) {
-                npcKilled = data.citizensNumKilled.get(npcKillIndex);
+            if (data.npcsNumKilled.size() > npcKillIndex) {
+                npcKilled = data.npcsNumKilled.get(npcKillIndex);
             }
-            final int toNpcKill = stage.getCitizenNumToKill().get(npcKillIndex);
+            final int toNpcKill = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "kill");
             if (message.contains("<mob>")) {
@@ -1850,7 +1850,7 @@ public class Quester implements IQuester {
                 final ItemStack progress = data.itemsDelivered.get(deliverIndex);
                 final int delivered = progress.getAmount();
                 final int toDeliver = goal.getAmount();
-                final Integer npc = stage.getItemDeliveryTargets().get(deliverIndex);
+                final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
                 final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
                 if (message.contains("<count>")) {
@@ -1870,10 +1870,10 @@ public class Quester implements IQuester {
             deliverIndex++;
         }
         int interactIndex = 0;
-        for (final Integer n : stage.getCitizensToInteract()) {
+        for (final UUID n : stage.getNpcsToInteract()) {
             boolean interacted = false;
-            if (data.citizensInteracted.size() > interactIndex) {
-                interacted = data.citizensInteracted.get(interactIndex);
+            if (data.npcsInteracted.size() > interactIndex) {
+                interacted = data.npcsInteracted.get(interactIndex);
                 final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + Lang.get(getPlayer(), "talkTo")
                         .replace("<npc>", depends.getNPCName(n));
@@ -1885,12 +1885,12 @@ public class Quester implements IQuester {
             interactIndex++;
         }
         int npcKillIndex = 0;
-        for (final Integer n : stage.getCitizensToKill()) {
+        for (final UUID n : stage.getNpcsToKill()) {
             int npcKilled = 0;
-            if (data.citizensNumKilled.size() > npcKillIndex) {
-                npcKilled = data.citizensNumKilled.get(npcKillIndex);
+            if (data.npcsNumKilled.size() > npcKillIndex) {
+                npcKilled = data.npcsNumKilled.get(npcKillIndex);
             }
-            final int toNpcKill = stage.getCitizenNumToKill().get(npcKillIndex);
+            final int toNpcKill = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "kill");
             if (message.contains("<mob>")) {
@@ -2967,7 +2967,7 @@ public class Quester implements IQuester {
         if (npc == null) {
             return;
         }
-        
+
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
         for (final ItemStack is : getQuestData(quest).itemsDelivered) {
@@ -2982,7 +2982,7 @@ public class Quester implements IQuester {
         final Player player = getPlayer();
         for (final Integer match : matches) {
             final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsDelivered);
-            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc.getId())) {
+            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc.getUniqueId())) {
                 continue;
             }
             final ItemStack found = items.get(match);
@@ -3025,7 +3025,7 @@ public class Quester implements IQuester {
                     final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
                             .getDeliverMessages().get(new Random().nextInt(getCurrentStage(quest).getDeliverMessages()
                             .size())), plugin.getDependencies().getCitizens().getNPCRegistry()
-                            .getById(getCurrentStage(quest).getItemDeliveryTargets().get(items.indexOf(found))));
+                            .getByUniqueId(getCurrentStage(quest).getItemDeliveryTargets().get(items.indexOf(found))));
                     player.sendMessage(message);
                 }
 
@@ -3054,12 +3054,12 @@ public class Quester implements IQuester {
      * @param npc The NPC being interacted with
      */
     public void interactWithNPC(final IQuest quest, final NPC npc) {
-        if (!getCurrentStage(quest).getCitizensToInteract().contains(npc.getId())) {
+        if (!getCurrentStage(quest).getNpcsToInteract().contains(npc.getUniqueId())) {
             return;
         }
 
-        final int index = getCurrentStage(quest).getCitizensToInteract().indexOf(npc.getId());
-        final boolean npcsInteracted = getQuestData(quest).citizensInteracted.get(index);
+        final int index = getCurrentStage(quest).getNpcsToInteract().indexOf(npc.getUniqueId());
+        final boolean npcsInteracted = getQuestData(quest).npcsInteracted.get(index);
 
         final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -3068,14 +3068,14 @@ public class Quester implements IQuester {
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
         if (!npcsInteracted) {
-            getQuestData(quest).citizensInteracted.set(index, true);
+            getQuestData(quest).npcsInteracted.set(index, true);
             finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestData(quest).citizensInteracted.set(index, true);
+                            q.getQuestData(quest).npcsInteracted.set(index, true);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -3096,13 +3096,13 @@ public class Quester implements IQuester {
      * @param npc The NPC being killed
      */
     public void killNPC(final IQuest quest, final NPC npc) {
-        if (!getCurrentStage(quest).getCitizensToKill().contains(npc.getId())) {
+        if (!getCurrentStage(quest).getNpcsToKill().contains(npc.getUniqueId())) {
             return;
         }
         
-        final int index = getCurrentStage(quest).getCitizensToKill().indexOf(npc.getId());
-        final int npcsKilled = getQuestData(quest).citizensNumKilled.get(index);
-        final int npcsToKill = getCurrentStage(quest).getCitizenNumToKill().get(index);
+        final int index = getCurrentStage(quest).getNpcsToKill().indexOf(npc.getUniqueId());
+        final int npcsKilled = getQuestData(quest).npcsNumKilled.get(index);
+        final int npcsToKill = getCurrentStage(quest).getNpcNumToKill().get(index);
         
         final ObjectiveType type = ObjectiveType.KILL_NPC;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -3110,9 +3110,9 @@ public class Quester implements IQuester {
                 new BukkitObjective(type, npcsKilled, npcsToKill));
         plugin.getServer().getPluginManager().callEvent(preEvent);
         
-        final int newNpcsKilled = getQuestData(quest).citizensNumKilled.get(index) + 1;
+        final int newNpcsKilled = getQuestData(quest).npcsNumKilled.get(index) + 1;
         if (npcsKilled < npcsToKill) {
-            getQuestData(quest).citizensNumKilled.set(index, newNpcsKilled);
+            getQuestData(quest).npcsNumKilled.set(index, newNpcsKilled);
             if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
@@ -3121,7 +3121,7 @@ public class Quester implements IQuester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestData(quest).citizensNumKilled.set(index, newNpcsKilled);
+                            q.getQuestData(quest).npcsNumKilled.set(index, newNpcsKilled);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -4183,14 +4183,14 @@ public class Quester implements IQuester {
                 data.itemsDelivered.add(temp);
             }
         }
-        if (!quest.getStage(stage).getCitizensToInteract().isEmpty()) {
-            for (final Integer ignored : quest.getStage(stage).getCitizensToInteract()) {
-                data.citizensInteracted.add(false);
+        if (!quest.getStage(stage).getNpcsToInteract().isEmpty()) {
+            for (final UUID ignored : quest.getStage(stage).getNpcsToInteract()) {
+                data.npcsInteracted.add(false);
             }
         }
-        if (!quest.getStage(stage).getCitizensToKill().isEmpty()) {
-            for (final Integer ignored : quest.getStage(stage).getCitizensToKill()) {
-                data.citizensNumKilled.add(0);
+        if (!quest.getStage(stage).getNpcsToKill().isEmpty()) {
+            for (final UUID ignored : quest.getStage(stage).getNpcsToKill()) {
+                data.npcsNumKilled.add(0);
             }
         }
         if (!quest.getStage(stage).getMobsToKill().isEmpty()) {
@@ -4374,11 +4374,11 @@ public class Quester implements IQuester {
                     }
                     questSec.set("item-delivery-amounts", deliveryAmounts);
                 }
-                if (!questData.citizensInteracted.isEmpty()) {
-                    questSec.set("has-talked-to", questData.citizensInteracted);
+                if (!questData.npcsInteracted.isEmpty()) {
+                    questSec.set("has-talked-to", questData.npcsInteracted);
                 }
-                if (!questData.citizensNumKilled.isEmpty()) {
-                    questSec.set("citizen-amounts-killed", questData.citizensNumKilled);
+                if (!questData.npcsNumKilled.isEmpty()) {
+                    questSec.set("npc-killed-amounts", questData.npcsNumKilled);
                 }
                 if (!questData.mobNumKilled.isEmpty()) {
                     questSec.set("mobs-killed-amounts", questData.mobNumKilled);

@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
 import net.citizensnpcs.api.event.NPCDeathEvent;
@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 public class NpcListener implements Listener {
 
@@ -58,9 +59,11 @@ public class NpcListener implements Listener {
             return;
         }
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + ChatColor.DARK_GREEN 
-                    + Lang.get("id") + ": "  + evt.getNPC().getId());
-            return;
+            if (evt.getNPC() == null) {
+                plugin.getLogger().severe("NPC was null while selecting by right-click");
+                return;
+            }
+            evt.getClicker().acceptConversationInput(String.valueOf(evt.getNPC().getUniqueId()));
         }
         if (!evt.getClicker().isConversing()) {
             final Player player = evt.getClicker();
@@ -81,15 +84,15 @@ public class NpcListener implements Listener {
                     final NPC clicked = evt.getNPC();
                     if (!matches.isEmpty()) {
                         for (final Integer match : matches) {
-                            final Integer id = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
-                            if (id.equals(clicked.getId())) {
+                            final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
+                            if (uuid.equals(clicked.getUniqueId())) {
                                 quester.deliverToNPC(quest, clicked, hand);
                                 return;
                             }
                         }
                     } else if (!hand.getType().equals(Material.AIR)) {
-                        for (final Integer n : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
-                            if (n.equals(clicked.getId())) {
+                        for (final UUID uuid : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
+                            if (uuid.equals(clicked.getUniqueId())) {
                                 String text = "";
                                 final boolean hasMeta = hand.getItemMeta() != null;
                                 if (hasMeta) {
@@ -189,10 +192,10 @@ public class NpcListener implements Listener {
                 boolean hasObjective = false;
                 for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
-                        final int npcIndex
-                                = quester.getCurrentStage(quest).getCitizensToInteract().indexOf(evt.getNPC().getId());
+                        final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNPC()
+                                .getUniqueId());
                         if (quester.getQuestData(quest) != null && npcIndex > -1
-                                && !quester.getQuestData(quest).citizensInteracted.get(npcIndex)) {
+                                && !quester.getQuestData(quest).npcsInteracted.get(npcIndex)) {
                             hasObjective = true;
                         }
                         quester.interactWithNPC(quest, evt.getNPC());
@@ -262,8 +265,11 @@ public class NpcListener implements Listener {
             return;
         }
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            evt.getClicker().sendMessage(ChatColor.GREEN + evt.getNPC().getName() + " " + ChatColor.DARK_GREEN 
-                    + Lang.get("id") + ": " + evt.getNPC().getId());
+            if (evt.getNPC() == null) {
+                plugin.getLogger().severe("NPC was null while selecting by left-click");
+                return;
+            }
+            evt.getClicker().acceptConversationInput(String.valueOf(evt.getNPC().getUniqueId()));
         }
     }
 

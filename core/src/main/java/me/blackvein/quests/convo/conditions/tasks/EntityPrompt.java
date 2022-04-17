@@ -251,7 +251,7 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Lang.get("conditionEditorNpcsPrompt");
+            return Lang.get("enterNpcUniqueIds");
         }
         
         @Override

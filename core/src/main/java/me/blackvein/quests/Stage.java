@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 public class Stage implements IStage {
 
@@ -42,7 +43,7 @@ public class Stage implements IStage {
     private LinkedList<ItemStack> itemsToBrew = new LinkedList<>();
     private LinkedList<ItemStack> itemsToConsume = new LinkedList<>();
     private LinkedList<ItemStack> itemsToDeliver = new LinkedList<>();
-    private LinkedList<Integer> itemDeliveryTargets = new LinkedList<Integer>() {
+    private LinkedList<UUID> itemDeliveryTargets = new LinkedList<UUID>() {
 
         private static final long serialVersionUID = -2774443496142382127L;
 
@@ -50,11 +51,10 @@ public class Stage implements IStage {
         public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
-                final
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (final Integer i : this) {
-                    final Integer other = otherList.get(this.indexOf(i));
-                    if (!other.equals(i)) {
+                final LinkedList<UUID> otherList = (LinkedList<UUID>) o;
+                for (final UUID uuid : this) {
+                    final UUID other = otherList.get(this.indexOf(uuid));
+                    if (!other.equals(uuid)) {
                         return false;
                     }
                 }
@@ -63,7 +63,7 @@ public class Stage implements IStage {
         }
     };
     private  LinkedList<String> deliverMessages = new LinkedList<>();
-    private LinkedList<Integer> citizensToInteract = new LinkedList<Integer>() {
+    private LinkedList<UUID> npcsToInteract = new LinkedList<UUID>() {
 
         private static final long serialVersionUID = -4086855121042524435L;
 
@@ -71,11 +71,10 @@ public class Stage implements IStage {
         public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
-                final
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (final Integer i : this) {
-                    final Integer other = otherList.get(this.indexOf(i));
-                    if (!other.equals(i)) {
+                final LinkedList<UUID> otherList = (LinkedList<UUID>) o;
+                for (final UUID uuid : this) {
+                    final UUID other = otherList.get(this.indexOf(uuid));
+                    if (!other.equals(uuid)) {
                         return false;
                     }
                 }
@@ -83,7 +82,7 @@ public class Stage implements IStage {
             return true;
         }
     };
-    private LinkedList<Integer> citizensToKill = new LinkedList<Integer>() {
+    private LinkedList<UUID> npcsToKill = new LinkedList<UUID>() {
 
         private static final long serialVersionUID = 7705964814014176415L;
 
@@ -91,11 +90,10 @@ public class Stage implements IStage {
         public boolean equals(final Object o) {
             if (o instanceof LinkedList) {
                 @SuppressWarnings("unchecked")
-                final
-                LinkedList<Integer> otherList = (LinkedList<Integer>) o;
-                for (final Integer i : this) {
-                    final Integer other = otherList.get(this.indexOf(i));
-                    if (!other.equals(i)) {
+                final LinkedList<UUID> otherList = (LinkedList<UUID>) o;
+                for (final UUID uuid : this) {
+                    final UUID other = otherList.get(this.indexOf(uuid));
+                    if (!other.equals(uuid)) {
                         return false;
                     }
                 }
@@ -103,7 +101,7 @@ public class Stage implements IStage {
             return true;
         }
     };
-    private LinkedList<Integer> citizenNumToKill = new LinkedList<>();
+    private LinkedList<Integer> npcNumToKill = new LinkedList<>();
     private LinkedList<EntityType> mobsToKill = new LinkedList<>();
     private LinkedList<Integer> mobNumToKill = new LinkedList<>();
     private LinkedList<Location> locationsToKillWithin = new LinkedList<>();
@@ -284,16 +282,16 @@ public class Stage implements IStage {
         this.itemsToDeliver = itemsToDeliver;
     }
 
-    public LinkedList<Integer> getItemDeliveryTargets() {
+    public LinkedList<UUID> getItemDeliveryTargets() {
         return itemDeliveryTargets;
     }
 
     @Override
-    public boolean addItemDeliveryTarget(Integer itemDeliveryTarget) {
+    public boolean addItemDeliveryTarget(UUID itemDeliveryTarget) {
         return itemDeliveryTargets.add(itemDeliveryTarget);
     }
 
-    public void setItemDeliveryTargets(final LinkedList<Integer> itemDeliveryTargets) {
+    public void setItemDeliveryTargets(final LinkedList<UUID> itemDeliveryTargets) {
         this.itemDeliveryTargets = itemDeliveryTargets;
     }
 
@@ -310,43 +308,42 @@ public class Stage implements IStage {
         this.deliverMessages = deliverMessages;
     }
 
-    public LinkedList<Integer> getCitizensToInteract() {
-        return citizensToInteract;
+    public LinkedList<UUID> getNpcsToInteract() {
+        return npcsToInteract;
     }
 
     @Override
-    public boolean addCitizenToInteract(Integer citizenToInteract) {
-        return citizensToInteract.add(citizenToInteract);
+    public boolean addNpcToInteract(UUID npcToInteract) {
+        return npcsToInteract.add(npcToInteract);
     }
 
-    public void setCitizensToInteract(final LinkedList<Integer> citizensToInteract) {
-        this.citizensToInteract = citizensToInteract;
+    public void setNpcsToInteract(final LinkedList<UUID> npcsToInteract) {
+        this.npcsToInteract = npcsToInteract;
     }
 
-    public LinkedList<Integer> getCitizensToKill() {
-        return citizensToKill;
-    }
-
-    @Override
-    public boolean addCitizenToKill(Integer citizenToKill) {
-        return citizensToKill.add(citizenToKill);
-    }
-
-    public void setCitizensToKill(final LinkedList<Integer> citizensToKill) {
-        this.citizensToKill = citizensToKill;
-    }
-
-    public LinkedList<Integer> getCitizenNumToKill() {
-        return citizenNumToKill;
+    public LinkedList<UUID> getNpcsToKill() {
+        return npcsToKill;
     }
 
     @Override
-    public boolean addCitizenNumToKill(Integer citizenNumToKill) {
-        return this.citizenNumToKill.add(citizenNumToKill);
+    public boolean addNpcToKill(UUID npcToKill) {
+        return npcsToKill.add(npcToKill);
     }
 
-    public void setCitizenNumToKill(final LinkedList<Integer> citizenNumToKill) {
-        this.citizenNumToKill = citizenNumToKill;
+    public void setNpcsToKill(final LinkedList<UUID> npcsToKill) {
+        this.npcsToKill = npcsToKill;
+    }
+
+    public LinkedList<Integer> getNpcNumToKill() {
+        return npcNumToKill;
+    }
+
+    public boolean addNpcNumToKill(Integer npcNumToKill) {
+        return this.npcNumToKill.add(npcNumToKill);
+    }
+
+    public void setNpcNumToKill(final LinkedList<Integer> npcNumToKill) {
+        this.npcNumToKill = npcNumToKill;
     }
 
     public LinkedList<EntityType> getMobsToKill() {
@@ -761,8 +758,8 @@ public class Stage implements IStage {
         if (!itemsToBrew.isEmpty()) { return true; }
         if (!itemsToConsume.isEmpty()) { return true; }
         if (!itemsToDeliver.isEmpty()) { return true; }
-        if (!citizensToInteract.isEmpty()) { return true; }
-        if (!citizensToKill.isEmpty()) { return true; }
+        if (!npcsToInteract.isEmpty()) { return true; }
+        if (!npcsToKill.isEmpty()) { return true; }
         if (!locationsToReach.isEmpty()) { return true; }
         if (!mobsToKill.isEmpty()) {return true; }
         if (!mobsToTame.isEmpty()) { return true; }
@@ -777,8 +774,8 @@ public class Stage implements IStage {
      * @return true if stage contains a locatable objective
      */
     public boolean hasLocatableObjective() {
-        if (!citizensToInteract.isEmpty()) { return true; }
-        if (!citizensToKill.isEmpty()) { return true; }
+        if (!npcsToInteract.isEmpty()) { return true; }
+        if (!npcsToKill.isEmpty()) { return true; }
         if (!locationsToReach.isEmpty()) { return true; }
         if (!itemDeliveryTargets.isEmpty()) { return true; }
         if (playersToKill != null) { return true; }
@@ -826,9 +823,9 @@ public class Stage implements IStage {
         } else if (type.equals(ObjectiveType.KILL_PLAYER)) {
             return playersToKill != null;
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            return !citizensToInteract.isEmpty();
+            return !npcsToInteract.isEmpty();
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
-            return !citizensToKill.isEmpty();
+            return !npcsToKill.isEmpty();
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
             return !mobsToTame.isEmpty();
         } else if (type.equals(ObjectiveType.SHEAR_SHEEP)) {
