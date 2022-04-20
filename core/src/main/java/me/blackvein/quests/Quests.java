@@ -1845,7 +1845,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         } else {
             throw new QuestFormatException("finish-message is missing", questKey);
         }
-        if (config.contains("quests." + questKey + ".npc-giver-uuid")) {
+        if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-uuid")) {
             final UUID uuid = UUID.fromString(Objects.requireNonNull(config.getString("quests." + questKey
                     + ".npc-giver-uuid")));
             if (CitizensAPI.getNPCRegistry().getByUniqueId(uuid) != null) {

@@ -51,7 +51,6 @@ import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -542,7 +541,7 @@ public class Quester implements IQuester {
                     for (final String msg : s.split("<br>")) {
                         sendMessage(msg);
                     }
-                    if (!plugin.getSettings().canAskConfirmation()) {
+                    if (!plugin.getSettings().canConfirmAccept()) {
                         takeQuest(quest, false);
                     } else {
                         plugin.getConversationFactory().buildConversation(getPlayer()).begin();
@@ -637,7 +636,6 @@ public class Quester implements IQuester {
      * @param quest The quest to start
      * @param ignoreRequirements Whether to ignore Requirements
      */
-    @SuppressWarnings("deprecation")
     public void takeQuest(final IQuest quest, final boolean ignoreRequirements) {
         if (quest == null) {
             return;
@@ -1871,9 +1869,8 @@ public class Quester implements IQuester {
         }
         int interactIndex = 0;
         for (final UUID n : stage.getNpcsToInteract()) {
-            boolean interacted = false;
             if (data.npcsInteracted.size() > interactIndex) {
-                interacted = data.npcsInteracted.get(interactIndex);
+                boolean interacted = data.npcsInteracted.get(interactIndex);
                 final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + Lang.get(getPlayer(), "talkTo")
                         .replace("<npc>", depends.getNPCName(n));
@@ -2714,7 +2711,7 @@ public class Quester implements IQuester {
     }
 
     /**
-     * Mark book as enchanted if Quester has such an objective
+     * Marks book as enchanted if Quester has such an objective
      *
      * @param quest The quest for which the item is being enchanted
      * @param itemStack The book being enchanted
@@ -2960,10 +2957,10 @@ public class Quester implements IQuester {
      * Mark item as delivered to a NPC if Quester has such an objective
      * 
      * @param quest The quest for which the item is being delivered
-     * @param npc The NPC being delivered to
+     * @param npc UUID of the NPC being delivered to
      * @param itemStack The item being delivered
      */
-    public void deliverToNPC(final IQuest quest, final NPC npc, final ItemStack itemStack) {
+    public void deliverToNPC(final IQuest quest, final UUID npc, final ItemStack itemStack) {
         if (npc == null) {
             return;
         }
@@ -2982,7 +2979,7 @@ public class Quester implements IQuester {
         final Player player = getPlayer();
         for (final Integer match : matches) {
             final LinkedList<ItemStack> items = new LinkedList<>(getQuestData(quest).itemsDelivered);
-            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc.getUniqueId())) {
+            if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc)) {
                 continue;
             }
             final ItemStack found = items.get(match);
@@ -3051,14 +3048,14 @@ public class Quester implements IQuester {
      * Mark NPC as interacted with if Quester has such an objective
      * 
      * @param quest The quest for which the NPC is being interacted with
-     * @param npc The NPC being interacted with
+     * @param npc UUID of the NPC being interacted with
      */
-    public void interactWithNPC(final IQuest quest, final NPC npc) {
-        if (!getCurrentStage(quest).getNpcsToInteract().contains(npc.getUniqueId())) {
+    public void interactWithNPC(final IQuest quest, final UUID npc) {
+        if (!getCurrentStage(quest).getNpcsToInteract().contains(npc)) {
             return;
         }
 
-        final int index = getCurrentStage(quest).getNpcsToInteract().indexOf(npc.getUniqueId());
+        final int index = getCurrentStage(quest).getNpcsToInteract().indexOf(npc);
         final boolean npcsInteracted = getQuestData(quest).npcsInteracted.get(index);
 
         final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
@@ -3093,14 +3090,14 @@ public class Quester implements IQuester {
      * Mark NPC as killed if the Quester has such an objective
      * 
      * @param quest The quest for which the NPC is being killed
-     * @param npc The NPC being killed
+     * @param npc UUID of the NPC being killed
      */
-    public void killNPC(final IQuest quest, final NPC npc) {
-        if (!getCurrentStage(quest).getNpcsToKill().contains(npc.getUniqueId())) {
+    public void killNPC(final IQuest quest, final UUID npc) {
+        if (!getCurrentStage(quest).getNpcsToKill().contains(npc)) {
             return;
         }
         
-        final int index = getCurrentStage(quest).getNpcsToKill().indexOf(npc.getUniqueId());
+        final int index = getCurrentStage(quest).getNpcsToKill().indexOf(npc);
         final int npcsKilled = getQuestData(quest).npcsNumKilled.get(index);
         final int npcsToKill = getCurrentStage(quest).getNpcNumToKill().get(index);
         
@@ -3619,7 +3616,7 @@ public class Quester implements IQuester {
      * @param extra
      *            Extra mob enum like career or ocelot type, if any
      * @param npc
-     *            NPC being talked to or killed, if any
+     *            UUID of NPC being talked to or killed, if any
      * @param location
      *            Location for user to reach, if any
      * @param color
@@ -3631,7 +3628,7 @@ public class Quester implements IQuester {
      */
     @SuppressWarnings("deprecation")
     public void finishObjective(final IQuest quest, final Objective objective, final EntityType mob,
-                                final String extra, final NPC npc, final Location location, final DyeColor color,
+                                final String extra, final UUID npc, final Location location, final DyeColor color,
                                 final String pass, final ICustomObjective co) {
         if (objective == null) {
             return;
@@ -3919,7 +3916,7 @@ public class Quester implements IQuester {
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
             final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "talkTo")
-                    .replace("<npc>", plugin.getDependencies().getNPCName(npc.getId()));
+                    .replace("<npc>", plugin.getDependencies().getNPCName(npc));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
@@ -3930,7 +3927,7 @@ public class Quester implements IQuester {
                 message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/"
                         + goal.getAmount();
             }
-            sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc.getId())));
+            sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc)));
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame");
             if (!message.contains("<mob>")) {
@@ -4001,54 +3998,6 @@ public class Quester implements IQuester {
         });
         if (testComplete(quest)) {
             quest.nextStage(this, true);
-        }
-    }
-
-    /**
-     * Complete quest objective
-     * 
-     * @deprecated Use {@link #finishObjective(IQuest, Objective, EntityType,
-     * String, NPC, Location, DyeColor, String, ICustomObjective)}
-     * 
-     * @param quest
-     *            Quest containing the objective
-     * @param objective
-     *            Type of objective, e.g. "password" or "damageBlock"
-     * @param increment
-     *            Final amount material being applied
-     * @param goal
-     *            Total required amount of material
-     * @param enchantment
-     *            Enchantment being applied by user
-     * @param mob
-     *            Mob being killed or tamed
-     * @param extra
-     *            Extra mob enum like career or ocelot type
-     * @param npc
-     *            NPC being talked to or killed
-     * @param location
-     *            Location for user to reach
-     * @param color
-     *            Shear color
-     * @param pass
-     *            Password
-     * @param co
-     *            See CustomObjective class
-     */
-    @Deprecated
-    public void finishObjective(final IQuest quest, final String objective, final ItemStack increment,
-                                final ItemStack goal, final Enchantment enchantment, final EntityType mob,
-                                final String extra, final NPC npc, final Location location, final DyeColor color,
-                                final String pass, final ICustomObjective co) {
-        if (objective == null) {
-            return;
-        }
-        if (increment == null || goal == null) {
-            finishObjective(quest, new BukkitObjective(ObjectiveType.fromName(objective), 1, 1), mob, extra, npc,
-                    location, color, pass, co);
-        } else {
-            finishObjective(quest, new BukkitObjective(ObjectiveType.fromName(objective), increment, goal), mob, extra,
-                    npc, location, color, pass, co);
         }
     }
     
@@ -4572,13 +4521,17 @@ public class Quester implements IQuester {
     /**
      * Show an inventory GUI with quest items to the specified player
      * 
-     * @param npc The NPC from which the GUI is bound
+     * @param npc UUID of the NPC from which the GUI is bound
      * @param quests List of quests to use for displaying items
      */
-    public void showGUIDisplay(final NPC npc, final LinkedList<IQuest> quests) {
+    public void showGUIDisplay(final UUID npc, final LinkedList<IQuest> quests) {
         if (npc == null || quests == null) {
             return;
         }
+        if (plugin.getDependencies().getCitizens() == null) {
+            return;
+        }
+        final String name = plugin.getDependencies().getNPCName(npc);
         final LinkedList<Quest> qs = new LinkedList<>();
         for (IQuest q : quests) {
             qs.add((Quest) q);
@@ -4590,7 +4543,7 @@ public class Quester implements IQuester {
         }
         final Player player = getPlayer();
         final Inventory inv = plugin.getServer().createInventory(player, ((quests.size() / 9) + 1) * 9, 
-                Lang.get(player, "quests") + " | " + npc.getName());
+                Lang.get(player, "quests") + " | " + name);
         int i = 0;
         for (final IQuest quest : quests) {
             if (quest.getGUIDisplay() != null) {

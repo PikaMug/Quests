@@ -14,34 +14,34 @@ package me.blackvein.quests.events.quester;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Called before a quester opens a quest selection GUI
  */
 public class QuesterPreOpenGUIEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final NPC npc;
+    private final UUID npc;
     LinkedList<Quest> quests;
     private boolean cancel = false;
     
-    public QuesterPreOpenGUIEvent(final Quester quester, final NPC npc, final LinkedList<Quest> quests) {
+    public QuesterPreOpenGUIEvent(final Quester quester, final UUID npc, final LinkedList<Quest> quests) {
         super(quester);
         this.npc = npc;
         this.quests = quests;
     }
     
     /**
-     * Returns the NPC involved in this event
+     * Returns the UUID of the NPC involved in this event
      * 
-     * @return NPC who is involved in this event
+     * @return UUID of NPC who is involved in this event
      */
-    public NPC getNPC() {
+    public UUID getNPC() {
         return npc;
     }
     

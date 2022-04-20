@@ -190,7 +190,7 @@ public class Quest implements IQuest {
 
     @Override
     public NPC getNpcStart() {
-        if (CitizensAPI.getNPCRegistry().getByUniqueId(npcStart) != null) {
+        if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().getByUniqueId(npcStart) != null) {
             return CitizensAPI.getNPCRegistry().getByUniqueId(npcStart);
         }
         return null;

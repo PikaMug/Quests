@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -155,10 +156,10 @@ public class ConfigUtil {
         return parsed;
     }
 
-    public static String parseString(final String s, final NPC npc) {
+    public static String parseString(final String s, final UUID npc) {
         String parsed = parseString(s);
-        if (parsed.contains("<npc>")) {
-            parsed = parsed.replace("<npc>", npc.getName());
+        if (Dependencies.citizens != null && parsed.contains("<npc>")) {
+            parsed = parsed.replace("<npc>", Dependencies.citizens.getNPCRegistry().getByUniqueId(npc).getName());
         }
         return parsed;
     }

@@ -18,7 +18,6 @@ import me.blackvein.quests.quests.Objective;
 import me.blackvein.quests.QuestData;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.module.ICustomObjective;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -172,11 +171,11 @@ public interface IQuester extends Comparable<IQuester> {
 
     void consumeItem(final IQuest quest, final ItemStack itemStack);
 
-    void deliverToNPC(final IQuest quest, final NPC npc, final ItemStack itemStack);
+    void deliverToNPC(final IQuest quest, final UUID npc, final ItemStack itemStack);
 
-    void interactWithNPC(final IQuest quest, final NPC npc);
+    void interactWithNPC(final IQuest quest, final UUID npc);
 
-    void killNPC(final IQuest quest, final NPC npc);
+    void killNPC(final IQuest quest, final UUID npc);
 
     void milkCow(final IQuest quest);
 
@@ -195,7 +194,7 @@ public interface IQuester extends Comparable<IQuester> {
     void sayPassword(final IQuest quest, final AsyncPlayerChatEvent evt);
 
     void finishObjective(final IQuest quest, final Objective objective, final EntityType mob,
-                         final String extra, final NPC npc, final Location location, final DyeColor color,
+                         final String extra, final UUID npc, final Location location, final DyeColor color,
                          final String pass, final ICustomObjective co);
 
     boolean testComplete(final IQuest quest);
@@ -222,7 +221,7 @@ public interface IQuester extends Comparable<IQuester> {
 
     void checkQuest(final IQuest quest);
 
-    void showGUIDisplay(final NPC npc, final LinkedList<IQuest> quests);
+    void showGUIDisplay(final UUID npc, final LinkedList<IQuest> quests);
 
     void hardQuit(final IQuest quest);
 

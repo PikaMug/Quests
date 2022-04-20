@@ -56,7 +56,7 @@ public class Dependencies implements IDependencies {
     private static Heroes heroes = null;
     private static PhatLoots phatLoots = null;
     public static PlaceholderAPIPlugin placeholder = null;
-    private static CitizensPlugin citizens = null;
+    public static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
     private static CitizensBooksAPI citizensBooks = null;
     private static PartiesAPI parties = null;
@@ -276,22 +276,38 @@ public class Dependencies implements IDependencies {
      * @deprecated Use {@link #getNPCLocation(UUID)}
      */
     public Location getNPCLocation(final int id) {
-        return citizens.getNPCRegistry().getById(id).getStoredLocation();
+        if (citizens != null) {
+            return citizens.getNPCRegistry().getById(id).getStoredLocation();
+        } else {
+            return null;
+        }
     }
 
     public Location getNPCLocation(final UUID uuid) {
-        return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
+        if (citizens != null) {
+            return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
+        } else {
+            return null;
+        }
     }
 
     /**
      * @deprecated Use {@link #getNPCName(UUID)}
      */
     public String getNPCName(final int id) {
-        return citizens.getNPCRegistry().getById(id).getName();
+        if (citizens != null) {
+            return citizens.getNPCRegistry().getById(id).getName();
+        } else {
+            return null;
+        }
     }
 
     public String getNPCName(final UUID uuid) {
-        return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
+        if (citizens != null) {
+            return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
+        } else {
+            return null;
+        }
     }
     
     public int getMcmmoSkillLevel(final SkillType st, final String player) {

@@ -86,7 +86,7 @@ public class NpcListener implements Listener {
                         for (final Integer match : matches) {
                             final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
                             if (uuid.equals(clicked.getUniqueId())) {
-                                quester.deliverToNPC(quest, clicked, hand);
+                                quester.deliverToNPC(quest, uuid, hand);
                                 return;
                             }
                         }
@@ -198,7 +198,7 @@ public class NpcListener implements Listener {
                                 && !quester.getQuestData(quest).npcsInteracted.get(npcIndex)) {
                             hasObjective = true;
                         }
-                        quester.interactWithNPC(quest, evt.getNPC());
+                        quester.interactWithNPC(quest, evt.getNPC().getUniqueId());
                     }
                 }
                 if (!hasObjective) {
@@ -233,7 +233,7 @@ public class NpcListener implements Listener {
                                 quester.takeQuest(q, false);
                             } else {
                                 if (q.getGUIDisplay() != null) {
-                                    quester.showGUIDisplay(evt.getNPC(), npcQuests);
+                                    quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
                                 } else {
                                     for (final String msg : extracted(quester).split("<br>")) {
                                         player.sendMessage(msg);
@@ -244,7 +244,7 @@ public class NpcListener implements Listener {
                         }
                     } else if (npcQuests.size() > 1) {
                         if (hasAtLeastOneGUI) {
-                            quester.showGUIDisplay(evt.getNPC(), npcQuests);
+                            quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
                         } else {
                             final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                             c.getContext().setSessionData("npcQuests", npcQuests);
@@ -307,13 +307,13 @@ public class NpcListener implements Listener {
 
                     if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.killNPC(quest, evt.getNPC());
+                        quester.killNPC(quest, evt.getNPC().getUniqueId());
                     }
 
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
                             (final IQuester q, final IQuest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                    q.killNPC(cq, evt.getNPC());
+                                    q.killNPC(cq, evt.getNPC().getUniqueId());
                                 }
                                 return null;
                             }));
