@@ -1911,8 +1911,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
-                            .append("https://pikamug.gitbook.io/quests/casual/modules\n").append(ChatColor.DARK_PURPLE)
-                            .append("(").append(Lang.get("stageEditorNoModules")).append(") ");
+                            .append("https://pikamug.gitbook.io/quests/casual/modules\n");
+                    text.append(ChatColor.RED).append("(").append(Lang.get("stageEditorNoModules")).append(")\n");
                 } else {
                     for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getModuleName().equals(moduleName)) {
@@ -1925,12 +1925,12 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             final TextComponent component = new TextComponent(getTitle(context) + "\n");
             component.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
             final TextComponent line = new TextComponent("");
-            if (plugin.getCustomObjectives().isEmpty()) {
+            if (plugin.getCustomRewards().isEmpty()) {
                 final TextComponent link = new TextComponent("https://pikamug.gitbook.io/quests/casual/modules\n");
                 link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
                 link.setUnderlined(true);
                 line.addExtra(link);
-                line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
+                line.addExtra(ChatColor.RED + "(" + Lang.get("stageEditorNoModules") + ")\n");
             } else {
                 for (final CustomReward co : plugin.getCustomRewards()) {
                     if (co.getModuleName().equals(moduleName)) {
