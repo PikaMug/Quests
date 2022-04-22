@@ -2392,8 +2392,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                             .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
                             .append("\n");
-                    text.append(ChatColor.DARK_PURPLE).append("(").append(Lang.get("stageEditorNoModules"))
-                            .append(") ");
+                    text.append(ChatColor.RED).append("(").append(Lang.get("stageEditorNoModules")).append(")")
+                            .append("\n");
                 } else {
                     for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
                             .collect(Collectors.toCollection(TreeSet::new))) {
@@ -2410,7 +2410,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
                 link.setUnderlined(true);
                 line.addExtra(link);
-                line.addExtra(ChatColor.DARK_AQUA + "(" + Lang.get("stageEditorNoModules") + ") ");
+                line.addExtra(ChatColor.RED + "(" + Lang.get("stageEditorNoModules") + ")\n");
             } else {
                 for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
