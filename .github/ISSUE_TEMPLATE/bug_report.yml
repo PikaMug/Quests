@@ -31,6 +31,6 @@ body:
     attributes:
       label: 'If applicable, can you provide an example quest from quests.yml?'
       description: 'Do not upload the file itself.'
-      render: shell
+      render: yaml
     validations:
       required: false
