@@ -151,8 +151,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     private final Collection<IQuest> quests = new ConcurrentSkipListSet<>();
     private Collection<IAction> actions = new ConcurrentSkipListSet<>();
     private Collection<ICondition> conditions = new ConcurrentSkipListSet<>();
-    private LinkedList<UUID> questNpcUuids = new LinkedList<>();
-    private LinkedList<Integer> questNpcIds = new LinkedList<>();
     private TabExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
     private ConversationFactory npcConversationFactory;
@@ -534,28 +532,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      */
     public void setOfflineQuesters(final Collection<IQuester> questers) {
         this.questers = new ConcurrentSkipListSet<>(questers);
-    }
-
-    public LinkedList<UUID> getQuestNpcUuids() {
-        return questNpcUuids;
-    }
-
-    public void setQuestNpcUuids(final LinkedList<UUID> questNpcUuids) {
-        this.questNpcUuids = questNpcUuids;
-    }
-
-    /**
-     * @deprecated Use {@link #getQuestNpcUuids()}
-     */
-    public LinkedList<Integer> getQuestNpcIds() {
-        return questNpcIds;
-    }
-
-    /**
-     * @deprecated Use {@link #setQuestNpcUuids(LinkedList)}
-     */
-    public void setQuestNpcIds(final LinkedList<Integer> questNpcIds) {
-        this.questNpcIds = questNpcIds;
     }
 
     public CommandExecutor getCommandExecutor() {
@@ -1850,20 +1826,16 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                     + ".npc-giver-uuid")));
             if (CitizensAPI.getNPCRegistry().getByUniqueId(uuid) != null) {
                 quest.setNpcStart(CitizensAPI.getNPCRegistry().getByUniqueId(uuid));
-                questNpcUuids.add(uuid);
             } else {
                 throw new QuestFormatException("npc-giver-uuid has invalid NPC UUID " + uuid, questKey);
             }
         } else if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
             // Legacy
-            final int npcId = config.getInt("quests." + questKey + ".npc-giver-id");
-            if (CitizensAPI.getNPCRegistry().getById(npcId) != null) {
-                final NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-                quest.setNpcStart(npc);
-                questNpcIds.add(npcId);
-                questNpcUuids.add(npc.getUniqueId());
+            final int id = config.getInt("quests." + questKey + ".npc-giver-id");
+            if (CitizensAPI.getNPCRegistry().getById(id) != null) {
+                quest.setNpcStart(CitizensAPI.getNPCRegistry().getById(id));
             } else {
-                throw new QuestFormatException("npc-giver-id has invalid NPC ID " + npcId, questKey);
+                throw new QuestFormatException("npc-giver-id has invalid NPC ID " + id, questKey);
             }
         }
         if (config.contains("quests." + questKey + ".block-start")) {
@@ -2937,8 +2909,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(uuid);
                             if (npc != null) {
                                 oStage.addNpcToInteract(uuid);
-                                questNpcIds.add(npc.getId());
-                                questNpcUuids.add(uuid);
                             } else {
                                 throw new StageFormatException("npc-uuids-to-talk-to has invalid NPC UUID of "
                                         + s, quest, stageNum);
@@ -2963,8 +2933,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             if (npc != null) {
                                 final UUID npcUuid = npc.getUniqueId();
                                 oStage.addNpcToInteract(npcUuid);
-                                questNpcIds.add(npc.getId());
-                                questNpcUuids.add(npcUuid);
                             } else {
                                 throw new StageFormatException("npc-ids-to-talk-to has invalid NPC ID of " + i, quest, 
                                         stageNum);
@@ -3090,8 +3058,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                                     if (npcAmountsToKill.get(npcUuidsToKill.indexOf(s)) > 0) {
                                         oStage.addNpcToKill(npcUuid);
                                         oStage.addNpcNumToKill(npcAmountsToKill.get(npcUuidsToKill.indexOf(s)));
-                                        questNpcIds.add(npc.getId());
-                                        questNpcUuids.add(npcUuid);
                                     } else {
                                         throw new StageFormatException("npc-kill-amounts is not a positive number", 
                                                 quest, stageNum);
@@ -3127,8 +3093,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                                         final UUID npcUuid = npc.getUniqueId();
                                         oStage.addNpcToKill(npcUuid);
                                         oStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
-                                        questNpcIds.add(npc.getId());
-                                        questNpcUuids.add(npcUuid);
                                     } else {
                                         throw new StageFormatException("npc-kill-amounts is not a positive number",
                                                 quest, stageNum);
@@ -3952,17 +3916,43 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 throw new ConditionFormatException("ride-entity is not a list of entity types", conditionKey);
             }
         }
-        if (data.contains(conditionKey + "ride-npc")) {
-            if (ConfigUtil.checkList(data.getList(conditionKey + "ride-npc"), Integer.class)) {
-                final LinkedList<Integer> npcList = new LinkedList<>();
-                for (final int i : data.getIntegerList(conditionKey + "ride-npc")) {
-                    if (i < 0) {
-                        throw new ConditionFormatException("ride-npc is not a valid NPC ID",
-                                conditionKey);
+        if (data.contains(conditionKey + "ride-npc-uuid")) {
+            if (ConfigUtil.checkList(data.getList(conditionKey + "ride-npc-uuid"), String.class)) {
+                final LinkedList<UUID> npcList = new LinkedList<>();
+                for (final String s : data.getStringList(conditionKey + "ride-npc-uuid")) {
+                    final UUID u = UUID.fromString(s);
+                    if (getDependencies().getCitizens() != null) {
+                        final NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(u);
+                        if (npc != null) {
+                            npcList.add(u);
+                        } else {
+                            throw new ConditionFormatException("ride-npc-uuid is not a valid NPC UUID",
+                                    conditionKey);
+                        }
+                    } else {
+                        throw new ConditionFormatException("Citizens not found for ride-npc-uuid", conditionKey);
                     }
-                    npcList.add(i);
                 }
                 condition.setNpcsWhileRiding(npcList);
+            }
+        } else if (data.contains(conditionKey + "ride-npc")) {
+            // Legacy
+            if (ConfigUtil.checkList(data.getList(conditionKey + "ride-npc"), Integer.class)) {
+                final LinkedList<UUID> npcList = new LinkedList<>();
+                if (getDependencies().getCitizens() != null) {
+                    for (final int i : data.getIntegerList(conditionKey + "ride-npc")) {
+                        final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
+                        if (npc != null) {
+                            npcList.add(npc.getUniqueId());
+                        } else {
+                            throw new ConditionFormatException("ride-npc is not a valid NPC ID",
+                                    conditionKey);
+                        }
+                    }
+                    condition.setNpcsWhileRiding(npcList);
+                } else {
+                    throw new ConditionFormatException("Citizens not found for ride-npc", conditionKey);
+                }
             } else {
                 throw new ConditionFormatException("ride-npc is not a list of NPC IDs", conditionKey);
             }

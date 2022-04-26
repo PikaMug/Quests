@@ -26,7 +26,6 @@ import me.blackvein.quests.quests.QuestFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -66,10 +65,6 @@ public interface QuestsAPI {
     Collection<IQuester> getOfflineQuesters();
 
     void setOfflineQuesters(final Collection<IQuester> questers);
-
-    LinkedList<Integer> getQuestNpcIds();
-
-    void setQuestNpcIds(final LinkedList<Integer> questNpcIds);
 
     QuestFactory getQuestFactory();
 

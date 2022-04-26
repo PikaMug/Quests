@@ -12,11 +12,12 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 public interface ICondition extends Comparable<ICondition> {
     String getName();
@@ -31,9 +32,9 @@ public interface ICondition extends Comparable<ICondition> {
 
     void setEntitiesWhileRiding(final LinkedList<String> entitiesWhileRiding);
 
-    LinkedList<Integer> getNpcsWhileRiding();
+    LinkedList<UUID> getNpcsWhileRiding();
 
-    void setNpcsWhileRiding(final LinkedList<Integer> npcsWhileRiding);
+    void setNpcsWhileRiding(final LinkedList<UUID> npcsWhileRiding);
 
     LinkedList<String> getPermissions();
 

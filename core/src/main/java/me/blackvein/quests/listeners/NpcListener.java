@@ -188,10 +188,10 @@ public class NpcListener implements Listener {
                     }
                 }
             }
-            if (plugin.getQuestNpcIds().contains(evt.getNPC().getId())) {
-                boolean hasObjective = false;
-                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
-                    if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
+            boolean hasObjective = false;
+            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
+                    if (quester.getCurrentStage(quest).getNpcsToInteract().contains(evt.getNPC().getUniqueId())) {
                         final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNPC()
                                 .getUniqueId());
                         if (quester.getQuestData(quest) != null && npcIndex > -1
@@ -201,59 +201,59 @@ public class NpcListener implements Listener {
                         quester.interactWithNPC(quest, evt.getNPC().getUniqueId());
                     }
                 }
-                if (!hasObjective) {
-                    boolean hasAtLeastOneGUI = false;
-                    final LinkedList<IQuest> npcQuests = new LinkedList<>();
-                    for (final IQuest q : plugin.getLoadedQuests()) {
-                        if (quester.getCurrentQuestsTemp().containsKey(q))
-                            continue;
-                        if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
-                            if (plugin.getSettings().canIgnoreLockedQuests()
-                                    && (!quester.getCompletedQuestsTemp().contains(q)
-                                    || q.getPlanner().getCooldown() > -1)) {
-                                if (q.testRequirements(quester)) {
-                                    npcQuests.add(q);
-                                    if (q.getGUIDisplay() != null) {
-                                        hasAtLeastOneGUI = true;
-                                    }
-                                }
-                            } else if (!quester.getCompletedQuestsTemp().contains(q) || q.getPlanner().getCooldown() > -1) {
+            }
+            if (!hasObjective) {
+                boolean hasAtLeastOneGUI = false;
+                final LinkedList<IQuest> npcQuests = new LinkedList<>();
+                for (final IQuest q : plugin.getLoadedQuests()) {
+                    if (quester.getCurrentQuestsTemp().containsKey(q))
+                        continue;
+                    if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
+                        if (plugin.getSettings().canIgnoreLockedQuests()
+                                && (!quester.getCompletedQuestsTemp().contains(q)
+                                || q.getPlanner().getCooldown() > -1)) {
+                            if (q.testRequirements(quester)) {
                                 npcQuests.add(q);
                                 if (q.getGUIDisplay() != null) {
                                     hasAtLeastOneGUI = true;
                                 }
                             }
-                        }
-                    }
-                    if (npcQuests.size() == 1) {
-                        final IQuest q = npcQuests.get(0);
-                        if (quester.canAcceptOffer(q, true)) {
-                            quester.setQuestIdToTake(q.getId());
-                            if (!plugin.getSettings().canAskConfirmation()) {
-                                quester.takeQuest(q, false);
-                            } else {
-                                if (q.getGUIDisplay() != null) {
-                                    quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
-                                } else {
-                                    for (final String msg : extracted(quester).split("<br>")) {
-                                        player.sendMessage(msg);
-                                    }
-                                    plugin.getConversationFactory().buildConversation(player).begin();
-                                }
+                        } else if (!quester.getCompletedQuestsTemp().contains(q) || q.getPlanner().getCooldown() > -1) {
+                            npcQuests.add(q);
+                            if (q.getGUIDisplay() != null) {
+                                hasAtLeastOneGUI = true;
                             }
                         }
-                    } else if (npcQuests.size() > 1) {
-                        if (hasAtLeastOneGUI) {
-                            quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
-                        } else {
-                            final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
-                            c.getContext().setSessionData("npcQuests", npcQuests);
-                            c.getContext().setSessionData("npc", evt.getNPC().getName());
-                            c.begin();
-                        }
-                    } else {
-                        evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
                     }
+                }
+                if (npcQuests.size() == 1) {
+                    final IQuest q = npcQuests.get(0);
+                    if (quester.canAcceptOffer(q, true)) {
+                        quester.setQuestIdToTake(q.getId());
+                        if (!plugin.getSettings().canAskConfirmation()) {
+                            quester.takeQuest(q, false);
+                        } else {
+                            if (q.getGUIDisplay() != null) {
+                                quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
+                            } else {
+                                for (final String msg : extracted(quester).split("<br>")) {
+                                    player.sendMessage(msg);
+                                }
+                                plugin.getConversationFactory().buildConversation(player).begin();
+                            }
+                        }
+                    }
+                } else if (npcQuests.size() > 1) {
+                    if (hasAtLeastOneGUI) {
+                        quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
+                    } else {
+                        final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
+                        c.getContext().setSessionData("npcQuests", npcQuests);
+                        c.getContext().setSessionData("npc", evt.getNPC().getName());
+                        c.begin();
+                    }
+                } else {
+                    evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
                 }
             }
         }

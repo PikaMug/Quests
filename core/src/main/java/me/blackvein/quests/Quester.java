@@ -797,12 +797,12 @@ public class Quester implements IQuester {
                         sendMessage(ChatColor.YELLOW + msg.toString());
                     } else if (!c.getNpcsWhileRiding().isEmpty()) {
                         final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideNPC"));
-                        for (final int i : c.getNpcsWhileRiding()) {
+                        for (final UUID u : c.getNpcsWhileRiding()) {
                             if (plugin.getDependencies().getCitizens() != null) {
                                 msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
-                                        .getById(i).getName());
+                                        .getByUniqueId(u).getName());
                             } else {
-                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(i);
+                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(u);
                             }
                         }
                         sendMessage(ChatColor.YELLOW + msg.toString());

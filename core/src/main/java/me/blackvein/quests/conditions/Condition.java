@@ -12,9 +12,9 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.MiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Condition implements ICondition {
 
@@ -30,7 +31,7 @@ public class Condition implements ICondition {
     private String name = "";
     private boolean failQuest = false;
     private LinkedList<String> entitiesWhileRiding = new LinkedList<>();
-    private LinkedList<Integer> npcsWhileRiding = new LinkedList<>();
+    private LinkedList<UUID> npcsWhileRiding = new LinkedList<>();
     private LinkedList<String> permissions = new LinkedList<>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<>();
@@ -79,12 +80,12 @@ public class Condition implements ICondition {
     }
 
     @Override
-    public LinkedList<Integer> getNpcsWhileRiding() {
+    public LinkedList<UUID> getNpcsWhileRiding() {
         return npcsWhileRiding;
     }
 
     @Override
-    public void setNpcsWhileRiding(final LinkedList<Integer> npcsWhileRiding) {
+    public void setNpcsWhileRiding(final LinkedList<UUID> npcsWhileRiding) {
         this.npcsWhileRiding = npcsWhileRiding;
     }
 
@@ -167,17 +168,17 @@ public class Condition implements ICondition {
                 if (player.getVehicle() != null && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: ICondition entity mismatch for " + player.getName() + ": " + e);
+                    plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
                 }
             }
         } else if (!npcsWhileRiding.isEmpty()) {
-            for (final int n : npcsWhileRiding) {
+            for (final UUID n : npcsWhileRiding) {
                 if (plugin.getDependencies().getCitizens() != null) {
-                    if (player.getVehicle() != null && player.getVehicle()
-                            .equals(plugin.getDependencies().getCitizens().getNPCRegistry().getById(n).getEntity())) {
+                    if (player.getVehicle() != null && player.getVehicle().equals(plugin.getDependencies().getCitizens()
+                            .getNPCRegistry().getByUniqueId(n).getEntity())) {
                         return true;
                     } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: ICondition NPC mismatch for " + player.getName() + ": ID " + n);
+                        plugin.getLogger().info("DEBUG: Condition NPC mismatch for " + player.getName() + ": ID " + n);
                     }
                 }
             }
@@ -187,7 +188,8 @@ public class Condition implements ICondition {
                     if (plugin.getDependencies().getVaultPermission().has(player, p)) {
                         return plugin.getDependencies().getVaultPermission().has(player, p);
                     } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: ICondition permission mismatch for " + player.getName() + ": " + p);
+                        plugin.getLogger().info("DEBUG: Condition permission mismatch for " + player.getName() + ": "
+                                + p);
                     }
                 } else {
                     plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
@@ -198,7 +200,7 @@ public class Condition implements ICondition {
                 if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: ICondition item mismatch for " + player.getName() + ": code "
+                    plugin.getLogger().info("DEBUG: Condition item mismatch for " + player.getName() + ": code "
                             + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
                 }
             }
@@ -207,7 +209,7 @@ public class Condition implements ICondition {
                 if (player.getWorld().getName().equalsIgnoreCase(w)) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: ICondition world mismatch for " + player.getName() + ": " + w);
+                    plugin.getLogger().info("DEBUG: Condition world mismatch for " + player.getName() + ": " + w);
                 }
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
@@ -219,7 +221,7 @@ public class Condition implements ICondition {
                         .name().equalsIgnoreCase(Objects.requireNonNull(MiscUtil.getProperBiome(b)).name())) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: ICondition biome mismatch for " + player.getName() + ": "
+                    plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": "
                             + MiscUtil.getProperBiome(b));
                 }
             }
@@ -228,7 +230,7 @@ public class Condition implements ICondition {
                 if (quester.isInRegion(r)) {
                     return true;
                 } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: ICondition region mismatch for " + player.getName() + ": " + r);
+                    plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
                 }
             }
         } else if (!placeholdersCheckIdentifier.isEmpty()) {
@@ -239,7 +241,8 @@ public class Condition implements ICondition {
                             placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
                         return true;
                     } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: ICondition placeholder mismatch for " + player.getName() + ": " + i);
+                        plugin.getLogger().info("DEBUG: Condition placeholder mismatch for " + player.getName() + ": "
+                                + i);
                     }
                 } else {
                     plugin.getLogger().warning("PAPI must be installed for placeholder checks: " + i);

@@ -12,12 +12,12 @@
 
 package me.blackvein.quests.conditions;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.conditions.menu.ConditionMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.FakeConversable;
 import me.blackvein.quests.util.Lang;
@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class BukkitConditionFactory implements ConditionFactory, ConversationAbandonedListener {
 
@@ -96,7 +97,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             context.setSessionData(CK.C_WHILE_RIDING_ENTITY, entities);
         }
         if (condition.getNpcsWhileRiding() != null && !condition.getNpcsWhileRiding().isEmpty()) {
-            final LinkedList<Integer> npcs = new LinkedList<>(condition.getNpcsWhileRiding());
+            final LinkedList<UUID> npcs = new LinkedList<>(condition.getNpcsWhileRiding());
             context.setSessionData(CK.C_WHILE_RIDING_NPC, npcs);
         }
         if (condition.getPermissions() != null && !condition.getPermissions().isEmpty()) {
@@ -214,40 +215,31 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             }
         }
         if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) != null) {
-            section.set("ride-entity", 
-                    context.getSessionData(CK.C_WHILE_RIDING_ENTITY));
+            section.set("ride-entity", context.getSessionData(CK.C_WHILE_RIDING_ENTITY));
         }
         if (context.getSessionData(CK.C_WHILE_RIDING_NPC) != null) {
-            section.set("ride-npc", 
-                    context.getSessionData(CK.C_WHILE_RIDING_NPC));
+            section.set("ride-npc-uuid", context.getSessionData(CK.C_WHILE_RIDING_NPC));
         }
         if (context.getSessionData(CK.C_WHILE_PERMISSION) != null) {
-            section.set("permission", 
-                    context.getSessionData(CK.C_WHILE_PERMISSION));
+            section.set("permission", context.getSessionData(CK.C_WHILE_PERMISSION));
         }
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
-            section.set("hold-main-hand", 
-                    context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
+            section.set("hold-main-hand", context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) != null) {
-            section.set("stay-within-world", 
-                    context.getSessionData(CK.C_WHILE_WITHIN_WORLD));
+            section.set("stay-within-world", context.getSessionData(CK.C_WHILE_WITHIN_WORLD));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) != null) {
-            section.set("stay-within-biome", 
-                    context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
+            section.set("stay-within-biome", context.getSessionData(CK.C_WHILE_WITHIN_BIOME));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) != null) {
-            section.set("stay-within-region", 
-                    context.getSessionData(CK.C_WHILE_WITHIN_REGION));
+            section.set("stay-within-region", context.getSessionData(CK.C_WHILE_WITHIN_REGION));
         }
         if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID) != null) {
-            section.set("check-placeholder-id", 
-                    context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID));
+            section.set("check-placeholder-id", context.getSessionData(CK.C_WHILE_PLACEHOLDER_ID));
         }
         if (context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL) != null) {
-            section.set("check-placeholder-value", 
-                    context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL));
+            section.set("check-placeholder-value", context.getSessionData(CK.C_WHILE_PLACEHOLDER_VAL));
         }
         try {
             data.save(conditionsFile);
