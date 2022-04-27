@@ -1595,7 +1595,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
     
     /**
-     * Show the player a list of their quests
+     * Show the player a list of their available quests
      * 
      * @param quester Quester to show the list
      * @param page Page to display, with 7 quests per page

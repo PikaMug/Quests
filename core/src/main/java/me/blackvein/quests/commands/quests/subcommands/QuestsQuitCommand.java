@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.commands.quests.subcommands;
 
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.commands.QuestsSubCommand;
 import me.blackvein.quests.player.IQuester;
@@ -100,9 +101,20 @@ public class QuestsQuitCommand extends QuestsSubCommand {
     public List<String> tabComplete(CommandSender commandSender, String[] args) {
         if (args.length == 2) {
             final List<String> results = new ArrayList<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
-                if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
-                    results.add(ChatColor.stripColor(quest.getName()));
+            if (commandSender instanceof Player) {
+                final Quester quester = plugin.getQuester(((Player) commandSender).getUniqueId());
+                if (quester != null) {
+                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                        if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                            results.add(ChatColor.stripColor(quest.getName()));
+                        }
+                    }
+                }
+            } else {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
+                    if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                        results.add(ChatColor.stripColor(quest.getName()));
+                    }
                 }
             }
             return results;

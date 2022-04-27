@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.commands.questadmin.subcommands;
 
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.commands.QuestsSubCommand;
 import me.blackvein.quests.player.IQuester;
@@ -21,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,7 +91,7 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
             } else {
                 msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
             }
-            msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + toRemove.getName() + ChatColor.AQUA);
+            msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + toRemove.getName() + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg);
             cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.getUUID().toString());
             quester.hardRemove(toRemove);
@@ -106,9 +108,21 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
             return null; // Shows online players
         } else if (args.length == 3) {
             final List<String> results = new ArrayList<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
-                if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
-                    results.add(ChatColor.stripColor(quest.getName()));
+            final Player player = Bukkit.getPlayer(args[1]);
+            if (player != null) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
+                if (quester != null) {
+                    for (final IQuest quest : quester.getCompletedQuests()) {
+                        if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                            results.add(ChatColor.stripColor(quest.getName()));
+                        }
+                    }
+                }
+            } else {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
+                    if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                        results.add(ChatColor.stripColor(quest.getName()));
+                    }
                 }
             }
             return results;

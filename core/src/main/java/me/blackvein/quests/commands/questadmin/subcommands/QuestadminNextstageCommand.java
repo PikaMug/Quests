@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.commands.questadmin.subcommands;
 
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.commands.QuestsSubCommand;
 import me.blackvein.quests.player.IQuester;
@@ -114,9 +115,21 @@ public class QuestadminNextstageCommand extends QuestsSubCommand {
             return null; // Shows online players
         } else if (args.length == 3) {
             final List<String> results = new ArrayList<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
-                if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
-                    results.add(ChatColor.stripColor(quest.getName()));
+            final Player player = Bukkit.getPlayer(args[1]);
+            if (player != null) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
+                if (quester != null) {
+                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                        if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                            results.add(ChatColor.stripColor(quest.getName()));
+                        }
+                    }
+                }
+            } else {
+                for (final IQuest quest : plugin.getLoadedQuests()) {
+                    if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
+                        results.add(ChatColor.stripColor(quest.getName()));
+                    }
                 }
             }
             return results;
