@@ -292,9 +292,8 @@ public class NpcListener implements Listener {
             final ObjectiveType type = ObjectiveType.KILL_NPC;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
             Player player = null;
-            if (damager instanceof Projectile
-                    && evt.getNPC().getEntity().getLastDamageCause().getEntity() instanceof Player) {
-                player = (Player) evt.getNPC().getEntity().getLastDamageCause().getEntity();
+            if (damager instanceof Projectile && ((Projectile)damageEvent.getDamager()).getShooter() instanceof Player) {
+                player = (Player) ((Projectile)damageEvent.getDamager()).getShooter();
             } else if (damager instanceof Player) {
                 player = (Player) damager;
             }
