@@ -55,10 +55,14 @@ public class NpcListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(final NPCRightClickEvent evt) {
+        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: A");
         if (plugin.getDependencies().getCitizens() == null) {
+            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: Citizens was null");
             return;
         }
+        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: B");
         if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
+            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: C");
             if (evt.getNPC() == null) {
                 plugin.getLogger().severe("NPC was null while selecting by right-click");
                 return;
@@ -66,10 +70,13 @@ public class NpcListener implements Listener {
             evt.getClicker().acceptConversationInput(String.valueOf(evt.getNPC().getUniqueId()));
         }
         if (!evt.getClicker().isConversing()) {
+            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: D");
             final Player player = evt.getClicker();
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: E1 " + quest.getName());
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: F");
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
                     final LinkedList<Integer> matches = new LinkedList<>();
@@ -83,16 +90,20 @@ public class NpcListener implements Listener {
                     }
                     final NPC clicked = evt.getNPC();
                     if (!matches.isEmpty()) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: G1");
                         for (final Integer match : matches) {
                             final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
                             if (uuid.equals(clicked.getUniqueId())) {
+                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: H");
                                 quester.deliverToNPC(quest, uuid, hand);
                                 return;
                             }
                         }
                     } else if (!hand.getType().equals(Material.AIR)) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: G2");
                         for (final UUID uuid : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
                             if (uuid.equals(clicked.getUniqueId())) {
+                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: H");
                                 String text = "";
                                 final boolean hasMeta = hand.getItemMeta() != null;
                                 if (hasMeta) {
@@ -169,11 +180,13 @@ public class NpcListener implements Listener {
                                                 .replace("<data>", "unknown"));
                                 }
                                 if (hasMeta) {
+                                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: hasMeta");
                                     if (hand.getType().equals(Material.ENCHANTED_BOOK)) {
                                         final EnchantmentStorageMeta esMeta = (EnchantmentStorageMeta) hand.getItemMeta();
                                         if (esMeta.hasStoredEnchants()) {
                                             for (final Entry<Enchantment, Integer> e : esMeta.getStoredEnchants()
                                                     .entrySet()) {
+                                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: send");
                                                 final HashMap<Enchantment, Integer> single = new HashMap<>();
                                                 single.put(e.getKey(), e.getValue());
                                                 plugin.getLocaleManager().sendMessage(player, ChatColor.GRAY + "\u2515 "
@@ -190,8 +203,11 @@ public class NpcListener implements Listener {
             }
             boolean hasObjective = false;
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: E2");
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: F");
                     if (quester.getCurrentStage(quest).getNpcsToInteract().contains(evt.getNPC().getUniqueId())) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: G");
                         final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNPC()
                                 .getUniqueId());
                         if (quester.getQuestData(quest) != null && npcIndex > -1
@@ -203,39 +219,51 @@ public class NpcListener implements Listener {
                 }
             }
             if (!hasObjective) {
+                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: E3");
                 boolean hasAtLeastOneGUI = false;
                 final LinkedList<IQuest> npcQuests = new LinkedList<>();
                 for (final IQuest q : plugin.getLoadedQuests()) {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: F");
                     if (quester.getCurrentQuestsTemp().containsKey(q))
                         continue;
                     if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: G");
                         if (plugin.getSettings().canIgnoreLockedQuests()
                                 && (!quester.getCompletedQuestsTemp().contains(q)
                                 || q.getPlanner().getCooldown() > -1)) {
+                            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: H1");
                             if (q.testRequirements(quester)) {
                                 npcQuests.add(q);
                                 if (q.getGUIDisplay() != null) {
+                                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: I1");
                                     hasAtLeastOneGUI = true;
                                 }
                             }
                         } else if (!quester.getCompletedQuestsTemp().contains(q) || q.getPlanner().getCooldown() > -1) {
+                            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: H2");
                             npcQuests.add(q);
                             if (q.getGUIDisplay() != null) {
+                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: I2");
                                 hasAtLeastOneGUI = true;
                             }
                         }
                     }
                 }
                 if (npcQuests.size() == 1) {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: J1");
                     final IQuest q = npcQuests.get(0);
                     if (quester.canAcceptOffer(q, true)) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: K1");
                         quester.setQuestIdToTake(q.getId());
                         if (!plugin.getSettings().canAskConfirmation()) {
+                            if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: 1");
                             quester.takeQuest(q, false);
                         } else {
                             if (q.getGUIDisplay() != null) {
+                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: 2");
                                 quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
                             } else {
+                                if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: 3");
                                 for (final String msg : extracted(quester).split("<br>")) {
                                     player.sendMessage(msg);
                                 }
@@ -244,15 +272,19 @@ public class NpcListener implements Listener {
                         }
                     }
                 } else if (npcQuests.size() > 1) {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: J2");
                     if (hasAtLeastOneGUI) {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: 1");
                         quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
                     } else {
+                        if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: 2");
                         final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                         c.getContext().setSessionData("npcQuests", npcQuests);
                         c.getContext().setSessionData("npc", evt.getNPC().getName());
                         c.begin();
                     }
                 } else {
+                    if (plugin.getSettings().getConsoleLogging() > 3) System.out.println("DEBUG: NO MORE QUEST");
                     evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
                 }
             }
