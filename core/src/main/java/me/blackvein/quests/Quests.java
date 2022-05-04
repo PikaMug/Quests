@@ -1545,7 +1545,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
             if (i < data.locationsReached.size()) {
                 final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(quester.getPlayer(), "goTo");
+                String message = color + "- " + Lang.get(quester.getPlayer(), "goTo");
                 message = message.replace("<location>", stage.getLocationNames().get(i));
                 quester.sendMessage(message);
             }

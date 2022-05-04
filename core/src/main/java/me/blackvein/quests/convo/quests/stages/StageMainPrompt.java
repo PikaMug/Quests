@@ -857,23 +857,42 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 final Block block = plugin.getQuestFactory().getSelectedReachLocations().get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    final LinkedList<String> locations;
-                    if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS);
-                    } else {
-                        locations = new LinkedList<>();
-                    }
+                    final LinkedList<String> locations
+                            = context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS) != null
+                            ? (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS)
+                            : new LinkedList<>();
                     if (locations != null) {
                         locations.add(ConfigUtil.getLocationInfo(loc));
                     }
                     context.setSessionData(stagePrefix + CK.S_REACH_LOCATIONS, locations);
-                    final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
-                    temp.remove(player.getUniqueId());
-                    plugin.getQuestFactory().setSelectedReachLocations(temp);
+
+                    LinkedList<Integer> amounts = new LinkedList<>();
+                    LinkedList<String> names = new LinkedList<>();
+                    if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_RADIUS) != null) {
+                        amounts = (LinkedList<Integer>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_RADIUS);
+                    }
+                    if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES) != null) {
+                        names = (LinkedList<String>) context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES);
+                    }
+                    if (locations != null && amounts != null && names != null) {
+                        for (int i = 0; i < locations.size(); i++) {
+                            if (i >= amounts.size()) {
+                                amounts.add(5);
+                            }
+                            if (i >= names.size()) {
+                                names.add(Lang.get("location").replace("<id>", "#" + (i + 1)));
+                            }
+                        }
+                    }
+                    context.setSessionData(stagePrefix + CK.S_REACH_LOCATIONS_RADIUS, amounts);
+                    context.setSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES, names);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("stageEditorNoBlockSelected"));
                     return new ReachLocationPrompt(context);
                 }
+                final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                temp.remove(player.getUniqueId());
+                plugin.getQuestFactory().setSelectedReachLocations(temp);
                 return new ReachListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();

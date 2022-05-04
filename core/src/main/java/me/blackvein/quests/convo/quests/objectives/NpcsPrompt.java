@@ -479,6 +479,15 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_NPCS, npcs);
+
+                LinkedList<String> messages = new LinkedList<>();
+                if (context.getSessionData(pref + CK.S_DELIVERY_MESSAGES) != null) {
+                    messages = (LinkedList<String>) context.getSessionData(pref + CK.S_DELIVERY_MESSAGES);
+                }
+                if (messages != null && messages.size() == 0) {
+                    messages.add(Lang.get("thankYouMore"));
+                }
+                context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, messages);
             }
             final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
             selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
@@ -816,6 +825,19 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_NPCS_TO_KILL, npcs);
+
+                LinkedList<Integer> amounts = new LinkedList<>();
+                if (context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS);
+                }
+                if (npcs != null && amounts != null) {
+                    for (int i = 0; i < npcs.size(); i++) {
+                        if (i >= amounts.size()) {
+                            amounts.add(1);
+                        }
+                    }
+                }
+                context.setSessionData(pref + CK.S_NPCS_TO_KILL_AMOUNTS, amounts);
             }
             final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
             selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());

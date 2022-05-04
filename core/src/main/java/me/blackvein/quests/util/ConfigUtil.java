@@ -128,10 +128,13 @@ public class ConfigUtil {
         return parsed.split("\n");
     }
 
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final NPC npc) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final NPC npc, int amount) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             parsed = parsed.replace("<npc>", npc.getName());
+        }
+        if (parsed.contains("<amount>")) {
+            parsed = parsed.replace("<amount>", String.valueOf(amount));
         }
         return parsed.split("\n");
     }

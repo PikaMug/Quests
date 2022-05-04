@@ -3022,7 +3022,8 @@ public class Quester implements IQuester {
                     final String[] message = ConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
                             .getDeliverMessages().get(new Random().nextInt(getCurrentStage(quest).getDeliverMessages()
                             .size())), plugin.getDependencies().getCitizens().getNPCRegistry()
-                            .getByUniqueId(getCurrentStage(quest).getItemDeliveryTargets().get(items.indexOf(found))));
+                            .getByUniqueId(getCurrentStage(quest).getItemDeliveryTargets().get(items.indexOf(found))),
+                            toDeliver - newAmount);
                     player.sendMessage(message);
                 }
 

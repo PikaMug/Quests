@@ -542,6 +542,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input == null) {
                 return null;
@@ -558,6 +559,19 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(pref + CK.S_MOB_TYPES, mobTypes);
+
+                LinkedList<Integer> amounts = new LinkedList<>();
+                if (context.getSessionData(pref + CK.S_MOB_AMOUNTS) != null) {
+                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_MOB_AMOUNTS);
+                }
+                if (amounts != null) {
+                    for (int i = 0; i < mobTypes.size(); i++) {
+                        if (i >= amounts.size()) {
+                            amounts.add(1);
+                        }
+                    }
+                }
+                context.setSessionData(pref + CK.S_MOB_AMOUNTS, amounts);
             }
             return new MobsKillListPrompt(context);
         }
@@ -778,112 +792,6 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class MobsFishPrompt extends QuestsEditorStringPrompt {
-
-        public MobsFishPrompt(final ConversationContext context) {
-            super(context);
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("stageEditorCatchFishPrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
-            
-            return ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                return null;
-            }
-            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                try {
-                    final int i = Integer.parseInt(input);
-                    if (i < 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-                        return new MobsFishPrompt(context);
-                    } else if (i > 0) {
-                        context.setSessionData(pref + CK.S_FISH, i);
-                    }
-                } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
-                            .replace("<input>", input));
-                    return new MobsFishPrompt(context);
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(pref + CK.S_FISH, null);
-            }
-            return new MobsPrompt(stageNum, context);
-        }
-    }
-    
-    public class MobsCowsPrompt extends QuestsEditorStringPrompt {
-
-        public MobsCowsPrompt(final ConversationContext context) {
-            super(context);
-        }
-        
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("stageEditorMilkCowsPrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
-            
-            return ChatColor.YELLOW + getQueryText(context);
-        }
-
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                return null;
-            }
-            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                try {
-                    final int i = Integer.parseInt(input);
-                    if (i < 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
-                        return new MobsCowsPrompt(context);
-                    } else if (i > 0) {
-                        context.setSessionData(pref + CK.S_COW_MILK, i);
-                    }
-                } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
-                            .replace("<input>", input));
-                    return new MobsCowsPrompt(context);
-                }
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(pref + CK.S_COW_MILK, null);
-            }
-            return new MobsPrompt(stageNum, context);
-        }
-    }
-    
     public class MobsTameListPrompt extends QuestsEditorNumericPrompt {
 
         public MobsTameListPrompt(final ConversationContext context) {
@@ -1073,6 +981,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input == null) {
                 return null;
@@ -1087,6 +996,19 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                             if (type.isAlive() || (ec != null && Tameable.class.isAssignableFrom(ec))) {
                                 mobTypes.add(s);
                                 context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
+
+                                LinkedList<Integer> amounts = new LinkedList<>();
+                                if (context.getSessionData(pref + CK.S_TAME_AMOUNTS) != null) {
+                                    amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_TAME_AMOUNTS);
+                                }
+                                if (amounts != null) {
+                                    for (int i = 0; i < mobTypes.size(); i++) {
+                                        if (i >= amounts.size()) {
+                                            amounts.add(1);
+                                        }
+                                    }
+                                }
+                                context.setSessionData(pref + CK.S_TAME_AMOUNTS, amounts);
                             } else {
                                 context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED
                                         + Lang.get("stageEditorInvalidMob"));
@@ -1156,6 +1078,112 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(pref + CK.S_TAME_AMOUNTS, mobAmounts);
             }
             return new MobsTameListPrompt(context);
+        }
+    }
+
+    public class MobsFishPrompt extends QuestsEditorStringPrompt {
+
+        public MobsFishPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("stageEditorCatchFishPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i < 0) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
+                        return new MobsFishPrompt(context);
+                    } else if (i > 0) {
+                        context.setSessionData(pref + CK.S_FISH, i);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new MobsFishPrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(pref + CK.S_FISH, null);
+            }
+            return new MobsPrompt(stageNum, context);
+        }
+    }
+
+    public class MobsCowsPrompt extends QuestsEditorStringPrompt {
+
+        public MobsCowsPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("stageEditorMilkCowsPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i < 0) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorPositiveAmount"));
+                        return new MobsCowsPrompt(context);
+                    } else if (i > 0) {
+                        context.setSessionData(pref + CK.S_COW_MILK, i);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new MobsCowsPrompt(context);
+                }
+            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
+                context.setSessionData(pref + CK.S_COW_MILK, null);
+            }
+            return new MobsPrompt(stageNum, context);
         }
     }
 
@@ -1340,6 +1368,7 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input == null) {
                 return null;
@@ -1350,6 +1379,19 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     if (MiscUtil.getProperDyeColor(s) != null) {
                         colors.add(s);
                         context.setSessionData(pref + CK.S_SHEAR_COLORS, colors);
+
+                        LinkedList<Integer> amounts = new LinkedList<>();
+                        if (context.getSessionData(pref + CK.S_SHEAR_AMOUNTS) != null) {
+                            amounts = (LinkedList<Integer>) context.getSessionData(pref + CK.S_SHEAR_AMOUNTS);
+                        }
+                        if (amounts != null) {
+                            for (int i = 0; i < colors.size(); i++) {
+                                if (i >= amounts.size()) {
+                                    amounts.add(1);
+                                }
+                            }
+                        }
+                        context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
                                 + Lang.get("stageEditorInvalidDye"));
