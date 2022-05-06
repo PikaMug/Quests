@@ -190,6 +190,9 @@ public class NpcListener implements Listener {
             }
             boolean hasObjective = false;
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                if (!quester.meetsCondition(quest, true)) {
+                    continue;
+                }
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
                     if (quester.getCurrentStage(quest).getNpcsToInteract().contains(evt.getNPC().getUniqueId())) {
                         final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNPC()
@@ -206,8 +209,9 @@ public class NpcListener implements Listener {
                 boolean hasAtLeastOneGUI = false;
                 final LinkedList<IQuest> npcQuests = new LinkedList<>();
                 for (final IQuest q : plugin.getLoadedQuests()) {
-                    if (quester.getCurrentQuestsTemp().containsKey(q))
+                    if (quester.getCurrentQuestsTemp().containsKey(q)) {
                         continue;
+                    }
                     if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
                         if (plugin.getSettings().canIgnoreLockedQuests()
                                 && (!quester.getCompletedQuestsTemp().contains(q)

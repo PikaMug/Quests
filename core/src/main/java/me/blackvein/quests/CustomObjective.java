@@ -213,6 +213,9 @@ public class CustomObjective implements ICustomObjective, Listener {
         final Quester quester = plugin.getQuester(player.getUniqueId());
         if (quester != null) {
             if (quester.hasCustomObjective(quest, obj.getName())) {
+                if (!quester.meetsCondition(quest, true)) {
+                    return;
+                }
                 int index = -1;
                 final LinkedList<Integer> customObjCounts = quester.getQuestData(quest).customObjectiveCounts;
                 for (final ICustomObjective co : quester.getCurrentStage(quest).getCustomObjectives()) {
