@@ -417,7 +417,8 @@ public class Action implements IAction {
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + Lang.get(player, "timerStart")
-                    .replace("<time>", ChatColor.RED + MiscUtil.getTime(timer * 1000L) + ChatColor.GREEN));
+                    .replace("<time>", ChatColor.RED + MiscUtil.getTime(timer * 1000L) + ChatColor.GREEN)
+                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
             if (timer > 60) {
                 quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
                         .runTaskLater(plugin, (timer - 60) * 20L).getTaskId(), quest);

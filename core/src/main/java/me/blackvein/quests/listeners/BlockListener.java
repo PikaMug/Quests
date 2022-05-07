@@ -209,7 +209,7 @@ public class BlockListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(evt.getBlock().getType(), 1, evt.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -220,9 +220,11 @@ public class BlockListener implements Listener {
                     }
                     
                     if (quester.getCurrentQuestsTemp().containsKey(quest)) {
-                        IStage currentStage = quester.getCurrentStage(quest);
+                        final IStage currentStage = quester.getCurrentStage(quest);
 
-                        if (currentStage.containsObjective(placeType)) quester.placeBlock(quest, blockItemStack);
+                        if (currentStage.containsObjective(placeType)) {
+                            quester.placeBlock(quest, blockItemStack);
+                        }
 
                         if (currentStage.containsObjective(breakType)) {
                             for (final ItemStack is : quester.getQuestData(quest).blocksBroken) {
@@ -235,7 +237,7 @@ public class BlockListener implements Listener {
                                     }
 
                                     final QuesterPreUpdateObjectiveEvent preEvent
-                                            = new QuesterPreUpdateObjectiveEvent((Quester) quester, quest,
+                                            = new QuesterPreUpdateObjectiveEvent(quester, quest,
                                             new BukkitObjective(placeType, is.getAmount(), toBreak.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
@@ -245,7 +247,7 @@ public class BlockListener implements Listener {
                                     quester.getQuestData(quest).blocksBroken.set(index, is);
 
                                     final QuesterPostUpdateObjectiveEvent postEvent
-                                            = new QuesterPostUpdateObjectiveEvent((Quester) quester, quest,
+                                            = new QuesterPostUpdateObjectiveEvent(quester, quest,
                                             new BukkitObjective(placeType, newAmount, toBreak.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }

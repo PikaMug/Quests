@@ -444,9 +444,9 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
             }
         }
         if (context.getSessionData(CK.E_CANCEL_TIMER) != null) {
-            final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
-            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                section.set("cancel-timer", true);
+            final Boolean b = (Boolean) context.getSessionData(CK.E_CANCEL_TIMER);
+            if (b != null) {
+                section.set("cancel-timer", b);
             }
         }
         if (context.getSessionData(CK.E_DENIZEN) != null) {

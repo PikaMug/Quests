@@ -41,7 +41,8 @@ public class ActionTimer extends BukkitRunnable {
             quester.updateJournal();
         } else {
             quester.getPlayer().sendMessage(ChatColor.GREEN + Lang.get(quester.getPlayer(), "timerMessage")
-                    .replace("<time>", ChatColor.RED + MiscUtil.getTime(time * 1000L) + ChatColor.GREEN));
+                    .replace("<time>", ChatColor.RED + MiscUtil.getTime(time * 1000L) + ChatColor.GREEN)
+                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
         }
     }
 }

@@ -40,7 +40,8 @@ public class QuestsLog4JFilter extends AbstractFilter {
             return Result.DENY;
         }
         // Paper outputs errors when dependencies for module events are missing
-        return message.startsWith("Plugin Quests") ? Result.DENY : Result.NEUTRAL;
+        return (message.contains("Plugin Quests") && message.contains("failed to register events"))
+                ? Result.DENY : Result.NEUTRAL;
     }
 
     @Override

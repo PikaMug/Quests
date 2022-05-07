@@ -12,10 +12,6 @@
 
 package me.blackvein.quests.convo.actions.tasks;
 
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
-
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
@@ -25,6 +21,9 @@ import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenStringProm
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 public class TimerPrompt extends ActionsEditorNumericPrompt {
@@ -89,8 +88,13 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
                 }
             }
         case 2:
-            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_CANCEL_TIMER) + ChatColor.GRAY
-                    + ")";
+            if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
+                return ChatColor.GRAY + "(" + ChatColor.RED + Lang.get("false") + ChatColor.GRAY + ")";
+            } else {
+                final Boolean timerOpt = (Boolean) context.getSessionData(CK.E_CANCEL_TIMER);
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(timerOpt) ? ChatColor.GREEN + Lang.get("true")
+                        : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
+            }
         case 3:
             return "";
         default:
@@ -101,7 +105,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
     @Override
     public @NotNull String getBasicPromptText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CANCEL_TIMER) == null) {
-            context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
+            context.setSessionData(CK.E_CANCEL_TIMER, false);
         }
         
         final ActionsEditorPostOpenNumericPromptEvent event
@@ -123,11 +127,11 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return new TimerFailPrompt(context);
         case 2:
-            final String s = (String) context.getSessionData(CK.E_CANCEL_TIMER);
-            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("noWord"));
+            final Boolean b = (Boolean) context.getSessionData(CK.E_CANCEL_TIMER);
+            if (Boolean.TRUE.equals(b)) {
+                context.setSessionData(CK.E_CANCEL_TIMER, false);
             } else {
-                context.setSessionData(CK.E_CANCEL_TIMER, Lang.get("yesWord"));
+                context.setSessionData(CK.E_CANCEL_TIMER, true);
             }
             return new TimerPrompt(context);
         case 3:
