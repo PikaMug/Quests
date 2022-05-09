@@ -170,10 +170,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         case 8:
             if (context.getSessionData(CK.E_FAIL_QUEST) == null) {
-                context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
+                return ChatColor.GRAY + "(" + ChatColor.RED + Lang.get("false") + ChatColor.GRAY + ")";
+            } else {
+                final Boolean failOpt = (Boolean) context.getSessionData(CK.E_FAIL_QUEST);
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + Lang.get("true")
+                        : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
             }
-            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_FAIL_QUEST) + ChatColor.GRAY
-                    + ")";
         default:
             return null;
         }
@@ -219,11 +221,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             }
         case 8:
-            final String s = (String) context.getSessionData(CK.E_FAIL_QUEST);
-            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                context.setSessionData(CK.E_FAIL_QUEST, Lang.get("noWord"));
+            final Boolean b = (Boolean) context.getSessionData(CK.E_FAIL_QUEST);
+            if (Boolean.TRUE.equals(b)) {
+                context.setSessionData(CK.E_FAIL_QUEST, false);
             } else {
-                context.setSessionData(CK.E_FAIL_QUEST, Lang.get("yesWord"));
+                context.setSessionData(CK.E_FAIL_QUEST, true);
             }
             return new ActionMainPrompt(context);
         case 9:

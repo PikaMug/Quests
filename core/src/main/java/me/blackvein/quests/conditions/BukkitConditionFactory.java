@@ -88,9 +88,9 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
     
     public void loadData(final ICondition condition, final ConversationContext context) {
         if (condition.isFailQuest()) {
-            context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
+            context.setSessionData(CK.C_FAIL_QUEST, true);
         } else {
-            context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
+            context.setSessionData(CK.C_FAIL_QUEST, false);
         }
         if (condition.getEntitiesWhileRiding() != null && !condition.getEntitiesWhileRiding().isEmpty()) {
             final LinkedList<String> entities = new LinkedList<>(condition.getEntitiesWhileRiding());
@@ -209,9 +209,9 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         final ConfigurationSection section = data.createSection("conditions." + context.getSessionData(CK.C_NAME));
         editingConditionNames.remove((String) context.getSessionData(CK.C_NAME));
         if (context.getSessionData(CK.C_FAIL_QUEST) != null) {
-            final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
-            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                section.set("fail-quest", true);
+            final Boolean b = (Boolean) context.getSessionData(CK.C_FAIL_QUEST);
+            if (b != null) {
+                section.set("fail-quest", b);
             }
         }
         if (context.getSessionData(CK.C_WHILE_RIDING_ENTITY) != null) {

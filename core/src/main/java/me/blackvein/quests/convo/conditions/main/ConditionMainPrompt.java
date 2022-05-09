@@ -90,7 +90,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 5:
             return ChatColor.YELLOW + Lang.get("conditionEditorCheckPlaceholder");
         case 6:
-            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest") + ":";
+            return ChatColor.YELLOW + Lang.get("eventEditorFailQuest");
         case 7:
             return ChatColor.GREEN + Lang.get("save");
         case 8:
@@ -113,9 +113,12 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             return "";
         case 6:
             if (context.getSessionData(CK.C_FAIL_QUEST) == null) {
-                context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
+                return ChatColor.GRAY + "(" + ChatColor.RED + Lang.get("false") + ChatColor.GRAY + ")";
+            } else {
+                final Boolean failOpt = (Boolean) context.getSessionData(CK.C_FAIL_QUEST);
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + Lang.get("true")
+                        : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
             }
-            return "" + ChatColor.AQUA + context.getSessionData(CK.C_FAIL_QUEST);
         default:
             return null;
         }
@@ -151,11 +154,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 5:
             return new ConditionPlaceholderListPrompt(context);
         case 6:
-            final String s = (String) context.getSessionData(CK.C_FAIL_QUEST);
-            if (s != null && s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                context.setSessionData(CK.C_FAIL_QUEST, Lang.get("noWord"));
+            final Boolean b = (Boolean) context.getSessionData(CK.C_FAIL_QUEST);
+            if (Boolean.TRUE.equals(b)) {
+                context.setSessionData(CK.C_FAIL_QUEST, false);
             } else {
-                context.setSessionData(CK.C_FAIL_QUEST, Lang.get("yesWord"));
+                context.setSessionData(CK.C_FAIL_QUEST, true);
             }
             return new ConditionMainPrompt(context);
         case 7:

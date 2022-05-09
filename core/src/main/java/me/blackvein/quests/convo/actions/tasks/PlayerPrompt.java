@@ -27,7 +27,6 @@ import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -197,8 +196,13 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return text.toString();
             }
         case 9:
-            return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.E_CLEAR_INVENTORY) + ChatColor.GRAY
-                    + ")";
+            if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
+                return ChatColor.GRAY + "(" + ChatColor.RED + Lang.get("false") + ChatColor.GRAY + ")";
+            } else {
+                final Boolean clearOpt = (Boolean) context.getSessionData(CK.E_CLEAR_INVENTORY);
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(clearOpt) ? ChatColor.GREEN + Lang.get("true")
+                        : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
+            }
         case 10:
             return "";
         default:
@@ -209,7 +213,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
     @Override
     public @NotNull String getBasicPromptText(final ConversationContext context) {
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) == null) {
-            context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
+            context.setSessionData(CK.E_CLEAR_INVENTORY, false);
         }
         
         final ActionsEditorPostOpenNumericPromptEvent event
@@ -258,13 +262,11 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return new PlayerPrompt(context);
             }
         case 9:
-            final String s = (String) context.getSessionData(CK.E_CLEAR_INVENTORY);
-            if (s != null) {
-                if (s.equalsIgnoreCase(Lang.get("yesWord"))) {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("noWord"));
-                } else {
-                    context.setSessionData(CK.E_CLEAR_INVENTORY, Lang.get("yesWord"));
-                }
+            final Boolean b = (Boolean) context.getSessionData(CK.E_CLEAR_INVENTORY);
+            if (Boolean.TRUE.equals(b)) {
+                context.setSessionData(CK.E_CLEAR_INVENTORY, false);
+            } else {
+                context.setSessionData(CK.E_CLEAR_INVENTORY, true);
             }
             return new PlayerPrompt(context);
         case 10:
