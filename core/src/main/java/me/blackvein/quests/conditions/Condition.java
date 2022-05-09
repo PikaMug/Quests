@@ -159,98 +159,134 @@ public class Condition implements ICondition {
         this.placeholdersCheckValue = placeholdersCheckValue;
     }
 
+    /**
+     * Checks whether the Quester passes all applicable conditions for provided quest
+     * @param quester Quester to check
+     * @param quest Quest to check
+     * @return true if successful
+     */
     @SuppressWarnings("deprecation")
     @Override
     public boolean check(final IQuester quester, final IQuest quest) {
         final Player player = quester.getPlayer();
+        boolean failed = false;
         if (!entitiesWhileRiding.isEmpty()) {
             for (final String e : entitiesWhileRiding) {
-                if (player.getVehicle() != null && player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
-                    return true;
-                } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
+                if (player.getVehicle() == null) {
+                    return false;
+                }
+                if (!player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
+                    }
+                    break;
                 }
             }
         } else if (!npcsWhileRiding.isEmpty()) {
             for (final UUID n : npcsWhileRiding) {
-                if (plugin.getDependencies().getCitizens() != null) {
-                    if (player.getVehicle() != null && player.getVehicle().equals(plugin.getDependencies().getCitizens()
-                            .getNPCRegistry().getByUniqueId(n).getEntity())) {
-                        return true;
-                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition NPC mismatch for " + player.getName() + ": ID " + n);
+                if (plugin.getDependencies().getCitizens() == null) {
+                    plugin.getLogger().warning("Citizens must be installed for condition ride NPC UUID " + n);
+                    return false;
+                }
+                if (player.getVehicle() == null) {
+                    return false;
+                }
+                if (!player.getVehicle().equals(plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(n)
+                        .getEntity())) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition ride NPC mismatch for " + player.getName()
+                                + ": NPC UUID " + n);
                     }
+                    break;
                 }
             }
         } else if (!permissions.isEmpty()) {
             for (final String p : permissions) {
                 if (plugin.getDependencies().isPluginAvailable("Vault")) {
-                    if (plugin.getDependencies().getVaultPermission().has(player, p)) {
-                        return plugin.getDependencies().getVaultPermission().has(player, p);
-                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
+                    return false;
+                }
+                if (!plugin.getDependencies().getVaultPermission().has(player, p)) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info("DEBUG: Condition permission mismatch for " + player.getName() + ": "
                                 + p);
                     }
-                } else {
-                    plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
+                    break;
                 }
             }
         } else if (!itemsWhileHoldingMainHand.isEmpty()) {
             for (final ItemStack is : itemsWhileHoldingMainHand) {
-                if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
-                    return true;
-                } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition item mismatch for " + player.getName() + ": code "
-                            + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
+                if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) != 0) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition item mismatch for " + player.getName() + ": code "
+                                + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
+                    }
+                    break;
                 }
             }
         } else if (!worldsWhileStayingWithin.isEmpty()) {
             for (final String w : worldsWhileStayingWithin) {
-                if (player.getWorld().getName().equalsIgnoreCase(w)) {
-                    return true;
-                } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition world mismatch for " + player.getName() + ": " + w);
+                if (!player.getWorld().getName().equalsIgnoreCase(w)) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition world mismatch for " + player.getName() + ": " + w);
+                    }
+                    break;
                 }
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
             for (final String b : biomesWhileStayingWithin) {
                 if (MiscUtil.getProperBiome(b) == null) {
-                    continue;
+                    plugin.getLogger().warning("Invalid entry for condition biome checks: " + b);
+                    return false;
                 }
-                if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
+                if (!player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
                         .name().equalsIgnoreCase(Objects.requireNonNull(MiscUtil.getProperBiome(b)).name())) {
-                    return true;
-                } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": "
-                            + MiscUtil.getProperBiome(b));
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": "
+                                + MiscUtil.getProperBiome(b));
+                    }
+                    break;
                 }
             }
         } else if (!regionsWhileStayingWithin.isEmpty()) {
             for (final String r : regionsWhileStayingWithin) {
-                if (quester.isInRegion(r)) {
-                    return true;
-                } else if (plugin.getSettings().getConsoleLogging() > 2) {
-                    plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
+                if (!quester.isInRegion(r)) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                        plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
+                    }
+                    break;
                 }
             }
         } else if (!placeholdersCheckIdentifier.isEmpty()) {
             int index = 0;
             for (final String i : placeholdersCheckIdentifier) {
                 if (plugin.getDependencies().isPluginAvailable("PlaceholderAPI")) {
-                    if (placeholdersCheckValue.size() > index &&
-                            placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
-                        return true;
-                    } else if (plugin.getSettings().getConsoleLogging() > 2) {
+                    plugin.getLogger().warning("PAPI must be installed for placeholder checks: " + i);
+                    return false;
+                }
+                if (placeholdersCheckValue.size() <= index) {
+                    plugin.getLogger().warning("Condition placeholder values outweigh identifiers: " + i);
+                    return false;
+                }
+                if (!placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
+                    failed = true;
+                    if (plugin.getSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info("DEBUG: Condition placeholder mismatch for " + player.getName() + ": "
                                 + i);
                     }
-                } else {
-                    plugin.getLogger().warning("PAPI must be installed for placeholder checks: " + i);
+                    break;
                 }
                 index++;
             }
         }
-        return false;
+        return !failed;
     }
 }
     
