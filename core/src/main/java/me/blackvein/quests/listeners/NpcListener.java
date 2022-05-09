@@ -257,7 +257,7 @@ public class NpcListener implements Listener {
                         c.begin();
                     }
                 } else {
-                    evt.getClicker().sendMessage(ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "noMoreQuest"));
                 }
             }
         }

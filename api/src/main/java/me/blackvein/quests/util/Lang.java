@@ -76,6 +76,7 @@ public class Lang {
 
     /**
      * Get key for lang string
+     *
      * @param value The lang string
      * @return key or "NULL" as String
      */
@@ -90,6 +91,7 @@ public class Lang {
 
     /**
      * Get prefixed key for lang value
+     *
      * @param value The lang string
      * @param keyPrefix String that the key starts with
      * @return full key or "NULL" as String
@@ -118,7 +120,13 @@ public class Lang {
         }
         return orig;
     }
-    
+
+    /**
+     * Send message if not null or empty
+     *
+     * @param player The player to send message to
+     * @param message The message to be sent
+     */
     public static void send(final Player player, final String message) {
         if (message != null && !ChatColor.stripColor(message).equals("")) {
             player.sendMessage(message);
