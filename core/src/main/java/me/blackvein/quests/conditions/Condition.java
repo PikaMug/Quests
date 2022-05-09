@@ -206,7 +206,7 @@ public class Condition implements ICondition {
         } else if (!permissions.isEmpty()) {
             // Must have ALL listed permissions
             for (final String p : permissions) {
-                if (plugin.getDependencies().isPluginAvailable("Vault")) {
+                if (!plugin.getDependencies().isPluginAvailable("Vault")) {
                     plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
                     return false;
                 }
@@ -272,7 +272,7 @@ public class Condition implements ICondition {
             // Must have ALL listed placeholders equal true
             int index = 0;
             for (final String i : placeholdersCheckIdentifier) {
-                if (plugin.getDependencies().isPluginAvailable("PlaceholderAPI")) {
+                if (!plugin.getDependencies().isPluginAvailable("PlaceholderAPI")) {
                     plugin.getLogger().warning("PAPI must be installed for placeholder checks: " + i);
                     return false;
                 }
