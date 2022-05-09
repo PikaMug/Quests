@@ -171,19 +171,21 @@ public class Condition implements ICondition {
         final Player player = quester.getPlayer();
         boolean failed = false;
         if (!entitiesWhileRiding.isEmpty()) {
+            boolean atLeastOne = false;
             for (final String e : entitiesWhileRiding) {
                 if (player.getVehicle() == null) {
                     return false;
                 }
-                if (!player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
-                    failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition entity mismatch for " + player.getName() + ": " + e);
-                    }
+                if (player.getVehicle().getType().equals(MiscUtil.getProperMobType(e))) {
+                    atLeastOne = true;
                     break;
                 }
             }
+            if (!atLeastOne) {
+                failed = true;
+            }
         } else if (!npcsWhileRiding.isEmpty()) {
+            boolean atLeastOne = false;
             for (final UUID n : npcsWhileRiding) {
                 if (plugin.getDependencies().getCitizens() == null) {
                     plugin.getLogger().warning("Citizens must be installed for condition ride NPC UUID " + n);
@@ -192,17 +194,17 @@ public class Condition implements ICondition {
                 if (player.getVehicle() == null) {
                     return false;
                 }
-                if (!player.getVehicle().equals(plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(n)
+                if (player.getVehicle().equals(plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(n)
                         .getEntity())) {
-                    failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition ride NPC mismatch for " + player.getName()
-                                + ": NPC UUID " + n);
-                    }
+                    atLeastOne = true;
                     break;
                 }
             }
+            if (!atLeastOne) {
+                failed = true;
+            }
         } else if (!permissions.isEmpty()) {
+            // Must have ALL listed permissions
             for (final String p : permissions) {
                 if (plugin.getDependencies().isPluginAvailable("Vault")) {
                     plugin.getLogger().warning("Vault must be installed for condition permission checks: " + p);
@@ -218,43 +220,45 @@ public class Condition implements ICondition {
                 }
             }
         } else if (!itemsWhileHoldingMainHand.isEmpty()) {
+            boolean atLeastOne = false;
             for (final ItemStack is : itemsWhileHoldingMainHand) {
-                if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) != 0) {
-                    failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition item mismatch for " + player.getName() + ": code "
-                                + ItemUtil.compareItems(player.getItemInHand(), is, true, true));
-                    }
+                if (ItemUtil.compareItems(player.getItemInHand(), is, true, true) == 0) {
+                    atLeastOne = true;
                     break;
                 }
+            }
+            if (!atLeastOne) {
+                failed = true;
             }
         } else if (!worldsWhileStayingWithin.isEmpty()) {
+            boolean atLeastOne = false;
             for (final String w : worldsWhileStayingWithin) {
-                if (!player.getWorld().getName().equalsIgnoreCase(w)) {
-                    failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition world mismatch for " + player.getName() + ": " + w);
-                    }
+                if (player.getWorld().getName().equalsIgnoreCase(w)) {
+                    atLeastOne = true;
                     break;
                 }
             }
+            if (!atLeastOne) {
+                failed = true;
+            }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
+            boolean atLeastOne = false;
             for (final String b : biomesWhileStayingWithin) {
                 if (MiscUtil.getProperBiome(b) == null) {
                     plugin.getLogger().warning("Invalid entry for condition biome checks: " + b);
                     return false;
                 }
-                if (!player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
+                if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
                         .name().equalsIgnoreCase(Objects.requireNonNull(MiscUtil.getProperBiome(b)).name())) {
-                    failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
-                        plugin.getLogger().info("DEBUG: Condition biome mismatch for " + player.getName() + ": "
-                                + MiscUtil.getProperBiome(b));
-                    }
+                    atLeastOne = true;
                     break;
                 }
             }
+            if (!atLeastOne) {
+                failed = true;
+            }
         } else if (!regionsWhileStayingWithin.isEmpty()) {
+            // Must be within ALL listed regions
             for (final String r : regionsWhileStayingWithin) {
                 if (!quester.isInRegion(r)) {
                     failed = true;
@@ -265,6 +269,7 @@ public class Condition implements ICondition {
                 }
             }
         } else if (!placeholdersCheckIdentifier.isEmpty()) {
+            // Must have ALL listed placeholders equal true
             int index = 0;
             for (final String i : placeholdersCheckIdentifier) {
                 if (plugin.getDependencies().isPluginAvailable("PlaceholderAPI")) {
