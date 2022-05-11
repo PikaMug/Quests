@@ -28,7 +28,7 @@ Read about usage in the documentation: https://pikamug.gitbook.io/quests/
 Compile
 ---
 
-Requires Java 8 and Maven: https://pikamug.gitbook.io/quests/master/plugin-compilation
+Java 8 and Maven required: https://pikamug.gitbook.io/quests/master/plugin-compilation
 
 Translate
 ---
