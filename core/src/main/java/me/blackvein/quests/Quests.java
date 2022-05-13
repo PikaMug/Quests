@@ -2389,6 +2389,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         if (config.contains("quests." + questKey + ".options.handle-offline-players")) {
             opts.setHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.handle-offline-players"));
         }
+        if (config.contains("quests." + questKey + ".options.ignore-block-replace")) {
+            opts.setIgnoreBlockReplace(config.getBoolean("quests." + questKey + ".options.ignore-block-replace"));
+        }
     }
 
     @SuppressWarnings({ "unchecked", "unused", "deprecation" })

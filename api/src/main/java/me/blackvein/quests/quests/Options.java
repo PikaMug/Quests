@@ -48,4 +48,8 @@ public interface Options {
     boolean canHandleOfflinePlayers();
 
     void setHandleOfflinePlayers(final boolean handleOfflinePlayers);
+
+    boolean canIgnoreBlockReplace();
+
+    void setIgnoreBlockReplace(final boolean ignoreBlockReplace);
 }

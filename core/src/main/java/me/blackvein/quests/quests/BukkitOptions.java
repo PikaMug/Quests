@@ -22,6 +22,7 @@ public class BukkitOptions implements Options {
     private double shareDistance = 0.0D;
     private int shareProgressLevel = 1;
     private boolean shareSameQuestOnly = true;
+    private boolean ignoreBlockReplace = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -93,5 +94,13 @@ public class BukkitOptions implements Options {
     
     public void setHandleOfflinePlayers(final boolean handleOfflinePlayers) {
         this.handleOfflinePlayers = handleOfflinePlayers;
+    }
+
+    public boolean canIgnoreBlockReplace() {
+        return ignoreBlockReplace;
+    }
+
+    public void setIgnoreBlockReplace(final boolean ignoreBlockReplace) {
+        this.ignoreBlockReplace = ignoreBlockReplace;
     }
 }

@@ -411,7 +411,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
 
-        private final int size = 4;
+        private final int size = 5;
         
         @Override
         public int getSize() {
@@ -429,8 +429,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 1:
             case 2:
             case 3:
-                return ChatColor.BLUE;
             case 4:
+                return ChatColor.BLUE;
+            case 5:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -447,6 +448,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 return ChatColor.YELLOW + Lang.get("optIgnoreSilkTouch");
             case 4:
+                return ChatColor.YELLOW + Lang.get("optIgnoreBlockReplace");
+            case 5:
                 return ChatColor.YELLOW + Lang.get("done");
             default:
                 return null;
@@ -487,6 +490,16 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                             : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
                 }
             case 4:
+                final Boolean ignoreBlockReplaceOpt = (Boolean) context.getSessionData(CK.OPT_IGNORE_BLOCK_REPLACE);
+                if (ignoreBlockReplaceOpt == null) {
+                    final boolean defaultOpt = new BukkitOptions().canIgnoreBlockReplace();
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + Lang.get("true")
+                            : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
+                } else {
+                    return ChatColor.GRAY + "(" + (ignoreBlockReplaceOpt ? ChatColor.GREEN + Lang.get("true")
+                            : ChatColor.RED + Lang.get("false")) + ChatColor.GRAY + ")";
+                }
+            case 5:
                 return "";
             default:
                 return null;
@@ -526,6 +539,10 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 tempPrompt = new OptionsGeneralPrompt(context);
                 return new OptionsTrueFalsePrompt(context);
             case 4:
+                tempKey = CK.OPT_IGNORE_BLOCK_REPLACE;
+                tempPrompt = new OptionsGeneralPrompt(context);
+                return new OptionsTrueFalsePrompt(context);
+            case 5:
                 tempKey = null;
                 tempPrompt = null;
                 try {
