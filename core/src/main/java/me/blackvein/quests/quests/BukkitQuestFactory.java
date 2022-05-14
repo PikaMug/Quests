@@ -173,7 +173,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 context.setSessionData(CK.REQ_QUEST_POINTS, requirements.getQuestPoints());
             }
             if (requirements.getExp() != 0) {
-                context.setSessionData(CK.REW_EXP, requirements.getExp());
+                context.setSessionData(CK.REQ_EXP, requirements.getExp());
             }
             if (!requirements.getItems().isEmpty()) {
                 context.setSessionData(CK.REQ_ITEMS, requirements.getItems());

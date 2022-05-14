@@ -491,10 +491,10 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     }
     
     public boolean checkReward(final ConversationContext context) {
-        if (context.getSessionData(CK.REW_MONEY) != null 
-                || context.getSessionData(CK.REW_EXP) != null
+        if (context.getSessionData(CK.REW_MONEY) != null
                 || context.getSessionData(CK.REW_QUEST_POINTS) != null 
                 || context.getSessionData(CK.REW_ITEMS) != null
+                || context.getSessionData(CK.REW_EXP) != null
                 || context.getSessionData(CK.REW_COMMAND) != null
                 || context.getSessionData(CK.REW_PERMISSION) != null 
                 || context.getSessionData(CK.REW_MCMMO_SKILLS) != null 
