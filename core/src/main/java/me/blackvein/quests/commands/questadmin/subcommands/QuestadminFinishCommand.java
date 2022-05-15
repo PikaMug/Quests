@@ -69,6 +69,10 @@ public class QuestadminFinishCommand extends QuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (args.length == 1) {
+            cs.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_FINISH_HELP"));
+            return;
+        }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
             OfflinePlayer target = getOfflinePlayer(args[1]);
             if (target == null) {

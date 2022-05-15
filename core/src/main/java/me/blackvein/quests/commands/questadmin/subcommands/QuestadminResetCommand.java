@@ -68,6 +68,10 @@ public class QuestadminResetCommand extends QuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (args.length == 1) {
+            cs.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_RESET_HELP"));
+            return;
+        }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
             OfflinePlayer target = getOfflinePlayer(args[1]);
             if (target == null) {
