@@ -486,6 +486,7 @@ optDistancePrompt: "Enter a distance (number) for share radius, <clear>, <cancel
 optAllowCommands: "Allow commands during quest"
 optAllowQuitting: "Allow quitting during quest"
 optIgnoreSilkTouch: "Ignore blocks broken with Silk Touch"
+optIgnoreBlockReplace: "Ignore blocks replaced once broken"
 optCommandsDenied: "You cannot use commands during <quest>."
 optPluginListTitle: "- Available Plugins -"
 optExternalPartyPlugin: "Set provider via Unite"

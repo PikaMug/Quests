@@ -150,6 +150,7 @@ public class CK {
     public static final String OPT_SHARE_SAME_QUEST_ONLY = "shareSameQuestOnlyOpt";
     public static final String OPT_SHARE_DISTANCE = "shareDistance";
     public static final String OPT_HANDLE_OFFLINE_PLAYERS = "handleOfflinePlayers";
+    public static final String OPT_IGNORE_BLOCK_REPLACE = "ignoreBlockReplace";
     // Actions
     public static final String E_OLD_EVENT = "oldEvent";
     public static final String E_NAME = "evtName";
