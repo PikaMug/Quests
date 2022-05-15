@@ -14,7 +14,6 @@ COMMAND_QUESTADMIN_QUIT: "خروج"
 COMMAND_QUESTADMIN_POINTS: "النقاط"
 COMMAND_QUESTADMIN_NEXTSTAGE: "المرحلة الموالية"
 COMMAND_QUESTADMIN_SETSTAGE: "تعيين المرحلة"
-COMMAND_QUESTADMIN_SETSTAGE_USAGE: 'الاستخدام:/questadmin تعيين المرحلة [player] [quest] [stage]'
 COMMAND_QUESTADMIN_RESET: "إعادة ضبط"
 COMMAND_QUESTADMIN_REMOVE: "إزالة"
 COMMAND_QUESTADMIN_RELOAD: "إعادة التحميل"
