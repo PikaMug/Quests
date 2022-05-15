@@ -65,28 +65,28 @@ public class QuestsTakeCommand extends QuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (args.length == 1) {
+            // Shows command usage
+            return;
+        }
         if (assertNonPlayer(cs)) {
             return;
         }
         final Player player = (Player) cs;
         if (plugin.getSettings().canAllowCommands()) {
             if (player.hasPermission(getPermission())) {
-                if (args.length == 1) {
-                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "COMMAND_TAKE_USAGE"));
-                } else {
-                    final IQuest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
-                    final IQuester quester = plugin.getQuester(player.getUniqueId());
-                    if (questToFind != null) {
-                        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
-                            if (q.getId().equals(questToFind.getId())) {
-                                Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
-                                return;
-                            }
+                final IQuest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
+                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                if (questToFind != null) {
+                    for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+                        if (q.getId().equals(questToFind.getId())) {
+                            Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
+                            return;
                         }
-                        quester.offerQuest(questToFind, true);
-                    } else {
-                        Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questNotFound"));
                     }
+                    quester.offerQuest(questToFind, true);
+                } else {
+                    Lang.send(player, ChatColor.YELLOW + Lang.get(player, "questNotFound"));
                 }
             } else {
                 Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));

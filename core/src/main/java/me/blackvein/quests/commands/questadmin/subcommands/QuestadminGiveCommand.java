@@ -69,7 +69,7 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (args.length == 1) {
-            cs.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_GIVE_HELP"));
+            // Shows command usage
             return;
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {

@@ -63,65 +63,61 @@ public class QuestsTopCommand extends QuestsSubCommand {
 
     @Override
     public int getMaxArguments() {
-        return 2;
+        return 1;
     }
 
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission(getPermission())) {
-            if (args.length > 2) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("COMMAND_TOP_USAGE"));
+            final int topNumber;
+            if (args.length == 1) {
+                topNumber = 5; // default
             } else {
-                final int topNumber;
-                if (args.length == 1) {
-                    topNumber = 5; // default
-                } else {
-                    try {
-                        topNumber = Integer.parseInt(args[1]);
-                    } catch (final NumberFormatException e) {
-                        cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
-                        return;
-                    }
-                }
-                if (topNumber < 1 || topNumber > plugin.getSettings().getTopLimit()) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("invalidRange").replace("<least>", "1")
-                            .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
+                try {
+                    topNumber = Integer.parseInt(args[1]);
+                } catch (final NumberFormatException e) {
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
                     return;
                 }
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                    final File folder = new File(plugin.getDataFolder(), "data");
-                    final File[] playerFiles = folder.listFiles();
-                    final Map<String, Integer> questPoints = new HashMap<>();
-                    if (playerFiles != null) {
-                        for (final File f : playerFiles) {
-                            if (!f.isDirectory()) {
-                                final FileConfiguration data = new YamlConfiguration();
-                                try {
-                                    data.load(f);
-                                } catch (final IOException | InvalidConfigurationException e) {
-                                    e.printStackTrace();
-                                }
-                                questPoints.put(data.getString("lastKnownName", "Unknown"),
-                                        data.getInt("quest-points", 0));
-                            }
-                        }
-                    }
-                    final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
-                    int numPrinted = 0;
-                    String msg = Lang.get("topQuestersTitle");
-                    msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
-                    cs.sendMessage(ChatColor.GOLD + msg);
-                    for (final Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
-                        numPrinted++;
-                        cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - "
-                                + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " "
-                                + Lang.get("questPoints"));
-                        if (numPrinted == topNumber) {
-                            break;
-                        }
-                    }
-                });
             }
+            if (topNumber < 1 || topNumber > plugin.getSettings().getTopLimit()) {
+                cs.sendMessage(ChatColor.YELLOW + Lang.get("invalidRange").replace("<least>", "1")
+                        .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
+                return;
+            }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                final File folder = new File(plugin.getDataFolder(), "data");
+                final File[] playerFiles = folder.listFiles();
+                final Map<String, Integer> questPoints = new HashMap<>();
+                if (playerFiles != null) {
+                    for (final File f : playerFiles) {
+                        if (!f.isDirectory()) {
+                            final FileConfiguration data = new YamlConfiguration();
+                            try {
+                                data.load(f);
+                            } catch (final IOException | InvalidConfigurationException e) {
+                                e.printStackTrace();
+                            }
+                            questPoints.put(data.getString("lastKnownName", "Unknown"),
+                                    data.getInt("quest-points", 0));
+                        }
+                    }
+                }
+                final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
+                int numPrinted = 0;
+                String msg = Lang.get("topQuestersTitle");
+                msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg);
+                for (final Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
+                    numPrinted++;
+                    cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - "
+                            + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " "
+                            + Lang.get("questPoints"));
+                    if (numPrinted == topNumber) {
+                        break;
+                    }
+                }
+            });
         }
     }
 }

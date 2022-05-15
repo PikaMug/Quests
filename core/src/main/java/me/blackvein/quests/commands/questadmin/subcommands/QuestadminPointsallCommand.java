@@ -67,7 +67,7 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (args.length == 1) {
-            cs.sendMessage(ChatColor.RED + Lang.get("COMMAND_QUESTADMIN_POINTSALL_HELP"));
+            // Shows command usage
             return;
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {

@@ -66,15 +66,15 @@ public class QuestsQuitCommand extends QuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
+        if (args.length == 1) {
+            // Shows command usage
+            return;
+        }
         if (assertNonPlayer(cs)) {
             return;
         }
         final Player player = (Player) cs;
         if (player.hasPermission(getPermission())) {
-            if (args.length == 1) {
-                Lang.send(player, ChatColor.RED + Lang.get(player, "COMMAND_QUIT_HELP"));
-                return;
-            }
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             if (!quester.getCurrentQuestsTemp().isEmpty()) {
                 final IQuest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));

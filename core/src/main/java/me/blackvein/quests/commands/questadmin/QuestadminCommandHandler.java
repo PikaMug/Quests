@@ -185,6 +185,7 @@ public class QuestadminCommandHandler {
 
     private String getAdminCommandUsage(final String cmd) {
         return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/questadmin "
-                + Lang.get(Lang.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP");
+                + Lang.get(Lang.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP")
+                .replace("<command>", cmd.toLowerCase());
     }
 }

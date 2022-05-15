@@ -58,12 +58,10 @@ public class QuestsInfoCommand extends QuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD
-                    + plugin.getDescription().getVersion());
+            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + Lang.get("createdBy") + " " + ChatColor.RED + "Blackvein"
                     + ChatColor.GOLD + " " + Lang.get("continuedBy") + " " + ChatColor.RED + "PikaMug & contributors");
-            cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
-                    + "https://github.com/PikaMug/Quests");
+            cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://github.com/PikaMug/Quests");
         }
     }
 }
