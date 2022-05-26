@@ -483,6 +483,7 @@ optDistancePrompt: "Entrez une distance (nombre) pour le rayon de partage, <clea
 optAllowCommands: "Autoriser les commandes pendant la quête"
 optAllowQuitting: "Autoriser la fin de la quête"
 optIgnoreSilkTouch: "Ignorer les blocs cassés avec Toucher de soie"
+optIgnoreBlockReplace: "Ignorer les blocs remplacés une fois cassés"
 optCommandsDenied: "Vous ne pouvez pas utiliser des commandes pendant <quest>."
 optPluginListTitle: "- Plugins Disponibles -"
 optExternalPartyPlugin: "Définir le fournisseur via Unite"
