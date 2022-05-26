@@ -352,13 +352,13 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         if (context.getSessionData(CK.E_CLEAR_INVENTORY) != null) {
             final Boolean b = (Boolean) context.getSessionData(CK.E_CLEAR_INVENTORY);
             if (b != null) {
-                section.set("clear-inventory", true);
+                section.set("clear-inventory", b);
             }
         }
         if (context.getSessionData(CK.E_FAIL_QUEST) != null) {
             final Boolean b = (Boolean) context.getSessionData(CK.E_FAIL_QUEST);
             if (b != null) {
-                section.set("fail-quest", true);
+                section.set("fail-quest", b);
             }
         }
         if (context.getSessionData(CK.E_ITEMS) != null) {
