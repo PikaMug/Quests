@@ -483,6 +483,7 @@ optDistancePrompt: "Zadejte vzdálenost (číslo) pro poloměr sdílení, <clear
 optAllowCommands: "Povolit příkazy během hledání"
 optAllowQuitting: "Povolit ukončení během hledání"
 optIgnoreSilkTouch: "Bloky rozbité pomocí Něžný dotek ignorujte"
+optIgnoreBlockReplace: "Ignorujte bloky vyměněné po rozbití"
 optCommandsDenied: "Příkazy nelze použít během <quest>."
 optPluginListTitle: "- Dostupné Pluginy -"
 optExternalPartyPlugin: "Nastavit poskytovatele přes Unite"
