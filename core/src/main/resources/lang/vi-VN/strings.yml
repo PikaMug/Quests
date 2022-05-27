@@ -483,6 +483,7 @@ optDistancePrompt: "Nhập khoảng cách (số) cho bán kính chia sẻ, <clea
 optAllowCommands: "Cho phép dùng các lệnh trong quest"
 optAllowQuitting: "Cho phép thoát trong quest"
 optIgnoreSilkTouch: "Bỏ qua các khối bị hỏng với Độ mềm mại"
+optIgnoreBlockReplace: "Bỏ qua các khối được thay thế sau khi bị hỏng"
 optCommandsDenied: "Bạn không thể sử dụng lệnh này trong <quest>."
 optPluginListTitle: "- Các plugin có sẵn -"
 optExternalPartyPlugin: "Đặt nhà cung cấp qua Unite"
