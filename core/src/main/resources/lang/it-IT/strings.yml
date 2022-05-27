@@ -483,6 +483,7 @@ optDistancePrompt: "Inserisci la distanza (numero) per il raggio di condivisione
 optAllowCommands: "Consenti l'utilizzo dei comandi durante la missione"
 optAllowQuitting: "Consenti la disconnessione durante la missione"
 optIgnoreSilkTouch: "Ignora i blocchi distrutti con il Tocco di Velluto"
+optIgnoreBlockReplace: "Ignora i blocchi sostituiti una volta rotti"
 optCommandsDenied: "Non puoi usare i comandi durante <quest>."
 optPluginListTitle: "- Plugin Disponibili -"
 optExternalPartyPlugin: "Imposta fornitore tramite Unite"
