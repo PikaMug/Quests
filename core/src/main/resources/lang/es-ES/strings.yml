@@ -483,6 +483,7 @@ optDistancePrompt: "Ingrese una distancia (número) para compartir radio, <clear
 optAllowCommands: "Permitir comandos durante la misión"
 optAllowQuitting: "Permitir dejar durante la misión"
 optIgnoreSilkTouch: "Ignora los bloques rotos con Toque de seda"
+optIgnoreBlockReplace: "Ignorar bloques reemplazados una vez rotos"
 optCommandsDenied: "No puede utilizar comandos durante <quest>."
 optPluginListTitle: "- Complementos Disponibles -"
 optExternalPartyPlugin: "Establecer proveedor a través de Unite"
