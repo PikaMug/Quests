@@ -483,6 +483,7 @@ optDistancePrompt: "Wprowadź odległość (liczbę) dla promienia udziału, <cl
 optAllowCommands: "Zezwalaj na polecenia podczas zadania"
 optAllowQuitting: "Zezwalaj na porzucić podczas zadania"
 optIgnoreSilkTouch: "Ignoruj ​​bloki złamane Jedwabny dotyk"
+optIgnoreBlockReplace: "Ignoruj ​​bloki zastępowane po złamaniu"
 optCommandsDenied: "Nie możesz używać poleceń podczas <quest>."
 optPluginListTitle: "- Dostępne Wtyczki -"
 optExternalPartyPlugin: "Ustaw dostawcę przez Unite"
