@@ -483,6 +483,7 @@ optDistancePrompt: "Indtast en afstand (nummer) for delingsradius, <clear>, <can
 optAllowCommands: "Tillad kommandoer i løbet af questen"
 optAllowQuitting: "Tillad forladning i løbet af questen"
 optIgnoreSilkTouch: "Ignorer blokke brudt med Silkeberøring"
+optIgnoreBlockReplace: "Ignorer blokke udskiftet, når de er gået i stykker"
 optCommandsDenied: "Du kan ikke bruge kommandoer i løbet af <quest>."
 optPluginListTitle: "- Tilgængelige Plugins -"
 optExternalPartyPlugin: "Angiv udbyder via Unite"
