@@ -483,6 +483,7 @@ optDistancePrompt: "Paylaşım yarıçapı için bir mesafe (sayı) girin, <clea
 optAllowCommands: "Görev esnasında komutlara izin ver"
 optAllowQuitting: "Görevi terk etmeye izin ver"
 optIgnoreSilkTouch: "İpeksi Dokunuş ile kırılan blokları yok sayın"
+optIgnoreBlockReplace: "Bir kez kırılan blokları yoksay"
 optCommandsDenied: "<quest> esnasında komut kullanamazsın."
 optPluginListTitle: "- Mevcut Eklentiler -"
 optExternalPartyPlugin: "Sağlayıcıyı Unite aracılığıyla ayarla"
