@@ -483,6 +483,7 @@ optDistancePrompt: "Введите расстояние (число) для ра
 optAllowCommands: "Разрешить команды во время квеста"
 optAllowQuitting: "Разрешить выйти во время квеста"
 optIgnoreSilkTouch: "Игнорировать блоки, сломанные с помощью Шёлковое касание"
+optIgnoreBlockReplace: "Игнорировать блоки, замененные после поломки"
 optCommandsDenied: "Вы не можете использовать команды во время <quest>."
 optPluginListTitle: "- Доступные плагины -"
 optExternalPartyPlugin: "Установить провайдера через Unite"
