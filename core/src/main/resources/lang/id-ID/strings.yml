@@ -483,6 +483,7 @@ optDistancePrompt: "Masukkan jarak (angka) untuk radius berbagi, <clear>, <cance
 optAllowCommands: "Izinkan perintah selama pencarian"
 optAllowQuitting: "Izinkan berhenti selama pencarian"
 optIgnoreSilkTouch: "Abaikan blok yang rusak dengan Sentuhan Sutera"
+optIgnoreBlockReplace: "Abaikan blok yang diganti setelah rusak"
 optCommandsDenied: "Anda tidak dapat menggunakan perintah selama <quest>."
 optPluginListTitle: "- Plugin yang Tersedia -"
 optExternalPartyPlugin: "Setel penyedia melalui Unite"
