@@ -483,6 +483,7 @@ optDistancePrompt: "Insira uma distância (número) para o raio de compartilhame
 optAllowCommands: "Permitir comandos durante a busca"
 optAllowQuitting: "Permitir a saída durante a missão"
 optIgnoreSilkTouch: "Ignorar blocos quebrados com Toque suave"
+optIgnoreBlockReplace: "Ignorar blocos substituídos uma vez quebrados"
 optCommandsDenied: "Você não pode usar comandos durante <quest>."
 optPluginListTitle: "- Plugins Disponíveis -"
 optExternalPartyPlugin: "Definir provedor via Unite"
