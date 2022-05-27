@@ -268,8 +268,8 @@ public class Dependencies implements IDependencies {
         return (partyProvider != null);
     }
     
-    public boolean runDenizenScript(final String scriptName, final IQuester quester) {
-        return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester);
+    public boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid) {
+        return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester, uuid);
     }
 
     /**

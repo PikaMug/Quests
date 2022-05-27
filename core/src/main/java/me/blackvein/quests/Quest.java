@@ -270,7 +270,7 @@ public class Quest implements IQuest {
             }
             if (quester.getCurrentQuestsTemp().get(this) == (orderedStages.size() - 1)) {
                 if (currentStage.getScript() != null) {
-                    plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester);
+                    plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
                 }
                 completeQuest(quester);
             } else {
@@ -327,7 +327,7 @@ public class Quest implements IQuest {
         quester.hardStagePut(this, stage);
         quester.addEmptiesFor(this, stage);
         if (currentStage.getScript() != null) {
-            plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester);
+            plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
         }
         if (nextStage.getStartAction() != null) {
             nextStage.getStartAction().fire(quester, this);

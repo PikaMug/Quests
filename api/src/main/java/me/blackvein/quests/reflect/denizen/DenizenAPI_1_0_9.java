@@ -105,14 +105,14 @@ public class DenizenAPI_1_0_9 {
         return dp;
     }
     
-    public static void runTaskScript(final String scriptName, final Player player) {
+    public static void runTaskScript(final String scriptName, final Player player, final NPC npc) {
         if (quests == null || api.scriptRegistry == null || api.bukkitScriptEntryData == null || api.scriptEntryData == null) return;
         try {
             final Constructor<?> constructor = api.bukkitScriptEntryData.getConstructors()[0];
             final Object tsc = getScriptContainerAs(scriptName);
             if (tsc != null) {
                 final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
-                runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
+                runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), mirrorCitizensNPC(npc)), null);
             }
         } catch (final Exception e) {
             quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);

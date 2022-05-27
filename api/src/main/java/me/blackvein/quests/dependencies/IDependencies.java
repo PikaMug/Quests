@@ -65,7 +65,7 @@ public interface IDependencies {
 
     boolean isPluginAvailable(final String pluginName);
 
-    boolean runDenizenScript(final String scriptName, final IQuester quester);
+    boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid);
 
     Location getNPCLocation(final int id);
 

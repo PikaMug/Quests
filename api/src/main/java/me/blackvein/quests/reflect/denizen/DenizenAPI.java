@@ -185,6 +185,9 @@ public class DenizenAPI {
 
     @Nullable
     public Object mirrorCitizensNPC(final NPC npc) {
+        if (npc == null) {
+            return null;
+        }
         if (denizen_1_2_2 != null) {
             return DenizenAPI_1_2_2.mirrorCitizensNPC(npc);
         } else if (denizen_1_1_1 != null) {
@@ -197,15 +200,15 @@ public class DenizenAPI {
         return null;
     }
 
-    public void runTaskScript(final String scriptName, final Player player) {
+    public void runTaskScript(final String scriptName, final Player player, NPC npc) {
         if (denizen_1_2_2 != null) {
-            DenizenAPI_1_2_2.runTaskScript(scriptName, player);
+            DenizenAPI_1_2_2.runTaskScript(scriptName, player, npc);
         } else if (denizen_1_1_1 != null) {
-            DenizenAPI_1_1_1.runTaskScript(scriptName, player);
+            DenizenAPI_1_1_1.runTaskScript(scriptName, player, npc);
         } else if (denizen_1_1_0 != null) {
-            DenizenAPI_1_1_0.runTaskScript(scriptName, player);
+            DenizenAPI_1_1_0.runTaskScript(scriptName, player, npc);
         } else if (denizen_1_0_9 != null) {
-            DenizenAPI_1_0_9.runTaskScript(scriptName, player);
+            DenizenAPI_1_0_9.runTaskScript(scriptName, player, npc);
         }
     }
 }

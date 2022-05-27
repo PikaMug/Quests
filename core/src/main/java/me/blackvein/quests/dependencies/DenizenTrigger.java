@@ -12,8 +12,11 @@
 
 package me.blackvein.quests.dependencies;
 
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.player.IQuester;
+import net.citizensnpcs.api.npc.NPC;
+
+import java.util.UUID;
 
 public class DenizenTrigger {
     private final Quests plugin;
@@ -21,12 +24,18 @@ public class DenizenTrigger {
     public DenizenTrigger(final Quests plugin) {
         this.plugin = plugin;
     }
-    public boolean runDenizenScript(final String scriptName, final IQuester quester) {
+
+    public boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid) {
         if (scriptName == null) {
             return false;
         }
         if (plugin.getDependencies().getDenizenApi().containsScript(scriptName)) {
-            plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer());
+            if (plugin.getDependencies().getCitizens() != null) {
+                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid);
+                plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), npc);
+            } else {
+                plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), null);
+            }
         }
         return true;
     }

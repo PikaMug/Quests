@@ -69,9 +69,10 @@ public class DenizenAPI_1_1_1 {
         return NPCTag.fromEntity(npc.getEntity());
     }
 
-    public static void runTaskScript(final String scriptName, final Player player) {
+    public static void runTaskScript(final String scriptName, final Player player, final NPC npc) {
         final TaskScriptContainer taskScript = ScriptRegistry.getScriptContainerAs(scriptName, TaskScriptContainer.class);
-        final BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player), null);
+        final BukkitScriptEntryData entryData = new BukkitScriptEntryData(PlayerTag.mirrorBukkitPlayer(player),
+                npc != null ? NPCTag.fromEntity(npc.getEntity()) : null);
         final InstantQueue queue = new InstantQueue(taskScript.getName());
 
         if (quests == null) {

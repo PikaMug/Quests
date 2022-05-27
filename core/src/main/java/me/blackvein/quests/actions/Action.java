@@ -463,7 +463,7 @@ public class Action implements IAction {
             }
         }
         if (denizenScript != null) {
-            plugin.getDenizenTrigger().runDenizenScript(denizenScript, quester);
+            plugin.getDenizenTrigger().runDenizenScript(denizenScript, quester, null);
         }
     }
 }

@@ -77,7 +77,7 @@ public class DenizenAPI_1_1_0 {
         return NPCTag.fromEntity(npc.getEntity());
     }
     
-    public static void runTaskScript(final String scriptName, final Player player) {
+    public static void runTaskScript(final String scriptName, final Player player, final NPC npc) {
         if (quests == null) {
             return;
         }
@@ -86,7 +86,7 @@ public class DenizenAPI_1_1_0 {
             final Object tsc = getScriptContainerAs(scriptName);
             if (tsc != null) {
                 final Method runTaskScript = tsc.getClass().getMethod("runTaskScript", api.scriptEntryData, Map.class);
-                runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), null), null);
+                runTaskScript.invoke(tsc, constructor.newInstance(mirrorBukkitPlayer(player), mirrorCitizensNPC(npc)), null);
             }
         } catch (final Exception e) {
             quests.getPluginLogger().log(Level.WARNING, "Error invoking Denizen TaskScriptContainer#runTaskScript", e);
