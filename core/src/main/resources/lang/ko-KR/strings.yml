@@ -483,6 +483,7 @@ optDistancePrompt: "공유 반경, <clear>, <cancel>에 대한 거리 (숫자) �
 optAllowCommands: "퀘스트 중 명령어 허용"
 optAllowQuitting: "퀘스트 중 종료 허용"
 optIgnoreSilkTouch: "섬세한 손길 로 깨진 블록 무시"
+optIgnoreBlockReplace: "한 번 부서진 블록 대체 무시"
 optCommandsDenied: "<quest> 중에는 명령어를 사용할 수 없습니다."
 optPluginListTitle: "- 사용 가능한 플러그인 -"
 optExternalPartyPlugin: "Unite를 통해 공급자 설정"
