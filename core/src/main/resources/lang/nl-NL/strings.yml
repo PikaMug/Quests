@@ -483,6 +483,7 @@ optDistancePrompt: "Voer een afstand (getal) in voor de deelradius, <clear>, <ca
 optAllowCommands: "Opdrachten toestaan tijdens queeste"
 optAllowQuitting: "Toestaan om quest te stoppen tijdens de queeste"
 optIgnoreSilkTouch: "Negeer blokken die met Zijden streling zijn gebroken"
+optIgnoreBlockReplace: "Negeer blokken die zijn vervangen als ze eenmaal kapot zijn"
 optCommandsDenied: "Je kunt geen opdrachten gebruiken tijdens <quest>."
 optPluginListTitle: "- Beschikbare Plugins -"
 optExternalPartyPlugin: "Provider instellen via Unite"
