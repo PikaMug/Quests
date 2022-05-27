@@ -483,6 +483,7 @@ optDistancePrompt: "Adjon meg egy távolságot (számot) a megosztás sugarához
 optAllowCommands: "Parancsok engedélyezése küldetés közben"
 optAllowQuitting: "Kilépés engedélyezése küldetés közben"
 optIgnoreSilkTouch: "Blokkok törésének figyelmen kívül hagyása Gyengéd Érintés-al"
+optIgnoreBlockReplace: "Hagyja figyelmen kívül a törött blokkokat"
 optCommandsDenied: "Nem használhatsz parancsokat a(z) <quest> küldetés közben."
 optPluginListTitle: "- Elérhető Bővítmények -"
 optExternalPartyPlugin: "Szolgáltató beállítása az Unite-on keresztül"
