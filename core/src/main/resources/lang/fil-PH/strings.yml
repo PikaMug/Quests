@@ -483,6 +483,7 @@ optDistancePrompt: "Magpasok ng isang distansya (numero) para sa radius ng pagba
 optAllowCommands: "Payagan ang mga utos sa panahon ng pakikipagsapalaran"
 optAllowQuitting: "Payagan ang pag-quit sa panahon ng pakikipagsapalaran"
 optIgnoreSilkTouch: "Huwag pansinin ang mga bloke na nasira gamit ang Alaga"
+optIgnoreBlockReplace: "Huwag pansinin ang mga bloke na pinalitan kapag nasira"
 optCommandsDenied: "Hindi ka maaaring gumamit ng mga command sa panahon ng <quest>."
 optPluginListTitle: "- Magagamit na Mga Plugin -"
 optExternalPartyPlugin: "Itakda ang provider sa pamamagitan ng Unite"
