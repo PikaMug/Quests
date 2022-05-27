@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.blackvein.quests</groupId>
-    <version>4.4.1</version>
+    <version>4.4.2</version>
     <artifactId>quests-parent</artifactId>
     <packaging>pom</packaging>
 
@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-    	<revision>4.4.1</revision>
+    	<revision>4.4.2</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
