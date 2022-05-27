@@ -483,6 +483,7 @@ optDistancePrompt: "Geben Sie einen Abstand (Nummer) für den Freigaberadius ein
 optAllowCommands: "Erlaube Befehle während der Quest"
 optAllowQuitting: "Erlaube das Beenden während der Quest"
 optIgnoreSilkTouch: "Ignorieren Sie mit Behutsamkeit gebrochene Blöcke"
+optIgnoreBlockReplace: "Ignoriere Blöcke, die ersetzt werden, sobald sie kaputt sind"
 optCommandsDenied: "Sie können während <quest> keine Befehle verwenden."
 optPluginListTitle: "- Verfügbare Plugins -"
 optExternalPartyPlugin: "Anbieter über Unite festlegen"
