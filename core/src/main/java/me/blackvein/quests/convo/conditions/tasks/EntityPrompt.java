@@ -21,7 +21,6 @@ import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPrompt
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -104,16 +103,16 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 if (context.getSessionData(CK.C_WHILE_RIDING_NPC) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<Integer> whileRidingNpc = (List<Integer>) context.getSessionData(CK.C_WHILE_RIDING_NPC);
+                    final List<UUID> whileRidingNpc = (List<UUID>) context.getSessionData(CK.C_WHILE_RIDING_NPC);
                     if (whileRidingNpc != null) {
-                        for (final int i : whileRidingNpc) {
+                        for (final UUID u : whileRidingNpc) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
-                                    .append(CitizensAPI.getNPCRegistry().getById(i).getName());
+                                    .append(plugin.getDependencies().getNPCName(u));
                         }
                     }
                     return text.toString();
@@ -278,21 +277,21 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<Integer> npcIds = new LinkedList<>();
+                final LinkedList<UUID> npcUuids = new LinkedList<>();
                 try {
                     for (final String s : input.split(" ")) {
-                        final int i = Integer.parseInt(s);
-                        if (i > -1) {
-                            if (CitizensAPI.getNPCRegistry().getById(i) == null) {
+                        try {
+                            final UUID u = UUID.fromString(s);
+                            if (plugin.getDependencies().getNPCName(u) == null) {
                                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
                                 return new ConditionNpcsPrompt(context);
                             }
-                            npcIds.add(i);
-                            context.setSessionData(CK.C_WHILE_RIDING_NPC, npcIds);
-                        } else {
+                            npcUuids.add(u);
+                            context.setSessionData(CK.C_WHILE_RIDING_NPC, npcUuids);
+                        } catch (Exception e) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-                            return new ConditionNpcsPrompt(context);
                         }
+                        return new ConditionNpcsPrompt(context);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 

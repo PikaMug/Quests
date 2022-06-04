@@ -44,11 +44,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-public class NpcListener implements Listener {
+public class CitizensListener implements Listener {
 
     private final Quests plugin;
 
-    public NpcListener(final Quests plugin) {
+    public CitizensListener(final Quests plugin) {
         this.plugin = plugin;
     }
 
@@ -214,7 +214,7 @@ public class NpcListener implements Listener {
                 if (quester.getCurrentQuestsTemp().containsKey(q)) {
                     continue;
                 }
-                if (q.getNpcStart() != null && q.getNpcStart().getId() == evt.getNPC().getId()) {
+                if (q.getNpcStart() != null && q.getNpcStart().equals(evt.getNPC().getUniqueId())) {
                     if (plugin.getSettings().canIgnoreLockedQuests()
                             && (!quester.getCompletedQuestsTemp().contains(q)
                             || q.getPlanner().getCooldown() > -1)) {

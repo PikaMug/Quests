@@ -30,7 +30,6 @@ import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -108,7 +107,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -132,7 +131,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return ChatColor.YELLOW + Lang.get("questEditorFinishMessage");
         case 4:
-            if (context.getSessionData(CK.Q_START_NPC) == null || plugin.getDependencies().getCitizens() != null) {
+            if (context.getSessionData(CK.Q_START_NPC) == null || plugin.getDependencies().getCitizens() != null
+                    || plugin.getDependencies().getZnpcs() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorNPCStart");
             } else {
                 return ChatColor.GRAY + Lang.get("questEditorNPCStart");
@@ -150,7 +150,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + Lang.get("questWGSetRegion");
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 return ChatColor.YELLOW + Lang.get("questEditorSetGUI");
             } else {
                 return ChatColor.GRAY + Lang.get("questEditorSetGUI");
@@ -193,13 +193,14 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.Q_FINISH_MESSAGE) 
                     + ChatColor.RESET + ChatColor.GRAY + ")";
         case 4:
-            if (context.getSessionData(CK.Q_START_NPC) == null && plugin.getDependencies().getCitizens()
-                    != null) {
+            if (context.getSessionData(CK.Q_START_NPC) == null && (plugin.getDependencies().getCitizens() != null
+                    || plugin.getDependencies().getZnpcs() != null)) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-            } else if (plugin.getDependencies().getCitizens() != null) {
-                final UUID uuid = UUID.fromString((String) Objects.requireNonNull(context.getSessionData(CK.Q_START_NPC)));
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + CitizensAPI.getNPCRegistry().getByUniqueId(uuid)
-                        .getName() + ChatColor.RESET + ChatColor.GRAY + ")";
+            } else if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
+                final UUID uuid = UUID.fromString((String) Objects.requireNonNull(context
+                        .getSessionData(CK.Q_START_NPC)));
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + plugin.getDependencies().getNPCName(uuid)
+                        + ChatColor.RESET + ChatColor.GRAY + ")";
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
@@ -225,7 +226,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 if (context.getSessionData(CK.Q_GUIDISPLAY) == null) {
                     return ChatColor.GRAY +  "(" + Lang.get("noneSet") + ")";
                 } else {
@@ -269,7 +270,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return new QuestFinishMessagePrompt(context);
         case 4:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 return new QuestNPCStartPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -291,7 +292,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMainPrompt(context);
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
                 return new QuestGuiDisplayPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -501,13 +502,11 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 try {
                     final UUID uuid = UUID.fromString(input);
-                    if (plugin.getDependencies().getCitizens() != null) {
-                        if (CitizensAPI.getNPCRegistry().getByUniqueId(uuid) == null) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-                            return new QuestNPCStartPrompt(context);
-                        }
-                        context.setSessionData(CK.Q_START_NPC, uuid.toString());
+                    if (plugin.getDependencies().getNPCName(uuid) == null) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+                        return new QuestNPCStartPrompt(context);
                     }
+                    context.setSessionData(CK.Q_START_NPC, uuid.toString());
                     if (context.getForWhom() instanceof Player) {
                         final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                         selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());

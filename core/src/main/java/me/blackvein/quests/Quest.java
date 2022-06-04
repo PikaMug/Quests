@@ -20,8 +20,9 @@ import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
-import me.blackvein.quests.actions.IAction;
+import io.github.znetworkw.znpcservers.npc.NPC;
 import me.blackvein.quests.actions.Action;
+import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.events.quest.QuestUpdateCompassEvent;
@@ -50,8 +51,6 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -72,6 +71,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -189,16 +189,18 @@ public class Quest implements IQuest {
     }
 
     @Override
-    public NPC getNpcStart() {
-        if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().getByUniqueId(npcStart) != null) {
-            return CitizensAPI.getNPCRegistry().getByUniqueId(npcStart);
-        }
-        return null;
+    public UUID getNpcStart() {
+        return npcStart;
     }
 
     @Override
-    public void setNpcStart(final NPC npcStart) {
-        this.npcStart = npcStart.getUniqueId();
+    public void setNpcStart(final UUID npcStart) {
+        this.npcStart = npcStart;
+    }
+
+    @Override
+    public String getNpcStartName() {
+        return plugin.getDependencies().getNPCName(getNpcStart());
     }
 
     @Override
@@ -361,8 +363,8 @@ public class Quest implements IQuest {
                     final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideNPC"));
                     for (final UUID u : c.getNpcsWhileRiding()) {
                         if (plugin.getDependencies().getCitizens() != null) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
-                                    .getByUniqueId(u).getName());
+                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(plugin.getDependencies()
+                                    .getCitizens().getNPCRegistry().getByUniqueId(u).getName());
                         } else {
                             msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(u);
                         }
@@ -456,9 +458,19 @@ public class Quest implements IQuest {
             } else if (stage.getLocationsToReach() != null && stage.getLocationsToReach().size() > 0) {
                 targetLocation = stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
-                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(stage
-                        .getItemDeliveryTargets().getFirst());
-                targetLocation = npc.getStoredLocation();
+                final UUID uuid = stage.getItemDeliveryTargets().getFirst();
+                if (plugin.getDependencies().getCitizens() != null
+                        && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
+                    targetLocation = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid)
+                            .getStoredLocation();
+                }
+                if (plugin.getDependencies().getZnpcs() != null
+                        && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
+                    final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
+                    if (opt.isPresent()) {
+                        targetLocation = opt.get().getLocation();
+                    }
+                }
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
                 if (quester.getPlayer() == null) {
                     return;

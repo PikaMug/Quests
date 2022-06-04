@@ -152,7 +152,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(CK.Q_FINISH_MESSAGE, q.getFinished());
             if (plugin.getDependencies().getCitizens() != null) {
                 if (q.getNpcStart() != null) {
-                    context.setSessionData(CK.Q_START_NPC, q.getNpcStart().getUniqueId().toString());
+                    context.setSessionData(CK.Q_START_NPC, q.getNpcStart().toString());
                 }
             }
             context.setSessionData(CK.Q_START_BLOCK, q.getBlockStart());

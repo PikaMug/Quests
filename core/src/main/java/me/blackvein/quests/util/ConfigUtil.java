@@ -105,7 +105,7 @@ public class ConfigUtil {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
-                parsed = parsed.replace("<npc>", quest.getNpcStart().getName());
+                parsed = parsed.replace("<npc>", quest.getNpcStartName());
             } else {
                 Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }
@@ -120,7 +120,7 @@ public class ConfigUtil {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
-                parsed = parsed.replace("<npc>", quest.getNpcStart().getName());
+                parsed = parsed.replace("<npc>", quest.getNpcStartName());
             } else {
                 Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }
@@ -143,7 +143,7 @@ public class ConfigUtil {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
-                parsed = parsed.replace("<npc>", quest.getNpcStart().getName());
+                parsed = parsed.replace("<npc>", quest.getNpcStartName());
             } else {
                 Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }

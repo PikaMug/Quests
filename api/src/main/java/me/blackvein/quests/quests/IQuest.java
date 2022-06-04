@@ -14,13 +14,13 @@ package me.blackvein.quests.quests;
 
 import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.player.IQuester;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
 public interface IQuest extends Comparable<IQuest> {
     Plugin getPlugin();
@@ -55,9 +55,11 @@ public interface IQuest extends Comparable<IQuest> {
 
     LinkedList<IStage> getStages();
 
-    NPC getNpcStart();
+    UUID getNpcStart();
 
-    void setNpcStart(final NPC npcStart);
+    void setNpcStart(final UUID npcStart);
+
+    String getNpcStartName();
 
     Location getBlockStart();
 

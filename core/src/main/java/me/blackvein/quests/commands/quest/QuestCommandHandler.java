@@ -116,7 +116,7 @@ public class QuestCommandHandler {
                 cs.sendMessage(" ");
                 if (q.getNpcStart() != null) {
                     String msg = Lang.get("speakTo");
-                    msg = msg.replace("<npc>", q.getNpcStart().getName());
+                    msg = msg.replace("<npc>", q.getNpcStartName());
                     cs.sendMessage(ChatColor.YELLOW + msg);
                 } else {
                     cs.sendMessage(ChatColor.YELLOW + q.getDescription());

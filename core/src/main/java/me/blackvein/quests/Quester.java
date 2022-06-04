@@ -16,6 +16,7 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
+import io.github.znetworkw.znpcservers.npc.NPC;
 import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.QuestAbandonPrompt;
@@ -62,6 +63,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -83,6 +85,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -587,20 +590,29 @@ public class Quester implements IQuester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (plugin.getDependencies().getCitizens() != null
-                && !plugin.getSettings().canAllowCommandsForNpcQuests()
-                && quest.getNpcStart() != null && quest.getNpcStart().getEntity() != null
-                && quest.getNpcStart().getEntity().getLocation().getWorld() != null
-                && getPlayer().getLocation().getWorld() != null
-                && quest.getNpcStart().getEntity().getLocation().getWorld().getName().equals(
-                getPlayer().getLocation().getWorld().getName())
-                && quest.getNpcStart().getEntity().getLocation().distance(getPlayer().getLocation()) > 6.0) {
+        } else if (!plugin.getSettings().canAllowCommandsForNpcQuests() && quest.getNpcStart() != null
+                && getPlayer().getLocation().getWorld() != null) {
+            final UUID uuid = quest.getNpcStart();
             if (giveReason) {
-                final String msg = Lang.get(getPlayer(), "mustSpeakTo").replace("<npc>", ChatColor.DARK_PURPLE
-                        + quest.getNpcStart().getName() + ChatColor.YELLOW);
-                sendMessage(ChatColor.YELLOW + msg);
+                Entity npc = null;
+                if (plugin.getDependencies().getCitizens() != null
+                        && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
+                    npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid).getEntity();
+                } else if (plugin.getDependencies().getZnpcs() != null
+                        && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
+                    final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
+                    if (opt.isPresent()) {
+                        npc = (Entity) opt.get().getBukkitEntity();
+                    }
+                }
+                if (npc != null && npc.getLocation().getWorld() != null && npc.getLocation().getWorld().getName()
+                        .equals(getPlayer().getLocation().getWorld().getName())
+                        && npc.getLocation().distance(getPlayer().getLocation()) > 6.0) {
+                    sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "mustSpeakTo")
+                            .replace("<npc>", ChatColor.DARK_PURPLE + npc.getName() + ChatColor.YELLOW));
+                    return false;
+                }
             }
-            return false;
         } else if (quest.getBlockStart() != null) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE
