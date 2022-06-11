@@ -195,7 +195,6 @@ stageEditorCompleteMessagePrompt: "Introduceți mesajul de sfârșit, <clear>, <
 stageEditorDeliveryAddItem: "Adauga articol"
 stageEditorDeliveryMessages: "Setați mesaje de livrare"
 stageEditorNotSolid: "nu este un bloc solid!"
-stageEditorInvalidEnchantment: "farmecul ales nu este valid!"
 stageEditorInvalidMob: "nu este un nume valid de monstru!"
 stageEditorInvalidItemName: "nu este un nume valid de articol!"
 stageEditorInvalidDye: "nu este o culoare validă!"
