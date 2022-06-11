@@ -25,7 +25,6 @@ import me.blackvein.quests.util.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -368,19 +367,21 @@ public class EffectPrompt extends ActionsEditorNumericPrompt {
                     }
                     context.setSessionData(CK.E_EFFECTS, effects);
                     if (context.getForWhom() instanceof Player) {
-                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
+                                .getSelectedEffectLocations();
                         selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                     }
                     return new EffectSoundListPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                            + Lang.get("eventEditorInvalidEffect"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidEffect")
+                            .replace("<input>", input));
                     return new EffectSoundPrompt(context);
                 }
             } else {
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
+                            .getSelectedEffectLocations();
                     selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 }

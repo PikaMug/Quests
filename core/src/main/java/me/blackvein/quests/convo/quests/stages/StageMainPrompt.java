@@ -1477,8 +1477,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new StartActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_START_EVENT, found.getName());
@@ -1544,8 +1543,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new FinishActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_FINISH_EVENT, found.getName());
@@ -1611,8 +1609,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new FailActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_FAIL_EVENT, found.getName());
@@ -1678,8 +1675,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new DeathActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_DEATH_EVENT, found.getName());
@@ -1745,8 +1741,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new DisconnectActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_DISCONNECT_EVENT, found.getName());
@@ -1812,8 +1807,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new ChatActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_CHAT_TEMP_EVENT, found.getName());
@@ -1954,8 +1948,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidEvent"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
                     return new CommandActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_COMMAND_TEMP_EVENT, found.getName());
@@ -2097,8 +2090,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + input + ChatColor.YELLOW + " " 
-                            + Lang.get("stageEditorInvalidCondition"));
+                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidCondition")
+                            .replace("<input>", input));
                     return new ConditionListPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_CONDITION, found.getName());

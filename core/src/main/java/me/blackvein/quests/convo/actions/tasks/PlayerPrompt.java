@@ -655,12 +655,12 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<String> effTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
-                    if (s != null && PotionEffectType.getByName(s.toUpperCase()) != null) {
+                    if (PotionEffectType.getByName(s.toUpperCase()) != null) {
                         effTypes.add(Objects.requireNonNull(PotionEffectType.getByName(s.toUpperCase())).getName());
                         context.setSessionData(CK.E_POTION_TYPES, effTypes);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                               + Lang.get("eventEditorInvalidPotionType"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidPotionType")
+                                .replace("<input>", s));
                         return new PlayerPotionTypesPrompt(context);
                     }
                 }

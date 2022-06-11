@@ -225,13 +225,13 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<String> worlds = new LinkedList<String>();
+                final LinkedList<String> worlds = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (Bukkit.getWorld(s) != null) {
                         worlds.add(s);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("conditionEditorInvalidWorld"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorInvalidWorld")
+                                .replace("<input>", s));
                         return new WorldsPrompt(context);
                     }
                 }
@@ -266,7 +266,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             }
             
             final StringBuilder biomes = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final LinkedList<Biome> biomeArr = new LinkedList<Biome>(Arrays.asList(Biome.values()));
+            final LinkedList<Biome> biomeArr = new LinkedList<>(Arrays.asList(Biome.values()));
             for (int i = 0; i < biomeArr.size(); i++) {
                 if (i < (biomeArr.size() - 1)) {
                     biomes.append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name())).append(", ");
@@ -283,13 +283,13 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<String> biomes = new LinkedList<String>();
+                final LinkedList<String> biomes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (MiscUtil.getProperBiome(s) != null) {
                         biomes.add(s);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("conditionEditorInvalidBiome"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorInvalidBiome")
+                                .replace("<input>", s));
                         return new BiomesPrompt(context);
                     }
                 }
@@ -349,7 +349,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<String> regions = new LinkedList<String>();
+                final LinkedList<String> regions = new LinkedList<>();
                 for (final String r : input.split(" ")) {
                     boolean found = false;
                     for (final World world : plugin.getServer().getWorlds()) {

@@ -338,8 +338,8 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     context.setSessionData(CK.E_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
                             .getName());
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                            + Lang.get("eventEditorInvalidWorld"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidWorld")
+                            .replace("<input>", input));
                     return new StormWorldPrompt(context);
                 }
             }
@@ -558,8 +558,8 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     context.setSessionData(CK.E_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
                             .getWorld(input)).getName());
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                            + Lang.get("eventEditorInvalidWorld"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidWorld")
+                            .replace("<input>", input));
                     return new ThunderWorldPrompt(context);
                 }
             }

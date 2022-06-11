@@ -553,8 +553,8 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                     if (MiscUtil.getProperMobType(s) != null) {
                         mobTypes.add(s);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorInvalidMob"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
+                                .replace("<input>", s));
                         return new MobsTypesPrompt(context);
                     }
                 }
@@ -741,8 +741,8 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         radii.add(i);
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + input + " " + ChatColor.RED 
-                                + Lang.get("stageEditorInvalidItemName"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidItemName")
+                                .replace("<input>", s));
                         return new MobsRadiiPrompt(context);
                     }
                 }
@@ -1010,14 +1010,14 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                                 }
                                 context.setSessionData(pref + CK.S_TAME_AMOUNTS, amounts);
                             } else {
-                                context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED
-                                        + Lang.get("stageEditorInvalidMob"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
+                                        .replace("<input>", s));
                                 return new MobsTameTypesPrompt(context);
                             }
                         }
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorInvalidMob"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
+                                .replace("<input>", s));
                         return new MobsTameTypesPrompt(context);
                     }
                 }
@@ -1393,8 +1393,8 @@ public class MobsPrompt extends QuestsEditorNumericPrompt {
                         }
                         context.setSessionData(pref + CK.S_SHEAR_AMOUNTS, amounts);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorInvalidDye"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidDye")
+                                .replace("<input>", s));
                         return new MobsShearColorsPrompt(context);
                     }
                 }

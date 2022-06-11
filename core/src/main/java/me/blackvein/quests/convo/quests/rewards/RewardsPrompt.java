@@ -1079,8 +1079,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 for (final String w : worlds) {
                     if (!w.equals("null") && context.getPlugin() != null
                             && context.getPlugin().getServer().getWorld(w) == null) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + w + " "
-                                + Lang.get("eventEditorInvalidWorld"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidWorld")
+                                .replace("<input>", w));
                         return new PermissionsWorldsPrompt(context);
                     }
                 }

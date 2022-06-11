@@ -222,13 +222,13 @@ public class EntityPrompt extends QuestsEditorNumericPrompt {
                             mobTypes.add(s);
                             context.setSessionData(CK.C_WHILE_RIDING_ENTITY, mobTypes);
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                    + Lang.get("stageEditorInvalidMob"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
+                                    .replace("<input>", s));
                             return new EntitiesPrompt(context);
                         }
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + " " + ChatColor.RED 
-                                + Lang.get("stageEditorInvalidMob"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
+                                .replace("<input>", s));
                         return new EntitiesPrompt(context);
                     }
                 }

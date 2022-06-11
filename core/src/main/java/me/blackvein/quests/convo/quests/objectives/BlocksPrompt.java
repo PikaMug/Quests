@@ -428,13 +428,13 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             if (m.isBlock()) {
                                 names.add(m.name());
                             } else {
-                                context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                        + Lang.get("stageEditorNotSolid"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotSolid")
+                                        .replace("<input>", s));
                                 return new BlockBreakNamesPrompt(context);
                             }
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                    + Lang.get("stageEditorInvalidBlockName"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidBlockName")
+                                    .replace("<input>", s));
                             return new BlockBreakNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
@@ -798,13 +798,13 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             if (m.isBlock()) {
                                 names.add(m.name());
                             } else {
-                                context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                        + Lang.get("stageEditorNotSolid"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotSolid")
+                                        .replace("<input>", s));
                                 return new BlockDamageNamesPrompt(context);
                             }
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                    + Lang.get("stageEditorInvalidBlockName"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidBlockName")
+                                    .replace("<input>", s));
                             return new BlockDamageNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
@@ -1166,13 +1166,13 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             if (m.isBlock()) {
                                 names.add(m.name());
                             } else {
-                                context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                        + Lang.get("stageEditorNotSolid"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotSolid")
+                                        .replace("<input>", s));
                                 return new BlockPlaceNamesPrompt(context);
                             }
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED 
-                                    + Lang.get("stageEditorInvalidBlockName"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidBlockName")
+                                    .replace("<input>", s));
                             return new BlockPlaceNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
@@ -1532,13 +1532,13 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
                             if (m.isBlock()) {
                                 names.add(m.name());
                             } else {
-                                context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                        + Lang.get("stageEditorNotSolid"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotSolid")
+                                        .replace("<input>", s));
                                 return new BlockUseNamesPrompt(context);
                             }
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + s + ChatColor.RED + " " 
-                                    + Lang.get("stageEditorInvalidBlockName"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidBlockName")
+                                    .replace("<input>", s));
                             return new BlockUseNamesPrompt(context);
                         }
                     } catch (final NumberFormatException e) {

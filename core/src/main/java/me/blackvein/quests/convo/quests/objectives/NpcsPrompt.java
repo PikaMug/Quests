@@ -463,8 +463,8 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNPCName(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + uuid + ChatColor.RED + " "
-                                    + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")
+                                    .replace("<input>", s));
                             return new NpcDeliveryNpcsPrompt(context);
                         }
                     } catch (final IllegalArgumentException e) {
@@ -581,8 +581,8 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNPCName(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + uuid + ChatColor.RED + " "
-                                    + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")
+                                    .replace("<input>", s));
                             return new NpcsIdsToTalkToPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
@@ -807,8 +807,8 @@ public class NpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNPCName(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.LIGHT_PURPLE + "" + uuid + ChatColor.RED + " "
-                                    + Lang.get("stageEditorInvalidNPC"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")
+                                    .replace("<input>", s));
                             return new NpcIdsToKillPrompt(context);
                         }
                     } catch (final IllegalArgumentException e) {
