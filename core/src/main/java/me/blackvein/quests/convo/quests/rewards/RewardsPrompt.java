@@ -12,8 +12,6 @@
 
 package me.blackvein.quests.convo.quests.rewards;
 
-import com.codisimus.plugins.phatloots.PhatLoot;
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.CustomReward;
@@ -53,7 +51,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
     private final Quests plugin;
     private final String classPrefix;
     private boolean hasReward = false;
-    private final int size = 13;
+    private final int size = 12;
 
     public RewardsPrompt(final ConversationContext context) {
         super(context);
@@ -86,7 +84,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 4:
         case 5:
         case 6:
-        case 11:
+        case 10:
             return ChatColor.BLUE;
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
@@ -106,13 +104,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.GRAY;
             }
-        case 10:
-            if (plugin.getDependencies().getPhatLoots() != null) {
-                return ChatColor.BLUE;
-            } else {
-                return ChatColor.GRAY;
-            }
-        case 12:
+        case 11:
             if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY;
@@ -122,7 +114,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.BLUE;
             }
-        case 13:
+        case 12:
             return ChatColor.GREEN;
         default:
             return null;
@@ -167,20 +159,14 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + Lang.get("rewSetPartiesExperience");
             }
         case 10:
-            if (plugin.getDependencies().getPhatLoots() != null) {
-                return ChatColor.YELLOW + Lang.get("rewSetPhat");
-            } else {
-                return ChatColor.GRAY + Lang.get("rewSetPhat");
-            }
-        case 11:
             return ChatColor.DARK_PURPLE + Lang.get("rewSetCustom");
-        case 12:
+        case 11:
             if (!hasReward) {
                 return ChatColor.GRAY + Lang.get("overrideCreateSet");
             } else {
                 return ChatColor.YELLOW + Lang.get("overrideCreateSet");
             }
-        case 13:
+        case 12:
             return ChatColor.YELLOW + Lang.get("done");
         default:
             return null;
@@ -331,24 +317,6 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                         + Lang.get("points") + ChatColor.GRAY + ")";
             }
         case 10:
-            if (plugin.getDependencies().getPhatLoots() != null) {
-                if (context.getSessionData(CK.REW_PHAT_LOOTS) == null) {
-                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
-                } else {
-                    final StringBuilder text = new StringBuilder();
-                    final List<String> phatLoots = (List<String>) context.getSessionData(CK.REW_PHAT_LOOTS);
-                    if (phatLoots != null) {
-                        for (final String phatLoot : phatLoots) {
-                            text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                    .append(phatLoot);
-                        }
-                    }
-                    return text.toString();
-                }
-            } else {
-                return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
-            }
-        case 11:
             if (context.getSessionData(CK.REW_CUSTOM) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
@@ -361,7 +329,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text.toString();
             }
-        case 12:
+        case 11:
             if (context.getSessionData(CK.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY + "(" + Lang.get("stageEditorOptional") + ")";
@@ -379,7 +347,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text.toString();
             }
-        case 13:
+        case 12:
             return "";
         default:
             return null;
@@ -466,14 +434,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
         case 9:
             return new RewardsPartiesExperiencePrompt(context);
         case 10:
-            if (plugin.getDependencies().getPhatLoots() != null) {
-                return new RewardsPhatLootsPrompt(context);
-            } else {
-                return new RewardsPrompt(context);
-            }
-        case 11:
             return new CustomRewardModulePrompt(context);
-        case 12:
+        case 11:
             if (hasReward) {
                 return new OverridePrompt.Builder()
                         .source(this)
@@ -483,7 +445,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
                 return new RewardsPrompt(context);
             }
-        case 13:
+        case 12:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
             return new RewardsPrompt(context);
@@ -1712,66 +1674,6 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                 return new RewardsPrompt(context);
             }
             return new RewardsPrompt(context);
-        }
-    }
-
-    public class RewardsPhatLootsPrompt extends QuestsEditorStringPrompt {
-        
-        public RewardsPhatLootsPrompt(final ConversationContext context) {
-            super(context);
-        }
-
-        @Override
-        public String getTitle(final ConversationContext context) {
-            return Lang.get("phatLootsRewardsTitle");
-        }
-
-        @Override
-        public String getQueryText(final ConversationContext context) {
-            return Lang.get("rewPhatLootsPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
-            
-            final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + getTitle(context) + "\n");
-            for (final PhatLoot pl : PhatLootsAPI.getAllPhatLoots()) {
-                text.append(ChatColor.GRAY).append("- ").append(ChatColor.BLUE).append(pl.name).append("\n");
-            }
-            text.append(ChatColor.YELLOW).append(getQueryText(context));
-            return text.toString();
-        }
-
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                return null;
-            }
-            if (!input.equalsIgnoreCase(Lang.get("cmdCancel")) && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                final String[] arr = input.split(" ");
-                for (final String s : arr) {
-                    if (PhatLootsAPI.getPhatLoot(s) == null) {
-                        String text = Lang.get("rewPhatLootsInvalid");
-                        text = text.replace("<input>", ChatColor.DARK_RED + s + ChatColor.RED);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new RewardsPhatLootsPrompt(context);
-                    }
-                }
-                final List<String> loots = new LinkedList<>(Arrays.asList(arr));
-                context.setSessionData(CK.REW_PHAT_LOOTS, loots);
-                return new RewardsPrompt(context);
-            } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
-                context.setSessionData(CK.REW_PHAT_LOOTS, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("rewPhatLootsCleared"));
-                return new RewardsPrompt(context);
-            } else {
-                return new RewardsPrompt(context);
-            }
         }
     }
 
