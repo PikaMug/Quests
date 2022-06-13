@@ -715,28 +715,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
                 return new RequirementsItemListPrompt(context);
             case 4:
-                final int one;
-                final int two;
+                final int missing;
                 final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
-                final List<Boolean> remove = (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
+                LinkedList<Boolean> remove = (LinkedList<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
                 if (items != null) {
-                    one = items.size();
-                } else {
-                    one = 0;
+                    if (remove != null) {
+                        missing = items.size() - remove.size();
+                    } else {
+                        missing = items.size();
+                        remove = new LinkedList<>();
+                    }
+                    for (int i = 0; i < missing; i++) {
+                        remove.add(false);
+                    }
                 }
-                if (remove != null) {
-                    two = remove.size();
-                } else {
-                    two = 0;
-                }
-                if (one == two) {
-                    return new RequirementsPrompt(context);
-                } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                    return new RequirementsItemListPrompt(context);
-                }
+                context.setSessionData(CK.REQ_ITEMS_REMOVE, remove);
+                return new RequirementsPrompt(context);
             default:
-                return null;
+                return new RequirementsPrompt(context);
             }
         }
     }
