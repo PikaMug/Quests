@@ -41,6 +41,8 @@ public interface ISettings {
     void setIgnoreLockedQuests(final boolean ignoreLockedQuests);
     int getKillDelay();
     void setKillDelay(final int killDelay);
+    String getLanguage();
+    void setLanguage(final String language);
     int getMaxQuests();
     void setMaxQuests(final int maxQuests);
     boolean canNpcEffects();

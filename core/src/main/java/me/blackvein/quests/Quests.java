@@ -37,10 +37,10 @@ import me.blackvein.quests.exceptions.QuestFormatException;
 import me.blackvein.quests.exceptions.StageFormatException;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.listeners.BlockListener;
+import me.blackvein.quests.listeners.CitizensListener;
 import me.blackvein.quests.listeners.CommandManager;
 import me.blackvein.quests.listeners.ConvoListener;
 import me.blackvein.quests.listeners.ItemListener;
-import me.blackvein.quests.listeners.CitizensListener;
 import me.blackvein.quests.listeners.PartiesListener;
 import me.blackvein.quests.listeners.PlayerListener;
 import me.blackvein.quests.listeners.UniteListener;
@@ -203,11 +203,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         conditionFactory = new BukkitConditionFactory(this);
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
-        final Metrics metrics = new Metrics(this);
-        metrics.addCustomChart(new Metrics.SimplePie("language", Lang::getISO));
 
         // 2 - Load main config
         settings.init();
+        if (settings.getLanguage().contains("-")) {
+            final Metrics metrics = new Metrics(this);
+            metrics.addCustomChart(new Metrics.SimplePie("language", () -> settings.getLanguage()));
+        }
         
         // 3 - Setup language files
         try {
@@ -761,7 +763,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     /**
-     * Transfer language files from jar to disk
+     * Transfer language files from jar to disk, then initialize default
      */
     private void setupLang() throws IOException, URISyntaxException {
         final String path = "lang";
@@ -783,7 +785,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             jar.close();
         }
         try {
-            Lang.init(this);
+            Lang.init(this, settings.getLanguage());
         } catch (final InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -1719,7 +1721,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             try {
                 Lang.clear();
                 settings.init();
-                Lang.init(Quests.this);
+                Lang.init(Quests.this, settings.getLanguage());
                 quests.clear();
                 actions.clear();
                 conditions.clear();

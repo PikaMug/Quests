@@ -408,7 +408,7 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         
         final TimeZone tz = TimeZone.getTimeZone(date[6]);
         cal.setTimeZone(tz);
-        final String[] iso = Lang.getISO().split("-");
+        final String[] iso = plugin.getSettings().getLanguage().split("-");
         final Locale loc = iso.length > 1 ? new Locale(iso[0], iso[1]) : new Locale(iso[0]);
         final Double zonehour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zonehour).replace("-", "").split("\\.");

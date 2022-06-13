@@ -37,17 +37,17 @@ import java.util.regex.Pattern;
 
 public class Lang {
 
-    private static String iso = "en-US";
+    //private static String iso = "en-US";
     private static final LinkedHashMap<String, String> langMap = new LinkedHashMap<>();
     private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
     
-    public static String getISO() {
+    /*public static String getISO() {
         return iso;
     }
     
     public static void setISO(final String iso) {
         Lang.iso = iso;
-    }
+    }*/
     
     public static Collection<String> values() {
         return langMap.values();
@@ -61,6 +61,14 @@ public class Lang {
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
     public static String get(final Player player, final String key) {
+        String locale;
+        try {
+            locale = player.getLocale();
+        } catch (NoSuchMethodError e) {
+            // Older version of Minecraft
+            locale = player.spigot().getLocale();
+        }
+
         return langMap.containsKey(key) ? LangToken.convertString(player, langMap.get(key)) : "NULL";
     }
 
@@ -133,62 +141,63 @@ public class Lang {
         }
     }
 
-    public static void init(final QuestsAPI plugin) throws InvalidConfigurationException, IOException {
+    public static void init(final QuestsAPI plugin, String iso) throws InvalidConfigurationException, IOException {
         final File langFile = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso + File.separator
                 + "strings.yml");
         final File langFile_new = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings_new.yml");
         final boolean exists_new = langFile_new.exists();
         final LinkedHashMap<String, String> allStrings = new LinkedHashMap<>();
-        if (langFile.exists() && iso.split("-").length > 1) {
-            final FileConfiguration config= YamlConfiguration
-                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
-            FileConfiguration config_new = null;
-            if (exists_new) {
-                config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
-                        new FileInputStream(langFile_new), StandardCharsets.UTF_8));
-            }
-            // Load user's lang file and determine new strings
-            for (final String key : config.getKeys(false)) {
-                allStrings.put(key, config.getString(key));
-                if (exists_new) {
-                    config_new.set(key, null);
-                }
-            }
-            // Add new strings and notify user
-            if (exists_new) {
-                for (final String key : config_new.getKeys(false)) {
-                    final String value = config_new.getString(key);
-                    if (value != null) {
-                        allStrings.put(key, value);
-                        plugin.getPluginLogger().warning("There are new language phrases in /lang/" + iso
-                                + "/strings_new.yml for the current version!"
-                                + " You must transfer them to, or regenerate, strings.yml to remove this warning!");
-                    }
-                }
-                config_new.options().header("Below are any new strings for your current version of Quests! " 
-                        + "Transfer them to the strings.yml of the"
-                        + " same folder to stay up-to-date and suppress console warnings.");
-                config_new.options().copyHeader(true);
-                config_new.save(langFile_new);
-            }
-        } else {
-            plugin.getPluginLogger().severe("Failed loading lang files for " + iso 
+        if (!(langFile.exists() && iso.split("-").length > 1)) {
+            plugin.getPluginLogger().severe("Failed loading lang files for " + iso
                     + " because they were not found. Using default en-US");
             plugin.getPluginLogger()
                     .info("If the plugin has not generated language files, ensure Quests has write permissions");
             plugin.getPluginLogger()
                     .info("For help, visit https://github.com/PikaMug/Quests/wiki/Casual-%E2%80%90-Translations");
-            iso = "en-US";
-            plugin.getPluginLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
-                    .toString());
-            plugin.getPluginLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
-                    .getLocation().getPath());
+            plugin.getSettings().setLanguage("en-US");
+            if (plugin.getSettings().getConsoleLogging() > 3) {
+                plugin.getPluginLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
+                        .toString());
+                plugin.getPluginLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
+                        .getLocation().getPath());
+            }
             final FileConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
                     .requireNonNull(plugin.getPluginResource("strings.yml")), StandardCharsets.UTF_8));
             for (final String key : config.getKeys(false)) {
                 allStrings.put(key, config.getString(key));
             }
+        }
+        final FileConfiguration config= YamlConfiguration
+                .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
+        FileConfiguration config_new = null;
+        if (exists_new) {
+            config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
+                    new FileInputStream(langFile_new), StandardCharsets.UTF_8));
+        }
+        // Load user's lang file and determine new strings
+        for (final String key : config.getKeys(false)) {
+            allStrings.put(key, config.getString(key));
+            if (exists_new) {
+                config_new.set(key, null);
+            }
+        }
+        // Add new strings and notify user
+        if (exists_new) {
+            for (final String key : config_new.getKeys(false)) {
+                final String value = config_new.getString(key);
+                if (value != null) {
+                    allStrings.put(key, value);
+                    plugin.getPluginLogger().warning("There are new language phrases in /lang/" + iso
+                            + "/strings_new.yml for the current version!"
+                            + " You must transfer them to, or regenerate, strings.yml to remove this warning!");
+                }
+            }
+            config_new.options().header("Below are any new strings for your current version of Quests! "
+                    + "Transfer them to the strings.yml of the"
+                    + " same folder to stay up-to-date and suppress console warnings.");
+            config_new.options().copyHeader(true);
+            config_new.save(langFile_new);
         }
         
         final String cmdAdd = allStrings.get("cmdAdd");

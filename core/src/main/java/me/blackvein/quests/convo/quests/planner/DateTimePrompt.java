@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo.quests.planner;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
@@ -30,11 +31,14 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateTimePrompt extends QuestsEditorNumericPrompt {
+
+    private final Quests plugin;
     private final Prompt oldPrompt;
     private final String source;
 
     public DateTimePrompt(final ConversationContext context, final Prompt old, final String origin) {
         super(context);
+        this.plugin = (Quests)context.getPlugin();
         oldPrompt = old;
         source = origin;
     }
@@ -71,7 +75,7 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
         cal.setTimeZone(TimeZone.getTimeZone((String) context.getSessionData("tempZone")));
-        final String[] iso = Lang.getISO().split("-");
+        final String[] iso = plugin.getSettings().getLanguage().split("-");
         final Locale loc = new Locale(iso[0], iso[1]);
         final Double zonedHour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zonedHour).replace("-", "").split("\\.");
