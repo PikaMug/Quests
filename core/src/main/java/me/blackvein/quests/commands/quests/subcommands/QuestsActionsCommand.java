@@ -66,10 +66,10 @@ public class QuestsActionsCommand extends QuestsSubCommand {
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
             } else {
-                cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+                cs.sendMessage(ChatColor.RED + Lang.get(cs, "duplicateEditor"));
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + Lang.get(cs, "noPermission"));
         }
     }
 }

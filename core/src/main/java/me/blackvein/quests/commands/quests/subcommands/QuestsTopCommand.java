@@ -76,12 +76,12 @@ public class QuestsTopCommand extends QuestsSubCommand {
                 try {
                     topNumber = Integer.parseInt(args[1]);
                 } catch (final NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get(cs, "inputNum"));
                     return;
                 }
             }
             if (topNumber < 1 || topNumber > plugin.getSettings().getTopLimit()) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("invalidRange").replace("<least>", "1")
+                cs.sendMessage(ChatColor.YELLOW + Lang.get(cs, "invalidRange").replace("<least>", "1")
                         .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
                 return;
             }
@@ -105,14 +105,14 @@ public class QuestsTopCommand extends QuestsSubCommand {
                 }
                 final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
                 int numPrinted = 0;
-                String msg = Lang.get("topQuestersTitle");
+                String msg = Lang.get(cs, "topQuestersTitle");
                 msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
                 cs.sendMessage(ChatColor.GOLD + msg);
                 for (final Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
                     numPrinted++;
                     cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - "
                             + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " "
-                            + Lang.get("questPoints"));
+                            + Lang.get(cs, "questPoints"));
                     if (numPrinted == topNumber) {
                         break;
                     }

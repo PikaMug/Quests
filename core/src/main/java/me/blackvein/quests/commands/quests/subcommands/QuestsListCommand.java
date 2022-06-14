@@ -87,7 +87,7 @@ public class QuestsListCommand extends QuestsSubCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                     if (page < 1) {
-                        cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionPosNum"));
+                        cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageSelectionPosNum"));
                     } else {
                         final Quester quester = plugin.getQuester(player.getUniqueId());
                         final QuestsCommandPreQuestsListEvent preEvent
@@ -100,11 +100,11 @@ public class QuestsListCommand extends QuestsSubCommand {
                         plugin.listQuests(quester, page);
                     }
                 } catch (final NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Lang.get("pageSelectionNum"));
+                    cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "pageSelectionNum"));
                 }
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + Lang.get(cs, "noPermission"));
         }
     }
 }

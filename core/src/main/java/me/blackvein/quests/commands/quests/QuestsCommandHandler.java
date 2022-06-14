@@ -65,13 +65,13 @@ public class QuestsCommandHandler {
         for (Map.Entry<String, QuestsSubCommand> cmd : subCommands.entrySet()) {
             if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
                 if (args.length < cmd.getValue().getMaxArguments()) {
-                    cs.sendMessage(getCommandUsage(args[0]));
+                    cs.sendMessage(getCommandUsage(cs, args[0]));
                 }
                 cmd.getValue().execute(cs, args);
                 return true;
             }
         }
-        cs.sendMessage(ChatColor.YELLOW + Lang.get("questsUnknownCommand"));
+        cs.sendMessage(ChatColor.YELLOW + Lang.get(cs, "questsUnknownCommand"));
         return true;
     }
 
@@ -106,20 +106,21 @@ public class QuestsCommandHandler {
                     + ChatColor.YELLOW));
         }
         if (cs instanceof Player) {
-            cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get("COMMAND_QUEST_HELP"));
+            cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Lang.get(cs, "COMMAND_QUEST_HELP"));
             if (cs.hasPermission("quests.questinfo")) {
                 cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW
-                        + Lang.get("COMMAND_QUESTINFO_HELP"));
+                        + Lang.get(cs, "COMMAND_QUESTINFO_HELP"));
             }
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Lang.get("COMMAND_QUESTADMIN_HELP"));
+                    + Lang.get(cs, "COMMAND_QUESTADMIN_HELP"));
         }
     }
 
-    private String getCommandUsage(final String cmd) {
-        return ChatColor.RED + Lang.get("usage") + ": " + ChatColor.YELLOW + "/quests "
-                + Lang.get(Lang.getKeyFromPrefix("COMMAND_", cmd) + "_HELP").replace("<command>", cmd.toLowerCase());
+    private String getCommandUsage(final CommandSender cs, final String cmd) {
+        return ChatColor.RED + Lang.get(cs, "usage") + ": " + ChatColor.YELLOW + "/quests "
+                + Lang.get(cs, Lang.getKeyFromPrefix("COMMAND_", cmd) + "_HELP")
+                .replace("<command>", cmd.toLowerCase());
     }
 }

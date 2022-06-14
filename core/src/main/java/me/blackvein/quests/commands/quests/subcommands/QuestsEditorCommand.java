@@ -79,10 +79,10 @@ public class QuestsEditorCommand extends QuestsSubCommand {
                 }
                 cn.begin();
             } else {
-                cs.sendMessage(ChatColor.RED + Lang.get("duplicateEditor"));
+                cs.sendMessage(ChatColor.RED + Lang.get(cs, "duplicateEditor"));
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Lang.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + Lang.get(cs, "noPermission"));
         }
     }
 }

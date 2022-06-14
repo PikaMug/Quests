@@ -43,6 +43,8 @@ public interface ISettings {
     void setKillDelay(final int killDelay);
     String getLanguage();
     void setLanguage(final String language);
+    boolean canLanguageOverrideClient();
+    void setLanguageOverrideClient(final boolean languageOverrideClient);
     int getMaxQuests();
     void setMaxQuests(final int maxQuests);
     boolean canNpcEffects();

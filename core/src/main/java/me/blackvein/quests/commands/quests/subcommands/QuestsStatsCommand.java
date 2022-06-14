@@ -70,20 +70,22 @@ public class QuestsStatsCommand extends QuestsSubCommand {
         if (cs.hasPermission(getPermission())) {
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + player.getName() + " -");
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("questPoints") + " - " + ChatColor.DARK_PURPLE
+            cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
             if (quester.getCurrentQuestsTemp().isEmpty()) {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ Lang.get("none"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "currentQuest") + " " + ChatColor.DARK_PURPLE
+                        + Lang.get("none"));
             } else {
-                cs.sendMessage(ChatColor.YELLOW + Lang.get("currentQuest"));
+                cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "currentQuest"));
                 for (final Map.Entry<IQuest, Integer> set : quester.getCurrentQuestsTemp().entrySet()) {
                     final IQuest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
-                            + ChatColor.LIGHT_PURPLE + " (" + Lang.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
+                            + ChatColor.LIGHT_PURPLE + " (" + Lang.get(player, "stageEditorStage") + " "
+                            +  (set.getValue() + 1) + ")";
                     cs.sendMessage(msg);
                 }
             }
-            cs.sendMessage(ChatColor.YELLOW + Lang.get("completedQuest"));
+            cs.sendMessage(ChatColor.YELLOW + Lang.get(player, "completedQuest"));
 
             if (quester.getCompletedQuestsTemp().isEmpty()) {
                 cs.sendMessage(ChatColor.DARK_PURPLE + Lang.get("none"));

@@ -80,7 +80,7 @@ public class QuestsQuitCommand extends QuestsSubCommand {
                 final IQuest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
-                        final String msg = ChatColor.YELLOW + Lang.get("questQuit").replace("<quest>",
+                        final String msg = ChatColor.YELLOW + Lang.get(player, "questQuit").replace("<quest>",
                                 ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
                         quester.abandonQuest(quest, msg);
                     } else {
