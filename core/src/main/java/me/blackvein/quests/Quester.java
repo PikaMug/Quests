@@ -569,6 +569,31 @@ public class Quester implements IQuester {
         if (quest == null) {
             return false;
         }
+        if (!plugin.getSettings().canAllowCommandsForNpcQuests() && quest.getNpcStart() != null
+                && getPlayer().getLocation().getWorld() != null) {
+            final UUID uuid = quest.getNpcStart();
+            Entity npc = null;
+            if (plugin.getDependencies().getCitizens() != null
+                    && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
+                npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid).getEntity();
+            } else if (plugin.getDependencies().getZnpcs() != null
+                    && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
+                final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
+                if (opt.isPresent()) {
+                    npc = (Entity) opt.get().getBukkitEntity();
+                }
+            }
+            if (npc != null && npc.getLocation().getWorld() != null && npc.getLocation().getWorld().getName()
+                    .equals(getPlayer().getLocation().getWorld().getName())
+                    && npc.getLocation().distance(getPlayer().getLocation()) > 6.0) {
+                if (giveReason) {
+                    final String msg = Lang.get(getPlayer(), "mustSpeakTo")
+                            .replace("<npc>", ChatColor.DARK_PURPLE + npc.getName() + ChatColor.YELLOW);
+                    sendMessage(ChatColor.YELLOW + msg);
+                }
+                return false;
+            }
+        }
         if (getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests()
                 > 0) {
             if (giveReason) {
@@ -590,29 +615,6 @@ public class Quester implements IQuester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (!plugin.getSettings().canAllowCommandsForNpcQuests() && quest.getNpcStart() != null
-                && getPlayer().getLocation().getWorld() != null) {
-            final UUID uuid = quest.getNpcStart();
-            if (giveReason) {
-                Entity npc = null;
-                if (plugin.getDependencies().getCitizens() != null
-                        && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
-                    npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid).getEntity();
-                } else if (plugin.getDependencies().getZnpcs() != null
-                        && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
-                    final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
-                    if (opt.isPresent()) {
-                        npc = (Entity) opt.get().getBukkitEntity();
-                    }
-                }
-                if (npc != null && npc.getLocation().getWorld() != null && npc.getLocation().getWorld().getName()
-                        .equals(getPlayer().getLocation().getWorld().getName())
-                        && npc.getLocation().distance(getPlayer().getLocation()) > 6.0) {
-                    sendMessage(ChatColor.YELLOW + Lang.get(getPlayer(), "mustSpeakTo")
-                            .replace("<npc>", ChatColor.DARK_PURPLE + npc.getName() + ChatColor.YELLOW));
-                    return false;
-                }
-            }
         } else if (quest.getBlockStart() != null) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE

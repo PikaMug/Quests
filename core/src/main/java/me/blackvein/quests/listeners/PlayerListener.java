@@ -136,6 +136,7 @@ public class PlayerListener implements Listener {
                                 }
                             }
                             evt.getWhoClicked().closeInventory();
+                            break;
                         }
                     }
                 }
