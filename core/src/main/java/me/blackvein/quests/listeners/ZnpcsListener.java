@@ -44,6 +44,9 @@ public class ZnpcsListener implements Listener {
                     return;
                 }
                 evt.getPlayer().acceptConversationInput(String.valueOf(evt.getNpc().getUUID()));
+                evt.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
+                        + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
+                        + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
         } else if (evt.isRightClick()) {
             if (plugin.getDependencies().getCitizens() == null) {
@@ -55,6 +58,9 @@ public class ZnpcsListener implements Listener {
                     return;
                 }
                 evt.getPlayer().acceptConversationInput(String.valueOf(evt.getNpc().getUUID()));
+                evt.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
+                        + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
+                        + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
             if (!evt.getPlayer().isConversing()) {
                 final Player player = evt.getPlayer();
