@@ -4566,7 +4566,7 @@ public class Quester implements IQuester {
                     // Protocol-enforced size limit has been exceeded
                     break;
                 }
-                final ItemStack display = quest.getGUIDisplay();
+                final ItemStack display = quest.getGUIDisplay().clone();
                 final ItemMeta meta = display.getItemMeta();
                 if (meta != null) {
                     if (completedQuests.contains(quest)) {
