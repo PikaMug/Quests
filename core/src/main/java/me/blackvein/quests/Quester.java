@@ -4561,37 +4561,13 @@ public class Quester implements IQuester {
                 Lang.get(player, "quests") + " | " + name);
         int i = 0;
         for (final IQuest quest : quests) {
-            if (quest.getGUIDisplay() != null) {
+            final Quest bukkitQuest = (Quest)quest;
+            if (bukkitQuest.getGUIDisplay() != null) {
                 if (i > 53) {
                     // Protocol-enforced size limit has been exceeded
                     break;
                 }
-                final ItemStack display = quest.getGUIDisplay().clone();
-                final ItemMeta meta = display.getItemMeta();
-                if (meta != null) {
-                    if (completedQuests.contains(quest)) {
-                        meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName()
-                                + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), npc));
-                    } else {
-                        meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(quest.getName(), npc));
-                    }
-                    if (!meta.hasLore()) {
-                        final LinkedList<String> lines;
-                        String desc = quest.getDescription();
-                        if (plugin.getDependencies().getPlaceholderApi() != null) {
-                            desc = PlaceholderAPI.setPlaceholders(player, desc);
-                        }
-                        if (desc.equals(ChatColor.stripColor(desc))) {
-                            lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
-                        } else {
-                            lines = MiscUtil.makeLines(desc, " ", 40, null);
-                        }
-                        meta.setLore(lines);
-                    }
-                    meta.addItemFlags(ItemFlag.values());
-                    display.setItemMeta(meta);
-                }
-                inv.setItem(i, display);
+                inv.setItem(i, bukkitQuest.prepareDisplay(this));
                 i++;
             }
         }

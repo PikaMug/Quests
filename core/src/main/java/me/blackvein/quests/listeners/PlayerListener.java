@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.listeners;
 
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
@@ -120,14 +121,15 @@ public class PlayerListener implements Listener {
                 return;
             }
         }
-        final IQuester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
+        final Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
         final Player player = (Player) evt.getWhoClicked();
         if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
             final ItemStack clicked = evt.getCurrentItem();
             if (ItemUtil.isItem(clicked)) {
                 for (final IQuest quest : plugin.getLoadedQuests()) {
+                    final Quest bukkitQuest = (Quest)quest;
                     if (quest.getGUIDisplay() != null) {
-                        if (ItemUtil.compareItems(clicked, quest.getGUIDisplay(), false) == 0) {
+                        if (ItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false) == 0) {
                             if (quester.canAcceptOffer(quest, true)) {
                                 try { 
                                     quester.takeQuest(quest, false);

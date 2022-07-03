@@ -65,6 +65,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
@@ -589,6 +590,42 @@ public class Quest implements IQuest {
             }
         });
         return true;
+    }
+
+    /**
+     * Format GUI display item with applicable display name, lore, and item flags
+     *
+     * @param quester The quester to prepare for
+     * @return formatted item
+     */
+    public ItemStack prepareDisplay(final Quester quester) {
+        final ItemStack display = getGUIDisplay().clone();
+        final ItemMeta meta = display.getItemMeta();
+        if (meta != null) {
+            final Player player = quester.getPlayer();
+            if (quester.getCompletedQuests().contains(this)) {
+                meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(getName()
+                        + " " + ChatColor.GREEN + Lang.get(player, "redoCompleted"), getNpcStart()));
+            } else {
+                meta.setDisplayName(ChatColor.DARK_PURPLE + ConfigUtil.parseString(getName(), getNpcStart()));
+            }
+            if (!meta.hasLore()) {
+                final LinkedList<String> lines;
+                String desc = getDescription();
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    desc = PlaceholderAPI.setPlaceholders(player, desc);
+                }
+                if (desc.equals(ChatColor.stripColor(desc))) {
+                    lines = MiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
+                } else {
+                    lines = MiscUtil.makeLines(desc, " ", 40, null);
+                }
+                meta.setLore(lines);
+            }
+            meta.addItemFlags(ItemFlag.values());
+            display.setItemMeta(meta);
+        }
+        return display;
     }
     
     /**
