@@ -1994,7 +1994,7 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     text += ChatColor.GOLD + descriptions.get(temp) + "\n";
                 }
                 String lang = Lang.get("stageEditorCustomDataPrompt");
-                lang = lang.replace("<data>", temp);
+                lang = lang.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
                 text += ChatColor.YELLOW + lang;
             }
             return text;
