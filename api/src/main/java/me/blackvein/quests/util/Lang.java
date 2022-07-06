@@ -71,6 +71,9 @@ public class Lang {
      */
     @SuppressWarnings("deprecation")
     public static String get(final Player player, final String key) {
+        if (key == null) {
+            return null;
+        }
         if (player == null) {
             return get(key);
         }
@@ -108,6 +111,9 @@ public class Lang {
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
     public static String get(final CommandSender commandSender, final String key) {
+        if (key == null) {
+            return null;
+        }
         if (commandSender instanceof Player) {
             return get((Player)commandSender, key);
         }
@@ -121,6 +127,9 @@ public class Lang {
      * @return formatted string
      */
     public static String get(final String key) {
+        if (key == null) {
+            return null;
+        }
         return defaultLang.containsKey(key) ? LangToken.convertString(defaultLang.get(key)) : "NULL";
     }
 
@@ -323,12 +332,15 @@ public class Lang {
         }
 
         public static String convertString(String s) {
+            if (s == null) {
+                return null;
+            }
             if (tokenMap.isEmpty()) {
                 LangToken.init();
             }
-            for (final String token : tokenMap.keySet()) {
-                s = s.replace(token, tokenMap.get(token));
-                s = s.replace(token.toUpperCase(), tokenMap.get(token));
+            for (final Entry<String, String> token : tokenMap.entrySet()) {
+                s = s.replace(token.getKey(), token.getValue());
+                s = s.replace(token.getKey().toUpperCase(), token.getValue());
             }
             final Matcher matcher = hexPattern.matcher(s);
             while (matcher.find()) {
@@ -344,6 +356,9 @@ public class Lang {
         }
         
         public static String convertString(final Player p, String s) {
+            if (s == null) {
+                return null;
+            }
             if (tokenMap.isEmpty()) {
                 LangToken.init();
             }
