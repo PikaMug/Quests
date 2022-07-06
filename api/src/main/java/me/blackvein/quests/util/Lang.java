@@ -100,6 +100,9 @@ public class Lang {
                 return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
             }
         }
+        if (otherLang.get(locale).get(key) == null) {
+            return defaultLang.get(key);
+        }
         return LangToken.convertString(otherLang.get(locale).get(key));
     }
 
