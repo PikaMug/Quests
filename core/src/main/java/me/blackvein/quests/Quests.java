@@ -492,7 +492,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             return null;
         }
         final ConcurrentSkipListSet<IQuester> set = (ConcurrentSkipListSet<IQuester>) questers;
-        for (final IQuester q: set) {
+        for (final IQuester q : set) {
             if (q != null && q.getUUID().equals(id)) {
                 return (Quester) q;
             }
@@ -1707,7 +1707,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     /**
-     * Reload quests, actions, config settings, lang and modules, and player data
+     * Reload quests, actions, conditions, config settings, lang, modules, and player data
      */
     public void reload(final ReloadCallback<Boolean> callback) {
         if (loading) {

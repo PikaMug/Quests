@@ -39,6 +39,10 @@ public class QuestsLog4JFilter extends AbstractFilter {
         if (message.contains("[PikaMug]")) {
             return Result.DENY;
         }
+        // Hikari outputs these messages as ERROR which concerns some
+        if (message.contains("quests-hikari - Shutdown")) {
+            return Result.DENY;
+        }
         // Paper outputs errors when dependencies for module events are missing
         return (message.contains("Plugin Quests") && message.contains("failed to register events"))
                 ? Result.DENY : Result.NEUTRAL;

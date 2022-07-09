@@ -316,7 +316,7 @@ public class BlockListener implements Listener {
         } catch (final NoSuchMethodError err) {
             // Do nothing, getHand() not present pre-1.9
         }
-        if (e == null || e.equals(EquipmentSlot.HAND)) { //If the event is fired by HAND (main hand)
+        if (e == null || e.equals(EquipmentSlot.HAND)) { // If the event is fired by HAND (main hand)
             final Player player = evt.getPlayer();
             if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
                 final IQuester quester = plugin.getQuester(player.getUniqueId());

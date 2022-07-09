@@ -67,6 +67,6 @@ public class MySqlConnectionFactory extends HikariConnectionFactory {
 
     @Override
     public Function<String, String> getStatementProcessor() {
-        return s -> s.replace("'", "`");
+        return s -> s.replace('\'', '`');
     }
 }
