@@ -643,6 +643,103 @@ public class Quester implements IQuester {
         }
         return true;
     }
+
+    /**
+     * Check if Quester is too early or late for a planned quest<p>
+     *
+     * For player cooldown, use {@link #canAcceptOffer(IQuest, boolean)} instead
+     *
+     * @param quest The quest to check
+     * @param giveReason Whether to inform Quester of unpunctuality
+     * @return true if on time
+     */
+    public boolean isOnTime(final IQuest quest, final boolean giveReason) {
+        final Planner pln = quest.getPlanner();
+        final long currentTime = System.currentTimeMillis();
+        final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
+        final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
+        final long duration = end - start; // How long the quest can be active for
+        final long repeat = pln.getRepeat(); // Length to wait in-between start times
+        if (start != -1) {
+            if (currentTime < start) {
+                if (giveReason) {
+                    String early = Lang.get("plnTooEarly");
+                    early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
+                    early = early.replace("<time>", ChatColor.RED
+                            + MiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
+                    sendMessage(ChatColor.YELLOW + early);
+                }
+                return false;
+            }
+        }
+        if (end != -1 && repeat == -1) {
+            if (currentTime > end) {
+                if (giveReason) {
+                    String late = Lang.get("plnTooLate");
+                    late = late.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.RED);
+                    late = late.replace("<time>", ChatColor.DARK_PURPLE
+                            + MiscUtil.getTime(currentTime - end) + ChatColor.RED);
+                    sendMessage(ChatColor.RED + late);
+                }
+                return false;
+            }
+        }
+        if (repeat != -1 && start != -1 && end != -1) {
+            // Ensure that we're past the initial duration
+            if (currentTime > end) {
+                final int maxSize = 2;
+                final LinkedHashMap<Long, Long> mostRecent = new LinkedHashMap<Long, Long>() {
+                    private static final long serialVersionUID = 3046838061019897713L;
+
+                    @Override
+                    protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+                        return size() > maxSize;
+                    }
+                };
+
+                // Get last completed time
+                long completedTime = 0L;
+                if (getCompletedTimes().containsKey(quest)) {
+                    completedTime = getCompletedTimes().get(quest);
+                }
+                long completedEnd = 0L;
+
+                // Store last completed, upcoming, and most recent periods of activity
+                long nextStart = start;
+                long nextEnd = end;
+                while (currentTime >= nextStart) {
+                    if (nextStart < completedTime && completedTime < nextEnd) {
+                        completedEnd = nextEnd;
+                    }
+                    nextStart += repeat;
+                    nextEnd = nextStart + duration;
+                    mostRecent.put(nextStart, nextEnd);
+                }
+
+                // Check whether the quest is currently active
+                boolean active = false;
+                for (final Entry<Long, Long> startEnd : mostRecent.entrySet()) {
+                    if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
+                        active = true;
+                        break;
+                    }
+                }
+
+                // If quest is not active, or new period of activity should override player cooldown
+                if (!active || (quest.getPlanner().getOverride() && completedEnd > 0L && currentTime < completedEnd)) {
+                    if (giveReason) {
+                        final String early = Lang.get("plnTooEarly")
+                                .replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW)
+                                .replace("<time>", ChatColor.DARK_PURPLE
+                                        + MiscUtil.getTime((completedEnd) - currentTime) + ChatColor.YELLOW);
+                        sendMessage(ChatColor.YELLOW + early);
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
     /**
      * Start a quest for this Quester
@@ -661,86 +758,8 @@ public class Quester implements IQuester {
         }
         final OfflinePlayer offlinePlayer = getOfflinePlayer();
         if (offlinePlayer.isOnline()) {
-            final Planner pln = quest.getPlanner();
-            final long currentTime = System.currentTimeMillis();
-            final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
-            final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
-            final long duration = end - start; // How long the quest can be active for
-            final long repeat = pln.getRepeat(); // Length to wait in-between start times
-            if (start != -1) {
-                if (currentTime < start) {
-                    String early = Lang.get("plnTooEarly");
-                    early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-                    early = early.replace("<time>", ChatColor.RED
-                            + MiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
-                    sendMessage(ChatColor.YELLOW + early);
-                    return;
-                }
-            }
-            if (end != -1 && repeat == -1) {
-                if (currentTime > end) {
-                    String late = Lang.get("plnTooLate");
-                    late = late.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.RED);
-                    late = late.replace("<time>", ChatColor.DARK_PURPLE
-                            + MiscUtil.getTime(currentTime - end) + ChatColor.RED);
-                    sendMessage(ChatColor.RED + late);
-                    return;
-                }
-            }
-            if (repeat != -1 && start != -1 && end != -1) {
-                // Ensure that we're past the initial duration
-                if (currentTime > end) {
-                    final int maxSize = 2;
-                    final LinkedHashMap<Long, Long> mostRecent = new LinkedHashMap<Long, Long>() {
-                        private static final long serialVersionUID = 3046838061019897713L;
-
-                        @Override
-                        protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
-                            return size() > maxSize;
-                        }
-                    };
-                    
-                    // Get last completed time
-                    long completedTime = 0L;
-                    if (getCompletedTimes().containsKey(quest)) {
-                        completedTime = getCompletedTimes().get(quest);
-                    }
-                    long completedEnd = 0L;
-                    
-                    // Store last completed, upcoming, and most recent periods of activity
-                    long nextStart = start;
-                    long nextEnd = end;
-                    while (currentTime >= nextStart) {
-                        if (nextStart < completedTime && completedTime < nextEnd) {
-                            completedEnd = nextEnd;
-                        }
-                        nextStart += repeat;
-                        nextEnd = nextStart + duration;
-                        mostRecent.put(nextStart, nextEnd);
-                    }
-                    
-                    // Check whether the quest is currently active
-                    boolean active = false;
-                    for (final Entry<Long, Long> startEnd : mostRecent.entrySet()) {
-                        if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
-                            active = true;
-                            break;
-                        }
-                    }
-                    
-                    // If quest is not active, or new period of activity should override player cooldown, inform user
-                    if (!active || (quest.getPlanner().getOverride() && completedEnd > 0L
-                            && currentTime < (completedEnd /*+ repeat*/))) {
-                        if (getPlayer().isOnline()) {
-                            final String early = Lang.get("plnTooEarly")
-                                .replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW)
-                                .replace("<time>", ChatColor.DARK_PURPLE
-                                + MiscUtil.getTime((completedEnd /*+ repeat*/) - currentTime) + ChatColor.YELLOW);
-                            sendMessage(ChatColor.YELLOW + early);
-                        }
-                        return;
-                    }
-                }
+            if (!isOnTime(quest, true)) {
+                return;
             }
         }
         if (quest.testRequirements(offlinePlayer) || ignoreRequirements) {
