@@ -10,7 +10,7 @@ COMMAND_JOURNAL_HELP: "<command> - Переглянути або прихова�
 COMMAND_EDITOR: "редактор"
 COMMAND_EDITOR_HELP: "<command> - Створити, редагувати або видалити квести"
 COMMAND_EVENTS_EDITOR: "дії"
-COMMAND_EVENTS_EDITOR_HELP: "<command> - Створити, редагувати або видалити квести"
+COMMAND_EVENTS_EDITOR_HELP: "<command> - Створити, редагувати або видалити дії"
 COMMAND_CONDITIONS_EDITOR: "Умови"
 COMMAND_CONDITIONS_EDITOR_HELP: "<command> - Створити, редагувати або видалити умови"
 COMMAND_STATS: "статистика"
