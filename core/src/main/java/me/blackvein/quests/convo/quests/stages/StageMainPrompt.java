@@ -933,8 +933,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
                 final LinkedList<Integer> radii = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -947,7 +946,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                         }
                         radii.add(i);
                     } catch (final NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                                .replace("<input>", input));
                         return new ReachRadiiPrompt(context);
                     }
                 }
@@ -1465,8 +1465,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1477,7 +1476,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new StartActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_START_EVENT, found.getName());
@@ -1487,7 +1487,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new ActionListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_START_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new StartActionPrompt(context);
@@ -1531,8 +1531,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1543,7 +1542,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new FinishActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_FINISH_EVENT, found.getName());
@@ -1553,7 +1553,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new ActionListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_FINISH_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new FinishActionPrompt(context);
@@ -1597,8 +1597,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1609,7 +1608,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new FailActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_FAIL_EVENT, found.getName());
@@ -1619,7 +1619,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new ActionListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_FAIL_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new FailActionPrompt(context);
@@ -1663,8 +1663,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1675,7 +1674,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new DeathActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_DEATH_EVENT, found.getName());
@@ -1685,7 +1685,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new ActionListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_DEATH_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new DeathActionPrompt(context);
@@ -1730,7 +1730,6 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1741,7 +1740,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new DisconnectActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_DISCONNECT_EVENT, found.getName());
@@ -1751,7 +1751,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new ActionListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_DISCONNECT_EVENT, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorEventCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new DisconnectActionPrompt(context);
@@ -1796,7 +1796,6 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1807,7 +1806,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new ChatActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_CHAT_TEMP_EVENT, found.getName());
@@ -1818,7 +1818,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_CHAT_EVENTS, null);
                 context.setSessionData(stagePrefix + CK.S_CHAT_EVENT_TRIGGERS, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorChatEventsCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorChatEventsCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new ChatActionPrompt(context);
@@ -1936,8 +1936,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 IAction found = null;
@@ -1948,7 +1947,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidEvent")
+                            .replace("<input>", input));
                     return new CommandActionPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_COMMAND_TEMP_EVENT, found.getName());
@@ -1959,7 +1959,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_COMMAND_EVENTS, null);
                 context.setSessionData(stagePrefix + CK.S_COMMAND_EVENT_TRIGGERS, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorCommandEventsCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorCommandEventsCleared"));
                 return new ActionListPrompt(context);
             } else {
                 return new CommandActionPrompt(context);
@@ -2078,8 +2078,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
-            final Player player = (Player) context.getForWhom();
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Lang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 ICondition found = null;
@@ -2090,7 +2089,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found == null) {
-                    player.sendMessage(ChatColor.RED + Lang.get("stageEditorInvalidCondition")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidCondition")
                             .replace("<input>", input));
                     return new ConditionListPrompt(context);
                 } else {
@@ -2101,7 +2100,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 return new StageMainPrompt(stageNum, context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(stagePrefix + CK.S_CONDITION, null);
-                player.sendMessage(ChatColor.YELLOW + Lang.get("stageEditorConditionCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorConditionCleared"));
                 return new StageMainPrompt(stageNum, context);
             } else {
                 return new ConditionListPrompt(context);
