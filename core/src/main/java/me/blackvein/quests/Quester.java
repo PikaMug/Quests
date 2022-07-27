@@ -4974,6 +4974,9 @@ public class Quester implements IQuester {
                     getPlayer().sendMessage(ChatColor.RED + Lang.get(getPlayer(), "conditionFailQuit")
                         .replace("<quest>", quest.getName()));
                 }
+                if (stage.getFailAction() != null) {
+                    getCurrentStage(quest).getFailAction().fire(this, quest);
+                }
                 hardQuit(quest);
             } else if (giveReason) {
                 if (System.currentTimeMillis() - lastNotifiedCondition > (plugin.getSettings().getConditionInterval()
