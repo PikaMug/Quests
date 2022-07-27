@@ -107,6 +107,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.nicuch</groupId>
+            <artifactId>CitizensBooks</artifactId>
+            <version>2.5.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.RednedEpic</groupId>
             <artifactId>PhatLoots</artifactId>
             <version>e55d0ba1f6</version>
