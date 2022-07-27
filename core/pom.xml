@@ -16,7 +16,7 @@
 
     <repositories>
         <repository>
-            <!-- CitizensBooks, DungeonsXL, GPS, LocaleLib, mcMMO Classic, PhatLoots, Unite -->
+            <!-- CitizensBooks, DungeonsXL, LocaleLib, mcMMO Classic, PhatLoots, Unite, ZNPCs -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -61,13 +61,13 @@
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizensapi</artifactId>
-            <version>2.0.21-SNAPSHOT</version>
+            <version>2.0.30-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.denizenscript</groupId>
             <artifactId>denizen</artifactId>
-            <version>1.2.3-SNAPSHOT</version>
+            <version>1.2.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -107,12 +107,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.nicuch</groupId>
-            <artifactId>CitizensBooks</artifactId>
-            <version>2.5.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.RednedEpic</groupId>
             <artifactId>PhatLoots</artifactId>
             <version>e55d0ba1f6</version>
@@ -121,7 +115,7 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.1.6</version>
+            <version>3.2.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
