@@ -631,7 +631,7 @@ public class Quest implements IQuest {
     /**
      * Check that a quester has met all Requirements to accept this quest<p>
      * 
-     * Item, permission and custom Requirements are only checked for online players
+     * Item, experience, permission and custom Requirements are only checked for online players
      * 
      * @param quester The quester to check
      * @return true if all Requirements have been met
@@ -643,7 +643,7 @@ public class Quest implements IQuest {
     /**
      * Check that a player has met all Requirements to accept this quest<p>
      * 
-     * Item, permission and custom Requirements are only checked for online players
+     * Item, experience, permission and custom Requirements are only checked for online players
      * 
      * @param player The player to check
      * @return true if all Requirements have been met
@@ -686,6 +686,9 @@ public class Quest implements IQuest {
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
+            if (p.getTotalExperience() < requirements.getExp()) {
+                return false;
+            }
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
             fakeInv.setContents(p.getInventory().getContents().clone());
             for (final ItemStack is : requirements.getItems()) {

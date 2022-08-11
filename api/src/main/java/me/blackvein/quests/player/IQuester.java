@@ -128,6 +128,8 @@ public interface IQuester extends Comparable<IQuester> {
 
     boolean canAcceptOffer(final IQuest quest, final boolean giveReason);
 
+    boolean isOnTime(final IQuest quest, final boolean giveReason);
+
     void takeQuest(final IQuest quest, final boolean ignoreRequirements);
 
     boolean abandonQuest(final IQuest quest, final String message);
