@@ -76,7 +76,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
             final Matcher matcher = NUMBER_PATTERN.matcher(ChatColor.stripColor(line));
             final TextComponent lineComponent = new TextComponent(TextComponent.fromLegacyText(line));
             if (matcher.find()) {
-                lineComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, matcher.group(1)));
+                lineComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + matcher.group(1)));
             }
             if (first) {
                 first = false;

@@ -58,6 +58,9 @@ permissions:
   quests.journal:
     description: Toggle the Quest Journal
     default: true
+  quests.choice:
+    description: Respond to a Quests prompt
+    default: true
   quests.compass:
     description: Use a Compass to target quests
     default: true
