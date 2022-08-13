@@ -14,6 +14,7 @@ package me.blackvein.quests.commands.quests;
 
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.commands.quests.subcommands.QuestsActionsCommand;
+import me.blackvein.quests.commands.quests.subcommands.QuestsChoiceCommand;
 import me.blackvein.quests.commands.quests.subcommands.QuestsConditionsCommand;
 import me.blackvein.quests.commands.quests.subcommands.QuestsEditorCommand;
 import me.blackvein.quests.commands.quests.subcommands.QuestsInfoCommand;
@@ -53,7 +54,8 @@ public class QuestsCommandHandler {
                         new QuestsEditorCommand(plugin),
                         new QuestsActionsCommand(plugin),
                         new QuestsConditionsCommand(plugin),
-                        new QuestsInfoCommand(plugin))
+                        new QuestsInfoCommand(plugin),
+                        new QuestsChoiceCommand())
                 .collect(Collectors.toMap(QuestsSubCommand::getName, Function.identity()));
     }
 
