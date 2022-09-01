@@ -131,9 +131,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutionException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -293,8 +291,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     public void onDisable() {
         getLogger().info("Saving Quester data...");
         for (final Player p : getServer().getOnlinePlayers()) {
-            final IQuester quester = getQuester(p.getUniqueId());
-            quester.saveData();
+            getQuester(p.getUniqueId()).saveData();
         }
         Bukkit.getScheduler().cancelTasks(this);
         getLogger().info("Closing storage...");
@@ -1716,9 +1713,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         loading = true;
         reloadConfig();
-        final CompletableFuture<Void> saveFuture = getStorage().saveOfflineQuesters();
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
+                getStorage().saveOfflineQuesters().get();
                 Lang.clear();
                 settings.init();
                 Lang.init(Quests.this, settings.getLanguage());
@@ -1728,24 +1725,15 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 loadQuests();
                 loadActions();
                 loadConditions();
-                final CompletableFuture<Void> loadFuture = saveFuture.thenRunAsync(() -> {
-                    try {
-                        for (final IQuester quester : questers) {
-                            final CompletableFuture<IQuester> cf = getStorage().loadQuester(quester.getUUID());
-                            final IQuester loaded = cf.get();
-                            for (final IQuest q : loaded.getCurrentQuestsTemp().keySet()) {
-                                loaded.checkQuest(q);
-                            }
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        finishLoading(callback, false, e);
+                for (final IQuester quester : questers) {
+                    final IQuester loaded = getStorage().loadQuester(quester.getUUID()).get();
+                    for (final IQuest quest : loaded.getCurrentQuestsTemp().keySet()) {
+                        loaded.checkQuest(quest);
                     }
-                });
-                loadFuture.thenRunAsync(() -> {
-                    loadModules();
-                    importQuests();
-                    finishLoading(callback, true, null);
-                });
+                }
+                loadModules();
+                importQuests();
+                finishLoading(callback, true, null);
             } catch (final Exception e) {
                 finishLoading(callback, false, e);
             }

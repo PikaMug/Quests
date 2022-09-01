@@ -63,7 +63,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     
     @SuppressWarnings("deprecation")
     @Override
-    public IQuester loadQuester(final UUID uniqueId) throws Exception {
+    public IQuester loadQuester(final UUID uniqueId) throws IOException, InvalidConfigurationException {
         final FileConfiguration data = new YamlConfiguration();
         IQuester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
@@ -71,15 +71,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
         } else {
             quester = new Quester(plugin, uniqueId);
         }
-        try {
-            final File dataFile = getDataFile(quester);
-            if (dataFile != null) {
-                data.load(dataFile);
-            } else {
-                return null;
-            }
-        } catch (final IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        final File dataFile = getDataFile(quester);
+        if (dataFile != null) {
+            data.load(dataFile);
+        } else {
             return null;
         }
         if (data.contains("completedRedoableQuests")) {
@@ -384,13 +379,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final IQuester quester) {
+    public void saveQuester(final IQuester quester) throws IOException {
         final FileConfiguration data = quester.getBaseData();
-        try {
-            data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
+        data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
     }
 
     @Override
