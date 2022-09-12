@@ -23,3 +23,8 @@ COMMAND_QUESTADMIN_STATS_HELP: "<command> [player] - переглянути ст
 COMMAND_QUESTADMIN_GIVE: "дати"
 COMMAND_QUESTADMIN_GIVE_HELP: "<command> [player] [quest] - змусити гравця обрати квест"
 COMMAND_QUESTADMIN_QUIT_HELP: "<command> [player] [quest] - змусити гравця обрати квест"
+questEditorCreate: "Створити новий квест"
+questEditorEdit: "Редагувати квест"
+questEditorDelete: "Видалити квест"
+questEditorName: "Встановити назву"
+questEditorReqs: "Редагувати вимоги"
