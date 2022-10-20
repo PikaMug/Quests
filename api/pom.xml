@@ -84,8 +84,8 @@
         </dependency>
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
-            <artifactId>heroes-stripped</artifactId>
-            <version>4dd3dd85</version>
+            <artifactId>Heroes</artifactId>
+            <version>1.9.23-RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
