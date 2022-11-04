@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.herocraftonline.heroes</groupId>
             <artifactId>Heroes</artifactId>
-            <version>1.9.19-RELEASE</version>
+            <version>1.9.26-RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
