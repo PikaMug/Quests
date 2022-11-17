@@ -80,13 +80,19 @@ public class QuestJournal {
                         if (obj.getMessage().contains("<item>") && obj.getGoalAsItem() != null) {
                             split = obj.getMessage().split("<item>");
                             builder.add(split[0]);
-                            if (plugin.getSettings().canTranslateNames()) {
-                                final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
-                                        .queryItemStack(obj.getGoalAsItem()));
-                                tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
-                                builder.add(tc);
+                            final ItemStack goal = obj.getGoalAsItem();
+                            if (goal.getItemMeta() != null && goal.getItemMeta().hasDisplayName()) {
+                                builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                        + goal.getItemMeta().getDisplayName());
                             } else {
-                                builder.add(ItemUtil.getName(obj.getGoalAsItem()));
+                                if (plugin.getSettings().canTranslateNames()) {
+                                    final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                            .queryItemStack(goal));
+                                    tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                                    builder.add(tc);
+                                } else {
+                                    builder.add(ChatColor.AQUA + ItemUtil.getPrettyItemName(goal.getType().name()));
+                                }
                             }
                             builder.add(split[1]).newLine();
                         }
