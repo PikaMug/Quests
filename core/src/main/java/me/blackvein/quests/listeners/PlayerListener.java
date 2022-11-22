@@ -397,13 +397,19 @@ public class PlayerListener implements Listener {
                                                     continue;
                                                 }
                                             }
+                                            for (final IQuest iq : quester.getCurrentQuestsTemp().keySet()) {
+                                                if (iq.getId().equals(q.getId())) {
+                                                    Lang.send(player, ChatColor.RED + Lang.get(player, "questAlreadyOn"));
+                                                    return;
+                                                }
+                                            }
                                             quester.setQuestIdToTake(q.getId());
                                             if (!plugin.getSettings().canAskConfirmation()) {
                                                 quester.takeQuest(q, false);
                                             } else {
                                                 final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
-                                                final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE 
-                                                        + quest.getName() + ChatColor.GOLD + " -\n" + "\n" 
+                                                final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE
+                                                        + quest.getName() + ChatColor.GOLD + " -\n" + "\n"
                                                         + ChatColor.RESET + quest.getDescription() + "\n";
                                                 for (final String msg : s.split("<br>")) {
                                                     Lang.send(player, msg);
