@@ -44,7 +44,7 @@ public class QuestsChoiceCommand extends QuestsSubCommand {
         if (assertNonPlayer(cs)) {
             return;
         }
-        Player player = (Player) cs;
+        final Player player = (Player) cs;
         if (!cs.hasPermission(getPermission())) {
             Lang.send(player, ChatColor.RED + Lang.get(player, "noPermission"));
             return;
@@ -56,7 +56,9 @@ public class QuestsChoiceCommand extends QuestsSubCommand {
         if (args.length == 1) {
             return;
         }
-        player.acceptConversationInput(concatArgArray(args, 1, args.length - 1, ' '));
+        final String input = concatArgArray(args, 1, args.length - 1, ' ');
+        if (input != null) {
+            player.acceptConversationInput(input);
+        }
     }
-
 }

@@ -103,6 +103,9 @@ public class QuestsCommandHandler {
         cs.sendMessage(ChatColor.GOLD + Lang.get("questHelpTitle"));
         cs.sendMessage(ChatColor.YELLOW + "/quests " + Lang.get("questDisplayHelp"));
         for (final QuestsSubCommand cmd : subCommands.values()) {
+            if (cmd.getName().equals("choice")) {
+                continue;
+            }
             cs.sendMessage(ChatColor.YELLOW + "/quests " + cmd.getDescription().replace("<command>", ChatColor.GOLD
                     + (plugin.getSettings().canTranslateSubCommands() ? cmd.getNameI18N() : cmd.getName())
                     + ChatColor.YELLOW));
