@@ -162,7 +162,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         for (int i = 1; i <= size + 1; i++) {
             final TextComponent choice = new TextComponent("\n" + getNumberColor(context, i) + ChatColor.BOLD + i + ". "
                     + ChatColor.RESET + getSelectionText(context, i));
-            choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.valueOf(i)));
+            choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + String.valueOf(i)));
             if (plugin.getSettings().canShowQuestReqs() && i <= size) {
                 choice.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(quests.get(i - 1).getDescription()).create()));

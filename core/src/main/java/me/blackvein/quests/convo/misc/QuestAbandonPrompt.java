@@ -80,11 +80,11 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         final TextComponent component = new TextComponent("");
         component.addExtra(ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN);
         final TextComponent yes = new TextComponent(getSelectionText(context, 1));
-        yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, Lang.get("yesWord")));
+        yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + Lang.get("yesWord")));
         component.addExtra(yes);
         component.addExtra(ChatColor.RESET + " / ");
         final TextComponent no = new TextComponent(getSelectionText(context, 2));
-        no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, Lang.get("noWord")));
+        no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + Lang.get("noWord")));
         component.addExtra(no);
 
         ((Player)context.getForWhom()).spigot().sendMessage(component);

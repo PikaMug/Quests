@@ -43,6 +43,10 @@ public class QuestsLog4JFilter extends AbstractFilter {
         if (message.contains("quests-hikari - Shutdown")) {
             return Result.DENY;
         }
+        // Command for 1.19+ clickable text spam
+        if (message.contains("quests choice")) {
+            return Result.DENY;
+        }
         // Paper outputs errors when dependencies for module events are missing
         return (message.contains("Plugin Quests") && message.contains("failed to register events"))
                 ? Result.DENY : Result.NEUTRAL;

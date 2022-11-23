@@ -2426,7 +2426,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
-                    click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, name));
+                    click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + name));
                     line.addExtra(click);
                 }
             }
@@ -2535,7 +2535,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
-                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, co.getName()));
+                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + co.getName()));
                         line.addExtra(click);
                     }
                 }
