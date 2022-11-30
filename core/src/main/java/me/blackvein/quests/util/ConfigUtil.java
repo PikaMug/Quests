@@ -45,6 +45,10 @@ public class ConfigUtil {
             return false;
         }
         for (final Object o : list) {
+            if (o == null) {
+                Bukkit.getLogger().severe(clazz.getSimpleName() + " type in Quests file was \"null\"");
+                return false;
+            }
             if (!clazz.isAssignableFrom(o.getClass())) {
                 return false;
             }
