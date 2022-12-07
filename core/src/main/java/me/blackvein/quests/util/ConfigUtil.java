@@ -144,7 +144,7 @@ public class ConfigUtil {
     }
     
     public static String parseString(final String s, final IQuest quest) {
-        String parsed = parseString(s);
+        String parsed = parseString(s).replace("<quest>", quest.getName());
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
                 parsed = parsed.replace("<npc>", quest.getNpcStartName());

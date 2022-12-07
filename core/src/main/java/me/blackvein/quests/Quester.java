@@ -536,8 +536,8 @@ public class Quester implements IQuester {
             if (getPlayer() != null) {
                 if (!getPlayer().isConversing()) {
                     setQuestIdToTake(quest.getId());
-                    final String s = ChatColor.GOLD + Lang.get("questObjectivesTitle")
-                            .replace("<quest>", quest.getName()) + "\n" + ChatColor.RESET + quest.getDescription();
+                    final String s = ChatColor.GOLD + Lang.get("questObjectivesTitle") + "\n" + ChatColor.RESET
+                            + ConfigUtil.parseString(quest.getDescription(), quest, getPlayer());
                     for (final String msg : s.split("<br>")) {
                         sendMessage(msg);
                     }
