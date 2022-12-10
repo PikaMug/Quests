@@ -42,6 +42,9 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onCraftItem(final CraftItemEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getAction().equals(InventoryAction.NOTHING)) {
             return;
         }
@@ -94,6 +97,9 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getWhoClicked() instanceof Player) {
             final Player player = (Player) event.getWhoClicked();
             if (event.getInventory().getType() == InventoryType.FURNACE
@@ -150,6 +156,9 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onEnchantItem(final EnchantItemEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (plugin.canUseQuests(event.getEnchanter().getUniqueId())) {
             final ItemStack enchantedItem = event.getItem().clone();
             enchantedItem.setAmount(1);
@@ -188,6 +197,9 @@ public class ItemListener implements Listener {
     
     @EventHandler
     public void onConsumeItem(final PlayerItemConsumeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
             final ItemStack consumedItem = event.getItem().clone();
             consumedItem.setAmount(1);
