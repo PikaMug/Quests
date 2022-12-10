@@ -4911,6 +4911,10 @@ public class Quester implements IQuester {
                                 }
                             }
                         }
+                        if (plugin.getSettings().getConsoleLogging() > 3) {
+                            plugin.getLogger().info("Found " + mq.size() + " party members for quest ID "
+                                    + quest.getId() + " via Unite plugin");
+                        }
                         return mq;
                     }
                 }
@@ -4953,6 +4957,10 @@ public class Quester implements IQuester {
                                     }
                                 }
                             }
+                        }
+                        if (plugin.getSettings().getConsoleLogging() > 3) {
+                            plugin.getLogger().info("Found " + mq.size() + " party members for quest ID "
+                                    + quest.getId() + " via Parties plugin");
                         }
                         return mq;
                     }
