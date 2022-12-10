@@ -65,7 +65,8 @@ public class ItemListener implements Listener {
                         quester.craftItem(quest, craftedItem);
                     }
                     
-                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
+                    dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                            (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.craftItem(cq, craftedItem);
                         }
@@ -119,7 +120,8 @@ public class ItemListener implements Listener {
                             quester.smeltItem(quest, event.getCurrentItem());
                         }
                         
-                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                                (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 q.smeltItem(cq, event.getCurrentItem());
                             }
@@ -142,7 +144,8 @@ public class ItemListener implements Listener {
                             quester.brewItem(quest, event.getCurrentItem());
                         }
                         
-                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                                (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 q.brewItem(cq, event.getCurrentItem());
                             }
@@ -180,7 +183,8 @@ public class ItemListener implements Listener {
                     }
                 }
                 
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                        (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         if (enchantedItem.getType().equals(Material.BOOK)) {
                             q.enchantBook(cq, enchantedItem, event.getEnchantsToAdd());
@@ -216,7 +220,8 @@ public class ItemListener implements Listener {
                     quester.consumeItem(quest, consumedItem);
                 }
                 
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                        (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.consumeItem(cq, consumedItem);
                     }
