@@ -82,49 +82,49 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryClickEvent(final InventoryClickEvent evt) {
-        final InventoryAction ac = evt.getAction();
+    public void onInventoryClickEvent(final InventoryClickEvent event) {
+        final InventoryAction ac = event.getAction();
         if (ac.equals(InventoryAction.NOTHING)) {
             return;
         }
-        if (ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem())) {
+        if (ItemUtil.isItem(event.getCurrentItem()) && ItemUtil.isJournal(event.getCurrentItem())) {
             if (ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) || ac.equals(InventoryAction.DROP_ALL_SLOT)
                     || ac.equals(InventoryAction.DROP_ONE_SLOT)) {
-                evt.setCancelled(true);
+                event.setCancelled(true);
                 return;
             }
-        } else if (ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCursor())) {
+        } else if (ItemUtil.isItem(event.getCurrentItem()) && ItemUtil.isJournal(event.getCursor())) {
             if (ac.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) || ac.equals(InventoryAction.DROP_ALL_CURSOR) 
                     || ac.equals(InventoryAction.DROP_ONE_CURSOR)) {
-                evt.setCancelled(true);
+                event.setCancelled(true);
                 return;
             }
         } else if (ac.equals(InventoryAction.SWAP_WITH_CURSOR) || ac.equals(InventoryAction.HOTBAR_SWAP)
                 || ac.equals(InventoryAction.HOTBAR_MOVE_AND_READD)) {
-            if (evt.getHotbarButton() > -1) {
-                final ItemStack item = evt.getWhoClicked().getInventory().getItem(evt.getHotbarButton());
+            if (event.getHotbarButton() > -1) {
+                final ItemStack item = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
                 if (ItemUtil.isItem(item) && ItemUtil.isJournal(item)) {
-                    evt.setCancelled(true);
+                    event.setCancelled(true);
                     return;
                 }
             }
         }
-        if (ItemUtil.isItem(evt.getCurrentItem()) && ItemUtil.isJournal(evt.getCurrentItem()) 
-                || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
-            int upper = evt.getView().getTopInventory().getSize();
-            if (evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
+        if (ItemUtil.isItem(event.getCurrentItem()) && ItemUtil.isJournal(event.getCurrentItem()) 
+                || ItemUtil.isItem(event.getCursor()) && ItemUtil.isJournal(event.getCursor())) {
+            int upper = event.getView().getTopInventory().getSize();
+            if (event.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
                 upper += 4;
-            final int lower = evt.getView().getBottomInventory().getSize();
-            final int relative = evt.getRawSlot() - upper;
+            final int lower = event.getView().getBottomInventory().getSize();
+            final int relative = event.getRawSlot() - upper;
             if (relative < 0 || relative >= (lower)) {
-                evt.setCancelled(true);
+                event.setCancelled(true);
                 return;
             }
         }
-        final Quester quester = plugin.getQuester(evt.getWhoClicked().getUniqueId());
-        final Player player = (Player) evt.getWhoClicked();
-        if (evt.getView().getTitle().contains(Lang.get(player, "quests"))) {
-            final ItemStack clicked = evt.getCurrentItem();
+        final Quester quester = plugin.getQuester(event.getWhoClicked().getUniqueId());
+        final Player player = (Player) event.getWhoClicked();
+        if (event.getView().getTitle().contains(Lang.get(player, "quests"))) {
+            final ItemStack clicked = event.getCurrentItem();
             if (ItemUtil.isItem(clicked)) {
                 for (final IQuest quest : plugin.getLoadedQuests()) {
                     final Quest bukkitQuest = (Quest)quest;
@@ -137,28 +137,28 @@ public class PlayerListener implements Listener {
                                     e.printStackTrace();
                                 }
                             }
-                            evt.getWhoClicked().closeInventory();
+                            event.getWhoClicked().closeInventory();
                             break;
                         }
                     }
                 }
-                evt.setCancelled(true);
+                event.setCancelled(true);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryDragEvent(final InventoryDragEvent evt) {
-        if (ItemUtil.isItem(evt.getOldCursor()) && ItemUtil.isJournal(evt.getOldCursor()) 
-                || ItemUtil.isItem(evt.getCursor()) && ItemUtil.isJournal(evt.getCursor())) {
-            int upper = evt.getView().getTopInventory().getSize();
-            if (evt.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
+    public void onInventoryDragEvent(final InventoryDragEvent event) {
+        if (ItemUtil.isItem(event.getOldCursor()) && ItemUtil.isJournal(event.getOldCursor()) 
+                || ItemUtil.isItem(event.getCursor()) && ItemUtil.isJournal(event.getCursor())) {
+            int upper = event.getView().getTopInventory().getSize();
+            if (event.getView().getTopInventory().getType().equals(InventoryType.CRAFTING))
                 upper += 4;
-            final int lower = evt.getView().getBottomInventory().getSize();
-            for (int relative : evt.getRawSlots()) {
+            final int lower = event.getView().getBottomInventory().getSize();
+            for (int relative : event.getRawSlots()) {
                 relative -= upper;
                 if (relative < 0 || relative >= (lower)) {
-                    evt.setCancelled(true);
+                    event.setCancelled(true);
                     break;
                 }
             }
@@ -166,62 +166,62 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDropItem(final PlayerDropItemEvent evt) {
-        if (ItemUtil.isJournal(evt.getItemDrop().getItemStack())) {
-            if (!evt.getPlayer().hasPermission("quests.admin.drop")) {
-                evt.setCancelled(true);
+    public void onPlayerDropItem(final PlayerDropItemEvent event) {
+        if (ItemUtil.isJournal(event.getItemDrop().getItemStack())) {
+            if (!event.getPlayer().hasPermission("quests.admin.drop")) {
+                event.setCancelled(true);
             }
         }
     }
 
     @SuppressWarnings("deprecation") // since 1.13
     @EventHandler
-    public void onPlayerInteract(final PlayerInteractEvent evt) {
+    public void onPlayerInteract(final PlayerInteractEvent event) {
         EquipmentSlot e = null;
         try {
-            e = evt.getHand();
+            e = event.getHand();
         } catch (final NoSuchMethodError err) {
             // Do nothing, getHand() not present pre-1.9
         }
         if (e == null || e.equals(EquipmentSlot.HAND)) { // If the event is fired by HAND (main hand)
-            if (ItemUtil.isJournal(evt.getPlayer().getItemInHand())) {
-                final Player player = evt.getPlayer();
-                if (evt.hasBlock()) {
-                    if (evt.getClickedBlock() == null) {
+            if (ItemUtil.isJournal(event.getPlayer().getItemInHand())) {
+                final Player player = event.getPlayer();
+                if (event.hasBlock()) {
+                    if (event.getClickedBlock() == null) {
                         return;
                     }
-                    if (evt.getClickedBlock().getType().name().equals("LECTERN")) {
-                        evt.setCancelled(true);
-                        Lang.send(player, ChatColor.RED + Lang.get(evt.getPlayer(), "journalDenied")
-                                .replace("<journal>", Lang.get(evt.getPlayer(), "journalTitle")));
+                    if (event.getClickedBlock().getType().name().equals("LECTERN")) {
+                        event.setCancelled(true);
+                        Lang.send(player, ChatColor.RED + Lang.get(event.getPlayer(), "journalDenied")
+                                .replace("<journal>", Lang.get(event.getPlayer(), "journalTitle")));
                         return;
                     }
                     if (plugin.getSettings().canAllowPranks()
-                            && evt.getClickedBlock().getType().name().contains("PORTAL")) {
-                        evt.setCancelled(true);
+                            && event.getClickedBlock().getType().name().contains("PORTAL")) {
+                        event.setCancelled(true);
                         Lang.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
                                 + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
                         return;
                     }
                 }
                 if (plugin.getSettings().canAllowPranks()
-                        && evt.getPlayer().getInventory().getHelmet() != null
-                        && (evt.getPlayer().getInventory().getHelmet().getType().name().equals("PUMPKIN")
-                        || evt.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
-                        if (!evt.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                        && event.getPlayer().getInventory().getHelmet() != null
+                        && (event.getPlayer().getInventory().getHelmet().getType().name().equals("PUMPKIN")
+                        || event.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
+                        if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                             Lang.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
                                 + "https://www.youtube.com/watch?v=v4IC7qaNr7I");
                         }
-                        evt.setCancelled(true);
+                        event.setCancelled(true);
                         return;
                 }
             }
-            if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-                final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
-                final Player player = evt.getPlayer();
-                if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
+                final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+                final Player player = event.getPlayer();
+                if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     boolean hasObjective = false;
-                    if (!evt.isCancelled()) {
+                    if (!event.isCancelled()) {
                         for (final IQuest quest : plugin.getLoadedQuests()) {
                             if (quester.getCurrentQuestsTemp().containsKey(quest)
                                     && quester.getCurrentStage(quest).containsObjective(ObjectiveType.USE_BLOCK)) {
@@ -230,9 +230,9 @@ public class PlayerListener implements Listener {
                         }
                     }
                     if (!hasObjective) {
-                        if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(evt.getPlayer()
+                        if (plugin.getQuestFactory().getSelectedBlockStarts().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -246,10 +246,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getActionFactory().getSelectedExplosionLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getActionFactory().getSelectedExplosionLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -263,10 +263,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getActionFactory().getSelectedEffectLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getActionFactory().getSelectedEffectLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -280,10 +280,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getActionFactory().getSelectedMobLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getActionFactory().getSelectedMobLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -297,10 +297,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getActionFactory().getSelectedLightningLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getActionFactory().getSelectedLightningLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -314,10 +314,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getActionFactory().getSelectedTeleportLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getActionFactory().getSelectedTeleportLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -331,10 +331,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getQuestFactory().getSelectedKillLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getQuestFactory().getSelectedKillLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -348,10 +348,10 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
-                        } else if (plugin.getQuestFactory().getSelectedReachLocations().containsKey(evt.getPlayer()
+                            event.setCancelled(true);
+                        } else if (plugin.getQuestFactory().getSelectedReachLocations().containsKey(event.getPlayer()
                                 .getUniqueId())) {
-                            final Block block = evt.getClickedBlock();
+                            final Block block = event.getClickedBlock();
                             if (block == null) {
                                 return;
                             }
@@ -365,11 +365,11 @@ public class PlayerListener implements Listener {
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + ItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
-                            evt.setCancelled(true);
+                            event.setCancelled(true);
                         } else if (!player.isConversing()) {
                             for (final IQuest q : plugin.getLoadedQuests()) {
-                                if (q.getBlockStart() != null && evt.getClickedBlock() != null) {
-                                    if (q.getBlockStart().equals(evt.getClickedBlock().getLocation())) {
+                                if (q.getBlockStart() != null && event.getClickedBlock() != null) {
+                                    if (q.getBlockStart().equals(event.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
                                                 && plugin.getSettings().getMaxQuests() > 0) {
                                             String msg = Lang.get(player, "questMaxAllowed");
@@ -424,16 +424,16 @@ public class PlayerListener implements Listener {
                         }
                     }
                 }
-                if (evt.getItem() != null && evt.getItem().getType().equals(Material.COMPASS)) {
+                if (event.getItem() != null && event.getItem().getType().equals(Material.COMPASS)) {
                     if (!quester.canUseCompass()) {
                         return;
                     }
-                    if (evt.getAction().equals(Action.LEFT_CLICK_AIR)
-                            || evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+                    if (event.getAction().equals(Action.LEFT_CLICK_AIR)
+                            || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                         quester.resetCompass();
                         Lang.send(player, ChatColor.YELLOW + Lang.get(player, "compassReset"));
-                    } else if (evt.getAction().equals(Action.RIGHT_CLICK_AIR)
-                            || evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    } else if (event.getAction().equals(Action.RIGHT_CLICK_AIR)
+                            || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                         quester.findNextCompassTarget(true);
                     }
                 }
@@ -443,11 +443,11 @@ public class PlayerListener implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler
-    public void onPlayerInteractEntity(final PlayerInteractEntityEvent evt) {
-        if (evt.getRightClicked().getType() == EntityType.ITEM_FRAME) {
-            final Player player = evt.getPlayer();
+    public void onPlayerInteractEntity(final PlayerInteractEntityEvent event) {
+        if (event.getRightClicked().getType() == EntityType.ITEM_FRAME) {
+            final Player player = event.getPlayer();
             if (ItemUtil.isJournal(player.getItemInHand())) {
-                evt.setCancelled(true);
+                event.setCancelled(true);
                 Lang.send(player, ChatColor.RED + Lang.get(player, "journalDenied")
                         .replace("<journal>", Lang.get(player, "journalTitle")));
             }
@@ -455,9 +455,12 @@ public class PlayerListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerBucketFill(final PlayerBucketFillEvent evt) {
-        if (evt.getItemStack() != null && evt.getItemStack().getType() == Material.MILK_BUCKET) {
-            final Player player = evt.getPlayer();
+    public void onPlayerBucketFill(final PlayerBucketFillEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getItemStack() != null && event.getItemStack().getType() == Material.MILK_BUCKET) {
+            final Player player = event.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.MILK_COW;
@@ -485,9 +488,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(final AsyncPlayerChatEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+    public void onPlayerChat(final AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
+            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             for (final IQuest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
@@ -499,7 +505,7 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     if (!currentStage.getChatActions().isEmpty()) {
-                        final String chat = evt.getMessage();
+                        final String chat = event.getMessage();
                         for (final String s : currentStage.getChatActions().keySet()) {
                             if (s.equalsIgnoreCase(chat)) {
                                 new BukkitRunnable() {
@@ -516,18 +522,18 @@ public class PlayerListener implements Listener {
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
                     if (quester.getCurrentStage(quest).containsObjective(type)) {
                         for (final String pass : quester.getCurrentStage(quest).getPasswordPhrases()) {
-                            if (pass.equalsIgnoreCase(evt.getMessage())) {
-                                evt.setCancelled(true);
+                            if (pass.equalsIgnoreCase(event.getMessage())) {
+                                event.setCancelled(true);
                                 break;
                             }
                         }
-                        quester.sayPassword(quest, evt);
+                        quester.sayPassword(quest, event);
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
                             (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.sayPassword(cq, evt);
+                            q.sayPassword(cq, event);
                         }
                         return null;
                     }));
@@ -537,19 +543,19 @@ public class PlayerListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+    public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
+        if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
+            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             if (!quester.getCurrentQuestsTemp().isEmpty()) {
                 for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quest.getOptions().canAllowCommands()) {
-                        if (!evt.getMessage().startsWith("/quest")) {
-                            final Player player = evt.getPlayer();
+                        if (!event.getMessage().startsWith("/quest")) {
+                            final Player player = event.getPlayer();
                             Lang.send(player, ChatColor.RED + Lang.get(player, "optCommandsDenied")
                                     .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
-                            evt.setCancelled(true);
+                            event.setCancelled(true);
                             plugin.getLogger().info("Player " + player.getName() + " tried to use command "
-                                    + evt.getMessage() + " but was denied because they are currently on quest "
+                                    + event.getMessage() + " but was denied because they are currently on quest "
                                     + quest.getName());
                             return;
                         }
@@ -561,7 +567,7 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     if (!currentStage.getCommandActions().isEmpty()) {
-                        final String command = evt.getMessage();
+                        final String command = event.getMessage();
                         for (final String s : currentStage.getCommandActions().keySet()) {
                             if (command.equalsIgnoreCase("/" + s)) {
                                 currentStage.getCommandActions().get(s).fire(quester, quest);
@@ -574,11 +580,14 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerShearEntity(final PlayerShearEntityEvent evt) {
-        if (evt.getEntity().getType() == EntityType.SHEEP) {
-            final Player player = evt.getPlayer();
+    public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getEntity().getType() == EntityType.SHEEP) {
+            final Player player = event.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final Sheep sheep = (Sheep) evt.getEntity();
+                final Sheep sheep = (Sheep) event.getEntity();
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -605,9 +614,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityTame(final EntityTameEvent evt) {
-        if (evt.getOwner() instanceof Player) {
-            final Player player = (Player) evt.getOwner();
+    public void onEntityTame(final EntityTameEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getOwner() instanceof Player) {
+            final Player player = (Player) event.getOwner();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
@@ -619,13 +631,13 @@ public class PlayerListener implements Listener {
                     
                     if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.tameMob(quest, evt.getEntityType());
+                        quester.tameMob(quest, event.getEntityType());
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
                             (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.tameMob(cq, evt.getEntityType());
+                            q.tameMob(cq, event.getEntityType());
                         }
                         return null;
                     }));
@@ -635,32 +647,33 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDeath(final EntityDeathEvent evt) {
-        if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            final EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
+    public void onEntityDeath(final EntityDeathEvent event) {
+        if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+            final EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event.getEntity()
+                    .getLastDamageCause();
             final Entity damager = damageEvent.getDamager();
 
             if (damager instanceof Projectile) {
                 final Projectile projectile = (Projectile) damager;
                 if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
-                    preKillMob((Entity)projectile.getShooter(), evt.getEntity());
+                    preKillMob((Entity)projectile.getShooter(), event.getEntity());
                 }
             } else if (damager instanceof TNTPrimed) {
                 final TNTPrimed tnt = (TNTPrimed) damager;
                 final Entity source = tnt.getSource();
                 if (source != null && source.isValid()) {
-                    preKillMob(source, evt.getEntity());
+                    preKillMob(source, event.getEntity());
                 }
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
                     final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                     if (quester != null) {
-                        preKillPlayer(quester.getPlayer(), evt.getEntity());
+                        preKillPlayer(quester.getPlayer(), event.getEntity());
                     }
                 }
             } else {
-                preKillMob(damager, evt.getEntity());
+                preKillMob(damager, event.getEntity());
             }
         }
     }
@@ -707,39 +720,40 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDeath(final PlayerDeathEvent evt) {
-        if (evt.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            final EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) evt.getEntity().getLastDamageCause();
+    public void onPlayerDeath(final PlayerDeathEvent event) {
+        if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+            final EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event.getEntity()
+                    .getLastDamageCause();
             final Entity damager = damageEvent.getDamager();
 
-            if (evt.getEntity().getUniqueId().equals(damager.getUniqueId())) {
+            if (event.getEntity().getUniqueId().equals(damager.getUniqueId())) {
                 return;
             }
             if (damager instanceof Projectile) {
                 final Projectile projectile = (Projectile) damager;
                 if (projectile.getShooter() != null && projectile.getShooter() instanceof Entity) {
-                    preKillPlayer((Entity)projectile.getShooter(), evt.getEntity());
+                    preKillPlayer((Entity)projectile.getShooter(), event.getEntity());
                 }
             } else if (damager instanceof TNTPrimed) {
                 final TNTPrimed tnt = (TNTPrimed) damager;
                 final Entity source = tnt.getSource();
                 if (source != null) {
                     if (source.isValid()) {
-                        preKillPlayer(source, evt.getEntity());
+                        preKillPlayer(source, event.getEntity());
                     }
                 }
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
                     final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
-                    preKillPlayer(quester.getPlayer(), evt.getEntity());
+                    preKillPlayer(quester.getPlayer(), event.getEntity());
                 }
             } else {
-                preKillPlayer(damager, evt.getEntity());
+                preKillPlayer(damager, event.getEntity());
             }
         }
             
-        final Player target = evt.getEntity();
+        final Player target = event.getEntity();
         if (plugin.canUseQuests(target.getUniqueId())) {
             final IQuester quester = plugin.getQuester(target.getUniqueId());
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
@@ -750,14 +764,14 @@ public class PlayerListener implements Listener {
             }
         }
         ItemStack found = null;
-        for (final ItemStack stack : evt.getDrops()) {
+        for (final ItemStack stack : event.getDrops()) {
             if (ItemUtil.isJournal(stack)) {
                 found = stack;
                 break;
             }
         }
         if (found != null) {
-            evt.getDrops().remove(found);
+            event.getDrops().remove(found);
         }
     }
     
@@ -811,8 +825,11 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerFish(final PlayerFishEvent evt) {
-        final Player player = evt.getPlayer();
+    public void onPlayerFish(final PlayerFishEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
@@ -822,7 +839,7 @@ public class PlayerListener implements Listener {
                     continue;
                 }
                 
-                if (evt.getState().equals(State.CAUGHT_FISH)) {
+                if (event.getState().equals(State.CAUGHT_FISH)) {
                     if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.catchFish(quest);
@@ -862,12 +879,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent evt) {
-        final Player player = evt.getPlayer();
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
         if (player.hasPermission("quests.admin.update")) {
             new UpdateChecker(plugin, 3711).getVersion(version -> {
                 if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
-                    evt.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
+                    event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
                             + "] " + ChatColor.GREEN + Lang.get(player, "updateTo").replace("<version>",
                             version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
                             + plugin.getDescription().getWebsite()));
@@ -918,9 +935,9 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(final PlayerQuitEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
+            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                 final IStage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
@@ -950,9 +967,9 @@ public class PlayerListener implements Listener {
                 quester.saveData();
             }
             
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer().getUniqueId())) {
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
                 final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
-                temp.remove(evt.getPlayer().getUniqueId());
+                temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
             final ConcurrentSkipListSet<IQuester> temp = (ConcurrentSkipListSet<IQuester>) plugin.getOfflineQuesters();
@@ -962,19 +979,19 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(final PlayerMoveEvent evt) {
-        if (evt.getTo() == null) {
+    public void onPlayerMove(final PlayerMoveEvent event) {
+        if (event.getTo() == null) {
             return;
         }
-        if (evt.getFrom().getBlock().equals(evt.getTo().getBlock())) {
+        if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
             return;
         }
         if (plugin.getDependencies().getCitizens() != null) {
-            if (CitizensAPI.getNPCRegistry().isNPC(evt.getPlayer())) {
+            if (CitizensAPI.getNPCRegistry().isNPC(event.getPlayer())) {
                 return;
             }
         }
-        playerMove(evt.getPlayer().getUniqueId(), evt.getTo());
+        playerMove(event.getPlayer().getUniqueId(), event.getTo());
     }
     
     /**

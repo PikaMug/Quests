@@ -33,37 +33,37 @@ public class ZnpcsListener implements Listener {
     }
 
     @EventHandler
-    public void onNPCInteract(final NPCInteractEvent evt) {
-        if (evt.isLeftClick()) {
+    public void onNPCInteract(final NPCInteractEvent event) {
+        if (event.isLeftClick()) {
             if (plugin.getDependencies().getZnpcs() == null) {
                 return;
             }
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer().getUniqueId())) {
-                if (evt.getNpc() == null) {
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
+                if (event.getNpc() == null) {
                     plugin.getLogger().severe("ZNPC was null while selecting by left-click");
                     return;
                 }
-                evt.getPlayer().acceptConversationInput(String.valueOf(evt.getNpc().getUUID()));
-                evt.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
+                event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
+                event.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
                         + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
                         + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
-        } else if (evt.isRightClick()) {
+        } else if (event.isRightClick()) {
             if (plugin.getDependencies().getCitizens() == null) {
                 return;
             }
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getPlayer().getUniqueId())) {
-                if (evt.getNpc() == null) {
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
+                if (event.getNpc() == null) {
                     plugin.getLogger().severe("ZNPC was null while selecting by right-click");
                     return;
                 }
-                evt.getPlayer().acceptConversationInput(String.valueOf(evt.getNpc().getUUID()));
-                evt.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
+                event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
+                event.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
                         + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
                         + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
-            if (!evt.getPlayer().isConversing()) {
-                final Player player = evt.getPlayer();
+            if (!event.getPlayer().isConversing()) {
+                final Player player = event.getPlayer();
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
                 for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
@@ -78,7 +78,7 @@ public class ZnpcsListener implements Listener {
                                 matches.add(currentIndex);
                             }
                         }
-                        final NPC clicked = evt.getNpc();
+                        final NPC clicked = event.getNpc();
                         if (!matches.isEmpty()) {
                             for (final Integer match : matches) {
                                 final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
@@ -191,18 +191,18 @@ public class ZnpcsListener implements Listener {
                         continue;
                     }
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
-                        if (quester.getCurrentStage(quest).getNpcsToInteract().contains(evt.getNpc().getUUID())) {
-                            final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNpc()
+                        if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNpc().getUUID())) {
+                            final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNpc()
                                     .getUUID());
                             if (quester.getQuestData(quest) != null && npcIndex > -1
                                     && !quester.getQuestData(quest).npcsInteracted.get(npcIndex)) {
                                 hasObjective = true;
                             }
-                            quester.interactWithNPC(quest, evt.getNpc().getUUID());
+                            quester.interactWithNPC(quest, event.getNpc().getUUID());
                         }
                     }
                 }
-                if (hasObjective || !plugin.getQuestNpcUuids().contains(evt.getNpc().getUUID())) {
+                if (hasObjective || !plugin.getQuestNpcUuids().contains(event.getNpc().getUUID())) {
                     return;
                 }
                 boolean hasAtLeastOneGUI = false;
@@ -211,7 +211,7 @@ public class ZnpcsListener implements Listener {
                     if (quester.getCurrentQuestsTemp().containsKey(q)) {
                         continue;
                     }
-                    if (q.getNpcStart() != null && q.getNpcStart().equals(evt.getNpc().getUUID())) {
+                    if (q.getNpcStart() != null && q.getNpcStart().equals(event.getNpc().getUUID())) {
                         if (plugin.getSettings().canIgnoreLockedQuests()
                                 && (!quester.getCompletedQuestsTemp().contains(q)
                                 || q.getPlanner().getCooldown() > -1)) {
@@ -237,7 +237,7 @@ public class ZnpcsListener implements Listener {
                             quester.takeQuest(q, false);
                         } else {
                             if (q.getGUIDisplay() != null) {
-                                quester.showGUIDisplay(evt.getNpc().getUUID(), npcQuests);
+                                quester.showGUIDisplay(event.getNpc().getUUID(), npcQuests);
                             } else {
                                 for (final String msg : extracted(quester).split("<br>")) {
                                     player.sendMessage(msg);
@@ -248,11 +248,11 @@ public class ZnpcsListener implements Listener {
                     }
                 } else if (npcQuests.size() > 1) {
                     if (hasAtLeastOneGUI) {
-                        quester.showGUIDisplay(evt.getNpc().getUUID(), npcQuests);
+                        quester.showGUIDisplay(event.getNpc().getUUID(), npcQuests);
                     } else {
                         final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                         c.getContext().setSessionData("npcQuests", npcQuests);
-                        c.getContext().setSessionData("npc", evt.getNpc().getGameProfile().getName());
+                        c.getContext().setSessionData("npc", event.getNpc().getGameProfile().getName());
                         c.begin();
                     }
                 } else {

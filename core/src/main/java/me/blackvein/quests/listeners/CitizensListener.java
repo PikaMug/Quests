@@ -54,19 +54,19 @@ public class CitizensListener implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onNPCRightClick(final NPCRightClickEvent evt) {
+    public void onNPCRightClick(final NPCRightClickEvent event) {
         if (plugin.getDependencies().getCitizens() == null) {
             return;
         }
-        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            if (evt.getNPC() == null) {
+        if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getClicker().getUniqueId())) {
+            if (event.getNPC() == null) {
                 plugin.getLogger().severe("NPC was null while selecting by right-click");
                 return;
             }
-            evt.getClicker().acceptConversationInput(String.valueOf(evt.getNPC().getUniqueId()));
+            event.getClicker().acceptConversationInput(String.valueOf(event.getNPC().getUniqueId()));
         }
-        if (!evt.getClicker().isConversing()) {
-            final Player player = evt.getClicker();
+        if (!event.getClicker().isConversing()) {
+            final Player player = event.getClicker();
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
@@ -81,7 +81,7 @@ public class CitizensListener implements Listener {
                             matches.add(currentIndex);
                         }
                     }
-                    final NPC clicked = evt.getNPC();
+                    final NPC clicked = event.getNPC();
                     if (!matches.isEmpty()) {
                         for (final Integer match : matches) {
                             final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
@@ -194,18 +194,18 @@ public class CitizensListener implements Listener {
                     continue;
                 }
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
-                    if (quester.getCurrentStage(quest).getNpcsToInteract().contains(evt.getNPC().getUniqueId())) {
-                        final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(evt.getNPC()
+                    if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNPC().getUniqueId())) {
+                        final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNPC()
                                 .getUniqueId());
                         if (quester.getQuestData(quest) != null && npcIndex > -1
                                 && !quester.getQuestData(quest).npcsInteracted.get(npcIndex)) {
                             hasObjective = true;
                         }
-                        quester.interactWithNPC(quest, evt.getNPC().getUniqueId());
+                        quester.interactWithNPC(quest, event.getNPC().getUniqueId());
                     }
                 }
             }
-            if (hasObjective || !plugin.getQuestNpcUuids().contains(evt.getNPC().getUniqueId())) {
+            if (hasObjective || !plugin.getQuestNpcUuids().contains(event.getNPC().getUniqueId())) {
                 return;
             }
             boolean hasAtLeastOneGUI = false;
@@ -214,7 +214,7 @@ public class CitizensListener implements Listener {
                 if (quester.getCurrentQuestsTemp().containsKey(q)) {
                     continue;
                 }
-                if (q.getNpcStart() != null && q.getNpcStart().equals(evt.getNPC().getUniqueId())) {
+                if (q.getNpcStart() != null && q.getNpcStart().equals(event.getNPC().getUniqueId())) {
                     if (plugin.getSettings().canIgnoreLockedQuests()
                             && (!quester.getCompletedQuestsTemp().contains(q)
                             || q.getPlanner().getCooldown() > -1)) {
@@ -240,7 +240,7 @@ public class CitizensListener implements Listener {
                         quester.takeQuest(q, false);
                     } else {
                         if (q.getGUIDisplay() != null) {
-                            quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
+                            quester.showGUIDisplay(event.getNPC().getUniqueId(), npcQuests);
                         } else {
                             for (final String msg : extracted(quester).split("<br>")) {
                                 player.sendMessage(msg);
@@ -251,11 +251,11 @@ public class CitizensListener implements Listener {
                 }
             } else if (npcQuests.size() > 1) {
                 if (hasAtLeastOneGUI) {
-                    quester.showGUIDisplay(evt.getNPC().getUniqueId(), npcQuests);
+                    quester.showGUIDisplay(event.getNPC().getUniqueId(), npcQuests);
                 } else {
                     final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                     c.getContext().setSessionData("npcQuests", npcQuests);
-                    c.getContext().setSessionData("npc", evt.getNPC().getName());
+                    c.getContext().setSessionData("npc", event.getNPC().getName());
                     c.begin();
                 }
             } else {
@@ -265,31 +265,31 @@ public class CitizensListener implements Listener {
     }
 
     @EventHandler
-    public void onNPCLeftClick(final NPCLeftClickEvent evt) {
+    public void onNPCLeftClick(final NPCLeftClickEvent event) {
         if (plugin.getDependencies().getCitizens() == null) {
             return;
         }
-        if (plugin.getQuestFactory().getSelectingNpcs().contains(evt.getClicker().getUniqueId())) {
-            if (evt.getNPC() == null) {
+        if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getClicker().getUniqueId())) {
+            if (event.getNPC() == null) {
                 plugin.getLogger().severe("NPC was null while selecting by left-click");
                 return;
             }
-            evt.getClicker().acceptConversationInput(String.valueOf(evt.getNPC().getUniqueId()));
+            event.getClicker().acceptConversationInput(String.valueOf(event.getNPC().getUniqueId()));
         }
     }
 
     @EventHandler
-    public void onNPCDeath(final NPCDeathEvent evt) {
+    public void onNPCDeath(final NPCDeathEvent event) {
         if (plugin.getDependencies().getCitizens() == null) {
             return;
         }
-        if (evt.getNPC() == null || evt.getNPC().getEntity() == null 
-                || evt.getNPC().getEntity().getLastDamageCause() == null) {
+        if (event.getNPC() == null || event.getNPC().getEntity() == null 
+                || event.getNPC().getEntity().getLastDamageCause() == null) {
             return;
         }
-        if (evt.getNPC().getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+        if (event.getNPC().getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             final EntityDamageByEntityEvent damageEvent 
-                    = (EntityDamageByEntityEvent) evt.getNPC().getEntity().getLastDamageCause();
+                    = (EntityDamageByEntityEvent) event.getNPC().getEntity().getLastDamageCause();
             final Entity damager = damageEvent.getDamager();
             if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(damager)) {
                 return;
@@ -311,13 +311,13 @@ public class CitizensListener implements Listener {
 
                     if (quester.getCurrentQuestsTemp().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
-                        quester.killNPC(quest, evt.getNPC().getUniqueId());
+                        quester.killNPC(quest, event.getNPC().getUniqueId());
                     }
 
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
                             (final IQuester q, final IQuest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                    q.killNPC(cq, evt.getNPC().getUniqueId());
+                                    q.killNPC(cq, event.getNPC().getUniqueId());
                                 }
                                 return null;
                             }));

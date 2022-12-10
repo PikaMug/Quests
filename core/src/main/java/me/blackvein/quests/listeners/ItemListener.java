@@ -41,14 +41,14 @@ public class ItemListener implements Listener {
     }
     
     @EventHandler
-    public void onCraftItem(final CraftItemEvent evt) {
-        if (evt.getAction().equals(InventoryAction.NOTHING)) {
+    public void onCraftItem(final CraftItemEvent event) {
+        if (event.getAction().equals(InventoryAction.NOTHING)) {
             return;
         }
-        if (evt.getWhoClicked() instanceof Player) {
-            final Player player = (Player) evt.getWhoClicked();
+        if (event.getWhoClicked() instanceof Player) {
+            final Player player = (Player) event.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final ItemStack craftedItem = getCraftedItem(evt);
+                final ItemStack craftedItem = getCraftedItem(event);
                 final IQuester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -74,12 +74,12 @@ public class ItemListener implements Listener {
     }
     
     @SuppressWarnings("deprecation")
-    private ItemStack getCraftedItem(final CraftItemEvent evt) {
-        if (evt.isShiftClick()) {
-            final ItemStack recipeResult = evt.getRecipe().getResult();
+    private ItemStack getCraftedItem(final CraftItemEvent event) {
+        if (event.isShiftClick()) {
+            final ItemStack recipeResult = event.getRecipe().getResult();
             final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
             int leastIngredient = -1;
-            for (final ItemStack item : evt.getInventory().getMatrix()) {
+            for (final ItemStack item : event.getInventory().getMatrix()) {
                 if (item != null && !item.getType().equals(Material.AIR)) {
                     final int re = item.getAmount() * resultAmt;
                     if (leastIngredient == -1 || re < leastIngredient) {
@@ -89,17 +89,17 @@ public class ItemListener implements Listener {
             }
             return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
         }
-        return evt.getCurrentItem();
+        return event.getCurrentItem();
     }
     
     @EventHandler
-    public void onInventoryClick(final InventoryClickEvent evt) {
-        if (evt.getWhoClicked() instanceof Player) {
-            final Player player = (Player) evt.getWhoClicked();
-            if (evt.getInventory().getType() == InventoryType.FURNACE
-                    || evt.getInventory().getType().name().equals("BLAST_FURNACE")
-                    || evt.getInventory().getType().name().equals("SMOKER")) {
-                if (evt.getSlotType() == SlotType.RESULT) {
+    public void onInventoryClick(final InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player) {
+            final Player player = (Player) event.getWhoClicked();
+            if (event.getInventory().getType() == InventoryType.FURNACE
+                    || event.getInventory().getType().name().equals("BLAST_FURNACE")
+                    || event.getInventory().getType().name().equals("SMOKER")) {
+                if (event.getSlotType() == SlotType.RESULT) {
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -110,19 +110,19 @@ public class ItemListener implements Listener {
                         
                         if (quester.getCurrentQuestsTemp().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
-                            quester.smeltItem(quest, evt.getCurrentItem());
+                            quester.smeltItem(quest, event.getCurrentItem());
                         }
                         
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.smeltItem(cq, evt.getCurrentItem());
+                                q.smeltItem(cq, event.getCurrentItem());
                             }
                             return null;
                         }));
                     }
                 }
-            } else if (evt.getInventory().getType() == InventoryType.BREWING) {
-                if (evt.getSlotType() == SlotType.CRAFTING) {
+            } else if (event.getInventory().getType() == InventoryType.BREWING) {
+                if (event.getSlotType() == SlotType.CRAFTING) {
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -133,12 +133,12 @@ public class ItemListener implements Listener {
                         
                         if (quester.getCurrentQuestsTemp().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
-                            quester.brewItem(quest, evt.getCurrentItem());
+                            quester.brewItem(quest, event.getCurrentItem());
                         }
                         
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.brewItem(cq, evt.getCurrentItem());
+                                q.brewItem(cq, event.getCurrentItem());
                             }
                             return null;
                         }));
@@ -149,12 +149,12 @@ public class ItemListener implements Listener {
     }
     
     @EventHandler
-    public void onEnchantItem(final EnchantItemEvent evt) {
-        if (plugin.canUseQuests(evt.getEnchanter().getUniqueId())) {
-            final ItemStack enchantedItem = evt.getItem().clone();
+    public void onEnchantItem(final EnchantItemEvent event) {
+        if (plugin.canUseQuests(event.getEnchanter().getUniqueId())) {
+            final ItemStack enchantedItem = event.getItem().clone();
             enchantedItem.setAmount(1);
-            enchantedItem.addUnsafeEnchantments(evt.getEnchantsToAdd());
-            final IQuester quester = plugin.getQuester(evt.getEnchanter().getUniqueId());
+            enchantedItem.addUnsafeEnchantments(event.getEnchantsToAdd());
+            final IQuester quester = plugin.getQuester(event.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final IQuest quest : plugin.getLoadedQuests()) {
@@ -165,7 +165,7 @@ public class ItemListener implements Listener {
                 if (quester.getCurrentQuestsTemp().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     if (enchantedItem.getType().equals(Material.BOOK)) {
-                        quester.enchantBook(quest, enchantedItem, evt.getEnchantsToAdd());
+                        quester.enchantBook(quest, enchantedItem, event.getEnchantsToAdd());
                     } else {
                         quester.enchantItem(quest, enchantedItem);
                     }
@@ -174,7 +174,7 @@ public class ItemListener implements Listener {
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (final IQuester q, final IQuest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         if (enchantedItem.getType().equals(Material.BOOK)) {
-                            q.enchantBook(cq, enchantedItem, evt.getEnchantsToAdd());
+                            q.enchantBook(cq, enchantedItem, event.getEnchantsToAdd());
                         } else {
                             q.enchantItem(cq, enchantedItem);
                         }
@@ -187,11 +187,11 @@ public class ItemListener implements Listener {
     
     
     @EventHandler
-    public void onConsumeItem(final PlayerItemConsumeEvent evt) {
-        if (plugin.canUseQuests(evt.getPlayer().getUniqueId())) {
-            final ItemStack consumedItem = evt.getItem().clone();
+    public void onConsumeItem(final PlayerItemConsumeEvent event) {
+        if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
+            final ItemStack consumedItem = event.getItem().clone();
             consumedItem.setAmount(1);
-            final IQuester quester = plugin.getQuester(evt.getPlayer().getUniqueId());
+            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
             for (final IQuest quest : plugin.getLoadedQuests()) {
