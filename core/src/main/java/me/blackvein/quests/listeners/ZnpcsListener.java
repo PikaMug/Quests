@@ -34,10 +34,10 @@ public class ZnpcsListener implements Listener {
 
     @EventHandler
     public void onNPCInteract(final NPCInteractEvent event) {
+        if (plugin.getDependencies().getZnpcs() == null) {
+            return;
+        }
         if (event.isLeftClick()) {
-            if (plugin.getDependencies().getZnpcs() == null) {
-                return;
-            }
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
                 if (event.getNpc() == null) {
                     plugin.getLogger().severe("ZNPC was null while selecting by left-click");
@@ -49,9 +49,6 @@ public class ZnpcsListener implements Listener {
                         + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
         } else if (event.isRightClick()) {
-            if (plugin.getDependencies().getCitizens() == null) {
-                return;
-            }
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
                 if (event.getNpc() == null) {
                     plugin.getLogger().severe("ZNPC was null while selecting by right-click");

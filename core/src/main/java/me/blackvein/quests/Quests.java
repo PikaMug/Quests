@@ -3084,20 +3084,25 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             npcAmountsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered."
                                     + stageNum + ".npc-kill-amounts");
                             for (final int i : npcIdsToKill) {
-                                final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
-                                if (npc != null) {
-                                    if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
-                                        final UUID npcUuid = npc.getUniqueId();
-                                        oStage.addNpcToKill(npcUuid);
-                                        oStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
-                                        questNpcUuids.add(npcUuid);
+                                if (getDependencies().getCitizens() != null) {
+                                    final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
+                                    if (npc != null) {
+                                        if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
+                                            final UUID npcUuid = npc.getUniqueId();
+                                            oStage.addNpcToKill(npcUuid);
+                                            oStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
+                                            questNpcUuids.add(npcUuid);
+                                        } else {
+                                            throw new StageFormatException("npc-kill-amounts is not a positive number",
+                                                    quest, stageNum);
+                                        }
                                     } else {
-                                        throw new StageFormatException("npc-kill-amounts is not a positive number",
-                                                quest, stageNum);
+                                        throw new StageFormatException("npc-ids-to-kill has invalid NPC ID of " + i, quest,
+                                                stageNum);
                                     }
                                 } else {
-                                    throw new StageFormatException("npc-ids-to-kill has invalid NPC ID of " + i, quest,
-                                            stageNum);
+                                    throw new StageFormatException(
+                                            "Citizens not found for npc-ids-to-kill", quest, stageNum);
                                 }
                             }
                         } else {
