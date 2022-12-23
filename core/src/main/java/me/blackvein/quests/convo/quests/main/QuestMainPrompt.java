@@ -735,7 +735,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
-                boolean failed = false;
+                // TODO - Delete this and questGUIError string
+                /*boolean failed = false;
                 for (final IQuest quest : plugin.getLoadedQuests()) {
                     if (quest.getGUIDisplay() != null) {
                         if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
@@ -749,6 +750,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (!failed) {
                     context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
+                }*/
+                if (stack != null) {
+                    context.setSessionData(CK.Q_GUIDISPLAY, stack.clone());
                 }
                 ItemStackPrompt.clearSessionData(context);
             }
