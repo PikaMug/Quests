@@ -735,22 +735,6 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             // Check/add newly made item
             if (context.getSessionData("tempStack") != null) {
                 final ItemStack stack = (ItemStack) context.getSessionData("tempStack");
-                // TODO - Delete this and questGUIError string
-                /*boolean failed = false;
-                for (final IQuest quest : plugin.getLoadedQuests()) {
-                    if (quest.getGUIDisplay() != null) {
-                        if (ItemUtil.compareItems(stack, quest.getGUIDisplay(), false) == 0) {
-                            String error = Lang.get("questGUIError");
-                            error = error.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED);
-                            context.getForWhom().sendRawMessage(ChatColor.RED + error);
-                            failed = true;
-                            break;
-                        }
-                    }
-                }
-                if (!failed) {
-                    context.setSessionData(CK.Q_GUIDISPLAY, context.getSessionData("tempStack"));
-                }*/
                 if (stack != null) {
                     context.setSessionData(CK.Q_GUIDISPLAY, stack.clone());
                 }
