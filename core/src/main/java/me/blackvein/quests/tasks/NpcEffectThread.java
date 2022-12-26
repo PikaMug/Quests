@@ -12,8 +12,9 @@
 
 package me.blackvein.quests.tasks;
 
-import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.Quester;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.events.quester.QuesterPostViewEffectEvent;
 import me.blackvein.quests.nms.ParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -33,18 +34,27 @@ public class NpcEffectThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            final List<Entity> nearby = player.getNearbyEntities(32.0, 32.0, 32.0);
+            final List<Entity> nearby = player.getNearbyEntities(32.0, 16.0, 32.0);
             if (!nearby.isEmpty()) {
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Entity e : nearby) {
                     if (plugin.getDependencies().getCitizens() != null 
                             && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
                         if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
                             final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
+                            final QuesterPostViewEffectEvent event;
                             if (plugin.hasQuest(npc, quester)) {
-                                showEffect(player, npc, plugin.getSettings().getEffect());
+                                showEffect(player, npc.getEntity(), plugin.getSettings().getEffect());
+
+                                event = new QuesterPostViewEffectEvent(quester, npc.getUniqueId(),
+                                        plugin.getSettings().getEffect(), false);
+                                plugin.getServer().getPluginManager().callEvent(event);
                             } else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
-                                showEffect(player, npc, plugin.getSettings().getRedoEffect());
+                                showEffect(player, npc.getEntity(), plugin.getSettings().getRedoEffect());
+
+                                event = new QuesterPostViewEffectEvent(quester, npc.getUniqueId(),
+                                        plugin.getSettings().getEffect(), true);
+                                plugin.getServer().getPluginManager().callEvent(event);
                             }
                         }
                     }
@@ -58,6 +68,7 @@ public class NpcEffectThread implements Runnable {
      * @param player Target player to let view the effect
      * @param npc Target NPC to place the effect above
      * @param effectType Value of EnumParticle such as NOTE or SMOKE
+     * @deprecated Use {@link #showEffect(Player, Entity, String)}
      */
     public void showEffect(final Player player, final NPC npc, final String effectType) {
         if (player == null || npc == null || npc.getEntity() == null) {
@@ -71,6 +82,25 @@ public class NpcEffectThread implements Runnable {
             } catch (final NoClassDefFoundError e) {
                 // Unsupported Minecraft version
             }
+        }
+    }
+
+    /**
+     * Display a particle effect above an entity one time
+     * @param player Target player to let view the effect
+     * @param entity Target entity to place the effect above
+     * @param effectType Value of {@link org.bukkit.Particle} or {@link me.blackvein.quests.nms.PreBuiltParticle}
+     */
+    public void showEffect(final Player player, final Entity entity, final String effectType) {
+        if (player == null || entity == null) {
+            return;
+        }
+        final Location eyeLoc = entity.getLocation();
+        eyeLoc.setY(eyeLoc.getY() + 2);
+        try {
+            ParticleProvider.sendToPlayer(player, eyeLoc, effectType.toUpperCase());
+        } catch (final NoClassDefFoundError e) {
+            // Unsupported Minecraft version
         }
     }
 }
