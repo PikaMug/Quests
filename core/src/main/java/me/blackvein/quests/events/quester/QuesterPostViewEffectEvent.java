@@ -20,13 +20,13 @@ import java.util.UUID;
 
 public class QuesterPostViewEffectEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final UUID entity;
+    private final UUID id;
     private final String effect;
     private final boolean redoable;
 
-    public QuesterPostViewEffectEvent(final Quester quester, UUID entity, String effect, boolean redoable) {
+    public QuesterPostViewEffectEvent(final Quester quester, UUID id, String effect, boolean redoable) {
         super(quester);
-        this.entity = entity;
+        this.id = id;
         this.effect = effect;
         this.redoable = redoable;
     }
@@ -36,8 +36,8 @@ public class QuesterPostViewEffectEvent extends QuesterEvent {
      *
      * @return UUID of entity who is involved in this event
      */
-    public UUID getEntity() {
-        return entity;
+    public UUID getEntityId() {
+        return id;
     }
 
     /**
