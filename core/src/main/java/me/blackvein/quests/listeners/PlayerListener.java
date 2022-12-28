@@ -567,9 +567,9 @@ public class PlayerListener implements Listener {
                         continue;
                     }
                     if (!currentStage.getCommandActions().isEmpty()) {
-                        final String command = event.getMessage();
+                        final String command = event.getMessage().toLowerCase();
                         for (final String s : currentStage.getCommandActions().keySet()) {
-                            if (command.equalsIgnoreCase("/" + s)) {
+                            if (command.startsWith("/" + s.toLowerCase())) {
                                 currentStage.getCommandActions().get(s).fire(quester, quest);
                             }
                         }
