@@ -37,22 +37,22 @@ public class NpcEffectThread implements Runnable {
             final List<Entity> nearby = player.getNearbyEntities(32.0, 16.0, 32.0);
             if (!nearby.isEmpty()) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                for (final Entity e : nearby) {
+                for (final Entity entity : nearby) {
                     if (plugin.getDependencies().getCitizens() != null 
                             && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
-                        if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(e)) {
-                            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(e);
+                        if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(entity)) {
+                            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(entity);
                             final QuesterPostViewEffectEvent event;
                             if (plugin.hasQuest(npc, quester)) {
                                 showEffect(player, npc.getEntity(), plugin.getSettings().getEffect());
 
-                                event = new QuesterPostViewEffectEvent(quester, npc.getUniqueId(),
+                                event = new QuesterPostViewEffectEvent(quester, entity,
                                         plugin.getSettings().getEffect(), false);
                                 plugin.getServer().getPluginManager().callEvent(event);
                             } else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
                                 showEffect(player, npc.getEntity(), plugin.getSettings().getRedoEffect());
 
-                                event = new QuesterPostViewEffectEvent(quester, npc.getUniqueId(),
+                                event = new QuesterPostViewEffectEvent(quester, entity,
                                         plugin.getSettings().getEffect(), true);
                                 plugin.getServer().getPluginManager().callEvent(event);
                             }

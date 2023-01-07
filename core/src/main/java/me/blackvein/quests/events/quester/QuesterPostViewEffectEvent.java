@@ -13,31 +13,30 @@
 package me.blackvein.quests.events.quester;
 
 import me.blackvein.quests.Quester;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class QuesterPostViewEffectEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final UUID id;
+    private final Entity entity;
     private final String effect;
     private final boolean redoable;
 
-    public QuesterPostViewEffectEvent(final Quester quester, UUID id, String effect, boolean redoable) {
+    public QuesterPostViewEffectEvent(final Quester quester, Entity entity, String effect, boolean redoable) {
         super(quester);
-        this.id = id;
+        this.entity = entity;
         this.effect = effect;
         this.redoable = redoable;
     }
 
     /**
-     * Returns the UUID of the entity involved in this event
+     * Returns the entity involved in this event
      *
-     * @return UUID of entity who is involved in this event
+     * @return entity who is involved in this event
      */
-    public UUID getEntityId() {
-        return id;
+    public Entity getEntity() {
+        return entity;
     }
 
     /**
