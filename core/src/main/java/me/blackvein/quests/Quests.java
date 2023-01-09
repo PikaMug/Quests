@@ -12,7 +12,6 @@
 
 package me.blackvein.quests;
 
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.blackvein.quests.actions.Action;
@@ -2094,22 +2093,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
         }
-        if (depends.isPluginAvailable("PhatLoots")) {
-            if (config.contains("quests." + questKey + ".rewards.phat-loots")) {
-                if (ConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.phat-loots"), String.class)) {
-                    for (final String loot : config.getStringList("quests." + questKey + ".rewards.phat-loots")) {
-                        if (depends.getPhatLoots() == null) {
-                            throw new QuestFormatException("PhatLoots not found for phat-loots", questKey);
-                        } else if (PhatLootsAPI.getPhatLoot(loot) == null) {
-                            throw new QuestFormatException("Reward phat-loots has invalid PhatLoot name " + loot,
-                                    questKey);
-                        }
-                    }
-                    rewards.setPhatLoots(config.getStringList("quests." + questKey + ".rewards.phat-loots"));
-                } else {
-                    throw new QuestFormatException("Reward phat-loots is not a list of PhatLoots", questKey);
-                }
-            }
+        if (config.contains("quests." + questKey + ".rewards.phat-loots")) {
+            throw new QuestFormatException("PhatLoots support has been removed. Use the module instead!", questKey);
         }
         if (config.contains("quests." + questKey + ".rewards.details-override")) {
             if (ConfigUtil.checkList(config.getList("quests." + questKey 

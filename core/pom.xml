@@ -113,12 +113,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.RednedEpic</groupId>
-            <artifactId>PhatLoots</artifactId>
-            <version>e55d0ba1f6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
             <version>3.2.6</version>

@@ -5,7 +5,7 @@ api-version: 1.13
 description: An extensive questing system.
 website: https://github.com/PikaMug/Quests
 author: PikaMug
-softdepend: [Citizens, CitizensBooks, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PhatLoots, PlaceholderAPI, Unite, Vault, WorldGuard]
+softdepend: [Citizens, CitizensBooks, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PlaceholderAPI, Unite, Vault, WorldGuard]
 permissions:
   quests.*:
     description: Access ALL Quests functionality

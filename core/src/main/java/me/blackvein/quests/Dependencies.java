@@ -14,7 +14,6 @@ package me.blackvein.quests;
 
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
-import com.codisimus.plugins.phatloots.PhatLoots;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
@@ -60,7 +59,6 @@ public class Dependencies implements IDependencies {
     private static WorldGuardAPI worldGuardApi = null;
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
-    private static PhatLoots phatLoots = null;
     public static PlaceholderAPIPlugin placeholder = null;
     public static CitizensPlugin citizens = null;
     private static DenizenAPI denizenApi = null;
@@ -132,19 +130,6 @@ public class Dependencies implements IDependencies {
             heroes = (Heroes) plugin.getServer().getPluginManager().getPlugin("Heroes");
         }
         return heroes;
-    }
-    
-    public PhatLoots getPhatLoots() {
-        if (phatLoots == null && isPluginAvailable("PhatLoots")) {
-            try {
-                phatLoots = (PhatLoots) plugin.getServer().getPluginManager().getPlugin("PhatLoots");
-                plugin.getLogger().info("Sucessfully linked Quests with PhatLoots " 
-                        + phatLoots.getDescription().getVersion());
-            } catch (final NoClassDefFoundError e) {
-                plugin.getLogger().warning("Unofficial version of PhatLoots found. PhatLoots in Quests not enabled.");
-            }
-        }
-        return phatLoots;
     }
     
     public PlaceholderAPIPlugin getPlaceholderApi() {
@@ -357,7 +342,6 @@ public class Dependencies implements IDependencies {
         getDenizenApi();
         getMcmmoClassic();
         getHeroes();
-        getPhatLoots();
         getPlaceholderApi();
         getCitizensBooksApi();
         getPartiesApi();

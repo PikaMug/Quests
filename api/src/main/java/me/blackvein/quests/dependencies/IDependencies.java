@@ -13,7 +13,6 @@
 package me.blackvein.quests.dependencies;
 
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
-import com.codisimus.plugins.phatloots.PhatLoots;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
@@ -47,8 +46,6 @@ public interface IDependencies {
     mcMMO getMcmmoClassic();
 
     Heroes getHeroes();
-
-    PhatLoots getPhatLoots();
 
     PlaceholderAPIPlugin getPlaceholderApi();
 

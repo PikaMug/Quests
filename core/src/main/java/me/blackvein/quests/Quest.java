@@ -14,9 +14,6 @@ package me.blackvein.quests;
 
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
-import com.codisimus.plugins.phatloots.PhatLootsAPI;
-import com.codisimus.plugins.phatloots.loot.CommandLoot;
-import com.codisimus.plugins.phatloots.loot.LootBundle;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
@@ -892,50 +889,6 @@ public class Quest implements IQuest {
                 }
             }
         }
-        final LinkedList<ItemStack> phatLootItems = new LinkedList<>();
-        int phatLootExp = 0;
-        final LinkedList<String> phatLootMessages = new LinkedList<>();
-        for (final String s : rewards.getPhatLoots()) {
-            final LootBundle lb = PhatLootsAPI.getPhatLoot(s).rollForLoot();
-            if (lb.getExp() > 0) {
-                phatLootExp += lb.getExp();
-                if (player.isOnline()) {
-                    ((Player)player).giveExp(lb.getExp());
-                }
-            }
-            if (lb.getMoney() > 0) {
-                if (depends.getVaultEconomy() != null) {
-                    depends.getVaultEconomy().depositPlayer(player, lb.getMoney());
-                }
-            }
-            if (!lb.getItemList().isEmpty()) {
-                phatLootItems.addAll(lb.getItemList());
-                if (player.isOnline()) {
-                    for (final ItemStack is : lb.getItemList()) {
-                        try {
-                            InventoryUtil.addItem(player.getPlayer(), is);
-                        } catch (final Exception e) {
-                            plugin.getLogger().severe("Unable to add PhatLoots item to inventory of "
-                                    + player.getName() + " upon completion of quest " + name);
-                            quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
-                                    + "Please contact an administrator.");
-                        }
-                    }
-                }
-            }
-            if (!lb.getCommandList().isEmpty() && player.isOnline()) {
-                for (final CommandLoot cl : lb.getCommandList()) {
-                    cl.execute((Player)player);
-                }
-            }
-            if (!lb.getMessageList().isEmpty()) {
-                phatLootMessages.addAll(lb.getMessageList());
-            }
-            if (plugin.getSettings().getConsoleLogging() > 2) {
-                plugin.getLogger().info(player.getUniqueId() + " was rewarded loot " + s);
-            }
-            issuedReward = true;
-        }
         if (rewards.getExp() > 0 && player.isOnline()) {
             ((Player)player).giveExp(rewards.getExp());
             if (plugin.getSettings().getConsoleLogging() > 2) {
@@ -1052,45 +1005,9 @@ public class Quest implements IQuest {
                         quester.sendMessage(text.toString().replace("<item>", ItemUtil.getName(i)));
                     }
                 }
-                for (final ItemStack i : phatLootItems) {
-                    if (i.getItemMeta() != null && i.getItemMeta().hasDisplayName()) {
-                        if (i.getEnchantments().isEmpty()) {
-                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
-                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
-                                    + i.getAmount());
-                        } else {
-                            quester.sendMessage("- " + ChatColor.DARK_AQUA + ChatColor.ITALIC
-                                    + i.getItemMeta().getDisplayName() + ChatColor.RESET + ChatColor.GRAY + " x "
-                                    + i.getAmount() + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
-                        }
-                    } else if (i.getDurability() != 0) {
-                        if (i.getEnchantments().isEmpty()) {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
-                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount());
-                        } else {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ":"
-                                    + i.getDurability() + ChatColor.GRAY + " x " + i.getAmount()
-                                    + ChatColor.DARK_PURPLE + " " + Lang.get(p, "enchantedItem"));
-                        }
-                    } else {
-                        if (i.getEnchantments().isEmpty()) {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
-                                    + " x " + i.getAmount());
-                        } else {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + ItemUtil.getName(i) + ChatColor.GRAY
-                                    + " x " + i.getAmount() + ChatColor.DARK_PURPLE + " "
-                                    + Lang.get(p, "enchantedItem"));
-                        }
-                    }
-                }
                 if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
                     quester.sendMessage("- " + ChatColor.DARK_GREEN
                             + depends.getVaultEconomy().format(rewards.getMoney()));
-                }
-                if (rewards.getExp() > 0 || phatLootExp > 0) {
-                    final int tot = rewards.getExp() + phatLootExp;
-                    quester.sendMessage("- " + ChatColor.DARK_GREEN + tot + ChatColor.DARK_PURPLE + " "
-                            + Lang.get(p, "experience"));
                 }
                 if (!rewards.getCommands().isEmpty()) {
                     int index = 0;
@@ -1137,11 +1054,6 @@ public class Quest implements IQuest {
                 if (rewards.getPartiesExperience() > 0) {
                     p.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getPartiesExperience() + ChatColor.DARK_PURPLE
                             + " " + Lang.get(p, "partiesExperience"));
-                }
-                if (!phatLootMessages.isEmpty()) {
-                    for (final String s : phatLootMessages) {
-                        quester.sendMessage("- " + s);
-                    }
                 }
                 for (final String s : rewards.getCustomRewards().keySet()) {
                     CustomReward found = null;
