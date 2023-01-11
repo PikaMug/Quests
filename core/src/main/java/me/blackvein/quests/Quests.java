@@ -228,6 +228,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         
         // 7 - Save config with any new options
         getConfig().options().copyDefaults(true);
+        getConfig().options().header("See https://pikamug.gitbook.io/quests/setup/configuration");
         saveConfig();
         final StorageFactory storageFactory = new StorageFactory(this);
         storage = storageFactory.getInstance();
