@@ -38,6 +38,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ro.nicuch.citizensbooks.CitizensBooksAPI;
 import ro.nicuch.citizensbooks.CitizensBooksPlugin;
 
@@ -279,7 +281,7 @@ public class Dependencies implements IDependencies {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester, uuid);
     }
 
-    public Location getNPCLocation(final UUID uuid) {
+    public @Nullable Location getNPCLocation(final UUID uuid) {
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
         } else if (getZnpcsUuids().contains(uuid)) {
@@ -291,7 +293,19 @@ public class Dependencies implements IDependencies {
         return null;
     }
 
-    public String getNPCName(final UUID uuid) {
+    public @Nullable Entity getNPCEntity(final UUID uuid) {
+        if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
+            return citizens.getNPCRegistry().getByUniqueId(uuid).getEntity();
+        } else if (getZnpcsUuids().contains(uuid)) {
+            final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
+            if (opt.isPresent()) {
+                return (Entity) opt.get().getBukkitEntity();
+            }
+        }
+        return null;
+    }
+
+    public @NotNull String getNPCName(final UUID uuid) {
         Entity npc = null;
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
@@ -307,6 +321,19 @@ public class Dependencies implements IDependencies {
             }
         }
         return "NPC";
+    }
+
+    /**
+     * Checks whether an Entity is a supported NPC
+     *
+     * @param entity the Entity to check
+     * @return true if a supported NPC
+     */
+    public boolean isSupportedNPC(Entity entity) {
+        if (citizens != null && citizens.getNPCRegistry().isNPC(entity)) {
+            return true;
+        }
+        return getZnpcsUuids().contains(entity.getUniqueId());
     }
     
     public int getMcmmoSkillLevel(final SkillType st, final String player) {

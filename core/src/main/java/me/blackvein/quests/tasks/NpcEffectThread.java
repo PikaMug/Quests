@@ -38,24 +38,20 @@ public class NpcEffectThread implements Runnable {
             if (!nearby.isEmpty()) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Entity entity : nearby) {
-                    if (plugin.getDependencies().getCitizens() != null 
-                            && plugin.getDependencies().getCitizens().getNPCRegistry() != null) {
-                        if (plugin.getDependencies().getCitizens().getNPCRegistry().isNPC(entity)) {
-                            final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getNPC(entity);
-                            final QuesterPostViewEffectEvent event;
-                            if (plugin.hasQuest(npc, quester)) {
-                                showEffect(player, npc.getEntity(), plugin.getSettings().getEffect());
+                    if (plugin.getDependencies().isSupportedNPC(entity)) {
+                        final QuesterPostViewEffectEvent event;
+                        if (plugin.hasQuest(entity.getUniqueId(), quester)) {
+                            showEffect(player, entity, plugin.getSettings().getEffect());
 
-                                event = new QuesterPostViewEffectEvent(quester, entity,
-                                        plugin.getSettings().getEffect(), false);
-                                plugin.getServer().getPluginManager().callEvent(event);
-                            } else if (plugin.hasCompletedRedoableQuest(npc, quester)) {
-                                showEffect(player, npc.getEntity(), plugin.getSettings().getRedoEffect());
+                            event = new QuesterPostViewEffectEvent(quester, entity,
+                                    plugin.getSettings().getEffect(), false);
+                            plugin.getServer().getPluginManager().callEvent(event);
+                        } else if (plugin.hasCompletedRedoableQuest(entity.getUniqueId(), quester)) {
+                            showEffect(player, entity, plugin.getSettings().getRedoEffect());
 
-                                event = new QuesterPostViewEffectEvent(quester, entity,
-                                        plugin.getSettings().getEffect(), true);
-                                plugin.getServer().getPluginManager().callEvent(event);
-                            }
+                            event = new QuesterPostViewEffectEvent(quester, entity,
+                                    plugin.getSettings().getEffect(), true);
+                            plugin.getServer().getPluginManager().callEvent(event);
                         }
                     }
                 }

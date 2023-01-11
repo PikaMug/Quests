@@ -4506,69 +4506,109 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         return null;
     }
+
+    /**
+     * Checks whether an NPC has a quest that the player may accept
+     *
+     * @param npc the giver NPC UUID to check
+     * @param quester The player to check
+     * @return true if at least one available quest has not yet been completed
+     */
+    public boolean hasQuest(final UUID npc, final IQuester quester) {
+        for (final IQuest q : quests) {
+            if (q.getNpcStart() != null && !quester.getCompletedQuestsTemp().contains(q)) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Unused internally, left for external use
+    /**
+     * Checks whether an NPC has a quest that the player has already completed
+     *
+     * @param npc The giver NPC UUID to check
+     * @param quester The player to check
+     * @return true if at least one available quest has been completed
+     */
+    public boolean hasCompletedQuest(final UUID npc, final IQuester quester) {
+        for (final IQuest q : quests) {
+            if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether an NPC has a repeatable quest that the player has already completed
+     *
+     * @param npc The giver NPC UUID to check
+     * @param quester The player to check
+     * @return true if at least one available, redoable quest has been completed
+     */
+    public boolean hasCompletedRedoableQuest(final UUID npc, final IQuester quester) {
+        for (final IQuest q : quests) {
+            if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)
+                    && q.getPlanner().getCooldown() > -1) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     
     /**
-     * Checks whether a NPC has a quest that the player may accept
+     * Checks whether an NPC has a quest that the player may accept
      * 
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available quest has not yet been completed
+     * @deprecated Use {@link #hasQuest(UUID, IQuester)}
      */
+    @Deprecated
     public boolean hasQuest(final NPC npc, final IQuester quester) {
-        for (final IQuest q : quests) {
-            if (q.getNpcStart() != null && !quester.getCompletedQuestsTemp().contains(q)) {
-                if (q.getNpcStart().equals(npc.getUniqueId())) {
-                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
-                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return hasQuest(npc.getUniqueId(), quester);
     }
     
     // Unused internally, left for external use
     /**
-     * Checks whether a NPC has a quest that the player has already completed
+     * Checks whether an NPC has a quest that the player has already completed
      * 
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available quest has been completed
+     * @deprecated Use {@link #hasCompletedQuest(UUID, IQuester)}
      */
+    @Deprecated
     public boolean hasCompletedQuest(final NPC npc, final IQuester quester) {
-        for (final IQuest q : quests) {
-            if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)) {
-                if (q.getNpcStart().equals(npc.getUniqueId())) {
-                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
-                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return hasCompletedQuest(npc.getUniqueId(), quester);
     }
     
     /**
-     * Checks whether a NPC has a repeatable quest that the player has already completed
+     * Checks whether an NPC has a repeatable quest that the player has already completed
      * 
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available, redoable quest has been completed
+     * @deprecated Use {@link #hasCompletedRedoableQuest(UUID, IQuester)}
      */
+    @Deprecated
     public boolean hasCompletedRedoableQuest(final NPC npc, final IQuester quester) {
-        for (final IQuest q : quests) {
-            if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)
-                    && q.getPlanner().getCooldown() > -1) {
-                if (q.getNpcStart().equals(npc.getUniqueId())) {
-                    final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
-                    if (!ignoreLockedQuests || q.testRequirements(quester)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return hasCompletedRedoableQuest(npc.getUniqueId(), quester);
     }
 }
