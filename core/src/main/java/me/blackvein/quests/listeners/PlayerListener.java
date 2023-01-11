@@ -404,7 +404,7 @@ public class PlayerListener implements Listener {
                                                 }
                                             }
                                             quester.setQuestIdToTake(q.getId());
-                                            if (!plugin.getSettings().canAskConfirmation()) {
+                                            if (!plugin.getSettings().canConfirmAccept()) {
                                                 quester.takeQuest(q, false);
                                             } else {
                                                 final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());

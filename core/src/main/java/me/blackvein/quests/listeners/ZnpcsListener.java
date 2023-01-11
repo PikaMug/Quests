@@ -230,7 +230,7 @@ public class ZnpcsListener implements Listener {
                     final IQuest q = npcQuests.get(0);
                     if (quester.canAcceptOffer(q, true)) {
                         quester.setQuestIdToTake(q.getId());
-                        if (!plugin.getSettings().canAskConfirmation()) {
+                        if (!plugin.getSettings().canConfirmAccept()) {
                             quester.takeQuest(q, false);
                         } else {
                             if (q.getGUIDisplay() != null) {

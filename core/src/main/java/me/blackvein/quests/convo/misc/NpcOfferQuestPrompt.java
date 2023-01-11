@@ -228,7 +228,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                     for (final String msg : extracted(plugin, quester).split("<br>")) {
                         player.sendMessage(msg);
                     }
-                    if (!plugin.getSettings().canAskConfirmation()) {
+                    if (!plugin.getSettings().canConfirmAccept()) {
                         quester.takeQuest(q, false);
                     } else {
                         plugin.getConversationFactory().buildConversation(player).begin();
