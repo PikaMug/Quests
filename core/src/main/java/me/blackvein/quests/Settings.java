@@ -26,7 +26,6 @@ public class Settings implements ISettings {
     private boolean allowCommands = true;
     private boolean allowCommandsForNpcQuests = false;
     private boolean allowPranks = true;
-    private boolean askConfirmation = true;
     private boolean clickablePrompts = true;
     private int conditionInterval = 7;
     private boolean confirmAbandon = true;
@@ -80,19 +79,6 @@ public class Settings implements ISettings {
     public void setAllowPranks(final boolean allowPranks) {
         this.allowPranks = allowPranks;
     }
-    /**
-     * @deprecated Use {@link #canConfirmAccept()}
-     */
-    public boolean canAskConfirmation() {
-        return askConfirmation;
-    }
-    /**
-     * @deprecated Use {@link #setConfirmAccept(boolean)}
-     */
-    public void setAskConfirmation(final boolean askConfirmation) {
-        this.askConfirmation = askConfirmation;
-        this.confirmAccept = askConfirmation;
-    }
     public boolean canClickablePrompts() {
         return clickablePrompts;
     }
@@ -115,7 +101,6 @@ public class Settings implements ISettings {
         return confirmAccept;
     }
     public void setConfirmAccept(final boolean confirmAccept) {
-        this.askConfirmation = confirmAccept;
         this.confirmAccept = confirmAccept;
     }
     public int getConsoleLogging() {
@@ -245,7 +230,6 @@ public class Settings implements ISettings {
         allowCommands = config.getBoolean("allow-command-questing", true);
         allowCommandsForNpcQuests = config.getBoolean("allow-command-quests-with-npcs", false);
         allowPranks = config.getBoolean("allow-pranks", true);
-        askConfirmation = config.getBoolean("confirm-accept", true);
         clickablePrompts = config.getBoolean("clickable-prompts", true);
         conditionInterval = config.getInt("condition-interval", 8);
         confirmAbandon = config.getBoolean("confirm-abandon", true);
