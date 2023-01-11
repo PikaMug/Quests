@@ -174,9 +174,11 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
 
+        // 1 - Trigger server to initialize Legacy Material Support
+        Material.matchMaterial("STONE", true);
         ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
 
-        // 1 - Initialize variables
+        // 2 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         settings = new Settings(this);
         try {
@@ -201,39 +203,39 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         depends = new Dependencies(this);
         trigger = new DenizenTrigger(this);
 
-        // 2 - Load main config
+        // 3 - Load main config
         settings.init();
         if (settings.getLanguage().contains("-")) {
             final Metrics metrics = new Metrics(this);
             metrics.addCustomChart(new Metrics.SimplePie("language", () -> settings.getLanguage()));
         }
         
-        // 3 - Setup language files
+        // 4 - Setup language files
         try {
             setupLang();
         } catch (final IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 
-        // 4 - Load command executor
+        // 5 - Load command executor
         cmdExecutor = new CommandManager(this);
         
-        // 5 - Load soft-depends
+        // 6 - Load soft-depends
         depends.init();
         
-        // 6 - Save resources from jar
+        // 7 - Save resources from jar
         saveResourceAs("quests.yml", "quests.yml", false);
         saveResourceAs("actions.yml", "actions.yml", false);
         saveResourceAs("conditions.yml", "conditions.yml", false);
         
-        // 7 - Save config with any new options
+        // 8 - Save config with any new options
         getConfig().options().copyDefaults(true);
         getConfig().options().header("See https://pikamug.gitbook.io/quests/setup/configuration");
         saveConfig();
         final StorageFactory storageFactory = new StorageFactory(this);
         storage = storageFactory.getInstance();
         
-        // 8 - Setup commands
+        // 9 - Setup commands
         if (getCommand("quests") != null) {
             Objects.requireNonNull(getCommand("quests")).setExecutor(getTabExecutor());
             Objects.requireNonNull(getCommand("quests")).setTabCompleter(getTabExecutor());
@@ -247,7 +249,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             Objects.requireNonNull(getCommand("quest")).setTabCompleter(getTabExecutor());
         }
         
-        // 9 - Build conversation factories
+        // 10 - Build conversation factories
         this.conversationFactory = new ConversationFactory(this).withModality(false)
                 .withPrefix(context -> ChatColor.GRAY.toString())
                 .withFirstPrompt(new QuestAcceptPrompt()).withTimeout(settings.getAcceptTimeout())
@@ -257,7 +259,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 .withFirstPrompt(new NpcOfferQuestPrompt()).withTimeout(settings.getAcceptTimeout())
                 .withLocalEcho(false).addConversationAbandonedListener(convoListener);
 
-        // 10 - Register listeners
+        // 11 - Register listeners
         getServer().getPluginManager().registerEvents(getBlockListener(), this);
         getServer().getPluginManager().registerEvents(getItemListener(), this);
         depends.linkCitizens();
@@ -275,7 +277,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             getServer().getPluginManager().registerEvents(getPartiesListener(), this);
         }
 
-        // 11 - Attempt to check for updates
+        // 12 - Attempt to check for updates
         new UpdateChecker(this, 3711).getVersion(version -> {
             if (!getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
                 getLogger().info(ChatColor.DARK_GREEN + Lang.get("updateTo").replace("<version>",
@@ -283,7 +285,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
         });
 
-        // 12 - Delay loading of quests, actions and modules
+        // 13 - Delay loading of quests, actions and modules
         delayLoadQuestInfo();
     }
 
