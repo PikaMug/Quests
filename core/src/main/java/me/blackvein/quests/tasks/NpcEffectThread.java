@@ -22,6 +22,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class NpcEffectThread implements Runnable {
 
@@ -38,15 +39,16 @@ public class NpcEffectThread implements Runnable {
             if (!nearby.isEmpty()) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Entity entity : nearby) {
-                    if (plugin.getDependencies().isSupportedNPC(entity)) {
+                    UUID uuid = plugin.getDependencies().getUUIDFromNPC(entity);
+                    if (uuid != null) {
                         final QuesterPostViewEffectEvent event;
-                        if (plugin.hasQuest(entity.getUniqueId(), quester)) {
+                        if (plugin.hasQuest(uuid, quester)) {
                             showEffect(player, entity, plugin.getSettings().getEffect());
 
                             event = new QuesterPostViewEffectEvent(quester, entity,
                                     plugin.getSettings().getEffect(), false);
                             plugin.getServer().getPluginManager().callEvent(event);
-                        } else if (plugin.hasCompletedRedoableQuest(entity.getUniqueId(), quester)) {
+                        } else if (plugin.hasCompletedRedoableQuest(uuid, quester)) {
                             showEffect(player, entity, plugin.getSettings().getRedoEffect());
 
                             event = new QuesterPostViewEffectEvent(quester, entity,

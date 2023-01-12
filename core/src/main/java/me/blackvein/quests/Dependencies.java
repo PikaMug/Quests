@@ -323,17 +323,16 @@ public class Dependencies implements IDependencies {
         return "NPC";
     }
 
-    /**
-     * Checks whether an Entity is a supported NPC
-     *
-     * @param entity the Entity to check
-     * @return true if a supported NPC
-     */
-    public boolean isSupportedNPC(Entity entity) {
+    public @Nullable UUID getUUIDFromNPC(final Entity entity) {
         if (citizens != null && citizens.getNPCRegistry().isNPC(entity)) {
-            return true;
+            return citizens.getNPCRegistry().getNPC(entity).getUniqueId();
+        } else if (getZnpcsUuids().contains(entity.getUniqueId())) {
+            final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(entity.getUniqueId())).findAny();
+            if (opt.isPresent()) {
+                return opt.get().getUUID();
+            }
         }
-        return getZnpcsUuids().contains(entity.getUniqueId());
+        return null;
     }
     
     public int getMcmmoSkillLevel(final SkillType st, final String player) {
