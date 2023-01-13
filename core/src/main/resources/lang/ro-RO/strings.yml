@@ -210,7 +210,7 @@ stageEditorReachLocationRadiiPrompt: "Introduceți o rază de acțiune pentru fi
 stageEditorReachLocationNamesPrompt: "Introdu numele localităților, <semicolon>, <cancel>"
 stageEditorTameAmountsPrompt: "Introdu suma entităților îmblânzite, <space>, <cancel>"
 stageEditorShearColorsPrompt: "Introdu culorile oilor, <space>, <cancel>"
-stageEditorShearAmountsPrompt: "Introduceți numărul a câtă lână să se taie, <space>, <cancel>"
+stageEditorShearAmountsPrompt: "Introduceți cantitate de lână să se taie, <space>, <cancel>"
 stageEditorEventsPrompt: "Introdu un nume pentru eveniment, <clear>, <cancel>"
 stageEditorChatEventsPrompt: "Introdu un nume pentru eveniment pentru a adăuga, <clear>, <cancel>"
 stageEditorChatEventsTriggerPrompt: "Introdu un text pentru a porni <action>, <cancel>"
