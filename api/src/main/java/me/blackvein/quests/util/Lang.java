@@ -225,8 +225,17 @@ public class Lang {
                 allStrings.put(key, config.getString(key));
             }
         }
-        final FileConfiguration config= YamlConfiguration
-                .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
+        FileConfiguration config = null;
+        try {
+            config = YamlConfiguration
+                    .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            plugin.getPluginLogger().severe("Unable to load config for language " + iso);
+            e.printStackTrace();
+        }
+        if (config == null) {
+            return;
+        }
         FileConfiguration config_new = null;
         if (exists_new) {
             config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
