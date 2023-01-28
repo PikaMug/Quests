@@ -201,7 +201,7 @@ public class Lang {
                 + File.separator + "strings.yml");
         final File langFile_new = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings_new.yml");
-        final boolean exists_new = langFile_new.exists();
+        boolean exists_new = langFile_new.exists();
         final LinkedHashMap<String, String> allStrings = new LinkedHashMap<>();
         if (!(langFile.exists() && iso.split("-").length > 1)) {
             if (defaultLang.isEmpty()) {
@@ -225,21 +225,22 @@ public class Lang {
                 allStrings.put(key, config.getString(key));
             }
         }
-        FileConfiguration config = null;
-        try {
+        FileConfiguration config;
+        if (langFile.length() > 4) {
             config = YamlConfiguration
                     .loadConfiguration(new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            plugin.getPluginLogger().severe("Unable to load config for language " + iso);
-            e.printStackTrace();
-        }
-        if (config == null) {
-            return;
+        } else {
+            config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects
+                    .requireNonNull(plugin.getPluginResource("strings.yml")), StandardCharsets.UTF_8));
         }
         FileConfiguration config_new = null;
         if (exists_new) {
-            config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
-                    new FileInputStream(langFile_new), StandardCharsets.UTF_8));
+            if (langFile_new.length() > 5) {
+                config_new = YamlConfiguration.loadConfiguration(new InputStreamReader(
+                        new FileInputStream(langFile_new), StandardCharsets.UTF_8));
+            } else {
+                exists_new = false;
+            }
         }
         // Load user's lang file and determine new strings
         for (final String key : config.getKeys(false)) {
@@ -308,7 +309,11 @@ public class Lang {
         } else {
             otherLang.put(iso, allStrings);
         }
-        plugin.getPluginLogger().info("Loaded language " + iso + ". Translations via Crowdin");
+        if (langFile.length() > 4) {
+            plugin.getPluginLogger().info("Loaded language " + iso + ". Translations via Crowdin");
+        } else {
+            plugin.getPluginLogger().info("Failed to load language " + iso + " due to lack of translations");
+        }
     }
 
     private static class LangToken {
