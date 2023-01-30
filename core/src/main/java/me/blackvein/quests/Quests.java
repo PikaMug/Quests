@@ -175,7 +175,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
 
         // 1 - Trigger server to initialize Legacy Material Support
-        Material.matchMaterial("STONE", true);
+        try {
+            Material.matchMaterial("STONE", true);
+        } catch (final NoSuchMethodError ignored) {
+            // Do nothing
+        }
+
         ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
 
         // 2 - Initialize variables
