@@ -35,6 +35,8 @@ public class Condition implements ICondition {
     private LinkedList<String> permissions = new LinkedList<>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<>();
+    private int tickStartWhileStayingWithin = -1;
+    private int tickEndWhileStayingWithin = -1;
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<>();
     private LinkedList<String> regionsWhileStayingWithin = new LinkedList<>();
     private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<>();
@@ -117,6 +119,26 @@ public class Condition implements ICondition {
     @Override
     public void setWorldsWhileStayingWithin(final LinkedList<String> worldsWhileStayingWithin) {
         this.worldsWhileStayingWithin = worldsWhileStayingWithin;
+    }
+
+    @Override
+    public int getTickStartWhileStayingWithin() {
+        return tickStartWhileStayingWithin;
+    }
+
+    @Override
+    public void setTickStartWhileStayingWithin(final int tickStartWhileStayingWithin) {
+        this.tickStartWhileStayingWithin = tickStartWhileStayingWithin;
+    }
+
+    @Override
+    public int getTickEndWhileStayingWithin() {
+        return tickEndWhileStayingWithin;
+    }
+
+    @Override
+    public void setTickEndWhileStayingWithin(final int tickEndWhileStayingWithin) {
+        this.tickEndWhileStayingWithin = tickEndWhileStayingWithin;
     }
 
     @Override
@@ -239,6 +261,11 @@ public class Condition implements ICondition {
                 }
             }
             if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (tickStartWhileStayingWithin > -1 && tickEndWhileStayingWithin > -1) {
+            long t = player.getWorld().getTime();
+            if (t < tickStartWhileStayingWithin || t > tickEndWhileStayingWithin) {
                 failed = true;
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {

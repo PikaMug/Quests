@@ -112,6 +112,14 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             final LinkedList<String> worlds = new LinkedList<>(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
         }
+        if (condition.getTickStartWhileStayingWithin() > -1) {
+            final int tick = condition.getTickStartWhileStayingWithin();
+            context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, tick);
+        }
+        if (condition.getTickEndWhileStayingWithin() > -1) {
+            final int tick = condition.getTickEndWhileStayingWithin();
+            context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, tick);
+        }
         if (condition.getBiomesWhileStayingWithin() != null && !condition.getBiomesWhileStayingWithin().isEmpty()) {
             final LinkedList<String> biomes = new LinkedList<>(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
@@ -140,6 +148,8 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         context.setSessionData(CK.C_WHILE_PERMISSION, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
+        context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, null);
+        context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, null);
         context.setSessionData(CK.C_WHILE_WITHIN_BIOME, null);
         context.setSessionData(CK.C_WHILE_WITHIN_REGION, null);
         context.setSessionData(CK.C_WHILE_PLACEHOLDER_ID, null);
@@ -228,6 +238,12 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) != null) {
             section.set("stay-within-world", context.getSessionData(CK.C_WHILE_WITHIN_WORLD));
+        }
+        if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) != null) {
+            section.set("stay-within-ticks.start", context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START));
+        }
+        if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) != null) {
+            section.set("stay-within-ticks.end", context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) != null) {
             section.set("stay-within-biome", context.getSessionData(CK.C_WHILE_WITHIN_BIOME));

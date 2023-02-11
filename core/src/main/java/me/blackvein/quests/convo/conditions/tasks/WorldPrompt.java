@@ -14,9 +14,11 @@ package me.blackvein.quests.convo.conditions.tasks;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.blackvein.quests.Quests;
+import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class WorldPrompt extends QuestsEditorNumericPrompt {
     
@@ -44,7 +47,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         this.plugin = (Quests)context.getPlugin();
     }
     
-    private final int size = 4;
+    private final int size = 5;
     
     @Override
     public int getSize() {
@@ -62,8 +65,9 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             case 1:
             case 2:
             case 3:
-                return ChatColor.BLUE;
             case 4:
+                return ChatColor.BLUE;
+            case 5:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -76,14 +80,16 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinWorld");
         case 2:
-            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinBiome");
+            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinTicks");
         case 3:
+            return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinBiome");
+        case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 return ChatColor.YELLOW + Lang.get("conditionEditorStayWithinRegion");
             } else {
                 return ChatColor.GRAY + Lang.get("conditionEditorStayWithinRegion");
             }
-        case 4:
+        case 5:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -108,6 +114,14 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
+            if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) == null
+                    || context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START)
+                        + " - " + context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END)+ ChatColor.GRAY + ")";
+            }
+        case 3:
             if (context.getSessionData(CK.C_WHILE_WITHIN_BIOME) == null) {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
@@ -120,7 +134,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 }
                 return text.toString();
             }
-        case 3:
+        case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 if (context.getSessionData(CK.C_WHILE_WITHIN_REGION) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
@@ -138,7 +152,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
             } else {
                 return ChatColor.GRAY + "(" + Lang.get("notInstalled") + ")";
             }
-        case 4:
+        case 5:
             return "";
         default:
             return null;
@@ -168,10 +182,12 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         case 1:
             return new WorldsPrompt(context);
         case 2:
-            return new BiomesPrompt(context);
+            return new TicksListPrompt(context);
         case 3:
-            return new RegionsPrompt(context);
+            return new BiomesPrompt(context);
         case 4:
+            return new RegionsPrompt(context);
+        case 5:
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
@@ -238,6 +254,225 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
             }
             return new WorldPrompt(context);
+        }
+    }
+
+    public class TicksListPrompt extends ConditionsEditorNumericPrompt {
+
+        public TicksListPrompt(final ConversationContext context) {
+            super(context);
+
+        }
+
+        private final int size = 4;
+
+        @Override
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionEditorTicksTitle");
+        }
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                    return ChatColor.BLUE;
+                case 3:
+                    return ChatColor.RED;
+                case 4:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.YELLOW + Lang.get("conditionEditorSetStartTick");
+                case 2:
+                    return ChatColor.YELLOW + Lang.get("conditionEditorSetEndTick");
+                case 3:
+                    return ChatColor.RED + Lang.get("clear");
+                case 4:
+                    return ChatColor.GREEN + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        final int i = (int) Objects.requireNonNull(context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START));
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + i + ChatColor.GRAY + ")";
+                    }
+                case 2:
+                    if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        final int i = (int) Objects.requireNonNull(context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END));
+                        return ChatColor.GRAY + "(" + ChatColor.AQUA + i + ChatColor.GRAY + ")";
+                    }
+                case 3:
+                case 4:
+                    return "";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+            final ConditionsEditorPostOpenNumericPromptEvent event
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
+            }
+            return text.toString();
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+            switch (input.intValue()) {
+                case 1:
+                    return new TickStartPrompt(context);
+                case 2:
+                    return new TickEndPrompt(context);
+                case 3:
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
+                    context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, null);
+                    context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, null);
+                    return new WorldPrompt(context);
+                case 4:
+                    if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) != null
+                            && context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) != null) {
+                        return new ConditionMainPrompt(context);
+                    } else {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
+                        return new WorldPrompt.TicksListPrompt(context);
+                    }
+                default:
+                    return new WorldPrompt.TicksListPrompt(context);
+            }
+        }
+    }
+
+    public class TickStartPrompt extends QuestsEditorStringPrompt {
+
+        public TickStartPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorTicksPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i < 0 || i > 24000) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+                                .replace("<least>", "0").replace("<greatest>", "24000"));
+                        return new TickStartPrompt(context);
+                    } else {
+                        context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, i);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new TickStartPrompt(context);
+                }
+            }
+            return new TicksListPrompt(context);
+        }
+    }
+
+    public class TickEndPrompt extends QuestsEditorStringPrompt {
+
+        public TickEndPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return null;
+        }
+
+        @Override
+        public String getQueryText(final ConversationContext context) {
+            return Lang.get("conditionEditorTicksPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            return ChatColor.YELLOW + getQueryText(context);
+        }
+
+        @Override
+        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+            if (input == null) {
+                return null;
+            }
+            if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
+                try {
+                    final int i = Integer.parseInt(input);
+                    if (i < 0 || i > 24000) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
+                                .replace("<least>", "0").replace("<greatest>", "24000"));
+                        return new TickEndPrompt(context);
+                    } else {
+                        context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, i);
+                    }
+                } catch (final NumberFormatException e) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
+                    return new TickEndPrompt(context);
+                }
+            }
+            return new TicksListPrompt(context);
         }
     }
     

@@ -816,72 +816,7 @@ public class Quester implements IQuester {
                 if (stageStartMessage != null) {
                     p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, quest, getPlayer()));
                 }
-                final ICondition c = stage.getCondition();
-                if (c != null && stage.getObjectiveOverrides().isEmpty()) {
-                    sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions"));
-                    if (!c.getEntitiesWhileRiding().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideEntity"));
-                        for (final String e : c.getEntitiesWhileRiding()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getNpcsWhileRiding().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorRideNPC"));
-                        for (final UUID u : c.getNpcsWhileRiding()) {
-                            if (plugin.getDependencies().getCitizens() != null) {
-                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
-                                        .getByUniqueId(u).getName());
-                            } else {
-                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(u);
-                            }
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getPermissions().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorPermissions"));
-                        for (final String e : c.getPermissions()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorItemsInMainHand"));
-                        for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(ItemUtil.getPrettyItemName(is
-                                    .getType().name()));
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinWorld"));
-                        for (final String w : c.getWorldsWhileStayingWithin()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(w);
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getBiomesWhileStayingWithin().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinBiome"));
-                        for (final String b : c.getBiomesWhileStayingWithin()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(MiscUtil
-                                    .snakeCaseToUpperCamelCase(b));
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getRegionsWhileStayingWithin().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinRegion"));
-                        for (final String r : c.getRegionsWhileStayingWithin()) {
-                            msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r);
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    } else if (!c.getPlaceholdersCheckIdentifier().isEmpty()) {
-                        final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorCheckPlaceholder"));
-                        int index = 0;
-                        for (final String r : c.getPlaceholdersCheckIdentifier()) {
-                            if (c.getPlaceholdersCheckValue().size() > index) {
-                                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r).append(ChatColor.GRAY)
-                                        .append(" = ").append(ChatColor.AQUA).append(c.getPlaceholdersCheckValue()
-                                        .get(index));
-                            }
-                            index++;
-                        }
-                        sendMessage(ChatColor.YELLOW + msg.toString());
-                    }
-                }
+                plugin.showConditions(quest, this);
             }
             if (quest.getInitialAction() != null) {
                 quest.getInitialAction().fire(this, quest);
