@@ -17,7 +17,6 @@ import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import io.github.znetworkw.znpcservers.npc.NPC;
-import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.QuestAbandonPrompt;
 import me.blackvein.quests.dependencies.IDependencies;
@@ -50,7 +49,6 @@ import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.unite.api.objects.PartyProvider;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -4914,7 +4912,8 @@ public class Quester implements IQuester {
                         .replace("<quest>", quest.getName()));
                 }
                 if (stage.getFailAction() != null) {
-                    getCurrentStage(quest).getFailAction().fire(this, quest);
+                    plugin.getServer().getScheduler().runTask(plugin, () ->
+                            getCurrentStage(quest).getFailAction().fire(this, quest));
                 }
                 hardQuit(quest);
             } else if (giveReason) {
