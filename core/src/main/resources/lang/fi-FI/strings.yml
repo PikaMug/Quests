@@ -228,7 +228,7 @@ eventEditorExists: "Toiminto on jo olemassa!"
 eventEditorDeleted: "Toiminto poistettu. Tehtävä- ja toimintatiedot on päivitetty."
 eventEditorSaved: "Toiminto tallennettu. Tehtävä- ja toimintatiedot on päivitetty."
 eventEditorEnterEventName: "Anna toiminnon nimi, <cancel>"
-eventEditorModifiedNote: 'Huomautus: Olet muokannut toimintoa, jota käytetään seuraavissa tehtävissä:'
+eventEditorModifiedNote: 'Olet muokannut toimintoa, jota käytetään seuraavissa tehtävissä:'
 eventEditorForcedToQuit: "Tallentaessasi toiminnon, kyseistä toimintoa suorittavat, joutuvat keskeyttämään sen."
 eventEditorEventInUse: "Seuraavat tehtävät käyttävät toimintoa"
 eventEditorMustModifyQuests: "Sinun täytyy muokata näitä tehtäviä ensin!"
