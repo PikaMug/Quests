@@ -239,7 +239,7 @@ conditionEditorInUse: "Idući zadaci koriste kondiciju"
 conditionEditorEnterName: "Upiši ime Kondicije, <cancel>"
 conditionEditorSaved: "Kondicija spremljena. Podaci zadataka i kondicija su ponovno učitani."
 conditionEditorDeleted: "Kondicija izbrisana. Podaci zadataka i kondicija su ponovno učitani."
-conditionEditorModifiedNote: 'Bilješka: Promijenio si kondiciju koju koriste ovi zadaci:'
+conditionEditorModifiedNote: 'Promijenio si kondiciju koju koriste ovi zadaci:'
 conditionEditorForcedToQuit: "Ako spremiš kondiciju, svi koji sada rade bilo koji od ovih zadataka će biti prisiljeni da ih napuste."
 conditionEditorSetName: "Postavi ime"
 conditionEditorWorld: "Svijet"
