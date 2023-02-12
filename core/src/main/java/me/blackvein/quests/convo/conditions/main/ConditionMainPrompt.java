@@ -544,11 +544,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
 
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
             if (!modified.isEmpty()) {
-                text.append("\n").append(ChatColor.RED).append(Lang.get("conditionEditorModifiedNote"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(Lang.get("conditionEditorModifiedNote"));
                 for (final String s : modified) {
                     text.append("\n").append(ChatColor.GRAY).append("    - ").append(ChatColor.DARK_RED).append(s);
                 }
-                text.append("\n").append(ChatColor.RED).append(Lang.get("conditionEditorForcedToQuit"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(Lang.get("conditionEditorForcedToQuit"));
             }
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)

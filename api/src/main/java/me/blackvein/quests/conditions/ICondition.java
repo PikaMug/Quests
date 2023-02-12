@@ -44,6 +44,10 @@ public interface ICondition extends Comparable<ICondition> {
 
     void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand);
 
+    LinkedList<ItemStack> getItemsWhileWearing();
+
+    void setItemsWhileWearing(final LinkedList<ItemStack> itemsWhileWearing);
+
     LinkedList<String> getWorldsWhileStayingWithin();
 
     void setWorldsWhileStayingWithin(final LinkedList<String> worldsWhileStayingWithin);

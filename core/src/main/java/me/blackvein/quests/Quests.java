@@ -1683,6 +1683,13 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             .getType().name()));
                 }
                 quester.sendMessage(ChatColor.YELLOW + msg.toString());
+            } else if (!c.getItemsWhileWearing().isEmpty()) {
+                final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorItemsWear"));
+                for (final ItemStack is : c.getItemsWhileWearing()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(ItemUtil.getPrettyItemName(is
+                            .getType().name()));
+                }
+                quester.sendMessage(ChatColor.YELLOW + msg.toString());
             } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
                 final StringBuilder msg = new StringBuilder("- " + Lang.get("conditionEditorStayWithinWorld"));
                 for (final String w : c.getWorldsWhileStayingWithin()) {
@@ -4057,6 +4064,19 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             condition.setItemsWhileHoldingMainHand(temp);
+        }
+        if (data.contains(conditionKey + "wear")) {
+            final LinkedList<ItemStack> temp = new LinkedList<>();
+            @SuppressWarnings("unchecked")
+            final List<ItemStack> stackList = (List<ItemStack>) data.get(conditionKey + "wear");
+            if (ConfigUtil.checkList(stackList, ItemStack.class)) {
+                for (final ItemStack stack : stackList) {
+                    if (stack != null) {
+                        temp.add(stack);
+                    }
+                }
+            }
+            condition.setItemsWhileWearing(temp);
         }
         if (data.contains(conditionKey + "stay-within-world")) {
             if (ConfigUtil.checkList(data.getList(conditionKey + "stay-within-world"), String.class)) {

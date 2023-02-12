@@ -36,7 +36,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         super(context);
     }
     
-    private final int size = 3;
+    private final int size = 4;
     
     @Override
     public int getSize() {
@@ -53,8 +53,9 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         switch (number) {
             case 1:
             case 2:
-                return ChatColor.BLUE;
             case 3:
+                return ChatColor.BLUE;
+            case 4:
                 return ChatColor.GREEN;
             default:
                 return null;
@@ -69,6 +70,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return ChatColor.YELLOW + Lang.get("conditionEditorItemsInMainHand");
         case 3:
+            return ChatColor.YELLOW + Lang.get("conditionEditorItemsWear");
+        case 4:
             return ChatColor.GREEN + Lang.get("done");
         default:
             return null;
@@ -111,6 +114,22 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 3:
+            if (context.getSessionData(CK.C_WHILE_WEARING) == null) {
+                return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+            } else {
+                final StringBuilder text = new StringBuilder();
+                final LinkedList<ItemStack> whileWearing
+                        = (LinkedList<ItemStack>) context.getSessionData(CK.C_WHILE_WEARING);
+                if (whileWearing != null) {
+                    for (final ItemStack item : whileWearing) {
+                        text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
+                                .append(ItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
+                                .append(ChatColor.AQUA).append(item.getAmount());
+                    }
+                }
+                return text.toString();
+            }
+        case 4:
             return "";
         default:
             return null;
@@ -155,6 +174,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new ItemsInMainHandListPrompt(context);
         case 3:
+            return new ItemsWearListPrompt(context);
+        case 4:
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
@@ -295,7 +316,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
                     }
                 } else {
-                    final LinkedList<ItemStack> items = new LinkedList<ItemStack>();
+                    final LinkedList<ItemStack> items = new LinkedList<>();
                     items.add((ItemStack) context.getSessionData("tempStack"));
                     context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
                 }
@@ -330,6 +351,131 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
                 return new PlayerPrompt(context);
             default:
                 return new ItemsInMainHandListPrompt(context);
+            }
+        }
+    }
+
+    public class ItemsWearListPrompt extends QuestsEditorNumericPrompt {
+
+        public ItemsWearListPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        private final int size = 3;
+
+        @Override
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return Lang.get("conditionEditorItemsWear");
+        }
+
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.BLUE;
+                case 2:
+                    return ChatColor.RED;
+                case 3:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch(number) {
+                case 1:
+                    return ChatColor.YELLOW + Lang.get("stageEditorDeliveryAddItem");
+                case 2:
+                    return ChatColor.RED + Lang.get("clear");
+                case 3:
+                    return ChatColor.GREEN + Lang.get("done");
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch(number) {
+                case 1:
+                    if (context.getSessionData(CK.C_WHILE_WEARING) == null) {
+                        return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
+                    } else {
+                        final StringBuilder text = new StringBuilder();
+                        final List<ItemStack> whileWearing
+                                = (List<ItemStack>) context.getSessionData(CK.C_WHILE_WEARING);
+                        if (whileWearing != null) {
+                            for (final ItemStack is : whileWearing) {
+                                text.append("\n").append(ChatColor.GRAY).append("     - ")
+                                        .append(ItemUtil.getDisplayString(is));
+                            }
+                        }
+                        return text.toString();
+                    }
+                case 2:
+                case 3:
+                    return "";
+                default:
+                    return null;
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public String getBasicPromptText(final ConversationContext context) {
+            // Check/add newly made item
+            if (context.getSessionData("tempStack") != null) {
+                if (context.getSessionData(CK.C_WHILE_WEARING) != null) {
+                    final List<ItemStack> items
+                            = (List<ItemStack>) context.getSessionData(CK.C_WHILE_WEARING);
+                    if (items != null) {
+                        items.add((ItemStack) context.getSessionData("tempStack"));
+                        context.setSessionData(CK.C_WHILE_WEARING, items);
+                    }
+                } else {
+                    final LinkedList<ItemStack> items = new LinkedList<>();
+                    items.add((ItemStack) context.getSessionData("tempStack"));
+                    context.setSessionData(CK.C_WHILE_WEARING, items);
+                }
+                ItemStackPrompt.clearSessionData(context);
+            }
+
+            if (context.getPlugin() != null) {
+                final QuestsEditorPostOpenNumericPromptEvent event
+                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                context.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
+            }
+            return text.toString();
+        }
+
+        @Override
+        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+            switch(input.intValue()) {
+                case 1:
+                    return new ItemStackPrompt(context, ItemsWearListPrompt.this);
+                case 2:
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
+                    context.setSessionData(CK.C_WHILE_WEARING, null);
+                    return new ItemsWearListPrompt(context);
+                case 3:
+                    return new PlayerPrompt(context);
+                default:
+                    return new ItemsWearListPrompt(context);
             }
         }
     }

@@ -1175,11 +1175,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
             if (!modified.isEmpty()) {
-                text.append("\n").append(ChatColor.RED).append(Lang.get("eventEditorModifiedNote"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(Lang.get("eventEditorModifiedNote"));
                 for (final String s : modified) {
                     text.append("\n").append(ChatColor.GRAY).append("    - ").append(ChatColor.DARK_RED).append(s);
                 }
-                text.append("\n").append(ChatColor.RED).append(Lang.get("eventEditorForcedToQuit"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(Lang.get("eventEditorForcedToQuit"));
             }
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)

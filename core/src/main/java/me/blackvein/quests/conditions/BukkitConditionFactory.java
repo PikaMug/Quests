@@ -108,6 +108,10 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             final LinkedList<ItemStack> items = new LinkedList<>(condition.getItemsWhileHoldingMainHand());
             context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, items);
         }
+        if (condition.getItemsWhileWearing() != null && !condition.getItemsWhileWearing().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(condition.getItemsWhileWearing());
+            context.setSessionData(CK.C_WHILE_WEARING, items);
+        }
         if (condition.getWorldsWhileStayingWithin() != null && !condition.getWorldsWhileStayingWithin().isEmpty()) {
             final LinkedList<String> worlds = new LinkedList<>(condition.getBiomesWhileStayingWithin());
             context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
@@ -147,6 +151,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         context.setSessionData(CK.C_WHILE_RIDING_NPC, null);
         context.setSessionData(CK.C_WHILE_PERMISSION, null);
         context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
+        context.setSessionData(CK.C_WHILE_WEARING, null);
         context.setSessionData(CK.C_WHILE_WITHIN_WORLD, null);
         context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, null);
         context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, null);
@@ -235,6 +240,9 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         }
         if (context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND) != null) {
             section.set("hold-main-hand", context.getSessionData(CK.C_WHILE_HOLDING_MAIN_HAND));
+        }
+        if (context.getSessionData(CK.C_WHILE_WEARING) != null) {
+            section.set("wear", context.getSessionData(CK.C_WHILE_WEARING));
         }
         if (context.getSessionData(CK.C_WHILE_WITHIN_WORLD) != null) {
             section.set("stay-within-world", context.getSessionData(CK.C_WHILE_WITHIN_WORLD));

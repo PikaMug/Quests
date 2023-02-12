@@ -34,6 +34,7 @@ public class Condition implements ICondition {
     private LinkedList<UUID> npcsWhileRiding = new LinkedList<>();
     private LinkedList<String> permissions = new LinkedList<>();
     private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<>();
+    private LinkedList<ItemStack> itemsWhileWearing = new LinkedList<>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<>();
     private int tickStartWhileStayingWithin = -1;
     private int tickEndWhileStayingWithin = -1;
@@ -109,6 +110,16 @@ public class Condition implements ICondition {
     @Override
     public void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand) {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
+    }
+
+    @Override
+    public LinkedList<ItemStack> getItemsWhileWearing() {
+        return itemsWhileWearing;
+    }
+
+    @Override
+    public void setItemsWhileWearing(final LinkedList<ItemStack> itemsWhileWearing) {
+        this.itemsWhileWearing = itemsWhileWearing;
     }
 
     @Override
@@ -250,6 +261,20 @@ public class Condition implements ICondition {
                 }
             }
             if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (!itemsWhileWearing.isEmpty()) {
+            // Must have ALL listed armor equipped
+            int matches = 0;
+            for (final ItemStack is : itemsWhileWearing) {
+                for (ItemStack armor : player.getInventory().getArmorContents()) {
+                    if (ItemUtil.compareItems(armor, is, true, true) == 0) {
+                        matches++;
+                        break;
+                    }
+                }
+            }
+            if (matches != itemsWhileWearing.size()) {
                 failed = true;
             }
         } else if (!worldsWhileStayingWithin.isEmpty()) {
