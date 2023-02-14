@@ -4834,9 +4834,18 @@ public class Quester implements IQuester {
                                 if (!id.equals(getUUID())) {
                                     if (distanceSquared > 0) {
                                         final Player player = Bukkit.getPlayer(id);
-                                        if (player != null && distanceSquared >= getPlayer().getLocation()
-                                                .distanceSquared(player.getLocation())) {
-                                            mq.add(plugin.getQuester(id));
+                                        if (player != null) {
+                                            final Location locationOne = getPlayer().getLocation();
+                                            final Location locationTwo = player.getLocation();
+                                            if (locationOne.getWorld() != null && locationTwo.getWorld() != null) {
+                                                if (locationOne.getWorld().getName().equals(locationTwo.getWorld()
+                                                        .getName())) {
+                                                    if (distanceSquared >= getPlayer().getLocation()
+                                                            .distanceSquared(player.getLocation())) {
+                                                        mq.add(plugin.getQuester(id));
+                                                    }
+                                                }
+                                            }
                                         }
                                     } else {
                                         mq.add(plugin.getQuester(id));

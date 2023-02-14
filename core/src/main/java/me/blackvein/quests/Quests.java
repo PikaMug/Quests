@@ -2484,7 +2484,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             opts.setIgnoreSilkTouch(config.getBoolean("quests." + questKey + ".options.ignore-silk-touch"));
         }
         if (config.contains("quests." + questKey + ".options.external-party-plugin")) {
-            opts.setExternalPartyPlugin(config.getString("quests." + questKey + ".external-party-plugin"));
+            opts.setExternalPartyPlugin(config.getString("quests." + questKey + ".options.external-party-plugin"));
         }
         if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
             opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
