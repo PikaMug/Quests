@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.2.6</version>
+            <version>3.2.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -127,7 +127,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>Unite</artifactId>
-            <version>1.1.3</version>
+            <version>59dade0c7c</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
