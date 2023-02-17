@@ -275,6 +275,8 @@ eventEditorMustModifyQuests: "Trebuie să modificați mai întâi aceste misiuni
 eventEditorNotANumberList: "Intrarea nu a fost o listă de numere!"
 eventEditorGiveItemsTitle: "- Dă Obiecte -"
 eventEditorEffectsTitle: "- Efecte Sonore -"
+eventEditorStormTitle: "- Furtună -"
+eventEditorThunderTitle: "- Acțiune Furtuna -"
 eventEditorMobsTitle: "- Creaturi -"
 eventEditorAddMobTypesTitle: "- Adaugă Creatură -"
 eventEditorWorldsTitle: "- Lume -"
