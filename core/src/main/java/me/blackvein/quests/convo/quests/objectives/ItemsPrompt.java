@@ -142,7 +142,8 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
+                final LinkedList<ItemStack> items
+                        = (LinkedList<ItemStack>) context.getSessionData(pref + CK.S_BREW_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
@@ -701,7 +702,9 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ").append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
             }
             return text.toString();
         }

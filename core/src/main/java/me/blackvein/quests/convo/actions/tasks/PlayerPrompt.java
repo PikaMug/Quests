@@ -964,7 +964,8 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(Lang.get("cmdDone"))) {
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
+                        .getSelectedTeleportLocations();
                 final Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
@@ -978,12 +979,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.E_TELEPORT, null);
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
+                        .getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
+                        .getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);

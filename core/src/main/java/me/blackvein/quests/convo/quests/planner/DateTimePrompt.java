@@ -80,9 +80,9 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
         final Double zonedHour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zonedHour).replace("-", "").split("\\.");
         final DecimalFormat zoneFormat = new DecimalFormat("00");
-        dateData += ChatColor.LIGHT_PURPLE + "UTC" + (zonedHour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0]))
-                + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
-                + cal.getTimeZone().getDisplayName(loc) + ")";
+        dateData += ChatColor.LIGHT_PURPLE + "UTC" + (zonedHour < 0 ? "-":"+")
+                + zoneFormat.format(Integer.valueOf(sep[0])) + ":" + zoneFormat.format(Integer.valueOf(sep[1]))
+                + ChatColor.GREEN + " (" + cal.getTimeZone().getDisplayName(loc) + ")";
         return dateData;
     }
     
@@ -201,7 +201,9 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             text.append(getDataText(context));
         }
         for (int i = 0; i <= size - 1; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ").append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
         return text.toString();
     }

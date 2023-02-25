@@ -15,10 +15,12 @@ package me.blackvein.quests.convo.conditions.tasks;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
@@ -38,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class WorldPrompt extends QuestsEditorNumericPrompt {
+public class WorldPrompt extends ConditionsEditorNumericPrompt {
     
     private final Quests plugin;
     
@@ -162,8 +164,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
         if (context.getPlugin() != null) {
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final ConditionsEditorPostOpenNumericPromptEvent event
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
         
@@ -199,7 +201,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class WorldsPrompt extends QuestsEditorStringPrompt {
+    public class WorldsPrompt extends ConditionsEditorStringPrompt {
         
         public WorldsPrompt(final ConversationContext context) {
             super(context);
@@ -218,8 +220,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             
@@ -372,7 +374,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class TickStartPrompt extends QuestsEditorStringPrompt {
+    public class TickStartPrompt extends ConditionsEditorStringPrompt {
 
         public TickStartPrompt(final ConversationContext context) {
             super(context);
@@ -391,8 +393,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 
@@ -424,7 +426,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class TickEndPrompt extends QuestsEditorStringPrompt {
+    public class TickEndPrompt extends ConditionsEditorStringPrompt {
 
         public TickEndPrompt(final ConversationContext context) {
             super(context);
@@ -443,8 +445,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 
@@ -476,7 +478,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class BiomesPrompt extends QuestsEditorStringPrompt {
+    public class BiomesPrompt extends ConditionsEditorStringPrompt {
         
         public BiomesPrompt(final ConversationContext context) {
             super(context);
@@ -495,8 +497,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             
@@ -534,7 +536,7 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class RegionsPrompt extends QuestsEditorStringPrompt {
+    public class RegionsPrompt extends ConditionsEditorStringPrompt {
         
         public RegionsPrompt(final ConversationContext context) {
             super(context);
@@ -553,8 +555,8 @@ public class WorldPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             

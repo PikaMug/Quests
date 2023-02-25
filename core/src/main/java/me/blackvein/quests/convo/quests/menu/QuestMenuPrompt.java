@@ -221,7 +221,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName)
+                    .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -265,7 +266,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event 
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName)
+                    .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 

@@ -1585,7 +1585,8 @@ public class BlocksPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final QuestsEditorPostOpenStringPromptEvent event
+                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             

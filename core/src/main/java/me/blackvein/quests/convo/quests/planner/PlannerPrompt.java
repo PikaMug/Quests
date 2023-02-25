@@ -413,9 +413,9 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         final Double zonehour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zonehour).replace("-", "").split("\\.");
         final DecimalFormat zoneFormat = new DecimalFormat("00");
-        output += ChatColor.LIGHT_PURPLE + " UTC" + (zonehour < 0 ? "-":"+") + zoneFormat.format(Integer.valueOf(sep[0]))
-                + ":" + zoneFormat.format(Integer.valueOf(sep[1])) + ChatColor.GREEN + " (" 
-                + cal.getTimeZone().getDisplayName(loc) + ")";
+        output += ChatColor.LIGHT_PURPLE + " UTC" + (zonehour < 0 ? "-":"+")
+                + zoneFormat.format(Integer.valueOf(sep[0])) + ":" + zoneFormat.format(Integer.valueOf(sep[1]))
+                + ChatColor.GREEN + " (" + cal.getTimeZone().getDisplayName(loc) + ")";
         return output;
     }
 }

@@ -1838,7 +1838,8 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
-                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + co.getName()));
+                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice "
+                                + co.getName()));
                         line.addExtra(click);
                     }
                 }

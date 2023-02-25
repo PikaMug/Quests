@@ -642,7 +642,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
-                        final List<Boolean> reqItemsRemove = (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
+                        final List<Boolean> reqItemsRemove
+                                = (List<Boolean>) context.getSessionData(CK.REQ_ITEMS_REMOVE);
                         if (reqItemsRemove != null) {
                             for (final Boolean b : reqItemsRemove) {
                                 text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
@@ -913,7 +914,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         = new QuestsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
-            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName)
+                    .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -1269,13 +1271,16 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                final QuestsEditorPostOpenNumericPromptEvent event
+                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 
             final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -\n");
             for (int i = 1; i <= size; i++) {
-                text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ").append(getAdditionalText(context, i)).append("\n");
+                text.append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
+                        .append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i)).append("\n");
             }
             return text.toString();
         }
@@ -1605,7 +1610,8 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
-                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + co.getName()));
+                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice "
+                                + co.getName()));
                         line.addExtra(click);
                     }
                 }

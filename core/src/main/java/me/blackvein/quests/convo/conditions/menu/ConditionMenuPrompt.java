@@ -235,7 +235,8 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             final ConditionsEditorPostOpenStringPromptEvent event 
                     = new ConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedConditions().stream().map(ICondition::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedConditions().stream().map(ICondition::getName)
+                    .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 

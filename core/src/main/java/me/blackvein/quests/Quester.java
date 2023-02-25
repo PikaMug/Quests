@@ -4911,7 +4911,13 @@ public class Quester implements IQuester {
         }
         return mq;
     }
-    
+
+    /**
+     * Whether this Quester meets condition of given quest
+     *
+     * @param quest The quest to check
+     * @return Whether to send Quester reason for failure
+     */
     public boolean meetsCondition(final IQuest quest, final boolean giveReason) {
         final IStage stage = getCurrentStage(quest);
         if (stage != null && stage.getCondition() != null && !stage.getCondition().check(this, quest)) {
@@ -4937,7 +4943,12 @@ public class Quester implements IQuester {
         }
         return true;
     }
-    
+
+    /**
+     * Whether this Quester is currently selecting a block in editor
+     *
+     * @return true if selecting
+     */
     public boolean isSelectingBlock() {
         final UUID uuid = getPlayer().getUniqueId();
         return plugin.getQuestFactory().getSelectedBlockStarts().containsKey(uuid)
@@ -4949,7 +4960,12 @@ public class Quester implements IQuester {
                 || plugin.getActionFactory().getSelectedLightningLocations().containsKey(uuid)
                 || plugin.getActionFactory().getSelectedTeleportLocations().containsKey(uuid);
     }
-    
+
+    /**
+     * Whether this Quester is in the specified WorldGuard region
+     *
+     * @return true if in specified WorldGuard region
+     */
     public boolean isInRegion(final String regionID) {
         if (getPlayer() == null) {
             return false;

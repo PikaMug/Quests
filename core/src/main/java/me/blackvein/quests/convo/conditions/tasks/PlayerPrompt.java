@@ -12,10 +12,14 @@
 
 package me.blackvein.quests.convo.conditions.tasks;
 
+import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
+import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -30,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PlayerPrompt extends QuestsEditorNumericPrompt {
+public class PlayerPrompt extends ConditionsEditorNumericPrompt {
     
     public PlayerPrompt(final ConversationContext context) {
         super(context);
@@ -152,8 +156,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         }
 
         if (context.getPlugin() != null) {
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final ConditionsEditorPostOpenNumericPromptEvent event
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
         
@@ -187,7 +191,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class PermissionsPrompt extends QuestsEditorStringPrompt {
+    public class PermissionsPrompt extends ConditionsEditorStringPrompt {
         
         public PermissionsPrompt(final ConversationContext context) {
             super(context);
@@ -206,8 +210,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenStringPromptEvent event
-                        = new QuestsEditorPostOpenStringPromptEvent(context, this);
+                final ConditionsEditorPostOpenStringPromptEvent event
+                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             
@@ -230,7 +234,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class ItemsInMainHandListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsInMainHandListPrompt extends ConditionsEditorNumericPrompt {
         
         public ItemsInMainHandListPrompt(final ConversationContext context) {
             super(context);
@@ -324,8 +328,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             }
 
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenNumericPromptEvent event
-                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                final ConditionsEditorPostOpenNumericPromptEvent event
+                        = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 
@@ -355,7 +359,7 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class ItemsWearListPrompt extends QuestsEditorNumericPrompt {
+    public class ItemsWearListPrompt extends ConditionsEditorNumericPrompt {
 
         public ItemsWearListPrompt(final ConversationContext context) {
             super(context);
@@ -449,8 +453,8 @@ public class PlayerPrompt extends QuestsEditorNumericPrompt {
             }
 
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenNumericPromptEvent event
-                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                final ConditionsEditorPostOpenNumericPromptEvent event
+                        = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 

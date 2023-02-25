@@ -437,7 +437,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -548,7 +549,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final QuestsEditorPostOpenStringPromptEvent event
+                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -742,7 +744,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
 
             if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+                final QuestsEditorPostOpenNumericPromptEvent event
+                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
                 context.getPlugin().getServer().getPluginManager().callEvent(event);
             }
 
@@ -754,7 +757,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(" ").append(ChatColor.GRAY).append("(").append(Lang.get("noneSet")).append(")\n");
             }
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
             }
             return text.toString();
         }

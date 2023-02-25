@@ -461,7 +461,9 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
         final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + ChatColor.AQUA
                 + getTitle(context).replaceFirst(" \\| ", ChatColor.LIGHT_PURPLE + " | ") + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ").append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                    .append(getAdditionalText(context, i));
         }
         return text.toString();
     }
@@ -2151,11 +2153,13 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     final int i = Integer.parseInt(input);
                     stageDelay = i * 1000L;
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber").replace("<input>", input));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
+                            .replace("<input>", input));
                     return new DelayPrompt(context);
                 }
                 if (stageDelay < 1000) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum").replace("<number>", "1"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
+                            .replace("<number>", "1"));
                     return new DelayPrompt(context);
                 } else {
                     context.setSessionData(stagePrefix + CK.S_DELAY, stageDelay);
@@ -2535,7 +2539,8 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
-                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + co.getName()));
+                        click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice "
+                                + co.getName()));
                         line.addExtra(click);
                     }
                 }
