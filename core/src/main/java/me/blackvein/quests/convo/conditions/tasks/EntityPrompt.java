@@ -269,10 +269,8 @@ public class EntityPrompt extends ConditionsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + Lang.get("npcHint");
-            } else {
-                return ChatColor.YELLOW + getQueryText(context);
             }
+            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override

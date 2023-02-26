@@ -686,7 +686,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> locations
@@ -701,7 +701,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_RADIUS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<Integer> radius
@@ -715,7 +715,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(stagePrefix + CK.S_REACH_LOCATIONS_NAMES) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> names
@@ -1051,7 +1051,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_DISPLAYS) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> displays = (List<String>) context.getSessionData(stagePrefix
@@ -1066,7 +1066,7 @@ public class StageMainPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(stagePrefix + CK.S_PASSWORD_PHRASES) == null) {
-                    return ChatColor.GRAY + " (" + Lang.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> phrases = (List<String>) context.getSessionData(stagePrefix

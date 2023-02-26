@@ -164,8 +164,9 @@ public class PlannerPrompt extends QuestsEditorNumericPrompt {
         }
 
         final String name = Objects.requireNonNull((String) context.getSessionData(CK.Q_NAME));
-        final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + getTitle(context)
-                .replace(name, ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA));
+        final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + "- "  + getTitle(context)
+                .replace(name, ChatColor.AQUA + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_AQUA)
+                + " -");
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")

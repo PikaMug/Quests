@@ -379,9 +379,9 @@ public class RewardsPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
         
-        final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context).replace((String) Objects
-                .requireNonNull(context.getSessionData(CK.Q_NAME)), ChatColor.AQUA + (String) context
-                .getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE));
+        final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle(context)
+                .replace((String) Objects.requireNonNull(context.getSessionData(CK.Q_NAME)), ChatColor.AQUA
+                + (String) context.getSessionData(CK.Q_NAME) + ChatColor.LIGHT_PURPLE) + " -");
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")

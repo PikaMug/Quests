@@ -92,9 +92,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
         
-        final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + getTitle(context)
+        final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- "  + getTitle(context)
                 .replace((String) Objects.requireNonNull(context.getSessionData(CK.Q_NAME)), ChatColor.AQUA
-                        + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN));
+                + (String) context.getSessionData(CK.Q_NAME) + ChatColor.DARK_GREEN) + " -");
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
