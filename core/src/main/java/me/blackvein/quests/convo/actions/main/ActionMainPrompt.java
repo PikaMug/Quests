@@ -213,11 +213,15 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 6:
             return new ActionMobListPrompt(context);
         case 7:
-            if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                return new ActionDenizenPrompt(context);
+            if (plugin.getDependencies().getDenizenApi() != null) {
+                if (!plugin.hasLimitedAccess(context.getForWhom())) {
+                    return new ActionDenizenPrompt(context);
+                } else {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
+                            .replace("<mode>", Lang.get("trialMode")));
+                    return new ActionMainPrompt(context);
+                }
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("modeDeny")
-                        .replace("<mode>", Lang.get("trialMode")));
                 return new ActionMainPrompt(context);
             }
         case 8:

@@ -188,7 +188,11 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
         case 3:
             return new BiomesPrompt(context);
         case 4:
-            return new RegionsPrompt(context);
+            if (plugin.getDependencies().getWorldGuardApi() != null) {
+                return new RegionsPrompt(context);
+            } else {
+                return new WorldPrompt(context);
+            }
         case 5:
             try {
                 return new ConditionMainPrompt(context);
@@ -361,8 +365,10 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                     context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, null);
                     return new WorldPrompt(context);
                 case 4:
-                    if (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) != null
-                            && context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) != null) {
+                    if ((context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) != null
+                            && context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) != null)
+                            || (context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) == null
+                            && context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) == null)) {
                         return new ConditionMainPrompt(context);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
@@ -562,13 +568,15 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
             
             StringBuilder regions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             boolean any = false;
-            for (final World world : plugin.getServer().getWorlds()) {
-                final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
-                final RegionManager regionManager = api.getRegionManager(world);
-                if (regionManager != null) {
-                    for (final String region : regionManager.getRegions().keySet()) {
-                        any = true;
-                        regions.append(ChatColor.GREEN).append(region).append(", ");
+            final WorldGuardAPI api = plugin.getDependencies().getWorldGuardApi();
+            if (api != null) {
+                for (final World world : plugin.getServer().getWorlds()) {
+                    final RegionManager regionManager = api.getRegionManager(world);
+                    if (regionManager != null) {
+                        for (final String region : regionManager.getRegions().keySet()) {
+                            any = true;
+                            regions.append(ChatColor.GREEN).append(region).append(", ");
+                        }
                     }
                 }
             }
