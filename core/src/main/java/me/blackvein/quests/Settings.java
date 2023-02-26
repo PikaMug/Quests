@@ -42,6 +42,7 @@ public class Settings implements ISettings {
     private boolean npcEffects = true;
     private String effect = "note";
     private String redoEffect = "angry_villager";
+    private boolean showCompletedObjs = true;
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
     private int strictPlayerMovement = 0;
@@ -175,6 +176,12 @@ public class Settings implements ISettings {
     public void setRedoEffect(final String redoEffect) {
         this.redoEffect = redoEffect;
     }
+    public boolean canShowCompletedObjs() {
+        return showCompletedObjs;
+    }
+    public void setShowCompletedObjs(final boolean showCompletedObjs) {
+        this.showCompletedObjs = showCompletedObjs;
+    }
     public boolean canShowQuestReqs() {
         return showQuestReqs;
     }
@@ -255,6 +262,7 @@ public class Settings implements ISettings {
         npcEffects = config.getBoolean("npc-effects.enabled", true);
         effect = config.getString("npc-effects.new-quest", "note");
         redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
+        showCompletedObjs = config.getBoolean("show-completed-objectives", true);
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);
         strictPlayerMovement = config.getInt("strict-player-movement", 0);

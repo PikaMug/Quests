@@ -75,6 +75,10 @@ public class QuestJournal {
                 title.setBold(true);
                 final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
                 for (final BukkitObjective obj : ((Quester)owner).getCurrentObjectivesTemp(quest, false, false)) {
+                    if (!plugin.getSettings().canShowCompletedObjs()
+                            && obj.getMessage().startsWith(ChatColor.GRAY.toString())) {
+                        continue;
+                    }
                     if (obj.getMessage() != null) {
                         String[] split = null;
                         if (obj.getMessage().contains("<item>") && obj.getGoalAsItem() != null) {

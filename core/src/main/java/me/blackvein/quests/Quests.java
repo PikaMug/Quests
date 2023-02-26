@@ -1081,7 +1081,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     }
 
     /**
-     * Show all of a player's objectives for the current stage of a quest.<p>
+     * Show applicable objectives for the current stage of a player's quest.<p>
      * 
      * Respects PlaceholderAPI and translations, when enabled.
      * 
@@ -1120,6 +1120,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                        continue;
+                    }
                     String message = color + "- " + Lang.get(quester.getPlayer(), "break");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1142,6 +1145,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                        continue;
+                    }
                     String message = color + "- " + Lang.get(quester.getPlayer(), "damage");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1164,6 +1170,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksPlaced) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                        continue;
+                    }
                     String message = color + "- " + Lang.get(quester.getPlayer(), "place");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1186,6 +1195,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksUsed) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                        continue;
+                    }
                     String message = color + "- " + Lang.get(quester.getPlayer(), "use");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1208,6 +1220,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksCut) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+                    if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                        continue;
+                    }
                     String message = color + "- " + Lang.get(quester.getPlayer(), "cut");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1234,6 +1249,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "craftItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
@@ -1260,6 +1278,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "smeltItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
@@ -1286,6 +1307,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "enchItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
@@ -1329,6 +1353,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "brewItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
@@ -1361,6 +1388,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "consumeItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
@@ -1394,6 +1424,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             final int toDeliver = is.getAmount();
             final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "deliver")
                     .replace("<npc>", depends.getNPCName(npc));
             if (message.contains("<count>")) {
@@ -1420,6 +1453,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 interacted = data.npcsInteracted.get(interactIndex);
             }
             final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
                     .replace("<npc>", depends.getNPCName(uuid));
             if (depends.getPlaceholderApi() != null) {
@@ -1436,6 +1472,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toNpcKill = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
             if (message.contains("<mob>")) {
                 message = message.replace("<mob>", depends.getNPCName(uuid));
@@ -1462,6 +1501,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toMobKill = stage.getMobNumToKill().get(mobKillIndex);
             final ChatColor color = mobKilled < toMobKill ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- ";
             if (stage.getLocationsToKillWithin().isEmpty()) {
                 message += Lang.get(quester.getPlayer(), "kill");
@@ -1497,6 +1539,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 tamed = data.mobsTamed.get(tameIndex);
             }
             final ChatColor color = tamed < toTame ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "tame");
             if (!message.contains("<mob>")) {
                 message += " <mob>";
@@ -1517,31 +1562,37 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         if (stage.getFishToCatch() != null) {
             final ChatColor color = data.getFishCaught() < stage.getFishToCatch() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "catchFish");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.getFishToCatch());
-            } else {
-                // Legacy
-                message += color + ": " + data.getFishCaught() + "/" + stage.getFishToCatch();
+            if (settings.canShowCompletedObjs()
+                    || (!settings.canShowCompletedObjs() && color.equals(ChatColor.GREEN))) {
+                String message = color + "- " + Lang.get(quester.getPlayer(), "catchFish");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.getFishToCatch());
+                } else {
+                    // Legacy
+                    message += color + ": " + data.getFishCaught() + "/" + stage.getFishToCatch();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                }
+                quester.sendMessage(message);
             }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-            }
-            quester.sendMessage(message);
         }
         if (stage.getCowsToMilk() != null) {
             final ChatColor color = data.getCowsMilked() < stage.getCowsToMilk() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "milkCow");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.getCowsToMilk());
-            } else {
-                // Legacy
-                message += color + ": " + data.getCowsMilked() + "/" + stage.getCowsToMilk();
+            if (settings.canShowCompletedObjs()
+                    || (!settings.canShowCompletedObjs() && color.equals(ChatColor.GREEN))) {
+                String message = color + "- " + Lang.get(quester.getPlayer(), "milkCow");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.getCowsToMilk());
+                } else {
+                    // Legacy
+                    message += color + ": " + data.getCowsMilked() + "/" + stage.getCowsToMilk();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                }
+                quester.sendMessage(message);
             }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-            }
-            quester.sendMessage(message);
         }
         int shearIndex = 0;
         for (final int toShear : stage.getSheepNumToShear()) {
@@ -1550,6 +1601,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 sheared = data.sheepSheared.get(shearIndex);
             }
             final ChatColor color = sheared < toShear ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + Lang.get(quester.getPlayer(), "shearSheep");
             message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(stage.getSheepToShear()
                     .get(shearIndex)));
@@ -1565,22 +1619,28 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         if (stage.getPlayersToKill() != null) {
             final ChatColor color = data.getPlayersKilled() < stage.getPlayersToKill() ? ChatColor.GREEN
                     : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "killPlayer");
-            if (message.contains("<count>")) {
-                message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/"
-                        + stage.getPlayersToKill());
-            } else {
-                // Legacy
-                message += color + ": " + data.getPlayersKilled() + "/" + stage.getPlayersToKill();
+            if (settings.canShowCompletedObjs()
+                    || (!settings.canShowCompletedObjs() && color.equals(ChatColor.GREEN))) {
+                String message = color + "- " + Lang.get(quester.getPlayer(), "killPlayer");
+                if (message.contains("<count>")) {
+                    message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/"
+                            + stage.getPlayersToKill());
+                } else {
+                    // Legacy
+                    message += color + ": " + data.getPlayersKilled() + "/" + stage.getPlayersToKill();
+                }
+                if (depends.getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                }
+                quester.sendMessage(message);
             }
-            if (depends.getPlaceholderApi() != null) {
-                message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-            }
-            quester.sendMessage(message);
         }
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
             if (i < data.locationsReached.size()) {
                 final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
+                if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                    continue;
+                }
                 String message = color + "- " + Lang.get(quester.getPlayer(), "goTo");
                 message = message.replace("<location>", stage.getLocationNames().get(i));
                 quester.sendMessage(message);
@@ -1593,6 +1653,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 said = data.passwordsSaid.get(passIndex);
             }
             final ChatColor color = !said ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             final String message = color + "- " + s;
             quester.sendMessage(message);
             passIndex++;
@@ -1605,6 +1668,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toClear = stage.getCustomObjectiveCounts().get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                continue;
+            }
             String message = color + "- " + co.getDisplay();
             for (final Entry<String,Object> prompt : co.getData()) {
                 final String replacement = "%" + prompt.getKey() + "%";

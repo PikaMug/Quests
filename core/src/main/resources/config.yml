@@ -19,6 +19,7 @@ npc-effects:
   enabled: true
   new-quest: note
   redo-quest: heart
+show-completed-objectives: true
 show-requirements: true
 show-titles: true
 storage-data:

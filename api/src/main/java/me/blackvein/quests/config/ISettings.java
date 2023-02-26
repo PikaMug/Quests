@@ -53,6 +53,8 @@ public interface ISettings {
     void setEffect(final String effect);
     String getRedoEffect();
     void setRedoEffect(final String redoEffect);
+    boolean canShowCompletedObjs();
+    void setShowCompletedObjs(final boolean showCompletedObjs);
     boolean canShowQuestReqs();
     void setShowQuestReqs(final boolean showQuestReqs);
     boolean canShowQuestTitles();
