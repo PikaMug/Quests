@@ -268,7 +268,6 @@ eventEditorExists: "Acțiunea există deja!"
 eventEditorDeleted: "Acțiune ștearsă, Misiunile și Acțiunile au fost încărcate."
 eventEditorSaved: "Acțiune salvată, Misiunile și Acțiunile au fost încărcate."
 eventEditorEnterEventName: "Introdu numele Acțiunii, <cancel>"
-eventEditorModifiedNote: 'Ai modificat o acțiune pe care o folosesc următoarele misiuni:'
 eventEditorForcedToQuit: "Dacă salvezi acțiunea, oricine face în mod activ oricare dintre aceste misiuni va fi forțat să renunțe la ele."
 eventEditorEventInUse: "Urmatoarele misiuni folosesc actiunea"
 eventEditorMustModifyQuests: "Trebuie să modificați mai întâi aceste misiuni!"
