@@ -383,6 +383,7 @@ conditionEditorInUse: "以下任务使用条件"
 conditionEditorEnterName: "请输入条件名，<cancel>"
 conditionEditorSaved: "已保存条件。已重载任务和条件数据。"
 conditionEditorDeleted: "条件已删除。已重载任务和条件数据。"
+conditionEditorModifiedNote: '注意：你已经对以下任务的条件进行修改：'
 conditionEditorForcedToQuit: "如果您保存该条件，任何正在进行这些任务的人都将被强制放弃任务。"
 conditionEditorSetName: "设置名称"
 conditionEditorEntity: "实体"
