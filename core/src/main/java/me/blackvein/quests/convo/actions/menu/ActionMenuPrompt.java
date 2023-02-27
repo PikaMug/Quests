@@ -292,7 +292,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<String> used = new LinkedList<String>();
+                final LinkedList<String> used = new LinkedList<>();
                 final IAction a = plugin.getAction(input);
                 if (a != null) {
                     for (final IQuest quest : plugin.getLoadedQuests()) {
@@ -342,7 +342,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         public String getTitle(final ConversationContext context) {
             return null;
         }
-        
+
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -353,7 +354,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:

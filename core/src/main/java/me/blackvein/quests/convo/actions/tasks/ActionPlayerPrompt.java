@@ -42,11 +42,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerPrompt extends ActionsEditorNumericPrompt {
+public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public PlayerPrompt(final ConversationContext context) {
+    public ActionPlayerPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -233,33 +233,33 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new PlayerMessagePrompt(context);
+            return new ActionPlayerMessagePrompt(context);
         case 2:
-            return new PlayerItemListPrompt(context);
+            return new ActionPlayerItemListPrompt(context);
         case 3:
-            return new PlayerPotionListPrompt(context);
+            return new ActionPlayerPotionListPrompt(context);
         case 4:
-            return new PlayerHungerPrompt(context);
+            return new ActionPlayerHungerPrompt(context);
         case 5:
-            return new PlayerSaturationPrompt(context);
+            return new ActionPlayerSaturationPrompt(context);
         case 6:
-            return new PlayerHealthPrompt(context);
+            return new ActionPlayerHealthPrompt(context);
         case 7:
             if (context.getForWhom() instanceof Player) {
                 final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-                return new PlayerTeleportPrompt(context);
+                return new ActionPlayerTeleportPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-                return new PlayerPrompt(context);
+                return new ActionPlayerPrompt(context);
             }
         case 8:
             if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                return new PlayerCommandsPrompt(context);
+                return new ActionPlayerCommandsPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("noPermission"));
-                return new PlayerPrompt(context);
+                return new ActionPlayerPrompt(context);
             }
         case 9:
             final Boolean b = (Boolean) context.getSessionData(CK.E_CLEAR_INVENTORY);
@@ -268,17 +268,17 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
             } else {
                 context.setSessionData(CK.E_CLEAR_INVENTORY, true);
             }
-            return new PlayerPrompt(context);
+            return new ActionPlayerPrompt(context);
         case 10:
             return new ActionMainPrompt(context);
         default:
-            return new PlayerPrompt(context);
+            return new ActionPlayerPrompt(context);
         }
     }
     
-    public class PlayerMessagePrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerMessagePrompt extends ActionsEditorStringPrompt {
 
-        public PlayerMessagePrompt(final ConversationContext context) {
+        public ActionPlayerMessagePrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -315,9 +315,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class PlayerItemListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionPlayerItemListPrompt extends ActionsEditorNumericPrompt {
 
-        public PlayerItemListPrompt(final ConversationContext context) {
+        public ActionPlayerItemListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -421,22 +421,22 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, PlayerItemListPrompt.this);
+                return new ItemStackPrompt(context, ActionPlayerItemListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorItemsCleared"));
                 context.setSessionData(CK.E_ITEMS, null);
-                return new PlayerItemListPrompt(context);
+                return new ActionPlayerItemListPrompt(context);
             case 3:
                 return new ActionMainPrompt(context);
             default:
-                return new PlayerItemListPrompt(context);
+                return new ActionPlayerItemListPrompt(context);
             }
         }
     }
     
-    public class PlayerPotionListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionPlayerPotionListPrompt extends ActionsEditorNumericPrompt {
 
-        public PlayerPotionListPrompt(final ConversationContext context) {
+        public ActionPlayerPotionListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -553,32 +553,32 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new PlayerPotionTypesPrompt(context);
+                return new ActionPlayerPotionTypesPrompt(context);
             case 2:
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetPotionTypesFirst"));
-                    return new PlayerPotionListPrompt(context);
+                    return new ActionPlayerPotionListPrompt(context);
                 } else {
-                    return new PlayerPotionDurationsPrompt(context);
+                    return new ActionPlayerPotionDurationsPrompt(context);
                 }
             case 3:
                 if (context.getSessionData(CK.E_POTION_TYPES) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
-                    return new PlayerPotionListPrompt(context);
+                    return new ActionPlayerPotionListPrompt(context);
                 } else if (context.getSessionData(CK.E_POTION_DURATIONS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("eventEditorMustSetPotionDurationsFirst"));
-                    return new PlayerPotionListPrompt(context);
+                    return new ActionPlayerPotionListPrompt(context);
                 } else {
-                    return new PlayerPotionMagnitudesPrompt(context);
+                    return new ActionPlayerPotionMagnitudesPrompt(context);
                 }
             case 4:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorPotionsCleared"));
                 context.setSessionData(CK.E_POTION_TYPES, null);
                 context.setSessionData(CK.E_POTION_DURATIONS, null);
                 context.setSessionData(CK.E_POTION_STRENGTH, null);
-                return new PlayerPotionListPrompt(context);
+                return new ActionPlayerPotionListPrompt(context);
             case 5:
                 final int one;
                 final int two;
@@ -605,17 +605,17 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorListSizeMismatch"));
-                    return new PlayerPotionListPrompt(context);
+                    return new ActionPlayerPotionListPrompt(context);
                 }
             default:
-                return new PlayerPotionListPrompt(context);
+                return new ActionPlayerPotionListPrompt(context);
             }
         }
     }
 
-    public class PlayerPotionTypesPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerPotionTypesPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerPotionTypesPrompt(final ConversationContext context) {
+        public ActionPlayerPotionTypesPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -661,17 +661,17 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidPotionType")
                                 .replace("<input>", s));
-                        return new PlayerPotionTypesPrompt(context);
+                        return new ActionPlayerPotionTypesPrompt(context);
                     }
                 }
             }
-            return new PlayerPotionListPrompt(context);
+            return new ActionPlayerPotionListPrompt(context);
         }
     }
 
-    public class PlayerPotionDurationsPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerPotionDurationsPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerPotionDurationsPrompt(final ConversationContext context) {
+        public ActionPlayerPotionDurationsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -708,24 +708,24 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                         if (l < 1000) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new PlayerPotionDurationsPrompt(context);
+                            return new ActionPlayerPotionDurationsPrompt(context);
                         }
                         effDurations.add(l / 50L);
                     } catch (final NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                                 .replace("<input>", s));
-                        return new PlayerPotionDurationsPrompt(context);
+                        return new ActionPlayerPotionDurationsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.E_POTION_DURATIONS, effDurations);
             }
-            return new PlayerPotionListPrompt(context);
+            return new ActionPlayerPotionListPrompt(context);
         }
     }
 
-    public class PlayerPotionMagnitudesPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerPotionMagnitudesPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerPotionMagnitudesPrompt(final ConversationContext context) {
+        public ActionPlayerPotionMagnitudesPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -761,24 +761,24 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                         if (i < 1) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new PlayerPotionMagnitudesPrompt(context);
+                            return new ActionPlayerPotionMagnitudesPrompt(context);
                         }
                         magAmounts.add(i);
                     } catch (final NumberFormatException e) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                                 .replace("<input>", s));
-                        return new PlayerPotionMagnitudesPrompt(context);
+                        return new ActionPlayerPotionMagnitudesPrompt(context);
                     }
                 }
                 context.setSessionData(CK.E_POTION_STRENGTH, magAmounts);
             }
-            return new PlayerPotionListPrompt(context);
+            return new ActionPlayerPotionListPrompt(context);
         }
     }
     
-    public class PlayerHungerPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerHungerPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerHungerPrompt(final ConversationContext context) {
+        public ActionPlayerHungerPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -812,14 +812,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     if (i < 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new PlayerHungerPrompt(context);
+                        return new ActionPlayerHungerPrompt(context);
                     } else {
                         context.setSessionData(CK.E_HUNGER, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new PlayerHungerPrompt(context);
+                    return new ActionPlayerHungerPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_HUNGER, null);
@@ -828,9 +828,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class PlayerSaturationPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerSaturationPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerSaturationPrompt(final ConversationContext context) {
+        public ActionPlayerSaturationPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -864,14 +864,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     if (i < 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new PlayerSaturationPrompt(context);
+                        return new ActionPlayerSaturationPrompt(context);
                     } else {
                         context.setSessionData(CK.E_SATURATION, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new PlayerSaturationPrompt(context);
+                    return new ActionPlayerSaturationPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_SATURATION, null);
@@ -880,9 +880,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class PlayerHealthPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerHealthPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerHealthPrompt(final ConversationContext context) {
+        public ActionPlayerHealthPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -916,14 +916,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     if (i < 0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED
                                 + Lang.get("invalidMinimum").replace("<number>", "0"));
-                        return new PlayerHealthPrompt(context);
+                        return new ActionPlayerHealthPrompt(context);
                     } else {
                         context.setSessionData(CK.E_HEALTH, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED
                             + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new PlayerHealthPrompt(context);
+                    return new ActionPlayerHealthPrompt(context);
                 }
             } else {
                 context.setSessionData(CK.E_HEALTH, null);
@@ -932,9 +932,9 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class PlayerTeleportPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerTeleportPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerTeleportPrompt(final ConversationContext context) {
+        public ActionPlayerTeleportPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -974,7 +974,7 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new PlayerTeleportPrompt(context);
+                    return new ActionPlayerTeleportPrompt(context);
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -991,14 +991,14 @@ public class PlayerPrompt extends ActionsEditorNumericPrompt {
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
             } else {
-                return new PlayerTeleportPrompt(context);
+                return new ActionPlayerTeleportPrompt(context);
             }
         }
     }
 
-    public class PlayerCommandsPrompt extends ActionsEditorStringPrompt {
+    public class ActionPlayerCommandsPrompt extends ActionsEditorStringPrompt {
 
-        public PlayerCommandsPrompt(final ConversationContext context) {
+        public ActionPlayerCommandsPrompt(final ConversationContext context) {
             super(context);
         }
         

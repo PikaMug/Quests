@@ -30,13 +30,13 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class DateTimePrompt extends QuestsEditorNumericPrompt {
+public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final Prompt oldPrompt;
     private final String source;
 
-    public DateTimePrompt(final ConversationContext context, final Prompt old, final String origin) {
+    public QuestDateTimePrompt(final ConversationContext context, final Prompt old, final String origin) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
         oldPrompt = old;
@@ -220,21 +220,21 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
             context.setSessionData("tempMinute", cal.get(Calendar.MINUTE));
             context.setSessionData("tempSecond", cal.get(Calendar.SECOND));
             context.setSessionData("tempZone", cal.getTimeZone().getID());
-            return new DateTimePrompt(context, oldPrompt, source);
+            return new QuestDateTimePrompt(context, oldPrompt, source);
         case 1:
-            return new YearPrompt(context);
+            return new QuestYearPrompt(context);
         case 2:
-            return new MonthPrompt(context);
+            return new QuestMonthPrompt(context);
         case 3:
-            return new DayPrompt(context);
+            return new QuestDayPrompt(context);
         case 4:
-            return new HourPrompt(context);
+            return new QuestHourPrompt(context);
         case 5:
-            return new MinutePrompt(context);
+            return new QuestMinutePrompt(context);
         case 6:
-            return new SecondPrompt(context);
+            return new QuestSecondPrompt(context);
         case 7:
-            return new OffsetPrompt(context);
+            return new QuestOffsetPrompt(context);
         case 8:
             context.setSessionData("tempYear", null);
             context.setSessionData("tempMonth", null);
@@ -278,18 +278,18 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     || context.getSessionData("tempMinute") != null || context.getSessionData("tempSecond") != null
                     || context.getSessionData("tempZone") != null) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             } else {
                 return oldPrompt;
             }
         default:
-            return new DateTimePrompt(context, oldPrompt, source);
+            return new QuestDateTimePrompt(context, oldPrompt, source);
         }
     }
     
-    public class YearPrompt extends QuestsEditorStringPrompt {
+    public class QuestYearPrompt extends QuestsEditorStringPrompt {
         
-        public YearPrompt(final ConversationContext context) {
+        public QuestYearPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -325,24 +325,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 1000 || amt > 9999) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1000").replace("<greatest>", "9999"));
-                        return new YearPrompt(context);
+                        return new QuestYearPrompt(context);
                     } else {
                         context.setSessionData("tempYear", Integer.parseInt(input));
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new YearPrompt(context);
+                    return new QuestYearPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class MonthPrompt extends QuestsEditorStringPrompt {
+    public class QuestMonthPrompt extends QuestsEditorStringPrompt {
         
-        public MonthPrompt(final ConversationContext context) {
+        public QuestMonthPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -378,24 +378,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 1 || amt > 12) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "12"));
-                        return new MonthPrompt(context);
+                        return new QuestMonthPrompt(context);
                     } else {
                         context.setSessionData("tempMonth", Integer.parseInt(input) - 1);
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new MonthPrompt(context);
+                    return new QuestMonthPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class DayPrompt extends QuestsEditorStringPrompt {
+    public class QuestDayPrompt extends QuestsEditorStringPrompt {
         
-        public DayPrompt(final ConversationContext context) {
+        public QuestDayPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -431,24 +431,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 1 || amt > 31) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "31"));
-                        return new DayPrompt(context);
+                        return new QuestDayPrompt(context);
                     } else {
                         context.setSessionData("tempDay", Integer.parseInt(input));
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new DayPrompt(context);
+                    return new QuestDayPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class HourPrompt extends QuestsEditorStringPrompt {
+    public class QuestHourPrompt extends QuestsEditorStringPrompt {
         
-        public HourPrompt(final ConversationContext context) {
+        public QuestHourPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -484,24 +484,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 0 || amt > 23) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "23"));
-                        return new HourPrompt(context);
+                        return new QuestHourPrompt(context);
                     } else {
                         context.setSessionData("tempHour", Integer.parseInt(input));
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new HourPrompt(context);
+                    return new QuestHourPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class MinutePrompt extends QuestsEditorStringPrompt {
+    public class QuestMinutePrompt extends QuestsEditorStringPrompt {
         
-        public MinutePrompt(final ConversationContext context) {
+        public QuestMinutePrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -537,24 +537,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 0 || amt > 59) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
-                        return new MinutePrompt(context);
+                        return new QuestMinutePrompt(context);
                     } else {
                         context.setSessionData("tempMinute", Integer.parseInt(input));
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new MinutePrompt(context);
+                    return new QuestMinutePrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class SecondPrompt extends QuestsEditorStringPrompt {
+    public class QuestSecondPrompt extends QuestsEditorStringPrompt {
         
-        public SecondPrompt(final ConversationContext context) {
+        public QuestSecondPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -590,24 +590,24 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < 0 || amt > 59) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
-                        return new SecondPrompt(context);
+                        return new QuestSecondPrompt(context);
                     } else {
                         context.setSessionData("tempSecond", Integer.parseInt(input));
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new SecondPrompt(context);
+                    return new QuestSecondPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class OffsetPrompt extends QuestsEditorStringPrompt {
+    public class QuestOffsetPrompt extends QuestsEditorStringPrompt {
         
-        public OffsetPrompt(final ConversationContext context) {
+        public QuestOffsetPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -643,33 +643,33 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                     if (amt < -12.0 || amt > 14.0) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                             .replace("<least>", "-12:00").replace("<greatest>", "14:00"));
-                        return new OffsetPrompt(context);
+                        return new QuestOffsetPrompt(context);
                     } else {
                         final String[] t = TimeZone.getAvailableIDs((int) Math.round(amt * 60.0 * 60.0 * 1000.0));
                         if (t.length > 1) {
-                            return new ZonePrompt(context, t);
+                            return new QuestZonePrompt(context, t);
                         } else if (t.length > 0) {
                             context.setSessionData("tempZone", t[0]);
                         }  else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
                         }    
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new OffsetPrompt(context);
+                    return new QuestOffsetPrompt(context);
                 }
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }
     
-    public class ZonePrompt extends QuestsEditorStringPrompt {
+    public class QuestZonePrompt extends QuestsEditorStringPrompt {
         
         String[] zones;
         
-        public ZonePrompt(final ConversationContext context, final String[] timezones) {
+        public QuestZonePrompt(final ConversationContext context, final String[] timezones) {
             super(context);
             zones = timezones;
         }
@@ -709,13 +709,13 @@ public class DateTimePrompt extends QuestsEditorNumericPrompt {
                 for (final String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
                         context.setSessionData("tempZone", z);
-                        return new DateTimePrompt(context, oldPrompt, source);
+                        return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 }
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                return new ZonePrompt(context, zones);
+                return new QuestZonePrompt(context, zones);
             } else {
-                return new DateTimePrompt(context, oldPrompt, source);
+                return new QuestDateTimePrompt(context, oldPrompt, source);
             }
         }
     }

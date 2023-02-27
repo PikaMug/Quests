@@ -47,14 +47,14 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class RequirementsPrompt extends QuestsEditorNumericPrompt {
+public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final String classPrefix;
     private boolean hasRequirement = false;
     private final int size = 12;
     
-    public RequirementsPrompt(final ConversationContext context) {
+    public QuestRequirementsPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
         this.classPrefix = getClass().getSimpleName();
@@ -376,36 +376,36 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         switch (input.intValue()) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                return new RequirementsMoneyPrompt(context);
+                return new QuestRequirementsMoneyPrompt(context);
             } else {
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
         case 2:
-            return new RequirementsQuestPointsPrompt(context);
+            return new QuestRequirementsQuestPointsPrompt(context);
         case 3:
-            return new RequirementsItemListPrompt(context);
+            return new QuestRequirementsItemListPrompt(context);
         case 4:
-            return new RequirementsExperiencePrompt(context);
+            return new QuestRequirementsExperiencePrompt(context);
         case 5:
-            return new RequirementsPermissionsPrompt(context);
+            return new QuestRequirementsPermissionsPrompt(context);
         case 6:
-            return new RequirementsQuestListPrompt(context, true);
+            return new QuestRequirementsQuestListPrompt(context, true);
         case 7:
-            return new RequirementsQuestListPrompt(context, false);
+            return new QuestRequirementsQuestListPrompt(context, false);
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             } else {
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
         case 9:
             if (plugin.getDependencies().getHeroes() != null) {
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             } else {
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
         case 10:
-            return new CustomRequirementModulePrompt(context);
+            return new QuestCustomRequirementModulePrompt(context);
         case 11:
             if (hasRequirement) {
                 return new OverridePrompt.Builder()
@@ -415,12 +415,12 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         .build();
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidOption"));
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
         case 12:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
     
@@ -442,9 +442,9 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         return false;
     }
 
-    public class RequirementsMoneyPrompt extends QuestsEditorStringPrompt {
+    public class QuestRequirementsMoneyPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsMoneyPrompt(final ConversationContext context) {
+        public QuestRequirementsMoneyPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -489,24 +489,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REQ_MONEY, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new RequirementsMoneyPrompt(context);
+                        return new QuestRequirementsMoneyPrompt(context);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new RequirementsMoneyPrompt(context);
+                    return new QuestRequirementsMoneyPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_MONEY, null);
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    public class RequirementsQuestPointsPrompt extends QuestsEditorStringPrompt {
+    public class QuestRequirementsQuestPointsPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsQuestPointsPrompt(final ConversationContext context) {
+        public QuestRequirementsQuestPointsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -543,24 +543,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REQ_QUEST_POINTS, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new RequirementsQuestPointsPrompt(context);
+                        return new QuestRequirementsQuestPointsPrompt(context);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new RequirementsQuestPointsPrompt(context);
+                    return new QuestRequirementsQuestPointsPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_QUEST_POINTS, null);
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    public class RequirementsItemListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsItemListPrompt extends QuestsEditorNumericPrompt {
         
-        public RequirementsItemListPrompt(final ConversationContext context) {
+        public QuestRequirementsItemListPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -702,19 +702,19 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, RequirementsItemListPrompt.this);
+                return new ItemStackPrompt(context, QuestRequirementsItemListPrompt.this);
             case 2:
                 if (context.getSessionData(CK.REQ_ITEMS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqMustAddItem"));
-                    return new RequirementsItemListPrompt(context);
+                    return new QuestRequirementsItemListPrompt(context);
                 } else {
-                    return new RemoveItemsPrompt(context);
+                    return new QuestRemoveItemsPrompt(context);
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqItemCleared"));
                 context.setSessionData(CK.REQ_ITEMS, null);
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, null);
-                return new RequirementsItemListPrompt(context);
+                return new QuestRequirementsItemListPrompt(context);
             case 4:
                 final int missing;
                 final List<ItemStack> items = (List<ItemStack>) context.getSessionData(CK.REQ_ITEMS);
@@ -731,16 +731,16 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, remove);
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             default:
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
         }
     }
 
-    public class RemoveItemsPrompt extends QuestsEditorStringPrompt {
+    public class QuestRemoveItemsPrompt extends QuestsEditorStringPrompt {
         
-        public RemoveItemsPrompt(final ConversationContext context) {
+        public QuestRemoveItemsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -782,18 +782,18 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         booleans.add(false);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                        return new RemoveItemsPrompt(context);
+                        return new QuestRemoveItemsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, booleans);
             }
-            return new RequirementsItemListPrompt(context);
+            return new QuestRequirementsItemListPrompt(context);
         }
     }
 
-    public class RequirementsExperiencePrompt extends QuestsEditorStringPrompt {
+    public class QuestRequirementsExperiencePrompt extends QuestsEditorStringPrompt {
 
-        public RequirementsExperiencePrompt(final ConversationContext context) {
+        public QuestRequirementsExperiencePrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -830,24 +830,24 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData(CK.REQ_EXP, i);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("inputPosNum"));
-                        return new RequirementsExperiencePrompt(context);
+                        return new QuestRequirementsExperiencePrompt(context);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new RequirementsExperiencePrompt(context);
+                    return new QuestRequirementsExperiencePrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_EXP, null);
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    public class RequirementsPermissionsPrompt extends QuestsEditorStringPrompt {
+    public class QuestRequirementsPermissionsPrompt extends QuestsEditorStringPrompt {
         
-        public RequirementsPermissionsPrompt(final ConversationContext context) {
+        public QuestRequirementsPermissionsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -884,15 +884,15 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_PERMISSION, null);
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    public class RequirementsQuestListPrompt extends QuestsEditorStringPrompt {
+    public class QuestRequirementsQuestListPrompt extends QuestsEditorStringPrompt {
 
         private final boolean isRequiredQuest;
 
-        public RequirementsQuestListPrompt(final ConversationContext context, final boolean isRequired) {
+        public QuestRequirementsQuestListPrompt(final ConversationContext context, final boolean isRequired) {
             super(context);
             this.isRequiredQuest = isRequired;
         }
@@ -933,11 +933,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         String text = Lang.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(text);
-                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
+                        return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
                     if (questIds.contains(plugin.getQuestTemp(s).getId())) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listDuplicate"));
-                        return new RequirementsQuestListPrompt(context, isRequiredQuest);
+                        return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
                     questIds.add(plugin.getQuestTemp(s).getId());
                 }
@@ -953,13 +953,13 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(CK.REQ_QUEST_BLOCK, null);
                 }
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    public class RequirementsMcMMOListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsMcMMOListPrompt extends QuestsEditorNumericPrompt {
 
-        public RequirementsMcMMOListPrompt(final ConversationContext context) {
+        public QuestRequirementsMcMMOListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -1060,20 +1060,20 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new McMMOSkillsPrompt(context);
+                return new QuestMcMMOSkillsPrompt(context);
             case 2:
-                return new McMMOAmountsPrompt(context);
+                return new QuestMcMMOAmountsPrompt(context);
             case 3:
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             default:
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             }
         }
     }
 
-    public class McMMOSkillsPrompt extends QuestsEditorStringPrompt {
+    public class QuestMcMMOSkillsPrompt extends QuestsEditorStringPrompt {
         
-        public McMMOSkillsPrompt(final ConversationContext context) {
+        public QuestMcMMOSkillsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -1120,30 +1120,30 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         skills.add(formatted);
                     } else if (skills.contains(formatted)) {
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("listDuplicate"));
-                        return new McMMOSkillsPrompt(context);
+                        return new QuestMcMMOSkillsPrompt(context);
                     } else {
                         String text = Lang.get("reqMcMMOError");
                         text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
-                        return new McMMOSkillsPrompt(context);
+                        return new QuestMcMMOSkillsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REQ_MCMMO_SKILLS, skills);
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqMcMMOCleared"));
                 context.setSessionData(CK.REQ_MCMMO_SKILLS, null);
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             }
-            return new McMMOSkillsPrompt(context);
+            return new QuestMcMMOSkillsPrompt(context);
         }
     }
 
-    public class McMMOAmountsPrompt extends QuestsEditorStringPrompt {
+    public class QuestMcMMOAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public McMMOAmountsPrompt(final ConversationContext context) {
+        public QuestMcMMOAmountsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -1183,25 +1183,25 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         String text = Lang.get("reqNotANumber");
                         text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
-                        return new McMMOAmountsPrompt(context);
+                        return new QuestMcMMOAmountsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, amounts);
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqMcMMOAmountsCleared"));
                 context.setSessionData(CK.REQ_MCMMO_SKILL_AMOUNTS, null);
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new RequirementsMcMMOListPrompt(context);
+                return new QuestRequirementsMcMMOListPrompt(context);
             }
-            return new McMMOAmountsPrompt(context);
+            return new QuestMcMMOAmountsPrompt(context);
         }
     }
 
-    public class RequirementsHeroesListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsHeroesListPrompt extends QuestsEditorNumericPrompt {
 
-        public RequirementsHeroesListPrompt(final ConversationContext context) {
+        public QuestRequirementsHeroesListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -1288,20 +1288,20 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new HeroesPrimaryPrompt(context);
+                return new QuestHeroesPrimaryPrompt(context);
             case 2:
-                return new HeroesSecondaryPrompt(context);
+                return new QuestHeroesSecondaryPrompt(context);
             case 3:
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             default:
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             }
         }
     }
 
-    public class HeroesPrimaryPrompt extends QuestsEditorStringPrompt {
+    public class QuestHeroesPrimaryPrompt extends QuestsEditorStringPrompt {
         
-        public HeroesPrimaryPrompt(final ConversationContext context) {
+        public QuestHeroesPrimaryPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -1353,30 +1353,30 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (hc != null) {
                     if (hc.isPrimary()) {
                         context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, hc.getName());
-                        return new RequirementsHeroesListPrompt(context);
+                        return new QuestRequirementsHeroesListPrompt(context);
                     } else {
                         String text = Lang.get("reqHeroesNotPrimary");
                         text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new HeroesPrimaryPrompt(context);
+                        return new QuestHeroesPrimaryPrompt(context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqHeroesClassNotFound"));
-                    return new HeroesPrimaryPrompt(context);
+                    return new QuestHeroesPrimaryPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_HEROES_PRIMARY_CLASS, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqHeroesPrimaryCleared"));
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             } else {
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             }
         }
     }
 
-    public class HeroesSecondaryPrompt extends QuestsEditorStringPrompt {
+    public class QuestHeroesSecondaryPrompt extends QuestsEditorStringPrompt {
         
-        public HeroesSecondaryPrompt(final ConversationContext context) {
+        public QuestHeroesSecondaryPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -1428,30 +1428,30 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (hc != null) {
                     if (hc.isSecondary()) {
                         context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, hc.getName());
-                        return new RequirementsHeroesListPrompt(context);
+                        return new QuestRequirementsHeroesListPrompt(context);
                     } else {
                         String text = Lang.get("reqHeroesNotSecondary");
                         text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new HeroesSecondaryPrompt(context);
+                        return new QuestHeroesSecondaryPrompt(context);
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqHeroesClassNotFound"));
-                    return new HeroesSecondaryPrompt(context);
+                    return new QuestHeroesSecondaryPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("clear"))) {
                 context.setSessionData(CK.REQ_HEROES_SECONDARY_CLASS, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqHeroesSecondaryCleared"));
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             } else {
-                return new RequirementsHeroesListPrompt(context);
+                return new QuestRequirementsHeroesListPrompt(context);
             }
         }
     }
 
-    public class CustomRequirementModulePrompt extends QuestsEditorStringPrompt {
+    public class QuestCustomRequirementModulePrompt extends QuestsEditorStringPrompt {
 
-        public CustomRequirementModulePrompt(final ConversationContext context) {
+        public QuestCustomRequirementModulePrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -1534,27 +1534,27 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found != null) {
-                    return new CustomRequirementsPrompt(found, context);
+                    return new QuestCustomRequirementsPrompt(found, context);
                 }
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_CUSTOM, null);
                 context.setSessionData(CK.REQ_CUSTOM_DATA, null);
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
-                return new RequirementsPrompt(context);
+                return new QuestRequirementsPrompt(context);
             }
             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomNotFound"));
-            return new CustomRequirementModulePrompt(context);
+            return new QuestCustomRequirementModulePrompt(context);
         }
     }
 
-    public class CustomRequirementsPrompt extends QuestsEditorStringPrompt {
+    public class QuestCustomRequirementsPrompt extends QuestsEditorStringPrompt {
 
         private final String moduleName;
 
-        public CustomRequirementsPrompt(final String moduleName, final ConversationContext context) {
+        public QuestCustomRequirementsPrompt(final String moduleName, final ConversationContext context) {
             super(context);
             this.moduleName = moduleName;
         }
@@ -1653,7 +1653,7 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                         } else {
                             // Already added, so inform user
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomAlreadyAdded"));
-                            return new CustomRequirementsPrompt(moduleName, context);
+                            return new QuestCustomRequirementsPrompt(moduleName, context);
                         }
                     } else {
                         // The custom requirement hasn't been added yet, so let's do it
@@ -1667,11 +1667,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                     // Send user to the custom data prompt if there is any needed
                     if (!found.getData().isEmpty()) {
                         context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
-                        return new RequirementCustomDataListPrompt();
+                        return new QuestRequirementCustomDataListPrompt();
                     }
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqCustomNotFound"));
-                    return new CustomRequirementsPrompt(moduleName, context);
+                    return new QuestCustomRequirementsPrompt(moduleName, context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(CK.REQ_CUSTOM, null);
@@ -1679,11 +1679,11 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("reqCustomCleared"));
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    private class RequirementCustomDataListPrompt extends StringPrompt {
+    private class QuestRequirementCustomDataListPrompt extends StringPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
@@ -1729,38 +1729,37 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
                 try {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {
-                    return new RequirementCustomDataListPrompt();
+                    return new QuestRequirementCustomDataListPrompt();
                 }
                 if (numInput < 1 || numInput > dataMap.size() + 1) {
-                    return new RequirementCustomDataListPrompt();
+                    return new QuestRequirementCustomDataListPrompt();
                 }
                 if (numInput < dataMap.size() + 1) {
                     final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
                     Collections.sort(dataMapKeys);
                     final String selectedKey = dataMapKeys.get(numInput - 1);
                     context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, selectedKey);
-                    return new RequirementCustomDataPrompt();
+                    return new QuestRequirementCustomDataPrompt();
                 } else {
                     if (dataMap.containsValue(null)) {
-                        return new RequirementCustomDataListPrompt();
+                        return new QuestRequirementCustomDataListPrompt();
                     } else {
                         context.setSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
                     }
                 }
             }
-            return new RequirementsPrompt(context);
+            return new QuestRequirementsPrompt(context);
         }
     }
 
-    private class RequirementCustomDataPrompt extends StringPrompt {
+    private class QuestRequirementCustomDataPrompt extends StringPrompt {
 
         @Override
         public @NotNull String getPromptText(final ConversationContext context) {
             String text = "";
             final String temp = (String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP);
             @SuppressWarnings("unchecked")
-            final
-            Map<String, String> descriptions
+            final Map<String, String> descriptions
                     = (Map<String, String>) context.getSessionData(CK.REQ_CUSTOM_DATA_DESCRIPTIONS);
             if (temp != null && descriptions != null) {
                 if (descriptions.get(temp) != null) {
@@ -1776,15 +1775,14 @@ public class RequirementsPrompt extends QuestsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final ConversationContext context, final String input) {
             @SuppressWarnings("unchecked")
-            final
-            LinkedList<Map<String, Object>> dataMapList
+            final LinkedList<Map<String, Object>> dataMapList
                     = (LinkedList<Map<String, Object>>) context.getSessionData(CK.REQ_CUSTOM_DATA);
             if (dataMapList != null) {
                 final Map<String, Object> dataMap = dataMapList.getLast();
                 dataMap.put((String) context.getSessionData(CK.REQ_CUSTOM_DATA_TEMP), input);
                 context.setSessionData(CK.REQ_CUSTOM_DATA_TEMP, null);
             }
-            return new RequirementCustomDataListPrompt();
+            return new QuestRequirementCustomDataListPrompt();
         }
     }
 }

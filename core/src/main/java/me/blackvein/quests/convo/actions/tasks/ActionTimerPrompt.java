@@ -26,11 +26,11 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
-public class TimerPrompt extends ActionsEditorNumericPrompt {
+public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public TimerPrompt(final ConversationContext context) {
+    public ActionTimerPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -125,7 +125,7 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new TimerFailPrompt(context);
+            return new ActionTimerFailPrompt(context);
         case 2:
             final Boolean b = (Boolean) context.getSessionData(CK.E_CANCEL_TIMER);
             if (Boolean.TRUE.equals(b)) {
@@ -133,17 +133,17 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
             } else {
                 context.setSessionData(CK.E_CANCEL_TIMER, true);
             }
-            return new TimerPrompt(context);
+            return new ActionTimerPrompt(context);
         case 3:
             return new ActionMainPrompt(context);
         default:
-            return new TimerPrompt(context);
+            return new ActionTimerPrompt(context);
         }
     }
     
-    public class TimerFailPrompt extends ActionsEditorStringPrompt {
+    public class ActionTimerFailPrompt extends ActionsEditorStringPrompt {
         
-        public TimerFailPrompt(final ConversationContext context) {
+        public ActionTimerFailPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -178,9 +178,9 @@ public class TimerPrompt extends ActionsEditorNumericPrompt {
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED
                         + Lang.get("reqNotANumber").replace("<input>", input));
-                return new TimerFailPrompt(context);
+                return new ActionTimerFailPrompt(context);
             }
-            return new TimerPrompt(context);
+            return new ActionTimerPrompt(context);
         }
     }
 }

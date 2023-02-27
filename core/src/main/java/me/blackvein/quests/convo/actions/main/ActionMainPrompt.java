@@ -17,10 +17,10 @@ import me.blackvein.quests.actions.IAction;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.blackvein.quests.convo.actions.ActionsEditorStringPrompt;
-import me.blackvein.quests.convo.actions.tasks.EffectPrompt;
-import me.blackvein.quests.convo.actions.tasks.PlayerPrompt;
-import me.blackvein.quests.convo.actions.tasks.TimerPrompt;
-import me.blackvein.quests.convo.actions.tasks.WeatherPrompt;
+import me.blackvein.quests.convo.actions.tasks.ActionEffectPrompt;
+import me.blackvein.quests.convo.actions.tasks.ActionPlayerPrompt;
+import me.blackvein.quests.convo.actions.tasks.ActionTimerPrompt;
+import me.blackvein.quests.convo.actions.tasks.ActionWeatherPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.entity.BukkitQuestMob;
 import me.blackvein.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
@@ -203,13 +203,13 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return new ActionNamePrompt(context);
         case 2:
-            return new PlayerPrompt(context);
+            return new ActionPlayerPrompt(context);
         case 3:
-            return new TimerPrompt(context);
+            return new ActionTimerPrompt(context);
         case 4:
-            return new EffectPrompt(context);
+            return new ActionEffectPrompt(context);
         case 5:
-            return new WeatherPrompt(context);
+            return new ActionWeatherPrompt(context);
         case 6:
             return new ActionMobListPrompt(context);
         case 7:
@@ -1141,7 +1141,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getTitle(final ConversationContext context) {
             return null;
         }
-        
+
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -1152,7 +1153,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -1229,7 +1231,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getTitle(final ConversationContext context) {
             return null;
         }
-        
+
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -1240,7 +1243,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:

@@ -16,12 +16,8 @@ import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
 import me.blackvein.quests.util.Lang;
@@ -34,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PlayerPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     
-    public PlayerPrompt(final ConversationContext context) {
+    public ConditionPlayerPrompt(final ConversationContext context) {
         super(context);
     }
     
@@ -174,11 +170,11 @@ public class PlayerPrompt extends ConditionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new PermissionsPrompt(context);
+            return new ConditionPermissionsPrompt(context);
         case 2:
-            return new ItemsInMainHandListPrompt(context);
+            return new ConditionItemsInMainHandListPrompt(context);
         case 3:
-            return new ItemsWearListPrompt(context);
+            return new ConditionItemsWearListPrompt(context);
         case 4:
             try {
                 return new ConditionMainPrompt(context);
@@ -187,13 +183,13 @@ public class PlayerPrompt extends ConditionsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new PlayerPrompt(context);
+            return new ConditionPlayerPrompt(context);
         }
     }
     
-    public class PermissionsPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionPermissionsPrompt extends ConditionsEditorStringPrompt {
         
-        public PermissionsPrompt(final ConversationContext context) {
+        public ConditionPermissionsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -230,13 +226,13 @@ public class PlayerPrompt extends ConditionsEditorNumericPrompt {
                 }
                 context.setSessionData(CK.C_WHILE_PERMISSION, permissions);
             }
-            return new PlayerPrompt(context);
+            return new ConditionPlayerPrompt(context);
         }
     }
     
-    public class ItemsInMainHandListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionItemsInMainHandListPrompt extends ConditionsEditorNumericPrompt {
         
-        public ItemsInMainHandListPrompt(final ConversationContext context) {
+        public ConditionItemsInMainHandListPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -346,22 +342,22 @@ public class PlayerPrompt extends ConditionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsInMainHandListPrompt.this);
+                return new ItemStackPrompt(context, ConditionItemsInMainHandListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
                 context.setSessionData(CK.C_WHILE_HOLDING_MAIN_HAND, null);
-                return new ItemsInMainHandListPrompt(context);
+                return new ConditionItemsInMainHandListPrompt(context);
             case 3:
-                return new PlayerPrompt(context);
+                return new ConditionPlayerPrompt(context);
             default:
-                return new ItemsInMainHandListPrompt(context);
+                return new ConditionItemsInMainHandListPrompt(context);
             }
         }
     }
 
-    public class ItemsWearListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionItemsWearListPrompt extends ConditionsEditorNumericPrompt {
 
-        public ItemsWearListPrompt(final ConversationContext context) {
+        public ConditionItemsWearListPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -471,15 +467,15 @@ public class PlayerPrompt extends ConditionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
                 case 1:
-                    return new ItemStackPrompt(context, ItemsWearListPrompt.this);
+                    return new ItemStackPrompt(context, ConditionItemsWearListPrompt.this);
                 case 2:
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
                     context.setSessionData(CK.C_WHILE_WEARING, null);
-                    return new ItemsWearListPrompt(context);
+                    return new ConditionItemsWearListPrompt(context);
                 case 3:
-                    return new PlayerPrompt(context);
+                    return new ConditionPlayerPrompt(context);
                 default:
-                    return new ItemsWearListPrompt(context);
+                    return new ConditionItemsWearListPrompt(context);
             }
         }
     }

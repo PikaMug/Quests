@@ -37,11 +37,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class WeatherPrompt extends ActionsEditorNumericPrompt {
+public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public WeatherPrompt(final ConversationContext context) {
+    public ActionWeatherPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -153,30 +153,30 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new StormPrompt(context);
+            return new ActionStormPrompt(context);
         case 2:
-            return new ThunderPrompt(context);
+            return new ActionThunderPrompt(context);
         case 3:
             if (context.getForWhom() instanceof Player) {
                 final Map<UUID, Block> selectedLightningLocations 
                         = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
-                return new LightningPrompt(context);
+                return new ActionLightningPrompt(context);
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("consoleError"));
-                return new WeatherPrompt(context);
+                return new ActionWeatherPrompt(context);
             }
         case 4:
             return new ActionMainPrompt(context);
         default:
-            return new WeatherPrompt(context);
+            return new ActionWeatherPrompt(context);
         }
     }
     
-    public class StormPrompt extends ActionsEditorNumericPrompt {
+    public class ActionStormPrompt extends ActionsEditorNumericPrompt {
 
-        public StormPrompt(final ConversationContext context) {
+        public ActionStormPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -270,33 +270,33 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new StormWorldPrompt(context);
+                return new ActionStormWorldPrompt(context);
             case 2:
                 if (context.getSessionData(CK.E_WORLD_STORM) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSetWorldFirst"));
-                    return new StormPrompt(context);
+                    return new ActionStormPrompt(context);
                 } else {
-                    return new StormDurationPrompt(context);
+                    return new ActionStormDurationPrompt(context);
                 }
             case 3:
                 if (context.getSessionData(CK.E_WORLD_STORM) != null 
                         && context.getSessionData(CK.E_WORLD_STORM_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetStormDuration"));
-                    return new StormPrompt(context);
+                    return new ActionStormPrompt(context);
                 } else {
                     return new ActionMainPrompt(context);
                 }
             case 4:
                 return new ActionMainPrompt(context);
             default:
-                return new StormPrompt(context);
+                return new ActionStormPrompt(context);
             }
         }
     }
 
-    public class StormWorldPrompt extends ActionsEditorStringPrompt {
+    public class ActionStormWorldPrompt extends ActionsEditorStringPrompt {
 
-        public StormWorldPrompt(final ConversationContext context) {
+        public ActionStormWorldPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -340,16 +340,16 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidWorld")
                             .replace("<input>", input));
-                    return new StormWorldPrompt(context);
+                    return new ActionStormWorldPrompt(context);
                 }
             }
-            return new StormPrompt(context);
+            return new ActionStormPrompt(context);
         }
     }
 
-    public class StormDurationPrompt extends ActionsEditorStringPrompt {
+    public class ActionStormDurationPrompt extends ActionsEditorStringPrompt {
 
-        public StormDurationPrompt(final ConversationContext context) {
+        public ActionStormDurationPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -379,7 +379,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
                             + Lang.get("invalidMinimum").replace("<number>", "1"));
-                    return new StormDurationPrompt(context);
+                    return new ActionStormDurationPrompt(context);
                 } else {
                     context.setSessionData(CK.E_WORLD_STORM_DURATION, i);
                 }
@@ -387,13 +387,13 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
                         + Lang.get("reqNotANumber").replace("<input>", input));
             }
-            return new StormPrompt(context);
+            return new ActionStormPrompt(context);
         }
     }
 
-    public class ThunderPrompt extends ActionsEditorNumericPrompt {
+    public class ActionThunderPrompt extends ActionsEditorNumericPrompt {
 
-        public ThunderPrompt(final ConversationContext context) {
+        public ActionThunderPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -487,36 +487,36 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
             case 1:
-                return new ThunderWorldPrompt(context);
+                return new ActionThunderWorldPrompt(context);
             case 2:
                 if (context.getSessionData(CK.E_WORLD_THUNDER) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorSetWorldFirst"));
-                    return new ThunderPrompt(context);
+                    return new ActionThunderPrompt(context);
                 } else {
-                    return new ThunderDurationPrompt(context);
+                    return new ActionThunderDurationPrompt(context);
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("eventEditorThunderCleared"));
                 context.setSessionData(CK.E_WORLD_THUNDER, null);
                 context.setSessionData(CK.E_WORLD_THUNDER_DURATION, null);
-                return new ThunderPrompt(context);
+                return new ActionThunderPrompt(context);
             case 4:
                 if (context.getSessionData(CK.E_WORLD_THUNDER) != null 
                         && context.getSessionData(CK.E_WORLD_THUNDER_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorMustSetThunderDuration"));
-                    return new ThunderPrompt(context);
+                    return new ActionThunderPrompt(context);
                 } else {
                     return new ActionMainPrompt(context);
                 }
             default:
-                return new ThunderPrompt(context);
+                return new ActionThunderPrompt(context);
             }
         }
     }
 
-    public class ThunderWorldPrompt extends ActionsEditorStringPrompt {
+    public class ActionThunderWorldPrompt extends ActionsEditorStringPrompt {
 
-        public ThunderWorldPrompt(final ConversationContext context) {
+        public ActionThunderWorldPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -560,16 +560,16 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("eventEditorInvalidWorld")
                             .replace("<input>", input));
-                    return new ThunderWorldPrompt(context);
+                    return new ActionThunderWorldPrompt(context);
                 }
             }
-            return new ThunderPrompt(context);
+            return new ActionThunderPrompt(context);
         }
     }
 
-    public class ThunderDurationPrompt extends ActionsEditorStringPrompt {
+    public class ActionThunderDurationPrompt extends ActionsEditorStringPrompt {
 
-        public ThunderDurationPrompt(final ConversationContext context) {
+        public ActionThunderDurationPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -599,7 +599,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED 
                             + Lang.get("invalidMinimum").replace("<number>", "1"));
-                    return new ThunderDurationPrompt(context);
+                    return new ActionThunderDurationPrompt(context);
                 } else {
                     context.setSessionData(CK.E_WORLD_THUNDER_DURATION, i);
                 }
@@ -607,13 +607,13 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
                         + Lang.get("reqNotANumber").replace("<input>", input));
             }
-            return new ThunderPrompt(context);
+            return new ActionThunderPrompt(context);
         }
     }
     
-    public class LightningPrompt extends ActionsEditorStringPrompt {
+    public class ActionLightningPrompt extends ActionsEditorStringPrompt {
 
-        public LightningPrompt(final ConversationContext context) {
+        public ActionLightningPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -663,7 +663,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + Lang.get("eventEditorSelectBlockFirst"));
-                    return new LightningPrompt(context);
+                    return new ActionLightningPrompt(context);
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -680,7 +680,7 @@ public class WeatherPrompt extends ActionsEditorNumericPrompt {
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionMainPrompt(context);
             } else {
-                return new LightningPrompt(context);
+                return new ActionLightningPrompt(context);
             }
         }
     }

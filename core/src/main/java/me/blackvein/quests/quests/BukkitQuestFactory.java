@@ -15,7 +15,7 @@ package me.blackvein.quests.quests;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.quests.main.QuestMainPrompt;
 import me.blackvein.quests.convo.quests.menu.QuestMenuPrompt;
-import me.blackvein.quests.convo.quests.stages.StageMenuPrompt;
+import me.blackvein.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.blackvein.quests.interfaces.ReloadCallback;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.util.CK;
@@ -673,7 +673,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         final ConfigurationSection stages = section.createSection("stages");
         final ConfigurationSection ordered = stages.createSection("ordered");
         String pref;
-        for (int i = 1; i <= new StageMenuPrompt(context).getStages(context); i++) {
+        for (int i = 1; i <= new QuestStageMenuPrompt(context).getStages(context); i++) {
             pref = "stage" + i;
             final ConfigurationSection stage = ordered.createSection("" + i);
             stage.set("break-block-names", context.getSessionData(pref + CK.S_BREAK_NAMES) != null

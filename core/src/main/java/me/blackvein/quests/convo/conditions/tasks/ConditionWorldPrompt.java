@@ -17,12 +17,8 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
@@ -40,11 +36,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class WorldPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public WorldPrompt(final ConversationContext context) {
+    public ConditionWorldPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -182,16 +178,16 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new WorldsPrompt(context);
+            return new ConditionWorldsPrompt(context);
         case 2:
-            return new TicksListPrompt(context);
+            return new ConditionTicksListPrompt(context);
         case 3:
-            return new BiomesPrompt(context);
+            return new ConditionBiomesPrompt(context);
         case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
-                return new RegionsPrompt(context);
+                return new ConditionRegionsPrompt(context);
             } else {
-                return new WorldPrompt(context);
+                return new ConditionWorldPrompt(context);
             }
         case 5:
             try {
@@ -201,13 +197,13 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new WorldPrompt(context);
+            return new ConditionWorldPrompt(context);
         }
     }
     
-    public class WorldsPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionWorldsPrompt extends ConditionsEditorStringPrompt {
         
-        public WorldsPrompt(final ConversationContext context) {
+        public ConditionWorldsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -254,18 +250,18 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorInvalidWorld")
                                 .replace("<input>", s));
-                        return new WorldsPrompt(context);
+                        return new ConditionWorldsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.C_WHILE_WITHIN_WORLD, worlds);
             }
-            return new WorldPrompt(context);
+            return new ConditionWorldPrompt(context);
         }
     }
 
-    public class TicksListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionTicksListPrompt extends ConditionsEditorNumericPrompt {
 
-        public TicksListPrompt(final ConversationContext context) {
+        public ConditionTicksListPrompt(final ConversationContext context) {
             super(context);
 
         }
@@ -356,14 +352,14 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch (input.intValue()) {
                 case 1:
-                    return new TickStartPrompt(context);
+                    return new ConditionTickStartPrompt(context);
                 case 2:
-                    return new TickEndPrompt(context);
+                    return new ConditionTickEndPrompt(context);
                 case 3:
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("conditionEditorConditionCleared"));
                     context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, null);
                     context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, null);
-                    return new WorldPrompt(context);
+                    return new ConditionWorldPrompt(context);
                 case 4:
                     if ((context.getSessionData(CK.C_WHILE_WITHIN_TICKS_START) != null
                             && context.getSessionData(CK.C_WHILE_WITHIN_TICKS_END) != null)
@@ -372,17 +368,17 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                         return new ConditionMainPrompt(context);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("listsNotSameSize"));
-                        return new WorldPrompt.TicksListPrompt(context);
+                        return new ConditionTicksListPrompt(context);
                     }
                 default:
-                    return new WorldPrompt.TicksListPrompt(context);
+                    return new ConditionTicksListPrompt(context);
             }
         }
     }
 
-    public class TickStartPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionTickStartPrompt extends ConditionsEditorStringPrompt {
 
-        public TickStartPrompt(final ConversationContext context) {
+        public ConditionTickStartPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -418,23 +414,23 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                     if (i < 0 || i > 24000) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "24000"));
-                        return new TickStartPrompt(context);
+                        return new ConditionTickStartPrompt(context);
                     } else {
                         context.setSessionData(CK.C_WHILE_WITHIN_TICKS_START, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new TickStartPrompt(context);
+                    return new ConditionTickStartPrompt(context);
                 }
             }
-            return new TicksListPrompt(context);
+            return new ConditionTicksListPrompt(context);
         }
     }
 
-    public class TickEndPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionTickEndPrompt extends ConditionsEditorStringPrompt {
 
-        public TickEndPrompt(final ConversationContext context) {
+        public ConditionTickEndPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -470,23 +466,23 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                     if (i < 0 || i > 24000) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "24000"));
-                        return new TickEndPrompt(context);
+                        return new ConditionTickEndPrompt(context);
                     } else {
                         context.setSessionData(CK.C_WHILE_WITHIN_TICKS_END, i);
                     }
                 } catch (final NumberFormatException e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new TickEndPrompt(context);
+                    return new ConditionTickEndPrompt(context);
                 }
             }
-            return new TicksListPrompt(context);
+            return new ConditionTicksListPrompt(context);
         }
     }
     
-    public class BiomesPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionBiomesPrompt extends ConditionsEditorStringPrompt {
         
-        public BiomesPrompt(final ConversationContext context) {
+        public ConditionBiomesPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -533,18 +529,18 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("conditionEditorInvalidBiome")
                                 .replace("<input>", s));
-                        return new BiomesPrompt(context);
+                        return new ConditionBiomesPrompt(context);
                     }
                 }
                 context.setSessionData(CK.C_WHILE_WITHIN_BIOME, biomes);
             }
-            return new WorldPrompt(context);
+            return new ConditionWorldPrompt(context);
         }
     }
     
-    public class RegionsPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionRegionsPrompt extends ConditionsEditorStringPrompt {
         
-        public RegionsPrompt(final ConversationContext context) {
+        public ConditionRegionsPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -618,12 +614,12 @@ public class WorldPrompt extends ConditionsEditorNumericPrompt {
                         String error = Lang.get("questWGInvalidRegion");
                         error = error.replace("<region>", ChatColor.RED + r + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + error);
-                        return new RegionsPrompt(context);
+                        return new ConditionRegionsPrompt(context);
                     }
                 }
                 context.setSessionData(CK.C_WHILE_WITHIN_REGION, regions);
             }
-            return new WorldPrompt(context);
+            return new ConditionWorldPrompt(context);
         }
     }
 }

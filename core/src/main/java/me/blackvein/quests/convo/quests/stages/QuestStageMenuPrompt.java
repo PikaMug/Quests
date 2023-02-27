@@ -23,12 +23,12 @@ import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import org.jetbrains.annotations.NotNull;
 
-public class StageMenuPrompt extends QuestsEditorNumericPrompt {
+public class QuestStageMenuPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private final int size = 2;
 
-    public StageMenuPrompt(final ConversationContext context) {
+    public QuestStageMenuPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -100,14 +100,14 @@ public class StageMenuPrompt extends QuestsEditorNumericPrompt {
         final int stages = getStages(context);
         if (i > 0) {
             if (i < (stages + 1)) {
-                return new StageMainPrompt((i), context);
+                return new QuestStageMainPrompt((i), context);
             } else if (i == (stages + 1)) {
-                return new StageMainPrompt((stages + 1), context);
+                return new QuestStageMainPrompt((stages + 1), context);
             } else if (i == (stages + 2)) {
                 return plugin.getQuestFactory().returnToMenu(context);
             }
         }
-        return new StageMenuPrompt(context);
+        return new QuestStageMenuPrompt(context);
     }
 
     public int getStages(final ConversationContext context) {

@@ -14,7 +14,7 @@ package me.blackvein.quests.convo.quests.objectives;
 
 import me.blackvein.quests.convo.generic.ItemStackPrompt;
 import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.stages.StageMainPrompt;
+import me.blackvein.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.ItemUtil;
@@ -28,11 +28,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ItemsPrompt extends QuestsEditorNumericPrompt {
+public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
     private final int stageNum;
     private final String pref;
 
-    public ItemsPrompt(final int stageNum, final ConversationContext context) {
+    public QuestItemsPrompt(final int stageNum, final ConversationContext context) {
         super(context);
         this.stageNum = stageNum;
         this.pref = "stage" + stageNum;
@@ -216,30 +216,30 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new ItemsCraftListPrompt(context);
+            return new QuestItemsCraftListPrompt(context);
         case 2:
-            return new ItemsSmeltListPrompt(context);
+            return new QuestItemsSmeltListPrompt(context);
         case 3:
-            return new ItemsEnchantListPrompt(context);
+            return new QuestItemsEnchantListPrompt(context);
         case 4:
-            return new ItemsBrewListPrompt(context);
+            return new QuestItemsBrewListPrompt(context);
         case 5:
-            return new ItemsConsumeListPrompt(context);
+            return new QuestItemsConsumeListPrompt(context);
         case 6:
             try {
-                return new StageMainPrompt(stageNum, context);
+                return new QuestStageMainPrompt(stageNum, context);
             } catch (final Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new ItemsPrompt(stageNum, context);
+            return new QuestItemsPrompt(stageNum, context);
         }
     }
     
-    public class ItemsCraftListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsCraftListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsCraftListPrompt(final ConversationContext context) {
+        public QuestItemsCraftListPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -348,20 +348,20 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsCraftListPrompt.this);
+                return new ItemStackPrompt(context, QuestItemsCraftListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CRAFT_ITEMS, null);
-                return new ItemsCraftListPrompt(context);
+                return new QuestItemsCraftListPrompt(context);
             default:
-                return new ItemsPrompt(stageNum, context);
+                return new QuestItemsPrompt(stageNum, context);
             }
         }
     }
     
-    public class ItemsSmeltListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsSmeltListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsSmeltListPrompt(final ConversationContext context) {
+        public QuestItemsSmeltListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -470,20 +470,20 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsSmeltListPrompt.this);
+                return new ItemStackPrompt(context, QuestItemsSmeltListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_SMELT_ITEMS, null);
-                return new ItemsSmeltListPrompt(context);
+                return new QuestItemsSmeltListPrompt(context);
             default:
-                return new ItemsPrompt(stageNum, context);
+                return new QuestItemsPrompt(stageNum, context);
             }
         }
     }
 
-    public class ItemsEnchantListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsEnchantListPrompt extends QuestsEditorNumericPrompt {
 
-        public ItemsEnchantListPrompt(final ConversationContext context) {
+        public QuestItemsEnchantListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -592,20 +592,20 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsEnchantListPrompt.this);
+                return new ItemStackPrompt(context, QuestItemsEnchantListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_ENCHANT_ITEMS, null);
-                return new ItemsEnchantListPrompt(context);
+                return new QuestItemsEnchantListPrompt(context);
             default:
-                return new ItemsPrompt(stageNum, context);
+                return new QuestItemsPrompt(stageNum, context);
             }
         }
     }
     
-    public class ItemsBrewListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsBrewListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsBrewListPrompt(final ConversationContext context) {
+        public QuestItemsBrewListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -713,20 +713,20 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsBrewListPrompt.this);
+                return new ItemStackPrompt(context, QuestItemsBrewListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_BREW_ITEMS, null);
-                return new ItemsBrewListPrompt(context);
+                return new QuestItemsBrewListPrompt(context);
             default:
-                return new ItemsPrompt(stageNum, context);
+                return new QuestItemsPrompt(stageNum, context);
             }
         }
     }
     
-    public class ItemsConsumeListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsConsumeListPrompt extends QuestsEditorNumericPrompt {
         
-        public ItemsConsumeListPrompt(final ConversationContext context) {
+        public QuestItemsConsumeListPrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -835,13 +835,13 @@ public class ItemsPrompt extends QuestsEditorNumericPrompt {
         protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ItemsConsumeListPrompt.this);
+                return new ItemStackPrompt(context, QuestItemsConsumeListPrompt.this);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Lang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + CK.S_CONSUME_ITEMS, null);
-                return new ItemsConsumeListPrompt(context);
+                return new QuestItemsConsumeListPrompt(context);
             default:
-                return new ItemsPrompt(stageNum, context);
+                return new QuestItemsPrompt(stageNum, context);
             }
         }
     }

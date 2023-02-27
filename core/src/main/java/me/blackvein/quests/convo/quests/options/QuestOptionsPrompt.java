@@ -28,13 +28,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class OptionsPrompt extends QuestsEditorNumericPrompt {
+public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
 
     private final Quests plugin;
     private String tempKey;
     private Prompt tempPrompt;
 
-    public OptionsPrompt(final ConversationContext context) {
+    public QuestOptionsPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -106,18 +106,19 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new OptionsGeneralPrompt(context);
+            return new QuestOptionsGeneralPrompt(context);
         case 2:
-            return new OptionsMultiplayerPrompt(context);
+            return new QuestOptionsMultiplayerPrompt(context);
         case 3:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
-            return new OptionsPrompt(context);
+            return new QuestOptionsPrompt(context);
         }
     }
 
-    public class OptionsPluginPrompt extends QuestsEditorStringPrompt {
-        public OptionsPluginPrompt(final ConversationContext context) {
+    public class QuestOptionsPluginPrompt extends QuestsEditorStringPrompt {
+
+        public QuestOptionsPluginPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -165,7 +166,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 if (input.equalsIgnoreCase("Quests")) {
                     context.getForWhom().sendRawMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
                             + "https://www.youtube.com/watch?v=gvdf5n-zI14");
-                    return new OptionsPluginPrompt(context);
+                    return new QuestOptionsPluginPrompt(context);
                 }
                 String properCase = null;
                 for (final PartyProvider partyProvider : plugin.getDependencies().getPartyProviders()) {
@@ -177,7 +178,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     String text = Lang.get("optNotAPluginName");
                     text = text.replace("<plugin>", ChatColor.LIGHT_PURPLE + input + ChatColor.RED);
                     context.getForWhom().sendRawMessage(text);
-                    return new OptionsPluginPrompt(context);
+                    return new QuestOptionsPluginPrompt(context);
                 }
                 context.setSessionData(CK.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
@@ -188,8 +189,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsTrueFalsePrompt extends QuestsEditorStringPrompt {
-        public OptionsTrueFalsePrompt(final ConversationContext context) {
+    public class QuestOptionsTrueFalsePrompt extends QuestsEditorStringPrompt {
+
+        public QuestOptionsTrueFalsePrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -209,7 +211,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             return Lang.get("optBooleanQuery").replace("<true>", Lang.get("true"))
                     .replace("<false>", Lang.get("false"));
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -251,7 +254,7 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                     context.setSessionData(tempKey, false);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateInvalidInput"));
-                    return new OptionsTrueFalsePrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Lang.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
@@ -261,8 +264,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsLevelPrompt extends QuestsEditorStringPrompt {
-        public OptionsLevelPrompt(final ConversationContext context) {
+    public class QuestOptionsLevelPrompt extends QuestsEditorStringPrompt {
+
+        public QuestOptionsLevelPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -281,7 +285,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         public String getQueryText(final ConversationContext context) {
             return Lang.get("optNumberQuery");
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -300,7 +305,8 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -360,8 +366,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsDistancePrompt extends QuestsEditorStringPrompt {
-        public OptionsDistancePrompt(final ConversationContext context) {
+    public class QuestOptionsDistancePrompt extends QuestsEditorStringPrompt {
+
+        public QuestOptionsDistancePrompt(final ConversationContext context) {
             super(context);
         }
         
@@ -407,8 +414,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsGeneralPrompt extends QuestsEditorNumericPrompt {
-        public OptionsGeneralPrompt(final ConversationContext context) {
+    public class QuestOptionsGeneralPrompt extends QuestsEditorNumericPrompt {
+
+        public QuestOptionsGeneralPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -529,25 +537,25 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_ALLOW_COMMANDS;
-                tempPrompt = new OptionsGeneralPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 2:
                 tempKey = CK.OPT_ALLOW_QUITTING;
-                tempPrompt = new OptionsGeneralPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 3:
                 tempKey = CK.OPT_IGNORE_SILK_TOUCH;
-                tempPrompt = new OptionsGeneralPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 4:
                 tempKey = CK.OPT_IGNORE_BLOCK_REPLACE;
-                tempPrompt = new OptionsGeneralPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 5:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(context);
+                    return new QuestOptionsPrompt(context);
                 } catch (final Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;
@@ -558,8 +566,9 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class OptionsMultiplayerPrompt extends QuestsEditorNumericPrompt {
-        public OptionsMultiplayerPrompt(final ConversationContext context) {
+    public class QuestOptionsMultiplayerPrompt extends QuestsEditorNumericPrompt {
+
+        public QuestOptionsMultiplayerPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -707,33 +716,33 @@ public class OptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = CK.OPT_EXTERNAL_PARTY_PLUGIN;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsPluginPrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsPluginPrompt(context);
             case 2:
                 tempKey = CK.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 3:
                 tempKey = CK.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsLevelPrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsLevelPrompt(context);
             case 4:
                 tempKey = CK.OPT_SHARE_SAME_QUEST_ONLY;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 5:
                 tempKey = CK.OPT_SHARE_DISTANCE;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsDistancePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsDistancePrompt(context);
             case 6:
                 tempKey = CK.OPT_HANDLE_OFFLINE_PLAYERS;
-                tempPrompt = new OptionsMultiplayerPrompt(context);
-                return new OptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
+                return new QuestOptionsTrueFalsePrompt(context);
             case 7:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new OptionsPrompt(context);
+                    return new QuestOptionsPrompt(context);
                 } catch (final Exception e) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;

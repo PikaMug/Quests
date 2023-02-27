@@ -16,12 +16,8 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorNumericPrompt;
-import me.blackvein.quests.convo.quests.QuestsEditorStringPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.blackvein.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
 import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
@@ -40,11 +36,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class EntityPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
     
     private final Quests plugin;
     
-    public EntityPrompt(final ConversationContext context) {
+    public ConditionEntityPrompt(final ConversationContext context) {
         super(context);
         this.plugin = (Quests)context.getPlugin();
     }
@@ -152,7 +148,7 @@ public class EntityPrompt extends ConditionsEditorNumericPrompt {
     protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
         switch(input.intValue()) {
         case 1:
-            return new EntitiesPrompt(context);
+            return new ConditionEntitiesPrompt(context);
         case 2:
             return new ConditionNpcsPrompt(context);
         case 3:
@@ -163,13 +159,13 @@ public class EntityPrompt extends ConditionsEditorNumericPrompt {
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
-            return new EntityPrompt(context);
+            return new ConditionEntityPrompt(context);
         }
     }
     
-    public class EntitiesPrompt extends ConditionsEditorStringPrompt {
+    public class ConditionEntitiesPrompt extends ConditionsEditorStringPrompt {
         
-        public EntitiesPrompt(final ConversationContext context) {
+        public ConditionEntitiesPrompt(final ConversationContext context) {
             super(context);
         }
 
@@ -228,16 +224,16 @@ public class EntityPrompt extends ConditionsEditorNumericPrompt {
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
                                     .replace("<input>", s));
-                            return new EntitiesPrompt(context);
+                            return new ConditionEntitiesPrompt(context);
                         }
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
-                        return new EntitiesPrompt(context);
+                        return new ConditionEntitiesPrompt(context);
                     }
                 }
             }
-            return new EntityPrompt(context);
+            return new ConditionEntityPrompt(context);
         }
     }
     
@@ -306,7 +302,7 @@ public class EntityPrompt extends ConditionsEditorNumericPrompt {
                 selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
-            return new EntityPrompt(context);
+            return new ConditionEntityPrompt(context);
         }
     }
 }

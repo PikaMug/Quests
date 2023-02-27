@@ -19,9 +19,9 @@ import me.blackvein.quests.quests.IStage;
 import me.blackvein.quests.convo.QuestsNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
-import me.blackvein.quests.convo.conditions.tasks.EntityPrompt;
-import me.blackvein.quests.convo.conditions.tasks.PlayerPrompt;
-import me.blackvein.quests.convo.conditions.tasks.WorldPrompt;
+import me.blackvein.quests.convo.conditions.tasks.ConditionEntityPrompt;
+import me.blackvein.quests.convo.conditions.tasks.ConditionPlayerPrompt;
+import me.blackvein.quests.convo.conditions.tasks.ConditionWorldPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -146,11 +146,11 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         case 1:
             return new ConditionNamePrompt(context);
         case 2:
-            return new EntityPrompt(context);
+            return new ConditionEntityPrompt(context);
         case 3:
-            return new PlayerPrompt(context);
+            return new ConditionPlayerPrompt(context);
         case 4:
-            return new WorldPrompt(context);
+            return new ConditionWorldPrompt(context);
         case 5:
             return new ConditionPlaceholderListPrompt(context);
         case 6:
@@ -508,7 +508,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         public String getTitle(final ConversationContext context) {
             return null;
         }
-        
+
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -519,7 +520,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -594,7 +596,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         public String getTitle(final ConversationContext context) {
             return null;
         }
-        
+
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
@@ -605,7 +608,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
         }
-        
+
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
