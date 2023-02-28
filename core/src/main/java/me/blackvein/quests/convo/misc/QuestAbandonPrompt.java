@@ -15,14 +15,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class QuestAbandonPrompt extends MiscStringPrompt {
 
-    private ConversationContext cc;
+    private ConversationContext context;
+    private final Quests plugin;
 
     public QuestAbandonPrompt() {
         super(null);
+        plugin = null;
     }
 
     public QuestAbandonPrompt(final ConversationContext context) {
         super(context);
+        plugin = (Quests)context.getPlugin();
+    }
+
+    @Override
+    public ConversationContext getConversationContext() {
+        return context;
     }
 
     private final int size = 2;
@@ -35,6 +43,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         return null;
     }
 
+    @SuppressWarnings("unused")
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
@@ -46,6 +55,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         }
     }
 
+    @SuppressWarnings("unused")
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
             case 1:
@@ -63,8 +73,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
 
     @Override
     public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-        this.cc = context;
-        final Quests plugin = (Quests)context.getPlugin();
+        this.context = context;
         if (plugin == null) {
             return ChatColor.YELLOW + Lang.get("unknownError");
         }

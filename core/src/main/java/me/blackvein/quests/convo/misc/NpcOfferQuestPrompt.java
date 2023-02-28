@@ -22,6 +22,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -34,19 +35,22 @@ import java.util.LinkedList;
 
 public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
-    private ConversationContext cc;
+    private ConversationContext context;
+    private final Quests plugin;
 
     public NpcOfferQuestPrompt() {
         super(null);
+        this.plugin = null;
     }
 
     public NpcOfferQuestPrompt(final ConversationContext context) {
         super(context);
+        this.plugin = (Quests)context.getPlugin();
     }
 
     @Override
     public ConversationContext getConversationContext() {
-        return cc;
+        return context;
     }
 
     private int size = 3;
@@ -64,7 +68,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
-        final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
             final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
@@ -87,7 +90,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public String getSelectionText(final ConversationContext context, final int number) {
-        final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
             final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
@@ -109,7 +111,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public String getAdditionalText(final ConversationContext context, final int number) {
-        final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin != null) {
             final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
@@ -132,8 +133,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public @Nonnull String getPromptText(final ConversationContext context) {
-        this.cc = context;
-        final Quests plugin = (Quests)context.getPlugin();
+        this.context = context;
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");
         if (plugin == null || quests == null || npc == null) {
@@ -162,7 +162,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         for (int i = 1; i <= size + 1; i++) {
             final TextComponent choice = new TextComponent("\n" + getNumberColor(context, i) + ChatColor.BOLD + i + ". "
                     + ChatColor.RESET + getSelectionText(context, i));
-            choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + String.valueOf(i)));
+            choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + i));
             if (plugin.getSettings().canShowQuestReqs() && i <= size) {
                 choice.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(quests.get(i - 1).getDescription()).create()));
@@ -179,7 +179,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(final ConversationContext context, final String input) {
-        final Quests plugin = (Quests)context.getPlugin();
         final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
         if (plugin == null || quests == null) {
             return Prompt.END_OF_CONVERSATION;

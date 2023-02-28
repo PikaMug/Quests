@@ -680,11 +680,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestGuiDisplayPrompt extends QuestsEditorNumericPrompt {
         
-        private final Quests plugin;
-        
         public QuestGuiDisplayPrompt(final ConversationContext context) {
             super(context);
-            this.plugin = (Quests)context.getPlugin();
         }
         
         private final int size = 3;
@@ -743,11 +740,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            if (context.getPlugin() != null) {
-                final QuestsEditorPostOpenNumericPromptEvent event
-                        = new QuestsEditorPostOpenNumericPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
             if (context.getSessionData(CK.Q_GUIDISPLAY) != null) {

@@ -12,6 +12,7 @@
 
 package me.blackvein.quests.convo.conditions.tasks;
 
+import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
@@ -31,9 +32,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
+
+    private final Quests plugin;
     
     public ConditionPlayerPrompt(final ConversationContext context) {
         super(context);
+        this.plugin = (Quests)context.getPlugin();
     }
     
     private final int size = 4;
@@ -151,11 +155,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             ItemStackPrompt.clearSessionData(context);
         }
 
-        if (context.getPlugin() != null) {
-            final ConditionsEditorPostOpenNumericPromptEvent event
-                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-        }
+        final ConditionsEditorPostOpenNumericPromptEvent event
+                = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+        plugin.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
         for (int i = 1; i <= size; i++) {
@@ -205,11 +207,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            if (context.getPlugin() != null) {
-                final ConditionsEditorPostOpenStringPromptEvent event
-                        = new ConditionsEditorPostOpenStringPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
+            final ConditionsEditorPostOpenStringPromptEvent event
+                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
         }
@@ -323,11 +323,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            if (context.getPlugin() != null) {
-                final ConditionsEditorPostOpenNumericPromptEvent event
-                        = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
+            final ConditionsEditorPostOpenNumericPromptEvent event
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
             for (int i = 1; i <= size; i++) {
@@ -448,11 +446,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            if (context.getPlugin() != null) {
-                final ConditionsEditorPostOpenNumericPromptEvent event
-                        = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
-                context.getPlugin().getServer().getPluginManager().callEvent(event);
-            }
+            final ConditionsEditorPostOpenNumericPromptEvent event
+                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
             for (int i = 1; i <= size; i++) {

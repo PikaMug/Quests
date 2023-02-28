@@ -647,7 +647,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
     public class QuestAcceptPrompt extends MiscStringPrompt {
 
-        private ConversationContext cc;
+        private ConversationContext context;
 
         public QuestAcceptPrompt() {
             super(null);
@@ -695,7 +695,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            this.cc = context;
+            this.context = context;
 
             final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
             getServer().getPluginManager().callEvent(event);
