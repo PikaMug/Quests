@@ -224,13 +224,13 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final List<World> worldArr = Bukkit.getWorlds();
             for (int i = 0; i < worldArr.size(); i++) {
+                worlds.append(ChatColor.AQUA).append(worldArr.get(i).getName());
                 if (i < (worldArr.size() - 1)) {
-                    worlds.append(worldArr.get(i).getName()).append(", ");
-                } else {
-                    worlds.append(worldArr.get(i).getName()).append("\n");
+                    worlds.append(ChatColor.GRAY).append(", ");
                 }
             }
-            return worlds.toString() + ChatColor.YELLOW + getQueryText(context);
+            worlds.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return worlds.toString();
         }
 
         @Override
@@ -497,13 +497,13 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             final StringBuilder biomes = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final LinkedList<Biome> biomeArr = new LinkedList<>(Arrays.asList(Biome.values()));
             for (int i = 0; i < biomeArr.size(); i++) {
+                biomes.append(ChatColor.AQUA).append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name()));
                 if (i < (biomeArr.size() - 1)) {
-                    biomes.append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name())).append(", ");
-                } else {
-                    biomes.append(MiscUtil.snakeCaseToUpperCamelCase(biomeArr.get(i).name())).append("\n");
+                    biomes.append(ChatColor.GRAY).append(", ");
                 }
+                biomes.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
             }
-            return biomes.toString() + ChatColor.YELLOW + getQueryText(context);
+            return biomes.toString();
         }
 
         @Override

@@ -561,10 +561,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      *
      * @param questNpcUuids a collection of UUIDs
      */
+    @SuppressWarnings("unused")
     public void setQuestNpcUuids(final Collection<UUID> questNpcUuids) {
         this.questNpcUuids = new ConcurrentSkipListSet<>(questNpcUuids);
     }
 
+    @SuppressWarnings("unused")
     public CommandExecutor getCommandExecutor() {
         return cmdExecutor;
     }
@@ -657,16 +659,20 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             super(context);
         }
 
-        private final int size = 2;
+        @Override
+        public ConversationContext getConversationContext() {
+            return context;
+        }
 
         public int getSize() {
-            return size;
+            return 2;
         }
 
         public String getTitle(final ConversationContext context) {
             return null;
         }
 
+        @SuppressWarnings("unused")
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
@@ -678,6 +684,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
         }
 
+        @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:

@@ -843,7 +843,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 if (!type.isAlive()) {
                     continue;
                 }
-                mobs.append(MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()));
+                mobs.append(ChatColor.AQUA).append(MiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()));
                 if (i < (mobArr.length - 1)) {
                     mobs.append(ChatColor.GRAY).append(", ");
                 }
