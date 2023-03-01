@@ -501,8 +501,8 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
                 if (i < (biomeArr.size() - 1)) {
                     biomes.append(ChatColor.GRAY).append(", ");
                 }
-                biomes.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
             }
+            biomes.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
             return biomes.toString();
         }
 
