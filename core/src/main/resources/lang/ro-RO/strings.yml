@@ -94,7 +94,6 @@ questDeleted: "Quest șters! Quest-urile și Evenimentele au fost reîncărcate.
 questEditorNameExists: "Un quest cu acest nume există deja!"
 questEditorBeingEdited: "Ceva cu acest nume este deja în curs de modificare!"
 questEditorInvalidQuestName: "Numele nu poate conține puncte sau virgule!"
-questEditorInvalidNPC: "Nu există niciun NPC cu acel id!"
 questEditorNoStartBlockSelected: "Trebuie să selectezi un bloc prima dată."
 questEditorPositiveAmount: "Suma trebuie să fie un număr pozitiv."
 questEditorQuestAsRequirement1: "Următoarele quest-uri au"
