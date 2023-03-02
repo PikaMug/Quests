@@ -449,10 +449,9 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final String[] args = input.split(" ");
                 final LinkedList<String> npcs = context.getSessionData(pref + CK.S_DELIVERY_NPCS) != null
                         ? (LinkedList<String>) context.getSessionData(pref + CK.S_DELIVERY_NPCS) : new LinkedList<>();
-                for (final String s : args) {
+                for (final String s : input.split(" ")) {
                     try {
                         final UUID uuid = UUID.fromString(s);
                         if (plugin.getDependencies().getNPCEntity(uuid) != null && npcs != null) {
@@ -464,7 +463,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         }
                     } catch (final IllegalArgumentException e) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfUniqueIds")
-                                .replace("<data>", s));
+                                .replace("<data>", input));
                         return new QuestNpcDeliveryNpcsPrompt(context);
                     }
                 }
@@ -479,9 +478,11 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(pref + CK.S_DELIVERY_MESSAGES, messages);
             }
-            final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-            selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
-            plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
+            if (context.getForWhom() instanceof Player) {
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
+                plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
+            }
             return new QuestNpcsDeliveryListPrompt(context);
         }
     }

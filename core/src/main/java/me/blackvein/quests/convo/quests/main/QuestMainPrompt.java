@@ -504,7 +504,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 try {
                     final UUID uuid = UUID.fromString(input);
                     if (plugin.getDependencies().getNPCEntity(uuid) == null) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")
+                                .replace("<input>", input));
                         return new QuestNPCStartPrompt(context);
                     }
                     context.setSessionData(CK.Q_START_NPC, uuid.toString());

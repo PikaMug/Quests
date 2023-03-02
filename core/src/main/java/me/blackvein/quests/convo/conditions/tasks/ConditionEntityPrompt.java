@@ -16,6 +16,7 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
+import me.blackvein.quests.convo.quests.objectives.QuestNpcsPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -259,37 +260,38 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
+                return ChatColor.YELLOW + Lang.get("questEditorClickNPCStart");
+            } else {
+                return ChatColor.YELLOW + getQueryText(context);
             }
-            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input == null) {
                 return null;
             }
             if (!input.equalsIgnoreCase(Lang.get("cmdCancel"))) {
-                final LinkedList<UUID> npcUuids = new LinkedList<>();
-                try {
-                    for (final String s : input.split(" ")) {
-                        try {
-                            final UUID u = UUID.fromString(s);
-                            if (plugin.getDependencies().getNPCEntity(u) == null) {
-                                context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
-                                return new ConditionNpcsPrompt(context);
-                            }
-                            npcUuids.add(u);
-                            context.setSessionData(CK.C_WHILE_RIDING_NPC, npcUuids);
-                        } catch (Exception e) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("questEditorInvalidNPC"));
+                final LinkedList<String> npcs = context.getSessionData(CK.C_WHILE_RIDING_NPC) != null
+                        ? (LinkedList<String>) context.getSessionData(CK.C_WHILE_RIDING_NPC) : new LinkedList<>();
+                for (final String s : input.split(" ")) {
+                    try {
+                        final UUID uuid = UUID.fromString(s);
+                        if (plugin.getDependencies().getNPCEntity(uuid) != null && npcs != null) {
+                            npcs.add(uuid.toString());
+                        } else {
+                            context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")
+                                    .replace("<input>", s));
+                            return new ConditionNpcsPrompt(context);
                         }
+                    } catch (final IllegalArgumentException e) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorNotListOfUniqueIds")
+                                .replace("<data>", input));
                         return new ConditionNpcsPrompt(context);
                     }
-                } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED 
-                            + Lang.get("reqNotANumber").replace("<input>", input));
-                    return new ConditionNpcsPrompt(context);
                 }
+                context.setSessionData(CK.C_WHILE_RIDING_NPC, npcs);
             }
             if (context.getForWhom() instanceof Player) {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
