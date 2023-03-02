@@ -94,7 +94,6 @@ questDeleted: "Ang paghahanap ay nabura! Paghahanap at ang Okasyon ay na i-reloa
 questEditorNameExists: "Ang Pagsubok kasama ang pangalan ay tapos nang umiral!"
 questEditorBeingEdited: "Ang isang bagay na may pangalang iyon ay nabago na!"
 questEditorInvalidQuestName: "Ang pangalan ay walang kahalong tuldok o mga kuwit!"
-questEditorInvalidNPC: "Walang NPC umiiral kasama ang id na yan!"
 questEditorNoStartBlockSelected: "Ikaw ay maaaring mamili ng unang haharangan."
 questEditorPositiveAmount: "Halaga ay dapat maging positibong bilang."
 questEditorQuestAsRequirement1: "Ang sumusunod na pagsusulit ay"
