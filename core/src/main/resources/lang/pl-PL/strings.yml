@@ -94,7 +94,6 @@ questDeleted: "Misja usunięta! Misje i wydarzenia zostały załadowane ponownie
 questEditorNameExists: "Misja o podanej nazwie już istnieje!"
 questEditorBeingEdited: "Coś o tej nazwie jest już modyfikowane!"
 questEditorInvalidQuestName: "Nazwa nie może zawierać kropek ani przecinków!"
-questEditorInvalidNPC: "Nie istnieje NPC z takim ID!"
 questEditorNoStartBlockSelected: "Najpierw musisz wybrać blok."
 questEditorPositiveAmount: "Liczba musi być dodatnia."
 questEditorQuestAsRequirement1: "Następujące zadania mają"
