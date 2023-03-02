@@ -94,7 +94,6 @@ questDeleted: "เควสลบแล้ว! เควสและกิจก
 questEditorNameExists: "เควสที่มีชื่อนี้มีอยู่แล้ว!"
 questEditorBeingEdited: "มีการแก้ไขบางอย่างกับชื่อนี้แล้ว!"
 questEditorInvalidQuestName: "ชื่ออาจไม่ประกอบด้วยรอบระยะเวลาหรือจุลภาค"
-questEditorInvalidNPC: "ไม่มี NPC ที่มี ID ดังกล่าว!"
 questEditorNoStartBlockSelected: "คุณต้องเลือกบล็อกก่อน"
 questEditorPositiveAmount: "จำนวนเงินต้องเป็นจำนวนบวก"
 questEditorQuestAsRequirement1: "มีเควสต่อไปนี้"
