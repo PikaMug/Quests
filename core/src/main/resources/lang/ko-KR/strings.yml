@@ -94,7 +94,6 @@ questDeleted: "퀘스트가 삭제되었습니다! 퀘스트 및 액션이 새�
 questEditorNameExists: "그 이름을 가진 퀘스트가 이미 존재합니다!"
 questEditorBeingEdited: "그 이름을 가진 무언가가 이미 수정되고 있습니다!"
 questEditorInvalidQuestName: "이름에는 마침표 또는 쉼표가 포함될 수 없습니다!"
-questEditorInvalidNPC: "그 id와 함께 NPC가 존재하지 않습니다!"
 questEditorNoStartBlockSelected: "먼저 블록을 선택해야합니다."
 questEditorPositiveAmount: "금액은 양수 여야합니다."
 questEditorQuestAsRequirement1: "다음 퀘스트는"
