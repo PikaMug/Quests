@@ -94,7 +94,6 @@ questDeleted: "Quête supprimée ! Les quêtes et les événements ont été re
 questEditorNameExists: "Une quête ayant le même nom existe déjà !"
 questEditorBeingEdited: "Quelque chose avec ce nom est déjà en cours de modification!"
 questEditorInvalidQuestName: "Nom ne peut pas contenir de points ou de virgules !"
-questEditorInvalidNPC: "Aucun NPC n’existe avec cet id !"
 questEditorNoStartBlockSelected: "Vous devez d'abord sélectionner un bloc."
 questEditorPositiveAmount: "Veuillez entrer un nombre positif."
 questEditorQuestAsRequirement1: "Les quêtes suivantes ont"
