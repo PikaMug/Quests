@@ -94,7 +94,6 @@ questDeleted: "A küldetés törölve! A küldetések és események újratöltv
 questEditorNameExists: "Ez a küldetés név már létezik!"
 questEditorBeingEdited: "Valami ezzel a névvel már módosult!"
 questEditorInvalidQuestName: "A név nem tartalmazhat időtartalmat vagy vesszőket!"
-questEditorInvalidNPC: "Nem létezik NPC ezzel az azonosítóval!"
 questEditorNoStartBlockSelected: "Először egy blokkot kell kiválasztanod."
 questEditorPositiveAmount: "Az összegnek pozitív számnak kell lennie."
 questEditorQuestAsRequirement1: "A következő küldetések vannak"
