@@ -94,7 +94,6 @@ questDeleted: "Missione cancellata! Le missioni e gli eventi sono stati ricarica
 questEditorNameExists: "Una missione con quel nome già esiste!"
 questEditorBeingEdited: "Qualcosa con quel nome è già in fase di modifica!"
 questEditorInvalidQuestName: "Il nome non può contenere punti o virgole!"
-questEditorInvalidNPC: "Non esiste nessun NPC con quell'ID!"
 questEditorNoStartBlockSelected: "Devi prima selezionare un blocco."
 questEditorPositiveAmount: "La quantità deve essere un numero positivo."
 questEditorQuestAsRequirement1: "Le seguenti missioni hanno"
