@@ -94,7 +94,6 @@ questDeleted: "クエストを削除! クエストとイベントがリロード
 questEditorNameExists: "その名前は既に使われています！"
 questEditorBeingEdited: "その名前のものはすでに変更されています！"
 questEditorInvalidQuestName: "名前に期間またはカンマを含めることはできません！"
-questEditorInvalidNPC: "そのIDを持つNPCは存在しません！"
 questEditorNoStartBlockSelected: "ブロックを先に選択してください。"
 questEditorPositiveAmount: "0より大きいかずでなければなりません。"
 questEditorQuestAsRequirement1: "次のクエストがあります"
