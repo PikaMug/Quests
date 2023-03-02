@@ -94,7 +94,6 @@ questDeleted: "Quest gelöscht! Quests und Events wurden automatisch neu geladen
 questEditorNameExists: "Es gibt eine Quest, die bereits diesen Namen besitzt!"
 questEditorBeingEdited: "Etwas mit diesem Namen wird bereits geändert!"
 questEditorInvalidQuestName: "Der Name darf keine Punkte oder Kommas enthalten!"
-questEditorInvalidNPC: "Es existiert kein NPC mit dieser ID!"
 questEditorNoStartBlockSelected: "Du musst zuerst einen Block auswählen."
 questEditorPositiveAmount: "Die Anzahl muss eine positive Nummer sein."
 questEditorQuestAsRequirement1: "Folgende Quests haben"
