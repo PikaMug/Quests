@@ -94,7 +94,6 @@ questDeleted: "Квест видалено! Завдання та дії бул�
 questEditorNameExists: "Квест із такою назвою вже існує!"
 questEditorBeingEdited: "Щось із цією назвою вже змінюється!"
 questEditorInvalidQuestName: "Ім'я не може містити періоди або коми!"
-questEditorInvalidNPC: "NPC з таким ID не існує!"
 questEditorNoStartBlockSelected: "Спочатку вам слід вибрати блок."
 questEditorPositiveAmount: "Сума має бути додатнім числом."
 questEditorQuestAsRequirement1: "Наступні квести мають"
