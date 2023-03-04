@@ -1544,14 +1544,15 @@ public class Quester implements IQuester {
             plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
             return new LinkedList<>();
         }
-        if (getCurrentStage(quest) == null) {
+        final IStage stage = getCurrentStage(quest);
+        if (stage == null) {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
             return new LinkedList<>();
         }
         final IDependencies depends = plugin.getDependencies();
-        if (!ignoreOverrides && !getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
+        if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
             final LinkedList<BukkitObjective> objectives = new LinkedList<>();
-            for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
+            for (final String s: stage.getObjectiveOverrides()) {
                 String message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
@@ -1562,7 +1563,6 @@ public class Quester implements IQuester {
             return objectives;
         }
         final QuestData data = getQuestData(quest);
-        final IStage stage = getCurrentStage(quest);
         final LinkedList<BukkitObjective> objectives = new LinkedList<>();
         for (final ItemStack goal : stage.getBlocksToBreak()) {
             for (final ItemStack progress : data.blocksBroken) {
