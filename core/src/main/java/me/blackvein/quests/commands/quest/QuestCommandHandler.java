@@ -52,7 +52,7 @@ public class QuestCommandHandler {
                                 final String msg = Lang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
                                 Lang.send(player, ChatColor.GOLD + msg);
-                                plugin.showObjectives(q, quester, false);
+                                quester.showCurrentObjectives(q, quester, false);
                             } else {
                                 final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
                                 String msg = ChatColor.YELLOW + "(" + Lang.get(player, "delay") + ") " + ChatColor.RED

@@ -1090,118 +1090,12 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
     }
 
-    public void showObjectivesTemp(final IQuest quest, final IQuester quester, final boolean ignoreOverrides) {
-        Quester q = (Quester)quester;
-        final IStage stage = quester.getCurrentStage(quest);
-        if (stage == null) {
-            getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
-            return;
-        }
-        if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
-            for (final String s: stage.getObjectiveOverrides()) {
-                String message = (s.trim().length() > 0 ? "- " : "") + ChatColor.GREEN + ConfigUtil
-                        .parseString(s, quest, quester.getPlayer());
-                if (depends.getPlaceholderApi() != null) {
-                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
-                }
-                quester.sendMessage(message);
-            }
-            return;
-        }
-        for (BukkitObjective objective : q.getCurrentObjectivesTemp(quest, false, false)) {
-            final String message = "- " + objective.getMessage();
-            if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
-                ItemStack progress = objective.getProgressAsItem();
-                ItemStack goal = objective.getGoalAsItem();
-                if (!settings.canShowCompletedObjs() && progress.getAmount() >= goal.getAmount()) {
-                    continue;
-                }
-                if (getSettings().canTranslateNames() && goal.hasItemMeta()) {
-                    // Bukkit version is 1.9+
-                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
-                            goal.getEnchantments(), goal.getItemMeta());
-                } else if (getSettings().canTranslateNames() && !goal.hasItemMeta()
-                        && Material.getMaterial("LINGERING_POTION") == null) {
-                    // Bukkit version is below 1.9
-                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
-                            goal.getEnchantments());
-                } else {
-                    if (goal.getEnchantments().isEmpty()) {
-                        quester.sendMessage(message.replace("<item>", ItemUtil.getName(goal))
-                                .replace("<enchantment>", "")
-                                .replace("<level>", "")
-                                .replaceAll("\\s+", " "));
-                    } else {
-                        for (final Entry<Enchantment, Integer> e : goal.getEnchantments().entrySet()) {
-                            quester.sendMessage(message.replace("<item>", ItemUtil.getName(goal))
-                                    .replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
-                                    .replace("<level>", RomanNumeral.getNumeral(e.getValue())));
-                        }
-                    }
-                }
-            } else if (objective.getProgressAsMob() != null && objective.getGoalAsMob() != null) {
-                CountableMob progress = objective.getProgressAsMob();
-                CountableMob goal = objective.getGoalAsMob();
-                if (!settings.canShowCompletedObjs() && progress.getCount() >= goal.getCount()) {
-                    continue;
-                }
-                if (getSettings().canTranslateNames()) {
-                    localeManager.sendMessage(quester.getPlayer(), message, goal.getEntityType(), null);
-                } else {
-                    quester.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(goal.getEntityType())));
-                }
-            } else {
-                if (!settings.canShowCompletedObjs() && objective.getProgress() >= objective.getGoal()) {
-                    continue;
-                }
-                quester.sendMessage(message);
-            }
-        }
-        final QuestData data = quester.getQuestData(quest);
-        if (data == null) {
-            getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
-            return;
-        }
-        int customIndex = 0;
-        for (final ICustomObjective customObjective : stage.getCustomObjectives()) {
-            int progress = data.customObjectiveCounts.size() > customIndex
-                    ? data.customObjectiveCounts.get(customIndex) : 0;
-            final int goal = stage.getCustomObjectiveCounts().get(customIndex);
-            final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
-            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
-                customIndex++;
-                continue;
-            }
-            String message = "- " + color + customObjective.getDisplay();
-            for (final Entry<String,Object> prompt : customObjective.getData()) {
-                final String replacement = "%" + prompt.getKey() + "%";
-                try {
-                    for (final Entry<String, Object> e : stage.getCustomObjectiveData()) {
-                        if (e.getKey().equals(prompt.getKey())) {
-                            if (message.contains(replacement)) {
-                                message = message.replace(replacement, ((String) e.getValue()));
-                            }
-                        }
-                    }
-                } catch (final NullPointerException npe) {
-                    getLogger().severe("Unable to fetch display for " + customObjective.getName() + " on "
-                            + quest.getName());
-                    npe.printStackTrace();
-                }
-            }
-            if (customObjective.canShowCount()) {
-                message = message.replace("%count%", progress + "/" + goal);
-            }
-            quester.sendMessage(ConfigUtil.parseString(message));
-            customIndex++;
-        }
-    }
-
     /**
      * Show applicable objectives for the current stage of a player's quest.<p>
      * 
      * Respects PlaceholderAPI and translations, when enabled.
-     * 
+     *
+     * @deprecated Use {@link Quester#showCurrentObjectives(IQuest, IQuester, boolean)}
      * @param quest The quest to get current stage objectives of
      * @param quester The player to show current stage objectives to
      * @param ignoreOverrides Whether to ignore objective-overrides
@@ -1209,7 +1103,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     @SuppressWarnings("deprecation")
     public void showObjectives(final IQuest quest, final IQuester quester, final boolean ignoreOverrides) {
         if (quest == null) {
-            getLogger().severe("Quest was null when getting objectives for " + quester.getLastKnownName());
+            getLogger().severe("Quest was null when showing objectives for " + quester.getLastKnownName());
             return;
         }
         if (quester.getQuestData(quest) == null) {
@@ -1829,6 +1723,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     /**
      * Show all of a player's conditions for the current stage of a quest.<p>
      *
+     * @deprecated Use {@link Quester#showCurrentConditions(IQuest, IQuester)}
      * @param quest The quest to get current stage objectives of
      * @param quester The player to show current stage objectives to
      */
@@ -1928,7 +1823,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
     
     /**
      * Show the player a list of their available quests
-     * 
+     *
+     * @deprecated Use {@link Quester#listQuests(IQuester, int)}
      * @param quester Quester to show the list
      * @param page Page to display, with 7 quests per page
      */

@@ -336,7 +336,7 @@ public class Quest implements IQuest {
             final Player p = quester.getPlayer();
             final String title = Lang.get(p, "objectives").replace("<quest>", name);
             quester.sendMessage(ChatColor.GOLD + title);
-            plugin.showObjectives(this, quester, false);
+            quester.showCurrentObjectives(this, quester, false);
             if (quester.getCurrentStage(this) == null) {
                 quester.sendMessage(ChatColor.RED + "itemCreateCriticalError");
                 plugin.getLogger().severe("Could not set stage for quest ID " + getId()

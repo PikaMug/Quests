@@ -140,15 +140,23 @@ public interface IQuester extends Comparable<IQuester> {
 
     void quitQuest(final IQuest quest, final String[] messages);
 
+    void listQuests(final IQuester quester, final int page);
+
     LinkedList<String> getCurrentRequirements(final IQuest quest, final boolean ignoreOverrides);
 
     LinkedList<String> getCurrentObjectives(final IQuest quest, final boolean ignoreOverrides);
+
+    void showCurrentObjectives(final IQuest quest, final IQuester quester, final boolean ignoreOverrides);
 
     LinkedList<String> getObjectives(final IQuest quest, final boolean ignoreOverrides);
 
     boolean containsObjective(final IQuest quest, final String name);
 
+    boolean hasObjective(final IQuest quest, final ObjectiveType type);
+
     boolean hasCustomObjective(final IQuest quest, final String name);
+
+    void showCurrentConditions(final IQuest quest, final IQuester quester);
 
     void breakBlock(final IQuest quest, final ItemStack itemStack);
 

@@ -17,6 +17,7 @@ import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import me.blackvein.quests.conditions.ICondition;
 import me.blackvein.quests.config.ISettings;
 import me.blackvein.quests.convo.misc.QuestAbandonPrompt;
 import me.blackvein.quests.dependencies.IDependencies;
@@ -48,7 +49,9 @@ import me.blackvein.quests.util.Lang;
 import me.blackvein.quests.util.MiscUtil;
 import me.blackvein.quests.util.RomanNumeral;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.localelib.LocaleManager;
 import me.pikamug.unite.api.objects.PartyProvider;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -589,8 +592,8 @@ public class Quester implements IQuester {
                 return false;
             }
         }
-        if (getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests() && plugin.getSettings().getMaxQuests()
-                > 0) {
+        if (getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
+                && plugin.getSettings().getMaxQuests() > 0) {
             if (giveReason) {
                 final String msg = Lang.get(getPlayer(), "questMaxAllowed").replace("<number>",
                         String.valueOf(plugin.getSettings().getMaxQuests()));
@@ -809,7 +812,7 @@ public class Quester implements IQuester {
                 final Player p = getPlayer();
                 final String title = Lang.get(p, "objectives").replace("<quest>", quest.getName());
                 sendMessage(ChatColor.GOLD + title);
-                plugin.showObjectives(quest, this, false);
+                showCurrentObjectives(quest, this, false);
                 final String stageStartMessage = stage.getStartMessage();
                 if (stageStartMessage != null) {
                     p.sendMessage(ConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, quest, getPlayer()));
@@ -829,7 +832,7 @@ public class Quester implements IQuester {
             if (offlinePlayer.isOnline()) {
                 sendMessage(ChatColor.DARK_AQUA + Lang.get("requirements"));
                 for (final String s : getCurrentRequirements(quest, false)) {
-                    sendMessage(ChatColor.GRAY + "- " + s);
+                    sendMessage("- " + ChatColor.GRAY + s);
                 }
             }
         }
@@ -921,7 +924,95 @@ public class Quester implements IQuester {
             compassTargetQuestId = null;
         }
     }
-    
+
+    /**
+     * Show the player a list of their available quests
+     *
+     * @param quester Quester to show the list
+     * @param page Page to display, with 7 quests per page
+     */
+    public void listQuests(final IQuester quester, final int page) {
+        // Although we could copy the quests list to a new object, we instead opt to
+        // duplicate code to improve efficiency if ignore-locked-quests is set to 'false'
+        final int rows = 7;
+        final Player player = quester.getPlayer();
+        final Collection<IQuest> quests = plugin.getLoadedQuests();
+        if (plugin.getSettings().canIgnoreLockedQuests()) {
+            final LinkedList<IQuest> available = new LinkedList<>();
+            for (final IQuest q : quests) {
+                if (!quester.getCompletedQuestsTemp().contains(q)) {
+                    if (q.testRequirements(player)) {
+                        available.add(q);
+                    }
+                } else if (q.getPlanner().hasCooldown() && quester.getRemainingCooldown(q) < 0) {
+                    if (q.testRequirements(player)) {
+                        available.add(q);
+                    }
+                }
+            }
+            if ((available.size() + rows) <= (page * rows) || available.size() == 0) {
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+            } else {
+                Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                final List<IQuest> subQuests;
+                if (available.size() >= (fromOrder + rows)) {
+                    subQuests = available.subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = available.subList((fromOrder), available.size());
+                }
+                fromOrder++;
+                for (final IQuest q : subQuests) {
+                    if (quester.canAcceptOffer(q, false)) {
+                        quester.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    } else {
+                        quester.sendMessage(ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
+                    }
+                    fromOrder++;
+                }
+                final int numPages = (int) Math.ceil(((double) available.size()) / ((double) rows));
+                String msg = Lang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                Lang.send(player, ChatColor.GOLD + msg);
+            }
+        } else {
+            if ((quests.size() + rows) <= (page * rows) || quests.size() == 0) {
+                Lang.send(player, ChatColor.YELLOW + Lang.get(player, "pageNotExist"));
+            } else {
+                Lang.send(player, ChatColor.GOLD + Lang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                final List<IQuest> subQuests;
+                if (quests.size() >= (fromOrder + rows)) {
+                    subQuests = new LinkedList<>(quests).subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = new LinkedList<>(quests).subList((fromOrder), quests.size());
+                }
+                fromOrder++;
+                for (final IQuest q : subQuests) {
+                    if (quester.canAcceptOffer(q, false)) {
+                        Lang.send(player, ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
+                    } else {
+                        Lang.send(player, ChatColor.GRAY + Integer.toString(fromOrder) + ". " + q.getName());
+                    }
+                    fromOrder++;
+                }
+                final int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
+                String msg = Lang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                Lang.send(player, ChatColor.GOLD + msg);
+            }
+        }
+    }
+
+    /**
+     * Get current requirements for a quest, both finished and unfinished
+     *
+     * @param quest The quest to get objectives of
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     * @return List of detailed requirements
+     */
     public LinkedList<String> getCurrentRequirements(final IQuest quest, final boolean ignoreOverrides) {
         if (quest == null) {
             return new LinkedList<>();
@@ -2053,6 +2144,128 @@ public class Quester implements IQuester {
         }
         return objectives;
     }
+
+    /**
+     * Show current objectives for a quest, if applicable<p>
+     *
+     * Respects PlaceholderAPI and translations, when enabled.
+     *
+     * @param quest The quest to get current stage objectives of
+     * @param quester The player to show current stage objectives to
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     */
+    public void showCurrentObjectives(final IQuest quest, final IQuester quester, final boolean ignoreOverrides) {
+        if (quest == null) {
+            plugin.getLogger().severe("Quest was null when showing objectives for " + quester.getLastKnownName());
+            return;
+        }
+        Quester q = (Quester)quester;
+        final IStage stage = quester.getCurrentStage(quest);
+        if (stage == null) {
+            plugin.getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
+            return;
+        }
+        if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
+            for (final String s: stage.getObjectiveOverrides()) {
+                String message = (s.trim().length() > 0 ? "- " : "") + ChatColor.GREEN + ConfigUtil
+                        .parseString(s, quest, quester.getPlayer());
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
+                }
+                quester.sendMessage(message);
+            }
+            return;
+        }
+        final Settings settings = plugin.getSettings();
+        final LocaleManager localeManager = plugin.getLocaleManager();
+        for (BukkitObjective objective : q.getCurrentObjectivesTemp(quest, false, false)) {
+            final String message = "- " + objective.getMessage();
+            if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
+                ItemStack progress = objective.getProgressAsItem();
+                ItemStack goal = objective.getGoalAsItem();
+                if (!settings.canShowCompletedObjs() && progress.getAmount() >= goal.getAmount()) {
+                    continue;
+                }
+                if (settings.canTranslateNames() && goal.hasItemMeta()) {
+                    // Bukkit version is 1.9+
+                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
+                            goal.getEnchantments(), goal.getItemMeta());
+                } else if (settings.canTranslateNames() && !goal.hasItemMeta()
+                        && Material.getMaterial("LINGERING_POTION") == null) {
+                    // Bukkit version is below 1.9
+                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
+                            goal.getEnchantments());
+                } else {
+                    if (goal.getEnchantments().isEmpty()) {
+                        quester.sendMessage(message.replace("<item>", ItemUtil.getName(goal))
+                                .replace("<enchantment>", "")
+                                .replace("<level>", "")
+                                .replaceAll("\\s+", " "));
+                    } else {
+                        for (final Entry<Enchantment, Integer> e : goal.getEnchantments().entrySet()) {
+                            quester.sendMessage(message.replace("<item>", ItemUtil.getName(goal))
+                                    .replace("<enchantment>", ItemUtil.getPrettyEnchantmentName(e.getKey()))
+                                    .replace("<level>", RomanNumeral.getNumeral(e.getValue())));
+                        }
+                    }
+                }
+            } else if (objective.getProgressAsMob() != null && objective.getGoalAsMob() != null) {
+                CountableMob progress = objective.getProgressAsMob();
+                CountableMob goal = objective.getGoalAsMob();
+                if (!settings.canShowCompletedObjs() && progress.getCount() >= goal.getCount()) {
+                    continue;
+                }
+                if (settings.canTranslateNames()) {
+                    localeManager.sendMessage(quester.getPlayer(), message, goal.getEntityType(), null);
+                } else {
+                    quester.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(goal.getEntityType())));
+                }
+            } else {
+                if (!settings.canShowCompletedObjs() && objective.getProgress() >= objective.getGoal()) {
+                    continue;
+                }
+                quester.sendMessage(message);
+            }
+        }
+        final QuestData data = quester.getQuestData(quest);
+        if (data == null) {
+            plugin.getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
+            return;
+        }
+        int customIndex = 0;
+        for (final ICustomObjective customObjective : stage.getCustomObjectives()) {
+            int progress = data.customObjectiveCounts.size() > customIndex
+                    ? data.customObjectiveCounts.get(customIndex) : 0;
+            final int goal = stage.getCustomObjectiveCounts().get(customIndex);
+            final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
+            if (!settings.canShowCompletedObjs() && color.equals(ChatColor.GRAY)) {
+                customIndex++;
+                continue;
+            }
+            String message = "- " + color + customObjective.getDisplay();
+            for (final Entry<String,Object> prompt : customObjective.getData()) {
+                final String replacement = "%" + prompt.getKey() + "%";
+                try {
+                    for (final Entry<String, Object> e : stage.getCustomObjectiveData()) {
+                        if (e.getKey().equals(prompt.getKey())) {
+                            if (message.contains(replacement)) {
+                                message = message.replace(replacement, ((String) e.getValue()));
+                            }
+                        }
+                    }
+                } catch (final NullPointerException npe) {
+                    plugin.getLogger().severe("Unable to fetch display for " + customObjective.getName() + " on "
+                            + quest.getName());
+                    npe.printStackTrace();
+                }
+            }
+            if (customObjective.canShowCount()) {
+                message = message.replace("%count%", progress + "/" + goal);
+            }
+            quester.sendMessage(ConfigUtil.parseString(message));
+            customIndex++;
+        }
+    }
     
     /**
      * Get current objectives for a quest, both finished and unfinished
@@ -2089,6 +2302,20 @@ public class Quester implements IQuester {
     }
 
     /**
+     * Check if player's current stage has the specified objective
+     *
+     * @param quest The quest to check objectives of
+     * @param type The type of objective to check for
+     * @return true if stage contains specified objective
+     */
+    public boolean hasObjective(final IQuest quest, final ObjectiveType type) {
+        if (quest == null || getCurrentStage(quest) == null || type == null) {
+            return false;
+        }
+        return getCurrentStage(quest).containsObjective(type);
+    }
+
+    /**
      * Check if player's current stage has the specified custom objective
      *
      * @param quest The quest to check custom objectives of
@@ -2096,7 +2323,7 @@ public class Quester implements IQuester {
      * @return true if stage contains specified objective
      */
     public boolean hasCustomObjective(final IQuest quest, final String name) {
-        if (quest == null || getCurrentStage(quest) == null) {
+        if (quest == null || getCurrentStage(quest) == null || name == null) {
             return false;
         }
         for (final ICustomObjective co : getCurrentStage(quest).getCustomObjectives()) {
@@ -2105,6 +2332,107 @@ public class Quester implements IQuester {
             }
         }
         return false;
+    }
+
+    /**
+     * Show all of a player's conditions for the current stage of a quest.<p>
+     *
+     * @param quest The quest to get current stage objectives of
+     * @param quester The player to show current stage objectives to
+     */
+    public void showCurrentConditions(final IQuest quest, final IQuester quester) {
+        if (quest == null) {
+            plugin.getLogger().severe("Quest was null when getting conditions for " + quester.getLastKnownName());
+            return;
+        }
+        if (quester.getQuestData(quest) == null) {
+            plugin.getLogger().warning("Quest data was null when showing conditions for " + quest.getName());
+            return;
+        }
+        final IStage stage = quester.getCurrentStage(quest);
+        if (stage == null) {
+            plugin.getLogger().warning("Current stage was null when showing conditions for " + quest.getName());
+            return;
+        }
+        final ICondition c = stage.getCondition();
+        if (c != null && stage.getObjectiveOverrides().isEmpty()) {
+            quester.sendMessage(ChatColor.LIGHT_PURPLE + Lang.get("stageEditorConditions"));
+            final StringBuilder msg = new StringBuilder("- " + ChatColor.YELLOW);
+            if (!c.getEntitiesWhileRiding().isEmpty()) {
+                msg.append(Lang.get("conditionEditorRideEntity"));
+                for (final String e : c.getEntitiesWhileRiding()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getNpcsWhileRiding().isEmpty()) {
+                msg.append(Lang.get("conditionEditorRideNPC"));
+                for (final UUID u : c.getNpcsWhileRiding()) {
+                    if (plugin.getDependencies().getCitizens() != null) {
+                        msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
+                                .getByUniqueId(u).getName());
+                    } else {
+                        msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(u);
+                    }
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getPermissions().isEmpty()) {
+                msg.append(Lang.get("conditionEditorPermissions"));
+                for (final String e : c.getPermissions()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(e);
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getItemsWhileHoldingMainHand().isEmpty()) {
+                msg.append(Lang.get("conditionEditorItemsInMainHand"));
+                for (final ItemStack is : c.getItemsWhileHoldingMainHand()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(ItemUtil.getPrettyItemName(is
+                            .getType().name()));
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getItemsWhileWearing().isEmpty()) {
+                msg.append(Lang.get("conditionEditorItemsWear"));
+                for (final ItemStack is : c.getItemsWhileWearing()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(ItemUtil.getPrettyItemName(is
+                            .getType().name()));
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getWorldsWhileStayingWithin().isEmpty()) {
+                msg.append(Lang.get("conditionEditorStayWithinWorld"));
+                for (final String w : c.getWorldsWhileStayingWithin()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(w);
+                }
+                quester.sendMessage(msg.toString());
+            } else if (c.getTickStartWhileStayingWithin() > -1 && c.getTickEndWhileStayingWithin() > -1) {
+                msg.append(Lang.get("conditionEditorStayWithinTicks"));
+                msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(c.getTickStartWhileStayingWithin())
+                        .append(" - ").append(c.getTickEndWhileStayingWithin());
+                quester.sendMessage(msg.toString());
+            } else if (!c.getBiomesWhileStayingWithin().isEmpty()) {
+                msg.append(Lang.get("conditionEditorStayWithinBiome"));
+                for (final String b : c.getBiomesWhileStayingWithin()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(MiscUtil
+                            .snakeCaseToUpperCamelCase(b));
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getRegionsWhileStayingWithin().isEmpty()) {
+                msg.append(Lang.get("conditionEditorStayWithinRegion"));
+                for (final String r : c.getRegionsWhileStayingWithin()) {
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r);
+                }
+                quester.sendMessage(msg.toString());
+            } else if (!c.getPlaceholdersCheckIdentifier().isEmpty()) {
+                msg.append(Lang.get("conditionEditorCheckPlaceholder"));
+                int index = 0;
+                for (final String r : c.getPlaceholdersCheckIdentifier()) {
+                    if (c.getPlaceholdersCheckValue().size() > index) {
+                        msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(r).append(ChatColor.GRAY)
+                                .append(" = ").append(ChatColor.AQUA).append(c.getPlaceholdersCheckValue()
+                                        .get(index));
+                    }
+                    index++;
+                }
+                quester.sendMessage(msg.toString());
+            }
+        }
     }
     
     /**
