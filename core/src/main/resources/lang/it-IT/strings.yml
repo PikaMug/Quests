@@ -94,7 +94,6 @@ questDeleted: "Missione cancellata! Le missioni e gli eventi sono stati ricarica
 questEditorNameExists: "Una missione con quel nome già esiste!"
 questEditorBeingEdited: "Qualcosa con quel nome è già in fase di modifica!"
 questEditorInvalidQuestName: "Il nome non può contenere punti o virgole!"
-questEditorInvalidNPC: "Non esiste nessun NPC con quell'ID!"
 questEditorNoStartBlockSelected: "Devi prima selezionare un blocco."
 questEditorPositiveAmount: "La quantità deve essere un numero positivo."
 questEditorQuestAsRequirement1: "Le seguenti missioni hanno"
@@ -268,7 +267,7 @@ eventEditorExists: "L'evento già esiste!"
 eventEditorDeleted: "Evento cancellato, Missioni ed Eventi ricaricati."
 eventEditorSaved: "Evento salvato, Missioni ed Eventi ricaricati."
 eventEditorEnterEventName: "Inserisci il nome dell'evento, <cancel>"
-eventEditorModifiedNote: 'Nota: Hai modificato un''azione che viene utilizzata nelle seguenti missioni:'
+eventEditorModifiedNote: 'Hai modificato un evento che viene utilizzato nelle seguenti missioni:'
 eventEditorForcedToQuit: "Se salverai l'evento, chiunque faccia attivamente una di queste missioni sarà forzato a lasciarle."
 eventEditorEventInUse: "Le seguenti missioni utilizzano l'evento"
 eventEditorMustModifyQuests: "È necessario modificare queste missioni prima!"
@@ -384,7 +383,7 @@ conditionEditorInUse: "Le seguenti missioni utilizzano la condizione"
 conditionEditorEnterName: "Inserici nome Condizione, <cancel>"
 conditionEditorSaved: "Condizione salvata. Dati delle missioni e condizioni ricaricati."
 conditionEditorDeleted: "Condizione cancellata. Dati delle missioni e condizioni ricaricati."
-conditionEditorModifiedNote: 'Nota: Hai modificato una condizione che viene utilizzata nelle seguenti missioni:'
+conditionEditorModifiedNote: 'Hai modificato una condizione che viene utilizzata dalle seguenti missioni:'
 conditionEditorForcedToQuit: "Se salverai la condizione, chiunque faccia attivamente una di queste missioni sarà forzato a lasciarle."
 conditionEditorSetName: "Imposta nome"
 conditionEditorEntity: "Entità"

@@ -94,7 +94,6 @@ questDeleted: "เควสลบแล้ว! เควสและกิจก
 questEditorNameExists: "เควสที่มีชื่อนี้มีอยู่แล้ว!"
 questEditorBeingEdited: "มีการแก้ไขบางอย่างกับชื่อนี้แล้ว!"
 questEditorInvalidQuestName: "ชื่ออาจไม่ประกอบด้วยรอบระยะเวลาหรือจุลภาค"
-questEditorInvalidNPC: "ไม่มี NPC ที่มี ID ดังกล่าว!"
 questEditorNoStartBlockSelected: "คุณต้องเลือกบล็อกก่อน"
 questEditorPositiveAmount: "จำนวนเงินต้องเป็นจำนวนบวก"
 questEditorQuestAsRequirement1: "มีเควสต่อไปนี้"
@@ -268,6 +267,7 @@ eventEditorExists: "มีกิจกรรมอยู่แล้ว!"
 eventEditorDeleted: "ลบกิจกรรมแล้ว รีโหลดเควสและข้อมูลกิจกรรมเรียบร้อย"
 eventEditorSaved: "บันทึกกิจกรรมที่สร้างขึ้นภารกิจและกิจกรรมใหม่แล้ว"
 eventEditorEnterEventName: "ป้อนชื่อการดำเนินการ<cancel>"
+eventEditorModifiedNote: 'คุณได้แก้ไขเหตุการณ์ที่เควสต่อไปนี้ใช้:'
 eventEditorForcedToQuit: "ถ้าคุณบันทึกกิจกรรมทุกคนที่กำลังดำเนินการใด ๆ ของเควสเหล่านี้จะถูกบังคับให้ออกจากคุกกี้"
 eventEditorEventInUse: "เควสต่อไปนี้ใช้เหตุการณ์"
 eventEditorMustModifyQuests: "คุณต้องแก้ไขเควสเหล่านี้ก่อน!"
@@ -383,6 +383,7 @@ conditionEditorInUse: "เควสต่อไปนี้ใช้เงื่
 conditionEditorEnterName: "ป้อนชื่อเงื่อนไข<cancel>"
 conditionEditorSaved: "บันทึกเงื่อนไขแล้ว โหลดข้อมูลภารกิจและเงื่อนไขอีกครั้ง"
 conditionEditorDeleted: "ลบเงื่อนไขแล้ว โหลดข้อมูลภารกิจและเงื่อนไขอีกครั้ง"
+conditionEditorModifiedNote: 'คุณได้แก้ไขเงื่อนไข ว่าเควสต่อไปนี้ ใช้:'
 conditionEditorForcedToQuit: "ถ้าคุณบันทึกกิจกรรมที่กำลังดำเนินการใด ๆ ของเควสเหล่านี้ ทุกๆคนจะถูกบังคับให้ออกจากคภารกิจ"
 conditionEditorSetName: "ตั้งชื่อ"
 conditionEditorEntity: "เอนทิตี้"

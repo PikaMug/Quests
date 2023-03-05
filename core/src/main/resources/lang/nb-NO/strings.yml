@@ -90,7 +90,6 @@ questDeleted: "Oppdrag slettet! Oppdrag- og handlingsdata er lastet om på nytt.
 questEditorNameExists: "Et oppdrag med det navnet eksisterer allerede!"
 questEditorBeingEdited: "Noe med det navnet blir allerede endret!"
 questEditorInvalidQuestName: "Navnet kan ikke inneholde punktum eller komma!"
-questEditorInvalidNPC: "Det finnes ingen NPC med den IDen!"
 questEditorNoStartBlockSelected: "Du må velge en blokk først."
 questEditorPositiveAmount: "Beløpet må være et positivt tall."
 questEditorQuestAsRequirement1: "Følgende oppdrag har"
