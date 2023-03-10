@@ -3116,7 +3116,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         questNpcUuids.add(uuid);
                     }
                 } else {
-                    throw new StageFormatException("npc-ids-to-talk-to is not a list of numbers", quest, stageNum);
+                    throw new StageFormatException("npc-uuids-to-talk-to is not a list of numbers", quest, stageNum);
                 }
             } else if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-ids-to-talk-to")) {
                 // Legacy
@@ -3176,7 +3176,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             }
                         }
                     } else {
-                        throw new StageFormatException("npc-delivery-ids is not a list of numbers", quest, stageNum);
+                        throw new StageFormatException("npc-delivery-uuids is not a list of numbers", quest, stageNum);
                     }
                 } else if (config.contains("quests." + questKey + ".stages.ordered." + stageNum
                         + ".npc-delivery-ids")) {
@@ -3225,7 +3225,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         throw new StageFormatException("npc-delivery-ids is not a list of numbers", quest, stageNum);
                     }
                 } else {
-                    throw new StageFormatException("npc-delivery-id is missing", quest, stageNum);
+                    throw new StageFormatException("npc-delivery-uuid is missing", quest, stageNum);
                 }
             }
             if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-uuids-to-kill")) {
