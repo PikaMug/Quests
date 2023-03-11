@@ -707,14 +707,6 @@ public class PlayerListener implements Listener {
                 if (quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.killMob(quest, target.getLocation(), target.getType());
                 }
-                
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final IQuester q, final IQuest cq) -> {
-                    if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.killMob(cq, target.getLocation(), target.getType());
-                    }
-                    return null;
-                }));
             }
         }
     }
@@ -812,14 +804,6 @@ public class PlayerListener implements Listener {
                 if (quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.killPlayer(quest, (Player)target);
                 }
-                
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final IQuester q, final IQuest cq) -> {
-                    if (!dispatchedQuestIDs.contains(cq.getId())) {
-                        q.killPlayer(cq, (Player)target);
-                    }
-                    return null;
-                }));
             }
         }
     }
