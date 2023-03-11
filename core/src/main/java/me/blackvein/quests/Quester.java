@@ -3591,7 +3591,12 @@ public class Quester implements IQuester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestData(quest).mobNumKilled.set(index, newMobsKilled);
+                            final int i = q.getCurrentStage(cq).getMobsToKill().indexOf(entityType);
+                            if (i == -1) {
+                                return null;
+                            }
+                            final int kills = q.getQuestData(quest).getMobNumKilled().get(i);
+                            q.getQuestData(quest).mobNumKilled.set(index, kills + 1);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -3644,7 +3649,8 @@ public class Quester implements IQuester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final IQuester q, final IQuest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestData(quest).setPlayersKilled(newPlayersKilled);
+                            final int kills = q.getQuestData(quest).getPlayersKilled();
+                            q.getQuestData(quest).setPlayersKilled(kills + 1);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
