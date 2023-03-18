@@ -413,8 +413,8 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                         }
                         stack.setItemMeta(meta);
                     }
-
                     context.setSessionData("tempStack", stack);
+                    return oldPrompt;
                 }
             } else {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateNoNameAmount"));
@@ -422,7 +422,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             }
         default:
             try {
-                return oldPrompt;
+                return new ItemStackPrompt(context, oldPrompt);
             } catch (final Exception e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
@@ -759,7 +759,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    private String getItemData(final ConversationContext context) {
+    public String getItemData(final ConversationContext context) {
         if (context.getSessionData("tempName") != null) {
             final StringBuilder item;
             if (context.getSessionData("tempDisplay") == null) {
@@ -784,35 +784,32 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             } else {
                 item.append(ChatColor.GRAY).append(" x ").append(ChatColor.DARK_AQUA).append("1");
             }
-            item.append("\n");
             if (context.getSessionData("tempEnchantments") != null) {
                 @SuppressWarnings("unchecked")
-                final
-                Map<Enchantment, Integer> enchantments 
+                final Map<Enchantment, Integer> enchantments
                         = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
                 if (enchantments != null) {
                     for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
-                        item.append(ChatColor.GRAY).append("  - ").append(ChatColor.RED)
+                        item.append("\n").append(ChatColor.GRAY).append("  - ").append(ChatColor.RED)
                                 .append(ItemUtil.getPrettyEnchantmentName(e.getKey())).append(" ")
-                                .append(RomanNumeral.getNumeral(e.getValue())).append("\n");
+                                .append(RomanNumeral.getNumeral(e.getValue()));
                     }
                 }
             }
             if (context.getSessionData("tempLore") != null) {
                 @SuppressWarnings("unchecked")
                 final List<String> lore = (List<String>) context.getSessionData("tempLore");
-                item.append(ChatColor.DARK_GREEN).append("(Lore)\n\"");
+                item.append("\n").append(ChatColor.DARK_GREEN).append("(Lore)\"");
                 if (lore != null) {
                     for (final String s : lore) {
                         if (lore.indexOf(s) != (lore.size() - 1)) {
-                            item.append(ChatColor.DARK_GREEN).append(ChatColor.ITALIC).append(s).append("\n");
+                            item.append("\n").append(ChatColor.DARK_GREEN).append(ChatColor.ITALIC).append(s);
                         } else {
-                            item.append(ChatColor.DARK_GREEN).append(ChatColor.ITALIC).append(s).append("\"\n");
+                            item.append("\n").append(ChatColor.DARK_GREEN).append(ChatColor.ITALIC).append(s).append("\"");
                         }
                     }
                 }
             }
-            item.append("\n");
             return item.toString();
         } else {
             return null;

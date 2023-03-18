@@ -5127,8 +5127,6 @@ public class Quester implements IQuester {
                 if (q == null) {
                     continue;
                 }
-                // Share only same quest is not necessary here
-                // The function must be applied to the same quest
                 if ((q.getCurrentQuestsTemp().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
                     fun.apply(q);
                 }
