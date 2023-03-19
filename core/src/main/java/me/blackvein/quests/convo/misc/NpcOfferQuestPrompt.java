@@ -27,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
@@ -132,7 +133,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @Nonnull String getPromptText(final ConversationContext context) {
+    public @NotNull String getPromptText(final ConversationContext context) {
         this.context = context;
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");

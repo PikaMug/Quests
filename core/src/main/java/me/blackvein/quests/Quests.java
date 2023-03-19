@@ -492,12 +492,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
      * Get Quester from player UUID
      *
      * @param id Player UUID
-     * @return Quester, or null if UUID is null
+     * @return new or existing Quester
      */
-    public Quester getQuester(final UUID id) {
-        if (id == null) {
-            return null;
-        }
+    public Quester getQuester(final @NotNull UUID id) {
         final ConcurrentSkipListSet<IQuester> set = (ConcurrentSkipListSet<IQuester>) questers;
         for (final IQuester q : set) {
             if (q != null && q.getUUID().equals(id)) {
@@ -738,28 +735,15 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
                     || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
-                IQuester quester = getQuester(player.getUniqueId());
-                if (quester == null) {
-                    // Must be new player
-                    quester = new Quester(Quests.this, player.getUniqueId());
-                    if (quester.saveData()) {
-                        getLogger().info("Created new data for player " + player.getName());
-                    } else {
-                        Lang.send(player, ChatColor.RED + Lang.get(player, "questSaveError"));
-                    }
-                }
+                final IQuester quester = getQuester(player.getUniqueId());
                 final String questIdToTake = quester.getQuestIdToTake();
-                try {
-                    if (getQuestByIdTemp(questIdToTake) == null) {
-                        getLogger().info(player.getName() + " attempted to take quest ID \"" + questIdToTake 
-                                + "\" but something went wrong");
-                        player.sendMessage(ChatColor.RED 
-                                + "Something went wrong! Please report issue to an administrator.");
-                    } else {
-                        getQuester(player.getUniqueId()).takeQuest(getQuestByIdTemp(questIdToTake), false);
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
+                if (getQuestByIdTemp(questIdToTake) == null) {
+                    getLogger().warning(player.getName() + " attempted to take quest ID \"" + questIdToTake
+                            + "\" but something went wrong");
+                    player.sendMessage(ChatColor.RED
+                            + "Something went wrong! Please report issue to an administrator.");
+                } else {
+                    quester.takeQuest(getQuestByIdTemp(questIdToTake), false);
                 }
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")

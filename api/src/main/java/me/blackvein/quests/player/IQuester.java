@@ -172,8 +172,7 @@ public interface IQuester extends Comparable<IQuester> {
 
     void smeltItem(final IQuest quest, final ItemStack itemStack);
 
-    void enchantBook(final IQuest quest, final ItemStack itemStack,
-                     final Map<Enchantment, Integer> enchantsToAdd);
+    void enchantBook(final IQuest quest, final ItemStack itemStack, final Map<Enchantment, Integer> enchantsToAdd);
 
     void enchantItem(final IQuest quest, final ItemStack itemStack);
 
