@@ -190,7 +190,8 @@ public class PlayerListener implements Listener {
                     if (event.getClickedBlock() == null) {
                         return;
                     }
-                    if (event.getClickedBlock().getType().name().equals("LECTERN")) {
+                    if (event.getClickedBlock().getType().name().equals("LECTERN")
+                            || event.getClickedBlock().getType().name().equals("CHISELED_BOOKSHELF")) {
                         event.setCancelled(true);
                         Lang.send(player, ChatColor.RED + Lang.get(event.getPlayer(), "journalDenied")
                                 .replace("<journal>", Lang.get(event.getPlayer(), "journalTitle")));
