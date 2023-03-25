@@ -27,7 +27,7 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
-import ro.nicuch.citizensbooks.CitizensBooksAPI;
+import ro.niconeko.astralbooks.AstralBooksAPI;
 
 import java.util.Set;
 import java.util.UUID;
@@ -57,7 +57,7 @@ public interface IDependencies {
 
     DenizenAPI getDenizenApi();
 
-    CitizensBooksAPI getCitizensBooksApi();
+    AstralBooksAPI getAstralBooksApi();
 
     ServersNPC getZnpcs();
 

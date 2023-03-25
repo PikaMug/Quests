@@ -16,7 +16,7 @@
     
     <repositories>
         <repository>
-            <!-- CitizensBooks, DungeonsXL, mcMMO Classic, PhatLoots, Unite, ZNPCs -->
+            <!-- DungeonsXL, mcMMO Classic, PhatLoots, Unite, ZNPCs -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -48,6 +48,11 @@
             <!-- Heroes, Vault -->
             <id>hc-repo</id>
             <url>https://nexus.hc.to/content/repositories/pub_releases/</url>
+        </repository>
+        <repository>
+            <!-- AstralBooks -->
+            <id>repsy-release</id>
+            <url>https://repo.repsy.io/mvn/niconeko/release</url>
         </repository>
     </repositories>
     
@@ -107,9 +112,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.nicuch</groupId>
-            <artifactId>CitizensBooks</artifactId>
-            <version>2.5.5</version>
+            <groupId>ro.niconeko</groupId>
+            <artifactId>AstralBooks</artifactId>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

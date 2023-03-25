@@ -404,10 +404,10 @@ public class Action implements IAction {
         }
         if (book != null) {
             if (!book.isEmpty()) {
-                if (plugin.getDependencies().getCitizensBooksApi() != null) {
-                    if (plugin.getDependencies().getCitizensBooksApi().hasFilter(book)) {
-                        plugin.getDependencies().getCitizensBooksApi().openBook(player, plugin.getDependencies()
-                                .getCitizensBooksApi().getFilter(book));
+                if (plugin.getDependencies().getAstralBooksApi() != null) {
+                    if (plugin.getDependencies().getAstralBooksApi().hasFilterBook(book)) {
+                        plugin.getDependencies().getAstralBooksApi().openBook(player, plugin.getDependencies()
+                                .getAstralBooksApi().getFilterBook(book));
                     }
                 }
             }

@@ -40,8 +40,8 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ro.nicuch.citizensbooks.CitizensBooksAPI;
-import ro.nicuch.citizensbooks.CitizensBooksPlugin;
+import ro.niconeko.astralbooks.AstralBooksAPI;
+import ro.niconeko.astralbooks.AstralBooksPlugin;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,13 +58,13 @@ public class Dependencies implements IDependencies {
     private static Permission permission = null;
     private static PartyProvider partyProvider = null;
     private static final Set<PartyProvider> partyProviders = new HashSet<>();
-    private static WorldGuardAPI worldGuardApi = null;
+    private static WorldGuardAPI worldGuard = null;
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
     public static PlaceholderAPIPlugin placeholder = null;
     public static CitizensPlugin citizens = null;
-    private static DenizenAPI denizenApi = null;
-    private static CitizensBooksAPI citizensBooks = null;
+    private static DenizenAPI denizen = null;
+    private static AstralBooksAPI astralBooks = null;
     private static ServersNPC znpcs = null;
     private static PartiesAPI parties = null;
     
@@ -109,10 +109,10 @@ public class Dependencies implements IDependencies {
     }
     
     public WorldGuardAPI getWorldGuardApi() {
-        if (worldGuardApi == null && isPluginAvailable("WorldGuard")) {
-            worldGuardApi = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
+        if (worldGuard == null && isPluginAvailable("WorldGuard")) {
+            worldGuard = new WorldGuardAPI(plugin.getServer().getPluginManager().getPlugin("WorldGuard"));
         }
-        return worldGuardApi;
+        return worldGuard;
     }
     
     public mcMMO getMcmmoClassic() {
@@ -178,22 +178,22 @@ public class Dependencies implements IDependencies {
     }
     
     public DenizenAPI getDenizenApi() {
-        if (denizenApi == null && isPluginAvailable("Denizen")) {
-            denizenApi = new DenizenAPI();
+        if (denizen == null && isPluginAvailable("Denizen")) {
+            denizen = new DenizenAPI();
         }
-        return denizenApi;
+        return denizen;
     }
     
-    public CitizensBooksAPI getCitizensBooksApi() {
-        if (citizensBooks == null && isPluginAvailable("CitizensBooks")) {
+    public AstralBooksAPI getAstralBooksApi() {
+        if (astralBooks == null && isPluginAvailable("AstralBooks")) {
             try {
-                citizensBooks = ((CitizensBooksPlugin) Objects.requireNonNull(plugin.getServer().getPluginManager()
-                        .getPlugin("CitizensBooks"))).getAPI();
+                astralBooks = ((AstralBooksPlugin) Objects.requireNonNull(plugin.getServer().getPluginManager()
+                        .getPlugin("AstralBooks"))).getAPI();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
-        return citizensBooks;
+        return astralBooks;
     }
 
     public ServersNPC getZnpcs() {
@@ -369,7 +369,7 @@ public class Dependencies implements IDependencies {
         getMcmmoClassic();
         getHeroes();
         getPlaceholderApi();
-        getCitizensBooksApi();
+        getAstralBooksApi();
         getPartiesApi();
         getPartyProvider();
         getVaultEconomy();
