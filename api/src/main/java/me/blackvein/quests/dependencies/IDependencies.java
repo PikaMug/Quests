@@ -27,7 +27,7 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
-import ro.niconeko.astralbooks.AstralBooksAPI;
+import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
 import java.util.Set;
 import java.util.UUID;

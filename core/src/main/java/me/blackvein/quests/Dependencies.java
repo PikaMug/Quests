@@ -40,8 +40,8 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ro.niconeko.astralbooks.AstralBooksAPI;
-import ro.niconeko.astralbooks.AstralBooksPlugin;
+import ro.niconeko.astralbooks.api.AstralBooksAPI;
+import ro.niconeko.astralbooks.api.AstralBooks;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -187,7 +187,7 @@ public class Dependencies implements IDependencies {
     public AstralBooksAPI getAstralBooksApi() {
         if (astralBooks == null && isPluginAvailable("AstralBooks")) {
             try {
-                astralBooks = ((AstralBooksPlugin) Objects.requireNonNull(plugin.getServer().getPluginManager()
+                astralBooks = ((AstralBooks) Objects.requireNonNull(plugin.getServer().getPluginManager()
                         .getPlugin("AstralBooks"))).getAPI();
             } catch (final Exception e) {
                 e.printStackTrace();
