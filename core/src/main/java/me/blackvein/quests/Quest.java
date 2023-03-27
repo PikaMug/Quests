@@ -589,11 +589,16 @@ public class Quest implements IQuest {
         if (quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
         }
-        if (!quester.getCompletedQuestsTemp().containsAll(requirements.getNeededQuests())) {
-            return false;
+        for (final IQuest q : quester.getCompletedQuestsTemp()) {
+            if (!requirements.getNeededQuestIds().contains(q.getName())) {
+                return false;
+            }
+            if (!requirements.getBlockQuestIds().contains(q.getName())) {
+                return false;
+            }
         }
-        for (final IQuest q : requirements.getBlockQuests()) {
-            if (quester.getCompletedQuestsTemp().contains(q) || quester.getCurrentQuestsTemp().containsKey(q)) {
+        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+            if (!requirements.getBlockQuestIds().contains(q.getName())) {
                 return false;
             }
         }

@@ -28,7 +28,6 @@ import me.blackvein.quests.convo.misc.NpcOfferQuestPrompt;
 import me.blackvein.quests.dependencies.DenizenTrigger;
 import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.entity.BukkitQuestMob;
-import me.blackvein.quests.entity.CountableMob;
 import me.blackvein.quests.entity.QuestMob;
 import me.blackvein.quests.events.misc.MiscPostQuestAcceptEvent;
 import me.blackvein.quests.exceptions.ActionFormatException;
@@ -48,11 +47,9 @@ import me.blackvein.quests.listeners.ZnpcsListener;
 import me.blackvein.quests.logging.QuestsLog4JFilter;
 import me.blackvein.quests.module.ICustomObjective;
 import me.blackvein.quests.player.IQuester;
-import me.blackvein.quests.quests.BukkitObjective;
 import me.blackvein.quests.quests.BukkitQuestFactory;
 import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.quests.IStage;
-import me.blackvein.quests.quests.Objective;
 import me.blackvein.quests.quests.Options;
 import me.blackvein.quests.quests.Planner;
 import me.blackvein.quests.quests.QuestFactory;
@@ -2375,20 +2372,16 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<IQuest> temp = new LinkedList<>();
+                final List<String> temp = new LinkedList<>();
                 for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
-                        final String node2 = config.getString("quests." + id + ".name");
-                        if (node2 != null && (id.equals(node) || node2.equalsIgnoreCase(node)
-                                || ChatColor.stripColor(node2).equalsIgnoreCase(ChatColor.stripColor(node)))) {
-                            if (getQuestTemp(node) != null) {
-                                temp.add(getQuestTemp(node));
-                            } else if (getQuestByIdTemp(node) != null) {
-                                temp.add(getQuestByIdTemp(node));
+                        if (id.equals(node)) {
+                            if (getQuestByIdTemp(node) != null) {
+                                temp.add(node);
                             } else {
-                                throw new QuestFormatException("Requirement quest-blocks has unknown quest name/id "
-                                        + node + ", place it earlier in file so it loads first", questKey);
+                                throw new QuestFormatException("Requirement quest-blocks has unknown quest ID "
+                                        + node + ", manually update it to a valid ID", questKey);
                             }
                             done = true;
                             break;
@@ -2400,9 +2393,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         break;
                     }
                 }
-                requires.setBlockQuests(temp);
+                requires.setBlockQuestIds(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quest-blocks has invalid quest name/id " + failedQuest,
+                    throw new QuestFormatException("Requirement quest-blocks has invalid quest ID " + failedQuest,
                             questKey);
                 }
             } else {
@@ -2414,20 +2407,16 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quests");
                 boolean failed = false;
                 String failedQuest = "NULL";
-                final List<IQuest> temp = new LinkedList<>();
+                final List<String> temp = new LinkedList<>();
                 for (final String node : nodes) {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
-                        final String node2 = config.getString("quests." + id + ".name");
-                        if (node2 != null && (id.equals(node) || node2.equalsIgnoreCase(node)
-                                || ChatColor.stripColor(node2).equalsIgnoreCase(ChatColor.stripColor(node)))) {
-                            if (getQuestTemp(node) != null) {
-                                temp.add(getQuestTemp(node));
-                            } else if (getQuestByIdTemp(node) != null) {
-                                temp.add(getQuestByIdTemp(node));
+                        if (id.equals(node)) {
+                            if (getQuestByIdTemp(node) != null) {
+                                temp.add(node);
                             } else {
-                                throw new QuestFormatException("Requirement quests has unknown quest name " 
-                                        + node + ", place it earlier in file so it loads first", questKey);
+                                throw new QuestFormatException("Requirement quests has unknown quest ID "
+                                        + node + ", manually update it to a valid ID", questKey);
                             }
                             done = true;
                             break;
@@ -2439,9 +2428,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                         break;
                     }
                 }
-                requires.setNeededQuests(temp);
+                requires.setNeededQuestIds(temp);
                 if (failed) {
-                    throw new QuestFormatException("Requirement quests has invalid quest name/id "
+                    throw new QuestFormatException("Requirement quests has invalid quest ID "
                             + failedQuest, questKey);
                 }
             } else {

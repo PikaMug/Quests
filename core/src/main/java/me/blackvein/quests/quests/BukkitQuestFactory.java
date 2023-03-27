@@ -53,7 +53,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedListener {
 
@@ -179,13 +178,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 context.setSessionData(CK.REQ_ITEMS, requirements.getItems());
                 context.setSessionData(CK.REQ_ITEMS_REMOVE, requirements.getRemoveItems());
             }
-            if (!requirements.getNeededQuests().isEmpty()) {
-                final List<String> ids = requirements.getNeededQuests().stream().map(IQuest::getId).collect(Collectors.toList());
-                context.setSessionData(CK.REQ_QUEST, ids);
+            if (!requirements.getNeededQuestIds().isEmpty()) {
+                context.setSessionData(CK.REQ_QUEST, requirements.getNeededQuestIds());
             }
-            if (!requirements.getBlockQuests().isEmpty()) {
-                final List<String> ids = requirements.getBlockQuests().stream().map(IQuest::getId).collect(Collectors.toList());
-                context.setSessionData(CK.REQ_QUEST_BLOCK, ids);
+            if (!requirements.getBlockQuestIds().isEmpty()) {
+                context.setSessionData(CK.REQ_QUEST_BLOCK, requirements.getBlockQuestIds());
             }
             if (!requirements.getMcmmoSkills().isEmpty()) {
                 context.setSessionData(CK.REQ_MCMMO_SKILLS, requirements.getMcmmoAmounts());

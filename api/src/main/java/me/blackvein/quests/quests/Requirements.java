@@ -38,13 +38,13 @@ public interface Requirements {
 
     void setRemoveItems(final List<Boolean> removeItems);
 
-    List<IQuest> getNeededQuests();
+    List<String> getNeededQuestIds();
 
-    void setNeededQuests(final List<IQuest> neededQuests);
+    void setNeededQuestIds(final List<String> neededQuests);
 
-    List<IQuest> getBlockQuests();
+    List<String> getBlockQuestIds();
 
-    void setBlockQuests(final List<IQuest> blockQuests);
+    void setBlockQuestIds(final List<String> blockQuests);
 
     List<String> getPermissions();
 

@@ -281,8 +281,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 final IQuest found = plugin.getQuestTemp(input);
                 if (found != null) {
                     for (final IQuest q : plugin.getLoadedQuests()) {
-                        if (q.getRequirements().getNeededQuests().contains(q) 
-                                || q.getRequirements().getBlockQuests().contains(q)) {
+                        if (q.getRequirements().getNeededQuestIds().contains(q.getId())
+                                || q.getRequirements().getBlockQuestIds().contains(q.getId())) {
                             used.add(q.getName());
                         }
                     }
