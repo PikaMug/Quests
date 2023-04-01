@@ -1056,13 +1056,17 @@ public class Quester implements IQuester {
         }
         for (final IQuest q : completedQuests) {
             if (q != null) {
-                if (requirements.getNeededQuestIds().contains(q.getId())) {
-                    finishedRequirements.add(ChatColor.GREEN + q.getName());
-                } else {
-                    unfinishedRequirements.add(ChatColor.GRAY + q.getName());
+                if (!requirements.getNeededQuestIds().isEmpty()) {
+                    if (requirements.getNeededQuestIds().contains(q.getId())) {
+                        finishedRequirements.add(ChatColor.GREEN + q.getName());
+                    } else {
+                        unfinishedRequirements.add(ChatColor.GRAY + q.getName());
+                    }
                 }
-                if (requirements.getBlockQuestIds().contains(q.getId())) {
-                    current.add(ChatColor.RED + quest.getName());
+                if (!requirements.getBlockQuestIds().isEmpty()) {
+                    if (requirements.getBlockQuestIds().contains(q.getId())) {
+                        current.add(ChatColor.RED + quest.getName());
+                    }
                 }
             }
         }

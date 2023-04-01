@@ -590,10 +590,12 @@ public class Quest implements IQuest {
             return false;
         }
         for (final IQuest q : quester.getCompletedQuestsTemp()) {
-            if (!requirements.getNeededQuestIds().contains(q.getName())) {
+            if (!requirements.getNeededQuestIds().isEmpty()
+                    && requirements.getNeededQuestIds().contains(q.getName())) {
                 return false;
             }
-            if (!requirements.getBlockQuestIds().contains(q.getName())) {
+            if (!requirements.getBlockQuestIds().isEmpty()
+                    && !requirements.getBlockQuestIds().contains(q.getName())) {
                 return false;
             }
         }
