@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-    	<revision>4.8.0</revision>
+    	<revision>4.8.1</revision>
         <updatePomFile>true</updatePomFile>
         <flattenMode>resolveCiFriendliesOnly</flattenMode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
