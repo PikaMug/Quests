@@ -18,9 +18,18 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
     private ConversationContext context;
     private final Quests plugin;
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public QuestAbandonPrompt() {
         super(null);
         plugin = null;
+    }
+
+    public QuestAbandonPrompt(Quests plugin) {
+        super(null);
+        this.plugin = plugin;
     }
 
     public QuestAbandonPrompt(final ConversationContext context) {
@@ -75,7 +84,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
     public @NotNull String getPromptText(final @NotNull ConversationContext context) {
         this.context = context;
         if (plugin == null) {
-            return ChatColor.YELLOW + Lang.get("unknownError");
+            return ChatColor.YELLOW + Lang.get("itemCreateCriticalError");
         }
 
         final MiscPostQuestAbandonEvent event = new MiscPostQuestAbandonEvent(context, this);

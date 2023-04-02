@@ -168,6 +168,7 @@ public class CustomObjective implements ICustomObjective, Listener {
     /**
      * @deprecated Do not use
      */
+    @Deprecated
     public Map<String, Object> getDataForPlayerTemp(final Player player, final ICustomObjective customObj,
                                                 final IQuest quest) {
         final IQuester quester = plugin.getQuester(player.getUniqueId());
@@ -208,6 +209,7 @@ public class CustomObjective implements ICustomObjective, Listener {
     /**
      * @deprecated Do not use
      */
+    @Deprecated
     public void incrementObjectiveTemp(final Player player, final ICustomObjective obj, final int count,
                                    final IQuest quest) {
         final Quester quester = plugin.getQuester(player.getUniqueId());

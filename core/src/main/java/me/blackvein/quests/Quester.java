@@ -875,7 +875,7 @@ public class Quester implements IQuester {
             if (settings.canConfirmAbandon()) {
                 final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
                         .withPrefix(context -> ChatColor.GRAY.toString())
-                        .withFirstPrompt(new QuestAbandonPrompt()).withTimeout(settings.getAcceptTimeout())
+                        .withFirstPrompt(new QuestAbandonPrompt(plugin)).withTimeout(settings.getAcceptTimeout())
                         .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                         .addConversationAbandonedListener(plugin.getConvoListener());
                 cf.buildConversation(getPlayer()).begin();

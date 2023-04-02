@@ -70,6 +70,7 @@ public abstract class CustomRequirement {
     /**
      * @deprecated Use {@link #setItem(String, short)}
      */
+    @Deprecated
     public void addItem(final String type, final short durability) {
         setItem(type, durability);
     }
