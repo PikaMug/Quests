@@ -3413,18 +3413,18 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                             final List<Integer> mobAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
                                     + stageNum + ".mob-tame-amounts");
                             for (final String mob : mobs) {
-                                if (mob != null) {
-                                    final Class<? extends Entity> ec = EntityType.valueOf(mob.toUpperCase())
-                                            .getEntityClass();
+                                final EntityType type = MiscUtil.getProperMobType(mob);
+                                if (type != null) {
+                                    final Class<? extends Entity> ec = type.getEntityClass();
                                     if (ec != null && Tameable.class.isAssignableFrom(ec)) {
-                                        oStage.addMobToTame(EntityType.valueOf(mob.toUpperCase()));
+                                        oStage.addMobToTame(type);
                                         oStage.addMobNumToTame(mobAmounts.get(mobs.indexOf(mob)));
                                     } else {
                                         throw new StageFormatException("mobs-to-tame has invalid tameable mob " + mob,
                                                 quest, stageNum);
                                     }
                                 } else {
-                                    throw new StageFormatException("mobs-to-tame has invalid mob", quest, stageNum);
+                                    throw new StageFormatException("mobs-to-tame has invalid mob name " + mob, quest, stageNum);
                                 }
                             }
                         } else {
