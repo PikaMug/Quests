@@ -983,7 +983,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
                         final EntityType type = MiscUtil.getProperMobType(s);
                         if (type != null) {
                             final Class<? extends Entity> ec = type.getEntityClass();
-                            if (type.isAlive() || (ec != null && Tameable.class.isAssignableFrom(ec))) {
+                            if (type.isAlive() && (ec != null && Tameable.class.isAssignableFrom(ec))) {
                                 mobTypes.add(s);
                                 context.setSessionData(pref + CK.S_TAME_TYPES, mobTypes);
 
