@@ -28,6 +28,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class QuestCommandHandler {
 
@@ -205,16 +207,18 @@ public class QuestCommandHandler {
                                         + ChatColor.ITALIC + quest.getName());
                             }
                         }
-                        for (IQuest quest : quester.getCompletedQuestsTemp()) {
-                            if (reqs.getBlockQuestIds().contains(quest.getId())) {
+                        final Map<String, String> completed = quester.getCompletedQuestsTemp().stream()
+                                .collect(Collectors.toMap(IQuest::getId, IQuest::getName));
+                        for (final String questId : reqs.getBlockQuestIds()) {
+                            if (completed.containsKey(questId)) {
                                 String msg = Lang.get("haveCompleted");
                                 msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + quest.getName() + ChatColor.RED);
+                                        + completed.get(questId) + ChatColor.RED);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
                                 String msg = Lang.get("cannotComplete");
                                 msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + quest.getName() + ChatColor.GREEN);
+                                        + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
                             }
                         }

@@ -69,8 +69,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class Quest implements IQuest {
 
@@ -589,19 +591,22 @@ public class Quest implements IQuest {
         if (quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
         }
-        for (final IQuest q : quester.getCompletedQuestsTemp()) {
-            if (!requirements.getNeededQuestIds().isEmpty()
-                    && requirements.getNeededQuestIds().contains(q.getName())) {
-                return false;
-            }
-            if (!requirements.getBlockQuestIds().isEmpty()
-                    && !requirements.getBlockQuestIds().contains(q.getName())) {
-                return false;
-            }
+        final Set<String> completed = quester.getCompletedQuestsTemp().stream().map(IQuest::getId)
+                .collect(Collectors.toSet());
+        if (!requirements.getNeededQuestIds().isEmpty()
+                && !completed.containsAll(requirements.getNeededQuestIds())) {
+            return false;
         }
-        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
-            if (!requirements.getBlockQuestIds().contains(q.getName())) {
-                return false;
+        if (!requirements.getBlockQuestIds().isEmpty()) {
+            for (final String questId : requirements.getBlockQuestIds()) {
+                if (completed.contains(questId)) {
+                    return false;
+                }
+            }
+            for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+                if (!requirements.getBlockQuestIds().contains(q.getId())) {
+                    return false;
+                }
             }
         }
         for (final String s : requirements.getMcmmoSkills()) {

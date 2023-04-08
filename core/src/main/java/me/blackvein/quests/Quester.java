@@ -1054,20 +1054,18 @@ public class Quester implements IQuester {
                 finishedRequirements.add(ChatColor.GRAY + "" + requirements.getQuestPoints() + " " + Lang.get("questPoints"));
             }
         }
-        for (final IQuest q : completedQuests) {
-            if (q != null) {
-                if (!requirements.getNeededQuestIds().isEmpty()) {
-                    if (requirements.getNeededQuestIds().contains(q.getId())) {
-                        finishedRequirements.add(ChatColor.GREEN + q.getName());
-                    } else {
-                        unfinishedRequirements.add(ChatColor.GRAY + q.getName());
-                    }
-                }
-                if (!requirements.getBlockQuestIds().isEmpty()) {
-                    if (requirements.getBlockQuestIds().contains(q.getId())) {
-                        current.add(ChatColor.RED + quest.getName());
-                    }
-                }
+        final Map<String, String> completed = completedQuests.stream()
+                .collect(Collectors.toMap(IQuest::getId, IQuest::getName));
+        for (final String questId : requirements.getNeededQuestIds()) {
+            if (completed.containsKey(questId)) {
+                finishedRequirements.add(ChatColor.GREEN + completed.get(questId));
+            } else {
+            unfinishedRequirements.add(ChatColor.GRAY + plugin.getQuestById(questId).getName());
+            }
+        }
+        for (final String questId : requirements.getBlockQuestIds()) {
+            if (completed.containsKey(questId)) {
+                current.add(ChatColor.RED + quest.getName());
             }
         }
         for (final IQuest q : currentQuests.keySet()) {
