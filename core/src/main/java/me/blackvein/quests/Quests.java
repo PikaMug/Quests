@@ -178,7 +178,6 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         try {
             Material.matchMaterial("STONE", true);
         } catch (final NoSuchMethodError ignored) {
-            // Do nothing
         }
 
         ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new QuestsLog4JFilter());
@@ -1062,11 +1061,10 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
             }
             if (count == 0) {
-                getLogger().severe("Unable to load module from file: " + jar.getName() 
-                        + ", file is not a valid module!");
+                getLogger().severe("Unable to load module from file " + jar.getName() + " (not a valid module)!");
             }
         } catch (final Exception e) {
-            getLogger().severe("Unable to load module from file: " + jar.getName());
+            getLogger().severe("Unable to load module from file " + jar.getName() + " (contact module developer)!");
             e.printStackTrace();
         }
     }
