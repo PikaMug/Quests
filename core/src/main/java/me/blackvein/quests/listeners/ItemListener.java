@@ -130,7 +130,8 @@ public class ItemListener implements Listener {
                     }
                 }
             } else if (event.getInventory().getType() == InventoryType.BREWING) {
-                if (event.getSlotType() == SlotType.CRAFTING) {
+                if (event.getSlotType() == SlotType.CRAFTING
+                        || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                     final IQuester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -141,13 +142,17 @@ public class ItemListener implements Listener {
                         
                         if (quester.getCurrentQuestsTemp().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
-                            quester.brewItem(quest, event.getCurrentItem());
+                            if (isAllowedBrewingAction(event)) {
+                                quester.brewItem(quest, event.getCurrentItem());
+                            }
                         }
                         
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
                                 (final IQuester q, final IQuest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.brewItem(cq, event.getCurrentItem());
+                                if (isAllowedBrewingAction(event)) {
+                                    q.brewItem(cq, event.getCurrentItem());
+                                }
                             }
                             return null;
                         }));
@@ -155,6 +160,25 @@ public class ItemListener implements Listener {
                 }
             }
         }
+    }
+
+    public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
+        final int slot = event.getRawSlot();
+        final InventoryAction action = event.getAction();
+        // Prevent shift-click into Brewing Stand
+        if (event.getSlotType() != SlotType.CRAFTING && action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+            event.setCancelled(true);
+            return false;
+        }
+        // Prevent placing into Brewing Stand
+        if (slot == 0 || slot == 1 || slot == 2) {
+            if (action.equals(InventoryAction.PLACE_ONE) || action.equals(InventoryAction.PLACE_SOME)
+                    || action.equals(InventoryAction.PLACE_ALL)) {
+                event.setCancelled(true);
+                return false;
+            }
+        }
+        return true;
     }
     
     @EventHandler
@@ -197,7 +221,6 @@ public class ItemListener implements Listener {
             }
         }
     }
-    
     
     @EventHandler
     public void onConsumeItem(final PlayerItemConsumeEvent event) {
