@@ -267,7 +267,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         getServer().getPluginManager().registerEvents(getBlockListener(), this);
         getServer().getPluginManager().registerEvents(getItemListener(), this);
         depends.linkCitizens();
-        if (depends.getZnpcs() != null) {
+        if (depends.getZnpcsPlus() != null) {
             getServer().getPluginManager().registerEvents(getZnpcsListener(), this);
         }
         getServer().getPluginManager().registerEvents(getPlayerListener(), this);
@@ -1424,7 +1424,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 continue;
             }
             String message = color + "- " + Lang.get(quester.getPlayer(), "deliver")
-                    .replace("<npc>", depends.getNPCName(npc));
+                    .replace("<npc>", depends.getNpcName(npc));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
             } else {
@@ -1454,7 +1454,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 continue;
             }
             String message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
-                    .replace("<npc>", depends.getNPCName(uuid));
+                    .replace("<npc>", depends.getNpcName(uuid));
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
             }
@@ -1475,9 +1475,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
             if (message.contains("<mob>")) {
-                message = message.replace("<mob>", depends.getNPCName(uuid));
+                message = message.replace("<mob>", depends.getNpcName(uuid));
             } else {
-                message += " " + depends.getNPCName(uuid);
+                message += " " + depends.getNpcName(uuid);
             }
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + npcKilled + "/" + toNpcKill);

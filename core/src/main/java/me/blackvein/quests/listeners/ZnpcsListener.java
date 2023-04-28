@@ -1,7 +1,7 @@
 package me.blackvein.quests.listeners;
 
 import io.github.znetworkw.znpcservers.npc.NPC;
-import io.github.znetworkw.znpcservers.npc.event.NPCInteractEvent;
+import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
 import me.blackvein.quests.player.IQuester;
@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +35,7 @@ public class ZnpcsListener implements Listener {
 
     @EventHandler
     public void onNPCInteract(final NPCInteractEvent event) {
-        if (plugin.getDependencies().getZnpcs() == null) {
+        if (plugin.getDependencies().getZnpcsPlus() == null) {
             return;
         }
         if (event.isLeftClick()) {
@@ -44,9 +45,6 @@ public class ZnpcsListener implements Listener {
                     return;
                 }
                 event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
-                event.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
-                        + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
-                        + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
         } else if (event.isRightClick()) {
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
@@ -55,9 +53,6 @@ public class ZnpcsListener implements Listener {
                     return;
                 }
                 event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
-                event.getPlayer().sendMessage(ChatColor.RED + "Warning: " + ChatColor.RESET
-                        + "ZNPCs is not fully supported and will break after server restart. Please ask its developer "
-                        + "to fix this at https://github.com/gonalez/znpc-servers/issues/36");
             }
             if (!event.getPlayer().isConversing()) {
                 final Player player = event.getPlayer();
@@ -249,7 +244,8 @@ public class ZnpcsListener implements Listener {
                     } else {
                         final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                         c.getContext().setSessionData("npcQuests", npcQuests);
-                        c.getContext().setSessionData("npc", event.getNpc().getGameProfile().getName());
+                        //c.getContext().setSessionData("npc", event.getNpc().getGameProfile().getName());
+                        c.getContext().setSessionData("npc", ((Entity)event.getNpc().getBukkitEntity()).getCustomName());
                         c.begin();
                     }
                 } else {

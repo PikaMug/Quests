@@ -20,8 +20,8 @@ import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
-import io.github.znetworkw.znpcservers.ServersNPC;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.listeners.CitizensListener;
 import me.blackvein.quests.player.IQuester;
@@ -40,8 +40,8 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ro.niconeko.astralbooks.api.AstralBooksAPI;
 import ro.niconeko.astralbooks.api.AstralBooks;
+import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -65,8 +65,9 @@ public class Dependencies implements IDependencies {
     public static CitizensPlugin citizens = null;
     private static DenizenAPI denizen = null;
     private static AstralBooksAPI astralBooks = null;
-    private static ServersNPC znpcs = null;
+    private static ZNPCsPlus znpcs = null;
     private static PartiesAPI parties = null;
+    private int npcEffectThread = -1;
     
     public Dependencies(final Quests plugin) {
         this.plugin = plugin;
@@ -160,10 +161,7 @@ public class Dependencies implements IDependencies {
                 }
                 if (!found) {
                     plugin.getServer().getPluginManager().registerEvents(plugin.getCitizensListener(), plugin);
-                    if (plugin.getSettings().canNpcEffects()) {
-                        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
-                                20, 20);
-                    }
+                    startNpcEffectThread();
                     plugin.getLogger().info("Successfully linked Quests with Citizens " 
                             + citizens.getDescription().getVersion());
                 }
@@ -196,16 +194,16 @@ public class Dependencies implements IDependencies {
         return astralBooks;
     }
 
-    public ServersNPC getZnpcs() {
+    public ZNPCsPlus getZnpcsPlus() {
         if (znpcs == null) {
-            znpcs = (ServersNPC) plugin.getServer().getPluginManager().getPlugin("ServersNPC");
+            znpcs = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
+            startNpcEffectThread();
         }
         return znpcs;
     }
 
-    public Set<UUID> getZnpcsUuids() {
-        if (znpcs != null && isPluginAvailable("ServersNPC")) {
-            // TODO - it seems ZNPCs UUIDs do not persist restart
+    public Set<UUID> getZnpcsPlusUuids() {
+        if (znpcs != null && isPluginAvailable("ZNPCsPlus")) {
             return io.github.znetworkw.znpcservers.npc.NPC.all().stream()
                     .map(io.github.znetworkw.znpcservers.npc.NPC::getUUID).collect(Collectors.toSet());
         }
@@ -281,10 +279,10 @@ public class Dependencies implements IDependencies {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester, uuid);
     }
 
-    public @Nullable Location getNPCLocation(final UUID uuid) {
+    public @Nullable Location getNpcLocation(final UUID uuid) {
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
-        } else if (getZnpcsUuids().contains(uuid)) {
+        } else if (znpcs != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 return opt.get().getLocation();
@@ -293,10 +291,10 @@ public class Dependencies implements IDependencies {
         return null;
     }
 
-    public @Nullable Entity getNPCEntity(final UUID uuid) {
+    public @Nullable Entity getNpcEntity(final UUID uuid) {
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getEntity();
-        } else if (getZnpcsUuids().contains(uuid)) {
+        } else if (znpcs != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 return (Entity) opt.get().getBukkitEntity();
@@ -305,11 +303,11 @@ public class Dependencies implements IDependencies {
         return null;
     }
 
-    public @NotNull String getNPCName(final UUID uuid) {
-        Entity npc = null;
+    public @NotNull String getNpcName(final UUID uuid) {
+        Entity npc;
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
-        } else if (getZnpcsUuids().contains(uuid)) {
+        } else if (znpcs != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 npc = (Entity) opt.get().getBukkitEntity();
@@ -323,16 +321,28 @@ public class Dependencies implements IDependencies {
         return "NPC";
     }
 
-    public @Nullable UUID getUUIDFromNPC(final Entity entity) {
+    public @Nullable UUID getUuidFromNpc(final Entity entity) {
         if (citizens != null && citizens.getNPCRegistry().isNPC(entity)) {
             return citizens.getNPCRegistry().getNPC(entity).getUniqueId();
-        } else if (getZnpcsUuids().contains(entity.getUniqueId())) {
+        } else if (znpcs != null && getZnpcsPlusUuids().contains(entity.getUniqueId())) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(entity.getUniqueId())).findAny();
             if (opt.isPresent()) {
                 return opt.get().getUUID();
             }
         }
         return null;
+    }
+
+    public void startNpcEffectThread() {
+        if (npcEffectThread == -1 && plugin.getSettings().canNpcEffects()) {
+            npcEffectThread = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,
+                    plugin.getNpcEffectThread(), 20, 20);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void stopNpcEffectThread() {
+        plugin.getServer().getScheduler().cancelTask(npcEffectThread);
     }
     
     public int getMcmmoSkillLevel(final SkillType st, final String player) {

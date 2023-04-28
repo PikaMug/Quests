@@ -16,7 +16,6 @@ import me.blackvein.quests.Quests;
 import me.blackvein.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.blackvein.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.blackvein.quests.convo.conditions.main.ConditionMainPrompt;
-import me.blackvein.quests.convo.quests.objectives.QuestNpcsPrompt;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.blackvein.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.blackvein.quests.util.CK;
@@ -104,7 +103,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcs() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 if (context.getSessionData(CK.C_WHILE_RIDING_NPC) == null) {
                     return ChatColor.GRAY + "(" + Lang.get("noneSet") + ")";
                 } else {
@@ -113,7 +112,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                     if (whileRidingNpc != null) {
                         for (final UUID u : whileRidingNpc) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
-                                    .append(plugin.getDependencies().getNPCName(u));
+                                    .append(plugin.getDependencies().getNpcName(u));
                         }
                     }
                     return text.toString();
@@ -278,7 +277,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 for (final String s : input.split(" ")) {
                     try {
                         final UUID uuid = UUID.fromString(s);
-                        if (plugin.getDependencies().getNPCEntity(uuid) != null && npcs != null) {
+                        if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + Lang.get("stageEditorInvalidNPC")

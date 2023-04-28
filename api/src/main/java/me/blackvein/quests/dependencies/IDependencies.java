@@ -17,7 +17,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
-import io.github.znetworkw.znpcservers.ServersNPC;
+import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
@@ -59,7 +59,7 @@ public interface IDependencies {
 
     AstralBooksAPI getAstralBooksApi();
 
-    ServersNPC getZnpcs();
+    ZNPCsPlus getZnpcsPlus();
 
     PartiesAPI getPartiesApi();
 
@@ -67,9 +67,9 @@ public interface IDependencies {
 
     boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid);
 
-    Location getNPCLocation(final UUID uuid);
+    Location getNpcLocation(final UUID uuid);
 
-    String getNPCName(final UUID uuid);
+    String getNpcName(final UUID uuid);
 
     int getMcmmoSkillLevel(final SkillType st, final String player);
 

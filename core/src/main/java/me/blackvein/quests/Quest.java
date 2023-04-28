@@ -199,7 +199,7 @@ public class Quest implements IQuest {
 
     @Override
     public String getNpcStartName() {
-        return plugin.getDependencies().getNPCName(getNpcStart());
+        return plugin.getDependencies().getNpcName(getNpcStart());
     }
 
     @Override
@@ -386,9 +386,9 @@ public class Quest implements IQuest {
         Bukkit.getScheduler().runTask(plugin, () -> {
             Location targetLocation = null;
             if (stage.getNpcsToInteract() != null && stage.getNpcsToInteract().size() > 0) {
-                targetLocation = plugin.getDependencies().getNPCLocation(stage.getNpcsToInteract().getFirst());
+                targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToInteract().getFirst());
             } else if (stage.getNpcsToKill() != null && stage.getNpcsToKill().size() > 0) {
-                targetLocation = plugin.getDependencies().getNPCLocation(stage.getNpcsToKill().getFirst());
+                targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToKill().getFirst());
             } else if (stage.getLocationsToReach() != null && stage.getLocationsToReach().size() > 0) {
                 targetLocation = stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
@@ -398,8 +398,8 @@ public class Quest implements IQuest {
                     targetLocation = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid)
                             .getStoredLocation();
                 }
-                if (plugin.getDependencies().getZnpcs() != null
-                        && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
+                if (plugin.getDependencies().getZnpcsPlus() != null
+                        && plugin.getDependencies().getZnpcsPlusUuids().contains(uuid)) {
                     final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
                     if (opt.isPresent()) {
                         targetLocation = opt.get().getLocation();

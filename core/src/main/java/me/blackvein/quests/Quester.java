@@ -574,8 +574,8 @@ public class Quester implements IQuester {
             if (plugin.getDependencies().getCitizens() != null
                     && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
                 npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid).getEntity();
-            } else if (plugin.getDependencies().getZnpcs() != null
-                    && plugin.getDependencies().getZnpcsUuids().contains(uuid)) {
+            } else if (plugin.getDependencies().getZnpcsPlus() != null
+                    && plugin.getDependencies().getZnpcsPlusUuids().contains(uuid)) {
                 final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
                 if (opt.isPresent()) {
                     npc = (Entity) opt.get().getBukkitEntity();
@@ -1400,7 +1400,7 @@ public class Quester implements IQuester {
             final int toDeliver = is.getAmount();
             final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNpcName(npc));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
             } else {
@@ -1421,7 +1421,7 @@ public class Quester implements IQuester {
             }
             final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "talkTo")
-                    .replace("<npc>", depends.getNPCName(n));
+                    .replace("<npc>", depends.getNpcName(n));
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
             }
@@ -1438,9 +1438,9 @@ public class Quester implements IQuester {
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "kill");
             if (message.contains("<mob>")) {
-                message = message.replace("<mob>", depends.getNPCName(n));
+                message = message.replace("<mob>", depends.getNpcName(n));
             } else {
-                message += " " + depends.getNPCName(n);
+                message += " " + depends.getNpcName(n);
             }
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + npcKilled + "/" + toNpcKill);
@@ -1909,7 +1909,7 @@ public class Quester implements IQuester {
                 final int toDeliver = goal.getAmount();
                 final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
                 final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+                String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNpcName(npc));
                 if (message.contains("<count>")) {
                     message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
                 } else {
@@ -1932,7 +1932,7 @@ public class Quester implements IQuester {
                 boolean interacted = data.npcsInteracted.get(interactIndex);
                 final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + Lang.get(getPlayer(), "talkTo")
-                        .replace("<npc>", depends.getNPCName(n));
+                        .replace("<npc>", depends.getNpcName(n));
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
@@ -1950,9 +1950,9 @@ public class Quester implements IQuester {
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + Lang.get(getPlayer(), "kill");
             if (message.contains("<mob>")) {
-                message = message.replace("<mob>", depends.getNPCName(n));
+                message = message.replace("<mob>", depends.getNpcName(n));
             } else {
-                message += " " + depends.getNPCName(n);
+                message += " " + depends.getNpcName(n);
             }
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + npcKilled + "/" + toNpcKill);
@@ -4158,7 +4158,7 @@ public class Quester implements IQuester {
             final ItemStack is = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest)
                     .getItemsToDeliver().indexOf(goal));
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "deliver")
-                    .replace("<npc>", plugin.getDependencies().getNPCName(getCurrentStage(quest)
+                    .replace("<npc>", plugin.getDependencies().getNpcName(getCurrentStage(quest)
                     .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal))));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
@@ -4219,7 +4219,7 @@ public class Quester implements IQuester {
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
             final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "talkTo")
-                    .replace("<npc>", plugin.getDependencies().getNPCName(npc));
+                    .replace("<npc>", plugin.getDependencies().getNpcName(npc));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
@@ -4230,7 +4230,7 @@ public class Quester implements IQuester {
                 message += ChatColor.AQUA + " <mob>" + ChatColor.GREEN + ": " + goal.getAmount() + "/"
                         + goal.getAmount();
             }
-            sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc)));
+            sendMessage(message.replace("<mob>", plugin.getDependencies().getNpcName(npc)));
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
             String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame");
             if (!message.contains("<mob>")) {
@@ -4833,7 +4833,7 @@ public class Quester implements IQuester {
         if (plugin.getDependencies().getCitizens() == null) {
             return;
         }
-        final String name = plugin.getDependencies().getNPCName(npc);
+        final String name = plugin.getDependencies().getNpcName(npc);
         final LinkedList<Quest> qs = new LinkedList<>();
         for (IQuest q : quests) {
             qs.add((Quest) q);
