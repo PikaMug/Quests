@@ -163,6 +163,9 @@ public class ItemListener implements Listener {
     }
 
     public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
+        if (event.getCursor() != null && event.getCursor().getType().equals(Material.GLASS_BOTTLE)) {
+            return true;
+        }
         final int slot = event.getRawSlot();
         final InventoryAction action = event.getAction();
         // Prevent shift-click into Brewing Stand
