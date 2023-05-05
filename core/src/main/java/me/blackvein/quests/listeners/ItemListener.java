@@ -12,10 +12,10 @@
 
 package me.blackvein.quests.listeners;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.enums.ObjectiveType;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,6 +28,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -163,7 +165,7 @@ public class ItemListener implements Listener {
     }
 
     public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
-        if (event.getCursor() != null && event.getCursor().getType().equals(Material.GLASS_BOTTLE)) {
+        if (event.getCursor() != null && isWaterBottle(event.getCursor())) {
             return true;
         }
         final int slot = event.getRawSlot();
@@ -182,6 +184,22 @@ public class ItemListener implements Listener {
             }
         }
         return true;
+    }
+
+    public boolean isWaterBottle(ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+        if (item.getType().equals(Material.POTION)) {
+            PotionMeta meta = (PotionMeta) item.getItemMeta();
+            if (meta == null) {
+                return false;
+            }
+            if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     @EventHandler
