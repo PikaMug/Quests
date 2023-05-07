@@ -186,12 +186,12 @@ public class ItemListener implements Listener {
         return true;
     }
 
-    public boolean isWaterBottle(ItemStack item) {
+    public boolean isWaterBottle(final ItemStack item) {
         if (item == null) {
             return false;
         }
         if (item.getType().equals(Material.POTION)) {
-            PotionMeta meta = (PotionMeta) item.getItemMeta();
+            final PotionMeta meta = (PotionMeta) item.getItemMeta();
             if (meta == null) {
                 return false;
             }
