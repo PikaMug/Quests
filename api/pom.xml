@@ -59,11 +59,10 @@
             <id>codemc-snapshots</id>
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
-        <repository>
-            <!-- ZNPCsPlus -->
+        <!--<repository>
             <id>znpcsplus-repo</id>
             <url>https://repo.pyr.lol/releases</url>
-        </repository>
+        </repository>-->
     </repositories>
     
     <dependencies>
@@ -145,10 +144,16 @@
             <version>2.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>lol.pyr</groupId>
             <artifactId>ZNPCsPlus</artifactId>
             <version>1.0.6</version>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.PikaMug</groupId>
+            <artifactId>ZNPCsPlus</artifactId>
+            <version>d6e8852728</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
