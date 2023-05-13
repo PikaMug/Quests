@@ -189,7 +189,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             Class.forName("me.blackvein.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
         } catch (final Exception ignored) {
-            getLogger().info("LocaleLib not present. Is this a debug environment?");
+            getLogger().warning("LocaleLib not present! Is this a debug environment?");
         }
         convoListener = new ConvoListener();
         blockListener = new BlockListener(this);

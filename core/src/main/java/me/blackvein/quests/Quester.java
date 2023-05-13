@@ -2183,6 +2183,10 @@ public class Quester implements IQuester {
         }
         final Settings settings = plugin.getSettings();
         final LocaleManager localeManager = plugin.getLocaleManager();
+        if (settings.canTranslateNames() && localeManager == null) {
+            settings.setTranslateNames(false);
+            plugin.getLogger().severe("Problem with locale manager! Item name translation disabled.");
+        }
         for (BukkitObjective objective : q.getCurrentObjectivesTemp(quest, false, false)) {
             final String message = "- " + objective.getMessage();
             if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
