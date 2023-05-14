@@ -12,24 +12,22 @@
 
 package me.blackvein.quests.convo.misc;
 
-import me.blackvein.quests.quests.IQuest;
-import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quests;
 import me.blackvein.quests.events.misc.MiscPostNpcOfferQuestEvent;
-import me.blackvein.quests.Quest;
+import me.blackvein.quests.player.IQuester;
+import me.blackvein.quests.quests.IQuest;
 import me.blackvein.quests.util.Lang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -39,9 +37,9 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     private ConversationContext context;
     private final Quests plugin;
 
-    public NpcOfferQuestPrompt() {
+    public NpcOfferQuestPrompt(final Quests plugin) {
         super(null);
-        this.plugin = null;
+        this.plugin = plugin;
     }
 
     public NpcOfferQuestPrompt(final ConversationContext context) {
@@ -138,7 +136,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");
         if (plugin == null || quests == null || npc == null) {
-            return ChatColor.YELLOW + Lang.get("unknownError");
+            return ChatColor.YELLOW + Lang.get("itemCreateCriticalError");
         }
         quests.sort(Comparator.comparing(Quest::getName));
 

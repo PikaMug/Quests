@@ -260,7 +260,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(convoListener);
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
-                .withFirstPrompt(new NpcOfferQuestPrompt()).withTimeout(settings.getAcceptTimeout())
+                .withFirstPrompt(new NpcOfferQuestPrompt(this)).withTimeout(settings.getAcceptTimeout())
                 .withLocalEcho(false).addConversationAbandonedListener(convoListener);
 
         // 11 - Register listeners
