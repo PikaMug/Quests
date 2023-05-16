@@ -143,7 +143,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>Unite</artifactId>
-            <version>59dade0c7c</version>
+            <version>1.1.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
