@@ -935,13 +935,6 @@ public class PlayerListener implements Listener {
                     currentStage.getDisconnectAction().fire(quester, quest);
                 }
             }
-            for (final Integer timerId : quester.getTimers().keySet()) {
-                plugin.getServer().getScheduler().cancelTask(timerId);
-                if (quester.getTimers().containsKey(timerId)) {
-                    quester.getTimers().get(timerId).failQuest(quester);
-                    quester.removeTimer(timerId);
-                }
-            }
             if (!plugin.getSettings().canGenFilesOnJoin()) {
                 if (quester.hasBaseData()) {
                     quester.saveData();

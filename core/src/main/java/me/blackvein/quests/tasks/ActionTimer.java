@@ -24,19 +24,17 @@ public class ActionTimer extends BukkitRunnable {
     private final IQuester quester;
     private final IQuest quest;
     private final int time;
-    private final boolean last;
 
-    public ActionTimer(final IQuester quester, final IQuest quest, final int time, final boolean last) {
+    public ActionTimer(final IQuester quester, final IQuest quest, final int time) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;
-        this.last = last;
     }
 
     @Override
     public void run() {
         quester.removeTimer(getTaskId());
-        if (last) {
+        if (time < 1) {
             quest.failQuest(quester, false);
             quester.updateJournal();
         } else {

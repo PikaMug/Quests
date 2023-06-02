@@ -29,8 +29,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Action implements IAction {
@@ -419,44 +421,19 @@ public class Action implements IAction {
             player.sendMessage(ChatColor.GREEN + Lang.get(player, "timerStart")
                     .replace("<time>", ChatColor.RED + MiscUtil.getTime(timer * 1000L) + ChatColor.GREEN)
                     .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
-            if (timer > 60) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 60, false)
-                        .runTaskLater(plugin, (timer - 60) * 20L).getTaskId(), quest);
+            final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
+            for (final int seconds : toNotify) {
+                if (timer > seconds) {
+                    quester.getTimers().put(new ActionTimer(quester, quest, seconds)
+                            .runTaskLater(plugin, (timer - seconds) * 20L).getTaskId(), quest);
+                }
             }
-            if (timer > 30) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 30, false)
-                        .runTaskLater(plugin, (timer - 30) * 20L).getTaskId(), quest);
-            }
-            if (timer > 10) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 10, false)
-                        .runTaskLater(plugin, (timer - 10) * 20L).getTaskId(), quest);
-            }
-            if (timer > 5) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 5, false)
-                        .runTaskLater(plugin, (timer - 5) * 20L).getTaskId(), quest);
-            }
-            if (timer > 4) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 4, false)
-                        .runTaskLater(plugin, (timer - 4) * 20L).getTaskId(), quest);
-            }
-            if (timer > 3) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 3, false)
-                        .runTaskLater(plugin, (timer - 3) * 20L).getTaskId(), quest);
-            }
-            if (timer > 2) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 2, false)
-                        .runTaskLater(plugin, (timer - 2) * 20L).getTaskId(), quest);
-            }
-            if (timer > 1) {
-                quester.getTimers().put(new ActionTimer(quester, quest, 1, false)
-                        .runTaskLater(plugin, (timer - 1) * 20L).getTaskId(), quest);
-            }
-            quester.getTimers().put(new ActionTimer(quester, quest, 0, true)
+            quester.getTimers().put(new ActionTimer(quester, quest, 0)
                     .runTaskLater(plugin, timer * 20L).getTaskId(), quest);
         }
         if (cancelTimer) {
             for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
-                if (entry.getValue().getName().equals(quest.getName())) {
+                if (entry.getValue().getId().equals(quest.getId())) {
                     plugin.getServer().getScheduler().cancelTask(entry.getKey());
                     quester.getTimers().remove(entry.getKey());
                 }

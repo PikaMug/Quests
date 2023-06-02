@@ -83,7 +83,7 @@ quests:
           break-block-durability:
           - 0
           start-event: TimerStart
-          finish-event: CancelTimer
+          disconnect-event: CancelTimer
     rewards:
       items:
         - name-GOLD_INGOT:amount-1

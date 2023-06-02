@@ -1075,6 +1075,12 @@ public class Quest implements IQuest {
         if (preEvent.isCancelled()) {
             return;
         }
+        for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
+            if (entry.getValue().getId().equals(getId())) {
+                plugin.getServer().getScheduler().cancelTask(entry.getKey());
+                quester.getTimers().remove(entry.getKey());
+            }
+        }
         final Player player = quester.getPlayer();
         if (!ignoreFailAction) {
             final IStage stage = quester.getCurrentStage(this);

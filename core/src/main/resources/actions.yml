@@ -22,6 +22,7 @@ actions:
     timer: 40
   CancelTimer:
     cancel-timer: true
+    fail-quest: true
   RunCommand:
     message: "<red>Answer to life, the universe, and everything?"
     commands:
