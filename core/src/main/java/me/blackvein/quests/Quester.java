@@ -2181,29 +2181,28 @@ public class Quester implements IQuester {
             }
             return;
         }
-        final Settings settings = plugin.getSettings();
         final LocaleManager localeManager = plugin.getLocaleManager();
-        if (settings.canTranslateNames() && localeManager == null) {
+        final Settings settings = plugin.getSettings();
+        if (localeManager == null && settings.canTranslateNames()) {
             settings.setTranslateNames(false);
             plugin.getLogger().severe("Problem with locale manager! Item name translation disabled.");
         }
-        for (BukkitObjective objective : q.getCurrentObjectivesTemp(quest, false, false)) {
+        for (final BukkitObjective objective : q.getCurrentObjectivesTemp(quest, false, false)) {
             final String message = "- " + objective.getMessage();
             if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
-                ItemStack progress = objective.getProgressAsItem();
-                ItemStack goal = objective.getGoalAsItem();
+                final ItemStack progress = objective.getProgressAsItem();
+                final ItemStack goal = objective.getGoalAsItem();
                 if (!settings.canShowCompletedObjs() && progress.getAmount() >= goal.getAmount()) {
                     continue;
                 }
-                if (settings.canTranslateNames() && goal.hasItemMeta()) {
-                    // Bukkit version is 1.9+
-                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
-                            goal.getEnchantments(), goal.getItemMeta());
-                } else if (settings.canTranslateNames() && !goal.hasItemMeta()
+                if (localeManager != null && settings.canTranslateNames() && !goal.hasItemMeta()
                         && Material.getMaterial("LINGERING_POTION") == null) {
-                    // Bukkit version is below 1.9
-                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(),
-                            goal.getEnchantments());
+                    // Bukkit version is below 1.9 and item has no metadata
+                    localeManager.sendMessage(quester.getPlayer(), message, goal);
+                } else if (localeManager != null && settings.canTranslateNames() && goal.getItemMeta() != null
+                        && !goal.getItemMeta().hasDisplayName() && !goal.getType().equals(Material.WRITTEN_BOOK)) {
+                    // Bukkit version is 1.9+ and item lacks custom name
+                    localeManager.sendMessage(quester.getPlayer(), message, goal);
                 } else {
                     if (goal.getEnchantments().isEmpty()) {
                         quester.sendMessage(message.replace("<item>", ItemUtil.getName(goal))
@@ -2224,7 +2223,7 @@ public class Quester implements IQuester {
                 if (!settings.canShowCompletedObjs() && progress.getCount() >= goal.getCount()) {
                     continue;
                 }
-                if (settings.canTranslateNames()) {
+                if (localeManager != null && settings.canTranslateNames()) {
                     localeManager.sendMessage(quester.getPlayer(), message, goal.getEntityType(), null);
                 } else {
                     quester.sendMessage(message.replace("<mob>", MiscUtil.getProperMobName(goal.getEntityType())));

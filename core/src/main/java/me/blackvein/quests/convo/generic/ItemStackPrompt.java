@@ -293,8 +293,10 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     if (is.hasItemMeta()) {
                         final ItemMeta meta = is.getItemMeta();
                         if (meta != null) {
-                            final String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
-                            context.setSessionData("tempDisplay", display);
+                            if (meta.hasDisplayName()) {
+                                final String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
+                                context.setSessionData("tempDisplay", display);
+                            }
                             if (meta.getLore() != null) {
                                 final LinkedList<String> lore = new LinkedList<>(meta.getLore());
                                 context.setSessionData("tempLore", lore);

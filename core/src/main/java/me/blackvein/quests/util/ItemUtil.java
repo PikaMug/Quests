@@ -600,6 +600,9 @@ public class ItemUtil {
         final String text;
         if (is.getItemMeta() != null && is.getItemMeta().hasDisplayName()) {
             text = "" + ChatColor.DARK_AQUA + ChatColor.ITALIC + is.getItemMeta().getDisplayName();
+        } else if (is.getType().equals(Material.WRITTEN_BOOK)) {
+            final BookMeta bookMeta = (BookMeta) is.getItemMeta();
+            text = "" + ChatColor.DARK_AQUA + ChatColor.LIGHT_PURPLE + bookMeta.getTitle();
         } else {
             text = ChatColor.AQUA + getPrettyItemName(is.getType().name());
         }
