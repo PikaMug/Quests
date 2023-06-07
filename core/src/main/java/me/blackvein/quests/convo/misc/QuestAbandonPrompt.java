@@ -117,7 +117,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         }
         final Player player = (Player) context.getForWhom();
         if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
-                || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
+                || input.equalsIgnoreCase(Lang.get("yesWord")) || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
             final IQuester quester = plugin.getQuester(player.getUniqueId());
             if (quester == null) {
                 plugin.getLogger().info("Ended conversation because quester for " + getName() + "was null");
@@ -141,7 +141,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
             }
             return Prompt.END_OF_CONVERSATION;
         } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
-                || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                || input.equalsIgnoreCase(Lang.get("noWord")) || input.equalsIgnoreCase(Lang.get(player, "noWord"))) {
             Lang.send(player, ChatColor.YELLOW + Lang.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {

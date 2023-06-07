@@ -730,6 +730,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
+                    || input.equalsIgnoreCase(Lang.get("yesWord"))
                     || input.equalsIgnoreCase(Lang.get(player, "yesWord"))) {
                 final IQuester quester = getQuester(player.getUniqueId());
                 final String questIdToTake = quester.getQuestIdToTake();
@@ -743,7 +744,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 }
                 return Prompt.END_OF_CONVERSATION;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
-                    || input.equalsIgnoreCase(Lang.get("noWord"))) {
+                    || input.equalsIgnoreCase(Lang.get("noWord"))
+                    || input.equalsIgnoreCase(Lang.get(player, "noWord"))) {
                 Lang.send(player, ChatColor.YELLOW + Lang.get("cancelled"));
                 return Prompt.END_OF_CONVERSATION;
             } else {

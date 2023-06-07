@@ -316,7 +316,7 @@ public class Lang {
         }
     }
 
-    private static class LangToken {
+    public static class LangToken {
 
         static Map<String, String> tokenMap = new HashMap<>();
 
