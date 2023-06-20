@@ -31,6 +31,10 @@ public class DenizenTrigger {
         }
         if (plugin.getDependencies().getDenizenApi().containsScript(scriptName)) {
             if (plugin.getDependencies().getCitizens() != null) {
+                if (uuid == null) {
+                    plugin.getLogger().severe("NPC UUID was null for Denizen script named " + scriptName);
+                    return false;
+                }
                 final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid);
                 plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), npc);
             } else {
