@@ -2235,7 +2235,8 @@ public class Quester implements IQuester {
                 quester.sendMessage(message);
             }
         }
-        final QuestData data = quester.getQuestData(quest);
+        // TODO - remove this since #getCurrentObjectivesTemp now includes custom objectives
+        /*final QuestData data = quester.getQuestData(quest);
         if (data == null) {
             plugin.getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
@@ -2272,7 +2273,7 @@ public class Quester implements IQuester {
             }
             quester.sendMessage(ConfigUtil.parseString(message));
             customIndex++;
-        }
+        }*/
     }
     
     /**
