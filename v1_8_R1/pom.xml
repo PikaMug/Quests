@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-       <groupId>me.blackvein.quests</groupId>
+       <groupId>me.pikamug.quests</groupId>
        <artifactId>quests-parent</artifactId>
        <version>${revision}</version>
     </parent>
@@ -22,7 +22,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-core</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>

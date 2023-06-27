@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>me.blackvein.quests</groupId>
+        <groupId>me.pikamug.quests</groupId>
         <artifactId>quests-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -190,7 +190,7 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -289,23 +289,23 @@
                     <relocations>
                         <relocation>
                             <pattern>me.pikamug.localelib</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.localelib</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.localelib</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.hikari</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.hikari</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.mysql</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.mysql</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.mysql</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.slf4j</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.slf4j</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>xyz.upperlevel.spigot.book</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.bookutil</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.bookutil</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

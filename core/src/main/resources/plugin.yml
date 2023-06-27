@@ -1,5 +1,5 @@
 name: Quests
-main: me.blackvein.quests.Quests
+main: me.pikamug.quests.BukkitQuestsPlugin
 version: ${project.version}-b${env.BUILD_NUMBER}
 api-version: 1.13
 description: An extensive questing system.
