@@ -61,6 +61,10 @@ public interface IDependencies {
 
     ZNPCsPlus getZnpcsPlus();
 
+    void linkZnpcsPlus();
+
+    void unlinkZnpcsPlus();
+
     PartiesAPI getPartiesApi();
 
     boolean isPluginAvailable(final String pluginName);

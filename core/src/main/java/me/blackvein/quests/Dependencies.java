@@ -24,6 +24,7 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.blackvein.quests.dependencies.IDependencies;
 import me.blackvein.quests.listeners.CitizensListener;
+import me.blackvein.quests.listeners.ZnpcsListener;
 import me.blackvein.quests.player.IQuester;
 import me.blackvein.quests.reflect.denizen.DenizenAPI;
 import me.blackvein.quests.reflect.worldguard.WorldGuardAPI;
@@ -165,8 +166,8 @@ public class Dependencies implements IDependencies {
                     plugin.getLogger().info("Successfully linked Quests with Citizens " 
                             + citizens.getDescription().getVersion());
                 }
-            } catch (final Exception e) {
-                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+            } catch (final Exception | NoClassDefFoundError e) {
+                plugin.getLogger().severe("Unsupported version of Citizens found. Citizens in Quests not enabled.");
             }
         }
     }
@@ -196,18 +197,43 @@ public class Dependencies implements IDependencies {
 
     public ZNPCsPlus getZnpcsPlus() {
         if (znpcs == null) {
-            znpcs = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
-            startNpcEffectThread();
+            linkZnpcsPlus();
         }
         return znpcs;
     }
 
     public Set<UUID> getZnpcsPlusUuids() {
-        if (znpcs != null && isPluginAvailable("ZNPCsPlus")) {
+        if (getZnpcsPlus() != null) {
             return io.github.znetworkw.znpcservers.npc.NPC.all().stream()
                     .map(io.github.znetworkw.znpcservers.npc.NPC::getUUID).collect(Collectors.toSet());
         }
         return Collections.emptySet();
+    }
+
+    public void linkZnpcsPlus() {
+        if (isPluginAvailable("ZNPCsPlus")) {
+            try {
+                znpcs = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
+                boolean found = false;
+                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
+                    if (listener.getListener() instanceof ZnpcsListener) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    plugin.getServer().getPluginManager().registerEvents(plugin.getZnpcsListener(), plugin);
+                    startNpcEffectThread();
+                    plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus "
+                            + znpcs.getDescription().getVersion());
+                }
+            } catch (final Exception | NoClassDefFoundError e) {
+                plugin.getLogger().severe("Unsupported version of ZNPCsPlus found. ZNPCsPlus in Quests not enabled.");
+            }
+        }
+    }
+
+    public void unlinkZnpcsPlus() {
+        znpcs = null;
     }
 
     public PartiesAPI getPartiesApi() {
@@ -223,7 +249,7 @@ public class Dependencies implements IDependencies {
     }
     
     public boolean isPluginAvailable(final String pluginName) {
-        if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null ) {
+        if (plugin.getServer().getPluginManager().getPlugin(pluginName) != null) {
             try {
                 if (!Objects.requireNonNull(plugin.getServer().getPluginManager().getPlugin(pluginName)).isEnabled()) {
                     plugin.getLogger().warning(pluginName
