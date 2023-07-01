@@ -21,8 +21,8 @@ import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.module.ICustomRequirement;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.module.CustomRequirement;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -901,7 +901,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final List<String> names = plugin.getLoadedQuests().stream().map(IQuest::getName)
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
@@ -1456,7 +1456,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                             .append("\n");
                 } else {
                     for (final String name : plugin.getCustomRequirements().stream()
-                            .map(ICustomRequirement::getModuleName).collect(Collectors.toCollection(TreeSet::new))) {
+                            .map(CustomRequirement::getModuleName).collect(Collectors.toCollection(TreeSet::new))) {
                         text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                     }
                 }
@@ -1472,7 +1472,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final String name : plugin.getCustomRequirements().stream().map(ICustomRequirement::getModuleName)
+                for (final String name : plugin.getCustomRequirements().stream().map(CustomRequirement::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
                     click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + name));
@@ -1491,7 +1491,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
                 String found = null;
                 // Check if we have a module with the specified name
-                for (final ICustomRequirement cr : plugin.getCustomRequirements()) {
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getModuleName().equalsIgnoreCase(input)) {
                         found = cr.getModuleName();
                         break;
@@ -1499,7 +1499,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (found == null) {
                     // No? Check again, but with locale sensitivity
-                    for (final ICustomRequirement cr : plugin.getCustomRequirements()) {
+                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                         if (cr.getModuleName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr.getModuleName();
                             break;
@@ -1559,7 +1559,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                             .append("https://pikamug.gitbook.io/quests/casual/modules\n");
                     text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")\n");
                 } else {
-                    for (final ICustomRequirement cr : plugin.getCustomRequirements()) {
+                    for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                         if (cr.getModuleName().equals(moduleName)) {
                             text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
                         }
@@ -1577,7 +1577,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final ICustomRequirement co : plugin.getCustomRequirements()) {
+                for (final CustomRequirement co : plugin.getCustomRequirements()) {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
@@ -1600,8 +1600,8 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                ICustomRequirement found = null;
-                for (final ICustomRequirement cr : plugin.getCustomRequirements()) {
+                CustomRequirement found = null;
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getModuleName().equals(moduleName)) {
                         if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;

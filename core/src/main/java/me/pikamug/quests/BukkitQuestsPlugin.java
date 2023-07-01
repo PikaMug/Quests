@@ -12,21 +12,21 @@
 
 package me.pikamug.quests;
 
+import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.actions.BukkitActionFactory;
-import me.pikamug.quests.actions.IAction;
 import me.pikamug.quests.conditions.BukkitConditionFactory;
 import me.pikamug.quests.conditions.BukkitCondition;
+import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.conditions.ConditionFactory;
-import me.pikamug.quests.conditions.ICondition;
-import me.pikamug.quests.config.ISettings;
+import me.pikamug.quests.config.Settings;
 import me.pikamug.quests.config.BukkitSettings;
 import me.pikamug.quests.convo.misc.MiscStringPrompt;
 import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.IDependencies;
+import me.pikamug.quests.dependencies.Dependencies;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.events.misc.MiscPostQuestAcceptEvent;
@@ -48,15 +48,15 @@ import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
 import me.pikamug.quests.module.BukkitCustomObjective;
 import me.pikamug.quests.module.BukkitCustomRequirement;
 import me.pikamug.quests.module.BukkitCustomReward;
-import me.pikamug.quests.module.ICustomObjective;
-import me.pikamug.quests.module.ICustomRequirement;
-import me.pikamug.quests.module.ICustomReward;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.module.CustomRequirement;
+import me.pikamug.quests.module.CustomReward;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.player.QuestData;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.quests.BukkitQuestFactory;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.quests.Options;
 import me.pikamug.quests.quests.Planner;
 import me.pikamug.quests.quests.BukkitQuest;
@@ -149,15 +149,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private boolean loading = true;
     private String bukkitVersion = "0";
-    private IDependencies depends;
-    private ISettings settings;
-    private final List<ICustomObjective> customObjectives = new LinkedList<>();
-    private final List<ICustomRequirement> customRequirements = new LinkedList<>();
-    private final List<ICustomReward> customRewards = new LinkedList<>();
-    private Collection<IQuester> questers = new ConcurrentSkipListSet<>();
-    private final Collection<IQuest> quests = new ConcurrentSkipListSet<>();
-    private Collection<IAction> actions = new ConcurrentSkipListSet<>();
-    private Collection<ICondition> conditions = new ConcurrentSkipListSet<>();
+    private Dependencies depends;
+    private Settings settings;
+    private final List<CustomObjective> customObjectives = new LinkedList<>();
+    private final List<CustomRequirement> customRequirements = new LinkedList<>();
+    private final List<CustomReward> customRewards = new LinkedList<>();
+    private Collection<Quester> questers = new ConcurrentSkipListSet<>();
+    private final Collection<Quest> quests = new ConcurrentSkipListSet<>();
+    private Collection<Action> actions = new ConcurrentSkipListSet<>();
+    private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
     private Collection<UUID> questNpcUuids = new ConcurrentSkipListSet<>();
     private TabExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
@@ -348,12 +348,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @Override
-    public List<ICustomObjective> getCustomObjectives() {
+    public List<CustomObjective> getCustomObjectives() {
         return customObjectives;
     }
 
-    public Optional<ICustomObjective> getCustomObjective(final String className) {
-        for (final ICustomObjective co : customObjectives) {
+    public Optional<CustomObjective> getCustomObjective(final String className) {
+        for (final CustomObjective co : customObjectives) {
             if (co.getClass().getName().equals(className)) {
                 return Optional.of(co);
             }
@@ -362,12 +362,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @Override
-    public List<ICustomRequirement> getCustomRequirements() {
+    public List<CustomRequirement> getCustomRequirements() {
         return customRequirements;
     }
 
-    public Optional<ICustomRequirement> getCustomRequirement(final String className) {
-        for (final ICustomRequirement cr : customRequirements) {
+    public Optional<CustomRequirement> getCustomRequirement(final String className) {
+        for (final CustomRequirement cr : customRequirements) {
             if (cr.getClass().getName().equals(className)) {
                 return Optional.of(cr);
             }
@@ -376,12 +376,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @Override
-    public List<ICustomReward> getCustomRewards() {
+    public List<CustomReward> getCustomRewards() {
         return customRewards;
     }
 
-    public Optional<ICustomReward> getCustomReward(final String className) {
-        for (final ICustomReward cr : customRewards) {
+    public Optional<CustomReward> getCustomReward(final String className) {
+        for (final CustomReward cr : customRewards) {
             if (cr.getClass().getName().equals(className)) {
                 return Optional.of(cr);
             }
@@ -398,7 +398,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Deprecated
     public LinkedList<BukkitQuest> getQuests() {
         final LinkedList<BukkitQuest> list = new LinkedList<>();
-        for (IQuest q : quests) {
+        for (Quest q : quests) {
             list.add((BukkitQuest) q);
         }
         return list;
@@ -409,7 +409,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a collection of all Quests
      */
-    public Collection<IQuest> getLoadedQuests() {
+    public Collection<Quest> getLoadedQuests() {
         return quests;
     }
 
@@ -422,36 +422,36 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Deprecated
     public LinkedList<BukkitAction> getActions() {
         final LinkedList<BukkitAction> list = new LinkedList<>();
-        for (IAction a : actions) {
+        for (Action a : actions) {
             list.add((BukkitAction) a);
         }
         return list;
     }
 
     /**
-     * Get every IAction loaded in memory
+     * Get every Action loaded in memory
      *
      * @return a collection of all Actions
      */
-    public Collection<IAction> getLoadedActions() {
+    public Collection<Action> getLoadedActions() {
         return actions;
     }
 
     /**
-     * Set every IAction loaded in memory
+     * Set every Action loaded in memory
      *
      * @deprecated Use {@link #setLoadedActions(Collection)}
      */
     @Deprecated
-    public void setActions(final LinkedList<IAction> actions) {
+    public void setActions(final LinkedList<Action> actions) {
         this.actions = actions;
     }
 
     /**
-     * Set every IAction loaded in memory
+     * Set every Action loaded in memory
      *
      */
-    public void setLoadedActions(final Collection<IAction> actions) {
+    public void setLoadedActions(final Collection<Action> actions) {
         this.actions = actions;
     }
 
@@ -464,36 +464,36 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Deprecated
     public LinkedList<BukkitCondition> getConditions() {
         final LinkedList<BukkitCondition> list = new LinkedList<>();
-        for (ICondition c : conditions) {
+        for (Condition c : conditions) {
             list.add((BukkitCondition) c);
         }
         return list;
     }
 
     /**
-     * Get every ICondition loaded in memory
+     * Get every Condition loaded in memory
      *
      * @return a collection of all Conditions
      */
-    public Collection<ICondition> getLoadedConditions() {
+    public Collection<Condition> getLoadedConditions() {
         return conditions;
     }
 
     /**
-     * Set every ICondition loaded in memory
+     * Set every Condition loaded in memory
      *
      * @deprecated Use {@link #setLoadedConditions(Collection)}
      */
     @Deprecated
-    public void setConditions(final LinkedList<ICondition> conditions) {
+    public void setConditions(final LinkedList<Condition> conditions) {
         this.conditions = conditions;
     }
 
     /**
-     * Set every ICondition loaded in memory
+     * Set every Condition loaded in memory
      *
      */
-    public void setLoadedConditions(final Collection<ICondition> conditions) {
+    public void setLoadedConditions(final Collection<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -504,8 +504,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @return new or existing Quester
      */
     public BukkitQuester getQuester(final @NotNull UUID id) {
-        final ConcurrentSkipListSet<IQuester> set = (ConcurrentSkipListSet<IQuester>) questers;
-        for (final IQuester q : set) {
+        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
+        for (final Quester q : set) {
             if (q != null && q.getUUID().equals(id)) {
                 return (BukkitQuester) q;
             }
@@ -526,9 +526,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a collection of all online Questers
      */
-    public Collection<IQuester> getOnlineQuesters() {
-        final Collection<IQuester> questers = new ConcurrentSkipListSet<>();
-        for (final IQuester q : getOfflineQuesters()) {
+    public Collection<Quester> getOnlineQuesters() {
+        final Collection<Quester> questers = new ConcurrentSkipListSet<>();
+        for (final Quester q : getOfflineQuesters()) {
             if (q.getOfflinePlayer().isOnline()) {
                 // Workaround for issues with the compass on fast join
                 q.findCompassTarget();
@@ -543,7 +543,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a collection of all Questers
      */
-    public Collection<IQuester> getOfflineQuesters() {
+    public Collection<Quester> getOfflineQuesters() {
         return questers;
     }
 
@@ -552,7 +552,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @param questers a collection of Questers
      */
-    public void setOfflineQuesters(final Collection<IQuester> questers) {
+    public void setOfflineQuesters(final Collection<Quester> questers) {
         this.questers = new ConcurrentSkipListSet<>(questers);
     }
 
@@ -745,7 +745,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
                     || input.equalsIgnoreCase(Language.get("yesWord"))
                     || input.equalsIgnoreCase(Language.get(player, "yesWord"))) {
-                final IQuester quester = getQuester(player.getUniqueId());
+                final Quester quester = getQuester(player.getUniqueId());
                 final String questIdToTake = quester.getQuestIdToTake();
                 if (getQuestByIdTemp(questIdToTake) == null) {
                     getLogger().warning(player.getName() + " attempted to take quest ID \"" + questIdToTake
@@ -863,7 +863,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                     + conditions.size() + " Condition(s) and " + Language.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
-                final IQuester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
+                final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
                 if (!quester.hasData()) {
                     quester.saveData();
                 }
@@ -920,12 +920,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             int count = 0;
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    for (final IQuest lq : getLoadedQuests()) {
+                    for (final Quest lq : getLoadedQuests()) {
                         if (lq.getId().equals(questKey)) {
                             throw new QuestFormatException("id already exists", questKey);
                         }
                     }
-                    final IQuest quest = loadQuest(config, questKey);
+                    final Quest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -1032,7 +1032,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                         final Class<? extends BukkitCustomRequirement> requirementClass = c.asSubclass(BukkitCustomRequirement.class);
                         final Constructor<? extends BukkitCustomRequirement> constructor = requirementClass.getConstructor();
                         final BukkitCustomRequirement requirement = constructor.newInstance();
-                        final Optional<ICustomRequirement> oo = getCustomRequirement(requirement.getClass().getName());
+                        final Optional<CustomRequirement> oo = getCustomRequirement(requirement.getClass().getName());
                         oo.ifPresent(customRequirements::remove);
                         customRequirements.add(requirement);
                         final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
@@ -1043,18 +1043,18 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                         final Class<? extends BukkitCustomReward> rewardClass = c.asSubclass(BukkitCustomReward.class);
                         final Constructor<? extends BukkitCustomReward> constructor = rewardClass.getConstructor();
                         final BukkitCustomReward reward = constructor.newInstance();
-                        final Optional<ICustomReward> oo = getCustomReward(reward.getClass().getName());
+                        final Optional<CustomReward> oo = getCustomReward(reward.getClass().getName());
                         oo.ifPresent(customRewards::remove);
                         customRewards.add(reward);
                         final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
                         final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
                         count++;
                         getLogger().info("Loaded \"" + name + "\" by " + author);
-                    } else if (ICustomObjective.class.isAssignableFrom(c)) {
+                    } else if (CustomObjective.class.isAssignableFrom(c)) {
                         final Class<? extends BukkitCustomObjective> objectiveClass = c.asSubclass(BukkitCustomObjective.class);
                         final Constructor<? extends BukkitCustomObjective> constructor = objectiveClass.getConstructor();
                         final BukkitCustomObjective objective = constructor.newInstance();
-                        final Optional<ICustomObjective> oo = getCustomObjective(objective.getClass().getName());
+                        final Optional<CustomObjective> oo = getCustomObjective(objective.getClass().getName());
                         if (oo.isPresent() && oo.get() instanceof BukkitCustomObjective) {
                             HandlerList.unregisterAll((BukkitCustomObjective)oo.get());
                             customObjectives.remove(oo.get());
@@ -1089,13 +1089,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * 
      * Respects PlaceholderAPI and translations, when enabled.
      *
-     * @deprecated Use {@link BukkitQuester#showCurrentObjectives(IQuest, IQuester, boolean)}
+     * @deprecated Use {@link BukkitQuester#showCurrentObjectives(Quest, Quester, boolean)}
      * @param quest The quest to get current stage objectives of
      * @param quester The player to show current stage objectives to
      * @param ignoreOverrides Whether to ignore objective-overrides
      */
     @SuppressWarnings("deprecation")
-    public void showObjectives(final IQuest quest, final IQuester quester, final boolean ignoreOverrides) {
+    public void showObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides) {
         if (quest == null) {
             getLogger().severe("Quest was null when showing objectives for " + quester.getLastKnownName());
             return;
@@ -1104,7 +1104,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
         }
-        final IStage stage = quester.getCurrentStage(quest);
+        final Stage stage = quester.getCurrentStage(quest);
         if (stage == null) {
             getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
             return;
@@ -1678,7 +1678,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             passIndex++;
         }
         int customIndex = 0;
-        for (final ICustomObjective co : stage.getCustomObjectives()) {
+        for (final CustomObjective co : stage.getCustomObjectives()) {
             int cleared = 0;
             if (data.customObjectiveCounts.size() > customIndex) {
                 cleared = data.customObjectiveCounts.get(customIndex);
@@ -1717,11 +1717,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Show all of a player's conditions for the current stage of a quest.<p>
      *
-     * @deprecated Use {@link BukkitQuester#showCurrentConditions(IQuest, IQuester)}
+     * @deprecated Use {@link BukkitQuester#showCurrentConditions(Quest, Quester)}
      * @param quest The quest to get current stage objectives of
      * @param quester The player to show current stage objectives to
      */
-    public void showConditions(final IQuest quest, final IQuester quester) {
+    public void showConditions(final Quest quest, final Quester quester) {
         if (quest == null) {
             getLogger().severe("Quest was null when getting conditions for " + quester.getLastKnownName());
             return;
@@ -1730,12 +1730,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().warning("Quest data was null when showing conditions for " + quest.getName());
             return;
         }
-        final IStage stage = quester.getCurrentStage(quest);
+        final Stage stage = quester.getCurrentStage(quest);
         if (stage == null) {
             getLogger().warning("Current stage was null when showing conditions for " + quest.getName());
             return;
         }
-        final ICondition c = stage.getCondition();
+        final Condition c = stage.getCondition();
         if (c != null && stage.getObjectiveOverrides().isEmpty()) {
             quester.sendMessage(ChatColor.LIGHT_PURPLE + Language.get("stageEditorConditions"));
             if (!c.getEntitiesWhileRiding().isEmpty()) {
@@ -1818,18 +1818,18 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Show the player a list of their available quests
      *
-     * @deprecated Use {@link BukkitQuester#listQuests(IQuester, int)}
+     * @deprecated Use {@link BukkitQuester#listQuests(Quester, int)}
      * @param quester Quester to show the list
      * @param page Page to display, with 7 quests per page
      */
-    public void listQuests(final IQuester quester, final int page) {
+    public void listQuests(final Quester quester, final int page) {
         // Although we could copy the quests list to a new object, we instead opt to
         // duplicate code to improve efficiency if ignore-locked-quests is set to 'false'
         final int rows = 7;
         final Player player = quester.getPlayer();
         if (getSettings().canIgnoreLockedQuests()) {
-            final LinkedList<IQuest> available = new LinkedList<>();
-            for (final IQuest q : quests) {
+            final LinkedList<Quest> available = new LinkedList<>();
+            for (final Quest q : quests) {
                 if (!quester.getCompletedQuestsTemp().contains(q)) {
                     if (q.testRequirements(player)) {
                         available.add(q);
@@ -1845,14 +1845,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             } else {
                 Language.send(player, ChatColor.GOLD + Language.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
-                final List<IQuest> subQuests;
+                final List<Quest> subQuests;
                 if (available.size() >= (fromOrder + rows)) {
                     subQuests = available.subList((fromOrder), (fromOrder + rows));
                 } else {
                     subQuests = available.subList((fromOrder), available.size());
                 }
                 fromOrder++;
-                for (final IQuest q : subQuests) {
+                for (final Quest q : subQuests) {
                     if (quester.canAcceptOffer(q, false)) {
                         quester.sendMessage(ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
                     } else {
@@ -1872,14 +1872,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             } else {
                 Language.send(player, ChatColor.GOLD + Language.get(player, "questListTitle"));
                 int fromOrder = (page - 1) * rows;
-                final List<IQuest> subQuests;
+                final List<Quest> subQuests;
                 if (quests.size() >= (fromOrder + rows)) {
                     subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), (fromOrder + rows));
                 } else {
                     subQuests = new LinkedList<>(getLoadedQuests()).subList((fromOrder), quests.size());
                 }
                 fromOrder++;
-                for (final IQuest q : subQuests) {
+                for (final Quest q : subQuests) {
                     if (quester.canAcceptOffer(q, false)) {
                         Language.send(player, ChatColor.YELLOW + Integer.toString(fromOrder) + ". " + q.getName());
                     } else {
@@ -1918,9 +1918,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 loadQuests();
                 loadActions();
                 loadConditions();
-                for (final IQuester quester : questers) {
-                    final IQuester loaded = getStorage().loadQuester(quester.getUUID()).get();
-                    for (final IQuest quest : loaded.getCurrentQuestsTemp().keySet()) {
+                for (final Quester quester : questers) {
+                    final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
+                    for (final Quest quest : loaded.getCurrentQuestsTemp().keySet()) {
                         loaded.checkQuest(quest);
                     }
                 }
@@ -1980,7 +1980,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    final IQuest quest = loadQuest(config, questKey);
+                    final Quest quest = loadQuest(config, questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -2013,9 +2013,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @SuppressWarnings("deprecation")
-    private IQuest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
+    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
             ActionFormatException {
-        final IQuest quest = new BukkitQuest(this);
+        final Quest quest = new BukkitQuest(this);
         quest.setId(questKey);
         if (config.contains("quests." + questKey + ".name")) {
             quest.setName(BukkitConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
@@ -2111,14 +2111,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
         }
         if (config.contains("quests." + questKey + ".action")) {
-            final IAction action = loadAction(config.getString("quests." + questKey + ".action"));
+            final Action action = loadAction(config.getString("quests." + questKey + ".action"));
             if (action != null) {
                 quest.setInitialAction(action);
             } else {
                 throw new QuestFormatException("action failed to load", questKey);
             }
         } else if (config.contains("quests." + questKey + ".event")) {
-            final IAction action = loadAction(config.getString("quests." + questKey + ".event"));
+            final Action action = loadAction(config.getString("quests." + questKey + ".event"));
             if (action != null) {
                 quest.setInitialAction(action);
             } else {
@@ -2129,7 +2129,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
-    private void loadQuestRewards(final FileConfiguration config, final IQuest quest, final String questKey)
+    private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey)
             throws QuestFormatException {
         final Rewards rewards = quest.getRewards();
         if (config.contains("quests." + questKey + ".rewards.items")) {
@@ -2302,7 +2302,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     private void loadQuestRequirements(final FileConfiguration config, final ConfigurationSection questsSection,
-                                       final IQuest quest, final String questKey) throws QuestFormatException {
+                                       final Quest quest, final String questKey) throws QuestFormatException {
         final Requirements requires = quest.getRequirements();
         if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
             final Object o = config.get("quests." + questKey + ".requirements.fail-requirement-message");
@@ -2516,7 +2516,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
     
-    private void loadQuestPlanner(final FileConfiguration config, final IQuest quest, final String questKey)
+    private void loadQuestPlanner(final FileConfiguration config, final Quest quest, final String questKey)
             throws QuestFormatException {
         final Planner pln = quest.getPlanner();
         if (config.contains("quests." + questKey + ".planner.start")) {
@@ -2544,7 +2544,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
     
-    private void loadQuestOptions(final FileConfiguration config, final IQuest quest, final String questKey)
+    private void loadQuestOptions(final FileConfiguration config, final Quest quest, final String questKey)
             throws QuestFormatException {
         final Options opts = quest.getOptions();
         if (config.contains("quests." + questKey + ".options.allow-commands")) {
@@ -2583,7 +2583,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     @SuppressWarnings({ "unchecked", "unused", "deprecation" })
-    private void loadQuestStages(final IQuest quest, final FileConfiguration config, final String questKey)
+    private void loadQuestStages(final Quest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, ActionFormatException, ConditionFormatException {
         final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
                 + ".stages.ordered");
@@ -2596,7 +2596,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             try {
                 stageNum = Integer.parseInt(stage);
             } catch (final NumberFormatException e) {
-                getLogger().severe("IStage key " + stage + "must be a number!");
+                getLogger().severe("Stage key " + stage + "must be a number!");
                 continue;
             }
             final BukkitStage oStage = new BukkitStage();
@@ -4245,7 +4245,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return condition;
     }
     
-    private void loadCustomSections(final IQuest quest, final FileConfiguration config, final String questKey)
+    private void loadCustomSections(final Quest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, QuestFormatException {
         final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
                 + ".stages.ordered");
@@ -4261,7 +4261,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                             - 1) + " for " + quest.getName() + " was null");
                     return;
                 }
-                final IStage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
+                final Stage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
                 oStage.clearCustomObjectives();
                 oStage.clearCustomObjectiveCounts();
                 oStage.clearCustomObjectiveData();
@@ -4273,8 +4273,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                         for (final String path : sec.getKeys(false)) {
                             final String name = sec.getString(path + ".name");
                             final int count = sec.getInt(path + ".count");
-                            Optional<ICustomObjective> found = Optional.empty();
-                            for (final ICustomObjective cr : customObjectives) {
+                            Optional<CustomObjective> found = Optional.empty();
+                            for (final CustomObjective cr : customObjectives) {
                                 if (cr.getName().equalsIgnoreCase(name)) {
                                     found = Optional.of(cr);
                                     break;
@@ -4289,7 +4289,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                                     oStage.addCustomObjectiveData(data);
                                 }
                             } else {
-                                throw new QuestFormatException(name + " custom objective not found for IStage "
+                                throw new QuestFormatException(name + " custom objective not found for Stage "
                                         + stageNum, questKey);
                             }
                         }
@@ -4304,8 +4304,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 if (sec != null) {
                     for (final String path : sec.getKeys(false)) {
                         final String name = sec.getString(path + ".name");
-                        Optional<ICustomReward> found = Optional.empty();
-                        for (final ICustomReward cr : customRewards) {
+                        Optional<CustomReward> found = Optional.empty();
+                        for (final CustomReward cr : customRewards) {
                             if (cr.getName().equalsIgnoreCase(name)) {
                                 found = Optional.of(cr);
                                 break;
@@ -4330,8 +4330,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 if (sec != null) {
                     for (final String path : sec.getKeys(false)) {
                         final String name = sec.getString(path + ".name");
-                        Optional<ICustomRequirement> found = Optional.empty();
-                        for (final ICustomRequirement cr : customRequirements) {
+                        Optional<CustomRequirement> found = Optional.empty();
+                        for (final CustomRequirement cr : customRequirements) {
                             if (cr.getName().equalsIgnoreCase(name)) {
                                 found = Optional.of(cr);
                                 break;
@@ -4444,7 +4444,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     if (action != null) {
                         actions.add(action);
                     } else {
-                        getLogger().log(Level.SEVERE, "Failed to load IAction \"" + s + "\". Skipping.");
+                        getLogger().log(Level.SEVERE, "Failed to load Action \"" + s + "\". Skipping.");
                     }
                 }
             } else {
@@ -4482,7 +4482,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     if (condition != null) {
                         conditions.add(condition);
                     } else {
-                        getLogger().log(Level.SEVERE, "Failed to load ICondition \"" + s + "\". Skipping.");
+                        getLogger().log(Level.SEVERE, "Failed to load Condition \"" + s + "\". Skipping.");
                     }
                 }
             } else {
@@ -4539,7 +4539,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (id == null) {
             return null;
         }
-        for (final IQuest iq : quests) {
+        for (final Quest iq : quests) {
             final BukkitQuest q = (BukkitQuest) iq;
             if (q.getId().equals(id)) {
                 return q;
@@ -4556,11 +4556,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @since 3.8.6
      * @deprecated Do not use
      */
-    public IQuest getQuestByIdTemp(final String id) {
+    public Quest getQuestByIdTemp(final String id) {
         if (id == null) {
             return null;
         }
-        for (final IQuest q : quests) {
+        for (final Quest q : quests) {
             if (q.getId().equals(id)) {
                 return q;
             }
@@ -4578,25 +4578,25 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (name == null) {
             return null;
         }
-        for (final IQuest iq : quests) {
+        for (final Quest iq : quests) {
             final BukkitQuest q = (BukkitQuest) iq;
             if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return q;
             }
         }
-        for (final IQuest iq : quests) {
+        for (final Quest iq : quests) {
             final BukkitQuest q = (BukkitQuest) iq;
             if (q.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (final IQuest iq : quests) {
+        for (final Quest iq : quests) {
             final BukkitQuest q = (BukkitQuest) iq;
             if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (final IQuest iq : quests) {
+        for (final Quest iq : quests) {
             // For tab completion
             final BukkitQuest q = (BukkitQuest) iq;
             if (ChatColor.stripColor(q.getName()).equals(ChatColor.stripColor(ChatColor
@@ -4613,26 +4613,26 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param name Name of the quest
      * @return Closest match or null if not found
      */
-    public IQuest getQuestTemp(final String name) {
+    public Quest getQuestTemp(final String name) {
         if (name == null) {
             return null;
         }
-        for (final IQuest q : quests) {
+        for (final Quest q : quests) {
             if (q.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return q;
             }
         }
-        for (final IQuest q : quests) {
+        for (final Quest q : quests) {
             if (q.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (final IQuest q : quests) {
+        for (final Quest q : quests) {
             if (q.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return q;
             }
         }
-        for (final IQuest q : quests) {
+        for (final Quest q : quests) {
             // For tab completion
             if (ChatColor.stripColor(q.getName()).equals(ChatColor.stripColor(ChatColor
                     .translateAlternateColorCodes('&', name)))) {
@@ -4643,31 +4643,31 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
     
     /**
-     * Get an IAction by name
+     * Get an Action by name
      * 
      * @param name Name of the action
      * @return Closest match or null if not found
      */
-    public IAction getAction(final String name) {
+    public Action getAction(final String name) {
         if (name == null) {
             return null;
         }
-        for (final IAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return a;
             }
         }
-        for (final IAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
         }
-        for (final IAction a : actions) {
+        for (final Action a : actions) {
             if (a.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return a;
             }
         }
-        for (final IAction a : actions) {
+        for (final Action a : actions) {
             // For tab completion
             if (ChatColor.stripColor(a.getName()).equals(ChatColor.stripColor(ChatColor.
                     translateAlternateColorCodes('&', name)))) {
@@ -4678,31 +4678,31 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
     
     /**
-     * Get a ICondition by name
+     * Get a Condition by name
      * 
      * @param name Name of the condition
      * @return Closest match or null if not found
      */
-    public ICondition getCondition(final String name) {
+    public Condition getCondition(final String name) {
         if (name == null) {
             return null;
         }
-        for (final ICondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', name))) {
                 return c;
             }
         }
-        for (final ICondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().toLowerCase().startsWith(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }
         }
-        for (final ICondition c : conditions) {
+        for (final Condition c : conditions) {
             if (c.getName().toLowerCase().contains(ChatColor.translateAlternateColorCodes('&', name).toLowerCase())) {
                 return c;
             }
         }
-        for (final ICondition c : conditions) {
+        for (final Condition c : conditions) {
             // For tab completion
             if (ChatColor.stripColor(c.getName()).equals(ChatColor.stripColor(ChatColor
                     .translateAlternateColorCodes('&', name)))) {
@@ -4719,8 +4719,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param quester The player to check
      * @return true if at least one available quest has not yet been completed
      */
-    public boolean hasQuest(final UUID npc, final IQuester quester) {
-        for (final IQuest q : quests) {
+    public boolean hasQuest(final UUID npc, final Quester quester) {
+        for (final Quest q : quests) {
             if (q.getNpcStart() != null && !quester.getCompletedQuestsTemp().contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
@@ -4741,8 +4741,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param quester The player to check
      * @return true if at least one available quest has been completed
      */
-    public boolean hasCompletedQuest(final UUID npc, final IQuester quester) {
-        for (final IQuest q : quests) {
+    public boolean hasCompletedQuest(final UUID npc, final Quester quester) {
+        for (final Quest q : quests) {
             if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
                     final boolean ignoreLockedQuests = settings.canIgnoreLockedQuests();
@@ -4762,8 +4762,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param quester The player to check
      * @return true if at least one available, redoable quest has been completed
      */
-    public boolean hasCompletedRedoableQuest(final UUID npc, final IQuester quester) {
-        for (final IQuest q : quests) {
+    public boolean hasCompletedRedoableQuest(final UUID npc, final Quester quester) {
+        for (final Quest q : quests) {
             if (q.getNpcStart() != null && quester.getCompletedQuestsTemp().contains(q)
                     && q.getPlanner().getCooldown() > -1) {
                 if (q.getNpcStart().equals(npc)) {
@@ -4783,10 +4783,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available quest has not yet been completed
-     * @deprecated Use {@link #hasQuest(UUID, IQuester)}
+     * @deprecated Use {@link #hasQuest(UUID, Quester)}
      */
     @Deprecated
-    public boolean hasQuest(final NPC npc, final IQuester quester) {
+    public boolean hasQuest(final NPC npc, final Quester quester) {
         return hasQuest(npc.getUniqueId(), quester);
     }
     
@@ -4797,10 +4797,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available quest has been completed
-     * @deprecated Use {@link #hasCompletedQuest(UUID, IQuester)}
+     * @deprecated Use {@link #hasCompletedQuest(UUID, Quester)}
      */
     @Deprecated
-    public boolean hasCompletedQuest(final NPC npc, final IQuester quester) {
+    public boolean hasCompletedQuest(final NPC npc, final Quester quester) {
         return hasCompletedQuest(npc.getUniqueId(), quester);
     }
     
@@ -4810,10 +4810,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param npc The giver NPC to check
      * @param quester The player to check
      * @return true if at least one available, redoable quest has been completed
-     * @deprecated Use {@link #hasCompletedRedoableQuest(UUID, IQuester)}
+     * @deprecated Use {@link #hasCompletedRedoableQuest(UUID, Quester)}
      */
     @Deprecated
-    public boolean hasCompletedRedoableQuest(final NPC npc, final IQuester quester) {
+    public boolean hasCompletedRedoableQuest(final NPC npc, final Quester quester) {
         return hasCompletedRedoableQuest(npc.getUniqueId(), quester);
     }
 }

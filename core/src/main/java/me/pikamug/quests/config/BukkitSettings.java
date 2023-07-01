@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class BukkitSettings implements ISettings {
+public class BukkitSettings implements Settings {
     
     private final BukkitQuestsPlugin plugin;
     private int acceptTimeout = 20;

@@ -12,8 +12,8 @@
 
 package me.pikamug.quests.actions;
 
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.entity.QuestMob;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -24,7 +24,7 @@ import org.bukkit.potion.PotionEffect;
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface IAction extends Comparable<IAction> {
+public interface Action extends Comparable<Action> {
     String getName();
 
     void setName(final String name);
@@ -117,5 +117,5 @@ public interface IAction extends Comparable<IAction> {
 
     void setDenizenScript(final String scriptName);
 
-    void fire(final IQuester quester, final IQuest quest);
+    void fire(final Quester quester, final Quest quest);
 }

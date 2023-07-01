@@ -13,7 +13,7 @@
 package me.pikamug.quests.convo.actions.main;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.actions.IAction;
+import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
@@ -25,8 +25,8 @@ import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -276,7 +276,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
@@ -1104,8 +1104,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final IQuest q : plugin.getLoadedQuests()) {
-                    for (final IStage s : q.getStages()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

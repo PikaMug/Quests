@@ -12,7 +12,7 @@
 
 package me.pikamug.quests.storage.implementation;
 
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 
 import java.util.Collection;
@@ -27,9 +27,9 @@ public interface StorageImplementation {
 
     void close();
     
-    IQuester loadQuester(UUID uniqueId) throws Exception;
+    Quester loadQuester(UUID uniqueId) throws Exception;
 
-    void saveQuester(IQuester quester) throws Exception;
+    void saveQuester(Quester quester) throws Exception;
 
     void deleteQuester(UUID uniqueId) throws Exception;
 

@@ -25,8 +25,8 @@ import me.pikamug.quests.convo.quests.rewards.QuestRewardsPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.reflect.worldguard.WorldGuardAPI;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -346,7 +346,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                for (final IQuest q : plugin.getLoadedQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
                         String s = null;
                         if (context.getSessionData(Key.ED_QUEST_EDIT) != null) {

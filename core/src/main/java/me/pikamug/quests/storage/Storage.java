@@ -12,7 +12,7 @@
 
 package me.pikamug.quests.storage;
 
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.storage.implementation.StorageImplementation;
 
@@ -85,11 +85,11 @@ public class Storage {
         }
     }
     
-    public CompletableFuture<IQuester> loadQuester(final UUID uniqueId) {
+    public CompletableFuture<Quester> loadQuester(final UUID uniqueId) {
         return makeFuture(() -> implementation.loadQuester(uniqueId));
     }
 
-    public CompletableFuture<Void> saveQuester(final IQuester quester) {
+    public CompletableFuture<Void> saveQuester(final Quester quester) {
         return makeFuture(() -> {
             try {
                 implementation.saveQuester(quester);
@@ -102,7 +102,7 @@ public class Storage {
     public CompletableFuture<Void> saveOfflineQuesters() {
         return makeFuture(() -> {
             try {
-                for (IQuester quester : plugin.getOfflineQuesters()) {
+                for (Quester quester : plugin.getOfflineQuesters()) {
                     implementation.saveQuester(quester);
                 }
             } catch (final Exception e) {

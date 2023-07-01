@@ -14,8 +14,8 @@ package me.pikamug.quests.actions;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.entity.QuestMob;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.BukkitActionTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
@@ -35,7 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BukkitAction implements IAction {
+public class BukkitAction implements Action {
 
     private final BukkitQuestsPlugin plugin;
     private String name = "";
@@ -88,7 +88,7 @@ public class BukkitAction implements IAction {
     }
 
     @Override
-    public int compareTo(final IAction action) {
+    public int compareTo(final Action action) {
         return name.compareTo(action.getName());
     }
 
@@ -322,7 +322,7 @@ public class BukkitAction implements IAction {
         this.denizenScript = scriptName;
     }
 
-    public void fire(final IQuester quester, final IQuest quest) {
+    public void fire(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
         if (message != null) {
             player.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
@@ -432,7 +432,7 @@ public class BukkitAction implements IAction {
                     .runTaskLater(plugin, timer * 20L).getTaskId(), quest);
         }
         if (cancelTimer) {
-            for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
+            for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
                 if (entry.getValue().getId().equals(quest.getId())) {
                     plugin.getServer().getScheduler().cancelTask(entry.getKey());
                     quester.getTimers().remove(entry.getKey());

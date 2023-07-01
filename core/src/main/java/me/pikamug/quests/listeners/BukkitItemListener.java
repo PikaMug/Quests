@@ -14,8 +14,8 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,10 +54,10 @@ public class BukkitItemListener implements Listener {
             final Player player = (Player) event.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(event);
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -68,7 +68,7 @@ public class BukkitItemListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.craftItem(cq, craftedItem);
                         }
@@ -109,10 +109,10 @@ public class BukkitItemListener implements Listener {
                     || event.getInventory().getType().name().equals("BLAST_FURNACE")
                     || event.getInventory().getType().name().equals("SMOKER")) {
                 if (event.getSlotType() == SlotType.RESULT) {
-                    final IQuester quester = plugin.getQuester(player.getUniqueId());
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.SMELT_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
-                    for (final IQuest quest : plugin.getLoadedQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -123,7 +123,7 @@ public class BukkitItemListener implements Listener {
                         }
                         
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                                (final IQuester q, final IQuest cq) -> {
+                                (final Quester q, final Quest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 q.smeltItem(cq, event.getCurrentItem());
                             }
@@ -134,10 +134,10 @@ public class BukkitItemListener implements Listener {
             } else if (event.getInventory().getType() == InventoryType.BREWING) {
                 if (event.getSlotType() == SlotType.CRAFTING
                         || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                    final IQuester quester = plugin.getQuester(player.getUniqueId());
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     final ObjectiveType type = ObjectiveType.BREW_ITEM;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
-                    for (final IQuest quest : plugin.getLoadedQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -150,7 +150,7 @@ public class BukkitItemListener implements Listener {
                         }
                         
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                                (final IQuester q, final IQuest cq) -> {
+                                (final Quester q, final Quest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 if (isAllowedBrewingAction(event)) {
                                     q.brewItem(cq, event.getCurrentItem());
@@ -211,10 +211,10 @@ public class BukkitItemListener implements Listener {
             final ItemStack enchantedItem = event.getItem().clone();
             enchantedItem.setAmount(1);
             enchantedItem.addUnsafeEnchantments(event.getEnchantsToAdd());
-            final IQuester quester = plugin.getQuester(event.getEnchanter().getUniqueId());
+            final Quester quester = plugin.getQuester(event.getEnchanter().getUniqueId());
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -229,7 +229,7 @@ public class BukkitItemListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                        (final IQuester q, final IQuest cq) -> {
+                        (final Quester q, final Quest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         if (enchantedItem.getType().equals(Material.BOOK)) {
                             q.enchantBook(cq, enchantedItem, event.getEnchantsToAdd());
@@ -251,10 +251,10 @@ public class BukkitItemListener implements Listener {
         if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
             final ItemStack consumedItem = event.getItem().clone();
             consumedItem.setAmount(1);
-            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+            final Quester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -265,7 +265,7 @@ public class BukkitItemListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                        (final IQuester q, final IQuest cq) -> {
+                        (final Quester q, final Quest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.consumeItem(cq, consumedItem);
                     }

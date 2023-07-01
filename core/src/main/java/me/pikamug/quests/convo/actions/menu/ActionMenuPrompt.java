@@ -12,10 +12,10 @@
 
 package me.pikamug.quests.convo.actions.menu;
 
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
@@ -186,7 +186,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorExists"));
                         return new ActionSelectCreatePrompt(context);
@@ -236,7 +236,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedActions().stream().map(IAction::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -246,7 +246,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                final IAction a = plugin.getAction(input);
+                final Action a = plugin.getAction(input);
                 if (a != null) {
                     context.setSessionData(Key.E_OLD_EVENT, a.getName());
                     context.setSessionData(Key.E_NAME, a.getName());
@@ -282,7 +282,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             final ActionsEditorPostOpenStringPromptEvent event 
                     = new ActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedActions().stream().map(IAction::getName).collect(Collectors.toList());
+            final List<String> names = plugin.getLoadedActions().stream().map(Action::getName).collect(Collectors.toList());
             return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
@@ -293,10 +293,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
-                final IAction a = plugin.getAction(input);
+                final Action a = plugin.getAction(input);
                 if (a != null) {
-                    for (final IQuest quest : plugin.getLoadedQuests()) {
-                        for (final IStage stage : quest.getStages()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
+                        for (final Stage stage : quest.getStages()) {
                             if (stage.getFinishAction() != null 
                                     && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {
                                 used.add(quest.getName());

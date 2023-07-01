@@ -13,8 +13,8 @@
 package me.pikamug.quests.events.quester;
 
 import me.pikamug.quests.player.BukkitQuester;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.Stage;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final IQuest quest;
-    private final IStage current;
-    private final IStage next;
+    private final Quest quest;
+    private final Stage current;
+    private final Stage next;
     private boolean cancel = false;;
     
-    public QuesterPreChangeStageEvent(final BukkitQuester quester, final IQuest quest, final IStage current, final IStage next) {
+    public QuesterPreChangeStageEvent(final BukkitQuester quester, final Quest quest, final Stage current, final Stage next) {
         super(quester);
         this.quest = quest;
         this.current = current;
@@ -41,15 +41,15 @@ public class QuesterPreChangeStageEvent extends QuesterEvent implements Cancella
      * 
      * @return Quest which is involved in this event
      */
-    public IQuest getQuest() {
+    public Quest getQuest() {
         return quest;
     }
     
-    public IStage getCurrentStage() {
+    public Stage getCurrentStage() {
         return current;
     }
     
-    public IStage getNextStage() {
+    public Stage getNextStage() {
         return next;
     }
 

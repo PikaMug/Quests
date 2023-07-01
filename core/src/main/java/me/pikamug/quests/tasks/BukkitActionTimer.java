@@ -12,8 +12,8 @@
 
 package me.pikamug.quests.tasks;
 
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
@@ -21,11 +21,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class BukkitActionTimer extends BukkitRunnable {
 
-    private final IQuester quester;
-    private final IQuest quest;
+    private final Quester quester;
+    private final Quest quest;
     private final int time;
 
-    public BukkitActionTimer(final IQuester quester, final IQuest quest, final int time) {
+    public BukkitActionTimer(final Quester quester, final Quest quest, final int time) {
         this.quester = quester;
         this.quest = quest;
         this.time = time;

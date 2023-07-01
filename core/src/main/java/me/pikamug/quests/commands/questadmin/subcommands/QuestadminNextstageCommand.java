@@ -15,8 +15,8 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -83,13 +83,13 @@ public class QuestadminNextstageCommand extends QuestsSubCommand {
                     return;
                 }
             }
-            final IQuester quester = plugin.getQuester(target.getUniqueId());
+            final Quester quester = plugin.getQuester(target.getUniqueId());
             if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
                 String msg = Language.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                final IQuest quest = plugin.getQuestTemp(concatArgArray(args, 2, args.length - 1, ' '));
+                final Quest quest = plugin.getQuestTemp(concatArgArray(args, 2, args.length - 1, ' '));
                 if (quest == null) {
                     cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
                     return;
@@ -123,14 +123,14 @@ public class QuestadminNextstageCommand extends QuestsSubCommand {
             if (player != null) {
                 final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
                 if (quester != null) {
-                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                    for (final Quest quest : quester.getCurrentQuests().keySet()) {
                         if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
                             results.add(ChatColor.stripColor(quest.getName()));
                         }
                     }
                 }
             } else {
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
                         results.add(ChatColor.stripColor(quest.getName()));
                     }

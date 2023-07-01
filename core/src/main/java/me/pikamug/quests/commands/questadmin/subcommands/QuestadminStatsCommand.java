@@ -14,8 +14,8 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -81,7 +81,7 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
                     return;
                 }
             }
-            final IQuester quester = plugin.getQuester(target.getUniqueId());
+            final Quester quester = plugin.getQuester(target.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");
             cs.sendMessage(ChatColor.YELLOW + Language.get("questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
@@ -89,8 +89,8 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ Language.get("none"));
             } else {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("currentQuest"));
-                for (final Map.Entry<IQuest, Integer> set : quester.getCurrentQuestsTemp().entrySet()) {
-                    final IQuest q = set.getKey();
+                for (final Map.Entry<Quest, Integer> set : quester.getCurrentQuestsTemp().entrySet()) {
+                    final Quest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
                             + ChatColor.LIGHT_PURPLE + " (" + Language.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
                     cs.sendMessage(msg);
@@ -103,7 +103,7 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
             } else {
                 final StringBuilder completed = new StringBuilder(" ");
                 int index = 1;
-                for (final IQuest q : quester.getCompletedQuestsTemp()) {
+                for (final Quest q : quester.getCompletedQuestsTemp()) {
                     completed.append(ChatColor.DARK_PURPLE).append(q.getName());
                     if (quester.getAmountsCompleted().containsKey(q) && quester.getAmountsCompleted().get(q) > 1) {
                         completed.append(ChatColor.LIGHT_PURPLE).append(" (x").append(quester.getAmountsCompleted()

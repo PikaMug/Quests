@@ -12,10 +12,10 @@
 
 package me.pikamug.quests.storage.implementation.file;
 
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.storage.implementation.StorageImplementation;
 import org.bukkit.OfflinePlayer;
@@ -63,9 +63,9 @@ public class SeparatedYamlStorage implements StorageImplementation {
     
     @SuppressWarnings("deprecation")
     @Override
-    public IQuester loadQuester(final UUID uniqueId) throws IOException, InvalidConfigurationException {
+    public Quester loadQuester(final UUID uniqueId) throws IOException, InvalidConfigurationException {
         final FileConfiguration data = new YamlConfiguration();
-        IQuester quester = plugin.getQuester(uniqueId);
+        Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {
@@ -80,7 +80,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         if (data.contains("completedRedoableQuests")) {
             final List<String> questIds = data.getStringList("completedRedoableQuests");
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
-            final ConcurrentHashMap<IQuest, Long> completedTimes = quester.getCompletedTimes();
+            final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
             for (int i = 0; i < questIds.size(); i++) {
                 if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
                     completedTimes.put(plugin.getQuestByIdTemp(questIds.get(i)), questTimes.get(i));
@@ -94,7 +94,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
         if (data.contains("amountsCompletedQuests")) {
             final List<String> questIds = data.getStringList("amountsCompletedQuests");
             final List<Integer> questAmounts = data.getIntegerList("amountsCompleted");
-            final ConcurrentHashMap<IQuest, Integer> amountsCompleted = quester.getAmountsCompleted();
+            final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
                 if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
                     amountsCompleted.put(plugin.getQuestByIdTemp(questIds.get(i)), questAmounts.get(i));
@@ -107,10 +107,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final ConcurrentSkipListSet<IQuest> completedQuests = quester.getCompletedQuestsTemp();
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuestsTemp();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
-                for (final IQuest q : plugin.getLoadedQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getId().equals(s)) {
                         if (!quester.getCompletedQuestsTemp().contains(q)) {
                             completedQuests.add(q);
@@ -131,7 +131,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             final int maxSize = Math.min(questIds.size(), questStages.size());
-            final ConcurrentHashMap<IQuest, Integer> currentQuests = quester.getCurrentQuestsTemp();
+            final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuestsTemp();
             for (int i = 0; i < maxSize; i++) {
                 if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
                     currentQuests.put(plugin.getQuestByIdTemp(questIds.get(i)), questStages.get(i));
@@ -147,11 +147,11 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
-                final IQuest quest = plugin.getQuestByIdTemp(key) != null ? plugin.getQuestByIdTemp(key) : plugin.getQuestTemp(key);
+                final Quest quest = plugin.getQuestByIdTemp(key) != null ? plugin.getQuestByIdTemp(key) : plugin.getQuestTemp(key);
                 if (quest == null || !quester.getCurrentQuestsTemp().containsKey(quest)) {
                     continue;
                 }
-                final IStage stage = quester.getCurrentStage(quest);
+                final Stage stage = quester.getCurrentStage(quest);
                 if (stage == null) {
                     quest.completeQuest(quester);
                     plugin.getLogger().severe("[Quests] Invalid stage number for player: \"" + uniqueId + "\" on Quest \"" 
@@ -379,7 +379,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final IQuester quester) throws IOException {
+    public void saveQuester(final Quester quester) throws IOException {
         final FileConfiguration data = quester.getBaseData();
         data.save(new File(directoryPath + File.separator + quester.getUUID() + ".yml"));
     }
@@ -392,7 +392,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
 
     @Override
     public String getQuesterLastKnownName(final UUID uniqueId) {
-        IQuester quester = plugin.getQuester(uniqueId);
+        Quester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {
@@ -433,7 +433,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
      * 
      * @return file if exists, otherwise null
      */
-    public File getDataFile(final IQuester quester) {
+    public File getDataFile(final Quester quester) {
         File dataFile = new File(plugin.getDataFolder(), "data" + File.separator + quester.getUUID().toString() + ".yml");
         if (!dataFile.exists()) {
             final OfflinePlayer p = quester.getOfflinePlayer();

@@ -12,13 +12,13 @@
 
 package me.pikamug.quests.module;
 
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Map;
 
-public interface ICustomObjective {
+public interface CustomObjective {
 
     String getModuleName();
 
@@ -84,7 +84,7 @@ public interface ICustomObjective {
      * @param quest Current me.pikamug.quests.Quest which includes this objective
      * @return data
      */
-    Map<String, Object> getDataForPlayerTemp(final Player player, final ICustomObjective customObj, final IQuest quest);
+    Map<String, Object> getDataForPlayerTemp(final Player player, final CustomObjective customObj, final Quest quest);
 
-    void incrementObjectiveTemp(final Player player, final ICustomObjective obj, final int count, final IQuest quest);
+    void incrementObjectiveTemp(final Player player, final CustomObjective obj, final int count, final Quest quest);
 }

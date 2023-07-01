@@ -12,9 +12,9 @@
 
 package me.pikamug.quests.convo.quests.stages;
 
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.conditions.ICondition;
-import me.pikamug.quests.module.ICustomObjective;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.conditions.Condition;
+import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
@@ -1437,7 +1437,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none")).append("\n");
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1448,8 +1448,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1501,7 +1501,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none"));
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1512,8 +1512,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1565,7 +1565,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none"));
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1576,8 +1576,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1629,7 +1629,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none")).append("\n");
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1640,8 +1640,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1693,7 +1693,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none"));
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1704,8 +1704,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1757,7 +1757,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none"));
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1768,8 +1768,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -1894,7 +1894,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedActions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none"));
             } else {
-                for (final IAction a : plugin.getLoadedActions()) {
+                for (final Action a : plugin.getLoadedActions()) {
                     text.append(ChatColor.GREEN).append("- ").append(a.getName()).append("\n");
                 }
             }
@@ -1905,8 +1905,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                IAction found = null;
-                for (final IAction a : plugin.getLoadedActions()) {
+                Action found = null;
+                for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
                         found = a;
                         break;
@@ -2031,7 +2031,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getLoadedConditions().isEmpty()) {
                 text.append(ChatColor.RED).append("- ").append(Language.get("none")).append("\n");
             } else {
-                for (final ICondition c : plugin.getLoadedConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     text.append(ChatColor.GREEN).append("- ").append(c.getName()).append("\n");
                 }
             }
@@ -2042,8 +2042,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                ICondition found = null;
-                for (final ICondition c : plugin.getLoadedConditions()) {
+                Condition found = null;
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         found = c;
                         break;
@@ -2359,7 +2359,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")")
                             .append("\n");
                 } else {
-                    for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
+                    for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
                             .collect(Collectors.toCollection(TreeSet::new))) {
                         text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                     }
@@ -2376,7 +2376,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final String name : plugin.getCustomObjectives().stream().map(ICustomObjective::getModuleName)
+                for (final String name : plugin.getCustomObjectives().stream().map(CustomObjective::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
                     click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + name));
@@ -2395,7 +2395,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
                 String found = null;
                 // Check if we have a module with the specified name
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equalsIgnoreCase(input)) {
                         found = co.getModuleName();
                         break;
@@ -2403,7 +2403,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (found == null) {
                     // No? Check again, but with locale sensitivity
-                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getModuleName().toLowerCase().contains(input.toLowerCase())) {
                             found = co.getModuleName();
                             break;
@@ -2464,7 +2464,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                             .append("https://pikamug.gitbook.io/quests/casual/modules\n");
                     text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")\n");
                 } else {
-                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getModuleName().equals(moduleName)) {
                             text.append(ChatColor.DARK_PURPLE).append("  - ").append(co.getName()).append("\n");
                         }
@@ -2482,7 +2482,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
@@ -2503,8 +2503,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
             if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                ICustomObjective found = null;
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                CustomObjective found = null;
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getModuleName().equals(moduleName)) {
                         if (co.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = co;
@@ -2581,8 +2581,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
                 text.append(objName).append(" -\n");
-                ICustomObjective found = null;
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                CustomObjective found = null;
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;
@@ -2607,8 +2607,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 if (counts != null && list != null && plugin != null) {
                     counts.set(counts.size() - 1, num);
                     final String objName = list.getLast();
-                    ICustomObjective found = null;
-                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                    CustomObjective found = null;
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getName().equals(objName)) {
                             found = co;
                             break;
@@ -2644,8 +2644,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                     + Key.S_CUSTOM_OBJECTIVES_DATA);
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
-                ICustomObjective found = null;
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                CustomObjective found = null;
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;
@@ -2688,8 +2688,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                     + Key.S_CUSTOM_OBJECTIVES);
             if (list != null && plugin != null) {
                 final String objName = list.getLast();
-                ICustomObjective found = null;
-                for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                CustomObjective found = null;
+                for (final CustomObjective co : plugin.getCustomObjectives()) {
                     if (co.getName().equals(objName)) {
                         found = co;
                         break;

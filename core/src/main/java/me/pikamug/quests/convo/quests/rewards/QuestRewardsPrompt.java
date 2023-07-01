@@ -21,7 +21,7 @@ import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.module.ICustomReward;
+import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -1675,7 +1675,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")")
                             .append("\n");
                 } else {
-                    for (final String name : plugin.getCustomRewards().stream().map(ICustomReward::getModuleName)
+                    for (final String name : plugin.getCustomRewards().stream().map(CustomReward::getModuleName)
                             .collect(Collectors.toCollection(TreeSet::new))) {
                         text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                     }
@@ -1692,7 +1692,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final String name : plugin.getCustomRewards().stream().map(ICustomReward::getModuleName)
+                for (final String name : plugin.getCustomRewards().stream().map(CustomReward::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + name + "\n");
                     click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + name));
@@ -1711,7 +1711,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
                 String found = null;
                 // Check if we have a module with the specified name
-                for (final ICustomReward cr : plugin.getCustomRewards()) {
+                for (final CustomReward cr : plugin.getCustomRewards()) {
                     if (cr.getModuleName().equalsIgnoreCase(input)) {
                         found = cr.getModuleName();
                         break;
@@ -1719,7 +1719,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (found == null) {
                     // No? Check again, but with locale sensitivity
-                    for (final ICustomReward cr : plugin.getCustomRewards()) {
+                    for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getModuleName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr.getModuleName();
                             break;
@@ -1779,7 +1779,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                             .append("https://pikamug.gitbook.io/quests/casual/modules\n");
                     text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")\n");
                 } else {
-                    for (final ICustomReward cr : plugin.getCustomRewards()) {
+                    for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getModuleName().equals(moduleName)) {
                             text.append(ChatColor.DARK_PURPLE).append("  - ").append(cr.getName()).append("\n");
                         }
@@ -1797,7 +1797,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 line.addExtra(link);
                 line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
             } else {
-                for (final ICustomReward co : plugin.getCustomRewards()) {
+                for (final CustomReward co : plugin.getCustomRewards()) {
                     if (co.getModuleName().equals(moduleName)) {
                         final TextComponent click = new TextComponent(ChatColor.DARK_PURPLE + "  - " + co.getName()
                                 + "\n");
@@ -1820,8 +1820,8 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                ICustomReward found = null;
-                for (final ICustomReward cr : plugin.getCustomRewards()) {
+                CustomReward found = null;
+                for (final CustomReward cr : plugin.getCustomRewards()) {
                     if (cr.getModuleName().equals(moduleName)) {
                         if (cr.getName().toLowerCase().contains(input.toLowerCase())) {
                             found = cr;

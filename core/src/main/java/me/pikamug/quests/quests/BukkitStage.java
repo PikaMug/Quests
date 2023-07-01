@@ -12,10 +12,10 @@
 
 package me.pikamug.quests.quests;
 
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.conditions.ICondition;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.module.ICustomObjective;
+import me.pikamug.quests.module.CustomObjective;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-public class BukkitStage implements IStage {
+public class BukkitStage implements Stage {
 
     private LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
     private LinkedList<ItemStack> blocksToDamage = new LinkedList<>();
@@ -120,20 +120,20 @@ public class BukkitStage implements IStage {
     private LinkedList<String> passwordDisplays = new LinkedList<>();
     private LinkedList<String> passwordPhrases = new LinkedList<>();
     private String script;
-    private IAction startAction = null;
-    private IAction finishAction = null;
-    private IAction failAction = null;
-    private IAction deathAction = null;
-    private Map<String, IAction> chatActions = new HashMap<>();
-    private Map<String, IAction> commandActions = new HashMap<>();
-    private IAction disconnectAction = null;
-    private ICondition condition = null;
+    private Action startAction = null;
+    private Action finishAction = null;
+    private Action failAction = null;
+    private Action deathAction = null;
+    private Map<String, Action> chatActions = new HashMap<>();
+    private Map<String, Action> commandActions = new HashMap<>();
+    private Action disconnectAction = null;
+    private Condition condition = null;
     private long delay = -1;
     private String delayMessage = null;
     private String completeMessage = null;
     private String startMessage = null;
     private LinkedList<String> objectiveOverrides = new LinkedList<>();
-    private final LinkedList<ICustomObjective> customObjectives = new LinkedList<>();
+    private final LinkedList<CustomObjective> customObjectives = new LinkedList<>();
     private final LinkedList<Integer> customObjectiveCounts = new LinkedList<>();
     private final LinkedList<String> customObjectiveDisplays = new LinkedList<>();
     private final LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
@@ -572,77 +572,77 @@ public class BukkitStage implements IStage {
         this.script = script;
     }
 
-    public IAction getStartAction() {
+    public Action getStartAction() {
         return startAction;
     }
 
-    public void setStartAction(final IAction startAction) {
+    public void setStartAction(final Action startAction) {
         this.startAction = startAction;
     }
     
-    public IAction getFinishAction() {
+    public Action getFinishAction() {
         return finishAction;
     }
 
-    public void setFinishAction(final IAction finishAction) {
+    public void setFinishAction(final Action finishAction) {
         this.finishAction = finishAction;
     }
     
-    public IAction getFailAction() {
+    public Action getFailAction() {
         return failAction;
     }
 
-    public void setFailAction(final IAction failAction) {
+    public void setFailAction(final Action failAction) {
         this.failAction = failAction;
     }
 
-    public IAction getDeathAction() {
+    public Action getDeathAction() {
         return deathAction;
     }
 
-    public void setDeathAction(final IAction deathAction) {
+    public void setDeathAction(final Action deathAction) {
         this.deathAction = deathAction;
     }
 
-    public Map<String, IAction> getChatActions() {
+    public Map<String, Action> getChatActions() {
         return chatActions;
     }
 
     @Override
-    public void addChatAction(Entry<String, IAction> chatAction) {
+    public void addChatAction(Entry<String, Action> chatAction) {
         chatActions.put(chatAction.getKey(), chatAction.getValue());
     }
 
-    public void setChatActions(final Map<String, IAction> chatActions) {
+    public void setChatActions(final Map<String, Action> chatActions) {
         this.chatActions = chatActions;
     }
 
-    public Map<String, IAction> getCommandActions() {
+    public Map<String, Action> getCommandActions() {
         return commandActions;
     }
 
     @Override
-    public void addCommandAction(Entry<String, IAction> commandAction) {
+    public void addCommandAction(Entry<String, Action> commandAction) {
         commandActions.put(commandAction.getKey(), commandAction.getValue());
     }
 
-    public void setCommandActions(final Map<String, IAction> commandActions) {
+    public void setCommandActions(final Map<String, Action> commandActions) {
         this.commandActions = commandActions;
     }
 
-    public IAction getDisconnectAction() {
+    public Action getDisconnectAction() {
         return disconnectAction;
     }
 
-    public void setDisconnectAction(final IAction disconnectAction) {
+    public void setDisconnectAction(final Action disconnectAction) {
         this.disconnectAction = disconnectAction;
     }
     
-    public ICondition getCondition() {
+    public Condition getCondition() {
         return condition;
     }
     
-    public void setCondition(final ICondition condition) {
+    public void setCondition(final Condition condition) {
         this.condition = condition;
     }
 
@@ -691,11 +691,11 @@ public class BukkitStage implements IStage {
         this.objectiveOverrides = objectiveOverrides;
     }
     
-    public LinkedList<ICustomObjective> getCustomObjectives() {
+    public LinkedList<CustomObjective> getCustomObjectives() {
         return customObjectives;
     }
 
-    public boolean addCustomObjectives(final ICustomObjective customObjective) {
+    public boolean addCustomObjectives(final CustomObjective customObjective) {
         return customObjectives.add(customObjective);
     }
 

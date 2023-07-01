@@ -12,8 +12,8 @@
 
 package me.pikamug.quests.events.quest;
 
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -24,10 +24,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuestTakeEvent extends QuestEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final IQuester quester;
+    private final Quester quester;
     private boolean cancel = false;
 
-    public QuestTakeEvent(final IQuest quest, final IQuester who) {
+    public QuestTakeEvent(final Quest quest, final Quester who) {
         super(quest);
         this.quester = who;
     }
@@ -37,7 +37,7 @@ public class QuestTakeEvent extends QuestEvent implements Cancellable {
      * 
      * @return Quester who is involved in this event
      */
-    public IQuester getQuester() {
+    public Quester getQuester() {
         return quester;
     }
     

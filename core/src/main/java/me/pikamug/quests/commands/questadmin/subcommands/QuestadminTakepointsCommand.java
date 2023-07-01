@@ -14,7 +14,7 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -87,7 +87,7 @@ public class QuestadminTakepointsCommand extends QuestsSubCommand {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("inputNum"));
                 return;
             }
-            final IQuester quester = plugin.getQuester(target.getUniqueId());
+            final Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
             String msg1 = Language.get("takeQuestPoints").replace("<points>", Language.get("questPoints"));
             msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);

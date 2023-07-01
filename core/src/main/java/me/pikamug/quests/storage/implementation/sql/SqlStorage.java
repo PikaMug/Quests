@@ -12,9 +12,9 @@
 
 package me.pikamug.quests.storage.implementation.sql;
 
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.player.QuestData;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.storage.implementation.StorageImplementation;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
@@ -221,8 +221,8 @@ public class SqlStorage implements StorageImplementation {
     }
     
     @Override
-    public IQuester loadQuester(final UUID uniqueId) throws Exception {
-        final IQuester quester = plugin.getQuester(uniqueId);
+    public Quester loadQuester(final UUID uniqueId) throws Exception {
+        final Quester quester = plugin.getQuester(uniqueId);
         if (quester == null) {
             return null;
         }
@@ -248,21 +248,21 @@ public class SqlStorage implements StorageImplementation {
     }
 
     @Override
-    public void saveQuester(final IQuester quester) throws SQLException {
+    public void saveQuester(final Quester quester) throws SQLException {
         final UUID uniqueId = quester.getUUID();
         final String lastKnownName = quester.getLastKnownName();
         final String oldLastKnownName = getQuesterLastKnownName(uniqueId);
-        final Set<String> currentQuests = quester.getCurrentQuestsTemp().keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
+        final Set<String> currentQuests = quester.getCurrentQuestsTemp().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
-        final Set<String> completedQuests = quester.getCompletedQuestsTemp().stream().map(IQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(IQuest::getId).collect(Collectors.toSet());
+        final Set<String> completedQuests = quester.getCompletedQuestsTemp().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(Quest::getId).collect(Collectors.toSet());
         oldCompletedQuests.removeAll(completedQuests);
-        final Set<String> redoableQuests = quester.getCompletedTimes().keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
+        final Set<String> redoableQuests = quester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldRedoableQuests.removeAll(redoableQuests);
-        final Set<String> questData = quester.getQuestData().keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
-        final Set<String> oldQuestData = getQuesterQuestData(uniqueId).keySet().stream().map(IQuest::getId).collect(Collectors.toSet());
+        final Set<String> questData = quester.getQuestData().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> oldQuestData = getQuesterQuestData(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldQuestData.removeAll(questData);
         
         try (final Connection c = connectionFactory.getConnection()) {
@@ -290,7 +290,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<IQuest, Integer> entry : quester.getCurrentQuestsTemp().entrySet()) {
+                for (final Entry<Quest, Integer> entry : quester.getCurrentQuestsTemp().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
@@ -309,7 +309,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final IQuest quest : quester.getCompletedQuestsTemp()) {
+                for (final Quest quest : quester.getCompletedQuestsTemp()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, quest.getId());
@@ -327,7 +327,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<IQuest, Long> entry : quester.getCompletedTimes().entrySet()) {
+                for (final Entry<Quest, Long> entry : quester.getCompletedTimes().entrySet()) {
                     if (entry.getKey() == null) {
                         plugin.getLogger().severe("Quest was null for completed times of quester " + quester.getUUID());
                         return;
@@ -356,7 +356,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Entry<IQuest, QuestData> entry : quester.getQuestData().entrySet()) {
+                for (final Entry<Quest, QuestData> entry : quester.getQuestData().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_DATA_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
@@ -432,14 +432,14 @@ public class SqlStorage implements StorageImplementation {
         return null;
     }
     
-    public ConcurrentHashMap<IQuest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws SQLException {
-        final ConcurrentHashMap<IQuest, Integer> currentQuests = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Integer> getQuesterCurrentQuests(final UUID uniqueId) throws SQLException {
+        final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final IQuest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
                         if (quest != null) {
                             currentQuests.put(quest, rs.getInt("stageNum"));
                         }
@@ -450,15 +450,15 @@ public class SqlStorage implements StorageImplementation {
         return currentQuests;
     }
 
-    public ConcurrentHashMap<IQuest, QuestData> getQuesterQuestData(final UUID uniqueId) throws SQLException {
-        final IQuester quester = plugin.getQuester(uniqueId);
-        final ConcurrentHashMap<IQuest, QuestData> questData = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, QuestData> getQuesterQuestData(final UUID uniqueId) throws SQLException {
+        final Quester quester = plugin.getQuester(uniqueId);
+        final ConcurrentHashMap<Quest, QuestData> questData = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_DATA_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final IQuest quest = plugin.getQuestByIdTemp(rs.getString("quest_id"));
+                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("quest_id"));
                         final QuestData data = new QuestData(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
                             data.blocksBroken.addAll(deserializeItemStackProgress(rs.getString("blocks_broken"),
@@ -505,14 +505,14 @@ public class SqlStorage implements StorageImplementation {
         return questData;
     }
     
-    public ConcurrentSkipListSet<IQuest> getQuesterCompletedQuests(final UUID uniqueId) throws SQLException {
-        final ConcurrentSkipListSet<IQuest> completedQuests = new ConcurrentSkipListSet<>();
+    public ConcurrentSkipListSet<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws SQLException {
+        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final IQuest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
                         if (quest != null) {
                             completedQuests.add(quest);
                         }
@@ -523,14 +523,14 @@ public class SqlStorage implements StorageImplementation {
         return completedQuests;
     }
     
-    public ConcurrentHashMap<IQuest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws SQLException {
-        final ConcurrentHashMap<IQuest, Long> completedTimes = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Long> getQuesterCompletedTimes(final UUID uniqueId) throws SQLException {
+        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final IQuest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
                         if (quest != null) {
                             completedTimes.put(quest, rs.getLong("lasttime"));
                         }
@@ -541,14 +541,14 @@ public class SqlStorage implements StorageImplementation {
         return completedTimes;
     }
     
-    public ConcurrentHashMap<IQuest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws SQLException {
-        final ConcurrentHashMap<IQuest, Integer> amountsCompleted = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Quest, Integer> getQuesterAmountsCompleted(final UUID uniqueId) throws SQLException {
+        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final IQuest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
                         if (quest != null) {
                             amountsCompleted.put(quest, rs.getInt("amount"));
                         }

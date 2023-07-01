@@ -19,7 +19,7 @@ import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.reflect.worldguard.WorldGuardAPI;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;

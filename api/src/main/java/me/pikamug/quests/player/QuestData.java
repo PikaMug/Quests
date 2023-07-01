@@ -22,9 +22,9 @@ import java.util.LinkedList;
  */
 public class QuestData {
 
-    private final IQuester quester;
+    private final Quester quester;
 
-    public QuestData(final IQuester quester) {
+    public QuestData(final Quester quester) {
         this.quester = quester;
     }
     

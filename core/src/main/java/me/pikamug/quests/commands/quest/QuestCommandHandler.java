@@ -13,9 +13,9 @@
 package me.pikamug.quests.commands.quest;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.quests.Requirements;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -44,10 +44,10 @@ public class QuestCommandHandler {
             if (cs.hasPermission("quests.quest")) {
                 if (args.length == 0) {
                     final Player player = (Player) cs;
-                    final IQuester quester = plugin.getQuester(player.getUniqueId());
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     if (!quester.getCurrentQuestsTemp().isEmpty()) {
-                        for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
-                            final IStage stage = quester.getCurrentStage(q);
+                        for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
+                            final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0
                                     || plugin.getQuester(player.getUniqueId()).getStageTime(q) < 0L) {
@@ -86,7 +86,7 @@ public class QuestCommandHandler {
             return Collections.emptyList();
         }
         final List<String> results = new ArrayList<>();
-        for (final IQuest quest : plugin.getLoadedQuests()) {
+        for (final Quest quest : plugin.getLoadedQuests()) {
             if (quest.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
                 results.add(ChatColor.stripColor(quest.getName()));
             }
@@ -110,10 +110,10 @@ public class QuestCommandHandler {
                     index++;
                 }
             }
-            final IQuest q = plugin.getQuestTemp(name.toString());
+            final Quest q = plugin.getQuestTemp(name.toString());
             if (q != null) {
                 final Player player = (Player) cs;
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 cs.sendMessage(ChatColor.GOLD + "- " + q.getName() + " -");
                 cs.sendMessage(" ");
                 if (q.getNpcStart() != null) {
@@ -198,7 +198,7 @@ public class QuestCommandHandler {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + BukkitItemUtil.getString(is));
                             }
                         }
-                        for (IQuest quest : quester.getCompletedQuestsTemp()) {
+                        for (Quest quest : quester.getCompletedQuestsTemp()) {
                             if (reqs.getNeededQuestIds().contains(quest.getId())) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Language.get("complete") + " "
                                         + ChatColor.ITALIC + quest.getName());
@@ -208,7 +208,7 @@ public class QuestCommandHandler {
                             }
                         }
                         final Map<String, String> completed = quester.getCompletedQuestsTemp().stream()
-                                .collect(Collectors.toMap(IQuest::getId, IQuest::getName));
+                                .collect(Collectors.toMap(Quest::getId, Quest::getName));
                         for (final String questId : reqs.getBlockQuestIds()) {
                             if (completed.containsKey(questId)) {
                                 String msg = Language.get("haveCompleted");

@@ -13,8 +13,8 @@
 package me.pikamug.quests.conditions;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BukkitCondition implements ICondition {
+public class BukkitCondition implements Condition {
 
     private final BukkitQuestsPlugin plugin;
     private String name = "";
@@ -48,7 +48,7 @@ public class BukkitCondition implements ICondition {
     }
     
     @Override
-    public int compareTo(final ICondition condition) {
+    public int compareTo(final Condition condition) {
         return name.compareTo(condition.getName());
     }
 
@@ -200,7 +200,7 @@ public class BukkitCondition implements ICondition {
      */
     @SuppressWarnings("deprecation")
     @Override
-    public boolean check(final IQuester quester, final IQuest quest) {
+    public boolean check(final Quester quester, final Quest quest) {
         final Player player = quester.getPlayer();
         boolean failed = false;
         if (!entitiesWhileRiding.isEmpty()) {

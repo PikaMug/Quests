@@ -14,8 +14,8 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
 import net.citizensnpcs.api.event.NPCDeathEvent;
@@ -67,8 +67,8 @@ public class BukkitCitizensListener implements Listener {
         }
         if (!event.getClicker().isConversing()) {
             final Player player = event.getClicker();
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                 if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
                     final ItemStack hand = player.getItemInHand();
                     int currentIndex = -1;
@@ -189,7 +189,7 @@ public class BukkitCitizensListener implements Listener {
                 }
             }
             boolean hasObjective = false;
-            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -209,8 +209,8 @@ public class BukkitCitizensListener implements Listener {
                 return;
             }
             boolean hasAtLeastOneGUI = false;
-            final LinkedList<IQuest> npcQuests = new LinkedList<>();
-            for (final IQuest q : plugin.getLoadedQuests()) {
+            final LinkedList<Quest> npcQuests = new LinkedList<>();
+            for (final Quest q : plugin.getLoadedQuests()) {
                 if (quester.getCurrentQuestsTemp().containsKey(q)) {
                     continue;
                 }
@@ -233,7 +233,7 @@ public class BukkitCitizensListener implements Listener {
                 }
             }
             if (npcQuests.size() == 1) {
-                final IQuest q = npcQuests.get(0);
+                final Quest q = npcQuests.get(0);
                 if (quester.canAcceptOffer(q, true)) {
                     quester.setQuestIdToTake(q.getId());
                     if (!plugin.getSettings().canConfirmAccept()) {
@@ -303,8 +303,8 @@ public class BukkitCitizensListener implements Listener {
                 player = (Player) damager;
             }
             if (player != null) {
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
-                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
+                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -315,7 +315,7 @@ public class BukkitCitizensListener implements Listener {
                     }
 
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
                                     q.killNPC(cq, event.getNPC().getUniqueId());
                                 }
@@ -326,8 +326,8 @@ public class BukkitCitizensListener implements Listener {
         }
     }
 
-    private String extracted(final IQuester quester) {
-        final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+    private String extracted(final Quester quester) {
+        final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

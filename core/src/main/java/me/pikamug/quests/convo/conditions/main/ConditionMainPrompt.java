@@ -12,10 +12,10 @@
 
 package me.pikamug.quests.convo.conditions.main;
 
-import me.pikamug.quests.conditions.ICondition;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.conditions.Condition;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
@@ -205,7 +205,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                for (final ICondition c : plugin.getLoadedConditions()) {
+                for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorExists"));
                         return new ConditionNamePrompt(context);
@@ -477,8 +477,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             super(context);
             if (modifiedName != null) {
                 modName = modifiedName;
-                for (final IQuest q : plugin.getLoadedQuests()) {
-                    for (final IStage s : q.getStages()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

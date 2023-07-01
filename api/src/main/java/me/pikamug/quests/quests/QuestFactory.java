@@ -48,7 +48,7 @@ public interface QuestFactory {
 
     Prompt returnToMenu(final ConversationContext context);
 
-    void loadQuest(final ConversationContext context, final IQuest q);
+    void loadQuest(final ConversationContext context, final Quest q);
 
     void deleteQuest(final ConversationContext context);
 

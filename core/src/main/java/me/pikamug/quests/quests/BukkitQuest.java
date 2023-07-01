@@ -19,9 +19,9 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import io.github.znetworkw.znpcservers.npc.NPC;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.dependencies.IDependencies;
+import me.pikamug.quests.dependencies.Dependencies;
 import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
 import me.pikamug.quests.events.quester.QuesterPostChangeStageEvent;
 import me.pikamug.quests.events.quester.QuesterPostCompleteQuestEvent;
@@ -29,10 +29,10 @@ import me.pikamug.quests.events.quester.QuesterPostFailQuestEvent;
 import me.pikamug.quests.events.quester.QuesterPreChangeStageEvent;
 import me.pikamug.quests.events.quester.QuesterPreCompleteQuestEvent;
 import me.pikamug.quests.events.quester.QuesterPreFailQuestEvent;
-import me.pikamug.quests.module.ICustomRequirement;
-import me.pikamug.quests.module.ICustomReward;
+import me.pikamug.quests.module.CustomRequirement;
+import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
@@ -68,7 +68,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class BukkitQuest implements IQuest {
+public class BukkitQuest implements Quest {
 
     protected BukkitQuestsPlugin plugin;
     protected String id;
@@ -76,7 +76,7 @@ public class BukkitQuest implements IQuest {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private final LinkedList<IStage> orderedStages = new LinkedList<>();
+    private final LinkedList<Stage> orderedStages = new LinkedList<>();
     protected UUID npcStart;
     protected Location blockStart;
     protected String regionStart = null;
@@ -91,7 +91,7 @@ public class BukkitQuest implements IQuest {
     }
 
     @Override
-    public int compareTo(final IQuest quest) {
+    public int compareTo(final Quest quest) {
         return id.compareTo(quest.getId());
     }
 
@@ -168,7 +168,7 @@ public class BukkitQuest implements IQuest {
     }
 
     @Override
-    public IStage getStage(final int index) {
+    public Stage getStage(final int index) {
         try {
             return orderedStages.get(index);
         } catch (final Exception e) {
@@ -177,7 +177,7 @@ public class BukkitQuest implements IQuest {
     }
 
     @Override
-    public LinkedList<IStage> getStages() {
+    public LinkedList<Stage> getStages() {
         return orderedStages;
     }
 
@@ -207,12 +207,12 @@ public class BukkitQuest implements IQuest {
     }
 
     @Override
-    public IAction getInitialAction() {
+    public Action getInitialAction() {
         return initialAction;
     }
 
     @Override
-    public void setInitialAction(final IAction initialAction) {
+    public void setInitialAction(final Action initialAction) {
         this.initialAction = (BukkitAction) initialAction;
     }
 
@@ -242,8 +242,8 @@ public class BukkitQuest implements IQuest {
      * @param quester Player to force
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
-    public void nextStage(final IQuester quester, final boolean allowSharedProgress) {
-        final IStage currentStage = quester.getCurrentStage(this);
+    public void nextStage(final Quester quester, final boolean allowSharedProgress) {
+        final Stage currentStage = quester.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + quester.getPlayer().getUniqueId());
             return;
@@ -278,8 +278,8 @@ public class BukkitQuest implements IQuest {
             
             // Multiplayer
             if (allowSharedProgress && options.getShareProgressLevel() == 3) {
-                final List<IQuester> mq = quester.getMultiplayerQuesters(this);
-                for (final IQuester qq : mq) {
+                final List<Quester> mq = quester.getMultiplayerQuesters(this);
+                for (final Quester qq : mq) {
                     if (currentStage.equals(qq.getCurrentStage(this))) {
                         nextStage(qq, true);
                     }
@@ -295,18 +295,18 @@ public class BukkitQuest implements IQuest {
      * Force player to proceed to the specified stage
      * 
      * @param quester Player to force
-     * @param stage IStage number to specify
+     * @param stage Stage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
-    public void setStage(final IQuester quester, final int stage) throws IndexOutOfBoundsException {
+    public void setStage(final Quester quester, final int stage) throws IndexOutOfBoundsException {
         final OfflinePlayer player = quester.getOfflinePlayer();
         if (orderedStages.size() - 1 < stage) {
             final String msg = "Tried to set invalid stage number of " + stage + " for quest " + getName() + " on " 
                     + player.getName();
             throw new IndexOutOfBoundsException(msg);
         }
-        final IStage currentStage = quester.getCurrentStage(this);
-        final IStage nextStage = getStage(stage);
+        final Stage currentStage = quester.getCurrentStage(this);
+        final Stage nextStage = getStage(stage);
         if (currentStage == null || nextStage == null) {
             return;
         }
@@ -363,7 +363,7 @@ public class BukkitQuest implements IQuest {
      * @param stage The stage to process for targets
      * @return true if quester is online and has permission
      */
-    public boolean updateCompass(final IQuester quester, final IStage stage) {
+    public boolean updateCompass(final Quester quester, final Stage stage) {
         if (quester == null) {
             return false;
         }
@@ -376,7 +376,7 @@ public class BukkitQuest implements IQuest {
         if (!quester.getPlayer().hasPermission("quests.compass")) {
             return false;
         }
-        final IQuest quest = this;
+        final Quest quest = this;
         Bukkit.getScheduler().runTask(plugin, () -> {
             Location targetLocation = null;
             if (stage.getNpcsToInteract() != null && stage.getNpcsToInteract().size() > 0) {
@@ -563,7 +563,7 @@ public class BukkitQuest implements IQuest {
      * @param quester The quester to check
      * @return true if all Requirements have been met
      */
-    public boolean testRequirements(final IQuester quester) {
+    public boolean testRequirements(final Quester quester) {
         return testRequirements(quester.getOfflinePlayer());
     }
     
@@ -576,7 +576,7 @@ public class BukkitQuest implements IQuest {
      * @return true if all Requirements have been met
      */
     public boolean testRequirements(final OfflinePlayer player) {
-        final IQuester quester = plugin.getQuester(player.getUniqueId());
+        final Quester quester = plugin.getQuester(player.getUniqueId());
         if (requirements.getMoney() != 0 && plugin.getDependencies().getVaultEconomy() != null) {
             if (plugin.getDependencies().getVaultEconomy().getBalance(player) < requirements.getMoney()) {
                 return false;
@@ -585,7 +585,7 @@ public class BukkitQuest implements IQuest {
         if (quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
         }
-        final Set<String> completed = quester.getCompletedQuestsTemp().stream().map(IQuest::getId)
+        final Set<String> completed = quester.getCompletedQuestsTemp().stream().map(Quest::getId)
                 .collect(Collectors.toSet());
         if (!requirements.getNeededQuestIds().isEmpty()
                 && !completed.containsAll(requirements.getNeededQuestIds())) {
@@ -597,7 +597,7 @@ public class BukkitQuest implements IQuest {
                     return false;
                 }
             }
-            for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+            for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
                 if (!requirements.getBlockQuestIds().contains(q.getId())) {
                     return false;
                 }
@@ -641,8 +641,8 @@ public class BukkitQuest implements IQuest {
                 }
             }
             for (final String s : requirements.getCustomRequirements().keySet()) {
-                ICustomRequirement found = null;
-                for (final ICustomRequirement cr : plugin.getCustomRequirements()) {
+                CustomRequirement found = null;
+                for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(s)) {
                         found = cr;
                         break;
@@ -666,7 +666,7 @@ public class BukkitQuest implements IQuest {
      *
      * @param quester The quester finishing this quest
      */
-    public void completeQuest(final IQuester quester) {
+    public void completeQuest(final Quester quester) {
         completeQuest(quester, true);
     }
     
@@ -677,7 +677,7 @@ public class BukkitQuest implements IQuest {
      * @param allowMultiplayer Allow multiplayer sharing
      */
     @SuppressWarnings("deprecation")
-    public void completeQuest(final IQuester quester, final boolean allowMultiplayer) {
+    public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
         final OfflinePlayer player = quester.getOfflinePlayer();
         boolean cancelled = false;
         if (player.isOnline()) {
@@ -708,7 +708,7 @@ public class BukkitQuest implements IQuest {
         }
         quester.hardQuit(this);
         quester.getCompletedQuestsTemp().add(this);
-        for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
+        for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
                 quester.getTimers().remove(entry.getKey());
@@ -730,7 +730,7 @@ public class BukkitQuest implements IQuest {
         }
         
         // Issue rewards
-        final IDependencies depends = plugin.getDependencies();
+        final Dependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
         if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
             depends.getVaultEconomy().depositPlayer(player, rewards.getMoney());
@@ -996,8 +996,8 @@ public class BukkitQuest implements IQuest {
                             + " " + Language.get(p, "partiesExperience"));
                 }
                 for (final String s : rewards.getCustomRewards().keySet()) {
-                    ICustomReward found = null;
-                    for (final ICustomReward cr : plugin.getCustomRewards()) {
+                    CustomReward found = null;
+                    for (final CustomReward cr : plugin.getCustomRewards()) {
                         if (cr.getName().equalsIgnoreCase(s)) {
                             found = cr;
                             break;
@@ -1039,8 +1039,8 @@ public class BukkitQuest implements IQuest {
         
         // Multiplayer
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
-            final List<IQuester> mq = quester.getMultiplayerQuesters(this);
-            for (final IQuester qq : mq) {
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            for (final Quester qq : mq) {
                 if (qq.getQuestData(this) != null) {
                     completeQuest(qq, false);
                 }
@@ -1053,7 +1053,7 @@ public class BukkitQuest implements IQuest {
      * 
      * @param quester The quester to be ejected
      */
-    public void failQuest(final IQuester quester) {
+    public void failQuest(final Quester quester) {
         failQuest(quester, false);
     }
     
@@ -1061,15 +1061,15 @@ public class BukkitQuest implements IQuest {
      * Force player to quit quest and inform them of their failure
      * 
      * @param quester The quester to be ejected
-     * @param ignoreFailAction Whether to ignore quest fail IAction
+     * @param ignoreFailAction Whether to ignore quest fail Action
      */
-    public void failQuest(final IQuester quester, final boolean ignoreFailAction) {
+    public void failQuest(final Quester quester, final boolean ignoreFailAction) {
         final QuesterPreFailQuestEvent preEvent = new QuesterPreFailQuestEvent((BukkitQuester) quester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
-        for (final Map.Entry<Integer, IQuest> entry : quester.getTimers().entrySet()) {
+        for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getId().equals(getId())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
                 quester.getTimers().remove(entry.getKey());
@@ -1077,7 +1077,7 @@ public class BukkitQuest implements IQuest {
         }
         final Player player = quester.getPlayer();
         if (!ignoreFailAction) {
-            final IStage stage = quester.getCurrentStage(this);
+            final Stage stage = quester.getCurrentStage(this);
             if (stage != null && stage.getFailAction() != null) {
                 quester.getCurrentStage(this).getFailAction().fire(quester, this);
             }
@@ -1096,12 +1096,12 @@ public class BukkitQuest implements IQuest {
     /**
      * Checks if quester is in WorldGuard region start
      * 
-     * @deprecated Use {@link #isInRegionStart(IQuester)}
+     * @deprecated Use {@link #isInRegionStart(Quester)}
      * @param quester The quester to check
      * @return true if quester is in region
      */
     @Deprecated
-    public boolean isInRegion(final IQuester quester) {
+    public boolean isInRegion(final Quester quester) {
         return isInRegionStart(quester);
     }
 
@@ -1124,7 +1124,7 @@ public class BukkitQuest implements IQuest {
      * @param quester The quester to check
      * @return true if quester is in region
      */
-    public boolean isInRegionStart(final IQuester quester) {
+    public boolean isInRegionStart(final Quester quester) {
         return isInRegionStart(quester.getPlayer());
     }
 

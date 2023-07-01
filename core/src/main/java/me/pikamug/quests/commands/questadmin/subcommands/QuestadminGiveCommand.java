@@ -14,8 +14,8 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -82,7 +82,7 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
                     return;
                 }
             }
-            final IQuest questToGive;
+            final Quest questToGive;
             StringBuilder name = new StringBuilder();
             if (args.length == 3) {
                 name = new StringBuilder(args[2].toLowerCase());
@@ -100,8 +100,8 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
             if (questToGive == null) {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("questNotFound"));
             } else {
-                final IQuester quester = plugin.getQuester(target.getUniqueId());
-                for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+                final Quester quester = plugin.getQuester(target.getUniqueId());
+                for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
                     if (q.getName().equalsIgnoreCase(questToGive.getName())) {
                         String msg = Language.get("questsPlayerHasQuestAlready");
                         msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()
@@ -137,7 +137,7 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
             return null; // Shows online players
         } else if (args.length == 3) {
             final List<String> results = new ArrayList<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (quest.getName().toLowerCase().startsWith(args[2].toLowerCase())) {
                     results.add(ChatColor.stripColor(quest.getName()));
                 }

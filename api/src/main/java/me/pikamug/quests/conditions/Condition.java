@@ -12,14 +12,14 @@
 
 package me.pikamug.quests.conditions;
 
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.UUID;
 
-public interface ICondition extends Comparable<ICondition> {
+public interface Condition extends Comparable<Condition> {
     String getName();
 
     void setName(final String name);
@@ -76,5 +76,5 @@ public interface ICondition extends Comparable<ICondition> {
 
     void setPlaceholdersCheckValue(final LinkedList<String> placeholdersCheckValue);
 
-    boolean check(final IQuester quester, final IQuest quest);
+    boolean check(final Quester quester, final Quest quest);
 }

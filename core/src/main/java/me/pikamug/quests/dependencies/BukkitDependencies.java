@@ -25,9 +25,9 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.reflect.denizen.DenizenAPI;
-import me.pikamug.quests.reflect.worldguard.WorldGuardAPI;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -52,7 +52,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BukkitDependencies implements IDependencies {
+public class BukkitDependencies implements Dependencies {
     
     private final BukkitQuestsPlugin plugin;
     private static Economy economy = null;
@@ -276,7 +276,7 @@ public class BukkitDependencies implements IDependencies {
         return partyProvider != null;
     }
     
-    public boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester, final UUID uuid) {
         return plugin.getDenizenTrigger().runDenizenScript(scriptName, quester, uuid);
     }
 

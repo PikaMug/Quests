@@ -15,8 +15,8 @@ package me.pikamug.quests.convo.misc;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.events.misc.MiscPostNpcOfferQuestEvent;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -67,12 +67,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public ChatColor getNumberColor(final ConversationContext context, final int number) {
-        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final IQuest quest = quests.get(number - 1);
+                    final Quest quest = quests.get(number - 1);
                     if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN;
                     } else {
@@ -89,12 +89,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public String getSelectionText(final ConversationContext context, final int number) {
-        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final IQuest quest = quests.get(number - 1);
+                    final Quest quest = quests.get(number - 1);
                     if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
                     } else {
@@ -110,12 +110,12 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     @SuppressWarnings("unchecked")
     public String getAdditionalText(final ConversationContext context, final int number) {
-        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         if (plugin != null) {
-            final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
-                    final IQuest quest = quests.get(number - 1);
+                    final Quest quest = quests.get(number - 1);
                     if (quester.getCompletedQuestsTemp().contains(quest)) {
                         return ChatColor.GREEN + "" + Language.get("redoCompleted");
                     }
@@ -178,11 +178,11 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(final ConversationContext context, final String input) {
-        final LinkedList<IQuest> quests = (LinkedList<IQuest>) context.getSessionData("npcQuests");
+        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
         if (plugin == null || quests == null) {
             return Prompt.END_OF_CONVERSATION;
         }
-        final IQuester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
@@ -193,15 +193,15 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
-            IQuest q = null;
-            for (final IQuest quest : quests) {
+            Quest q = null;
+            for (final Quest quest : quests) {
                 if (quest.getName().equalsIgnoreCase(input)) {
                     q = quest;
                     break;
                 }
             }
             if (q == null) {
-                for (final IQuest quest : quests) {
+                for (final Quest quest : quests) {
                     if (numInput == (quests.indexOf(quest) + 1)) {
                         q = quest;
                         break;
@@ -209,7 +209,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                 }
             }
             if (q == null) {
-                for (final IQuest quest : quests) {
+                for (final Quest quest : quests) {
                     if (quest.getName().toLowerCase().contains(input.toLowerCase())) {
                         q = quest;
                         break;
@@ -237,8 +237,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         }
     }
 
-    private String extracted(final BukkitQuestsPlugin plugin, final IQuester quester) {
-        final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+    private String extracted(final BukkitQuestsPlugin plugin, final Quester quester) {
+        final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

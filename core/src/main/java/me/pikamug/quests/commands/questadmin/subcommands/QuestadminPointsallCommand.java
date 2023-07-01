@@ -14,7 +14,7 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -84,7 +84,7 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
             }
             cs.sendMessage(ChatColor.YELLOW + Language.get("settingAllQuestPoints")
                     .replace("<points>", Language.get("questPoints")));
-            for (final IQuester q : plugin.getOfflineQuesters()) {
+            for (final Quester q : plugin.getOfflineQuesters()) {
                 q.setQuestPoints(amount);
             }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {

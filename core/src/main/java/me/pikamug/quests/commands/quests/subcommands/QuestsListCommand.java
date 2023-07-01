@@ -16,7 +16,7 @@ import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.events.command.QuestsCommandPreQuestsListEvent;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -66,7 +66,7 @@ public class QuestsListCommand extends QuestsSubCommand {
             if (!(cs instanceof Player)) {
                 int num = 1;
                 cs.sendMessage(ChatColor.GOLD + Language.get("questListTitle"));
-                for (final IQuest q : plugin.getLoadedQuests()) {
+                for (final Quest q : plugin.getLoadedQuests()) {
                     cs.sendMessage(ChatColor.YELLOW + "" + num + ". " + q.getName());
                     num++;
                 }

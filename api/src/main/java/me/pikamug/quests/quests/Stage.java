@@ -12,10 +12,10 @@
 
 package me.pikamug.quests.quests;
 
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.conditions.ICondition;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.module.ICustomObjective;
+import me.pikamug.quests.module.CustomObjective;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
-public interface IStage {
+public interface Stage {
     LinkedList<ItemStack> getBlocksToBreak();
 
     boolean addBlockToBreak(ItemStack blockToBreak);
@@ -229,41 +229,41 @@ public interface IStage {
 
     void setScript(final String script);
 
-    IAction getStartAction();
+    Action getStartAction();
 
-    void setStartAction(final IAction startAction);
+    void setStartAction(final Action startAction);
 
-    IAction getFinishAction();
+    Action getFinishAction();
 
-    void setFinishAction(final IAction finishAction);
+    void setFinishAction(final Action finishAction);
 
-    IAction getFailAction();
+    Action getFailAction();
 
-    void setFailAction(final IAction failAction);
+    void setFailAction(final Action failAction);
 
-    IAction getDeathAction();
+    Action getDeathAction();
 
-    void setDeathAction(final IAction deathAction);
+    void setDeathAction(final Action deathAction);
 
-    Map<String, IAction> getChatActions();
+    Map<String, Action> getChatActions();
 
-    void addChatAction(Map.Entry<String, IAction> chatAction);
+    void addChatAction(Map.Entry<String, Action> chatAction);
 
-    void setChatActions(final Map<String, IAction> chatActions);
+    void setChatActions(final Map<String, Action> chatActions);
 
-    Map<String, IAction> getCommandActions();
+    Map<String, Action> getCommandActions();
 
-    void addCommandAction(Map.Entry<String, IAction> commandAction);
+    void addCommandAction(Map.Entry<String, Action> commandAction);
 
-    void setCommandActions(final Map<String, IAction> commandActions);
+    void setCommandActions(final Map<String, Action> commandActions);
 
-    IAction getDisconnectAction();
+    Action getDisconnectAction();
 
-    void setDisconnectAction(final IAction disconnectAction);
+    void setDisconnectAction(final Action disconnectAction);
 
-    ICondition getCondition();
+    Condition getCondition();
 
-    void setCondition(final ICondition condition);
+    void setCondition(final Condition condition);
 
     long getDelay();
 
@@ -287,9 +287,9 @@ public interface IStage {
 
     void setObjectiveOverrides(final LinkedList<String> objectiveOverrides);
 
-    LinkedList<ICustomObjective> getCustomObjectives();
+    LinkedList<CustomObjective> getCustomObjectives();
 
-    boolean addCustomObjectives(final ICustomObjective customObjective);
+    boolean addCustomObjectives(final CustomObjective customObjective);
 
     void clearCustomObjectives();
 

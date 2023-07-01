@@ -19,7 +19,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BukkitCustomReward implements ICustomReward {
+public abstract class BukkitCustomReward implements CustomReward {
 
     private String name = null;
     private String author = null;

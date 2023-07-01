@@ -14,7 +14,7 @@ package me.pikamug.quests.util;
 
 import io.github.znetworkw.znpcservers.npc.NPC;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -107,7 +107,7 @@ public class BukkitConfigUtil {
                 + loc.getZ();
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final IQuest quest, final Player player) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -122,7 +122,7 @@ public class BukkitConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final IQuest quest) {
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
@@ -142,7 +142,7 @@ public class BukkitConfigUtil {
         return parsed.split("\n");
     }
     
-    public static String parseString(final String s, final IQuest quest) {
+    public static String parseString(final String s, final Quest quest) {
         String parsed = parseString(s);
         if (quest != null && quest.getName() != null) {
             parsed = parsed.replace("<quest>", quest.getName());
@@ -157,7 +157,7 @@ public class BukkitConfigUtil {
         return parsed;
     }
     
-    public static String parseString(final String s, final IQuest quest, final Player player) {
+    public static String parseString(final String s, final Quest quest, final Player player) {
         String parsed = parseString(s, quest);
         if (BukkitDependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);

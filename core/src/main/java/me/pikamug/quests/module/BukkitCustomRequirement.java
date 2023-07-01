@@ -19,7 +19,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BukkitCustomRequirement implements ICustomRequirement {
+public abstract class BukkitCustomRequirement implements CustomRequirement {
 
     private String name = null;
     private String author = null;

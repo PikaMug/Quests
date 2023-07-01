@@ -13,7 +13,7 @@
 package me.pikamug.quests.events.quester;
 
 import me.pikamug.quests.player.BukkitQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuesterPostCompleteQuestEvent extends QuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final IQuest quest;
+    private final Quest quest;
     
-    public QuesterPostCompleteQuestEvent(final BukkitQuester quester, final IQuest quest) {
+    public QuesterPostCompleteQuestEvent(final BukkitQuester quester, final Quest quest) {
         super(quester);
         this.quest = quest;
     }
@@ -34,7 +34,7 @@ public class QuesterPostCompleteQuestEvent extends QuesterEvent {
      * 
      * @return Quest which is involved in this event
      */
-    public IQuest getQuest() {
+    public Quest getQuest() {
         return quest;
     }
     

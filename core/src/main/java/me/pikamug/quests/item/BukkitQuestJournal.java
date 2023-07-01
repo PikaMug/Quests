@@ -14,9 +14,9 @@ package me.pikamug.quests.item;
 
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitObjective;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -38,10 +38,10 @@ import java.util.stream.Collectors;
 public class BukkitQuestJournal {
 
     final BukkitQuestsPlugin plugin;
-    final IQuester owner;
+    final Quester owner;
     final ItemStack journal;
     
-    public BukkitQuestJournal(BukkitQuestsPlugin plugin, final IQuester owner) {
+    public BukkitQuestJournal(BukkitQuestsPlugin plugin, final Quester owner) {
         this.plugin = plugin;
         this.owner = owner;
         final Player player = owner.getPlayer();
@@ -66,10 +66,10 @@ public class BukkitQuestJournal {
                     + Language.get(player, "journalNoQuests").replace("<journal>", title))).build());
         } else {
             final List<BaseComponent[]> pages = new LinkedList<>();
-            final List<IQuest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
-                    .sorted(Comparator.comparing(IQuest::getName))
+            final List<Quest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
+                    .sorted(Comparator.comparing(Quest::getName))
                     .collect(Collectors.toList());
-            for (final IQuest quest : sortedList) {
+            for (final Quest quest : sortedList) {
                 final TextComponent title = new TextComponent(quest.getName());
                 title.setColor(net.md_5.bungee.api.ChatColor.DARK_PURPLE);
                 title.setBold(true);
@@ -124,7 +124,7 @@ public class BukkitQuestJournal {
         }
     }
     
-    public IQuester getOwner() {
+    public Quester getOwner() {
         return owner;
     }
     

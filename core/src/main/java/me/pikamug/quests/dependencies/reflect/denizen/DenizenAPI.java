@@ -10,7 +10,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.reflect.denizen;
+package me.pikamug.quests.dependencies.reflect.denizen;
 
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.OfflinePlayer;

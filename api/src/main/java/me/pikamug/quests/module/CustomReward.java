@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public interface ICustomReward {
+public interface CustomReward {
 
     String getModuleName();
 

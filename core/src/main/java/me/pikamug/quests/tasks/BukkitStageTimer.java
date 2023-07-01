@@ -12,17 +12,17 @@
 
 package me.pikamug.quests.tasks;
 
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 
 public class BukkitStageTimer implements Runnable {
 
-    private final IQuester quester;
+    private final Quester quester;
     private final BukkitQuestsPlugin plugin;
-    private final IQuest quest;
+    private final Quest quest;
 
-    public BukkitStageTimer(final BukkitQuestsPlugin plugin, final IQuester quester, final IQuest quest) {
+    public BukkitStageTimer(final BukkitQuestsPlugin plugin, final Quester quester, final Quest quest) {
         this.quester = quester;
         this.quest = quest;
         this.plugin = plugin;

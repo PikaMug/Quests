@@ -14,8 +14,8 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -75,10 +75,10 @@ public class QuestsTakeCommand extends QuestsSubCommand {
         final Player player = (Player) cs;
         if (plugin.getSettings().canAllowCommands()) {
             if (player.hasPermission(getPermission())) {
-                final IQuest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 if (questToFind != null) {
-                    for (final IQuest q : quester.getCurrentQuestsTemp().keySet()) {
+                    for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
                         if (q.getId().equals(questToFind.getId())) {
                             Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
                             return;
@@ -100,7 +100,7 @@ public class QuestsTakeCommand extends QuestsSubCommand {
     public List<String> tabComplete(CommandSender commandSender, String[] args) {
         if (args.length == 2) {
             final List<String> results = new ArrayList<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
                     results.add(ChatColor.stripColor(quest.getName()));
                 }

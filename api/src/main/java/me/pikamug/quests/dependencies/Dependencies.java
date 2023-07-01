@@ -19,9 +19,9 @@ import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import lol.pyr.znpcsplus.ZNPCsPlus;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.reflect.denizen.DenizenAPI;
-import me.pikamug.quests.reflect.worldguard.WorldGuardAPI;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -33,7 +33,7 @@ import ro.niconeko.astralbooks.api.AstralBooksAPI;
 import java.util.Set;
 import java.util.UUID;
 
-public interface IDependencies {
+public interface Dependencies {
     Economy getVaultEconomy();
 
     Permission getVaultPermission();
@@ -66,7 +66,7 @@ public interface IDependencies {
 
     boolean isPluginAvailable(final String pluginName);
 
-    boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid);
+    boolean runDenizenScript(final String scriptName, final Quester quester, final UUID uuid);
 
     Location getNpcLocation(final UUID uuid);
 

@@ -16,9 +16,9 @@ import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -127,7 +127,7 @@ public class BukkitPlayerListener implements Listener {
             final ItemStack clicked = event.getCurrentItem();
             if (BukkitItemUtil.isItem(clicked)) {
                 event.setCancelled(true);
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     final BukkitQuest bukkitQuest = (BukkitQuest)quest;
                     if (quest.getGUIDisplay() != null) {
                         if (BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false) == 0) {
@@ -219,12 +219,12 @@ public class BukkitPlayerListener implements Listener {
                 }
             }
             if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
-                final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+                final Quester quester = plugin.getQuester(event.getPlayer().getUniqueId());
                 final Player player = event.getPlayer();
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     boolean hasObjective = false;
                     if (!event.isCancelled()) {
-                        for (final IQuest quest : plugin.getLoadedQuests()) {
+                        for (final Quest quest : plugin.getLoadedQuests()) {
                             if (quester.getCurrentQuestsTemp().containsKey(quest)
                                     && quester.getCurrentStage(quest).containsObjective(ObjectiveType.USE_BLOCK)) {
                                 hasObjective = true;
@@ -369,7 +369,7 @@ public class BukkitPlayerListener implements Listener {
                             }
                             event.setCancelled(true);
                         } else if (!player.isConversing()) {
-                            for (final IQuest q : plugin.getLoadedQuests()) {
+                            for (final Quest q : plugin.getLoadedQuests()) {
                                 if (q.getBlockStart() != null && event.getClickedBlock() != null) {
                                     if (q.getBlockStart().equals(event.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
@@ -399,7 +399,7 @@ public class BukkitPlayerListener implements Listener {
                                                     continue;
                                                 }
                                             }
-                                            for (final IQuest iq : quester.getCurrentQuestsTemp().keySet()) {
+                                            for (final Quest iq : quester.getCurrentQuestsTemp().keySet()) {
                                                 if (iq.getId().equals(q.getId())) {
                                                     Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
                                                     return;
@@ -409,7 +409,7 @@ public class BukkitPlayerListener implements Listener {
                                             if (!plugin.getSettings().canConfirmAccept()) {
                                                 quester.takeQuest(q, false);
                                             } else {
-                                                final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+                                                final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE
                                                         + quest.getName() + ChatColor.GOLD + " -\n" + "\n"
                                                         + ChatColor.RESET + quest.getDescription() + "\n";
@@ -464,10 +464,10 @@ public class BukkitPlayerListener implements Listener {
         if (event.getItemStack() != null && event.getItemStack().getType() == Material.MILK_BUCKET) {
             final Player player = event.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.MILK_COW;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -478,7 +478,7 @@ public class BukkitPlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.milkCow(cq);
                         }
@@ -495,14 +495,14 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            final Quester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
                 
                 if (quester.getCurrentQuestsTemp().containsKey(quest)) {
-                    final IStage currentStage = quester.getCurrentStage(quest);
+                    final Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         continue;
                     }
@@ -533,7 +533,7 @@ public class BukkitPlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.sayPassword(cq, event);
                         }
@@ -547,9 +547,9 @@ public class BukkitPlayerListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+            final Quester quester = plugin.getQuester(event.getPlayer().getUniqueId());
             if (!quester.getCurrentQuestsTemp().isEmpty()) {
-                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quest.getOptions().canAllowCommands()) {
                         if (!event.getMessage().startsWith("/quest")) {
                             final Player player = event.getPlayer();
@@ -562,7 +562,7 @@ public class BukkitPlayerListener implements Listener {
                             return;
                         }
                     }
-                    final IStage currentStage = quester.getCurrentStage(quest);
+                    final Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
                                + " on command for quest " + quest.getName());
@@ -590,10 +590,10 @@ public class BukkitPlayerListener implements Listener {
             final Player player = event.getPlayer();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final Sheep sheep = (Sheep) event.getEntity();
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -604,7 +604,7 @@ public class BukkitPlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.shearSheep(cq, sheep.getColor());
                         }
@@ -623,10 +623,10 @@ public class BukkitPlayerListener implements Listener {
         if (event.getOwner() instanceof Player) {
             final Player player = (Player) event.getOwner();
             if (plugin.canUseQuests(player.getUniqueId())) {
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.TAME_MOB;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -637,7 +637,7 @@ public class BukkitPlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.tameMob(cq, event.getEntityType());
                         }
@@ -669,7 +669,7 @@ public class BukkitPlayerListener implements Listener {
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
-                    final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                    final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                     if (quester != null) {
                         preKillPlayer(quester.getPlayer(), event.getEntity());
                     }
@@ -695,9 +695,9 @@ public class BukkitPlayerListener implements Listener {
             if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 return;
             }
-            final IQuester quester = plugin.getQuester(damager.getUniqueId());
+            final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_MOB;
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -738,7 +738,7 @@ public class BukkitPlayerListener implements Listener {
             } else if (damager instanceof Wolf) {
                 final Wolf wolf = (Wolf) damager;
                 if (wolf.isTamed() && wolf.getOwner() != null) {
-                    final IQuester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
+                    final Quester quester = plugin.getQuester(wolf.getOwner().getUniqueId());
                     preKillPlayer(quester.getPlayer(), event.getEntity());
                 }
             } else {
@@ -748,9 +748,9 @@ public class BukkitPlayerListener implements Listener {
             
         final Player target = event.getEntity();
         if (plugin.canUseQuests(target.getUniqueId())) {
-            final IQuester quester = plugin.getQuester(target.getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
-                final IStage stage = quester.getCurrentStage(quest);
+            final Quester quester = plugin.getQuester(target.getUniqueId());
+            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+                final Stage stage = quester.getCurrentStage(quest);
                 if (stage != null && stage.getDeathAction() != null) {
                     quester.getCurrentStage(quest).getDeathAction().fire(quester, quest);
                 }
@@ -791,9 +791,9 @@ public class BukkitPlayerListener implements Listener {
                     return;
                 }
             }
-            final IQuester quester = plugin.getQuester(damager.getUniqueId());
+            final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -815,10 +815,10 @@ public class BukkitPlayerListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.CATCH_FISH;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -830,7 +830,7 @@ public class BukkitPlayerListener implements Listener {
                     }
                     
                     dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
                             q.catchFish(cq);
                         }
@@ -845,9 +845,9 @@ public class BukkitPlayerListener implements Listener {
     public void onPlayerChangeWorld(final PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             quester.findCompassTarget();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 quester.meetsCondition(quest, true);
             }
         }
@@ -857,7 +857,7 @@ public class BukkitPlayerListener implements Listener {
     public void onPlayerRespawn(final PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(plugin, quester::findCompassTarget, 10);
         }
     }
@@ -876,29 +876,29 @@ public class BukkitPlayerListener implements Listener {
             });
         }
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final IQuester noobCheck = new BukkitQuester(plugin, player.getUniqueId());
+            final Quester noobCheck = new BukkitQuester(plugin, player.getUniqueId());
             if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
                 noobCheck.saveData();
             }
 
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                final CompletableFuture<IQuester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
+                final CompletableFuture<Quester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
-                    final IQuester quester = cf.get();
+                    final Quester quester = cf.get();
                     if (quester == null) {
                         return;
                     }
-                    for (final IQuest q : quester.getCompletedQuestsTemp()) {
+                    for (final Quest q : quester.getCompletedQuestsTemp()) {
                         if (q != null) {
                             if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
                                 quester.getCompletedTimes().put(q, System.currentTimeMillis());
                             }
                         }
                     }
-                    for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                    for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                         quester.checkQuest(quest);
                     }
-                    for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                    for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                         if (quester.getCurrentStage(quest).getDelay() > -1) {
                             quester.startStageTimer(quest);
                         }
@@ -921,9 +921,9 @@ public class BukkitPlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
         if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
-            final IQuester quester = plugin.getQuester(event.getPlayer().getUniqueId());
-            for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
-                final IStage currentStage = quester.getCurrentStage(quest);
+            final Quester quester = plugin.getQuester(event.getPlayer().getUniqueId());
+            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+                final Stage currentStage = quester.getCurrentStage(quest);
                 if (currentStage == null) {
                     plugin.getLogger().severe("currentStage was null for " + quester.getUUID().toString() 
                             + " on quit for quest " + quest.getName());
@@ -949,7 +949,7 @@ public class BukkitPlayerListener implements Listener {
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            final ConcurrentSkipListSet<IQuester> temp = (ConcurrentSkipListSet<IQuester>) plugin.getOfflineQuesters();
+            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
             plugin.setOfflineQuesters(temp);
         }
@@ -982,12 +982,12 @@ public class BukkitPlayerListener implements Listener {
      */
     public void playerMove(final UUID uuid, final Location location) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            final IQuester quester = plugin.getQuester(uuid);
+            final Quester quester = plugin.getQuester(uuid);
             if (quester != null) {
                 if (plugin.canUseQuests(uuid)) {
                     final ObjectiveType type = ObjectiveType.REACH_LOCATION;
                     final Set<String> dispatchedQuestIDs = new HashSet<>();
-                    for (final IQuest quest : plugin.getLoadedQuests()) {
+                    for (final Quest quest : plugin.getLoadedQuests()) {
                         if (!quester.meetsCondition(quest, true)) {
                             continue;
                         }
@@ -1001,7 +1001,7 @@ public class BukkitPlayerListener implements Listener {
                         }
 
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                                (final IQuester q, final IQuest cq) -> {
+                                (final Quester q, final Quest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
                                 plugin.getServer().getScheduler().runTask(plugin, () -> q
                                         .reachLocation(cq, location));

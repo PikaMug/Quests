@@ -12,8 +12,8 @@
 
 package me.pikamug.quests.quests;
 
-import me.pikamug.quests.actions.IAction;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.player.Quester;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.LinkedList;
 import java.util.UUID;
 
-public interface IQuest extends Comparable<IQuest> {
+public interface Quest extends Comparable<Quest> {
     Plugin getPlugin();
 
     void setPlugin(Plugin plugin);
@@ -51,9 +51,9 @@ public interface IQuest extends Comparable<IQuest> {
 
     void setGUIDisplay(final ItemStack guiDisplay);
 
-    IStage getStage(final int index);
+    Stage getStage(final int index);
 
-    LinkedList<IStage> getStages();
+    LinkedList<Stage> getStages();
 
     UUID getNpcStart();
 
@@ -65,9 +65,9 @@ public interface IQuest extends Comparable<IQuest> {
 
     void setBlockStart(final Location blockStart);
 
-    IAction getInitialAction();
+    Action getInitialAction();
 
-    void setInitialAction(final IAction initialAction);
+    void setInitialAction(final Action initialAction);
 
     Requirements getRequirements();
 
@@ -77,25 +77,25 @@ public interface IQuest extends Comparable<IQuest> {
 
     Options getOptions();
 
-    void nextStage(final IQuester quester, final boolean allowSharedProgress);
+    void nextStage(final Quester quester, final boolean allowSharedProgress);
 
-    void setStage(final IQuester quester, final int stage);
+    void setStage(final Quester quester, final int stage);
 
-    boolean updateCompass(final IQuester quester, final IStage stage);
+    boolean updateCompass(final Quester quester, final Stage stage);
 
-    boolean testRequirements(final IQuester quester);
+    boolean testRequirements(final Quester quester);
 
     boolean testRequirements(final OfflinePlayer player);
 
-    void completeQuest(final IQuester quester);
+    void completeQuest(final Quester quester);
 
-    void completeQuest(final IQuester quester, final boolean allowMultiplayer);
+    void completeQuest(final Quester quester, final boolean allowMultiplayer);
 
-    void failQuest(final IQuester quester);
+    void failQuest(final Quester quester);
 
-    void failQuest(final IQuester quester, final boolean ignoreFailAction);
+    void failQuest(final Quester quester, final boolean ignoreFailAction);
 
-    boolean isInRegion(final IQuester quester);
+    boolean isInRegion(final Quester quester);
 
-    boolean isInRegionStart(final IQuester quester);
+    boolean isInRegionStart(final Quester quester);
 }

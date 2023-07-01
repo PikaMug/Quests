@@ -2,8 +2,8 @@ package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.events.misc.MiscPostQuestAbandonEvent;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -118,14 +118,14 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         final Player player = (Player) context.getForWhom();
         if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
                 || input.equalsIgnoreCase(Language.get("yesWord")) || input.equalsIgnoreCase(Language.get(player, "yesWord"))) {
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             if (quester == null) {
                 plugin.getLogger().info("Ended conversation because quester for " + getName() + "was null");
                 return Prompt.END_OF_CONVERSATION;
             }
             final String questIdToQuit = quester.getQuestIdToQuit();
             try {
-                IQuest quest = plugin.getQuestByIdTemp(questIdToQuit);
+                Quest quest = plugin.getQuestByIdTemp(questIdToQuit);
                 if (quest == null) {
                     plugin.getLogger().info(player.getName() + " attempted to quit quest ID \"" + questIdToQuit
                             + "\" but something went wrong");

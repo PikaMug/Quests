@@ -13,7 +13,7 @@
 package me.pikamug.quests.events.quester;
 
 import me.pikamug.quests.player.BukkitQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Objective;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuesterPreUpdateObjectiveEvent extends QuesterEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final IQuest quest;
+    private final Quest quest;
     private final Objective objective;
     private boolean cancel = false;
     
-    public QuesterPreUpdateObjectiveEvent(final BukkitQuester quester, final IQuest quest, final Objective objective) {
+    public QuesterPreUpdateObjectiveEvent(final BukkitQuester quester, final Quest quest, final Objective objective) {
         super(quester);
         this.quest = quest;
         this.objective = objective;
@@ -39,7 +39,7 @@ public class QuesterPreUpdateObjectiveEvent extends QuesterEvent implements Canc
      * 
      * @return Quest which is involved in this event
      */
-    public IQuest getQuest() {
+    public Quest getQuest() {
         return quest;
     }
     

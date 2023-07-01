@@ -14,10 +14,10 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.nms.BukkitActionBarProvider;
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.IStage;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.pikamug.quests.events.quester.QuesterPreUpdateObjectiveEvent;
@@ -67,12 +67,12 @@ public class BukkitBlockListener implements Listener {
             final Set<String> dispatchedBreakQuestIDs = new HashSet<>();
             final Set<String> dispatchedPlaceQuestIDs = new HashSet<>();
             final Set<String> dispatchedCutQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
                 if (quester.getCurrentQuestsTemp().containsKey(quest)) {
-                    final IStage currentStage = quester.getCurrentStage(quest);
+                    final Stage currentStage = quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         plugin.getLogger().severe("Player " + player.getName() + " (" + player.getUniqueId()
                                 + ") has invalid stage for quest " + quest.getName() + " (" + quest.getId() + ")");
@@ -87,7 +87,7 @@ public class BukkitBlockListener implements Listener {
                             quester.breakBlock(quest, blockItemStack);
 
                             dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
-                                    (final IQuester q, final IQuest cq) -> {
+                                    (final Quester q, final Quest cq) -> {
                                 if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
                                     q.breakBlock(cq, blockItemStack);
                                 }
@@ -126,7 +126,7 @@ public class BukkitBlockListener implements Listener {
                         }
                         // Ignore blocks broken once replaced (party support)
                         dispatchedPlaceQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, placeType,
-                                (final IQuester q, final IQuest cq) -> {
+                                (final Quester q, final Quest cq) -> {
                             if (!dispatchedPlaceQuestIDs.contains(cq.getId())) {
                                 for (final ItemStack is : q.getQuestData(cq).blocksPlaced) {
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
@@ -163,7 +163,7 @@ public class BukkitBlockListener implements Listener {
                         }
                     }
                     dispatchedCutQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, cutType,
-                            (final IQuester q, final IQuest cq) -> {
+                            (final Quester q, final Quest cq) -> {
                         if (!dispatchedCutQuestIDs.contains(cq.getId())) {
                             if (player.getItemInHand().getType().equals(Material.SHEARS)) {
                                 q.cutBlock(cq, blockItemStack);
@@ -186,10 +186,10 @@ public class BukkitBlockListener implements Listener {
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, event.getBlock().getState()
                     .getData().toItemStack().getDurability());
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -200,7 +200,7 @@ public class BukkitBlockListener implements Listener {
                 }
                 
                 dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                        (final IQuester q, final IQuest cq) -> {
+                        (final Quester q, final Quest cq) -> {
                     if (!dispatchedQuestIDs.contains(cq.getId())) {
                         q.damageBlock(cq, blockItemStack);
                     }
@@ -225,13 +225,13 @@ public class BukkitBlockListener implements Listener {
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final Set<String> dispatchedPlaceQuestIDs = new HashSet<>();
             final Set<String> dispatchedBreakQuestIDs = new HashSet<>();
-            for (final IQuest quest : plugin.getLoadedQuests()) {
+            for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
 
                 if (quester.getCurrentQuestsTemp().containsKey(quest)) {
-                    final IStage currentStage = quester.getCurrentStage(quest);
+                    final Stage currentStage = quester.getCurrentStage(quest);
 
                     if (currentStage.containsObjective(placeType)) {
                         quester.placeBlock(quest, blockItemStack);
@@ -268,7 +268,7 @@ public class BukkitBlockListener implements Listener {
                         }
                         // Ignore blocks replaced once broken (party support)
                         dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
-                                (final IQuester q, final IQuest cq) -> {
+                                (final Quester q, final Quest cq) -> {
                             if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
                                 for (final ItemStack is : q.getQuestData(cq).blocksBroken) {
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
@@ -302,7 +302,7 @@ public class BukkitBlockListener implements Listener {
                 }
 
                 dispatchedPlaceQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, placeType,
-                        (final IQuester q, final IQuest cq) -> {
+                        (final Quester q, final Quest cq) -> {
                     if (!dispatchedPlaceQuestIDs.contains(cq.getId())) {
                         q.placeBlock(cq, blockItemStack);
                     }
@@ -327,7 +327,7 @@ public class BukkitBlockListener implements Listener {
         if (e == null || e.equals(EquipmentSlot.HAND)) { // If the event is fired by HAND (main hand)
             final Player player = event.getPlayer();
             if (plugin.canUseQuests(event.getPlayer().getUniqueId())) {
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
+                final Quester quester = plugin.getQuester(player.getUniqueId());
                 if (quester.isSelectingBlock()) {
                     return;
                 }
@@ -337,7 +337,7 @@ public class BukkitBlockListener implements Listener {
                                 .getClickedBlock().getState().getData().toItemStack().getDurability());
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
-                        for (final IQuest quest : plugin.getLoadedQuests()) {
+                        for (final Quest quest : plugin.getLoadedQuests()) {
                             if (!quester.meetsCondition(quest, true)) {
                                 continue;
                             }
@@ -348,7 +348,7 @@ public class BukkitBlockListener implements Listener {
                             }
                             
                             dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, 
-                                    (final IQuester q, final IQuest cq) -> {
+                                    (final Quester q, final Quest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
                                     q.useBlock(cq, blockItemStack);
                                 }

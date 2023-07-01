@@ -4,8 +4,8 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
@@ -56,8 +56,8 @@ public class BukkitZnpcsListener implements Listener {
             }
             if (!event.getPlayer().isConversing()) {
                 final Player player = event.getPlayer();
-                final IQuester quester = plugin.getQuester(player.getUniqueId());
-                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                final Quester quester = plugin.getQuester(player.getUniqueId());
+                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
                         final ItemStack hand = player.getItemInHand();
                         int currentIndex = -1;
@@ -178,7 +178,7 @@ public class BukkitZnpcsListener implements Listener {
                     }
                 }
                 boolean hasObjective = false;
-                for (final IQuest quest : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -198,8 +198,8 @@ public class BukkitZnpcsListener implements Listener {
                     return;
                 }
                 boolean hasAtLeastOneGUI = false;
-                final LinkedList<IQuest> npcQuests = new LinkedList<>();
-                for (final IQuest q : plugin.getLoadedQuests()) {
+                final LinkedList<Quest> npcQuests = new LinkedList<>();
+                for (final Quest q : plugin.getLoadedQuests()) {
                     if (quester.getCurrentQuestsTemp().containsKey(q)) {
                         continue;
                     }
@@ -222,7 +222,7 @@ public class BukkitZnpcsListener implements Listener {
                     }
                 }
                 if (npcQuests.size() == 1) {
-                    final IQuest q = npcQuests.get(0);
+                    final Quest q = npcQuests.get(0);
                     if (quester.canAcceptOffer(q, true)) {
                         quester.setQuestIdToTake(q.getId());
                         if (!plugin.getSettings().canConfirmAccept()) {
@@ -255,8 +255,8 @@ public class BukkitZnpcsListener implements Listener {
         }
     }
 
-    private String extracted(final IQuester quester) {
-        final IQuest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+    private String extracted(final Quester quester) {
+        final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE,
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

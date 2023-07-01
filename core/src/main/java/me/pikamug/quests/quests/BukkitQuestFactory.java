@@ -17,7 +17,7 @@ import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
 import me.pikamug.quests.convo.quests.menu.QuestMenuPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.module.ICustomObjective;
+import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
@@ -142,7 +142,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     }
 
     @SuppressWarnings("deprecation")
-    public void loadQuest(final ConversationContext context, final IQuest q) {
+    public void loadQuest(final ConversationContext context, final Quest q) {
         try {
             context.setSessionData(Key.ED_QUEST_EDIT, q.getName());
             context.setSessionData(Key.Q_ID, q.getId());
@@ -283,7 +283,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(Key.OPT_IGNORE_BLOCK_REPLACE, opt.canIgnoreBlockReplace());
             // Stages (Objectives)
             int index = 1;
-            for (final IStage stage : q.getStages()) {
+            for (final Stage stage : q.getStages()) {
                 final String pref = "stage" + index;
                 index++;
                 context.setSessionData(pref, Boolean.TRUE);
@@ -773,8 +773,8 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final ConfigurationSection sec2 = sec.createSection("custom" + (index + 1));
                     sec2.set("name", customObj.get(index));
                     sec2.set("count", customObjCounts.get(index));
-                    ICustomObjective found = null;
-                    for (final ICustomObjective co : plugin.getCustomObjectives()) {
+                    CustomObjective found = null;
+                    for (final CustomObjective co : plugin.getCustomObjectives()) {
                         if (co.getName().equals(customObj.get(index))) {
                             found = co;
                             break;

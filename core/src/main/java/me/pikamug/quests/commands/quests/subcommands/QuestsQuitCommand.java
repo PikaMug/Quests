@@ -15,8 +15,8 @@ package me.pikamug.quests.commands.quests.subcommands;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -75,9 +75,9 @@ public class QuestsQuitCommand extends QuestsSubCommand {
         }
         final Player player = (Player) cs;
         if (player.hasPermission(getPermission())) {
-            final IQuester quester = plugin.getQuester(player.getUniqueId());
+            final Quester quester = plugin.getQuester(player.getUniqueId());
             if (!quester.getCurrentQuestsTemp().isEmpty()) {
-                final IQuest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
+                final Quest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
                         final String msg = ChatColor.YELLOW + Language.get(player, "questQuit").replace("<quest>",
@@ -104,14 +104,14 @@ public class QuestsQuitCommand extends QuestsSubCommand {
             if (commandSender instanceof Player) {
                 final BukkitQuester quester = plugin.getQuester(((Player) commandSender).getUniqueId());
                 if (quester != null) {
-                    for (final IQuest quest : quester.getCurrentQuests().keySet()) {
+                    for (final Quest quest : quester.getCurrentQuests().keySet()) {
                         if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
                             results.add(ChatColor.stripColor(quest.getName()));
                         }
                     }
                 }
             } else {
-                for (final IQuest quest : plugin.getLoadedQuests()) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
                     if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
                         results.add(ChatColor.stripColor(quest.getName()));
                     }

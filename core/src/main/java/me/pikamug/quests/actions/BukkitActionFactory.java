@@ -12,8 +12,8 @@
 
 package me.pikamug.quests.actions;
 
-import me.pikamug.quests.quests.IQuest;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.convo.actions.menu.ActionMenuPrompt;
@@ -152,7 +152,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         return new ActionMainPrompt(context);
     }
     
-    public void loadData(final IAction event, final ConversationContext context) {
+    public void loadData(final Action event, final ConversationContext context) {
         if (event.getMessage() != null) {
             context.setSessionData(Key.E_MESSAGE, event.getMessage());
         }
@@ -313,8 +313,8 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted action " + action);
         }
-        for (final IQuester q : plugin.getOfflineQuesters()) {
-            for (final IQuest quest : q.getCurrentQuestsTemp().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuestsTemp().keySet()) {
                 q.checkQuest(quest);
             }
         }
@@ -340,7 +340,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         if (context.getSessionData(Key.E_OLD_EVENT) != null
                 && !((String) Objects.requireNonNull(context.getSessionData(Key.E_OLD_EVENT))).isEmpty()) {
             data.set(key + "." + context.getSessionData(Key.E_OLD_EVENT), null);
-            final Collection<IAction> temp = plugin.getLoadedActions();
+            final Collection<Action> temp = plugin.getLoadedActions();
             temp.remove(plugin.getAction((String) context.getSessionData(Key.E_OLD_EVENT)));
             plugin.setLoadedActions(temp);
         }
@@ -470,8 +470,8 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved action " + context.getSessionData(Key.E_NAME));
         }
-        for (final IQuester q : plugin.getOfflineQuesters()) {
-            for (final IQuest quest : q.getCurrentQuestsTemp().keySet()) {
+        for (final Quester q : plugin.getOfflineQuesters()) {
+            for (final Quest quest : q.getCurrentQuestsTemp().keySet()) {
                 q.checkQuest(quest);
             }
         }

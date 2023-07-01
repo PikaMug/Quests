@@ -12,17 +12,17 @@
 
 package me.pikamug.quests;
 
+import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.ActionFactory;
-import me.pikamug.quests.actions.IAction;
 import me.pikamug.quests.conditions.ConditionFactory;
-import me.pikamug.quests.conditions.ICondition;
-import me.pikamug.quests.config.ISettings;
-import me.pikamug.quests.dependencies.IDependencies;
-import me.pikamug.quests.module.ICustomObjective;
-import me.pikamug.quests.module.ICustomRequirement;
-import me.pikamug.quests.module.ICustomReward;
-import me.pikamug.quests.player.IQuester;
-import me.pikamug.quests.quests.IQuest;
+import me.pikamug.quests.conditions.Condition;
+import me.pikamug.quests.config.Settings;
+import me.pikamug.quests.dependencies.Dependencies;
+import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.module.CustomRequirement;
+import me.pikamug.quests.module.CustomReward;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.QuestFactory;
 
 import java.io.File;
@@ -44,29 +44,29 @@ public interface Quests {
 
     InputStream getPluginResource(String filename);
 
-    IDependencies getDependencies();
+    Dependencies getDependencies();
 
-    ISettings getSettings();
+    Settings getSettings();
 
-    List<ICustomObjective> getCustomObjectives();
+    List<CustomObjective> getCustomObjectives();
 
-    List<ICustomReward> getCustomRewards();
+    List<CustomReward> getCustomRewards();
 
-    List<ICustomRequirement> getCustomRequirements();
+    List<CustomRequirement> getCustomRequirements();
 
-    Collection<IQuest> getLoadedQuests();
+    Collection<Quest> getLoadedQuests();
 
-    Collection<IAction> getLoadedActions();
+    Collection<Action> getLoadedActions();
 
-    Collection<ICondition> getLoadedConditions();
+    Collection<Condition> getLoadedConditions();
 
-    IQuester getQuester(final UUID id);
+    Quester getQuester(final UUID id);
 
-    Collection<IQuester> getOnlineQuesters();
+    Collection<Quester> getOnlineQuesters();
 
-    Collection<IQuester> getOfflineQuesters();
+    Collection<Quester> getOfflineQuesters();
 
-    void setOfflineQuesters(final Collection<IQuester> questers);
+    void setOfflineQuesters(final Collection<Quester> questers);
 
     QuestFactory getQuestFactory();
 

@@ -13,7 +13,7 @@
 package me.pikamug.quests.dependencies;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.player.IQuester;
+import me.pikamug.quests.player.Quester;
 import net.citizensnpcs.api.npc.NPC;
 
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class BukkitDenizenTrigger {
         this.plugin = plugin;
     }
 
-    public boolean runDenizenScript(final String scriptName, final IQuester quester, final UUID uuid) {
+    public boolean runDenizenScript(final String scriptName, final Quester quester, final UUID uuid) {
         if (scriptName == null) {
             return false;
         }
