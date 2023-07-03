@@ -17,12 +17,14 @@ import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.config.Settings;
+import me.pikamug.quests.conditions.BukkitCondition;
 import me.pikamug.quests.config.BukkitSettings;
+import me.pikamug.quests.config.Settings;
 import me.pikamug.quests.convo.misc.QuestAbandonPrompt;
-import me.pikamug.quests.dependencies.Dependencies;
+import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quest.QuestQuitEvent;
@@ -38,21 +40,19 @@ import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.quests.BukkitObjective;
-import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.Stage;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Objective;
 import me.pikamug.quests.quests.Planner;
-import me.pikamug.quests.quests.BukkitQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Requirements;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.tasks.BukkitStageTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.RomanNumeral;
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.pikamug.localelib.LocaleManager;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
@@ -570,9 +570,10 @@ public class BukkitQuester implements Quester {
         if (quest == null) {
             return false;
         }
-        if (!plugin.getSettings().canAllowCommandsForNpcQuests() && quest.getNpcStart() != null
+        final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+        if (!plugin.getSettings().canAllowCommandsForNpcQuests() && bukkitQuest.getNpcStart() != null
                 && getPlayer().getLocation().getWorld() != null) {
-            final UUID uuid = quest.getNpcStart();
+            final UUID uuid = bukkitQuest.getNpcStart();
             Entity npc = null;
             if (plugin.getDependencies().getCitizens() != null
                     && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
@@ -603,40 +604,40 @@ public class BukkitQuester implements Quester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCurrentQuestsTemp().containsKey(quest)) {
+        } else if (getCurrentQuestsTemp().containsKey(bukkitQuest)) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "questAlreadyOn");
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuestsTemp().contains(quest) && quest.getPlanner().getCooldown() < 0) {
+        } else if (getCompletedQuestsTemp().contains(bukkitQuest) && bukkitQuest.getPlanner().getCooldown() < 0) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "questAlreadyCompleted")
-                        .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+                        .replace("<quest>", ChatColor.DARK_PURPLE + bukkitQuest.getName() + ChatColor.YELLOW);
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (quest.getBlockStart() != null) {
+        } else if (bukkitQuest.getBlockStart() != null) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE
-                        + quest.getName() + ChatColor.YELLOW);
+                        + bukkitQuest.getName() + ChatColor.YELLOW);
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuestsTemp().contains(quest) && getRemainingCooldown(quest) > 0
-                && !quest.getPlanner().getOverride()) {
+        } else if (getCompletedQuestsTemp().contains(bukkitQuest) && getRemainingCooldown(bukkitQuest) > 0
+                && !bukkitQuest.getPlanner().getOverride()) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "questTooEarly").replace("<quest>", ChatColor.AQUA
-                        + quest.getName()+ ChatColor.YELLOW).replace("<time>", ChatColor.DARK_PURPLE
-                        + BukkitMiscUtil.getTime(getRemainingCooldown(quest)) + ChatColor.YELLOW);
+                        + bukkitQuest.getName()+ ChatColor.YELLOW).replace("<time>", ChatColor.DARK_PURPLE
+                        + BukkitMiscUtil.getTime(getRemainingCooldown(bukkitQuest)) + ChatColor.YELLOW);
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (quest.getRegionStart() != null) {
-            if (!quest.isInRegionStart(this)) {
+        } else if (bukkitQuest.getRegionStart() != null) {
+            if (!bukkitQuest.isInRegionStart(this)) {
                 if (giveReason) {
                     final String msg = Language.get(getPlayer(), "questInvalidLocation").replace("<quest>", ChatColor.AQUA
-                            + quest.getName() + ChatColor.YELLOW);
+                            + bukkitQuest.getName() + ChatColor.YELLOW);
                     getPlayer().sendMessage(ChatColor.YELLOW + msg);
                 }
                 return false;
@@ -752,31 +753,32 @@ public class BukkitQuester implements Quester {
         if (quest == null) {
             return;
         }
-        final QuesterPreStartQuestEvent preEvent = new QuesterPreStartQuestEvent(this, quest);
+        final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+        final QuesterPreStartQuestEvent preEvent = new QuesterPreStartQuestEvent(this, bukkitQuest);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
         final OfflinePlayer offlinePlayer = getOfflinePlayer();
         if (offlinePlayer.isOnline()) {
-            if (!isOnTime(quest, true)) {
+            if (!isOnTime(bukkitQuest, true)) {
                 return;
             }
         }
-        if (quest.testRequirements(offlinePlayer) || ignoreRequirements) {
-            addEmptiesFor(quest, 0);
+        if (bukkitQuest.testRequirements(offlinePlayer) || ignoreRequirements) {
+            addEmptiesFor(bukkitQuest, 0);
             try {
-                currentQuests.put(quest, 0);
+                currentQuests.put(bukkitQuest, 0);
                 if (plugin.getSettings().getConsoleLogging() > 1) {
-                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + quest.getName());
+                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + bukkitQuest.getName());
                 }
             } catch (final NullPointerException npe) {
-                plugin.getLogger().severe("Unable to add quest" + quest.getName() + " for player " + offlinePlayer.getName()
+                plugin.getLogger().severe("Unable to add quest" + bukkitQuest.getName() + " for player " + offlinePlayer.getName()
                         + ". Consider resetting player data or report on Github");
             }
-            final Stage stage = quest.getStage(0);
+            final Stage stage = bukkitQuest.getStage(0);
             if (!ignoreRequirements) {
-                final Requirements requirements = quest.getRequirements();
+                final Requirements requirements = bukkitQuest.getRequirements();
                 if (requirements.getMoney() > 0) {
                     if (plugin.getDependencies().getVaultEconomy() != null) {
                         plugin.getDependencies().getVaultEconomy().withdrawPlayer(getOfflinePlayer(), requirements.getMoney());
@@ -793,19 +795,19 @@ public class BukkitQuester implements Quester {
                                         p.getInventory().setContents(original);
                                         p.updateInventory();
                                         sendMessage(Language.get(p, "requirementsItemFail"));
-                                        hardQuit(quest);
+                                        hardQuit(bukkitQuest);
                                         return;
                                     }
                                 }
                             }
                         }
                         String accepted = Language.get(p, "questAccepted");
-                        accepted = accepted.replace("<quest>", quest.getName());
+                        accepted = accepted.replace("<quest>", bukkitQuest.getName());
                         sendMessage(ChatColor.GREEN + accepted);
                         p.sendMessage("");
                         if (plugin.getSettings().canShowQuestTitles()) {
                             final String title = ChatColor.GOLD + Language.get(p, "quest") + " " + Language.get(p, "accepted");
-                            final String subtitle = ChatColor.YELLOW + quest.getName();
+                            final String subtitle = ChatColor.YELLOW + bukkitQuest.getName();
                             BukkitTitleProvider.sendTitle(p, title, subtitle);
                         }
                     }
@@ -813,34 +815,34 @@ public class BukkitQuester implements Quester {
             }
             if (offlinePlayer.isOnline()) {
                 final Player p = getPlayer();
-                final String title = Language.get(p, "objectives").replace("<quest>", quest.getName());
+                final String title = Language.get(p, "objectives").replace("<quest>", bukkitQuest.getName());
                 sendMessage(ChatColor.GOLD + title);
-                showCurrentObjectives(quest, this, false);
+                showCurrentObjectives(bukkitQuest, this, false);
                 final String stageStartMessage = stage.getStartMessage();
                 if (stageStartMessage != null) {
-                    p.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, quest, getPlayer()));
+                    p.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, bukkitQuest, getPlayer()));
                 }
-                plugin.showConditions(quest, this);
+                plugin.showConditions(bukkitQuest, this);
             }
-            if (quest.getInitialAction() != null) {
-                quest.getInitialAction().fire(this, quest);
+            if (bukkitQuest.getInitialAction() != null) {
+                bukkitQuest.getInitialAction().fire(this, bukkitQuest);
             }
             if (stage.getStartAction() != null) {
-                stage.getStartAction().fire(this, quest);
+                stage.getStartAction().fire(this, bukkitQuest);
             }
             saveData();
-            setCompassTarget(quest);
-            quest.updateCompass(this, stage);
+            setCompassTarget(bukkitQuest);
+            bukkitQuest.updateCompass(this, stage);
         } else {
             if (offlinePlayer.isOnline()) {
                 sendMessage(ChatColor.DARK_AQUA + Language.get("requirements"));
-                for (final String s : getCurrentRequirements(quest, false)) {
+                for (final String s : getCurrentRequirements(bukkitQuest, false)) {
                     sendMessage("- " + ChatColor.GRAY + s);
                 }
             }
         }
         if (offlinePlayer.isOnline()) {
-            final QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, quest);
+            final QuesterPostStartQuestEvent postEvent = new QuesterPostStartQuestEvent(this, bukkitQuest);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
     }
@@ -944,11 +946,11 @@ public class BukkitQuester implements Quester {
             final LinkedList<Quest> available = new LinkedList<>();
             for (final Quest q : quests) {
                 if (!quester.getCompletedQuestsTemp().contains(q)) {
-                    if (q.testRequirements(player)) {
+                    if (q.testRequirements(quester)) {
                         available.add(q);
                     }
                 } else if (q.getPlanner().hasCooldown() && quester.getRemainingCooldown(q) < 0) {
-                    if (q.testRequirements(player)) {
+                    if (q.testRequirements(quester)) {
                         available.add(q);
                     }
                 }
@@ -1136,7 +1138,7 @@ public class BukkitQuester implements Quester {
             for (final Entry<String, Map<String, Object>> m : requirements.getCustomRequirements().entrySet()) {
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(m.getKey())) {
-                        if (cr.testRequirement(getPlayer(), m.getValue())) {
+                        if (cr.testRequirement(getPlayer().getUniqueId(), m.getValue())) {
                             finishedRequirements.add(ChatColor.GREEN + ""
                                     + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
                         } else {
@@ -1173,7 +1175,7 @@ public class BukkitQuester implements Quester {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
             return new LinkedList<>();
         }
-        final Dependencies depends = plugin.getDependencies();
+        final BukkitDependencies depends = plugin.getDependencies();
         if (!ignoreOverrides && !getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
             final LinkedList<String> objectives = new LinkedList<>();
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
@@ -1648,7 +1650,7 @@ public class BukkitQuester implements Quester {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
             return new LinkedList<>();
         }
-        final Dependencies depends = plugin.getDependencies();
+        final BukkitDependencies depends = plugin.getDependencies();
         if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
             final LinkedList<BukkitObjective> objectives = new LinkedList<>();
             for (final String s: stage.getObjectiveOverrides()) {
@@ -2366,7 +2368,7 @@ public class BukkitQuester implements Quester {
             plugin.getLogger().warning("Current stage was null when showing conditions for " + quest.getName());
             return;
         }
-        final Condition c = stage.getCondition();
+        final BukkitCondition c = (BukkitCondition) stage.getCondition();
         if (c != null && stage.getObjectiveOverrides().isEmpty()) {
             quester.sendMessage(ChatColor.LIGHT_PURPLE + Language.get("stageEditorConditions"));
             final StringBuilder msg = new StringBuilder("- " + ChatColor.YELLOW);

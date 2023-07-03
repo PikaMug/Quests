@@ -78,20 +78,20 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(Key.E_TIMER) == null) {
+            if (context.getSessionData(Key.A_TIMER) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
-                final Integer timer = (Integer)context.getSessionData(Key.E_TIMER);
+                final Integer timer = (Integer)context.getSessionData(Key.A_TIMER);
                 if (timer != null) {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitMiscUtil.getTime(timer * 1000L) + ChatColor.GRAY
                             + ")";
                 }
             }
         case 2:
-            if (context.getSessionData(Key.E_CANCEL_TIMER) == null) {
+            if (context.getSessionData(Key.A_CANCEL_TIMER) == null) {
                 return ChatColor.GRAY + "(" + ChatColor.RED + Language.get("false") + ChatColor.GRAY + ")";
             } else {
-                final Boolean timerOpt = (Boolean) context.getSessionData(Key.E_CANCEL_TIMER);
+                final Boolean timerOpt = (Boolean) context.getSessionData(Key.A_CANCEL_TIMER);
                 return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(timerOpt) ? ChatColor.GREEN + Language.get("true")
                         : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
             }
@@ -104,8 +104,8 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final ConversationContext context) {
-        if (context.getSessionData(Key.E_CANCEL_TIMER) == null) {
-            context.setSessionData(Key.E_CANCEL_TIMER, false);
+        if (context.getSessionData(Key.A_CANCEL_TIMER) == null) {
+            context.setSessionData(Key.A_CANCEL_TIMER, false);
         }
         
         final ActionsEditorPostOpenNumericPromptEvent event
@@ -127,11 +127,11 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
         case 1:
             return new ActionTimerFailPrompt(context);
         case 2:
-            final Boolean b = (Boolean) context.getSessionData(Key.E_CANCEL_TIMER);
+            final Boolean b = (Boolean) context.getSessionData(Key.A_CANCEL_TIMER);
             if (Boolean.TRUE.equals(b)) {
-                context.setSessionData(Key.E_CANCEL_TIMER, false);
+                context.setSessionData(Key.A_CANCEL_TIMER, false);
             } else {
-                context.setSessionData(Key.E_CANCEL_TIMER, true);
+                context.setSessionData(Key.A_CANCEL_TIMER, true);
             }
             return new ActionTimerPrompt(context);
         case 3:
@@ -173,7 +173,7 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
                 if (i < 1) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questEditorPositiveAmount"));
                 } else {
-                    context.setSessionData(Key.E_TIMER, i);
+                    context.setSessionData(Key.A_TIMER, i);
                 }
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED

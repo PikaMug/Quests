@@ -12,29 +12,16 @@
 
 package me.pikamug.quests.quests;
 
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public interface QuestFactory {
-    Map<UUID, Block> getSelectedBlockStarts();
-
-    void setSelectedBlockStarts(final Map<UUID, Block> selectedBlockStarts);
-
-    Map<UUID, Block> getSelectedKillLocations();
-
-    void setSelectedKillLocations(final Map<UUID, Block> selectedKillLocations);
-
-    Map<UUID, Block> getSelectedReachLocations();
-
-    void setSelectedReachLocations(final Map<UUID, Block> selectedReachLocations);
 
     Set<UUID> getSelectingNpcs();
 

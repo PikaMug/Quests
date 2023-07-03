@@ -90,13 +90,13 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(Key.E_EFFECTS) == null) {
+            if (context.getSessionData(Key.A_EFFECTS) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(Key.E_EFFECTS);
+                final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS);
                 final LinkedList<String> locations
-                        = (LinkedList<String>) context.getSessionData(Key.E_EFFECTS_LOCATIONS);
+                        = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
                 if (effects != null && locations != null) {
                     for (final String effect : effects) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(effect)
@@ -107,11 +107,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (context.getSessionData(Key.E_EXPLOSIONS) == null) {
+            if (context.getSessionData(Key.A_EXPLOSIONS) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.E_EXPLOSIONS);
+                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.A_EXPLOSIONS);
                 if (locations != null) {
                     for (final String loc : locations) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc);
@@ -217,22 +217,22 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.E_EFFECTS) == null) {
+                if (context.getSessionData(Key.A_EFFECTS) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(Key.E_EFFECTS))) {
+                    for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(Key.A_EFFECTS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.E_EFFECTS_LOCATIONS) == null) {
+                if (context.getSessionData(Key.A_EFFECTS_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     for (final String s : (List<String>) Objects.requireNonNull(context
-                            .getSessionData(Key.E_EFFECTS_LOCATIONS))) {
+                            .getSessionData(Key.A_EFFECTS_LOCATIONS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
@@ -267,7 +267,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             case 1:
                 return new ActionEffectSoundPrompt(context);
             case 2:
-                if (context.getSessionData(Key.E_EFFECTS) == null) {
+                if (context.getSessionData(Key.A_EFFECTS) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorMustAddEffects"));
                     return new ActionEffectSoundListPrompt(context);
                 } else {
@@ -283,14 +283,14 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorEffectsCleared"));
-                context.setSessionData(Key.E_EFFECTS, null);
-                context.setSessionData(Key.E_EFFECTS_LOCATIONS, null);
+                context.setSessionData(Key.A_EFFECTS, null);
+                context.setSessionData(Key.A_EFFECTS_LOCATIONS, null);
                 return new ActionEffectSoundListPrompt(context);
             case 4:
                 final int one;
                 final int two;
-                final List<String> effects = (List<String>) context.getSessionData(Key.E_EFFECTS);
-                final List<String> locations = (List<String>) context.getSessionData(Key.E_EFFECTS_LOCATIONS);
+                final List<String> effects = (List<String>) context.getSessionData(Key.A_EFFECTS);
+                final List<String> locations = (List<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
                 if (effects != null) {
                     one = effects.size();
                 } else {
@@ -356,15 +356,15 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperEffect(input) != null) {
                     final LinkedList<String> effects;
-                    if (context.getSessionData(Key.E_EFFECTS) != null) {
-                        effects = (LinkedList<String>) context.getSessionData(Key.E_EFFECTS);
+                    if (context.getSessionData(Key.A_EFFECTS) != null) {
+                        effects = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS);
                     } else {
                         effects = new LinkedList<>();
                     }
                     if (effects != null && BukkitMiscUtil.getProperEffect(input) != null) {
                         effects.add(Objects.requireNonNull(BukkitMiscUtil.getProperEffect(input)).name());
                     }
-                    context.setSessionData(Key.E_EFFECTS, effects);
+                    context.setSessionData(Key.A_EFFECTS, effects);
                     if (context.getForWhom() instanceof Player) {
                         final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
                                 .getSelectedEffectLocations();
@@ -427,15 +427,15 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
-                    if (context.getSessionData(Key.E_EFFECTS_LOCATIONS) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(Key.E_EFFECTS_LOCATIONS);
+                    if (context.getSessionData(Key.A_EFFECTS_LOCATIONS) != null) {
+                        locations = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
                     } else {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
-                    context.setSessionData(Key.E_EFFECTS_LOCATIONS, locations);
+                    context.setSessionData(Key.A_EFFECTS_LOCATIONS, locations);
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
                     player.sendMessage(ChatColor.RED + Language.get("eventEditorSelectBlockFirst"));
@@ -491,15 +491,15 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
-                    if (context.getSessionData(Key.E_EXPLOSIONS) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(Key.E_EXPLOSIONS);
+                    if (context.getSessionData(Key.A_EXPLOSIONS) != null) {
+                        locations = (LinkedList<String>) context.getSessionData(Key.A_EXPLOSIONS);
                     } else {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
-                    context.setSessionData(Key.E_EXPLOSIONS, locations);
+                    context.setSessionData(Key.A_EXPLOSIONS, locations);
                     selectedExplosionLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 } else {
@@ -508,7 +508,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                context.setSessionData(Key.E_EXPLOSIONS, null);
+                context.setSessionData(Key.A_EXPLOSIONS, null);
                 final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);

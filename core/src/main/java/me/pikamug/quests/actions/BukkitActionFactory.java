@@ -85,8 +85,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         return selectedExplosionLocations;
     }
 
-    public void setSelectedExplosionLocations(
-            final Map<UUID, Block> selectedExplosionLocations) {
+    public void setSelectedExplosionLocations(final Map<UUID, Block> selectedExplosionLocations) {
         this.selectedExplosionLocations = selectedExplosionLocations;
     }
 
@@ -110,8 +109,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         return selectedLightningLocations;
     }
 
-    public void setSelectedLightningLocations(
-            final Map<UUID, Block> selectedLightningLocations) {
+    public void setSelectedLightningLocations(final Map<UUID, Block> selectedLightningLocations) {
         this.selectedLightningLocations = selectedLightningLocations;
     }
 
@@ -152,126 +150,127 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         return new ActionMainPrompt(context);
     }
     
-    public void loadData(final Action event, final ConversationContext context) {
-        if (event.getMessage() != null) {
-            context.setSessionData(Key.E_MESSAGE, event.getMessage());
+    public void loadData(final ConversationContext context, final Action action) {
+        BukkitAction bukkitAction = (BukkitAction) action;
+        if (bukkitAction.getMessage() != null) {
+            context.setSessionData(Key.A_MESSAGE, bukkitAction.getMessage());
         }
-        if (event.isClearInv()) {
-            context.setSessionData(Key.E_CLEAR_INVENTORY, true);
+        if (bukkitAction.isClearInv()) {
+            context.setSessionData(Key.A_CLEAR_INVENTORY, true);
         } else {
-            context.setSessionData(Key.E_CLEAR_INVENTORY, false);
+            context.setSessionData(Key.A_CLEAR_INVENTORY, false);
         }
-        if (event.isFailQuest()) {
-            context.setSessionData(Key.E_FAIL_QUEST, true);
+        if (bukkitAction.isFailQuest()) {
+            context.setSessionData(Key.A_FAIL_QUEST, true);
         } else {
-            context.setSessionData(Key.E_FAIL_QUEST, false);
+            context.setSessionData(Key.A_FAIL_QUEST, false);
         }
-        if (event.getItems() != null && !event.getItems().isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(event.getItems());
-            context.setSessionData(Key.E_ITEMS, items);
+        if (bukkitAction.getItems() != null && !bukkitAction.getItems().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(bukkitAction.getItems());
+            context.setSessionData(Key.A_ITEMS, items);
         }
-        if (event.getExplosions() != null && !event.getExplosions().isEmpty()) {
+        if (bukkitAction.getExplosions() != null && !bukkitAction.getExplosions().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
-            for (final Location loc : event.getExplosions()) {
+            for (final Location loc : bukkitAction.getExplosions()) {
                 locs.add(BukkitConfigUtil.getLocationInfo(loc));
             }
-            context.setSessionData(Key.E_EXPLOSIONS, locs);
+            context.setSessionData(Key.A_EXPLOSIONS, locs);
         }
-        if (event.getEffects() != null && !event.getEffects().isEmpty()) {
+        if (bukkitAction.getEffects() != null && !bukkitAction.getEffects().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
             final LinkedList<String> effs = new LinkedList<>();
-            for (final Entry<Location, Effect> e : event.getEffects().entrySet()) {
+            for (final Entry<Location, Effect> e : bukkitAction.getEffects().entrySet()) {
                 locs.add(BukkitConfigUtil.getLocationInfo(e.getKey()));
                 effs.add(e.getValue().toString());
             }
-            context.setSessionData(Key.E_EFFECTS, effs);
-            context.setSessionData(Key.E_EFFECTS_LOCATIONS, locs);
+            context.setSessionData(Key.A_EFFECTS, effs);
+            context.setSessionData(Key.A_EFFECTS_LOCATIONS, locs);
         }
-        if (event.getStormWorld() != null) {
-            context.setSessionData(Key.E_WORLD_STORM, event.getStormWorld().getName());
-            context.setSessionData(Key.E_WORLD_STORM_DURATION, event.getStormDuration());
+        if (bukkitAction.getStormWorld() != null) {
+            context.setSessionData(Key.A_WORLD_STORM, bukkitAction.getStormWorld().getName());
+            context.setSessionData(Key.A_WORLD_STORM_DURATION, bukkitAction.getStormDuration());
         }
-        if (event.getThunderWorld() != null) {
-            context.setSessionData(Key.E_WORLD_THUNDER, event.getThunderWorld().getName());
-            context.setSessionData(Key.E_WORLD_THUNDER_DURATION, event.getThunderDuration());
+        if (bukkitAction.getThunderWorld() != null) {
+            context.setSessionData(Key.A_WORLD_THUNDER, bukkitAction.getThunderWorld().getName());
+            context.setSessionData(Key.A_WORLD_THUNDER_DURATION, bukkitAction.getThunderDuration());
         }
-        if (event.getMobSpawns() != null && !event.getMobSpawns().isEmpty()) {
+        if (bukkitAction.getMobSpawns() != null && !bukkitAction.getMobSpawns().isEmpty()) {
             final LinkedList<String> questMobs = new LinkedList<>();
-            for (final QuestMob questMob : event.getMobSpawns()) {
+            for (final QuestMob questMob : bukkitAction.getMobSpawns()) {
                 questMobs.add(questMob.serialize());
             }
-            context.setSessionData(Key.E_MOB_TYPES, questMobs);
+            context.setSessionData(Key.A_MOB_TYPES, questMobs);
         }
-        if (event.getLightningStrikes() != null && !event.getLightningStrikes().isEmpty()) {
+        if (bukkitAction.getLightningStrikes() != null && !bukkitAction.getLightningStrikes().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
-            for (final Location loc : event.getLightningStrikes()) {
+            for (final Location loc : bukkitAction.getLightningStrikes()) {
                 locs.add(BukkitConfigUtil.getLocationInfo(loc));
             }
-            context.setSessionData(Key.E_LIGHTNING, locs);
+            context.setSessionData(Key.A_LIGHTNING, locs);
         }
-        if (event.getPotionEffects() != null && !event.getPotionEffects().isEmpty()) {
+        if (bukkitAction.getPotionEffects() != null && !bukkitAction.getPotionEffects().isEmpty()) {
             final LinkedList<String> types = new LinkedList<>();
             final LinkedList<Long> durations = new LinkedList<>();
             final LinkedList<Integer> mags = new LinkedList<>();
-            for (final PotionEffect pe : event.getPotionEffects()) {
+            for (final PotionEffect pe : bukkitAction.getPotionEffects()) {
                 types.add(pe.getType().getName());
                 durations.add((long) pe.getDuration());
                 mags.add(pe.getAmplifier());
             }
-            context.setSessionData(Key.E_POTION_TYPES, types);
-            context.setSessionData(Key.E_POTION_DURATIONS, durations);
-            context.setSessionData(Key.E_POTION_STRENGTH, mags);
+            context.setSessionData(Key.A_POTION_TYPES, types);
+            context.setSessionData(Key.A_POTION_DURATIONS, durations);
+            context.setSessionData(Key.A_POTION_STRENGTH, mags);
         }
-        if (event.getHunger() > -1) {
-            context.setSessionData(Key.E_HUNGER, event.getHunger());
+        if (bukkitAction.getHunger() > -1) {
+            context.setSessionData(Key.A_HUNGER, bukkitAction.getHunger());
         }
-        if (event.getSaturation() > -1) {
-            context.setSessionData(Key.E_SATURATION, event.getSaturation());
+        if (bukkitAction.getSaturation() > -1) {
+            context.setSessionData(Key.A_SATURATION, bukkitAction.getSaturation());
         }
-        if (event.getHealth() > -1) {
-            context.setSessionData(Key.E_HEALTH, event.getHealth());
+        if (bukkitAction.getHealth() > -1) {
+            context.setSessionData(Key.A_HEALTH, bukkitAction.getHealth());
         }
-        if (event.getTeleport() != null) {
-            context.setSessionData(Key.E_TELEPORT, BukkitConfigUtil.getLocationInfo(event.getTeleport()));
+        if (bukkitAction.getTeleport() != null) {
+            context.setSessionData(Key.A_TELEPORT, BukkitConfigUtil.getLocationInfo(bukkitAction.getTeleport()));
         }
-        if (event.getCommands() != null) {
-            context.setSessionData(Key.E_COMMANDS, event.getCommands());
+        if (bukkitAction.getCommands() != null) {
+            context.setSessionData(Key.A_COMMANDS, bukkitAction.getCommands());
         }
-        if (event.getTimer() > 0) {
-            context.setSessionData(Key.E_TIMER, event.getTimer());
+        if (bukkitAction.getTimer() > 0) {
+            context.setSessionData(Key.A_TIMER, bukkitAction.getTimer());
         }
-        if (event.isCancelTimer()) {
-            context.setSessionData(Key.E_CANCEL_TIMER, true);
+        if (bukkitAction.isCancelTimer()) {
+            context.setSessionData(Key.A_CANCEL_TIMER, true);
         }
     }
 
     public void clearData(final ConversationContext context) {
-        context.setSessionData(Key.E_OLD_EVENT, null);
-        context.setSessionData(Key.E_NAME, null);
-        context.setSessionData(Key.E_MESSAGE, null);
-        context.setSessionData(Key.E_CLEAR_INVENTORY, null);
-        context.setSessionData(Key.E_FAIL_QUEST, null);
-        context.setSessionData(Key.E_ITEMS, null);
-        context.setSessionData(Key.E_ITEMS_AMOUNTS, null);
-        context.setSessionData(Key.E_EXPLOSIONS, null);
-        context.setSessionData(Key.E_EFFECTS, null);
-        context.setSessionData(Key.E_EFFECTS_LOCATIONS, null);
-        context.setSessionData(Key.E_WORLD_STORM, null);
-        context.setSessionData(Key.E_WORLD_STORM_DURATION, null);
-        context.setSessionData(Key.E_WORLD_THUNDER, null);
-        context.setSessionData(Key.E_WORLD_THUNDER_DURATION, null);
-        context.setSessionData(Key.E_MOB_TYPES, null);
-        context.setSessionData(Key.E_LIGHTNING, null);
-        context.setSessionData(Key.E_POTION_TYPES, null);
-        context.setSessionData(Key.E_POTION_DURATIONS, null);
-        context.setSessionData(Key.E_POTION_STRENGTH, null);
-        context.setSessionData(Key.E_HUNGER, null);
-        context.setSessionData(Key.E_SATURATION, null);
-        context.setSessionData(Key.E_HEALTH, null);
-        context.setSessionData(Key.E_TELEPORT, null);
-        context.setSessionData(Key.E_COMMANDS, null);
-        context.setSessionData(Key.E_TIMER, null);
-        context.setSessionData(Key.E_CANCEL_TIMER, null);
+        context.setSessionData(Key.A_OLD_ACTION, null);
+        context.setSessionData(Key.A_NAME, null);
+        context.setSessionData(Key.A_MESSAGE, null);
+        context.setSessionData(Key.A_CLEAR_INVENTORY, null);
+        context.setSessionData(Key.A_FAIL_QUEST, null);
+        context.setSessionData(Key.A_ITEMS, null);
+        context.setSessionData(Key.A_ITEMS_AMOUNTS, null);
+        context.setSessionData(Key.A_EXPLOSIONS, null);
+        context.setSessionData(Key.A_EFFECTS, null);
+        context.setSessionData(Key.A_EFFECTS_LOCATIONS, null);
+        context.setSessionData(Key.A_WORLD_STORM, null);
+        context.setSessionData(Key.A_WORLD_STORM_DURATION, null);
+        context.setSessionData(Key.A_WORLD_THUNDER, null);
+        context.setSessionData(Key.A_WORLD_THUNDER_DURATION, null);
+        context.setSessionData(Key.A_MOB_TYPES, null);
+        context.setSessionData(Key.A_LIGHTNING, null);
+        context.setSessionData(Key.A_POTION_TYPES, null);
+        context.setSessionData(Key.A_POTION_DURATIONS, null);
+        context.setSessionData(Key.A_POTION_STRENGTH, null);
+        context.setSessionData(Key.A_HUNGER, null);
+        context.setSessionData(Key.A_SATURATION, null);
+        context.setSessionData(Key.A_HEALTH, null);
+        context.setSessionData(Key.A_TELEPORT, null);
+        context.setSessionData(Key.A_COMMANDS, null);
+        context.setSessionData(Key.A_TIMER, null);
+        context.setSessionData(Key.A_CANCEL_TIMER, null);
     }
 
     public void deleteAction(final ConversationContext context) {
@@ -337,58 +336,58 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         if (data.getConfigurationSection(key) == null) {
             key = "events";
         }
-        if (context.getSessionData(Key.E_OLD_EVENT) != null
-                && !((String) Objects.requireNonNull(context.getSessionData(Key.E_OLD_EVENT))).isEmpty()) {
-            data.set(key + "." + context.getSessionData(Key.E_OLD_EVENT), null);
+        if (context.getSessionData(Key.A_OLD_ACTION) != null
+                && !((String) Objects.requireNonNull(context.getSessionData(Key.A_OLD_ACTION))).isEmpty()) {
+            data.set(key + "." + context.getSessionData(Key.A_OLD_ACTION), null);
             final Collection<Action> temp = plugin.getLoadedActions();
-            temp.remove(plugin.getAction((String) context.getSessionData(Key.E_OLD_EVENT)));
+            temp.remove(plugin.getAction((String) context.getSessionData(Key.A_OLD_ACTION)));
             plugin.setLoadedActions(temp);
         }
-        final ConfigurationSection section = data.createSection(key + "." + context.getSessionData(Key.E_NAME));
-        editingActionNames.remove((String) context.getSessionData(Key.E_NAME));
-        if (context.getSessionData(Key.E_MESSAGE) != null) {
-            section.set("message", context.getSessionData(Key.E_MESSAGE));
+        final ConfigurationSection section = data.createSection(key + "." + context.getSessionData(Key.A_NAME));
+        editingActionNames.remove((String) context.getSessionData(Key.A_NAME));
+        if (context.getSessionData(Key.A_MESSAGE) != null) {
+            section.set("message", context.getSessionData(Key.A_MESSAGE));
         }
-        if (context.getSessionData(Key.E_CLEAR_INVENTORY) != null) {
-            final Boolean b = (Boolean) context.getSessionData(Key.E_CLEAR_INVENTORY);
+        if (context.getSessionData(Key.A_CLEAR_INVENTORY) != null) {
+            final Boolean b = (Boolean) context.getSessionData(Key.A_CLEAR_INVENTORY);
             if (b != null) {
                 section.set("clear-inventory", b);
             }
         }
-        if (context.getSessionData(Key.E_FAIL_QUEST) != null) {
-            final Boolean b = (Boolean) context.getSessionData(Key.E_FAIL_QUEST);
+        if (context.getSessionData(Key.A_FAIL_QUEST) != null) {
+            final Boolean b = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
             if (b != null) {
                 section.set("fail-quest", b);
             }
         }
-        if (context.getSessionData(Key.E_ITEMS) != null) {
-            section.set("items", context.getSessionData(Key.E_ITEMS));
+        if (context.getSessionData(Key.A_ITEMS) != null) {
+            section.set("items", context.getSessionData(Key.A_ITEMS));
         }
-        if (context.getSessionData(Key.E_EXPLOSIONS) != null) {
-            section.set("explosions", context.getSessionData(Key.E_EXPLOSIONS));
+        if (context.getSessionData(Key.A_EXPLOSIONS) != null) {
+            section.set("explosions", context.getSessionData(Key.A_EXPLOSIONS));
         }
-        if (context.getSessionData(Key.E_EFFECTS) != null) {
-            section.set("effects", context.getSessionData(Key.E_EFFECTS));
-            section.set("effect-locations", context.getSessionData(Key.E_EFFECTS_LOCATIONS));
+        if (context.getSessionData(Key.A_EFFECTS) != null) {
+            section.set("effects", context.getSessionData(Key.A_EFFECTS));
+            section.set("effect-locations", context.getSessionData(Key.A_EFFECTS_LOCATIONS));
         }
-        if (context.getSessionData(Key.E_WORLD_STORM) != null) {
-            section.set("storm-world", context.getSessionData(Key.E_WORLD_STORM));
-            section.set("storm-duration", context.getSessionData(Key.E_WORLD_STORM_DURATION));
+        if (context.getSessionData(Key.A_WORLD_STORM) != null) {
+            section.set("storm-world", context.getSessionData(Key.A_WORLD_STORM));
+            section.set("storm-duration", context.getSessionData(Key.A_WORLD_STORM_DURATION));
         }
-        if (context.getSessionData(Key.E_WORLD_THUNDER) != null) {
-            section.set("thunder-world", context.getSessionData(Key.E_WORLD_THUNDER));
-            section.set("thunder-duration", context.getSessionData(Key.E_WORLD_THUNDER_DURATION));
+        if (context.getSessionData(Key.A_WORLD_THUNDER) != null) {
+            section.set("thunder-world", context.getSessionData(Key.A_WORLD_THUNDER));
+            section.set("thunder-duration", context.getSessionData(Key.A_WORLD_THUNDER_DURATION));
         }
         try {
-            if (context.getSessionData(Key.E_MOB_TYPES) != null) {
+            if (context.getSessionData(Key.A_MOB_TYPES) != null) {
                 int count = 0;
                 for (final String s : (LinkedList<String>) Objects.requireNonNull(context
-                        .getSessionData(Key.E_MOB_TYPES))) {
+                        .getSessionData(Key.A_MOB_TYPES))) {
                     ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
                     if (ss == null) {
                         ss = section.createSection("mob-spawns." + count);
                     }
-                    final QuestMob questMob = BukkitQuestMob.fromString(s);
+                    final BukkitQuestMob questMob = BukkitQuestMob.fromString(s);
                     if (questMob.getName() != null) {
                         ss.set("name", questMob.getName());
                     }
@@ -411,46 +410,46 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        if (context.getSessionData(Key.E_LIGHTNING) != null) {
-            section.set("lightning-strikes", context.getSessionData(Key.E_LIGHTNING));
+        if (context.getSessionData(Key.A_LIGHTNING) != null) {
+            section.set("lightning-strikes", context.getSessionData(Key.A_LIGHTNING));
         }
-        if (context.getSessionData(Key.E_COMMANDS) != null) {
-            final LinkedList<String> commands = (LinkedList<String>) context.getSessionData(Key.E_COMMANDS);
+        if (context.getSessionData(Key.A_COMMANDS) != null) {
+            final LinkedList<String> commands = (LinkedList<String>) context.getSessionData(Key.A_COMMANDS);
             if (commands != null && !commands.isEmpty()) {
                 section.set("commands", commands);
             }
         }
-        if (context.getSessionData(Key.E_POTION_TYPES) != null) {
-            section.set("potion-effect-types", context.getSessionData(Key.E_POTION_TYPES));
-            section.set("potion-effect-durations", context.getSessionData(Key.E_POTION_DURATIONS));
-            section.set("potion-effect-amplifiers", context.getSessionData(Key.E_POTION_STRENGTH));
+        if (context.getSessionData(Key.A_POTION_TYPES) != null) {
+            section.set("potion-effect-types", context.getSessionData(Key.A_POTION_TYPES));
+            section.set("potion-effect-durations", context.getSessionData(Key.A_POTION_DURATIONS));
+            section.set("potion-effect-amplifiers", context.getSessionData(Key.A_POTION_STRENGTH));
         }
-        if (context.getSessionData(Key.E_HUNGER) != null) {
-            section.set("hunger", context.getSessionData(Key.E_HUNGER));
+        if (context.getSessionData(Key.A_HUNGER) != null) {
+            section.set("hunger", context.getSessionData(Key.A_HUNGER));
         }
-        if (context.getSessionData(Key.E_SATURATION) != null) {
-            section.set("saturation", context.getSessionData(Key.E_SATURATION));
+        if (context.getSessionData(Key.A_SATURATION) != null) {
+            section.set("saturation", context.getSessionData(Key.A_SATURATION));
         }
-        if (context.getSessionData(Key.E_HEALTH) != null) {
-            section.set("health", context.getSessionData(Key.E_HEALTH));
+        if (context.getSessionData(Key.A_HEALTH) != null) {
+            section.set("health", context.getSessionData(Key.A_HEALTH));
         }
-        if (context.getSessionData(Key.E_TELEPORT) != null) {
-            section.set("teleport-location", context.getSessionData(Key.E_TELEPORT));
+        if (context.getSessionData(Key.A_TELEPORT) != null) {
+            section.set("teleport-location", context.getSessionData(Key.A_TELEPORT));
         }
-        if (context.getSessionData(Key.E_TIMER) != null) {
-            final Integer i = (Integer) context.getSessionData(Key.E_TIMER);
+        if (context.getSessionData(Key.A_TIMER) != null) {
+            final Integer i = (Integer) context.getSessionData(Key.A_TIMER);
             if (i != null && i > 0) {
-                section.set("timer", context.getSessionData(Key.E_TIMER));
+                section.set("timer", context.getSessionData(Key.A_TIMER));
             }
         }
-        if (context.getSessionData(Key.E_CANCEL_TIMER) != null) {
-            final Boolean b = (Boolean) context.getSessionData(Key.E_CANCEL_TIMER);
+        if (context.getSessionData(Key.A_CANCEL_TIMER) != null) {
+            final Boolean b = (Boolean) context.getSessionData(Key.A_CANCEL_TIMER);
             if (b != null) {
                 section.set("cancel-timer", b);
             }
         }
-        if (context.getSessionData(Key.E_DENIZEN) != null) {
-            section.set("denizen-script", context.getSessionData(Key.E_DENIZEN));
+        if (context.getSessionData(Key.A_DENIZEN) != null) {
+            section.set("denizen-script", context.getSessionData(Key.A_DENIZEN));
         }
         try {
             data.save(actionsFile);
@@ -468,7 +467,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         if (plugin.getSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(identifier + " saved action " + context.getSessionData(Key.E_NAME));
+            plugin.getLogger().info(identifier + " saved action " + context.getSessionData(Key.A_NAME));
         }
         for (final Quester q : plugin.getOfflineQuesters()) {
             for (final Quest quest : q.getCurrentQuestsTemp().keySet()) {

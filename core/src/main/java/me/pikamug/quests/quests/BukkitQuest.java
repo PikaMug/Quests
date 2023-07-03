@@ -18,10 +18,11 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
-import me.pikamug.quests.dependencies.Dependencies;
+import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
 import me.pikamug.quests.events.quester.QuesterPostChangeStageEvent;
 import me.pikamug.quests.events.quester.QuesterPostCompleteQuestEvent;
@@ -32,15 +33,14 @@ import me.pikamug.quests.events.quester.QuesterPreFailQuestEvent;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
-import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.player.BukkitQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.RomanNumeral;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -56,7 +56,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -95,7 +94,7 @@ public class BukkitQuest implements Quest {
         return id.compareTo(quest.getId());
     }
 
-    public BukkitQuestsPlugin getPlugin() {
+    /*public BukkitQuestsPlugin getPlugin() {
         return plugin;
     }
 
@@ -103,7 +102,7 @@ public class BukkitQuest implements Quest {
         if (plugin instanceof BukkitQuestsPlugin) {
             this.plugin = (BukkitQuestsPlugin)plugin;
         }
-    }
+    }*/
 
     @Override
     public String getId() {
@@ -157,12 +156,10 @@ public class BukkitQuest implements Quest {
         this.regionStart = regionStart;
     }
 
-    @Override
     public ItemStack getGUIDisplay() {
         return guiDisplay;
     }
 
-    @Override
     public void setGUIDisplay(final ItemStack guiDisplay) {
         this.guiDisplay = guiDisplay;
     }
@@ -196,12 +193,10 @@ public class BukkitQuest implements Quest {
         return plugin.getDependencies().getNpcName(getNpcStart());
     }
 
-    @Override
     public Location getBlockStart() {
         return blockStart;
     }
 
-    @Override
     public void setBlockStart(final Location blockStart) {
         this.blockStart = blockStart;
     }
@@ -649,7 +644,7 @@ public class BukkitQuest implements Quest {
                     }
                 }
                 if (found != null) {
-                    if (!found.testRequirement(p, requirements.getCustomRequirements().get(s))) {
+                    if (!found.testRequirement(p.getUniqueId(), requirements.getCustomRequirements().get(s))) {
                         return false;
                     }
                 } else {
@@ -730,7 +725,7 @@ public class BukkitQuest implements Quest {
         }
         
         // Issue rewards
-        final Dependencies depends = plugin.getDependencies();
+        final BukkitDependencies depends = plugin.getDependencies();
         boolean issuedReward = false;
         if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
             depends.getVaultEconomy().depositPlayer(player, rewards.getMoney());
@@ -1015,7 +1010,7 @@ public class BukkitQuest implements Quest {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
-                        found.giveReward(p, rewards.getCustomRewards().get(s));
+                        found.giveReward(p.getUniqueId(), rewards.getCustomRewards().get(s));
                     } else {
                         plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
                                 + name + "\", but the Custom Reward \"" + s

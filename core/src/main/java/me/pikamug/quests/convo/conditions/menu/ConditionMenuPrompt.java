@@ -250,7 +250,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 if (c != null) {
                     context.setSessionData(Key.C_OLD_CONDITION, c.getName());
                     context.setSessionData(Key.C_NAME, c.getName());
-                    plugin.getConditionFactory().loadData(c, context);
+                    plugin.getConditionFactory().loadData(context, c);
                     return new ConditionMainPrompt(context);
                 }
                 context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorNotFound"));

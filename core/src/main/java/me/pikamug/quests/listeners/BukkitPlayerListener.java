@@ -129,7 +129,7 @@ public class BukkitPlayerListener implements Listener {
                 event.setCancelled(true);
                 for (final Quest quest : plugin.getLoadedQuests()) {
                     final BukkitQuest bukkitQuest = (BukkitQuest)quest;
-                    if (quest.getGUIDisplay() != null) {
+                    if (bukkitQuest.getGUIDisplay() != null) {
                         if (BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false) == 0) {
                             if (quester.canAcceptOffer(quest, true)) {
                                 try { 
@@ -369,9 +369,10 @@ public class BukkitPlayerListener implements Listener {
                             }
                             event.setCancelled(true);
                         } else if (!player.isConversing()) {
-                            for (final Quest q : plugin.getLoadedQuests()) {
-                                if (q.getBlockStart() != null && event.getClickedBlock() != null) {
-                                    if (q.getBlockStart().equals(event.getClickedBlock().getLocation())) {
+                            for (final Quest quest : plugin.getLoadedQuests()) {
+                                final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+                                if (bukkitQuest.getBlockStart() != null && event.getClickedBlock() != null) {
+                                    if (bukkitQuest.getBlockStart().equals(event.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
                                                 && plugin.getSettings().getMaxQuests() > 0) {
                                             String msg = Language.get(player, "questMaxAllowed");
@@ -379,40 +380,40 @@ public class BukkitPlayerListener implements Listener {
                                                     .valueOf(plugin.getSettings().getMaxQuests()));
                                             Language.send(player, ChatColor.YELLOW + msg);
                                         } else {
-                                            if (quester.getCompletedQuestsTemp().contains(q)) {
-                                                if (q.getPlanner().getCooldown() > -1 
-                                                        && (quester.getRemainingCooldown(q)) > 0) {
+                                            if (quester.getCompletedQuestsTemp().contains(bukkitQuest)) {
+                                                if (bukkitQuest.getPlanner().getCooldown() > -1
+                                                        && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
                                                     String early = Language.get(player, "questTooEarly");
-                                                    early = early.replace("<quest>", ChatColor.AQUA + q.getName() 
+                                                    early = early.replace("<quest>", ChatColor.AQUA + bukkitQuest.getName()
                                                             + ChatColor.YELLOW);
                                                     early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                            + BukkitMiscUtil.getTime(quester.getRemainingCooldown(q))
+                                                            + BukkitMiscUtil.getTime(quester.getRemainingCooldown(bukkitQuest))
                                                             + ChatColor.YELLOW);
                                                     Language.send(player, ChatColor.YELLOW + early);
                                                     continue;
-                                                } else if (quester.getCompletedQuestsTemp().contains(q)
-                                                        && q.getPlanner().getCooldown() < 0) {
+                                                } else if (quester.getCompletedQuestsTemp().contains(bukkitQuest)
+                                                        && bukkitQuest.getPlanner().getCooldown() < 0) {
                                                     String completed = Language.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
-                                                            + q.getName() + ChatColor.YELLOW);
+                                                            + bukkitQuest.getName() + ChatColor.YELLOW);
                                                     Language.send(player, ChatColor.YELLOW + completed);
                                                     continue;
                                                 }
                                             }
-                                            for (final Quest iq : quester.getCurrentQuestsTemp().keySet()) {
-                                                if (iq.getId().equals(q.getId())) {
+                                            for (final Quest currentQuest : quester.getCurrentQuestsTemp().keySet()) {
+                                                if (currentQuest.getId().equals(bukkitQuest.getId())) {
                                                     Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
                                                     return;
                                                 }
                                             }
-                                            quester.setQuestIdToTake(q.getId());
+                                            quester.setQuestIdToTake(bukkitQuest.getId());
                                             if (!plugin.getSettings().canConfirmAccept()) {
-                                                quester.takeQuest(q, false);
+                                                quester.takeQuest(bukkitQuest, false);
                                             } else {
-                                                final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+                                                final Quest toTake = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE
-                                                        + quest.getName() + ChatColor.GOLD + " -\n" + "\n"
-                                                        + ChatColor.RESET + quest.getDescription() + "\n";
+                                                        + toTake.getName() + ChatColor.GOLD + " -\n" + "\n"
+                                                        + ChatColor.RESET + toTake.getDescription() + "\n";
                                                 for (final String msg : s.split("<br>")) {
                                                     Language.send(player, msg);
                                                 }

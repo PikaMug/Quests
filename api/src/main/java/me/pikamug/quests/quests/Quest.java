@@ -14,18 +14,11 @@ package me.pikamug.quests.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.Quester;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
 import java.util.UUID;
 
 public interface Quest extends Comparable<Quest> {
-    Plugin getPlugin();
-
-    void setPlugin(Plugin plugin);
 
     String getId();
 
@@ -47,10 +40,6 @@ public interface Quest extends Comparable<Quest> {
 
     void setRegionStart(final String regionStart);
 
-    ItemStack getGUIDisplay();
-
-    void setGUIDisplay(final ItemStack guiDisplay);
-
     Stage getStage(final int index);
 
     LinkedList<Stage> getStages();
@@ -60,10 +49,6 @@ public interface Quest extends Comparable<Quest> {
     void setNpcStart(final UUID npcStart);
 
     String getNpcStartName();
-
-    Location getBlockStart();
-
-    void setBlockStart(final Location blockStart);
 
     Action getInitialAction();
 
@@ -84,8 +69,6 @@ public interface Quest extends Comparable<Quest> {
     boolean updateCompass(final Quester quester, final Stage stage);
 
     boolean testRequirements(final Quester quester);
-
-    boolean testRequirements(final OfflinePlayer player);
 
     void completeQuest(final Quester quester);
 

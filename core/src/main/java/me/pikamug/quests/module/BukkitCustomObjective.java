@@ -16,14 +16,13 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.pikamug.quests.events.quester.QuesterPreUpdateObjectiveEvent;
-import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.player.BukkitQuester;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitObjective;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Stage;
-import me.pikamug.quests.quests.BukkitQuest;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 public class BukkitCustomObjective implements CustomObjective, Listener {
 
@@ -162,26 +162,27 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
         this.showCount = showCount;
     }
 
-    public Map<String, Object> getDataForPlayer(final Player player, final BukkitCustomObjective customObj,
-                                                final BukkitQuest quest) {
-        return getDataForPlayerTemp(player, customObj, quest);
-    }
-
     /**
-     * @deprecated Do not use
+     * Get custom objective data for applicable player
+     *
+     * @param uuid UUID of player attempting this objective
+     * @param customObj The objective being attempted
+     * @param quest Current me.pikamug.quests.Quest which includes this objective
+     * @return data Map of custom objective data
      */
-    @Deprecated
-    public Map<String, Object> getDataForPlayerTemp(final Player player, final CustomObjective customObj,
+    public Map<String, Object> getDataForPlayer(final UUID uuid, final CustomObjective customObj,
                                                 final Quest quest) {
-        final Quester quester = plugin.getQuester(player.getUniqueId());
+        final BukkitCustomObjective bukkitCustomObj = (BukkitCustomObjective) customObj;
+        final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+        final Quester quester = plugin.getQuester(uuid);
         if (quester != null) {
-            final Stage currentStage = quester.getCurrentStage(quest);
+            final Stage currentStage = quester.getCurrentStage(bukkitQuest);
             if (currentStage == null) {
                 return null;
             }
             CustomObjective found = null;
             for (final CustomObjective co : currentStage.getCustomObjectives()) {
-                if (co.getName().equals(customObj.getName())) {
+                if (co.getName().equals(bukkitCustomObj.getName())) {
                     found = co;
                     break;
                 }
@@ -203,65 +204,66 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
         return null;
     }
 
-    public void incrementObjective(final Player player, final BukkitCustomObjective obj, final int count,
-                                   final BukkitQuest quest) {
-        incrementObjectiveTemp(player, obj, count, quest);
-    }
-
     /**
-     * @deprecated Do not use
+     * Increment objective count for applicable player
+     *
+     * @param uuid UUID of player attempting this objective
+     * @param customObj The objective being attempted
+     * @param quest Current me.pikamug.quests.Quest which includes this objective
+     * @param count Amount to increase objective count by
      */
-    @Deprecated
-    public void incrementObjectiveTemp(final Player player, final CustomObjective obj, final int count,
-                                       final Quest quest) {
-        final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
+    public void incrementObjective(final UUID uuid, final CustomObjective customObj, final Quest quest,
+                                   final int count) {
+        final BukkitCustomObjective bukkitCustomObj = (BukkitCustomObjective) customObj;
+        final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+        final BukkitQuester quester = plugin.getQuester(uuid);
         if (quester != null) {
-            if (quester.hasCustomObjective(quest, obj.getName())) {
-                if (!quester.meetsCondition(quest, true)) {
+            if (quester.hasCustomObjective(bukkitQuest, bukkitCustomObj.getName())) {
+                if (!quester.meetsCondition(bukkitQuest, true)) {
                     return;
                 }
                 int index = -1;
-                final LinkedList<Integer> customObjCounts = quester.getQuestData(quest).customObjectiveCounts;
-                for (final CustomObjective co : quester.getCurrentStage(quest).getCustomObjectives()) {
+                final LinkedList<Integer> customObjCounts = quester.getQuestData(bukkitQuest).customObjectiveCounts;
+                for (final CustomObjective co : quester.getCurrentStage(bukkitQuest).getCustomObjectives()) {
                     index++;
                     if (co.getName().equals(this.getName())) {
                         if (index >= customObjCounts.size()) {
-                            plugin.getLogger().severe("Index was larger than count for " + obj.getName() + " by "
-                                    + obj.getAuthor());
+                            plugin.getLogger().severe("Index was larger than count for " + bukkitCustomObj.getName() + " by "
+                                    + bukkitCustomObj.getAuthor());
                             continue;
                         }
                         final int old = customObjCounts.get(index);
-                        plugin.getQuester(player.getUniqueId()).getQuestData(quest).customObjectiveCounts
+                        plugin.getQuester(uuid).getQuestData(bukkitQuest).customObjectiveCounts
                                 .set(index, old + count);
                         break;
                     }
                 }
                 if (index > -1) {
                     final int progress = customObjCounts.get(index);
-                    final int goal = quester.getCurrentStage(quest).getCustomObjectiveCounts().get(index);
+                    final int goal = quester.getCurrentStage(bukkitQuest).getCustomObjectiveCounts().get(index);
 
                     final ObjectiveType type = ObjectiveType.CUSTOM;
                     final QuesterPreUpdateObjectiveEvent preEvent
-                            = new QuesterPreUpdateObjectiveEvent(quester, quest, new BukkitObjective(type, progress, goal));
+                            = new QuesterPreUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     if (progress >= goal) {
-                        quester.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                                new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
+                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
+                                new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
 
                         // Multiplayer
                         final int finalIndex = index;
-                        quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
-                            final int old = q.getQuestData(quest).customObjectiveCounts.get(finalIndex);
-                            q.getQuestData(quest).customObjectiveCounts.set(finalIndex, old + count);
-                            q.finishObjective(quest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
-                                    new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, obj);
+                        quester.dispatchMultiplayerObjectives(bukkitQuest, quester.getCurrentStage(bukkitQuest), (final Quester q) -> {
+                            final int old = q.getQuestData(bukkitQuest).customObjectiveCounts.get(finalIndex);
+                            q.getQuestData(bukkitQuest).customObjectiveCounts.set(finalIndex, old + count);
+                            q.finishObjective(bukkitQuest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
+                                    new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
                             return null;
                         });
                     }
 
                     final QuesterPostUpdateObjectiveEvent postEvent
-                            = new QuesterPostUpdateObjectiveEvent(quester, quest, new BukkitObjective(type, progress, goal));
+                            = new QuesterPostUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(postEvent);
                 }
             }

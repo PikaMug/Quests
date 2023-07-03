@@ -14,7 +14,6 @@ package me.pikamug.quests.conditions;
 
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -39,14 +38,6 @@ public interface Condition extends Comparable<Condition> {
     LinkedList<String> getPermissions();
 
     void setPermissions(final LinkedList<String> permissions);
-
-    LinkedList<ItemStack> getItemsWhileHoldingMainHand();
-
-    void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand);
-
-    LinkedList<ItemStack> getItemsWhileWearing();
-
-    void setItemsWhileWearing(final LinkedList<ItemStack> itemsWhileWearing);
 
     LinkedList<String> getWorldsWhileStayingWithin();
 

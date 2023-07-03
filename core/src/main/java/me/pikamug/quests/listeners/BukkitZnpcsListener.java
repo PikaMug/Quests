@@ -5,6 +5,7 @@ import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -199,36 +200,37 @@ public class BukkitZnpcsListener implements Listener {
                 }
                 boolean hasAtLeastOneGUI = false;
                 final LinkedList<Quest> npcQuests = new LinkedList<>();
-                for (final Quest q : plugin.getLoadedQuests()) {
-                    if (quester.getCurrentQuestsTemp().containsKey(q)) {
+                for (final Quest quest : plugin.getLoadedQuests()) {
+                    final BukkitQuest bukkitQuest = (BukkitQuest) quest;
+                    if (quester.getCurrentQuestsTemp().containsKey(bukkitQuest)) {
                         continue;
                     }
-                    if (q.getNpcStart() != null && q.getNpcStart().equals(event.getNpc().getUUID())) {
+                    if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(event.getNpc().getUUID())) {
                         if (plugin.getSettings().canIgnoreLockedQuests()
-                                && (!quester.getCompletedQuestsTemp().contains(q)
-                                || q.getPlanner().getCooldown() > -1)) {
-                            if (q.testRequirements(quester)) {
-                                npcQuests.add(q);
-                                if (q.getGUIDisplay() != null) {
+                                && (!quester.getCompletedQuestsTemp().contains(bukkitQuest)
+                                || bukkitQuest.getPlanner().getCooldown() > -1)) {
+                            if (bukkitQuest.testRequirements(quester)) {
+                                npcQuests.add(bukkitQuest);
+                                if (bukkitQuest.getGUIDisplay() != null) {
                                     hasAtLeastOneGUI = true;
                                 }
                             }
-                        } else if (!quester.getCompletedQuestsTemp().contains(q) || q.getPlanner().getCooldown() > -1) {
-                            npcQuests.add(q);
-                            if (q.getGUIDisplay() != null) {
+                        } else if (!quester.getCompletedQuestsTemp().contains(bukkitQuest) || bukkitQuest.getPlanner().getCooldown() > -1) {
+                            npcQuests.add(bukkitQuest);
+                            if (bukkitQuest.getGUIDisplay() != null) {
                                 hasAtLeastOneGUI = true;
                             }
                         }
                     }
                 }
                 if (npcQuests.size() == 1) {
-                    final Quest q = npcQuests.get(0);
-                    if (quester.canAcceptOffer(q, true)) {
-                        quester.setQuestIdToTake(q.getId());
+                    final BukkitQuest quest = (BukkitQuest) npcQuests.get(0);
+                    if (quester.canAcceptOffer(quest, true)) {
+                        quester.setQuestIdToTake(quest.getId());
                         if (!plugin.getSettings().canConfirmAccept()) {
-                            quester.takeQuest(q, false);
+                            quester.takeQuest(quest, false);
                         } else {
-                            if (q.getGUIDisplay() != null) {
+                            if (quest.getGUIDisplay() != null) {
                                 quester.showGUIDisplay(event.getNpc().getUUID(), npcQuests);
                             } else {
                                 for (final String msg : extracted(quester).split("<br>")) {

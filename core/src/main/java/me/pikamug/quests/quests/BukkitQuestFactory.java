@@ -142,29 +142,30 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
     }
 
     @SuppressWarnings("deprecation")
-    public void loadQuest(final ConversationContext context, final Quest q) {
+    public void loadQuest(final ConversationContext context, final Quest quest) {
+        BukkitQuest bukkitQuest = (BukkitQuest) quest;
         try {
-            context.setSessionData(Key.ED_QUEST_EDIT, q.getName());
-            context.setSessionData(Key.Q_ID, q.getId());
-            context.setSessionData(Key.Q_NAME, q.getName());
-            context.setSessionData(Key.Q_ASK_MESSAGE, q.getDescription());
-            context.setSessionData(Key.Q_FINISH_MESSAGE, q.getFinished());
+            context.setSessionData(Key.ED_QUEST_EDIT, bukkitQuest.getName());
+            context.setSessionData(Key.Q_ID, bukkitQuest.getId());
+            context.setSessionData(Key.Q_NAME, bukkitQuest.getName());
+            context.setSessionData(Key.Q_ASK_MESSAGE, bukkitQuest.getDescription());
+            context.setSessionData(Key.Q_FINISH_MESSAGE, bukkitQuest.getFinished());
             if (plugin.getDependencies().getCitizens() != null) {
-                if (q.getNpcStart() != null) {
-                    context.setSessionData(Key.Q_START_NPC, q.getNpcStart().toString());
+                if (bukkitQuest.getNpcStart() != null) {
+                    context.setSessionData(Key.Q_START_NPC, bukkitQuest.getNpcStart().toString());
                 }
             }
-            context.setSessionData(Key.Q_START_BLOCK, q.getBlockStart());
-            if (q.getInitialAction() != null) {
-                context.setSessionData(Key.Q_INITIAL_EVENT, q.getInitialAction().getName());
+            context.setSessionData(Key.Q_START_BLOCK, bukkitQuest.getBlockStart());
+            if (bukkitQuest.getInitialAction() != null) {
+                context.setSessionData(Key.Q_INITIAL_EVENT, bukkitQuest.getInitialAction().getName());
             }
-            if (q.getRegionStart() != null) {
-                context.setSessionData(Key.Q_REGION, q.getRegionStart());
+            if (bukkitQuest.getRegionStart() != null) {
+                context.setSessionData(Key.Q_REGION, bukkitQuest.getRegionStart());
             }
-            if (q.getGUIDisplay() != null) {
-                context.setSessionData(Key.Q_GUIDISPLAY, q.getGUIDisplay());
+            if (bukkitQuest.getGUIDisplay() != null) {
+                context.setSessionData(Key.Q_GUIDISPLAY, bukkitQuest.getGUIDisplay());
             }
-            final Requirements requirements = q.getRequirements();
+            final Requirements requirements = bukkitQuest.getRequirements();
             if (requirements.getMoney() != 0) {
                 context.setSessionData(Key.REQ_MONEY, requirements.getMoney());
             }
@@ -210,7 +211,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             if (!requirements.getDetailsOverride().isEmpty()) {
                 context.setSessionData(Key.REQ_FAIL_MESSAGE, requirements.getDetailsOverride());
             }
-            final Rewards rewards = q.getRewards();
+            final Rewards rewards = bukkitQuest.getRewards();
             if (rewards.getMoney() != 0) {
                 context.setSessionData(Key.REW_MONEY, rewards.getMoney());
             }
@@ -256,7 +257,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             if (!rewards.getDetailsOverride().isEmpty()) {
                 context.setSessionData(Key.REW_DETAILS_OVERRIDE, rewards.getDetailsOverride());
             }
-            final Planner pln = q.getPlanner();
+            final Planner pln = bukkitQuest.getPlanner();
             if (pln.getStart() != null) {
                 context.setSessionData(Key.PLN_START_DATE, pln.getStart());
             }
@@ -270,7 +271,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 context.setSessionData(Key.PLN_COOLDOWN, pln.getCooldown());
             }
             context.setSessionData(Key.PLN_OVERRIDE, pln.getOverride());
-            final Options opt = q.getOptions();
+            final Options opt = bukkitQuest.getOptions();
             context.setSessionData(Key.OPT_ALLOW_COMMANDS, opt.canAllowCommands());
             context.setSessionData(Key.OPT_ALLOW_QUITTING, opt.canAllowQuitting());
             context.setSessionData(Key.OPT_IGNORE_SILK_TOUCH, opt.canIgnoreSilkTouch());
@@ -283,7 +284,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(Key.OPT_IGNORE_BLOCK_REPLACE, opt.canIgnoreBlockReplace());
             // Stages (Objectives)
             int index = 1;
-            for (final Stage stage : q.getStages()) {
+            for (final Stage stage : bukkitQuest.getStages()) {
                 final String pref = "stage" + index;
                 index++;
                 context.setSessionData(pref, Boolean.TRUE);

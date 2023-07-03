@@ -65,7 +65,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("event") + ": " + context.getSessionData(Key.E_NAME);
+        return Language.get("event") + ": " + context.getSessionData(Key.A_NAME);
     }
     
     @Override
@@ -139,10 +139,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 10:
             return "";
         case 6:
-            if (context.getSessionData(Key.E_MOB_TYPES) == null) {
+            if (context.getSessionData(Key.A_MOB_TYPES) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
-                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.E_MOB_TYPES);
+                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
                 final StringBuilder text = new StringBuilder();
                 if (types != null) {
                     for (final String s : types) {
@@ -161,18 +161,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
             } else {
-                if (context.getSessionData(Key.E_DENIZEN) == null) {
+                if (context.getSessionData(Key.A_DENIZEN) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.E_DENIZEN)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_DENIZEN)
                             + ChatColor.GRAY + ")";
                 }
             }
         case 8:
-            if (context.getSessionData(Key.E_FAIL_QUEST) == null) {
+            if (context.getSessionData(Key.A_FAIL_QUEST) == null) {
                 return ChatColor.GRAY + "(" + ChatColor.RED + Language.get("false") + ChatColor.GRAY + ")";
             } else {
-                final Boolean failOpt = (Boolean) context.getSessionData(Key.E_FAIL_QUEST);
+                final Boolean failOpt = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
                 return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + Language.get("true")
                         : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
             }
@@ -225,16 +225,16 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             }
         case 8:
-            final Boolean b = (Boolean) context.getSessionData(Key.E_FAIL_QUEST);
+            final Boolean b = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
             if (Boolean.TRUE.equals(b)) {
-                context.setSessionData(Key.E_FAIL_QUEST, false);
+                context.setSessionData(Key.A_FAIL_QUEST, false);
             } else {
-                context.setSessionData(Key.E_FAIL_QUEST, true);
+                context.setSessionData(Key.A_FAIL_QUEST, true);
             }
             return new ActionMainPrompt(context);
         case 9:
-            if (context.getSessionData(Key.E_OLD_EVENT) != null) {
-                return new ActionSavePrompt(context, (String) context.getSessionData(Key.E_OLD_EVENT));
+            if (context.getSessionData(Key.A_OLD_ACTION) != null) {
+                return new ActionSavePrompt(context, (String) context.getSessionData(Key.A_OLD_ACTION));
             } else {
                 return new ActionSavePrompt(context, null);
             }
@@ -291,8 +291,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questEditorInvalidQuestName"));
                     return new ActionNamePrompt(context);
                 }
-                actionNames.remove((String) context.getSessionData(Key.E_NAME));
-                context.setSessionData(Key.E_NAME, input);
+                actionNames.remove((String) context.getSessionData(Key.A_NAME));
+                context.setSessionData(Key.A_NAME, input);
                 actionNames.add(input);
                 plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
             }
@@ -350,10 +350,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.E_MOB_TYPES) != null) {
+                if (context.getSessionData(Key.A_MOB_TYPES) != null) {
                     @SuppressWarnings("unchecked")
                     final
-                    LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.E_MOB_TYPES);
+                    LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
                     final StringBuilder text = new StringBuilder();
                     if (types != null) {
                         for (final String type : types) {
@@ -398,7 +398,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobPrompt(context, null);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorMobSpawnsCleared"));
-                context.setSessionData(Key.E_MOB_TYPES, null);
+                context.setSessionData(Key.A_MOB_TYPES, null);
                 return new ActionMobListPrompt(context);
             case 3:
                 return new ActionMainPrompt(context);
@@ -552,11 +552,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorMustSetMobAmountsFirst"));
                     return new ActionMobPrompt(context, questMob);
                 }
-                final LinkedList<String> list = context.getSessionData(Key.E_MOB_TYPES) == null ? new LinkedList<>()
-                        : (LinkedList<String>) context.getSessionData(Key.E_MOB_TYPES);
+                final LinkedList<String> list = context.getSessionData(Key.A_MOB_TYPES) == null ? new LinkedList<>()
+                        : (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
                 if (list != null) {
                     list.add(questMob.serialize());
-                    context.setSessionData(Key.E_MOB_TYPES, list);
+                    context.setSessionData(Key.A_MOB_TYPES, list);
                 }
                 return new ActionMobListPrompt(context);
             default:
@@ -1079,14 +1079,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))
                     && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
                 if (plugin.getDependencies().getDenizenApi().containsScript(input)) {
-                    context.setSessionData(Key.E_DENIZEN, input.toUpperCase());
+                    context.setSessionData(Key.A_DENIZEN, input.toUpperCase());
                     return new ActionMainPrompt(context);
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("stageEditorInvalidScript"));
                     return new ActionDenizenPrompt(context);
                 }
             } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                context.setSessionData(Key.E_DENIZEN, null);
+                context.setSessionData(Key.A_DENIZEN, null);
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("stageEditorDenizenCleared"));
                 return new ActionMainPrompt(context);
             } else {

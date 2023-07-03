@@ -16,7 +16,7 @@ import com.denizenscript.denizen.objects.NPCTag;
 import com.denizenscript.denizen.objects.PlayerTag;
 import com.denizenscript.denizencore.scripts.ScriptRegistry;
 import com.denizenscript.denizencore.scripts.containers.core.TaskScriptContainer;
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ import java.util.logging.Level;
 
 public class DenizenAPI_1_1_0 {
     
-    private static final Quests quests = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+    private static final BukkitQuestsPlugin quests = (BukkitQuestsPlugin) Bukkit.getPluginManager().getPlugin("Quests");
     private static final DenizenAPI api = quests != null ? quests.getDependencies().getDenizenApi() : null;
 
     public static boolean containsScript(final String input) {

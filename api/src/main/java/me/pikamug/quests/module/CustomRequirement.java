@@ -1,8 +1,7 @@
 package me.pikamug.quests.module;
 
-import org.bukkit.entity.Player;
-
 import java.util.Map;
+import java.util.UUID;
 
 public interface CustomRequirement {
 
@@ -29,6 +28,8 @@ public interface CustomRequirement {
 
     Map<String, Object> getData();
 
+    Map<String, String> getDescriptions();
+
     /**
      * Add a new prompt<p>
      *
@@ -40,7 +41,12 @@ public interface CustomRequirement {
      */
     void addStringPrompt(final String title, final String description, final Object defaultValue);
 
-    Map<String, String> getDescriptions();
-
-    boolean testRequirement(Player p, Map<String, Object> m);
+    /**
+     * Test whether a player has met the requirement
+     *
+     * @param uuid UUID of player being tested
+     * @param data Map of custom requirement data
+     * @return true if met
+     */
+    boolean testRequirement(UUID uuid, Map<String, Object> data);
 }

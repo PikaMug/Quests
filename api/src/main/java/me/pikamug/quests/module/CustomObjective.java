@@ -13,10 +13,10 @@
 package me.pikamug.quests.module;
 
 import me.pikamug.quests.quests.Quest;
-import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.UUID;
 
 public interface CustomObjective {
 
@@ -79,12 +79,20 @@ public interface CustomObjective {
     /**
      * Get custom objective data for applicable player
      *
-     * @param player Player attempting this objective
+     * @param uuid UUID of player attempting this objective
      * @param customObj The objective being attempted
      * @param quest Current me.pikamug.quests.Quest which includes this objective
-     * @return data
+     * @return data Map of custom objective data
      */
-    Map<String, Object> getDataForPlayerTemp(final Player player, final CustomObjective customObj, final Quest quest);
+    Map<String, Object> getDataForPlayer(final UUID uuid, final CustomObjective customObj, final Quest quest);
 
-    void incrementObjectiveTemp(final Player player, final CustomObjective obj, final int count, final Quest quest);
+    /**
+     * Increment objective count for applicable player
+     *
+     * @param uuid UUID of player attempting this objective
+     * @param customObj The objective being attempted
+     * @param quest Current me.pikamug.quests.Quest which includes this objective
+     * @param count Amount to increase objective count by
+     */
+    void incrementObjective(final UUID uuid, final CustomObjective customObj, final Quest quest, final int count);
 }

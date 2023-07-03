@@ -93,33 +93,33 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
     public String getAdditionalText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(Key.E_WORLD_STORM) == null) {
+            if (context.getSessionData(Key.A_WORLD_STORM) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
-                final Integer duration = (Integer) context.getSessionData(Key.E_WORLD_STORM_DURATION);
+                final Integer duration = (Integer) context.getSessionData(Key.A_WORLD_STORM_DURATION);
                 if (duration != null) {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.E_WORLD_STORM)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_WORLD_STORM)
                             + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                             + ChatColor.GRAY + ")";
                 }
             }
         case 2:
-            if (context.getSessionData(Key.E_WORLD_THUNDER) == null) {
+            if (context.getSessionData(Key.A_WORLD_THUNDER) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
-                final Integer duration = (Integer) context.getSessionData(Key.E_WORLD_THUNDER_DURATION);
+                final Integer duration = (Integer) context.getSessionData(Key.A_WORLD_THUNDER_DURATION);
                 if (duration != null) {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.E_WORLD_THUNDER)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_WORLD_THUNDER)
                             + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                             + ChatColor.GRAY + ")";
                 }
             }
         case 3:
-            if (context.getSessionData(Key.E_LIGHTNING) == null) {
+            if (context.getSessionData(Key.A_LIGHTNING) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.E_LIGHTNING);
+                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.A_LIGHTNING);
                 if (locations != null) {
                     for (final String loc : locations) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc);
@@ -227,17 +227,17 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.E_WORLD_STORM) == null) {
+                if (context.getSessionData(Key.A_WORLD_STORM) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.E_WORLD_STORM)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_WORLD_STORM)
                             + ChatColor.GRAY + ")";
                 }
             case 2:
-                if (context.getSessionData(Key.E_WORLD_STORM_DURATION) == null) {
+                if (context.getSessionData(Key.A_WORLD_STORM_DURATION) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
-                    final Integer duration = (Integer) context.getSessionData(Key.E_WORLD_STORM_DURATION);
+                    final Integer duration = (Integer) context.getSessionData(Key.A_WORLD_STORM_DURATION);
                     if (duration != null) {
                         return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                                 + ChatColor.GRAY + ")";
@@ -272,15 +272,15 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             case 1:
                 return new ActionStormWorldPrompt(context);
             case 2:
-                if (context.getSessionData(Key.E_WORLD_STORM) == null) {
+                if (context.getSessionData(Key.A_WORLD_STORM) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorSetWorldFirst"));
                     return new ActionStormPrompt(context);
                 } else {
                     return new ActionStormDurationPrompt(context);
                 }
             case 3:
-                if (context.getSessionData(Key.E_WORLD_STORM) != null
-                        && context.getSessionData(Key.E_WORLD_STORM_DURATION) == null) {
+                if (context.getSessionData(Key.A_WORLD_STORM) != null
+                        && context.getSessionData(Key.A_WORLD_STORM_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorMustSetStormDuration"));
                     return new ActionStormPrompt(context);
                 } else {
@@ -335,7 +335,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
-                    context.setSessionData(Key.E_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
+                    context.setSessionData(Key.A_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
                             .getName());
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorInvalidWorld")
@@ -381,7 +381,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                             + Language.get("invalidMinimum").replace("<number>", "1"));
                     return new ActionStormDurationPrompt(context);
                 } else {
-                    context.setSessionData(Key.E_WORLD_STORM_DURATION, i);
+                    context.setSessionData(Key.A_WORLD_STORM_DURATION, i);
                 }
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
@@ -444,17 +444,17 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.E_WORLD_THUNDER) == null) {
+                if (context.getSessionData(Key.A_WORLD_THUNDER) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.E_WORLD_THUNDER)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_WORLD_THUNDER)
                             + ChatColor.GRAY + ")";
                 }
             case 2:
-                if (context.getSessionData(Key.E_WORLD_THUNDER_DURATION) == null) {
+                if (context.getSessionData(Key.A_WORLD_THUNDER_DURATION) == null) {
                     return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
                 } else {
-                    final Integer duration = (Integer) context.getSessionData(Key.E_WORLD_THUNDER_DURATION);
+                    final Integer duration = (Integer) context.getSessionData(Key.A_WORLD_THUNDER_DURATION);
                     if (duration != null) {
                         return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                                 + ChatColor.GRAY + ")";
@@ -489,7 +489,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             case 1:
                 return new ActionThunderWorldPrompt(context);
             case 2:
-                if (context.getSessionData(Key.E_WORLD_THUNDER) == null) {
+                if (context.getSessionData(Key.A_WORLD_THUNDER) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorSetWorldFirst"));
                     return new ActionThunderPrompt(context);
                 } else {
@@ -497,12 +497,12 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                 }
             case 3:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorThunderCleared"));
-                context.setSessionData(Key.E_WORLD_THUNDER, null);
-                context.setSessionData(Key.E_WORLD_THUNDER_DURATION, null);
+                context.setSessionData(Key.A_WORLD_THUNDER, null);
+                context.setSessionData(Key.A_WORLD_THUNDER_DURATION, null);
                 return new ActionThunderPrompt(context);
             case 4:
-                if (context.getSessionData(Key.E_WORLD_THUNDER) != null
-                        && context.getSessionData(Key.E_WORLD_THUNDER_DURATION) == null) {
+                if (context.getSessionData(Key.A_WORLD_THUNDER) != null
+                        && context.getSessionData(Key.A_WORLD_THUNDER_DURATION) == null) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorMustSetThunderDuration"));
                     return new ActionThunderPrompt(context);
                 } else {
@@ -555,7 +555,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
-                    context.setSessionData(Key.E_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
+                    context.setSessionData(Key.A_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
                             .getWorld(input)).getName());
                 } else {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorInvalidWorld")
@@ -601,7 +601,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                             + Language.get("invalidMinimum").replace("<number>", "1"));
                     return new ActionThunderDurationPrompt(context);
                 } else {
-                    context.setSessionData(Key.E_WORLD_THUNDER_DURATION, i);
+                    context.setSessionData(Key.A_WORLD_THUNDER_DURATION, i);
                 }
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED 
@@ -650,15 +650,15 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
-                    if (context.getSessionData(Key.E_LIGHTNING) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(Key.E_LIGHTNING);
+                    if (context.getSessionData(Key.A_LIGHTNING) != null) {
+                        locations = (LinkedList<String>) context.getSessionData(Key.A_LIGHTNING);
                     } else {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
-                    context.setSessionData(Key.E_LIGHTNING, locations);
+                    context.setSessionData(Key.A_LIGHTNING, locations);
                     selectedLightningLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 } else {
@@ -667,7 +667,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                 }
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                context.setSessionData(Key.E_LIGHTNING, null);
+                context.setSessionData(Key.A_LIGHTNING, null);
                 final Map<UUID, Block> selectedLightningLocations 
                         = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.remove(player.getUniqueId());

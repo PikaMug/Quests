@@ -12,21 +12,20 @@
 
 package me.pikamug.quests;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
-import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.actions.BukkitActionFactory;
-import me.pikamug.quests.conditions.BukkitConditionFactory;
 import me.pikamug.quests.conditions.BukkitCondition;
+import me.pikamug.quests.conditions.BukkitConditionFactory;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.conditions.ConditionFactory;
-import me.pikamug.quests.config.Settings;
 import me.pikamug.quests.config.BukkitSettings;
+import me.pikamug.quests.config.Settings;
 import me.pikamug.quests.convo.misc.MiscStringPrompt;
 import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.Dependencies;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.events.misc.MiscPostQuestAcceptEvent;
@@ -51,19 +50,18 @@ import me.pikamug.quests.module.BukkitCustomReward;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
-import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.player.QuestData;
 import me.pikamug.quests.player.BukkitQuester;
+import me.pikamug.quests.player.QuestData;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.BukkitQuestFactory;
-import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.Stage;
+import me.pikamug.quests.quests.BukkitStage;
 import me.pikamug.quests.quests.Options;
 import me.pikamug.quests.quests.Planner;
-import me.pikamug.quests.quests.BukkitQuest;
-import me.pikamug.quests.quests.QuestFactory;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Requirements;
 import me.pikamug.quests.quests.Rewards;
-import me.pikamug.quests.quests.BukkitStage;
+import me.pikamug.quests.quests.Stage;
 import me.pikamug.quests.statistics.BukkitMetrics;
 import me.pikamug.quests.storage.Storage;
 import me.pikamug.quests.storage.StorageFactory;
@@ -71,12 +69,10 @@ import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.BukkitUpdateChecker;
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.pikamug.localelib.LocaleManager;
+import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.RomanNumeral;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -149,7 +145,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private boolean loading = true;
     private String bukkitVersion = "0";
-    private Dependencies depends;
+    private BukkitDependencies depends;
     private Settings settings;
     private final List<CustomObjective> customObjectives = new LinkedList<>();
     private final List<CustomRequirement> customRequirements = new LinkedList<>();
@@ -162,9 +158,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private TabExecutor cmdExecutor;
     private ConversationFactory conversationFactory;
     private ConversationFactory npcConversationFactory;
-    private QuestFactory questFactory;
-    private ActionFactory actionFactory;
-    private ConditionFactory conditionFactory;
+    private BukkitQuestFactory questFactory;
+    private BukkitActionFactory actionFactory;
+    private BukkitConditionFactory conditionFactory;
     private BukkitConvoListener convoListener;
     private BukkitBlockListener blockListener;
     private BukkitItemListener itemListener;
@@ -592,15 +588,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return npcConversationFactory;
     }
 
-    public QuestFactory getQuestFactory() {
+    public BukkitQuestFactory getQuestFactory() {
         return questFactory;
     }
 
-    public ActionFactory getActionFactory() {
+    public BukkitActionFactory getActionFactory() {
         return actionFactory;
     }
 
-    public ConditionFactory getConditionFactory() {
+    public BukkitConditionFactory getConditionFactory() {
         return conditionFactory;
     }
 
@@ -935,7 +931,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     if (config.contains("quests." + questKey + ".options")) {
                         loadQuestOptions(config, quest, questKey);
                     }
-                    quest.setPlugin(this);
+                    // TODO was this necessary?
+                    //quest.setPlugin(this);
                     loadQuestStages(quest, config, questKey);
                     loadQuestRewards(config, quest, questKey);
                     quests.add(quest);
@@ -1735,7 +1732,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().warning("Current stage was null when showing conditions for " + quest.getName());
             return;
         }
-        final Condition c = stage.getCondition();
+        final BukkitCondition c = (BukkitCondition) stage.getCondition();
         if (c != null && stage.getObjectiveOverrides().isEmpty()) {
             quester.sendMessage(ChatColor.LIGHT_PURPLE + Language.get("stageEditorConditions"));
             if (!c.getEntitiesWhileRiding().isEmpty()) {
@@ -1831,11 +1828,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             final LinkedList<Quest> available = new LinkedList<>();
             for (final Quest q : quests) {
                 if (!quester.getCompletedQuestsTemp().contains(q)) {
-                    if (q.testRequirements(player)) {
+                    if (q.testRequirements(quester)) {
                         available.add(q);
                     }
                 } else if (q.getPlanner().hasCooldown() && quester.getRemainingCooldown(q) < 0) {
-                    if (q.testRequirements(player)) {
+                    if (q.testRequirements(quester)) {
                         available.add(q);
                     }
                 }
@@ -1990,7 +1987,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     if (config.contains("quests." + questKey + ".options")) {
                         loadQuestOptions(config, quest, questKey);
                     }
-                    quest.setPlugin(this);
+                    // TODO was this necessary?
+                    //quest.setPlugin(this);
                     loadQuestStages(quest, config, questKey);
                     loadQuestRewards(config, quest, questKey);
                     quests.add(quest);
@@ -2015,7 +2013,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @SuppressWarnings("deprecation")
     private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
             ActionFormatException {
-        final Quest quest = new BukkitQuest(this);
+        final BukkitQuest quest = new BukkitQuest(this);
         quest.setId(questKey);
         if (config.contains("quests." + questKey + ".name")) {
             quest.setName(BukkitConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
@@ -3910,7 +3908,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                         dropChances[3] = (float) section.getDouble(s + ".chest-plate-drop-chance");
                         inventory[4] = BukkitItemUtil.readItemStack(section.getString(s + ".helmet"));
                         dropChances[4] = (float) section.getDouble(s + ".helmet-drop-chance");
-                        final QuestMob questMob = new BukkitQuestMob(type, spawnLocation, mobAmount);
+                        final BukkitQuestMob questMob = new BukkitQuestMob(type, spawnLocation, mobAmount);
                         questMob.setInventory(inventory);
                         questMob.setDropChances(dropChances);
                         questMob.setName(mobName);

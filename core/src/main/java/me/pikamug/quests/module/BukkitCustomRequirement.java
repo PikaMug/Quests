@@ -12,12 +12,11 @@
 
 package me.pikamug.quests.module;
 
-import org.bukkit.entity.Player;
-
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class BukkitCustomRequirement implements CustomRequirement {
 
@@ -27,8 +26,6 @@ public abstract class BukkitCustomRequirement implements CustomRequirement {
     private Map.Entry<String, Short> item = new AbstractMap.SimpleEntry<>("BOOK", (short) 0);
     private final Map<String, Object> data = new HashMap<>();
     private final Map<String, String> descriptions = new HashMap<>();
-
-    public abstract boolean testRequirement(Player p, Map<String, Object> m);
 
     public String getModuleName() {
         return new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getName()
@@ -75,6 +72,10 @@ public abstract class BukkitCustomRequirement implements CustomRequirement {
         return data;
     }
 
+    public Map<String, String> getDescriptions() {
+        return descriptions;
+    }
+
     /**
      * Add a new prompt<p>
      *
@@ -89,7 +90,12 @@ public abstract class BukkitCustomRequirement implements CustomRequirement {
         descriptions.put(title, description);
     }
 
-    public Map<String, String> getDescriptions() {
-        return descriptions;
-    }
+    /**
+     * Test whether a player has met the requirement
+     *
+     * @param uuid UUID of player being tested
+     * @param data Map of custom requirement data
+     * @return true if met
+     */
+    public abstract boolean testRequirement(UUID uuid, Map<String, Object> data);
 }

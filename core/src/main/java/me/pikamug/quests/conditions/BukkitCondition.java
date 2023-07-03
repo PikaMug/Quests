@@ -102,22 +102,18 @@ public class BukkitCondition implements Condition {
         this.permissions = permissions;
     }
 
-    @Override
     public LinkedList<ItemStack> getItemsWhileHoldingMainHand() {
         return itemsWhileHoldingMainHand;
     }
 
-    @Override
     public void setItemsWhileHoldingMainHand(final LinkedList<ItemStack> itemsWhileHoldingMainHand) {
         this.itemsWhileHoldingMainHand = itemsWhileHoldingMainHand;
     }
 
-    @Override
     public LinkedList<ItemStack> getItemsWhileWearing() {
         return itemsWhileWearing;
     }
 
-    @Override
     public void setItemsWhileWearing(final LinkedList<ItemStack> itemsWhileWearing) {
         this.itemsWhileWearing = itemsWhileWearing;
     }

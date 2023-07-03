@@ -112,7 +112,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         case 1:
             if (cs.hasPermission("quests.editor.actions.create") 
                     || cs.hasPermission("quests.editor.events.create")) {
-                context.setSessionData(Key.E_OLD_EVENT, "");
+                context.setSessionData(Key.A_OLD_ACTION, "");
                 return new ActionSelectCreatePrompt(context);
             } else {
                 cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
@@ -186,8 +186,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                for (final Action a : plugin.getLoadedActions()) {
-                    if (a.getName().equalsIgnoreCase(input)) {
+                for (final Action action : plugin.getLoadedActions()) {
+                    if (action.getName().equalsIgnoreCase(input)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorExists"));
                         return new ActionSelectCreatePrompt(context);
                     }
@@ -205,7 +205,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
                     return new ActionSelectCreatePrompt(context);
                 }
-                context.setSessionData(Key.E_NAME, input);
+                context.setSessionData(Key.A_NAME, input);
                 actionNames.add(input);
                 plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
                 return new ActionMainPrompt(context);
@@ -246,11 +246,11 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
-                final Action a = plugin.getAction(input);
-                if (a != null) {
-                    context.setSessionData(Key.E_OLD_EVENT, a.getName());
-                    context.setSessionData(Key.E_NAME, a.getName());
-                    plugin.getActionFactory().loadData(a, context);
+                final Action action = plugin.getAction(input);
+                if (action != null) {
+                    context.setSessionData(Key.A_OLD_ACTION, action.getName());
+                    context.setSessionData(Key.A_NAME, action.getName());
+                    plugin.getActionFactory().loadData(context, action);
                     return new ActionMainPrompt(context);
                 }
                 context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorNotFound"));
@@ -293,23 +293,23 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
-                final Action a = plugin.getAction(input);
-                if (a != null) {
+                final Action action = plugin.getAction(input);
+                if (action != null) {
                     for (final Quest quest : plugin.getLoadedQuests()) {
                         for (final Stage stage : quest.getStages()) {
                             if (stage.getFinishAction() != null 
-                                    && stage.getFinishAction().getName().equalsIgnoreCase(a.getName())) {
+                                    && stage.getFinishAction().getName().equalsIgnoreCase(action.getName())) {
                                 used.add(quest.getName());
                                 break;
                             }
                         }
                     }
                     if (used.isEmpty()) {
-                        context.setSessionData(Key.ED_EVENT_DELETE, a.getName());
+                        context.setSessionData(Key.ED_EVENT_DELETE, action.getName());
                         return new ActionConfirmDeletePrompt(context);
                     } else {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorEventInUse")
-                        + " \"" + ChatColor.DARK_PURPLE + a.getName() + ChatColor.RED + "\":");
+                        + " \"" + ChatColor.DARK_PURPLE + action.getName() + ChatColor.RED + "\":");
                         for (final String s : used) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }

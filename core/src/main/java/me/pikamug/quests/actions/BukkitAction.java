@@ -132,42 +132,34 @@ public class BukkitAction implements Action {
         this.failQuest = failQuest;
     }
 
-    @Override
     public LinkedList<Location> getExplosions() {
         return explosions;
     }
 
-    @Override
     public void setExplosions(final LinkedList<Location> explosions) {
         this.explosions = explosions;
     }
 
-    @Override
     public Map<Location, Effect> getEffects() {
         return effects;
     }
 
-    @Override
     public void setEffects(final Map<Location, Effect> effects) {
         this.effects = effects;
     }
 
-    @Override
     public LinkedList<ItemStack> getItems() {
         return items;
     }
 
-    @Override
     public void setItems(final LinkedList<ItemStack> items) {
         this.items = items;
     }
 
-    @Override
     public World getStormWorld() {
         return stormWorld;
     }
 
-    @Override
     public void setStormWorld(final World stormWorld) {
         this.stormWorld = stormWorld;
     }
@@ -182,12 +174,10 @@ public class BukkitAction implements Action {
         this.stormDuration = stormDuration;
     }
 
-    @Override
     public World getThunderWorld() {
         return thunderWorld;
     }
 
-    @Override
     public void setThunderWorld(final World thunderWorld) {
         this.thunderWorld = thunderWorld;
     }
@@ -232,12 +222,10 @@ public class BukkitAction implements Action {
         this.mobSpawns = mobSpawns;
     }
 
-    @Override
     public LinkedList<Location> getLightningStrikes() {
         return lightningStrikes;
     }
 
-    @Override
     public void setLightningStrikes(final LinkedList<Location> lightningStrikes) {
         this.lightningStrikes = lightningStrikes;
     }
@@ -252,12 +240,10 @@ public class BukkitAction implements Action {
         this.commands = commands;
     }
 
-    @Override
     public LinkedList<PotionEffect> getPotionEffects() {
         return potionEffects;
     }
 
-    @Override
     public void setPotionEffects(final LinkedList<PotionEffect> potionEffects) {
         this.potionEffects = potionEffects;
     }
@@ -292,12 +278,10 @@ public class BukkitAction implements Action {
         this.health = health;
     }
 
-    @Override
     public Location getTeleport() {
         return teleport;
     }
 
-    @Override
     public void setTeleport(final Location teleport) {
         this.teleport = teleport;
     }

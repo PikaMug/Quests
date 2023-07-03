@@ -1,8 +1,7 @@
 package me.pikamug.quests.module;
 
-import org.bukkit.entity.Player;
-
 import java.util.Map;
+import java.util.UUID;
 
 public interface CustomReward {
 
@@ -29,6 +28,8 @@ public interface CustomReward {
     
     Map<String, Object> getData();
 
+    Map<String, String> getDescriptions();
+
     /**
      * Add a new prompt<p>
      *
@@ -40,7 +41,11 @@ public interface CustomReward {
      */
     void addStringPrompt(final String title, final String description, final Object defaultValue);
 
-    Map<String, String> getDescriptions();
-
-    void giveReward(Player p, Map<String, Object> m);
+    /**
+     * Give loot reward to a player
+     *
+     * @param uuid UUID of player being tested
+     * @param data Map of custom reward data
+     */
+    void giveReward(UUID uuid, Map<String, Object> data);
 }

@@ -18,8 +18,8 @@ import me.pikamug.quests.convo.conditions.menu.ConditionMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitFakeConversable;
+import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -86,59 +86,60 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         return new ConditionMainPrompt(context);
     }
     
-    public void loadData(final Condition condition, final ConversationContext context) {
-        if (condition.isFailQuest()) {
+    public void loadData(final ConversationContext context, final Condition condition) {
+        BukkitCondition bukkitCondition = (BukkitCondition) condition;
+        if (bukkitCondition.isFailQuest()) {
             context.setSessionData(Key.C_FAIL_QUEST, true);
         } else {
             context.setSessionData(Key.C_FAIL_QUEST, false);
         }
-        if (condition.getEntitiesWhileRiding() != null && !condition.getEntitiesWhileRiding().isEmpty()) {
-            final LinkedList<String> entities = new LinkedList<>(condition.getEntitiesWhileRiding());
+        if (bukkitCondition.getEntitiesWhileRiding() != null && !bukkitCondition.getEntitiesWhileRiding().isEmpty()) {
+            final LinkedList<String> entities = new LinkedList<>(bukkitCondition.getEntitiesWhileRiding());
             context.setSessionData(Key.C_WHILE_RIDING_ENTITY, entities);
         }
-        if (condition.getNpcsWhileRiding() != null && !condition.getNpcsWhileRiding().isEmpty()) {
-            final LinkedList<UUID> npcs = new LinkedList<>(condition.getNpcsWhileRiding());
+        if (bukkitCondition.getNpcsWhileRiding() != null && !bukkitCondition.getNpcsWhileRiding().isEmpty()) {
+            final LinkedList<UUID> npcs = new LinkedList<>(bukkitCondition.getNpcsWhileRiding());
             context.setSessionData(Key.C_WHILE_RIDING_NPC, npcs);
         }
-        if (condition.getPermissions() != null && !condition.getPermissions().isEmpty()) {
-            final LinkedList<String> permissions = new LinkedList<>(condition.getPermissions());
+        if (bukkitCondition.getPermissions() != null && !bukkitCondition.getPermissions().isEmpty()) {
+            final LinkedList<String> permissions = new LinkedList<>(bukkitCondition.getPermissions());
             context.setSessionData(Key.C_WHILE_PERMISSION, permissions);
         }
-        if (condition.getItemsWhileHoldingMainHand() != null && !condition.getItemsWhileHoldingMainHand().isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(condition.getItemsWhileHoldingMainHand());
+        if (bukkitCondition.getItemsWhileHoldingMainHand() != null && !bukkitCondition.getItemsWhileHoldingMainHand().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(bukkitCondition.getItemsWhileHoldingMainHand());
             context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, items);
         }
-        if (condition.getItemsWhileWearing() != null && !condition.getItemsWhileWearing().isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(condition.getItemsWhileWearing());
+        if (bukkitCondition.getItemsWhileWearing() != null && !bukkitCondition.getItemsWhileWearing().isEmpty()) {
+            final LinkedList<ItemStack> items = new LinkedList<>(bukkitCondition.getItemsWhileWearing());
             context.setSessionData(Key.C_WHILE_WEARING, items);
         }
-        if (condition.getWorldsWhileStayingWithin() != null && !condition.getWorldsWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> worlds = new LinkedList<>(condition.getBiomesWhileStayingWithin());
+        if (bukkitCondition.getWorldsWhileStayingWithin() != null && !bukkitCondition.getWorldsWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> worlds = new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin());
             context.setSessionData(Key.C_WHILE_WITHIN_WORLD, worlds);
         }
-        if (condition.getTickStartWhileStayingWithin() > -1) {
-            final int tick = condition.getTickStartWhileStayingWithin();
+        if (bukkitCondition.getTickStartWhileStayingWithin() > -1) {
+            final int tick = bukkitCondition.getTickStartWhileStayingWithin();
             context.setSessionData(Key.C_WHILE_WITHIN_TICKS_START, tick);
         }
-        if (condition.getTickEndWhileStayingWithin() > -1) {
-            final int tick = condition.getTickEndWhileStayingWithin();
+        if (bukkitCondition.getTickEndWhileStayingWithin() > -1) {
+            final int tick = bukkitCondition.getTickEndWhileStayingWithin();
             context.setSessionData(Key.C_WHILE_WITHIN_TICKS_END, tick);
         }
-        if (condition.getBiomesWhileStayingWithin() != null && !condition.getBiomesWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> biomes = new LinkedList<>(condition.getBiomesWhileStayingWithin());
+        if (bukkitCondition.getBiomesWhileStayingWithin() != null && !bukkitCondition.getBiomesWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> biomes = new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin());
             context.setSessionData(Key.C_WHILE_WITHIN_BIOME, biomes);
         }
-        if (condition.getRegionsWhileStayingWithin() != null && !condition.getRegionsWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> regions = new LinkedList<>(condition.getRegionsWhileStayingWithin());
+        if (bukkitCondition.getRegionsWhileStayingWithin() != null && !bukkitCondition.getRegionsWhileStayingWithin().isEmpty()) {
+            final LinkedList<String> regions = new LinkedList<>(bukkitCondition.getRegionsWhileStayingWithin());
             context.setSessionData(Key.C_WHILE_WITHIN_REGION, regions);
         }
-        if (condition.getPlaceholdersCheckIdentifier() != null
-                && !condition.getPlaceholdersCheckIdentifier().isEmpty()) {
-            final LinkedList<String> identifiers = new LinkedList<>(condition.getPlaceholdersCheckIdentifier());
+        if (bukkitCondition.getPlaceholdersCheckIdentifier() != null
+                && !bukkitCondition.getPlaceholdersCheckIdentifier().isEmpty()) {
+            final LinkedList<String> identifiers = new LinkedList<>(bukkitCondition.getPlaceholdersCheckIdentifier());
             context.setSessionData(Key.C_WHILE_PLACEHOLDER_ID, identifiers);
         }
-        if (condition.getPlaceholdersCheckValue() != null && !condition.getPlaceholdersCheckValue().isEmpty()) {
-            final LinkedList<String> values = new LinkedList<>(condition.getPlaceholdersCheckValue());
+        if (bukkitCondition.getPlaceholdersCheckValue() != null && !bukkitCondition.getPlaceholdersCheckValue().isEmpty()) {
+            final LinkedList<String> values = new LinkedList<>(bukkitCondition.getPlaceholdersCheckValue());
             context.setSessionData(Key.C_WHILE_PLACEHOLDER_VAL, values);
         }
     }
