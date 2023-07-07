@@ -14,12 +14,12 @@ package me.pikamug.quests.commands.quest;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.BukkitRequirements;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Stage;
-import me.pikamug.quests.quests.Requirements;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -125,7 +125,7 @@ public class QuestCommandHandler {
                 }
                 cs.sendMessage(" ");
                 if (plugin.getSettings().canShowQuestReqs()) {
-                    final Requirements reqs = q.getRequirements();
+                    final BukkitRequirements reqs = (BukkitRequirements) q.getRequirements();
                     if (reqs.hasRequirement()) {
                         cs.sendMessage(ChatColor.GOLD + Language.get("requirements"));
                         if (!reqs.getPermissions().isEmpty()) {

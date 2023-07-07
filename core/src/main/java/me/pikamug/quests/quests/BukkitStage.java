@@ -142,7 +142,6 @@ public class BukkitStage implements Stage {
         return blocksToBreak;
     }
 
-    @Override
     public boolean addBlockToBreak(@NotNull ItemStack blockToBreak) {
         return blocksToBreak.add(blockToBreak);
     }
@@ -155,7 +154,6 @@ public class BukkitStage implements Stage {
         return blocksToDamage;
     }
 
-    @Override
     public boolean addBlockToDamage(@NotNull ItemStack blockToDamage) {
         return blocksToDamage.add(blockToDamage);
     }
@@ -168,7 +166,6 @@ public class BukkitStage implements Stage {
         return blocksToPlace;
     }
 
-    @Override
     public boolean addBlockToPlace(@NotNull ItemStack blockToPlace) {
         return blocksToPlace.add(blockToPlace);
     }
@@ -181,7 +178,6 @@ public class BukkitStage implements Stage {
         return blocksToUse;
     }
 
-    @Override
     public boolean addBlockToUse(@NotNull ItemStack blockToUse) {
         return blocksToUse.add(blockToUse);
     }
@@ -194,7 +190,6 @@ public class BukkitStage implements Stage {
         return blocksToCut;
     }
 
-    @Override
     public boolean addBlockToCut(@NotNull ItemStack blockToCut) {
         return blocksToCut.add(blockToCut);
     }
@@ -207,7 +202,6 @@ public class BukkitStage implements Stage {
         return itemsToCraft;
     }
 
-    @Override
     public boolean addItemToCraft(@NotNull ItemStack itemToCraft) {
         return itemsToCraft.add(itemToCraft);
     }
@@ -220,7 +214,6 @@ public class BukkitStage implements Stage {
         return itemsToSmelt;
     }
 
-    @Override
     public boolean addItemToSmelt(@NotNull ItemStack itemToSmelt) {
         return itemsToSmelt.add(itemToSmelt);
     }
@@ -233,7 +226,6 @@ public class BukkitStage implements Stage {
         return itemsToEnchant;
     }
 
-    @Override
     public boolean addItemToEnchant(@NotNull ItemStack itemToEnchant) {
         return itemsToEnchant.add(itemToEnchant);
     }
@@ -246,7 +238,6 @@ public class BukkitStage implements Stage {
         return itemsToBrew;
     }
 
-    @Override
     public boolean addItemsToBrew(@NotNull ItemStack itemToBrew) {
         return itemsToBrew.add(itemToBrew);
     }
@@ -259,7 +250,6 @@ public class BukkitStage implements Stage {
         return itemsToConsume;
     }
 
-    @Override
     public boolean addItemToConsume(@NotNull ItemStack itemToConsume) {
         return itemsToConsume.add(itemToConsume);
     }
@@ -272,7 +262,6 @@ public class BukkitStage implements Stage {
         return itemsToDeliver;
     }
 
-    @Override
     public boolean addItemToDeliver(@NotNull ItemStack itemToDeliver) {
         return itemsToDeliver.add(itemToDeliver);
     }
@@ -285,7 +274,6 @@ public class BukkitStage implements Stage {
         return itemDeliveryTargets;
     }
 
-    @Override
     public boolean addItemDeliveryTarget(UUID itemDeliveryTarget) {
         return itemDeliveryTargets.add(itemDeliveryTarget);
     }
@@ -298,7 +286,6 @@ public class BukkitStage implements Stage {
         return deliverMessages;
     }
 
-    @Override
     public boolean addDeliverMessage(String deliverMessage) {
         return deliverMessages.add(deliverMessage);
     }
@@ -311,7 +298,6 @@ public class BukkitStage implements Stage {
         return npcsToInteract;
     }
 
-    @Override
     public boolean addNpcToInteract(UUID npcToInteract) {
         return npcsToInteract.add(npcToInteract);
     }
@@ -324,7 +310,6 @@ public class BukkitStage implements Stage {
         return npcsToKill;
     }
 
-    @Override
     public boolean addNpcToKill(UUID npcToKill) {
         return npcsToKill.add(npcToKill);
     }
@@ -349,7 +334,6 @@ public class BukkitStage implements Stage {
         return mobsToKill;
     }
 
-    @Override
     public boolean addMobToKill(EntityType mobToKill) {
         return mobsToKill.add(mobToKill);
     }
@@ -362,7 +346,6 @@ public class BukkitStage implements Stage {
         return mobNumToKill;
     }
 
-    @Override
     public boolean addMobNumToKill(Integer mobNumToKill) {
         return this.mobNumToKill.add(mobNumToKill);
     }
@@ -375,7 +358,6 @@ public class BukkitStage implements Stage {
         return locationsToKillWithin;
     }
 
-    @Override
     public boolean addLocationToKillWithin(Location locationToKillWithin) {
         return locationsToKillWithin.add(locationToKillWithin);
     }
@@ -388,7 +370,6 @@ public class BukkitStage implements Stage {
         return radiiToKillWithin;
     }
 
-    @Override
     public boolean addRadiusToKillWithin(Integer radiusToKillWithin) {
         return radiiToKillWithin.add(radiusToKillWithin);
     }
@@ -401,7 +382,6 @@ public class BukkitStage implements Stage {
         return killNames;
     }
 
-    @Override
     public boolean addKillName(String killName) {
         return killNames.add(killName);
     }
@@ -414,7 +394,6 @@ public class BukkitStage implements Stage {
         return locationsToReach;
     }
 
-    @Override
     public boolean addLocationToReach(Location locationToReach) {
         return locationsToReach.add(locationToReach);
     }
@@ -427,7 +406,6 @@ public class BukkitStage implements Stage {
         return radiiToReachWithin;
     }
 
-    @Override
     public boolean addRadiusToReachWithin(Integer radiusToReachWithin) {
         return radiiToReachWithin.add(radiusToReachWithin);
     }
@@ -440,7 +418,6 @@ public class BukkitStage implements Stage {
         return worldsToReachWithin;
     }
 
-    @Override
     public boolean addWorldToReachWithin(World worldToReachWithin) {
         return worldsToReachWithin.add(worldToReachWithin);
     }
@@ -453,7 +430,6 @@ public class BukkitStage implements Stage {
         return locationNames;
     }
 
-    @Override
     public boolean addLocationName(String locationName) {
         return locationNames.add(locationName);
     }
@@ -466,7 +442,6 @@ public class BukkitStage implements Stage {
         return mobsToTame;
     }
 
-    @Override
     public boolean addMobToTame(EntityType mobToTame) {
         return mobsToTame.add(mobToTame);
     }
@@ -479,7 +454,6 @@ public class BukkitStage implements Stage {
         return mobNumToTame;
     }
 
-    @Override
     public boolean addMobNumToTame(Integer mobNumToTame) {
         return this.mobNumToTame.add(mobNumToTame);
     }
@@ -516,7 +490,6 @@ public class BukkitStage implements Stage {
         return sheepToShear;
     }
 
-    @Override
     public boolean addSheepToShear(DyeColor sheepToShear) {
         return this.sheepToShear.add(sheepToShear);
     }
@@ -529,7 +502,6 @@ public class BukkitStage implements Stage {
         return sheepNumToShear;
     }
 
-    @Override
     public boolean addSheepNumToShear(Integer sheepNumToShear) {
         return this.sheepNumToShear.add(sheepNumToShear);
     }
@@ -542,7 +514,6 @@ public class BukkitStage implements Stage {
         return passwordDisplays;
     }
 
-    @Override
     public boolean addPasswordDisplay(String passwordDisplay) {
         return passwordDisplays.add(passwordDisplay);
     }
@@ -555,7 +526,6 @@ public class BukkitStage implements Stage {
         return passwordPhrases;
     }
 
-    @Override
     public boolean addPasswordPhrase(String passwordPhrase) {
         return passwordPhrases.add(passwordPhrase);
     }
@@ -608,7 +578,6 @@ public class BukkitStage implements Stage {
         return chatActions;
     }
 
-    @Override
     public void addChatAction(Entry<String, Action> chatAction) {
         chatActions.put(chatAction.getKey(), chatAction.getValue());
     }
@@ -621,7 +590,6 @@ public class BukkitStage implements Stage {
         return commandActions;
     }
 
-    @Override
     public void addCommandAction(Entry<String, Action> commandAction) {
         commandActions.put(commandAction.getKey(), commandAction.getValue());
     }
@@ -682,7 +650,6 @@ public class BukkitStage implements Stage {
         return objectiveOverrides;
     }
 
-    @Override
     public boolean addObjectiveOverride(String objectiveOverride) {
         return objectiveOverrides.add(objectiveOverride);
     }

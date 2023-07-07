@@ -16,176 +16,85 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
 public interface Stage {
-    LinkedList<ItemStack> getBlocksToBreak();
+    LinkedList<?> getBlocksToBreak();
 
-    boolean addBlockToBreak(ItemStack blockToBreak);
+    LinkedList<?> getBlocksToDamage();
 
-    void setBlocksToBreak(final LinkedList<ItemStack> blocksToBreak);
+    LinkedList<?> getBlocksToPlace();
 
-    LinkedList<ItemStack> getBlocksToDamage();
+    LinkedList<?> getBlocksToUse();
 
-    boolean addBlockToDamage(ItemStack blockToDamage);
+    LinkedList<?> getBlocksToCut();
 
-    void setBlocksToDamage(final LinkedList<ItemStack> blocksToDamage);
+    LinkedList<?> getItemsToCraft();
 
-    LinkedList<ItemStack> getBlocksToPlace();
+    LinkedList<?> getItemsToSmelt();
 
-    boolean addBlockToPlace(ItemStack blockToPlace);
+    LinkedList<?> getItemsToEnchant();
 
-    void setBlocksToPlace(final LinkedList<ItemStack> blocksToPlace);
+    LinkedList<?> getItemsToBrew();
 
-    LinkedList<ItemStack> getBlocksToUse();
+    LinkedList<?> getItemsToConsume();
 
-    boolean addBlockToUse(ItemStack blockToUse);
-
-    void setBlocksToUse(final LinkedList<ItemStack> blocksToUse);
-
-    LinkedList<ItemStack> getBlocksToCut();
-
-    boolean addBlockToCut(ItemStack blockToCut);
-
-    void setBlocksToCut(final LinkedList<ItemStack> blocksToCut);
-
-    LinkedList<ItemStack> getItemsToCraft();
-
-    boolean addItemToCraft(ItemStack itemToCraft);
-
-    void setItemsToCraft(final LinkedList<ItemStack> itemsToCraft);
-
-    LinkedList<ItemStack> getItemsToSmelt();
-
-    boolean addItemToSmelt(ItemStack itemToSmelt);
-
-    void setItemsToSmelt(final LinkedList<ItemStack> itemsToSmelt);
-
-    LinkedList<ItemStack> getItemsToEnchant();
-
-    boolean addItemToEnchant(ItemStack itemToEnchant);
-
-    void setItemsToEnchant(final LinkedList<ItemStack> itemsToEnchant);
-
-    LinkedList<ItemStack> getItemsToBrew();
-
-    boolean addItemsToBrew(ItemStack itemToBrew);
-
-    void setItemsToBrew(final LinkedList<ItemStack> itemsToBrew);
-
-    LinkedList<ItemStack> getItemsToConsume();
-
-    boolean addItemToConsume(ItemStack itemToConsume);
-
-    void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume);
-
-    LinkedList<ItemStack> getItemsToDeliver();
-
-    boolean addItemToDeliver(ItemStack itemToDeliver);
-
-    void setItemsToDeliver(final LinkedList<ItemStack> itemsToDeliver);
+    LinkedList<?> getItemsToDeliver();
 
     LinkedList<UUID> getItemDeliveryTargets();
-
-    boolean addItemDeliveryTarget(UUID itemDeliveryTarget);
 
     void setItemDeliveryTargets(final LinkedList<UUID> itemDeliveryTargets);
 
     LinkedList<String> getDeliverMessages();
 
-    boolean addDeliverMessage(String deliverMessage);
-
     void setDeliverMessages(final LinkedList<String> deliverMessages);
 
     LinkedList<UUID> getNpcsToInteract();
-
-    boolean addNpcToInteract(UUID npcToInteract);
 
     void setNpcsToInteract(final LinkedList<UUID> npcsToInteract);
 
     LinkedList<UUID> getNpcsToKill();
 
-    boolean addNpcToKill(UUID citizenToKill);
-
     void setNpcsToKill(final LinkedList<UUID> npcsToKill);
 
     LinkedList<Integer> getNpcNumToKill();
 
-    boolean addNpcNumToKill(Integer npcNumToKill);
-
     void setNpcNumToKill(final LinkedList<Integer> npcNumToKill);
 
-    LinkedList<EntityType> getMobsToKill();
-
-    boolean addMobToKill(EntityType mobToKill);
-
-    void setMobsToKill(final LinkedList<EntityType> mobsToKill);
+    LinkedList<?> getMobsToKill();
 
     LinkedList<Integer> getMobNumToKill();
 
-    boolean addMobNumToKill(Integer mobNumToKill);
-
     void setMobNumToKill(final LinkedList<Integer> mobNumToKill);
 
-    LinkedList<Location> getLocationsToKillWithin();
-
-    boolean addLocationToKillWithin(Location locationToKillWithin);
-
-    void setLocationsToKillWithin(final LinkedList<Location> locationsToKillWithin);
+    LinkedList<?> getLocationsToKillWithin();
 
     LinkedList<Integer> getRadiiToKillWithin();
-
-    boolean addRadiusToKillWithin(Integer radiusToKillWithin);
 
     void setRadiiToKillWithin(final LinkedList<Integer> radiiToKillWithin);
 
     LinkedList<String> getKillNames();
 
-    boolean addKillName(String killName);
-
     void setKillNames(final LinkedList<String> killNames);
 
-    LinkedList<Location> getLocationsToReach();
-
-    boolean addLocationToReach(Location locationToReach);
-
-    void setLocationsToReach(final LinkedList<Location> locationsToReach);
+    LinkedList<?> getLocationsToReach();
 
     LinkedList<Integer> getRadiiToReachWithin();
 
-    boolean addRadiusToReachWithin(Integer radiusToReachWithin);
-
     void setRadiiToReachWithin(final LinkedList<Integer> radiiToReachWithin);
 
-    LinkedList<World> getWorldsToReachWithin();
-
-    boolean addWorldToReachWithin(World worldToReachWithin);
-
-    void setWorldsToReachWithin(final LinkedList<World> worldsToReachWithin);
+    LinkedList<?> getWorldsToReachWithin();
 
     LinkedList<String> getLocationNames();
 
-    boolean addLocationName(String locationName);
-
     void setLocationNames(final LinkedList<String> locationNames);
 
-    LinkedList<EntityType> getMobsToTame();
-
-    boolean addMobToTame(EntityType mobToTame);
-
-    void setMobsToTame(final LinkedList<EntityType> mobsToTame);
+    LinkedList<?> getMobsToTame();
 
     LinkedList<Integer> getMobNumToTame();
-
-    boolean addMobNumToTame(Integer mobNumToTame);
 
     void setMobNumToTame(final LinkedList<Integer> mobNumToTame);
 
@@ -201,27 +110,17 @@ public interface Stage {
 
     void setPlayersToKill(final Integer playersToKill);
 
-    LinkedList<DyeColor> getSheepToShear();
-
-    boolean addSheepToShear(DyeColor sheepToShear);
-
-    void setSheepToShear(final LinkedList<DyeColor> sheepToShear);
+    LinkedList<?> getSheepToShear();
 
     LinkedList<Integer> getSheepNumToShear();
-
-    boolean addSheepNumToShear(Integer sheepNumToShear);
 
     void setSheepNumToShear(final LinkedList<Integer> sheepNumToShear);
 
     LinkedList<String> getPasswordDisplays();
 
-    boolean addPasswordDisplay(String passwordDisplay);
-
     void setPasswordDisplays(final LinkedList<String> passwordDisplays);
 
     LinkedList<String> getPasswordPhrases();
-
-    boolean addPasswordPhrase(String passwordPhrase);
 
     void setPasswordPhrases(final LinkedList<String> passwordPhrases);
 
@@ -247,13 +146,9 @@ public interface Stage {
 
     Map<String, Action> getChatActions();
 
-    void addChatAction(Map.Entry<String, Action> chatAction);
-
     void setChatActions(final Map<String, Action> chatActions);
 
     Map<String, Action> getCommandActions();
-
-    void addCommandAction(Map.Entry<String, Action> commandAction);
 
     void setCommandActions(final Map<String, Action> commandActions);
 
@@ -283,19 +178,13 @@ public interface Stage {
 
     LinkedList<String> getObjectiveOverrides();
 
-    boolean addObjectiveOverride(String objectiveOverride);
-
     void setObjectiveOverrides(final LinkedList<String> objectiveOverrides);
 
     LinkedList<CustomObjective> getCustomObjectives();
 
-    boolean addCustomObjectives(final CustomObjective customObjective);
-
     void clearCustomObjectives();
 
     LinkedList<Integer> getCustomObjectiveCounts();
-
-    boolean addCustomObjectiveCounts(final Integer customObjectiveCount);
 
     void clearCustomObjectiveCounts();
 
@@ -304,8 +193,6 @@ public interface Stage {
     void clearCustomObjectiveDisplays();
 
     LinkedList<Map.Entry<String, Object>> getCustomObjectiveData();
-
-    boolean addCustomObjectiveData(final Map.Entry<String, Object> customObjectiveDatum);
 
     void clearCustomObjectiveData();
 

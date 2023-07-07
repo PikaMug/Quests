@@ -101,10 +101,6 @@ public interface Quester extends Comparable<Quester> {
 
     void setAmountsCompleted(final ConcurrentHashMap<Quest, Integer> amountsCompleted);
 
-    ConcurrentHashMap<Quest, QuestData> getQuestData();
-
-    void setQuestData(final ConcurrentHashMap<Quest, QuestData> questData);
-
     Player getPlayer();
 
     OfflinePlayer getOfflinePlayer();

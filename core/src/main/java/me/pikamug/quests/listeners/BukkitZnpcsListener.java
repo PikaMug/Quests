@@ -4,8 +4,10 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.player.BukkitQuestData;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuest;
+import me.pikamug.quests.quests.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;
@@ -59,12 +61,13 @@ public class BukkitZnpcsListener implements Listener {
                 final Player player = event.getPlayer();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
-                    if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.DELIVER_ITEM)) {
+                    final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
+                    if (currentStage.containsObjective(ObjectiveType.DELIVER_ITEM)) {
                         final ItemStack hand = player.getItemInHand();
                         int currentIndex = -1;
                         final LinkedList<Integer> matches = new LinkedList<>();
                         int reasonCode = 0;
-                        for (final ItemStack is : quester.getCurrentStage(quest).getItemsToDeliver()) {
+                        for (final ItemStack is : currentStage.getItemsToDeliver()) {
                             currentIndex++;
                             reasonCode = BukkitItemUtil.compareItems(is, hand, true);
                             if (reasonCode == 0) {
@@ -74,14 +77,14 @@ public class BukkitZnpcsListener implements Listener {
                         final NPC clicked = event.getNpc();
                         if (!matches.isEmpty()) {
                             for (final Integer match : matches) {
-                                final UUID uuid = quester.getCurrentStage(quest).getItemDeliveryTargets().get(match);
+                                final UUID uuid = currentStage.getItemDeliveryTargets().get(match);
                                 if (uuid.equals(clicked.getUUID())) {
                                     quester.deliverToNPC(quest, uuid, hand);
                                     return;
                                 }
                             }
                         } else if (!hand.getType().equals(Material.AIR)) {
-                            for (final UUID uuid : quester.getCurrentStage(quest).getItemDeliveryTargets()) {
+                            for (final UUID uuid : currentStage.getItemDeliveryTargets()) {
                                 if (uuid.equals(clicked.getUUID())) {
                                     String text = "";
                                     final boolean hasMeta = hand.getItemMeta() != null;
@@ -188,7 +191,7 @@ public class BukkitZnpcsListener implements Listener {
                             final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNpc()
                                     .getUUID());
                             if (quester.getQuestData(quest) != null && npcIndex > -1
-                                    && !quester.getQuestData(quest).npcsInteracted.get(npcIndex)) {
+                                    && !((BukkitQuestData) quester.getQuestData(quest)).npcsInteracted.get(npcIndex)) {
                                 hasObjective = true;
                             }
                             quester.interactWithNPC(quest, event.getNpc().getUUID());

@@ -379,7 +379,7 @@ public class BukkitQuest implements Quest {
             } else if (stage.getNpcsToKill() != null && stage.getNpcsToKill().size() > 0) {
                 targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToKill().getFirst());
             } else if (stage.getLocationsToReach() != null && stage.getLocationsToReach().size() > 0) {
-                targetLocation = stage.getLocationsToReach().getFirst();
+                targetLocation = (Location) stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
                 final UUID uuid = stage.getItemDeliveryTargets().getFirst();
                 if (plugin.getDependencies().getCitizens() != null
@@ -424,7 +424,7 @@ public class BukkitQuest implements Quest {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final EntityType et = stage.getMobsToKill().getFirst();
+                final EntityType et = (EntityType) stage.getMobsToKill().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }
@@ -448,7 +448,7 @@ public class BukkitQuest implements Quest {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final EntityType et = stage.getMobsToTame().getFirst();
+                final EntityType et = (EntityType) stage.getMobsToTame().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }
@@ -472,7 +472,7 @@ public class BukkitQuest implements Quest {
                 final Location source = quester.getPlayer().getLocation();
                 Location nearest = null;
                 double old_distance = 30000000;
-                final DyeColor dc = stage.getSheepToShear().getFirst();
+                final DyeColor dc = (DyeColor) stage.getSheepToShear().getFirst();
                 if (source.getWorld() == null) {
                     return;
                 }

@@ -12,8 +12,6 @@
 
 package me.pikamug.quests.quests;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +44,7 @@ public interface Rewards {
 
     void setPermissionWorlds(final List<String> worldNames);
 
-    List<ItemStack> getItems();
-
-    void setItems(final List<ItemStack> items);
+    List<?> getItems();
 
     List<String> getMcmmoSkills();
 

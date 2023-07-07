@@ -51,10 +51,12 @@ import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.player.BukkitQuester;
-import me.pikamug.quests.player.QuestData;
+import me.pikamug.quests.player.BukkitQuestData;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.BukkitQuestFactory;
+import me.pikamug.quests.quests.BukkitRequirements;
+import me.pikamug.quests.quests.BukkitRewards;
 import me.pikamug.quests.quests.BukkitStage;
 import me.pikamug.quests.quests.Options;
 import me.pikamug.quests.quests.Planner;
@@ -1101,7 +1103,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().warning("Quest data was null when showing objectives for " + quest.getName());
             return;
         }
-        final Stage stage = quester.getCurrentStage(quest);
+        final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
         if (stage == null) {
             getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
             return;
@@ -1117,7 +1119,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             return;
         }
-        final QuestData data = quester.getQuestData(quest);
+        final BukkitQuestData data = (BukkitQuestData) quester.getQuestData(quest);
         for (final ItemStack e : stage.getBlocksToBreak()) {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
@@ -2129,7 +2131,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @SuppressWarnings({"unchecked", "deprecation"})
     private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey)
             throws QuestFormatException {
-        final Rewards rewards = quest.getRewards();
+        final BukkitRewards rewards = (BukkitRewards) quest.getRewards();
         if (config.contains("quests." + questKey + ".rewards.items")) {
             final LinkedList<ItemStack> temp = new LinkedList<>();
             final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
@@ -2301,7 +2303,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @SuppressWarnings({ "unchecked", "deprecation" })
     private void loadQuestRequirements(final FileConfiguration config, final ConfigurationSection questsSection,
                                        final Quest quest, final String questKey) throws QuestFormatException {
-        final Requirements requires = quest.getRequirements();
+        final BukkitRequirements requires = (BukkitRequirements) quest.getRequirements();
         if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
             final Object o = config.get("quests." + questKey + ".requirements.fail-requirement-message");
             if (o instanceof List) {
@@ -4259,7 +4261,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                             - 1) + " for " + quest.getName() + " was null");
                     return;
                 }
-                final Stage oStage = quest.getStage(Integer.parseInt(stageNum) - 1);
+                final BukkitStage oStage = (BukkitStage) quest.getStage(Integer.parseInt(stageNum) - 1);
                 oStage.clearCustomObjectives();
                 oStage.clearCustomObjectiveCounts();
                 oStage.clearCustomObjectiveData();

@@ -285,14 +285,15 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             // Stages (Objectives)
             int index = 1;
             for (final Stage stage : bukkitQuest.getStages()) {
+                final BukkitStage bukkitStage = (BukkitStage) stage;
                 final String pref = "stage" + index;
                 index++;
                 context.setSessionData(pref, Boolean.TRUE);
-                if (!stage.getBlocksToBreak().isEmpty()) {
+                if (!bukkitStage.getBlocksToBreak().isEmpty()) {
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : stage.getBlocksToBreak()) {
+                    for (final ItemStack e : bukkitStage.getBlocksToBreak()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -301,11 +302,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     context.setSessionData(pref + Key.S_BREAK_AMOUNTS, amounts);
                     context.setSessionData(pref + Key.S_BREAK_DURABILITY, durability);
                 }
-                if (!stage.getBlocksToDamage().isEmpty()) {
+                if (!bukkitStage.getBlocksToDamage().isEmpty()) {
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : stage.getBlocksToDamage()) {
+                    for (final ItemStack e : bukkitStage.getBlocksToDamage()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -314,11 +315,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     context.setSessionData(pref + Key.S_DAMAGE_AMOUNTS, amounts);
                     context.setSessionData(pref + Key.S_DAMAGE_DURABILITY, durability);
                 }
-                if (!stage.getBlocksToPlace().isEmpty()) {
+                if (!bukkitStage.getBlocksToPlace().isEmpty()) {
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : stage.getBlocksToPlace()) {
+                    for (final ItemStack e : bukkitStage.getBlocksToPlace()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -327,11 +328,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     context.setSessionData(pref + Key.S_PLACE_AMOUNTS, amounts);
                     context.setSessionData(pref + Key.S_PLACE_DURABILITY, durability);
                 }
-                if (!stage.getBlocksToUse().isEmpty()) {
+                if (!bukkitStage.getBlocksToUse().isEmpty()) {
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : stage.getBlocksToUse()) {
+                    for (final ItemStack e : bukkitStage.getBlocksToUse()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -340,11 +341,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     context.setSessionData(pref + Key.S_USE_AMOUNTS, amounts);
                     context.setSessionData(pref + Key.S_USE_DURABILITY, durability);
                 }
-                if (!stage.getBlocksToCut().isEmpty()) {
+                if (!bukkitStage.getBlocksToCut().isEmpty()) {
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : stage.getBlocksToCut()) {
+                    for (final ItemStack e : bukkitStage.getBlocksToCut()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -353,176 +354,176 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     context.setSessionData(pref + Key.S_CUT_AMOUNTS, amounts);
                     context.setSessionData(pref + Key.S_CUT_DURABILITY, durability);
                 }
-                if (!stage.getItemsToCraft().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToCraft());
+                if (!bukkitStage.getItemsToCraft().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToCraft());
                     context.setSessionData(pref + Key.S_CRAFT_ITEMS, items);
                 }
-                if (!stage.getItemsToSmelt().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToSmelt());
+                if (!bukkitStage.getItemsToSmelt().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToSmelt());
                     context.setSessionData(pref + Key.S_SMELT_ITEMS, items);
                 }
-                if (!stage.getItemsToEnchant().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToEnchant());
+                if (!bukkitStage.getItemsToEnchant().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToEnchant());
                     context.setSessionData(pref + Key.S_ENCHANT_ITEMS, items);
                 }
-                if (!stage.getItemsToBrew().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToBrew());
+                if (!bukkitStage.getItemsToBrew().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToBrew());
                     context.setSessionData(pref + Key.S_BREW_ITEMS, items);
                 }
-                if (!stage.getItemsToConsume().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToConsume());
+                if (!bukkitStage.getItemsToConsume().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToConsume());
                     context.setSessionData(pref + Key.S_CONSUME_ITEMS, items);
                 }
-                if (stage.getCowsToMilk() != null) {
-                    context.setSessionData(pref + Key.S_COW_MILK, stage.getCowsToMilk());
+                if (bukkitStage.getCowsToMilk() != null) {
+                    context.setSessionData(pref + Key.S_COW_MILK, bukkitStage.getCowsToMilk());
                 }
-                if (stage.getFishToCatch() != null) {
-                    context.setSessionData(pref + Key.S_FISH, stage.getFishToCatch());
+                if (bukkitStage.getFishToCatch() != null) {
+                    context.setSessionData(pref + Key.S_FISH, bukkitStage.getFishToCatch());
                 }
-                if (stage.getPlayersToKill() != null) {
-                    context.setSessionData(pref + Key.S_PLAYER_KILL, stage.getPlayersToKill());
+                if (bukkitStage.getPlayersToKill() != null) {
+                    context.setSessionData(pref + Key.S_PLAYER_KILL, bukkitStage.getPlayersToKill());
                 }
-                if (!stage.getItemsToDeliver().isEmpty()) {
-                    final LinkedList<ItemStack> items = new LinkedList<>(stage.getItemsToDeliver());
+                if (!bukkitStage.getItemsToDeliver().isEmpty()) {
+                    final LinkedList<ItemStack> items = new LinkedList<>(bukkitStage.getItemsToDeliver());
                     final LinkedList<String> npcs = new LinkedList<>();
-                    for (UUID uuid : stage.getItemDeliveryTargets()) {
+                    for (UUID uuid : bukkitStage.getItemDeliveryTargets()) {
                         npcs.add(uuid.toString());
                     }
                     context.setSessionData(pref + Key.S_DELIVERY_ITEMS, items);
                     context.setSessionData(pref + Key.S_DELIVERY_NPCS, npcs);
-                    context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, stage.getDeliverMessages());
+                    context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, bukkitStage.getDeliverMessages());
                 }
-                if (!stage.getNpcsToInteract().isEmpty()) {
+                if (!bukkitStage.getNpcsToInteract().isEmpty()) {
                     final LinkedList<String> npcs = new LinkedList<>();
-                    for (UUID uuid : stage.getNpcsToInteract()) {
+                    for (UUID uuid : bukkitStage.getNpcsToInteract()) {
                         npcs.add(uuid.toString());
                     }
                     context.setSessionData(pref + Key.S_NPCS_TO_TALK_TO, npcs);
                 }
-                if (!stage.getNpcsToKill().isEmpty()) {
+                if (!bukkitStage.getNpcsToKill().isEmpty()) {
                     final LinkedList<String> npcs = new LinkedList<>();
-                    for (UUID uuid : stage.getNpcsToKill()) {
+                    for (UUID uuid : bukkitStage.getNpcsToKill()) {
                         npcs.add(uuid.toString());
                     }
                     context.setSessionData(pref + Key.S_NPCS_TO_KILL, npcs);
-                    context.setSessionData(pref + Key.S_NPCS_TO_KILL_AMOUNTS, stage.getNpcNumToKill());
+                    context.setSessionData(pref + Key.S_NPCS_TO_KILL_AMOUNTS, bukkitStage.getNpcNumToKill());
                 }
-                if (!stage.getMobsToKill().isEmpty()) {
+                if (!bukkitStage.getMobsToKill().isEmpty()) {
                     final LinkedList<String> mobs = new LinkedList<>();
-                    for (final EntityType et : stage.getMobsToKill()) {
+                    for (final EntityType et : bukkitStage.getMobsToKill()) {
                         mobs.add(BukkitMiscUtil.getPrettyMobName(et));
                     }
                     context.setSessionData(pref + Key.S_MOB_TYPES, mobs);
-                    context.setSessionData(pref + Key.S_MOB_AMOUNTS, stage.getMobNumToKill());
-                    if (!stage.getLocationsToKillWithin().isEmpty()) {
+                    context.setSessionData(pref + Key.S_MOB_AMOUNTS, bukkitStage.getMobNumToKill());
+                    if (!bukkitStage.getLocationsToKillWithin().isEmpty()) {
                         final LinkedList<String> locations = new LinkedList<>();
-                        for (final Location l : stage.getLocationsToKillWithin()) {
+                        for (final Location l : bukkitStage.getLocationsToKillWithin()) {
                             locations.add(BukkitConfigUtil.getLocationInfo(l));
                         }
                         context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS, locations);
-                        context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS_RADIUS, stage.getRadiiToKillWithin());
-                        context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS_NAMES, stage.getKillNames());
+                        context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS_RADIUS, bukkitStage.getRadiiToKillWithin());
+                        context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS_NAMES, bukkitStage.getKillNames());
                     }
                 }
-                if (!stage.getLocationsToReach().isEmpty()) {
+                if (!bukkitStage.getLocationsToReach().isEmpty()) {
                     final LinkedList<String> locations = new LinkedList<>();
-                    for (final Location l : stage.getLocationsToReach()) {
+                    for (final Location l : bukkitStage.getLocationsToReach()) {
                         locations.add(BukkitConfigUtil.getLocationInfo(l));
                     }
                     context.setSessionData(pref + Key.S_REACH_LOCATIONS, locations);
-                    context.setSessionData(pref + Key.S_REACH_LOCATIONS_RADIUS, stage.getRadiiToReachWithin());
-                    context.setSessionData(pref + Key.S_REACH_LOCATIONS_NAMES, stage.getLocationNames());
+                    context.setSessionData(pref + Key.S_REACH_LOCATIONS_RADIUS, bukkitStage.getRadiiToReachWithin());
+                    context.setSessionData(pref + Key.S_REACH_LOCATIONS_NAMES, bukkitStage.getLocationNames());
                 }
-                if (!stage.getMobsToTame().isEmpty()) {
+                if (!bukkitStage.getMobsToTame().isEmpty()) {
                     final LinkedList<String> mobs = new LinkedList<>();
-                    for (final EntityType e : stage.getMobsToTame()) {
+                    for (final EntityType e : bukkitStage.getMobsToTame()) {
                         mobs.add(BukkitMiscUtil.getPrettyMobName(e));
                     }
-                    final LinkedList<Integer> amounts = new LinkedList<>(stage.getMobNumToTame());
+                    final LinkedList<Integer> amounts = new LinkedList<>(bukkitStage.getMobNumToTame());
                     context.setSessionData(pref + Key.S_TAME_TYPES, mobs);
                     context.setSessionData(pref + Key.S_TAME_AMOUNTS, amounts);
                 }
-                if (!stage.getSheepToShear().isEmpty()) {
+                if (!bukkitStage.getSheepToShear().isEmpty()) {
                     final LinkedList<String> colors = new LinkedList<>();
-                    for (final DyeColor d : stage.getSheepToShear()) {
+                    for (final DyeColor d : bukkitStage.getSheepToShear()) {
                         colors.add(BukkitMiscUtil.getPrettyDyeColorName(d));
 
                     }
-                    final LinkedList<Integer> amounts = new LinkedList<>(stage.getSheepNumToShear());
+                    final LinkedList<Integer> amounts = new LinkedList<>(bukkitStage.getSheepNumToShear());
                     context.setSessionData(pref + Key.S_SHEAR_COLORS, colors);
                     context.setSessionData(pref + Key.S_SHEAR_AMOUNTS, amounts);
                 }
-                if (!stage.getPasswordDisplays().isEmpty()) {
-                    context.setSessionData(pref + Key.S_PASSWORD_DISPLAYS, stage.getPasswordDisplays());
-                    context.setSessionData(pref + Key.S_PASSWORD_PHRASES, stage.getPasswordPhrases());
+                if (!bukkitStage.getPasswordDisplays().isEmpty()) {
+                    context.setSessionData(pref + Key.S_PASSWORD_DISPLAYS, bukkitStage.getPasswordDisplays());
+                    context.setSessionData(pref + Key.S_PASSWORD_PHRASES, bukkitStage.getPasswordPhrases());
                 }
-                if (!stage.getCustomObjectives().isEmpty()) {
+                if (!bukkitStage.getCustomObjectives().isEmpty()) {
                     final LinkedList<String> list = new LinkedList<>();
                     final LinkedList<Integer> countList = new LinkedList<>();
-                    for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
-                        list.add(stage.getCustomObjectives().get(i).getName());
-                        countList.add(stage.getCustomObjectiveCounts().get(i));
+                    for (int i = 0; i < bukkitStage.getCustomObjectives().size(); i++) {
+                        list.add(bukkitStage.getCustomObjectives().get(i).getName());
+                        countList.add(bukkitStage.getCustomObjectiveCounts().get(i));
                     }
-                    final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(stage.getCustomObjectiveData());
+                    final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(bukkitStage.getCustomObjectiveData());
                     context.setSessionData(pref + Key.S_CUSTOM_OBJECTIVES, list);
                     context.setSessionData(pref + Key.S_CUSTOM_OBJECTIVES_COUNT, countList);
                     context.setSessionData(pref + Key.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
                 }
-                if (stage.getStartAction() != null) {
-                    context.setSessionData(pref + Key.S_START_EVENT, stage.getStartAction().getName());
+                if (bukkitStage.getStartAction() != null) {
+                    context.setSessionData(pref + Key.S_START_EVENT, bukkitStage.getStartAction().getName());
                 }
-                if (stage.getFinishAction() != null) {
-                    context.setSessionData(pref + Key.S_FINISH_EVENT, stage.getFinishAction().getName());
+                if (bukkitStage.getFinishAction() != null) {
+                    context.setSessionData(pref + Key.S_FINISH_EVENT, bukkitStage.getFinishAction().getName());
                 }
-                if (stage.getFailAction() != null) {
-                    context.setSessionData(pref + Key.S_FAIL_EVENT, stage.getFailAction().getName());
+                if (bukkitStage.getFailAction() != null) {
+                    context.setSessionData(pref + Key.S_FAIL_EVENT, bukkitStage.getFailAction().getName());
                 }
-                if (stage.getDeathAction() != null) {
-                    context.setSessionData(pref + Key.S_DEATH_EVENT, stage.getDeathAction().getName());
+                if (bukkitStage.getDeathAction() != null) {
+                    context.setSessionData(pref + Key.S_DEATH_EVENT, bukkitStage.getDeathAction().getName());
                 }
-                if (stage.getDisconnectAction() != null) {
-                    context.setSessionData(pref + Key.S_DISCONNECT_EVENT, stage.getDisconnectAction().getName());
+                if (bukkitStage.getDisconnectAction() != null) {
+                    context.setSessionData(pref + Key.S_DISCONNECT_EVENT, bukkitStage.getDisconnectAction().getName());
                 }
-                if (!stage.getChatActions().isEmpty()) {
+                if (!bukkitStage.getChatActions().isEmpty()) {
                     final LinkedList<String> chatEvents = new LinkedList<>();
                     final LinkedList<String> chatEventTriggers = new LinkedList<>();
-                    for (final String s : stage.getChatActions().keySet()) {
+                    for (final String s : bukkitStage.getChatActions().keySet()) {
                         chatEventTriggers.add(s);
-                        chatEvents.add(stage.getChatActions().get(s).getName());
+                        chatEvents.add(bukkitStage.getChatActions().get(s).getName());
                     }
                     context.setSessionData(pref + Key.S_CHAT_EVENTS, chatEvents);
                     context.setSessionData(pref + Key.S_CHAT_EVENT_TRIGGERS, chatEventTriggers);
                 }
-                if (!stage.getCommandActions().isEmpty()) {
+                if (!bukkitStage.getCommandActions().isEmpty()) {
                     final LinkedList<String> commandEvents = new LinkedList<>();
                     final LinkedList<String> commandEventTriggers = new LinkedList<>();
-                    for (final String s : stage.getCommandActions().keySet()) {
+                    for (final String s : bukkitStage.getCommandActions().keySet()) {
                         commandEventTriggers.add(s);
-                        commandEvents.add(stage.getCommandActions().get(s).getName());
+                        commandEvents.add(bukkitStage.getCommandActions().get(s).getName());
                     }
                     context.setSessionData(pref + Key.S_COMMAND_EVENTS, commandEvents);
                     context.setSessionData(pref + Key.S_COMMAND_EVENT_TRIGGERS, commandEventTriggers);
                 }
-                if (stage.getCondition() != null) {
-                    context.setSessionData(pref + Key.S_CONDITION, stage.getCondition().getName());
+                if (bukkitStage.getCondition() != null) {
+                    context.setSessionData(pref + Key.S_CONDITION, bukkitStage.getCondition().getName());
                 }
-                if (stage.getDelay() != -1) {
-                    context.setSessionData(pref + Key.S_DELAY, stage.getDelay());
-                    if (stage.getDelayMessage() != null) {
-                        context.setSessionData(pref + Key.S_DELAY_MESSAGE, stage.getDelayMessage());
+                if (bukkitStage.getDelay() != -1) {
+                    context.setSessionData(pref + Key.S_DELAY, bukkitStage.getDelay());
+                    if (bukkitStage.getDelayMessage() != null) {
+                        context.setSessionData(pref + Key.S_DELAY_MESSAGE, bukkitStage.getDelayMessage());
                     }
                 }
-                if (stage.getScript() != null) {
-                    context.setSessionData(pref + Key.S_DENIZEN, stage.getScript());
+                if (bukkitStage.getScript() != null) {
+                    context.setSessionData(pref + Key.S_DENIZEN, bukkitStage.getScript());
                 }
-                if (stage.getCompleteMessage() != null) {
-                    context.setSessionData(pref + Key.S_COMPLETE_MESSAGE, stage.getCompleteMessage());
+                if (bukkitStage.getCompleteMessage() != null) {
+                    context.setSessionData(pref + Key.S_COMPLETE_MESSAGE, bukkitStage.getCompleteMessage());
                 }
-                if (stage.getStartMessage() != null) {
-                    context.setSessionData(pref + Key.S_START_MESSAGE, stage.getStartMessage());
+                if (bukkitStage.getStartMessage() != null) {
+                    context.setSessionData(pref + Key.S_START_MESSAGE, bukkitStage.getStartMessage());
                 }
-                if (!stage.getObjectiveOverrides().isEmpty()) {
-                    context.setSessionData(pref + Key.S_OVERRIDE_DISPLAY, stage.getObjectiveOverrides());
+                if (!bukkitStage.getObjectiveOverrides().isEmpty()) {
+                    context.setSessionData(pref + Key.S_OVERRIDE_DISPLAY, bukkitStage.getObjectiveOverrides());
                 }
             }
         } catch (Exception e) {

@@ -12,8 +12,6 @@
 
 package me.pikamug.quests.quests;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +28,7 @@ public interface Requirements {
 
     void setExp(final int exp);
 
-    List<ItemStack> getItems();
-
-    void setItems(final List<ItemStack> items);
+    List<?> getItems();
 
     List<Boolean> getRemoveItems();
 
