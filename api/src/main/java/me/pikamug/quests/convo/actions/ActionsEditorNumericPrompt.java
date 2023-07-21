@@ -29,12 +29,6 @@ public abstract class ActionsEditorNumericPrompt extends QuestsNumericPrompt {
         }
     }
     
-    @Deprecated
-    public ActionsEditorNumericPrompt(final ConversationContext context, final ActionFactory factory) {
-        this.context = context;
-        this.factory = factory;
-    }
-    
     @Override
     public String getName() {
         return getClass().getSimpleName();

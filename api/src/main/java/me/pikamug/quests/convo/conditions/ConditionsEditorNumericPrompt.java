@@ -29,12 +29,6 @@ public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt 
         }
     }
     
-    @Deprecated
-    public ConditionsEditorNumericPrompt(final ConversationContext context, final ConditionFactory factory) {
-        this.context = context;
-        this.factory = factory;
-    }
-    
     @Override
     public String getName() {
         return getClass().getSimpleName();

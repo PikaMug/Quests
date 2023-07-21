@@ -76,7 +76,7 @@ public class QuestsQuitCommand extends QuestsSubCommand {
         final Player player = (Player) cs;
         if (player.hasPermission(getPermission())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            if (!quester.getCurrentQuestsTemp().isEmpty()) {
+            if (!quester.getCurrentQuests().isEmpty()) {
                 final Quest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {

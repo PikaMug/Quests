@@ -60,7 +60,7 @@ public class BukkitZnpcsListener implements Listener {
             if (!event.getPlayer().isConversing()) {
                 final Player player = event.getPlayer();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
                     if (currentStage.containsObjective(ObjectiveType.DELIVER_ITEM)) {
                         final ItemStack hand = player.getItemInHand();
@@ -182,7 +182,7 @@ public class BukkitZnpcsListener implements Listener {
                     }
                 }
                 boolean hasObjective = false;
-                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
@@ -205,7 +205,7 @@ public class BukkitZnpcsListener implements Listener {
                 final LinkedList<Quest> npcQuests = new LinkedList<>();
                 for (final Quest quest : plugin.getLoadedQuests()) {
                     final BukkitQuest bukkitQuest = (BukkitQuest) quest;
-                    if (quester.getCurrentQuestsTemp().containsKey(bukkitQuest)) {
+                    if (quester.getCurrentQuests().containsKey(bukkitQuest)) {
                         continue;
                     }
                     if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(event.getNpc().getUUID())) {

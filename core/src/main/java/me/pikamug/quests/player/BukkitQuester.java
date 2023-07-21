@@ -316,18 +316,8 @@ public class BukkitQuester implements Quester {
      *
      * @return Quest or null
      */
-    public BukkitQuest getCompassTarget() {
-        return compassTargetQuestId != null ? plugin.getQuestById(compassTargetQuestId) : null;
-    }
-
-    /**
-     * Get compass target quest. Returns null if not set
-     *
-     * @return Quest or null
-     * @deprecated Do not use
-     */
     @Override
-    public Quest getCompassTargetTemp() {
+    public Quest getCompassTarget() {
         return compassTargetQuestId != null ? plugin.getQuestByIdTemp(compassTargetQuestId) : null;
     }
 
@@ -358,21 +348,14 @@ public class BukkitQuester implements Quester {
         this.timers.remove(timerId);
     }
 
-    public ConcurrentHashMap<BukkitQuest, Integer> getCurrentQuests() {
-        final ConcurrentHashMap<BukkitQuest, Integer> map = new ConcurrentHashMap<>();
+    @Override
+    public ConcurrentHashMap<Quest, Integer> getCurrentQuests() {
+        final ConcurrentHashMap<Quest, Integer> map = new ConcurrentHashMap<>();
         for (final Entry<Quest, Integer> cq : currentQuests.entrySet()) {
             final BukkitQuest q = (BukkitQuest) cq.getKey();
             map.put(q, cq.getValue());
         }
         return map;
-    }
-
-    /**
-     * @deprecated Do not use
-     */
-    @Override
-    public ConcurrentHashMap<Quest, Integer> getCurrentQuestsTemp() {
-        return currentQuests;
     }
 
     @Override
@@ -595,7 +578,7 @@ public class BukkitQuester implements Quester {
                 return false;
             }
         }
-        if (getCurrentQuestsTemp().size() >= plugin.getSettings().getMaxQuests()
+        if (getCurrentQuests().size() >= plugin.getSettings().getMaxQuests()
                 && plugin.getSettings().getMaxQuests() > 0) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "questMaxAllowed").replace("<number>",
@@ -603,7 +586,7 @@ public class BukkitQuester implements Quester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCurrentQuestsTemp().containsKey(bukkitQuest)) {
+        } else if (getCurrentQuests().containsKey(bukkitQuest)) {
             if (giveReason) {
                 final String msg = Language.get(getPlayer(), "questAlreadyOn");
                 sendMessage(ChatColor.YELLOW + msg);
@@ -1062,14 +1045,23 @@ public class BukkitQuester implements Quester {
                 .collect(Collectors.toMap(Quest::getId, Quest::getName));
         for (final String questId : requirements.getNeededQuestIds()) {
             if (completed.containsKey(questId)) {
-                finishedRequirements.add(ChatColor.GREEN + completed.get(questId));
+                String msg = Language.get("haveCompleted");
+                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
+                        + completed.get(questId) + ChatColor.GREEN);
+                finishedRequirements.add(ChatColor.GREEN + msg);
             } else {
-            unfinishedRequirements.add(ChatColor.GRAY + plugin.getQuestById(questId).getName());
+                String msg = Language.get("mustComplete");
+                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
+                        + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
+                unfinishedRequirements.add(ChatColor.GRAY + msg);
             }
         }
         for (final String questId : requirements.getBlockQuestIds()) {
             if (completed.containsKey(questId)) {
-                current.add(ChatColor.RED + quest.getName());
+                String msg = Language.get("cannotComplete");
+                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
+                        + quest.getName() + ChatColor.RED);
+                current.add(ChatColor.RED + msg);
             }
         }
         for (final Quest q : currentQuests.keySet()) {
@@ -5121,7 +5113,7 @@ public class BukkitQuester implements Quester {
                                 appliedQuestIDs.add(quest.getId());
                             }
                         }
-                        q.getCurrentQuestsTemp().forEach((otherQuest, i) -> {
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
                             if (otherQuest.getStage(i).containsObjective(type)) {
                                 if (!otherQuest.getOptions().canShareSameQuestOnly()) {
                                     fun.apply(q, otherQuest);
@@ -5159,7 +5151,7 @@ public class BukkitQuester implements Quester {
                 if (q == null) {
                     continue;
                 }
-                if ((q.getCurrentQuestsTemp().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
+                if ((q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest)))) {
                     fun.apply(q);
                 }
             }

@@ -44,20 +44,6 @@ public class Language {
     private static final LinkedHashMap<String, LinkedHashMap<String, String>> otherLang = new LinkedHashMap<>();
     private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
 
-    /**
-     * @deprecated Use Settings#getLanguage()
-     */
-    public static String getISO() {
-        return plugin.getSettings().getLanguage();
-    }
-
-    /**
-     * @deprecated Use Settings#setLanguage(String)
-     */
-    public static void setISO(final String iso) {
-        plugin.getSettings().setLanguage(iso);
-    }
-    
     public static Collection<String> values() {
         return defaultLang.values();
     }
@@ -90,7 +76,7 @@ public class Language {
         final String language = locale.substring(0, separator);
         final String country = locale.substring(separator + 1).toUpperCase();
         locale = language + "-" + country;
-        if (plugin.getSettings().canLanguageOverrideClient() || locale.equals(getISO())) {
+        if (plugin.getSettings().canLanguageOverrideClient() || locale.equals(plugin.getSettings().getLanguage())) {
             return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
         }
         if (!otherLang.containsKey(locale)) {
@@ -303,7 +289,7 @@ public class Language {
                 allStrings.put(entry.getKey(), entry.getValue().replace("<semicolon>", strSemicolon));
             }
         }
-        if (iso.equals(getISO())) {
+        if (iso.equals(plugin.getSettings().getLanguage())) {
             defaultLang.clear();
             defaultLang.putAll(allStrings);
         } else {

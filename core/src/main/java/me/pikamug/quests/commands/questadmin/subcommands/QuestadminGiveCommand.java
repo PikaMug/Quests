@@ -101,7 +101,7 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("questNotFound"));
             } else {
                 final Quester quester = plugin.getQuester(target.getUniqueId());
-                for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest q : quester.getCurrentQuests().keySet()) {
                     if (q.getName().equalsIgnoreCase(questToGive.getName())) {
                         String msg = Language.get("questsPlayerHasQuestAlready");
                         msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()

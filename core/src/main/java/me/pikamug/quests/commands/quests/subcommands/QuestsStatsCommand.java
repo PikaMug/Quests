@@ -72,12 +72,12 @@ public class QuestsStatsCommand extends QuestsSubCommand {
             cs.sendMessage(ChatColor.GOLD + "- " + player.getName() + " -");
             cs.sendMessage(ChatColor.YELLOW + Language.get(player, "questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
-            if (quester.getCurrentQuestsTemp().isEmpty()) {
+            if (quester.getCurrentQuests().isEmpty()) {
                 cs.sendMessage(ChatColor.YELLOW + Language.get(player, "currentQuest") + " " + ChatColor.DARK_PURPLE
                         + Language.get("none"));
             } else {
                 cs.sendMessage(ChatColor.YELLOW + Language.get(player, "currentQuest"));
-                for (final Map.Entry<Quest, Integer> set : quester.getCurrentQuestsTemp().entrySet()) {
+                for (final Map.Entry<Quest, Integer> set : quester.getCurrentQuests().entrySet()) {
                     final Quest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
                             + ChatColor.LIGHT_PURPLE + " (" + Language.get(player, "stageEditorStage") + " "

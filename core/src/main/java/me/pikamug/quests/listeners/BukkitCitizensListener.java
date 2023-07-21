@@ -71,7 +71,7 @@ public class BukkitCitizensListener implements Listener {
         if (!event.getClicker().isConversing()) {
             final Player player = event.getClicker();
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+            for (final Quest quest : quester.getCurrentQuests().keySet()) {
                 final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
                 if (currentStage.containsObjective(ObjectiveType.DELIVER_ITEM)) {
                     final ItemStack hand = player.getItemInHand();
@@ -193,7 +193,7 @@ public class BukkitCitizensListener implements Listener {
                 }
             }
             boolean hasObjective = false;
-            for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+            for (final Quest quest : quester.getCurrentQuests().keySet()) {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
@@ -216,7 +216,7 @@ public class BukkitCitizensListener implements Listener {
             final LinkedList<Quest> npcQuests = new LinkedList<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 final BukkitQuest bukkitQuest = (BukkitQuest) quest;
-                if (quester.getCurrentQuestsTemp().containsKey(bukkitQuest)) {
+                if (quester.getCurrentQuests().containsKey(bukkitQuest)) {
                     continue;
                 }
                 if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(event.getNPC().getUniqueId())) {
@@ -309,12 +309,12 @@ public class BukkitCitizensListener implements Listener {
             }
             if (player != null) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
-                for (final Quest quest : quester.getCurrentQuestsTemp().keySet()) {
+                for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
 
-                    if (quester.getCurrentQuestsTemp().containsKey(quest)
+                    if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.killNPC(quest, event.getNPC().getUniqueId());
                     }

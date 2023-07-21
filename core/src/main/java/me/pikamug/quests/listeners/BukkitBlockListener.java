@@ -72,7 +72,7 @@ public class BukkitBlockListener implements Listener {
                 if (!quester.meetsCondition(quest, true)) {
                     continue;
                 }
-                if (quester.getCurrentQuestsTemp().containsKey(quest)) {
+                if (quester.getCurrentQuests().containsKey(quest)) {
                     final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
                     if (currentStage == null) {
                         plugin.getLogger().severe("Player " + player.getName() + " (" + player.getUniqueId()
@@ -197,7 +197,7 @@ public class BukkitBlockListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuestsTemp().containsKey(quest)
+                if (quester.getCurrentQuests().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.damageBlock(quest, blockItemStack);
                 }
@@ -233,7 +233,7 @@ public class BukkitBlockListener implements Listener {
                     continue;
                 }
 
-                if (quester.getCurrentQuestsTemp().containsKey(quest)) {
+                if (quester.getCurrentQuests().containsKey(quest)) {
                     final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
 
                     if (currentStage.containsObjective(placeType)) {
@@ -347,7 +347,7 @@ public class BukkitBlockListener implements Listener {
                                 continue;
                             }
                             
-                            if (quester.getCurrentQuestsTemp().containsKey(quest)
+                            if (quester.getCurrentQuests().containsKey(quest)
                                     && quester.getCurrentStage(quest).containsObjective(type)) {
                                 quester.useBlock(quest, blockItemStack);
                             }

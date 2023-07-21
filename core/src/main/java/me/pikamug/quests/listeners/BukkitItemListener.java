@@ -62,7 +62,7 @@ public class BukkitItemListener implements Listener {
                         continue;
                     }
                     
-                    if (quester.getCurrentQuestsTemp().containsKey(quest)
+                    if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         quester.craftItem(quest, craftedItem);
                     }
@@ -117,7 +117,7 @@ public class BukkitItemListener implements Listener {
                             continue;
                         }
                         
-                        if (quester.getCurrentQuestsTemp().containsKey(quest)
+                        if (quester.getCurrentQuests().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
                             quester.smeltItem(quest, event.getCurrentItem());
                         }
@@ -142,7 +142,7 @@ public class BukkitItemListener implements Listener {
                             continue;
                         }
                         
-                        if (quester.getCurrentQuestsTemp().containsKey(quest)
+                        if (quester.getCurrentQuests().containsKey(quest)
                                 && quester.getCurrentStage(quest).containsObjective(type)) {
                             if (isAllowedBrewingAction(event)) {
                                 quester.brewItem(quest, event.getCurrentItem());
@@ -219,7 +219,7 @@ public class BukkitItemListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuestsTemp().containsKey(quest)
+                if (quester.getCurrentQuests().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     if (enchantedItem.getType().equals(Material.BOOK)) {
                         quester.enchantBook(quest, enchantedItem, event.getEnchantsToAdd());
@@ -259,7 +259,7 @@ public class BukkitItemListener implements Listener {
                     continue;
                 }
                 
-                if (quester.getCurrentQuestsTemp().containsKey(quest)
+                if (quester.getCurrentQuests().containsKey(quest)
                         && quester.getCurrentStage(quest).containsObjective(type)) {
                     quester.consumeItem(quest, consumedItem);
                 }

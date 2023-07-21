@@ -258,13 +258,13 @@ public class BukkitQuest implements Quest {
             if (currentStage.getFinishAction() != null) {
                 currentStage.getFinishAction().fire(quester, this);
             }
-            if (quester.getCurrentQuestsTemp().get(this) == (orderedStages.size() - 1)) {
+            if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
                 if (currentStage.getScript() != null) {
                     plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
                 }
                 completeQuest(quester);
             } else {
-                setStage(quester, quester.getCurrentQuestsTemp().get(this) + 1);
+                setStage(quester, quester.getCurrentQuests().get(this) + 1);
             }
             if (quester.getQuestData(this) != null) {
                 quester.getQuestData(this).setDelayStartTime(0);
@@ -592,7 +592,7 @@ public class BukkitQuest implements Quest {
                     return false;
                 }
             }
-            for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
+            for (final Quest q : quester.getCurrentQuests().keySet()) {
                 if (!requirements.getBlockQuestIds().contains(q.getId())) {
                     return false;
                 }

@@ -132,7 +132,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<String> questIds = data.getStringList("currentQuests");
             final List<Integer> questStages = data.getIntegerList("currentStages");
             final int maxSize = Math.min(questIds.size(), questStages.size());
-            final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuestsTemp();
+            final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
                 if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
                     currentQuests.put(plugin.getQuestByIdTemp(questIds.get(i)), questStages.get(i));
@@ -149,7 +149,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
                 final Quest quest = plugin.getQuestByIdTemp(key) != null ? plugin.getQuestByIdTemp(key) : plugin.getQuestTemp(key);
-                if (quest == null || !quester.getCurrentQuestsTemp().containsKey(quest)) {
+                if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
                 final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
@@ -159,7 +159,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                             + quest.getName() + "\". Quest ended.");
                     continue;
                 }
-                quester.addEmptiesFor(quest, quester.getCurrentQuestsTemp().get(quest));
+                quester.addEmptiesFor(quest, quester.getCurrentQuests().get(quest));
                 if (questSec == null) {
                     continue;
                 }

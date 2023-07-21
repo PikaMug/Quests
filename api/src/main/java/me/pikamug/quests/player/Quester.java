@@ -62,9 +62,8 @@ public interface Quester extends Comparable<Quester> {
      * Get compass target quest. Returns null if not set
      *
      * @return Quest or null
-     * @deprecated Do not use
      */
-    Quest getCompassTargetTemp();
+    Quest getCompassTarget();
 
     /**
      * Set compass target quest. Does not update in-game
@@ -79,10 +78,7 @@ public interface Quester extends Comparable<Quester> {
 
     void removeTimer(final Integer timerId);
 
-    /**
-     * @deprecated Do not use
-     */
-    ConcurrentHashMap<Quest, Integer> getCurrentQuestsTemp();
+    ConcurrentHashMap<Quest, Integer> getCurrentQuests();
 
     void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests);
 

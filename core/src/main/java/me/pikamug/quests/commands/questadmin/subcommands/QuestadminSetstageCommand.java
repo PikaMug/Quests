@@ -92,7 +92,7 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Language.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
@@ -102,7 +102,7 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
                     cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
                     return;
                 }
-                if (!quester.getCurrentQuestsTemp().containsKey(quest)) {
+                if (!quester.getCurrentQuests().containsKey(quest)) {
                     String msg1 = Language.get("questForceTake");
                     msg1 = msg1.replace("<player>", ChatColor.GREEN + quester.getLastKnownName() + ChatColor.GOLD);
                     msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);

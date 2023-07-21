@@ -78,7 +78,7 @@ public class QuestsTakeCommand extends QuestsSubCommand {
                 final Quest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 if (questToFind != null) {
-                    for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
+                    for (final Quest q : quester.getCurrentQuests().keySet()) {
                         if (q.getId().equals(questToFind.getId())) {
                             Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
                             return;

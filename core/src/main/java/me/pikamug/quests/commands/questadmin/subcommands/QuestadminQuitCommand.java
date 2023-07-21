@@ -84,7 +84,7 @@ public class QuestadminQuitCommand extends QuestsSubCommand {
                 }
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuestsTemp().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
                 String msg = Language.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);

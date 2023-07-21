@@ -59,14 +59,14 @@ public class BukkitQuestJournal {
     }
 
     public List<BaseComponent[]> getPages() {
-        if (owner.getCurrentQuestsTemp().isEmpty()) {
+        if (owner.getCurrentQuests().isEmpty()) {
             final Player player = owner.getPlayer();
             final String title = Language.get(player, "journalTitle");
             return Collections.singletonList(new BookUtil.PageBuilder().add(new TextComponent(ChatColor.DARK_RED
                     + Language.get(player, "journalNoQuests").replace("<journal>", title))).build());
         } else {
             final List<BaseComponent[]> pages = new LinkedList<>();
-            final List<Quest> sortedList = owner.getCurrentQuestsTemp().keySet().stream()
+            final List<Quest> sortedList = owner.getCurrentQuests().keySet().stream()
                     .sorted(Comparator.comparing(Quest::getName))
                     .collect(Collectors.toList());
             for (final Quest quest : sortedList) {
