@@ -45,8 +45,8 @@ public class QuestCommandHandler {
                 if (args.length == 0) {
                     final Player player = (Player) cs;
                     final Quester quester = plugin.getQuester(player.getUniqueId());
-                    if (!quester.getCurrentQuestsTemp().isEmpty()) {
-                        for (final Quest q : quester.getCurrentQuestsTemp().keySet()) {
+                    if (!quester.getCurrentQuests().isEmpty()) {
+                        for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
                             if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0

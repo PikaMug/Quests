@@ -390,40 +390,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Get every Quest loaded in memory
      *
-     * @deprecated Use {@link #getLoadedQuests()}
-     * @return a list of all Quests
-     */
-    @Deprecated
-    public LinkedList<BukkitQuest> getQuests() {
-        final LinkedList<BukkitQuest> list = new LinkedList<>();
-        for (Quest q : quests) {
-            list.add((BukkitQuest) q);
-        }
-        return list;
-    }
-
-    /**
-     * Get every Quest loaded in memory
-     *
      * @return a collection of all Quests
      */
     public Collection<Quest> getLoadedQuests() {
         return quests;
-    }
-
-    /**
-     * Get every Action loaded in memory
-     *
-     * @deprecated Use {@link #getLoadedActions()}
-     * @return a list of all Actions
-     */
-    @Deprecated
-    public LinkedList<BukkitAction> getActions() {
-        final LinkedList<BukkitAction> list = new LinkedList<>();
-        for (Action a : actions) {
-            list.add((BukkitAction) a);
-        }
-        return list;
     }
 
     /**
@@ -438,34 +408,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Set every Action loaded in memory
      *
-     * @deprecated Use {@link #setLoadedActions(Collection)}
-     */
-    @Deprecated
-    public void setActions(final LinkedList<Action> actions) {
-        this.actions = actions;
-    }
-
-    /**
-     * Set every Action loaded in memory
-     *
      */
     public void setLoadedActions(final Collection<Action> actions) {
         this.actions = actions;
-    }
-
-    /**
-     * Get every Condition loaded in memory
-     *
-     * @deprecated Use {@link #getLoadedConditions()}
-     * @return a list of all Actions
-     */
-    @Deprecated
-    public LinkedList<BukkitCondition> getConditions() {
-        final LinkedList<BukkitCondition> list = new LinkedList<>();
-        for (Condition c : conditions) {
-            list.add((BukkitCondition) c);
-        }
-        return list;
     }
 
     /**
@@ -475,16 +420,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     public Collection<Condition> getLoadedConditions() {
         return conditions;
-    }
-
-    /**
-     * Set every Condition loaded in memory
-     *
-     * @deprecated Use {@link #setLoadedConditions(Collection)}
-     */
-    @Deprecated
-    public void setConditions(final LinkedList<Condition> conditions) {
-        this.conditions = conditions;
     }
 
     /**
@@ -1919,7 +1854,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 loadConditions();
                 for (final Quester quester : questers) {
                     final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
-                    for (final Quest quest : loaded.getCurrentQuestsTemp().keySet()) {
+                    for (final Quest quest : loaded.getCurrentQuests().keySet()) {
                         loaded.checkQuest(quest);
                     }
                 }
@@ -2390,12 +2325,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
                         if (id.equals(node)) {
-                            if (getQuestByIdTemp(node) != null) {
-                                temp.add(node);
-                            } else {
-                                throw new QuestFormatException("Requirement quest-blocks has unknown quest ID "
-                                        + node + ", manually update it to a valid ID", questKey);
-                            }
+                            temp.add(node);
                             done = true;
                             break;
                         }
@@ -2425,12 +2355,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     boolean done = false;
                     for (final String id : questsSection.getKeys(false)) {
                         if (id.equals(node)) {
-                            if (getQuestByIdTemp(node) != null) {
-                                temp.add(node);
-                            } else {
-                                throw new QuestFormatException("Requirement quests has unknown quest ID "
-                                        + node + ", manually update it to a valid ID", questKey);
-                            }
+                            temp.add(node);
                             done = true;
                             break;
                         }
@@ -4733,7 +4658,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return false;
     }
 
-    // Unused internally, left for external use
     /**
      * Checks whether an NPC has a quest that the player has already completed
      *
@@ -4775,45 +4699,5 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
         }
         return false;
-    }
-    
-    /**
-     * Checks whether an NPC has a quest that the player may accept
-     * 
-     * @param npc The giver NPC to check
-     * @param quester The player to check
-     * @return true if at least one available quest has not yet been completed
-     * @deprecated Use {@link #hasQuest(UUID, Quester)}
-     */
-    @Deprecated
-    public boolean hasQuest(final NPC npc, final Quester quester) {
-        return hasQuest(npc.getUniqueId(), quester);
-    }
-    
-    // Unused internally, left for external use
-    /**
-     * Checks whether an NPC has a quest that the player has already completed
-     * 
-     * @param npc The giver NPC to check
-     * @param quester The player to check
-     * @return true if at least one available quest has been completed
-     * @deprecated Use {@link #hasCompletedQuest(UUID, Quester)}
-     */
-    @Deprecated
-    public boolean hasCompletedQuest(final NPC npc, final Quester quester) {
-        return hasCompletedQuest(npc.getUniqueId(), quester);
-    }
-    
-    /**
-     * Checks whether an NPC has a repeatable quest that the player has already completed
-     * 
-     * @param npc The giver NPC to check
-     * @param quester The player to check
-     * @return true if at least one available, redoable quest has been completed
-     * @deprecated Use {@link #hasCompletedRedoableQuest(UUID, Quester)}
-     */
-    @Deprecated
-    public boolean hasCompletedRedoableQuest(final NPC npc, final Quester quester) {
-        return hasCompletedRedoableQuest(npc.getUniqueId(), quester);
     }
 }
