@@ -1666,7 +1666,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1772,7 +1772,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)

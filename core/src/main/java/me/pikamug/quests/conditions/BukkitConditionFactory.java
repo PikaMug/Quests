@@ -191,7 +191,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorDeleted"));
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted condition " + condition);
@@ -279,7 +279,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorSaved"));
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved condition " + context.getSessionData(Key.C_NAME));

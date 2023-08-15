@@ -154,43 +154,6 @@ public class BukkitQuestMob implements QuestMob {
         }
     }
 
-    public String serialize() {
-        final StringBuilder export = new StringBuilder();
-        if (entityType != null) {
-            export.append("type-").append(entityType.name());
-        }
-        if (name != null) {
-            export.append("::name-").append(name);
-        }
-        if (spawnLocation != null) {
-            export.append("::spawn-").append(BukkitConfigUtil.getLocationInfo(spawnLocation));
-        }
-        if (spawnAmounts != null) {
-            export.append("::amounts-").append(spawnAmounts);
-        }
-        if (inventory.length > 0 && inventory[0] != null) {
-            export.append("::hand-").append(BukkitItemUtil.serializeItemStack(inventory[0]));
-            export.append("::hand_drop-").append(dropChances[0]);
-        }
-        if (inventory.length > 1 && inventory[1] != null) {
-            export.append("::boots-").append(BukkitItemUtil.serializeItemStack(inventory[1]));
-            export.append("::boots_drop-").append(dropChances[1]);
-        }
-        if (inventory.length > 2 && inventory[2] != null) {
-            export.append("::leggings-").append(BukkitItemUtil.serializeItemStack(inventory[2]));
-            export.append("::leggings_drop-").append(dropChances[2]);
-        }
-        if (inventory.length > 3 && inventory[3] != null) {
-            export.append("::chest-").append(BukkitItemUtil.serializeItemStack(inventory[3]));
-            export.append("::chest_drop-").append(dropChances[3]);
-        }
-        if (inventory.length > 4 && inventory[4] != null) {
-            export.append("::helmet-").append(BukkitItemUtil.serializeItemStack(inventory[4]));
-            export.append("::helmet_drop-").append(dropChances[4]);
-        }
-        return export.toString();
-    }
-
     public static BukkitQuestMob fromString(final String str) {
         String name = null;
         EntityType entityType = null;

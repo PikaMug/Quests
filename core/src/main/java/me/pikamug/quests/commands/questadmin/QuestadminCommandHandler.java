@@ -105,7 +105,7 @@ public class QuestadminCommandHandler {
         }
         cs.sendMessage(ChatColor.GOLD + Language.get("questAdminHelpTitle"));
         cs.sendMessage(ChatColor.YELLOW + "/questadmin" + ChatColor.RED + " " + Language.get("COMMAND_QUESTADMIN_HELP"));
-        final boolean translateSubCommands = plugin.getSettings().canTranslateSubCommands();
+        final boolean translateSubCommands = plugin.getConfigSettings().canTranslateSubCommands();
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.stats")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Language.get("COMMAND_QUESTADMIN_STATS_HELP")
                     .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_STATS")

@@ -78,7 +78,5 @@ public interface Quest extends Comparable<Quest> {
 
     void failQuest(final Quester quester, final boolean ignoreFailAction);
 
-    boolean isInRegion(final Quester quester);
-
     boolean isInRegionStart(final Quester quester);
 }

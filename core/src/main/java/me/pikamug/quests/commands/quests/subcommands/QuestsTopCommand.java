@@ -80,9 +80,9 @@ public class QuestsTopCommand extends QuestsSubCommand {
                     return;
                 }
             }
-            if (topNumber < 1 || topNumber > plugin.getSettings().getTopLimit()) {
+            if (topNumber < 1 || topNumber > plugin.getConfigSettings().getTopLimit()) {
                 cs.sendMessage(ChatColor.YELLOW + Language.get(cs, "invalidRange").replace("<least>", "1")
-                        .replace("<greatest>", String.valueOf(plugin.getSettings().getTopLimit())));
+                        .replace("<greatest>", String.valueOf(plugin.getConfigSettings().getTopLimit())));
                 return;
             }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {

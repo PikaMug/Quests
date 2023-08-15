@@ -59,7 +59,7 @@ public abstract class QuestsStringPrompt extends StringPrompt {
         if (context.getPlugin() == null) {
             return Language.get("itemCreateCriticalError");
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getConfigSettings().canClickablePrompts()) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
         }
         final TextComponent component = new TextComponent(header + "\n");

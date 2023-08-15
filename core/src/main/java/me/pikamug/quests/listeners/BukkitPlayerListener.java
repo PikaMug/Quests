@@ -198,7 +198,7 @@ public class BukkitPlayerListener implements Listener {
                                 .replace("<journal>", Language.get(event.getPlayer(), "journalTitle")));
                         return;
                     }
-                    if (plugin.getSettings().canAllowPranks()
+                    if (plugin.getConfigSettings().canAllowPranks()
                             && event.getClickedBlock().getType().name().contains("PORTAL")) {
                         event.setCancelled(true);
                         Language.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
@@ -206,7 +206,7 @@ public class BukkitPlayerListener implements Listener {
                         return;
                     }
                 }
-                if (plugin.getSettings().canAllowPranks()
+                if (plugin.getConfigSettings().canAllowPranks()
                         && event.getPlayer().getInventory().getHelmet() != null
                         && (event.getPlayer().getInventory().getHelmet().getType().name().equals("PUMPKIN")
                         || event.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
@@ -373,14 +373,14 @@ public class BukkitPlayerListener implements Listener {
                                 final BukkitQuest bukkitQuest = (BukkitQuest) quest;
                                 if (bukkitQuest.getBlockStart() != null && event.getClickedBlock() != null) {
                                     if (bukkitQuest.getBlockStart().equals(event.getClickedBlock().getLocation())) {
-                                        if (quester.getCurrentQuests().size() >= plugin.getSettings().getMaxQuests()
-                                                && plugin.getSettings().getMaxQuests() > 0) {
+                                        if (quester.getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()
+                                                && plugin.getConfigSettings().getMaxQuests() > 0) {
                                             String msg = Language.get(player, "questMaxAllowed");
                                             msg = msg.replace("<number>", String
-                                                    .valueOf(plugin.getSettings().getMaxQuests()));
+                                                    .valueOf(plugin.getConfigSettings().getMaxQuests()));
                                             Language.send(player, ChatColor.YELLOW + msg);
                                         } else {
-                                            if (quester.getCompletedQuestsTemp().contains(bukkitQuest)) {
+                                            if (quester.getCompletedQuests().contains(bukkitQuest)) {
                                                 if (bukkitQuest.getPlanner().getCooldown() > -1
                                                         && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
                                                     String early = Language.get(player, "questTooEarly");
@@ -391,7 +391,7 @@ public class BukkitPlayerListener implements Listener {
                                                             + ChatColor.YELLOW);
                                                     Language.send(player, ChatColor.YELLOW + early);
                                                     continue;
-                                                } else if (quester.getCompletedQuestsTemp().contains(bukkitQuest)
+                                                } else if (quester.getCompletedQuests().contains(bukkitQuest)
                                                         && bukkitQuest.getPlanner().getCooldown() < 0) {
                                                     String completed = Language.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
@@ -407,10 +407,10 @@ public class BukkitPlayerListener implements Listener {
                                                 }
                                             }
                                             quester.setQuestIdToTake(bukkitQuest.getId());
-                                            if (!plugin.getSettings().canConfirmAccept()) {
+                                            if (!plugin.getConfigSettings().canConfirmAccept()) {
                                                 quester.takeQuest(bukkitQuest, false);
                                             } else {
-                                                final Quest toTake = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+                                                final Quest toTake = plugin.getQuestById(quester.getQuestIdToTake());
                                                 final String s = ChatColor.GOLD + "- " + ChatColor.DARK_PURPLE
                                                         + toTake.getName() + ChatColor.GOLD + " -\n" + "\n"
                                                         + ChatColor.RESET + toTake.getDescription() + "\n";
@@ -878,7 +878,7 @@ public class BukkitPlayerListener implements Listener {
         }
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester noobCheck = new BukkitQuester(plugin, player.getUniqueId());
-            if (plugin.getSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
+            if (plugin.getConfigSettings().canGenFilesOnJoin() && !noobCheck.hasData()) {
                 noobCheck.saveData();
             }
 
@@ -889,7 +889,7 @@ public class BukkitPlayerListener implements Listener {
                     if (quester == null) {
                         return;
                     }
-                    for (final Quest q : quester.getCompletedQuestsTemp()) {
+                    for (final Quest q : quester.getCompletedQuests()) {
                         if (q != null) {
                             if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
                                 quester.getCompletedTimes().put(q, System.currentTimeMillis());
@@ -937,7 +937,7 @@ public class BukkitPlayerListener implements Listener {
                     currentStage.getDisconnectAction().fire(quester, quest);
                 }
             }
-            if (!plugin.getSettings().canGenFilesOnJoin()) {
+            if (!plugin.getConfigSettings().canGenFilesOnJoin()) {
                 if (quester.hasBaseData()) {
                     quester.saveData();
                 }

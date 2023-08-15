@@ -110,7 +110,7 @@ public class QuestCommandHandler {
                     index++;
                 }
             }
-            final Quest q = plugin.getQuestTemp(name.toString());
+            final Quest q = plugin.getQuest(name.toString());
             if (q != null) {
                 final Player player = (Player) cs;
                 final Quester quester = plugin.getQuester(player.getUniqueId());
@@ -124,7 +124,7 @@ public class QuestCommandHandler {
                     cs.sendMessage(ChatColor.YELLOW + q.getDescription());
                 }
                 cs.sendMessage(" ");
-                if (plugin.getSettings().canShowQuestReqs()) {
+                if (plugin.getConfigSettings().canShowQuestReqs()) {
                     final BukkitRequirements reqs = (BukkitRequirements) q.getRequirements();
                     if (reqs.hasRequirement()) {
                         cs.sendMessage(ChatColor.GOLD + Language.get("requirements"));
@@ -198,7 +198,7 @@ public class QuestCommandHandler {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + BukkitItemUtil.getString(is));
                             }
                         }
-                        for (Quest quest : quester.getCompletedQuestsTemp()) {
+                        for (Quest quest : quester.getCompletedQuests()) {
                             if (reqs.getNeededQuestIds().contains(quest.getId())) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Language.get("complete") + " "
                                         + ChatColor.ITALIC + quest.getName());
@@ -207,7 +207,7 @@ public class QuestCommandHandler {
                                         + ChatColor.ITALIC + quest.getName());
                             }
                         }
-                        final Map<String, String> completed = quester.getCompletedQuestsTemp().stream()
+                        final Map<String, String> completed = quester.getCompletedQuests().stream()
                                 .collect(Collectors.toMap(Quest::getId, Quest::getName));
                         for (final String questId : reqs.getBlockQuestIds()) {
                             if (completed.containsKey(questId)) {

@@ -82,10 +82,7 @@ public interface Quester extends Comparable<Quester> {
 
     void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests);
 
-    /**
-     * @deprecated Do not use
-     */
-    ConcurrentSkipListSet<Quest> getCompletedQuestsTemp();
+    ConcurrentSkipListSet<Quest> getCompletedQuests();
 
     void setCompletedQuests(final ConcurrentSkipListSet<Quest> completedQuests);
 
@@ -138,10 +135,6 @@ public interface Quester extends Comparable<Quester> {
     LinkedList<String> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides);
 
     void showCurrentObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides);
-
-    LinkedList<String> getObjectives(final Quest quest, final boolean ignoreOverrides);
-
-    boolean containsObjective(final Quest quest, final String name);
 
     boolean hasObjective(final Quest quest, final ObjectiveType type);
 
@@ -256,4 +249,10 @@ public interface Quester extends Comparable<Quester> {
     boolean isSelectingBlock();
 
     boolean isInRegion(final String regionID);
+
+    boolean canAcceptQuest(final UUID npc);
+
+    boolean canAcceptCompletedQuest(final UUID npc);
+
+    boolean canAcceptCompletedRedoableQuest(final UUID npc);
 }

@@ -77,7 +77,7 @@ public class QuestsQuitCommand extends QuestsSubCommand {
         if (player.hasPermission(getPermission())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             if (!quester.getCurrentQuests().isEmpty()) {
-                final Quest quest = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
+                final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
                         final String msg = ChatColor.YELLOW + Language.get(player, "questQuit").replace("<quest>",

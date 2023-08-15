@@ -232,8 +232,8 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 final List<String> questReq = (List<String>) context.getSessionData(Key.REQ_QUEST);
                 if (questReq != null) {
                     for (String s : questReq) {
-                        if (plugin.getQuestByIdTemp(s) != null) {
-                            s = plugin.getQuestByIdTemp(s).getName();
+                        if (plugin.getQuestById(s) != null) {
+                            s = plugin.getQuestById(s).getName();
                         }
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
@@ -248,8 +248,8 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 final List<String> questBlockReq = (List<String>) context.getSessionData(Key.REQ_QUEST_BLOCK);
                 if (questBlockReq != null) {
                     for (String s : questBlockReq) {
-                        if (plugin.getQuestByIdTemp(s) != null) {
-                            s = plugin.getQuestByIdTemp(s).getName();
+                        if (plugin.getQuestById(s) != null) {
+                            s = plugin.getQuestById(s).getName();
                         }
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
@@ -916,17 +916,17 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 final LinkedList<String> questIds = new LinkedList<>();
                 for (String s : args) {
                     s = s.trim();
-                    if (plugin.getQuestTemp(s) == null) {
+                    if (plugin.getQuest(s) == null) {
                         String text = Language.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(text);
                         return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
-                    if (questIds.contains(plugin.getQuestTemp(s).getId())) {
+                    if (questIds.contains(plugin.getQuest(s).getId())) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("listDuplicate"));
                         return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
-                    questIds.add(plugin.getQuestTemp(s).getId());
+                    questIds.add(plugin.getQuest(s).getId());
                 }
                 if (isRequiredQuest) {
                     context.setSessionData(Key.REQ_QUEST, questIds);
@@ -1446,7 +1446,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1552,7 +1552,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)

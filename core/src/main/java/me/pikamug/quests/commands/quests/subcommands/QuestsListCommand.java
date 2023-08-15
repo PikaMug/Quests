@@ -81,7 +81,7 @@ public class QuestsListCommand extends QuestsSubCommand {
                     return;
                 }
 
-                plugin.listQuests(quester, 1);
+                quester.listQuests(quester, 1);
             } else if (args.length == 2) {
                 final int page;
                 try {
@@ -97,7 +97,7 @@ public class QuestsListCommand extends QuestsSubCommand {
                             return;
                         }
 
-                        plugin.listQuests(quester, page);
+                        quester.listQuests(quester, page);
                     }
                 } catch (final NumberFormatException e) {
                     cs.sendMessage(ChatColor.YELLOW + Language.get(player, "pageSelectionNum"));

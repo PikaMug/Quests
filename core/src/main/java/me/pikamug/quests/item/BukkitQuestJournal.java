@@ -75,7 +75,7 @@ public class BukkitQuestJournal {
                 title.setBold(true);
                 final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
                 for (final BukkitObjective obj : ((BukkitQuester)owner).getCurrentObjectivesTemp(quest, false, false)) {
-                    if (!plugin.getSettings().canShowCompletedObjs()
+                    if (!plugin.getConfigSettings().canShowCompletedObjs()
                             && obj.getMessage().startsWith(ChatColor.GRAY.toString())) {
                         continue;
                     }
@@ -89,7 +89,7 @@ public class BukkitQuestJournal {
                                 builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
                                         + goal.getItemMeta().getDisplayName());
                             } else {
-                                if (plugin.getSettings().canTranslateNames()) {
+                                if (plugin.getConfigSettings().canTranslateNames()) {
                                     final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
                                             .queryItemStack(goal));
                                     tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
@@ -103,7 +103,7 @@ public class BukkitQuestJournal {
                         if (obj.getMessage().contains("<mob>") && obj.getGoalAsMob() != null) {
                             split = obj.getMessage().split("<mob>");
                             builder.add(split[0]);
-                            if (plugin.getSettings().canTranslateNames()) {
+                            if (plugin.getConfigSettings().canTranslateNames()) {
                                 final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
                                         .queryEntityType(obj.getGoalAsMob().getEntityType(), null)); // TODO extra data
                                 tc.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);

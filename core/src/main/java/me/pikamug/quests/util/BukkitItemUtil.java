@@ -210,7 +210,7 @@ public class BukkitItemUtil {
      * Returns an ItemStack based on given values. Checks for legacy pre-1.13 names. Other traits such as
      * enchantments and lore cannot be added via this method and must be done separately.
      * 
-     * @param material Item name suitable for Material.getMaterial()
+     * @param material Item name suitable for Material#getMaterial
      * @param amount The number of items in the stack
      * @param durability The data value of the item, default of 0
      * @return ItemStack, or null if invalid format
@@ -244,7 +244,7 @@ public class BukkitItemUtil {
     }
 
     /**
-     * Get ItemStack from formatted string. See serialize() for reverse function.
+     * Get ItemStack from formatted string. See #serializeItemStack for reverse function.
      *
      * <p>Supplied format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
      * :lore-lore
@@ -469,7 +469,7 @@ public class BukkitItemUtil {
     }
 
     /**
-     * Get formatted string from ItemStack. See readItemStack() for reverse function.
+     * Get formatted string from ItemStack. See #readItemStack for reverse function.
      *
      * <p>Returned format = name-name:amount-amount:data-data:enchantment-enchantment level:displayname-displayname
      * :lore-lore:
@@ -515,7 +515,7 @@ public class BukkitItemUtil {
     }
 
     /**
-     * Essentially the reverse of ItemMeta.serialize()
+     * Essentially the reverse of ItemMeta#serialize
      * 
      * @param itemMetaClass metadata class
      * @param args key/value map of metadata

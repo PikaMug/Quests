@@ -168,7 +168,7 @@ public class Key {
     public static final String A_WORLD_STORM_DURATION = "actStormDuration";
     public static final String A_WORLD_THUNDER = "actThunderWorld";
     public static final String A_WORLD_THUNDER_DURATION = "actThunderDuration";
-    public static final String A_MOB_TYPES = "actMobTypes";
+    public static final String A_MOBS = "actMobs";
     public static final String A_LIGHTNING = "actLightningStrikes";
     public static final String A_POTION_TYPES = "actPotionTypes";
     public static final String A_POTION_DURATIONS = "actPotionDurations";

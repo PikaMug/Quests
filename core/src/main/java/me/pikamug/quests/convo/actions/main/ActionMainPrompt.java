@@ -23,15 +23,16 @@ import me.pikamug.quests.convo.actions.tasks.ActionTimerPrompt;
 import me.pikamug.quests.convo.actions.tasks.ActionWeatherPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.entity.BukkitQuestMob;
+import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.Stage;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -139,14 +140,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 10:
             return "";
         case 6:
-            if (context.getSessionData(Key.A_MOB_TYPES) == null) {
+            if (context.getSessionData(Key.A_MOBS) == null) {
                 return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
             } else {
-                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
+                final LinkedList<QuestMob> mobs = (LinkedList<QuestMob>) context.getSessionData(Key.A_MOBS);
                 final StringBuilder text = new StringBuilder();
-                if (types != null) {
-                    for (final String s : types) {
-                        final BukkitQuestMob qm = BukkitQuestMob.fromString(s);
+                if (mobs != null) {
+                    for (final QuestMob mob : mobs) {
+                        final BukkitQuestMob qm = (BukkitQuestMob) mob;
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                 .append(qm.getType().name())
                                 .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "").append(ChatColor.GRAY)
@@ -350,14 +351,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.A_MOB_TYPES) != null) {
+                if (context.getSessionData(Key.A_MOBS) != null) {
                     @SuppressWarnings("unchecked")
                     final
-                    LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
+                    LinkedList<QuestMob> mobs = (LinkedList<QuestMob>) context.getSessionData(Key.A_MOBS);
                     final StringBuilder text = new StringBuilder();
-                    if (types != null) {
-                        for (final String type : types) {
-                            final BukkitQuestMob qm = BukkitQuestMob.fromString(type);
+                    if (mobs != null) {
+                        for (final QuestMob mob : mobs) {
+                            final BukkitQuestMob qm = (BukkitQuestMob) mob;
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
                                     .append(qm.getType().name())
                                     .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
@@ -398,7 +399,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobPrompt(context, null);
             case 2:
                 context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorMobSpawnsCleared"));
-                context.setSessionData(Key.A_MOB_TYPES, null);
+                context.setSessionData(Key.A_MOBS, null);
                 return new ActionMobListPrompt(context);
             case 3:
                 return new ActionMainPrompt(context);
@@ -552,11 +553,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("eventEditorMustSetMobAmountsFirst"));
                     return new ActionMobPrompt(context, questMob);
                 }
-                final LinkedList<String> list = context.getSessionData(Key.A_MOB_TYPES) == null ? new LinkedList<>()
-                        : (LinkedList<String>) context.getSessionData(Key.A_MOB_TYPES);
+                final LinkedList<QuestMob> list = context.getSessionData(Key.A_MOBS) == null ? new LinkedList<>()
+                        : (LinkedList<QuestMob>) context.getSessionData(Key.A_MOBS);
                 if (list != null) {
-                    list.add(questMob.serialize());
-                    context.setSessionData(Key.A_MOB_TYPES, list);
+                    list.add(questMob);
+                    context.setSessionData(Key.A_MOBS, list);
                 }
                 return new ActionMobListPrompt(context);
             default:
@@ -1184,7 +1185,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Language.get("yesWord"))) {
-                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
+                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getConfigSettings().canTrialSave()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("modeDeny")
                             .replace("<mode>", Language.get("trialMode")));
                     return new ActionMainPrompt(context);

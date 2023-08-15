@@ -28,12 +28,6 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
         }
     }
     
-    @Deprecated
-    public QuestsEditorStringPrompt(final ConversationContext context, final QuestFactory factory) {
-        this.context = context;
-        this.factory = factory;
-    }
-    
     @Override
     public String getName() {
         return getClass().getSimpleName();

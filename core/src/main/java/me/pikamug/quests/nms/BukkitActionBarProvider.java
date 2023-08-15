@@ -24,7 +24,7 @@ public abstract class BukkitActionBarProvider {
         try {
             final String packageName = BukkitActionBarProvider.class.getPackage().getName();
             if (internalsName.startsWith("v1_8_R")) {
-                loaded = (BukkitActionBarProvider) Class.forName(packageName + ".ActionBarProvider_" + internalsName)
+                loaded = (BukkitActionBarProvider) Class.forName(packageName + ".BukkitActionBarProvider_" + internalsName)
                         .newInstance();
             } else {
                 // Should not be an issue because single thread, alternatives welcome!

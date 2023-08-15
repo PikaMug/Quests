@@ -24,7 +24,7 @@ public abstract class BukkitTitleProvider {
         try {
             final String packageName = BukkitTitleProvider.class.getPackage().getName();
             if (internalsName.startsWith("v1_8_R")) {
-                loaded = (BukkitTitleProvider) Class.forName(packageName + ".TitleProvider_" + internalsName)
+                loaded = (BukkitTitleProvider) Class.forName(packageName + ".BukkitTitleProvider_" + internalsName)
                         .newInstance();
             } else {
                 // Should not be an issue because single thread, alternatives welcome!

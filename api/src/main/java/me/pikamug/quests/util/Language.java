@@ -76,7 +76,7 @@ public class Language {
         final String language = locale.substring(0, separator);
         final String country = locale.substring(separator + 1).toUpperCase();
         locale = language + "-" + country;
-        if (plugin.getSettings().canLanguageOverrideClient() || locale.equals(plugin.getSettings().getLanguage())) {
+        if (plugin.getConfigSettings().canLanguageOverrideClient() || locale.equals(plugin.getConfigSettings().getLanguage())) {
             return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
         }
         if (!otherLang.containsKey(locale)) {
@@ -197,8 +197,8 @@ public class Language {
                         .info("If the plugin has not generated language files, ensure Quests has write permissions");
                 plugin.getPluginLogger()
                         .info("For help, visit https://pikamug.gitbook.io/quests/casual/translations");
-                plugin.getSettings().setLanguage("en-US");
-                if (plugin.getSettings().getConsoleLogging() > 3) {
+                plugin.getConfigSettings().setLanguage("en-US");
+                if (plugin.getConfigSettings().getConsoleLogging() > 3) {
                     plugin.getPluginLogger().info("CodeSource: " + plugin.getClass().getProtectionDomain().getCodeSource()
                             .toString());
                     plugin.getPluginLogger().info("LocationPath: " + plugin.getClass().getProtectionDomain().getCodeSource()
@@ -289,7 +289,7 @@ public class Language {
                 allStrings.put(entry.getKey(), entry.getValue().replace("<semicolon>", strSemicolon));
             }
         }
-        if (iso.equals(plugin.getSettings().getLanguage())) {
+        if (iso.equals(plugin.getConfigSettings().getLanguage())) {
             defaultLang.clear();
             defaultLang.putAll(allStrings);
         } else {

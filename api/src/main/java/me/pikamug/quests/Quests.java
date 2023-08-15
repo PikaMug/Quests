@@ -14,9 +14,10 @@ package me.pikamug.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.ActionFactory;
-import me.pikamug.quests.conditions.ConditionFactory;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.config.Settings;
+import me.pikamug.quests.conditions.ConditionFactory;
+import me.pikamug.quests.conditions.ConditionSettings;
+import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.dependencies.Dependencies;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -46,7 +47,9 @@ public interface Quests {
 
     Dependencies getDependencies();
 
-    Settings getSettings();
+    ConfigSettings getConfigSettings();
+
+    ConditionSettings getConditionSettings();
 
     List<CustomObjective> getCustomObjectives();
 

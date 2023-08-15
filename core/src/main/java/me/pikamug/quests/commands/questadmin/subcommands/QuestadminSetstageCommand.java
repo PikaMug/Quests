@@ -12,10 +12,9 @@
 
 package me.pikamug.quests.commands.questadmin.subcommands;
 
-import me.pikamug.quests.quests.BukkitQuest;
-import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
+import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Language;
@@ -97,7 +96,7 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                final Quest quest = plugin.getQuestTemp(concatArgArray(args, 2, args.length - 2, ' '));
+                final Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 2, ' '));
                 if (quest == null) {
                     cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
                     return;
@@ -155,7 +154,7 @@ public class QuestadminSetstageCommand extends QuestsSubCommand {
             }
             return results;
         } else if (args.length > 3) {
-            final BukkitQuest quest = plugin.getQuest(args[2]);
+            final Quest quest = plugin.getQuest(args[2]);
             if (quest != null) {
                 final List<String> results = new ArrayList<>();
                 for (int i = 1; i <= quest.getStages().size(); i++) {

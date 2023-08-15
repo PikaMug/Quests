@@ -111,7 +111,7 @@ public class BukkitBlockListener implements Listener {
 
                                     final QuesterPreUpdateObjectiveEvent preEvent
                                             = new QuesterPreUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, is.getAmount(), toPlace.getAmount()));
+                                            new BukkitObjective(placeType, null, is.getAmount(), toPlace.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                     final int index = questData.blocksPlaced.indexOf(is);
@@ -121,7 +121,7 @@ public class BukkitBlockListener implements Listener {
 
                                     final QuesterPostUpdateObjectiveEvent postEvent
                                             = new QuesterPostUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, newAmount, toPlace.getAmount()));
+                                            new BukkitObjective(placeType, null, newAmount, toPlace.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }
                             }
@@ -142,7 +142,7 @@ public class BukkitBlockListener implements Listener {
 
                                         final QuesterPreUpdateObjectiveEvent preEvent
                                                 = new QuesterPreUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(placeType, is.getAmount(), toPlace.getAmount()));
+                                                new BukkitObjective(placeType, null, is.getAmount(), toPlace.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                         final int index = qQuestData.blocksPlaced.indexOf(is);
@@ -152,7 +152,7 @@ public class BukkitBlockListener implements Listener {
 
                                         final QuesterPostUpdateObjectiveEvent postEvent
                                                 = new QuesterPostUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(placeType, newAmount, toPlace.getAmount()));
+                                                new BukkitObjective(placeType, null, newAmount, toPlace.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(postEvent);
                                     }
                                 }
@@ -255,7 +255,7 @@ public class BukkitBlockListener implements Listener {
 
                                     final QuesterPreUpdateObjectiveEvent preEvent
                                             = new QuesterPreUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, is.getAmount(), toBreak.getAmount()));
+                                            new BukkitObjective(placeType, null, is.getAmount(), toBreak.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                     final int index = questData.blocksBroken.indexOf(is);
@@ -265,7 +265,7 @@ public class BukkitBlockListener implements Listener {
 
                                     final QuesterPostUpdateObjectiveEvent postEvent
                                             = new QuesterPostUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, newAmount, toBreak.getAmount()));
+                                            new BukkitObjective(placeType, null, newAmount, toBreak.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }
                             }
@@ -286,7 +286,7 @@ public class BukkitBlockListener implements Listener {
 
                                         final QuesterPreUpdateObjectiveEvent preEvent
                                                 = new QuesterPreUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(breakType, is.getAmount(), toBreak.getAmount()));
+                                                new BukkitObjective(breakType, null, is.getAmount(), toBreak.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                         final int index = qQuestData.blocksBroken.indexOf(is);
@@ -296,7 +296,7 @@ public class BukkitBlockListener implements Listener {
 
                                         final QuesterPostUpdateObjectiveEvent postEvent
                                                 = new QuesterPostUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(breakType, newAmount, toBreak.getAmount()));
+                                                new BukkitObjective(breakType, null, newAmount, toBreak.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(postEvent);
                                     }
                                 }

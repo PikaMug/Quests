@@ -335,7 +335,7 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public void startNpcEffectThread() {
-        if (npcEffectThread == -1 && plugin.getSettings().canNpcEffects()) {
+        if (npcEffectThread == -1 && plugin.getConfigSettings().canNpcEffects()) {
             npcEffectThread = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,
                     plugin.getNpcEffectThread(), 20, 20);
         }

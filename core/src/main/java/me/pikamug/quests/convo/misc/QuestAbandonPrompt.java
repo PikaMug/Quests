@@ -18,15 +18,6 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
     private ConversationContext context;
     private final BukkitQuestsPlugin plugin;
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public QuestAbandonPrompt() {
-        super(null);
-        plugin = null;
-    }
-
     public QuestAbandonPrompt(BukkitQuestsPlugin plugin) {
         super(null);
         this.plugin = plugin;
@@ -90,7 +81,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         final MiscPostQuestAbandonEvent event = new MiscPostQuestAbandonEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        if (!plugin.getSettings().canClickablePrompts()) {
+        if (!plugin.getConfigSettings().canClickablePrompts()) {
             return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
                     + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
         }
@@ -125,7 +116,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
             }
             final String questIdToQuit = quester.getQuestIdToQuit();
             try {
-                Quest quest = plugin.getQuestByIdTemp(questIdToQuit);
+                Quest quest = plugin.getQuestById(questIdToQuit);
                 if (quest == null) {
                     plugin.getLogger().info(player.getName() + " attempted to quit quest ID \"" + questIdToQuit
                             + "\" but something went wrong");
@@ -134,7 +125,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
                 } else {
                     final String msg = ChatColor.YELLOW + Language.get("questQuit").replace("<quest>",
                             ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
-                    quester.quitQuest(plugin.getQuestByIdTemp(questIdToQuit), msg);
+                    quester.quitQuest(plugin.getQuestById(questIdToQuit), msg);
                 }
             } catch (final Exception e) {
                 e.printStackTrace();

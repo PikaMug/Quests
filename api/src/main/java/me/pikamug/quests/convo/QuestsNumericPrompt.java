@@ -66,7 +66,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
         if (context.getPlugin() == null) {
             return Language.get("itemCreateCriticalError");
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getSettings().canClickablePrompts()) {
+        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getConfigSettings().canClickablePrompts()) {
             return input;
         }
         final String[] basicText = input.split("\n");

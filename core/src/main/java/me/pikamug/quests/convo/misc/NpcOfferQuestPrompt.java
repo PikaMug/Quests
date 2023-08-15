@@ -73,7 +73,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuestsTemp().contains(quest)) {
+                    if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN;
                     } else {
                         return ChatColor.GOLD;
@@ -95,7 +95,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuestsTemp().contains(quest)) {
+                    if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN + "" + ChatColor.ITALIC + quest.getName();
                     } else {
                         return ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName();
@@ -116,7 +116,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
-                    if (quester.getCompletedQuestsTemp().contains(quest)) {
+                    if (quester.getCompletedQuests().contains(quest)) {
                         return ChatColor.GREEN + "" + Language.get("redoCompleted");
                     }
                 }
@@ -143,7 +143,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        if (!(context.getForWhom() instanceof Player) || !plugin.getSettings().canClickablePrompts()) {
+        if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
             final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle(context));
             size = quests.size();
             for (int i = 1; i <= size + 1; i++) {
@@ -162,7 +162,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             final TextComponent choice = new TextComponent("\n" + getNumberColor(context, i) + ChatColor.BOLD + i + ". "
                     + ChatColor.RESET + getSelectionText(context, i));
             choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + i));
-            if (plugin.getSettings().canShowQuestReqs() && i <= size) {
+            if (plugin.getConfigSettings().canShowQuestReqs() && i <= size) {
                 choice.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(quests.get(i - 1).getDescription()).create()));
             }
@@ -226,7 +226,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                     for (final String msg : extracted(plugin, quester).split("<br>")) {
                         player.sendMessage(msg);
                     }
-                    if (!plugin.getSettings().canConfirmAccept()) {
+                    if (!plugin.getConfigSettings().canConfirmAccept()) {
                         quester.takeQuest(q, false);
                     } else {
                         plugin.getConversationFactory().buildConversation(player).begin();
@@ -238,7 +238,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     }
 
     private String extracted(final BukkitQuestsPlugin plugin, final Quester quester) {
-        final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

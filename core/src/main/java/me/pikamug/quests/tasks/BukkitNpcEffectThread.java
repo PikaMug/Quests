@@ -68,17 +68,17 @@ public class BukkitNpcEffectThread implements Runnable {
         UUID uuid = plugin.getDependencies().getUuidFromNpc(entity);
         if (uuid != null) {
             final QuesterPostViewEffectEvent event;
-            if (plugin.hasQuest(uuid, quester)) {
-                showEffect(quester.getPlayer(), entity, plugin.getSettings().getEffect());
+            if (quester.canAcceptQuest(uuid)) {
+                showEffect(quester.getPlayer(), entity, plugin.getConfigSettings().getEffect());
 
                 event = new QuesterPostViewEffectEvent(quester, entity,
-                        plugin.getSettings().getEffect(), false);
+                        plugin.getConfigSettings().getEffect(), false);
                 plugin.getServer().getPluginManager().callEvent(event);
-            } else if (plugin.hasCompletedRedoableQuest(uuid, quester)) {
-                showEffect(quester.getPlayer(), entity, plugin.getSettings().getRedoEffect());
+            } else if (quester.canAcceptCompletedRedoableQuest(uuid)) {
+                showEffect(quester.getPlayer(), entity, plugin.getConfigSettings().getRedoEffect());
 
                 event = new QuesterPostViewEffectEvent(quester, entity,
-                        plugin.getSettings().getEffect(), true);
+                        plugin.getConfigSettings().getEffect(), true);
                 plugin.getServer().getPluginManager().callEvent(event);
             }
         }

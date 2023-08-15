@@ -12,18 +12,17 @@
 
 package me.pikamug.quests.actions;
 
-import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.convo.actions.menu.ActionMenuPrompt;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.util.Key;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
-import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.Language;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -195,11 +194,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
             context.setSessionData(Key.A_WORLD_THUNDER_DURATION, bukkitAction.getThunderDuration());
         }
         if (bukkitAction.getMobSpawns() != null && !bukkitAction.getMobSpawns().isEmpty()) {
-            final LinkedList<String> questMobs = new LinkedList<>();
-            for (final QuestMob questMob : bukkitAction.getMobSpawns()) {
-                questMobs.add(questMob.serialize());
-            }
-            context.setSessionData(Key.A_MOB_TYPES, questMobs);
+            context.setSessionData(Key.A_MOBS, bukkitAction.getMobSpawns());
         }
         if (bukkitAction.getLightningStrikes() != null && !bukkitAction.getLightningStrikes().isEmpty()) {
             final LinkedList<String> locs = new LinkedList<>();
@@ -259,7 +254,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         context.setSessionData(Key.A_WORLD_STORM_DURATION, null);
         context.setSessionData(Key.A_WORLD_THUNDER, null);
         context.setSessionData(Key.A_WORLD_THUNDER_DURATION, null);
-        context.setSessionData(Key.A_MOB_TYPES, null);
+        context.setSessionData(Key.A_MOBS, null);
         context.setSessionData(Key.A_LIGHTNING, null);
         context.setSessionData(Key.A_POTION_TYPES, null);
         context.setSessionData(Key.A_POTION_DURATIONS, null);
@@ -307,7 +302,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorDeleted"));
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted action " + action);
@@ -379,30 +374,31 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
             section.set("thunder-duration", context.getSessionData(Key.A_WORLD_THUNDER_DURATION));
         }
         try {
-            if (context.getSessionData(Key.A_MOB_TYPES) != null) {
+            if (context.getSessionData(Key.A_MOBS) != null) {
                 int count = 0;
-                for (final String s : (LinkedList<String>) Objects.requireNonNull(context
-                        .getSessionData(Key.A_MOB_TYPES))) {
+                for (final QuestMob mob : (LinkedList<QuestMob>) Objects.requireNonNull(context
+                        .getSessionData(Key.A_MOBS))) {
                     ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
                     if (ss == null) {
                         ss = section.createSection("mob-spawns." + count);
                     }
-                    final BukkitQuestMob questMob = BukkitQuestMob.fromString(s);
+                    final BukkitQuestMob questMob = (BukkitQuestMob) mob;
                     if (questMob.getName() != null) {
                         ss.set("name", questMob.getName());
                     }
+                    // TODO - save ItemStack better way
                     ss.set("spawn-location", BukkitConfigUtil.getLocationInfo(questMob.getSpawnLocation()));
                     ss.set("mob-type", questMob.getType().name());
                     ss.set("spawn-amounts", questMob.getSpawnAmounts());
-                    ss.set("held-item", BukkitItemUtil.serializeItemStack(questMob.getInventory()[0]));
+                    ss.set("held-item", questMob.getInventory()[0]);
                     ss.set("held-item-drop-chance", questMob.getDropChances()[0]);
-                    ss.set("boots", BukkitItemUtil.serializeItemStack(questMob.getInventory()[1]));
+                    ss.set("boots", questMob.getInventory()[1]);
                     ss.set("boots-drop-chance", questMob.getDropChances()[1]);
-                    ss.set("leggings", BukkitItemUtil.serializeItemStack(questMob.getInventory()[2]));
+                    ss.set("leggings", questMob.getInventory()[2]);
                     ss.set("leggings-drop-chance", questMob.getDropChances()[2]);
-                    ss.set("chest-plate", BukkitItemUtil.serializeItemStack(questMob.getInventory()[3]));
+                    ss.set("chest-plate", questMob.getInventory()[3]);
                     ss.set("chest-plate-drop-chance", questMob.getDropChances()[3]);
-                    ss.set("helmet", BukkitItemUtil.serializeItemStack(questMob.getInventory()[4]));
+                    ss.set("helmet", questMob.getInventory()[4]);
                     ss.set("helmet-drop-chance", questMob.getDropChances()[4]);
                     count++;
                 }
@@ -464,7 +460,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("eventEditorSaved"));
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved action " + context.getSessionData(Key.A_NAME));

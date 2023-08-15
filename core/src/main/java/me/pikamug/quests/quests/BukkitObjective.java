@@ -25,30 +25,6 @@ public class BukkitObjective implements Objective {
     private final int goal;
     private final Object progressObj;
     private final Object goalObj;
-
-    /**
-     * @deprecated Use {@link #BukkitObjective(ObjectiveType, String, int, int)} with null message
-     */
-    public BukkitObjective(final ObjectiveType type, final int progress, final int goal) {
-        this.type = type;
-        this.message = null;
-        this.progress = progress;
-        this.goal = goal;
-        this.progressObj = new Object();
-        this.goalObj = new Object();
-    }
-
-    /**
-     * @deprecated Use {@link #BukkitObjective(ObjectiveType, String, Object, Object)} with null message
-     */
-    public BukkitObjective(final ObjectiveType type, final ItemStack progress, final ItemStack goal) {
-        this.type = type;
-        this.message = null;
-        this.progress = progress.getAmount();
-        this.goal = goal.getAmount();
-        this.progressObj = progress;
-        this.goalObj = goal;
-    }
     
     public BukkitObjective(final ObjectiveType type, @Nullable final String message, final int progress,
                            final int goal) {

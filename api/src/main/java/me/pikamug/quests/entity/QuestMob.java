@@ -26,6 +26,4 @@ public interface QuestMob {
     void setDropChances(final Float[] dropChances);
 
     void spawn();
-
-    String serialize();
 }

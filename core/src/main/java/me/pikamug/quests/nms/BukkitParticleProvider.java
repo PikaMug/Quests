@@ -29,7 +29,7 @@ public abstract class BukkitParticleProvider {
         try {
             final String packageName = BukkitParticleProvider.class.getPackage().getName();
             if (internalsName.startsWith("v1_8_R")) {
-                loaded = (BukkitParticleProvider) Class.forName(packageName + ".ParticleProvider_" + internalsName)
+                loaded = (BukkitParticleProvider) Class.forName(packageName + ".BukkitParticleProvider_" + internalsName)
                         .newInstance();
             } else {
                 // Should not be an issue because single thread, alternatives welcome!

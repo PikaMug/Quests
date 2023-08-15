@@ -12,7 +12,7 @@
 
 package me.pikamug.quests.config;
 
-public interface Settings {
+public interface ConfigSettings {
     int getAcceptTimeout();
     void setAcceptTimeout(final int acceptTimeout);
     boolean canAllowCommands();

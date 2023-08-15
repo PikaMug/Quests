@@ -257,7 +257,7 @@ public class SqlStorage implements StorageImplementation {
         final Set<String> currentQuests = bukkitQuester.getCurrentQuests().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldCurrentQuests = getQuesterCurrentQuests(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldCurrentQuests.removeAll(currentQuests);
-        final Set<String> completedQuests = bukkitQuester.getCompletedQuestsTemp().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> completedQuests = bukkitQuester.getCompletedQuests().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldCompletedQuests = getQuesterCompletedQuests(uniqueId).stream().map(Quest::getId).collect(Collectors.toSet());
         oldCompletedQuests.removeAll(completedQuests);
         final Set<String> redoableQuests = bukkitQuester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
@@ -311,7 +311,7 @@ public class SqlStorage implements StorageImplementation {
                     }
                 }
             } else {
-                for (final Quest quest : bukkitQuester.getCompletedQuestsTemp()) {
+                for (final Quest quest : bukkitQuester.getCompletedQuests()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, quest.getId());
@@ -441,7 +441,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             currentQuests.put(quest, rs.getInt("stageNum"));
                         }
@@ -460,7 +460,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("quest_id"));
+                        final Quest quest = plugin.getQuestById(rs.getString("quest_id"));
                         final BukkitQuestData data = new BukkitQuestData(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
                             final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
@@ -515,7 +515,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             completedQuests.add(quest);
                         }
@@ -533,7 +533,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             completedTimes.put(quest, rs.getLong("lasttime"));
                         }
@@ -551,7 +551,7 @@ public class SqlStorage implements StorageImplementation {
                 ps.setString(1, uniqueId.toString());
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        final Quest quest = plugin.getQuestByIdTemp(rs.getString("questid"));
+                        final Quest quest = plugin.getQuestById(rs.getString("questid"));
                         if (quest != null) {
                             amountsCompleted.put(quest, rs.getInt("amount"));
                         }

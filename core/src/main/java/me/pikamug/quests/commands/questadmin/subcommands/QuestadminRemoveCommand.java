@@ -83,7 +83,7 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
                     return;
                 }
             }
-            final Quest toRemove = plugin.getQuestTemp(concatArgArray(args, 2, args.length - 1, ' '));
+            final Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
             if (toRemove == null) {
                 cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
                 return;

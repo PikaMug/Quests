@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class BukkitSettings implements Settings {
+public class BukkitConfigSettings implements ConfigSettings {
     
     private final BukkitQuestsPlugin plugin;
     private int acceptTimeout = 20;
@@ -52,7 +52,7 @@ public class BukkitSettings implements Settings {
     private boolean translateSubCommands = false;
     private boolean updateCheck = true;
     
-    public BukkitSettings(final BukkitQuestsPlugin plugin) {
+    public BukkitConfigSettings(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
     
@@ -230,7 +230,10 @@ public class BukkitSettings implements Settings {
     public void setUpdateCheck(final boolean updateCheck) {
         this.updateCheck = updateCheck;
     }
-    
+
+    /**
+     * Load config from file
+     */
     public void init() {
         final FileConfiguration config = plugin.getConfig();
         acceptTimeout = config.getInt("accept-timeout", 20);

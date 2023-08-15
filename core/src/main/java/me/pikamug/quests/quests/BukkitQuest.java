@@ -338,7 +338,7 @@ public class BukkitQuest implements Quest {
             if (stageStartMessage != null) {
                 p.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(stageStartMessage, this, p));
             }
-            plugin.showConditions(this, quester);
+            quester.showCurrentConditions(this, quester);
         }
         quester.updateJournal();
         quester.saveData();
@@ -580,7 +580,7 @@ public class BukkitQuest implements Quest {
         if (quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
         }
-        final Set<String> completed = quester.getCompletedQuestsTemp().stream().map(Quest::getId)
+        final Set<String> completed = quester.getCompletedQuests().stream().map(Quest::getId)
                 .collect(Collectors.toSet());
         if (!requirements.getNeededQuestIds().isEmpty()
                 && !completed.containsAll(requirements.getNeededQuestIds())) {
@@ -702,7 +702,7 @@ public class BukkitQuest implements Quest {
             return;
         }
         quester.hardQuit(this);
-        quester.getCompletedQuestsTemp().add(this);
+        quester.getCompletedQuests().add(this);
         for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
@@ -730,7 +730,7 @@ public class BukkitQuest implements Quest {
         if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
             depends.getVaultEconomy().depositPlayer(player, rewards.getMoney());
             issuedReward = true;
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded "
                         + depends.getVaultEconomy().format(rewards.getMoney()));
             }
@@ -746,7 +746,7 @@ public class BukkitQuest implements Quest {
                             + "Please contact an administrator.");
                 }
                 issuedReward = true;
-                if (plugin.getSettings().getConsoleLogging() > 2) {
+                if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was rewarded " + i.getType().name() + " x " 
                             + i.getAmount());
                 }
@@ -768,7 +768,7 @@ public class BukkitQuest implements Quest {
                         Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command));
             }
             issuedReward = true;
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded command " + s);
             }
         }
@@ -784,7 +784,7 @@ public class BukkitQuest implements Quest {
                 } else {
                     depends.getVaultPermission().playerAdd(world, player, perm);
                 }
-                if (plugin.getSettings().getConsoleLogging() > 2) {
+                if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was rewarded permission " + perm);
                 }
                 issuedReward = true;
@@ -793,7 +793,7 @@ public class BukkitQuest implements Quest {
         for (final String s : rewards.getMcmmoSkills()) {
             final int levels = rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s));
             UserManager.getOfflinePlayer(player).getProfile().addLevels(plugin.getDependencies().getMcMMOSkill(s), levels);
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
             }
             issuedReward = true;
@@ -804,7 +804,7 @@ public class BukkitQuest implements Quest {
                 final double expChange = rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s));
                 hero.addExp(expChange, plugin.getDependencies().getHeroes().getClassManager().getClass(s), 
                         ((Player)player).getLocation());
-                if (plugin.getSettings().getConsoleLogging() > 2) {
+                if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + expChange);
                 }
                 issuedReward = true;
@@ -817,7 +817,7 @@ public class BukkitQuest implements Quest {
                 if (party != null) {
                     party.giveExperience(rewards.getPartiesExperience());
                     issuedReward = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info(player.getUniqueId() + " was rewarded "
                                 + rewards.getPartiesExperience() + " party experience");
                     }
@@ -826,14 +826,14 @@ public class BukkitQuest implements Quest {
         }
         if (rewards.getExp() > 0 && player.isOnline()) {
             ((Player)player).giveExp(rewards.getExp());
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded exp " + rewards.getExp());
             }
             issuedReward = true;
         }
         if (rewards.getQuestPoints() > 0) {
             quester.setQuestPoints(quester.getQuestPoints() + rewards.getQuestPoints());
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rewards.getQuestPoints() + " "
                         + Language.get("questPoints"));
             }
@@ -841,7 +841,7 @@ public class BukkitQuest implements Quest {
         }
         if (!rewards.getCustomRewards().isEmpty()) {
             issuedReward = true;
-            if (plugin.getSettings().getConsoleLogging() > 2) {
+            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 for (final String s : rewards.getCustomRewards().keySet()) {
                     plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
                 }
@@ -853,7 +853,7 @@ public class BukkitQuest implements Quest {
             final Player p = (Player)player;
             Language.send(p, ChatColor.GOLD + Language.get(p, "questCompleteTitle").replace("<quest>",
                     ChatColor.YELLOW + name + ChatColor.GOLD));
-            if (plugin.getSettings().canShowQuestTitles()) {
+            if (plugin.getConfigSettings().canShowQuestTitles()) {
                 final String title = ChatColor.GOLD + Language.get(p, "quest") + " " + Language.get(p, "complete");
                 final String subtitle = ChatColor.YELLOW + name;
                 BukkitTitleProvider.sendTitle(p, title, subtitle);
@@ -921,7 +921,7 @@ public class BukkitQuest implements Quest {
                         }
                         text.append(ChatColor.GRAY).append(" x ").append(i.getAmount());
                     }
-                    if (plugin.getSettings().canTranslateNames() && text.toString().contains("<item>")) {
+                    if (plugin.getConfigSettings().canTranslateNames() && text.toString().contains("<item>")) {
                         if (!plugin.getLocaleManager().sendMessage(p, text.toString(), i.getType(), i.getDurability(),
                                 i.getEnchantments())) {
                             for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
@@ -1091,48 +1091,14 @@ public class BukkitQuest implements Quest {
     /**
      * Checks if quester is in WorldGuard region start
      * 
-     * @deprecated Use {@link #isInRegionStart(Quester)}
-     * @param quester The quester to check
-     * @return true if quester is in region
-     */
-    @Deprecated
-    public boolean isInRegion(final Quester quester) {
-        return isInRegionStart(quester);
-    }
-
-    /**
-     * Checks if player is in WorldGuard region start
-     * 
-     * @deprecated Use {@link #isInRegionStart(Player)}
-     * @param player The player to check
-     * @return true if player is in region
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    private boolean isInRegion(final Player player) {
-        return isInRegionStart(player);
-    }
-    
-    /**
-     * Checks if quester is in WorldGuard region start
-     * 
      * @param quester The quester to check
      * @return true if quester is in region
      */
     public boolean isInRegionStart(final Quester quester) {
-        return isInRegionStart(quester.getPlayer());
-    }
-
-    /**
-     * Checks if player is in WorldGuard region start
-     * 
-     * @param player The player to check
-     * @return true if player is in region
-     */
-    private boolean isInRegionStart(final Player player) {
         if (regionStart == null) {
             return false;
         }
+        final Player player = quester.getPlayer();
         return plugin.getDependencies().getWorldGuardApi()
                 .getApplicableRegionsIDs(player.getWorld(), player.getLocation()).contains(regionStart);
     }

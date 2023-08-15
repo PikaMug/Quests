@@ -566,7 +566,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         };
         plugin.reload(callback);
         context.getForWhom().sendRawMessage(ChatColor.GREEN + Language.get("questDeleted"));
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ?
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " deleted quest " + quest);
@@ -614,7 +614,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         saveRewards(context, section);
         savePlanner(context, section);
         saveOptions(context, section);
-        if (plugin.getSettings().getConsoleLogging() > 0) {
+        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ?
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + context.getSessionData(Key.Q_NAME));

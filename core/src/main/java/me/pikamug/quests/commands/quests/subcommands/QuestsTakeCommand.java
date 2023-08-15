@@ -73,9 +73,9 @@ public class QuestsTakeCommand extends QuestsSubCommand {
             return;
         }
         final Player player = (Player) cs;
-        if (plugin.getSettings().canAllowCommands()) {
+        if (plugin.getConfigSettings().canAllowCommands()) {
             if (player.hasPermission(getPermission())) {
-                final Quest questToFind = plugin.getQuestTemp(concatArgArray(args, 1, args.length - 1, ' '));
+                final Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 if (questToFind != null) {
                     for (final Quest q : quester.getCurrentQuests().keySet()) {

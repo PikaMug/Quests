@@ -241,7 +241,7 @@ public class BukkitCondition implements Condition {
                 }
                 if (!plugin.getDependencies().getVaultPermission().has(player, p)) {
                     failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info("DEBUG: Condition permission mismatch for " + player.getName() + ": "
                                 + p);
                     }
@@ -310,7 +310,7 @@ public class BukkitCondition implements Condition {
             for (final String r : regionsWhileStayingWithin) {
                 if (!quester.isInRegion(r)) {
                     failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
                     }
                     break;
@@ -330,7 +330,7 @@ public class BukkitCondition implements Condition {
                 }
                 if (!placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
                     failed = true;
-                    if (plugin.getSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                         plugin.getLogger().info("DEBUG: Condition placeholder mismatch for " + player.getName() + ": "
                                 + i);
                     }

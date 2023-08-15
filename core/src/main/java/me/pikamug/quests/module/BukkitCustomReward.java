@@ -64,32 +64,8 @@ public abstract class BukkitCustomReward implements CustomReward {
         return item;
     }
 
-    /**
-     * @deprecated Use {@link #setItem(String, short)}
-     */
-    @Deprecated
-    public void addItem(final String type, final short durability) {
-        setItem(type, durability);
-    }
-
     public void setItem(final String type, final short durability) {
         this.item = new AbstractMap.SimpleEntry<>(type, durability);
-    }
-    
-    /**
-     * @deprecated Use {@link #getDisplay()}
-     */
-    @Deprecated
-    public String getRewardName() {
-        return display;
-    }
-
-    /**
-     * @deprecated Use {@link #setDisplay(String)}
-     */
-    @Deprecated
-    public void setRewardName(final String name) {
-        display = name;
     }
     
     public Map<String, Object> getData() {

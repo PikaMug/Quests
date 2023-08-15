@@ -75,7 +75,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
         cal.setTimeZone(TimeZone.getTimeZone((String) context.getSessionData("tempZone")));
-        final String[] iso = plugin.getSettings().getLanguage().split("-");
+        final String[] iso = plugin.getConfigSettings().getLanguage().split("-");
         final Locale loc = new Locale(iso[0], iso[1]);
         final Double zonedHour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
         final String[] sep = String.valueOf(zonedHour).replace("-", "").split("\\.");

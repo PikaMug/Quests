@@ -107,7 +107,7 @@ public class QuestsCommandHandler {
                 continue;
             }
             cs.sendMessage(ChatColor.YELLOW + "/quests " + cmd.getDescription().replace("<command>", ChatColor.GOLD
-                    + (plugin.getSettings().canTranslateSubCommands() ? cmd.getNameI18N() : cmd.getName())
+                    + (plugin.getConfigSettings().canTranslateSubCommands() ? cmd.getNameI18N() : cmd.getName())
                     + ChatColor.YELLOW));
         }
         if (cs instanceof Player) {

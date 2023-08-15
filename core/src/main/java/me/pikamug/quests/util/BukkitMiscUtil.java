@@ -137,18 +137,6 @@ public class BukkitMiscUtil {
         }
         return name;
     }
-    
-    /**
-     * Convert EntityType name from snake_case to UpperCamelCase
-     * 
-     * @deprecated Use {@link #snakeCaseToUpperCamelCase(String)}
-     * @param type To convert
-     * @return Converted text
-     */
-    @Deprecated
-    public static String getProperMobName(final EntityType type) {
-        return snakeCaseToUpperCamelCase(type.name());
-    }
 
     /**
      * Gets EntityType from name

@@ -96,7 +96,7 @@ public class QuestadminGiveCommand extends QuestsSubCommand {
                     }
                 }
             }
-            questToGive = plugin.getQuestTemp(name.toString());
+            questToGive = plugin.getQuest(name.toString());
             if (questToGive == null) {
                 cs.sendMessage(ChatColor.YELLOW + Language.get("questNotFound"));
             } else {

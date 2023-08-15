@@ -99,7 +99,7 @@ public class BukkitZnpcsListener implements Listener {
                                         text += (hand.getItemMeta().hasDisplayName() ? ")" : "");
                                     }
                                     text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
-                                    if (plugin.getSettings().canTranslateNames() && !hasMeta
+                                    if (plugin.getConfigSettings().canTranslateNames() && !hasMeta
                                             && !hand.getItemMeta().hasDisplayName()) {
                                         plugin.getLocaleManager().sendMessage(player, Language
                                                 .get(player, "questInvalidDeliveryItem").replace("<item>", text), hand
@@ -209,8 +209,8 @@ public class BukkitZnpcsListener implements Listener {
                         continue;
                     }
                     if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(event.getNpc().getUUID())) {
-                        if (plugin.getSettings().canIgnoreLockedQuests()
-                                && (!quester.getCompletedQuestsTemp().contains(bukkitQuest)
+                        if (plugin.getConfigSettings().canIgnoreLockedQuests()
+                                && (!quester.getCompletedQuests().contains(bukkitQuest)
                                 || bukkitQuest.getPlanner().getCooldown() > -1)) {
                             if (bukkitQuest.testRequirements(quester)) {
                                 npcQuests.add(bukkitQuest);
@@ -218,7 +218,7 @@ public class BukkitZnpcsListener implements Listener {
                                     hasAtLeastOneGUI = true;
                                 }
                             }
-                        } else if (!quester.getCompletedQuestsTemp().contains(bukkitQuest) || bukkitQuest.getPlanner().getCooldown() > -1) {
+                        } else if (!quester.getCompletedQuests().contains(bukkitQuest) || bukkitQuest.getPlanner().getCooldown() > -1) {
                             npcQuests.add(bukkitQuest);
                             if (bukkitQuest.getGUIDisplay() != null) {
                                 hasAtLeastOneGUI = true;
@@ -230,7 +230,7 @@ public class BukkitZnpcsListener implements Listener {
                     final BukkitQuest quest = (BukkitQuest) npcQuests.get(0);
                     if (quester.canAcceptOffer(quest, true)) {
                         quester.setQuestIdToTake(quest.getId());
-                        if (!plugin.getSettings().canConfirmAccept()) {
+                        if (!plugin.getConfigSettings().canConfirmAccept()) {
                             quester.takeQuest(quest, false);
                         } else {
                             if (quest.getGUIDisplay() != null) {
@@ -261,7 +261,7 @@ public class BukkitZnpcsListener implements Listener {
     }
 
     private String extracted(final Quester quester) {
-        final Quest quest = plugin.getQuestByIdTemp(quester.getQuestIdToTake());
+        final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE,
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
     }

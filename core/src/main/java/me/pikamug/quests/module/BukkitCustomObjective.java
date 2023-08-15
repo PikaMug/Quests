@@ -245,11 +245,11 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
 
                     final ObjectiveType type = ObjectiveType.CUSTOM;
                     final QuesterPreUpdateObjectiveEvent preEvent
-                            = new QuesterPreUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, progress, goal));
+                            = new QuesterPreUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     if (progress >= goal) {
-                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
+                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                                 new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
 
                         // Multiplayer
@@ -258,14 +258,14 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                             final BukkitQuestData qBukkitQuestData = (BukkitQuestData) q.getQuestData(bukkitQuest);
                             final int old = qBukkitQuestData.customObjectiveCounts.get(finalIndex);
                             qBukkitQuestData.customObjectiveCounts.set(finalIndex, old + count);
-                            q.finishObjective(bukkitQuest, new BukkitObjective(type, new ItemStack(Material.AIR, 1),
+                            q.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                                     new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
                             return null;
                         });
                     }
 
                     final QuesterPostUpdateObjectiveEvent postEvent
-                            = new QuesterPostUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, progress, goal));
+                            = new QuesterPostUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(postEvent);
                 }
             }

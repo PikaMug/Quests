@@ -89,7 +89,7 @@ public class QuestadminQuitCommand extends QuestsSubCommand {
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                final Quest quest = plugin.getQuestTemp(concatArgArray(args, 2, args.length - 1, ' '));
+                final Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
                 if (quest == null) {
                     cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
                     return;

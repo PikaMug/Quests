@@ -79,7 +79,7 @@ public class QuestsJournalCommand extends QuestsSubCommand {
                 return;
             }
 
-            if (!plugin.getSettings().canGiveJournalItem()) {
+            if (!plugin.getConfigSettings().canGiveJournalItem()) {
                 final BukkitQuestJournal journal = new BukkitQuestJournal(plugin, quester);
                 BookUtil.openPlayer(player, journal.toItemStack());
             } else {

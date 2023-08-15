@@ -557,7 +557,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 return null;
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Language.get("yesWord"))) {
-                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getSettings().canTrialSave()) {
+                if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getConfigSettings().canTrialSave()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("modeDeny")
                             .replace("<mode>", Language.get("trialMode")));
                     return new ConditionMainPrompt(context);

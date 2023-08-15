@@ -83,11 +83,11 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
             final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
             for (int i = 0; i < questIds.size(); i++) {
-                if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
-                    completedTimes.put(plugin.getQuestByIdTemp(questIds.get(i)), questTimes.get(i));
-                } else if (plugin.getQuestTemp(questIds.get(i)) != null) {
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    completedTimes.put(plugin.getQuestById(questIds.get(i)), questTimes.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
                     // Legacy
-                    completedTimes.put(plugin.getQuestTemp(questIds.get(i)), questTimes.get(i));
+                    completedTimes.put(plugin.getQuest(questIds.get(i)), questTimes.get(i));
                 }
             }
             quester.setCompletedTimes(completedTimes);
@@ -97,29 +97,29 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<Integer> questAmounts = data.getIntegerList("amountsCompleted");
             final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
-                if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
-                    amountsCompleted.put(plugin.getQuestByIdTemp(questIds.get(i)), questAmounts.get(i));
-                } else if (plugin.getQuestTemp(questIds.get(i)) != null) {
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmounts.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
                     // Legacy
-                    amountsCompleted.put(plugin.getQuestTemp(questIds.get(i)), questAmounts.get(i));
+                    amountsCompleted.put(plugin.getQuest(questIds.get(i)), questAmounts.get(i));
                 }
             }
             quester.setAmountsCompleted(amountsCompleted);
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuestsTemp();
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getId().equals(s)) {
-                        if (!quester.getCompletedQuestsTemp().contains(q)) {
+                        if (!quester.getCompletedQuests().contains(q)) {
                             completedQuests.add(q);
                         }
                         break;
                     } else if (q.getName().equalsIgnoreCase(s)) {
                         // Legacy
-                        if (!quester.getCompletedQuestsTemp().contains(q)) {
+                        if (!quester.getCompletedQuests().contains(q)) {
                             completedQuests.add(q);
                         }
                         break;
@@ -134,11 +134,11 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final int maxSize = Math.min(questIds.size(), questStages.size());
             final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
-                if (plugin.getQuestByIdTemp(questIds.get(i)) != null) {
-                    currentQuests.put(plugin.getQuestByIdTemp(questIds.get(i)), questStages.get(i));
-                } else if (plugin.getQuestTemp(questIds.get(i)) != null) {
+                if (plugin.getQuestById(questIds.get(i)) != null) {
+                    currentQuests.put(plugin.getQuestById(questIds.get(i)), questStages.get(i));
+                } else if (plugin.getQuest(questIds.get(i)) != null) {
                     // Legacy
-                    currentQuests.put(plugin.getQuestTemp(questIds.get(i)), questStages.get(i));
+                    currentQuests.put(plugin.getQuest(questIds.get(i)), questStages.get(i));
                 }
             }
             quester.setCurrentQuests(currentQuests);
@@ -148,7 +148,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             }
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
-                final Quest quest = plugin.getQuestByIdTemp(key) != null ? plugin.getQuestByIdTemp(key) : plugin.getQuestTemp(key);
+                final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
                 if (quest == null || !quester.getCurrentQuests().containsKey(quest)) {
                     continue;
                 }
