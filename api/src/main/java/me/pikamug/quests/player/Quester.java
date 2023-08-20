@@ -13,8 +13,8 @@
 package me.pikamug.quests.player;
 
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.Stage;
-import me.pikamug.quests.quests.Objective;
+import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
 import org.bukkit.DyeColor;

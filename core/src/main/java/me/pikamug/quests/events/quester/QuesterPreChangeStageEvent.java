@@ -14,7 +14,7 @@ package me.pikamug.quests.events.quester;
 
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.Stage;
+import me.pikamug.quests.quests.components.Stage;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

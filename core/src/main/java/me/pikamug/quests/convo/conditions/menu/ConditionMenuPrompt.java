@@ -15,7 +15,7 @@ package me.pikamug.quests.convo.conditions.menu;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.Stage;
+import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;

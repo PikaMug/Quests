@@ -27,13 +27,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,7 +87,7 @@ public class Language {
         }
         if (!otherLang.containsKey(locale)) {
             try {
-                init(plugin, locale);
+                load(plugin, locale);
             } catch (Exception e) {
                 return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
             }
@@ -181,7 +187,45 @@ public class Language {
         }
     }
 
-    public static void init(final Quests plugin, String iso) throws InvalidConfigurationException, IOException {
+    /**
+     * Transfer language files from jar to disk, then load default setting
+     */
+    public static void init(final Quests plugin) throws IOException, URISyntaxException {
+        Language.plugin = plugin;
+        final String path = "lang";
+        final File jarFile = new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+        if (jarFile.isFile()) {
+            final JarFile jar = new JarFile(jarFile);
+            final Enumeration<JarEntry> entries = jar.entries();
+            final Set<String> results = new HashSet<>();
+            while (entries.hasMoreElements()) {
+                final String name = entries.nextElement().getName();
+                if (name.startsWith(path + "/") && name.contains("strings.yml")) {
+                    results.add(name);
+                }
+            }
+            for (final String resourcePath : results) {
+                plugin.saveResourceAs(resourcePath, resourcePath, false);
+                plugin.saveResourceAs(resourcePath, resourcePath.replace(".yml", "_new.yml"), true);
+            }
+            jar.close();
+        }
+        try {
+            load(plugin, plugin.getConfigSettings().getLanguage());
+        } catch (final InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Load specified language from file
+     *
+     * @param plugin Quests plugin
+     * @param iso ISO code such as en-US
+     * @throws InvalidConfigurationException invalid language file
+     * @throws IOException file issue
+     */
+    public static void load(final Quests plugin, String iso) throws InvalidConfigurationException, IOException {
         Language.plugin = plugin;
         final File langFile = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings.yml");

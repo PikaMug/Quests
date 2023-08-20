@@ -12,7 +12,7 @@
 
 package me.pikamug.quests.convo.quests.options;
 
-import me.pikamug.quests.quests.BukkitOptions;
+import me.pikamug.quests.quests.components.BukkitOptions;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;

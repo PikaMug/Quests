@@ -24,17 +24,18 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BukkitConditionSettings implements ConditionSettings {
+public class BukkitConditionLoader implements ConditionLoader {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitConditionSettings(final BukkitQuestsPlugin plugin) {
+    public BukkitConditionLoader(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
     /**
      * Load conditions from file
      */
+    @Override
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
         final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");

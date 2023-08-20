@@ -17,7 +17,7 @@ import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuestData;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuest;
-import me.pikamug.quests.quests.BukkitStage;
+import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;

@@ -10,28 +10,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.storage.implementation.sql.connection;
+package me.pikamug.quests.quests.components;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Function;
+import me.pikamug.quests.enums.ObjectiveType;
+import org.jetbrains.annotations.NotNull;
 
-import me.pikamug.quests.BukkitQuestsPlugin;
+public interface Objective {
+    ObjectiveType getType();
 
-public interface ConnectionFactory {
-    String getImplementationName();
+    String getMessage();
 
-    void init(BukkitQuestsPlugin plugin);
+    int getProgress();
 
-    void close() throws Exception;
+    int getGoal();
 
-    default Map<String, String> getMeta() {
-        return Collections.emptyMap();
-    }
+    @NotNull Object getProgressObject();
 
-    Function<String, String> getStatementProcessor();
-
-    Connection getConnection() throws SQLException;
+    @NotNull Object getGoalObject();
 }

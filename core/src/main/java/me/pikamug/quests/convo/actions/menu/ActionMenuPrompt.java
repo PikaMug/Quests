@@ -15,7 +15,7 @@ package me.pikamug.quests.convo.actions.menu;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.quests.Stage;
+import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;

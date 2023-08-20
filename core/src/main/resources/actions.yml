@@ -17,8 +17,8 @@ actions:
   GiveRod:
     message: "<green>Here's a rod to get you started!"
     items:
-      - ==: org.bukkit.inventory.ItemStack
-          type: FISHING_ROD
+    - ==: org.bukkit.inventory.ItemStack
+      type: FISHING_ROD
   TimerStart:
     timer: 40
   CancelTimer:

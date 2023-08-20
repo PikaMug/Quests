@@ -14,24 +14,19 @@ package me.pikamug.quests;
 
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.actions.ActionSettings;
+import me.pikamug.quests.actions.ActionLoader;
 import me.pikamug.quests.actions.BukkitActionFactory;
-import me.pikamug.quests.actions.BukkitActionSettings;
+import me.pikamug.quests.actions.BukkitActionLoader;
 import me.pikamug.quests.conditions.BukkitConditionFactory;
-import me.pikamug.quests.conditions.BukkitConditionSettings;
+import me.pikamug.quests.conditions.BukkitConditionLoader;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.conditions.ConditionSettings;
+import me.pikamug.quests.conditions.ConditionLoader;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
-import me.pikamug.quests.convo.misc.MiscStringPrompt;
 import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
+import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.events.misc.MiscPostQuestAcceptEvent;
-import me.pikamug.quests.exceptions.ActionFormatException;
-import me.pikamug.quests.exceptions.ConditionFormatException;
-import me.pikamug.quests.exceptions.QuestFormatException;
-import me.pikamug.quests.exceptions.StageFormatException;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.listeners.BukkitBlockListener;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
@@ -43,95 +38,50 @@ import me.pikamug.quests.listeners.BukkitPlayerListener;
 import me.pikamug.quests.listeners.BukkitUniteListener;
 import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
-import me.pikamug.quests.module.BukkitCustomObjective;
-import me.pikamug.quests.module.BukkitCustomRequirement;
-import me.pikamug.quests.module.BukkitCustomReward;
+import me.pikamug.quests.module.BukkitCustomLoader;
+import me.pikamug.quests.module.CustomLoader;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.BukkitQuestFactory;
-import me.pikamug.quests.quests.BukkitRequirements;
-import me.pikamug.quests.quests.BukkitRewards;
-import me.pikamug.quests.quests.BukkitStage;
-import me.pikamug.quests.quests.Options;
-import me.pikamug.quests.quests.Planner;
+import me.pikamug.quests.quests.BukkitQuestLoader;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.Requirements;
-import me.pikamug.quests.quests.Rewards;
+import me.pikamug.quests.quests.QuestLoader;
 import me.pikamug.quests.statistics.BukkitMetrics;
 import me.pikamug.quests.storage.Storage;
 import me.pikamug.quests.storage.StorageFactory;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
-import me.pikamug.quests.util.BukkitConfigUtil;
-import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import me.pikamug.quests.util.Language;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
-import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -140,14 +90,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private boolean loading = true;
     private String bukkitVersion = "0";
     private BukkitDependencies depends;
-    private ActionSettings actionSettings;
-    private ConditionSettings conditionSettings;
+    private ActionLoader actionLoader;
+    private ConditionLoader conditionLoader;
     private ConfigSettings configSettings;
-    private final List<CustomObjective> customObjectives = new LinkedList<>();
-    private final List<CustomRequirement> customRequirements = new LinkedList<>();
-    private final List<CustomReward> customRewards = new LinkedList<>();
+    private CustomLoader customLoader;
+    private QuestLoader questLoader;
+    private List<CustomObjective> customObjectives = new LinkedList<>();
+    private List<CustomRequirement> customRequirements = new LinkedList<>();
+    private List<CustomReward> customRewards = new LinkedList<>();
     private Collection<Quester> questers = new ConcurrentSkipListSet<>();
-    private final Collection<Quest> quests = new ConcurrentSkipListSet<>();
+    private Collection<Quest> quests = new ConcurrentSkipListSet<>();
     private Collection<Action> actions = new ConcurrentSkipListSet<>();
     private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
     private Collection<UUID> questNpcUuids = new ConcurrentSkipListSet<>();
@@ -185,9 +137,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // 2 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        actionSettings = new BukkitActionSettings(this);
-        conditionSettings = new BukkitConditionSettings(this);
+        actionLoader = new BukkitActionLoader(this);
+        conditionLoader = new BukkitConditionLoader(this);
         configSettings = new BukkitConfigSettings(this);
+        customLoader = new BukkitCustomLoader(this);
+        questLoader = new BukkitQuestLoader(this);
         try {
             Class.forName("me.pikamug.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
@@ -219,7 +173,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         
         // 4 - Setup language files
         try {
-            setupLang();
+            Language.init(this);
         } catch (final IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -259,7 +213,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // 10 - Build conversation factories
         this.conversationFactory = new ConversationFactory(this).withModality(false)
                 .withPrefix(context -> ChatColor.GRAY.toString())
-                .withFirstPrompt(new QuestAcceptPrompt()).withTimeout(configSettings.getAcceptTimeout())
+                .withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(configSettings.getAcceptTimeout())
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(convoListener);
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
@@ -341,10 +295,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return (BukkitConfigSettings) configSettings;
     }
 
-    public BukkitConditionSettings getConditionSettings() {
-        return (BukkitConditionSettings) conditionSettings;
-    }
-
     @Override
     public List<CustomObjective> getCustomObjectives() {
         return customObjectives;
@@ -357,6 +307,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
         }
         return Optional.empty();
+    }
+
+    public void setCustomObjectives(List<CustomObjective> customObjectives) {
+        this.customObjectives = customObjectives;
     }
 
     @Override
@@ -373,6 +327,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return Optional.empty();
     }
 
+    public void setCustomRequirements(List<CustomRequirement> customRequirements) {
+        this.customRequirements = customRequirements;
+    }
+
     @Override
     public List<CustomReward> getCustomRewards() {
         return customRewards;
@@ -387,6 +345,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return Optional.empty();
     }
 
+    public void setCustomRewards(List<CustomReward> customRewards) {
+        this.customRewards = customRewards;
+    }
+
     /**
      * Get every Quest loaded in memory
      *
@@ -394,6 +356,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     public Collection<Quest> getLoadedQuests() {
         return quests;
+    }
+
+    /**
+     * Set every Quest loaded in memory
+     *
+     */
+    public void setLoadedQuests(final Collection<Quest> quests) {
+        this.quests = quests;
     }
 
     /**
@@ -589,157 +559,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return storage;
     }
 
-    public class QuestAcceptPrompt extends MiscStringPrompt {
-
-        private ConversationContext context;
-
-        public QuestAcceptPrompt() {
-            super(null);
-        }
-
-        public QuestAcceptPrompt(final ConversationContext context) {
-            super(context);
-        }
-
-        @Override
-        public ConversationContext getConversationContext() {
-            return context;
-        }
-
-        public int getSize() {
-            return 2;
-        }
-
-        public String getTitle(final ConversationContext context) {
-            return null;
-        }
-
-        @SuppressWarnings("unused")
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
-            switch (number) {
-                case 1:
-                    return ChatColor.GREEN;
-                case 2:
-                    return ChatColor.RED;
-                default:
-                    return null;
-            }
-        }
-
-        @SuppressWarnings("unused")
-        public String getSelectionText(final ConversationContext context, final int number) {
-            switch (number) {
-                case 1:
-                    return ChatColor.GREEN + Language.get("yesWord");
-                case 2:
-                    return ChatColor.RED + Language.get("noWord");
-                default:
-                    return null;
-            }
-        }
-
-        public String getQueryText(final ConversationContext context) {
-            return Language.get("acceptQuest");
-        }
-
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            this.context = context;
-
-            final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(context, this);
-            getServer().getPluginManager().callEvent(event);
-
-            if (!getConfigSettings().canClickablePrompts()) {
-                return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
-                        + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
-            }
-
-            final TextComponent component = new TextComponent("");
-            component.addExtra(ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN);
-            final TextComponent yes = new TextComponent(getSelectionText(context, 1));
-            yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + Language.get("yesWord")));
-            component.addExtra(yes);
-            component.addExtra(ChatColor.RESET + " / ");
-            final TextComponent no = new TextComponent(getSelectionText(context, 2));
-            no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + Language.get("noWord")));
-            component.addExtra(no);
-
-            ((Player)context.getForWhom()).spigot().sendMessage(component);
-            return "";
-        }
-
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-            if (input == null) {
-                getLogger().severe("Ended conversation because input for " + getName() + "was null");
-                return Prompt.END_OF_CONVERSATION;
-            }
-            final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
-                    || input.equalsIgnoreCase(Language.get("yesWord"))
-                    || input.equalsIgnoreCase(Language.get(player, "yesWord"))) {
-                final Quester quester = getQuester(player.getUniqueId());
-                final String questIdToTake = quester.getQuestIdToTake();
-                if (getQuestById(questIdToTake) == null) {
-                    getLogger().warning(player.getName() + " attempted to take quest ID \"" + questIdToTake
-                            + "\" but something went wrong");
-                    player.sendMessage(ChatColor.RED
-                            + "Something went wrong! Please report issue to an administrator.");
-                } else {
-                    quester.takeQuest(getQuestById(questIdToTake), false);
-                }
-                return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
-                    || input.equalsIgnoreCase(Language.get("noWord"))
-                    || input.equalsIgnoreCase(Language.get(player, "noWord"))) {
-                Language.send(player, ChatColor.YELLOW + Language.get("cancelled"));
-                return Prompt.END_OF_CONVERSATION;
-            } else {
-                final String msg = Language.get(player, "questInvalidChoice")
-                    .replace("<yes>", Language.get(player, "yesWord"))
-                    .replace("<no>", Language.get(player, "noWord"));
-                Language.send(player, ChatColor.RED + msg);
-                return new QuestAcceptPrompt(context);
-            }
-        }
-    }
-
-    /**
-     * Transfer language files from jar to disk, then initialize default
-     */
-    private void setupLang() throws IOException, URISyntaxException {
-        final String path = "lang";
-        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-        if (jarFile.isFile()) {
-            final JarFile jar = new JarFile(jarFile);
-            final Enumeration<JarEntry> entries = jar.entries();
-            final Set<String> results = new HashSet<>();
-            while (entries.hasMoreElements()) {
-                final String name = entries.nextElement().getName();
-                if (name.startsWith(path + "/") && name.contains("strings.yml")) {
-                    results.add(name);
-                }
-            }
-            for (final String resourcePath : results) {
-                saveResourceAs(resourcePath, resourcePath, false);
-                saveResourceAs(resourcePath, resourcePath.replace(".yml", "_new.yml"), true);
-            }
-            jar.close();
-        }
-        try {
-            Language.init(this, configSettings.getLanguage());
-        } catch (final InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
-    
     /**
      * Save a Quests plugin resource to a specific path in the filesystem
-     * 
+     *
      * @param resourcePath jar file location starting from resource folder, i.e. "lang/el-GR/strings.yml"
      * @param outputPath file destination starting from Quests folder, i.e. "lang/el-GR/strings.yml"
      * @param replace whether or not to replace the destination file
      */
+    @Override
     public void saveResourceAs(String resourcePath, final String outputPath, final boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
@@ -748,17 +575,17 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         resourcePath = resourcePath.replace('\\', '/');
         final InputStream in = getResource(resourcePath);
         if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath 
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath
                     + "' cannot be found in Quests jar");
         }
-        
+
         final String outPath = outputPath.replace('/', File.separatorChar).replace('\\', File.separatorChar);
         final File outFile = new File(getDataFolder(), outPath);
         final File outDir = new File(outFile.getPath().replace(outFile.getName(), ""));
-        
+
         if (!outDir.exists()) {
             if (!outDir.mkdirs()) {
-                getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + " (canWrite= " 
+                getLogger().log(Level.SEVERE, "Failed to make directories for " + outFile.getName() + " (canWrite= "
                         + outDir.canWrite() + ")");
             }
         }
@@ -774,7 +601,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 out.close();
                 in.close();
                 if (!outFile.exists()) {
-                    getLogger().severe("Unable to copy " + outFile.getName() + " (canWrite= " + outFile.canWrite() 
+                    getLogger().severe("Unable to copy " + outFile.getName() + " (canWrite= " + outFile.canWrite()
                             + ")");
                 }
             }
@@ -790,9 +617,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     private void delayLoadQuestInfo() {
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
-            conditionSettings.init();
-            actionSettings.init();
-            loadQuests();
+            conditionLoader.init();
+            actionLoader.init();
+            questLoader.init();
             getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                     + conditions.size() + " Condition(s) and " + Language.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
@@ -811,211 +638,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     depends.unlinkCitizens();
                 }
             }
-            loadModules();
-            importQuests();
+            customLoader.init();
+            questLoader.importQuests();
             if (getConfigSettings().canDisableCommandFeedback()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
             }
             loading = false;
         }, 5L);
-    }
-    
-    private void importQuests() {
-        final File f = new File(this.getDataFolder(), "import");
-        if (f.exists() && f.isDirectory()) {
-            final File[] imports = f.listFiles();
-            if (imports != null) {
-                for (final File file : imports) {
-                    if (!file.isDirectory() && file.getName().endsWith(".yml")) {
-                        importQuest(file);
-                    }
-                }
-            }
-        } else if (!f.mkdir()) {
-            getLogger().warning("Unable to create import directory");
-        }
-    }
-    
-    private void importQuest(final File file) {
-        FileConfiguration config = null;
-        try {
-            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
-                    StandardCharsets.UTF_8));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-        if (config != null) {
-            final ConfigurationSection questsSection = config.getConfigurationSection("quests");
-            if (questsSection == null) {
-                getLogger().severe("Missing 'quests' section marker, canceled import of file " + file.getName());
-                return;
-            }
-            int count = 0;
-            for (final String questKey : questsSection.getKeys(false)) {
-                try {
-                    for (final Quest lq : getLoadedQuests()) {
-                        if (lq.getId().equals(questKey)) {
-                            throw new QuestFormatException("id already exists", questKey);
-                        }
-                    }
-                    final Quest quest = loadQuest(config, questKey);
-                    if (config.contains("quests." + questKey + ".requirements")) {
-                        loadQuestRequirements(config, questsSection, quest, questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".planner")) {
-                        loadQuestPlanner(config, quest, questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".options")) {
-                        loadQuestOptions(config, quest, questKey);
-                    }
-                    // TODO was this necessary?
-                    //quest.setPlugin(this);
-                    loadQuestStages(quest, config, questKey);
-                    loadQuestRewards(config, quest, questKey);
-                    quests.add(quest);
-                    count++;
-                } catch (final QuestFormatException | StageFormatException | ActionFormatException
-                        | ConditionFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (count > 0) {
-                getLogger().info("Imported " + count + " Quests from " + file.getName());
-            }
-        } else {
-            getLogger().severe("Unable to import quest file " + file.getName());
-        }
-    }
-    
-    /**
-     * Load modules from file
-     */
-    public void loadModules() {
-        final File f = new File(this.getDataFolder(), "modules");
-        if (f.exists() && f.isDirectory()) {
-            final File[] modules = f.listFiles();
-            if (modules != null) {
-                for (final File module : modules) {
-                    if (!module.isDirectory() && module.getName().endsWith(".jar")) {
-                        loadModule(module);
-                    }
-                }
-            }
-        } else if (!f.mkdir()) {
-            getLogger().warning("Unable to create module directory");
-        }
-        FileConfiguration config = null;
-        final File file = new File(this.getDataFolder(), "quests.yml");
-        try {
-            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
-                    StandardCharsets.UTF_8));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-        if (config != null) {
-            final ConfigurationSection questsSection;
-            if (config.contains("quests")) {
-                questsSection = config.getConfigurationSection("quests");
-                if (questsSection != null) {
-                    for (final String questKey : questsSection.getKeys(false)) {
-                        try {
-                            if (config.contains("quests." + questKey)) {
-                                loadCustomSections(getQuestById(questKey), config, questKey);
-                            } else {
-                                throw new QuestFormatException("Unable to load custom sections", questKey);
-                            }
-                        } catch (final QuestFormatException | StageFormatException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } else {
-            getLogger().severe("Unable to load module data from quests.yml");
-        }
-    }
-
-    /**
-     * Load the specified jar as a module
-     * 
-     * @param jar A custom reward/requirement/objective jar
-     */
-    public void loadModule(final File jar) {
-        try {
-            @SuppressWarnings("resource")
-            final JarFile jarFile = new JarFile(jar);
-            final Enumeration<JarEntry> entry = jarFile.entries();
-            final URL[] urls = { new URL("jar:file:" + jar.getPath() + "!/") };
-            final ClassLoader cl = URLClassLoader.newInstance(urls, getClassLoader());
-            int count = 0;
-            while (entry.hasMoreElements()) {
-                final JarEntry je = entry.nextElement();
-                if (je.isDirectory() || !je.getName().endsWith(".class")) {
-                    continue;
-                }
-                final String className = je.getName().substring(0, je.getName().length() - 6).replace('/', '.');
-                Class<?> c = null;
-                try {
-                    c = Class.forName(className, true, cl);
-                } catch (final NoClassDefFoundError e) {
-                    getLogger().severe("Module error! Seek help from developer of module:");
-                    e.printStackTrace();
-                }
-                if (c != null) {
-                    if (BukkitCustomRequirement.class.isAssignableFrom(c)) {
-                        final Class<? extends BukkitCustomRequirement> requirementClass = c.asSubclass(BukkitCustomRequirement.class);
-                        final Constructor<? extends BukkitCustomRequirement> constructor = requirementClass.getConstructor();
-                        final BukkitCustomRequirement requirement = constructor.newInstance();
-                        final Optional<CustomRequirement> oo = getCustomRequirement(requirement.getClass().getName());
-                        oo.ifPresent(customRequirements::remove);
-                        customRequirements.add(requirement);
-                        final String name = requirement.getName() == null ? "[" + jar.getName() + "]" : requirement.getName();
-                        final String author = requirement.getAuthor() == null ? "[Unknown]" : requirement.getAuthor();
-                        count++;
-                        getLogger().info("Loaded \"" + name + "\" by " + author);
-                    } else if (BukkitCustomReward.class.isAssignableFrom(c)) {
-                        final Class<? extends BukkitCustomReward> rewardClass = c.asSubclass(BukkitCustomReward.class);
-                        final Constructor<? extends BukkitCustomReward> constructor = rewardClass.getConstructor();
-                        final BukkitCustomReward reward = constructor.newInstance();
-                        final Optional<CustomReward> oo = getCustomReward(reward.getClass().getName());
-                        oo.ifPresent(customRewards::remove);
-                        customRewards.add(reward);
-                        final String name = reward.getName() == null ? "[" + jar.getName() + "]" : reward.getName();
-                        final String author = reward.getAuthor() == null ? "[Unknown]" : reward.getAuthor();
-                        count++;
-                        getLogger().info("Loaded \"" + name + "\" by " + author);
-                    } else if (CustomObjective.class.isAssignableFrom(c)) {
-                        final Class<? extends BukkitCustomObjective> objectiveClass = c.asSubclass(BukkitCustomObjective.class);
-                        final Constructor<? extends BukkitCustomObjective> constructor = objectiveClass.getConstructor();
-                        final BukkitCustomObjective objective = constructor.newInstance();
-                        final Optional<CustomObjective> oo = getCustomObjective(objective.getClass().getName());
-                        if (oo.isPresent() && oo.get() instanceof BukkitCustomObjective) {
-                            HandlerList.unregisterAll((BukkitCustomObjective)oo.get());
-                            customObjectives.remove(oo.get());
-                        }
-                        customObjectives.add(objective);
-                        final String name = objective.getName() == null ? "[" + jar.getName() + "]" : objective.getName();
-                        final String author = objective.getAuthor() == null ? "[Unknown]" : objective.getAuthor();
-                        count++;
-                        getLogger().info("Loaded \"" + name + "\" by " + author);
-                        try {
-                            getServer().getPluginManager().registerEvents(objective, this);
-                            getLogger().info("Registered events for custom objective \"" + name + "\"");
-                        } catch (final Exception ex) {
-                            getLogger().warning("Failed to register events for custom objective \"" + name
-                                    + "\". Does the objective class listen for events?");
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-            if (count == 0) {
-                getLogger().severe("Unable to load module from file " + jar.getName() + " (not a valid module)!");
-            }
-        } catch (final Exception e) {
-            getLogger().severe("Unable to load module from file " + jar.getName() + " (contact module developer)!");
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -1033,21 +662,21 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 getStorage().saveOfflineQuesters().get();
                 Language.clear();
                 configSettings.init();
-                Language.init(BukkitQuestsPlugin.this, configSettings.getLanguage());
+                Language.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
                 quests.clear();
                 actions.clear();
                 conditions.clear();
-                conditionSettings.init();
-                actionSettings.init();
-                loadQuests();
+                conditionLoader.init();
+                actionLoader.init();
+                questLoader.init();
                 for (final Quester quester : questers) {
                     final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
                     for (final Quest quest : loaded.getCurrentQuests().keySet()) {
                         loaded.checkQuest(quest);
                     }
                 }
-                loadModules();
-                importQuests();
+                customLoader.init();
+                questLoader.importQuests();
                 finishLoading(callback, true, null);
             } catch (final Exception e) {
                 finishLoading(callback, false, e);
@@ -1076,1838 +705,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Load quests from file
-     */
-    public void loadQuests() {
-        boolean needsSaving = false;
-        FileConfiguration config = null;
-        final File file = new File(this.getDataFolder(), "quests.yml");
-        try {
-            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
-                    StandardCharsets.UTF_8));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-        if (config != null) {
-            final ConfigurationSection questsSection;
-            if (config.contains("quests")) {
-                questsSection = config.getConfigurationSection("quests");
-            } else {
-                questsSection = config.createSection("quests");
-                needsSaving = true;
-            }
-            if (questsSection == null) {
-                getLogger().severe("Missing 'quests' section marker within quests.yml, canceled loading");
-                return;
-            }
-            for (final String questKey : questsSection.getKeys(false)) {
-                try {
-                    final Quest quest = loadQuest(config, questKey);
-                    if (config.contains("quests." + questKey + ".requirements")) {
-                        loadQuestRequirements(config, questsSection, quest, questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".planner")) {
-                        loadQuestPlanner(config, quest, questKey);
-                    }
-                    if (config.contains("quests." + questKey + ".options")) {
-                        loadQuestOptions(config, quest, questKey);
-                    }
-                    // TODO was this necessary?
-                    //quest.setPlugin(this);
-                    loadQuestStages(quest, config, questKey);
-                    loadQuestRewards(config, quest, questKey);
-                    quests.add(quest);
-                    if (needsSaving) {
-                        try {
-                            config.save(file);
-                        } catch (final IOException e) {
-                            getLogger().log(Level.SEVERE, "Failed to save Quest \"" + questKey + "\"");
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (final QuestFormatException | StageFormatException | ActionFormatException
-                        | ConditionFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            getLogger().severe("Unable to load quests.yml");
-        }
-    }
-
-    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
-            ActionFormatException {
-        final BukkitQuest quest = new BukkitQuest(this);
-        quest.setId(questKey);
-        if (config.contains("quests." + questKey + ".name")) {
-            quest.setName(BukkitConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
-        } else {
-            throw new QuestFormatException("'name' is missing", questKey);
-        }
-        if (config.contains("quests." + questKey + ".ask-message")) {
-            quest.setDescription(BukkitConfigUtil.parseString(config.getString("quests." + questKey
-                    + ".ask-message"), quest));
-        } else {
-            throw new QuestFormatException("'ask-message' is missing", questKey);
-        }
-        if (config.contains("quests." + questKey + ".finish-message")) {
-            quest.setFinished(BukkitConfigUtil.parseString(config.getString("quests." + questKey
-                    + ".finish-message"), quest));
-        } else {
-            throw new QuestFormatException("'finish-message' is missing", questKey);
-        }
-        if (config.contains("quests." + questKey + ".npc-giver-uuid")) {
-            final UUID uuid = UUID.fromString(Objects.requireNonNull(config.getString("quests." + questKey
-                    + ".npc-giver-uuid")));
-            quest.setNpcStart(uuid);
-            questNpcUuids.add(uuid);
-        } else if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
-            // Legacy
-            final int id = config.getInt("quests." + questKey + ".npc-giver-id");
-            if (CitizensAPI.getNPCRegistry().getById(id) != null) {
-                final NPC npc = CitizensAPI.getNPCRegistry().getById(id);
-                quest.setNpcStart(npc.getUniqueId());
-                questNpcUuids.add(npc.getUniqueId());
-            } else {
-                throw new QuestFormatException("'npc-giver-id' has invalid NPC ID " + id, questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".block-start")) {
-            final String blockStart = config.getString("quests." + questKey + ".block-start");
-            if (blockStart != null) {
-                final Location location = BukkitConfigUtil.getLocation(blockStart);
-                if (location != null) {
-                    quest.setBlockStart(location);
-                } else {
-                    throw new QuestFormatException("'block-start' has invalid location", questKey);
-                }
-            } else {
-                throw new QuestFormatException("'block-start' has invalid location format", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".region")
-                && getDependencies().getWorldGuardApi() != null) {
-            final String region = config.getString("quests." + questKey + ".region");
-            if (region != null) {
-                boolean exists = false;
-                for (final World world : getServer().getWorlds()) {
-                    if (world != null && getDependencies().getWorldGuardApi().getRegionManager(world) != null) {
-                        if (Objects.requireNonNull(getDependencies().getWorldGuardApi().getRegionManager(world))
-                                .hasRegion(region)) {
-                            quest.setRegionStart(region);
-                            exists = true;
-                            break;
-                        }
-                    }
-                }
-                if (!exists) {
-                    throw new QuestFormatException("'region' has invalid WorldGuard region name", questKey);
-                }
-            } else {
-                throw new QuestFormatException("'region' has invalid WorldGuard region", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".gui-display")) {
-            ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
-            if (stack != null) {
-                quest.setGUIDisplay(stack);
-            } else {
-                throw new QuestFormatException("'gui-display' has invalid item format", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".redo-delay")) {
-            // Legacy
-            if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
-                quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000L);
-            } else {
-                throw new QuestFormatException("'redo-delay' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".action")) {
-            final String actionName = config.getString("quests." + questKey + ".action");
-            final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName))
-                    .findAny();
-            if (action.isPresent()) {
-                quest.setInitialAction(action.get());
-            } else {
-                throw new QuestFormatException("'action' failed to load", questKey);
-            }
-        } else if (config.contains("quests." + questKey + ".event")) {
-            final String actionName = config.getString("quests." + questKey + ".event");
-            final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName))
-                    .findAny();
-            if (action.isPresent()) {
-                quest.setInitialAction(action.get());
-            } else {
-                throw new QuestFormatException("'event' failed to load", questKey);
-            }
-        }
-        return quest;
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private void loadQuestRewards(final FileConfiguration config, final Quest quest, final String questKey)
-            throws QuestFormatException {
-        final BukkitRewards rewards = (BukkitRewards) quest.getRewards();
-        if (config.contains("quests." + questKey + ".rewards.items")) {
-            final LinkedList<ItemStack> temp = new LinkedList<>();
-            final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
-            if (BukkitConfigUtil.checkList(stackList, ItemStack.class)) {
-                for (final ItemStack stack : stackList) {
-                    if (stack != null) {
-                        temp.add(stack);
-                    }
-                }
-            } else {
-                throw new QuestFormatException("Reward 'items' has invalid formatting", questKey);
-            }
-            rewards.setItems(temp);
-        }
-        if (config.contains("quests." + questKey + ".rewards.money")) {
-            if (config.getInt("quests." + questKey + ".rewards.money", -999) != -999) {
-                rewards.setMoney(config.getInt("quests." + questKey + ".rewards.money"));
-            } else {
-                throw new QuestFormatException("Reward 'money' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.quest-points")) {
-            if (config.getInt("quests." + questKey + ".rewards.quest-points", -999) != -999) {
-                rewards.setQuestPoints(config.getInt("quests." + questKey + ".rewards.quest-points"));
-            } else {
-                throw new QuestFormatException("Reward 'quest-points' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.exp")) {
-            if (config.getInt("quests." + questKey + ".rewards.exp", -999) != -999) {
-                rewards.setExp(config.getInt("quests." + questKey + ".rewards.exp"));
-            } else {
-                throw new QuestFormatException("Reward 'exp' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.commands")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands"), String.class)) {
-                rewards.setCommands(config.getStringList("quests." + questKey + ".rewards.commands"));
-            } else {
-                throw new QuestFormatException("Reward 'commands' is not a list of commands", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.commands-override-display")) {
-            // Legacy
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.commands-override-display"),
-                    String.class)) {
-                rewards.setCommandsOverrideDisplay(config.getStringList("quests." + questKey
-                        + ".rewards.commands-override-display"));
-            } else {
-                throw new QuestFormatException("Reward 'commands-override-display' is not a list of strings", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.permissions")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.permissions"), String.class)) {
-                rewards.setPermissions(config.getStringList("quests." + questKey + ".rewards.permissions"));
-            } else {
-                throw new QuestFormatException("Reward 'permissions' is not a list of permissions", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.permission-worlds")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey
-                    + ".rewards.permission-worlds"), String.class)) {
-                rewards.setPermissionWorlds(config.getStringList("quests." + questKey + ".rewards.permission-worlds"));
-            } else {
-                throw new QuestFormatException("Reward 'permission-worlds' is not a list of worlds", questKey);
-            }
-        }
-        if (depends.isPluginAvailable("mcMMO")) {
-            if (config.contains("quests." + questKey + ".rewards.mcmmo-skills")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-skills"),
-                        String.class)) {
-                    if (config.contains("quests." + questKey + ".rewards.mcmmo-levels")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.mcmmo-levels"),
-                                Integer.class)) {
-                            for (final String skill : config.getStringList("quests." + questKey
-                                    + ".rewards.mcmmo-skills")) {
-                                if (depends.getMcmmoClassic() == null) {
-                                    throw new QuestFormatException("mcMMO not found for 'mcmmo-skills'", questKey);
-                                } else if (depends.getMcMMOSkill(skill) == null) {
-                                    throw new QuestFormatException("Reward 'mcmmo-skills' has invalid skill name "
-                                            + skill, questKey);
-                                }
-                            }
-                            rewards.setMcmmoSkills(config.getStringList("quests." + questKey
-                                    + ".rewards.mcmmo-skills"));
-                            rewards.setMcmmoAmounts(config.getIntegerList("quests." + questKey
-                                    + ".rewards.mcmmo-levels"));
-                        } else {
-                            throw new QuestFormatException("Reward 'mcmmo-levels' is not a list of numbers", questKey);
-                        }
-                    } else {
-                        throw new QuestFormatException("Reward 'mcmmo-levels' is missing!", questKey);
-                    }
-                } else {
-                    throw new QuestFormatException("Reward 'mcmmo-skills' is not a list of mcMMO skill names", questKey);
-                }
-            }
-        }
-        if (depends.isPluginAvailable("Heroes")) {
-            if (config.contains("quests." + questKey + ".rewards.heroes-exp-classes")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-classes"),
-                        String.class)) {
-                    if (config.contains("quests." + questKey + ".rewards.heroes-exp-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".rewards.heroes-exp-amounts"),
-                                Double.class)) {
-                            for (final String heroClass : config.getStringList("quests." + questKey 
-                                    + ".rewards.heroes-exp-classes")) {
-                                if (depends.getHeroes() == null) {
-                                    throw new QuestFormatException("Heroes not found for 'heroes-exp-classes'", questKey);
-                                } else if (depends.getHeroes().getClassManager().getClass(heroClass) == null) {
-                                    throw new QuestFormatException("Reward 'heroes-exp-classes' has invalid class name "
-                                            + heroClass, questKey);
-                                }
-                            }
-                            rewards.setHeroesClasses(config.getStringList("quests." + questKey
-                                    + ".rewards.heroes-exp-classes"));
-                            rewards.setHeroesAmounts(config.getDoubleList("quests." + questKey
-                                    + ".rewards.heroes-exp-amounts"));
-                        } else {
-                            throw new QuestFormatException("Reward 'heroes-exp-amounts' is not a list of decimal numbers",
-                                    questKey);
-                        }
-                    } else {
-                        throw new QuestFormatException("Reward 'heroes-exp-amounts' is missing", questKey);
-                    }
-                } else {
-                    throw new QuestFormatException("Reward 'heroes-exp-classes' is not a list of Heroes classes",
-                            questKey);
-                }
-            }
-        }
-        if (depends.isPluginAvailable("Parties")) {
-            if (config.contains("quests." + questKey + ".rewards.parties-experience")) {
-                if (config.getInt("quests." + questKey + ".rewards.parties-experience", -999) != -999) {
-                    rewards.setPartiesExperience(config.getInt("quests." + questKey + ".rewards.parties-experience"));
-                } else {
-                    throw new QuestFormatException("Reward 'parties-experience' is not a number", questKey);
-                }
-            }
-        }
-        if (config.contains("quests." + questKey + ".rewards.phat-loots")) {
-            throw new QuestFormatException("PhatLoots support has been removed. Use the module instead!", questKey);
-        }
-        if (config.contains("quests." + questKey + ".rewards.details-override")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey
-                    + ".rewards.details-override"), String.class)) {
-                rewards.setDetailsOverride(config.getStringList("quests." + questKey + ".rewards.details-override"));
-            }  else {
-                throw new QuestFormatException("Reward 'details-override' is not a list of strings", questKey);
-            }
-        }
-    }
-
-    @SuppressWarnings({ "unchecked"})
-    private void loadQuestRequirements(final FileConfiguration config, final ConfigurationSection questsSection,
-                                       final Quest quest, final String questKey) throws QuestFormatException {
-        final BukkitRequirements requires = (BukkitRequirements) quest.getRequirements();
-        if (config.contains("quests." + questKey + ".requirements.fail-requirement-message")) {
-            final Object o = config.get("quests." + questKey + ".requirements.fail-requirement-message");
-            if (o instanceof List) {
-                requires.setDetailsOverride(config.getStringList("quests." + questKey
-                        + ".requirements.fail-requirement-message"));
-            } else {
-                // Legacy
-                final List<String> override = new LinkedList<>();
-                override.add((String) o);
-                requires.setDetailsOverride(override);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.items")) {
-            final List<ItemStack> temp = new LinkedList<>();
-            final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey
-                    + ".requirements.items");
-            if (BukkitConfigUtil.checkList(stackList, ItemStack.class)) {
-                for (final ItemStack stack : stackList) {
-                    if (stack != null) {
-                        temp.add(stack);
-                    }
-                }
-            } else {
-                throw new QuestFormatException("Requirement 'items' has invalid formatting", questKey);
-            }
-            requires.setItems(temp);
-            if (config.contains("quests." + questKey + ".requirements.remove-items")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.remove-items"),
-                        Boolean.class)) {
-                    requires.setRemoveItems(config.getBooleanList("quests." + questKey + ".requirements.remove-items"));
-                } else {
-                    throw new QuestFormatException("Requirement 'remove-items' is not a list of true/false values",
-                            questKey);
-                }
-            } else {
-                throw new QuestFormatException("Requirement 'remove-items' is missing", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.money")) {
-            if (config.getInt("quests." + questKey + ".requirements.money", -999) != -999) {
-                requires.setMoney(config.getInt("quests." + questKey + ".requirements.money"));
-            } else {
-                throw new QuestFormatException("Requirement 'money' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.quest-points")) {
-            if (config.getInt("quests." + questKey + ".requirements.quest-points", -999) != -999) {
-                requires.setQuestPoints(config.getInt("quests." + questKey + ".requirements.quest-points"));
-            } else {
-                throw new QuestFormatException("Requirement 'quest-points' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.exp")) {
-            if (config.getInt("quests." + questKey + ".requirements.exp", -999) != -999) {
-                requires.setExp(config.getInt("quests." + questKey + ".requirements.exp"));
-            } else {
-                throw new QuestFormatException("Requirement 'exp' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.quest-blocks")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quest-blocks"),
-                    String.class)) {
-                final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quest-blocks");
-                boolean failed = false;
-                String failedQuest = "NULL";
-                final List<String> temp = new LinkedList<>();
-                for (final String node : nodes) {
-                    boolean done = false;
-                    for (final String id : questsSection.getKeys(false)) {
-                        if (id.equals(node)) {
-                            temp.add(node);
-                            done = true;
-                            break;
-                        }
-                    }
-                    if (!done) {
-                        failed = true;
-                        failedQuest = node;
-                        break;
-                    }
-                }
-                requires.setBlockQuestIds(temp);
-                if (failed) {
-                    throw new QuestFormatException("Requirement 'quest-blocks' has invalid quest ID " + failedQuest,
-                            questKey);
-                }
-            } else {
-                throw new QuestFormatException("Requirement 'quest-blocks' is not a list of quest names", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.quests")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.quests"), String.class)) {
-                final List<String> nodes = config.getStringList("quests." + questKey + ".requirements.quests");
-                boolean failed = false;
-                String failedQuest = "NULL";
-                final List<String> temp = new LinkedList<>();
-                for (final String node : nodes) {
-                    boolean done = false;
-                    for (final String id : questsSection.getKeys(false)) {
-                        if (id.equals(node)) {
-                            temp.add(node);
-                            done = true;
-                            break;
-                        }
-                    }
-                    if (!done) {
-                        failed = true;
-                        failedQuest = node;
-                        break;
-                    }
-                }
-                requires.setNeededQuestIds(temp);
-                if (failed) {
-                    throw new QuestFormatException("Requirement 'quests' has invalid quest ID "
-                            + failedQuest, questKey);
-                }
-            } else {
-                throw new QuestFormatException("Requirement 'quests' is not a list of quest names", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.permissions")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.permissions"),
-                    String.class)) {
-                requires.setPermissions(config.getStringList("quests." + questKey + ".requirements.permissions"));
-            } else {
-                throw new QuestFormatException("Requirement 'permissions' is not a list of permissions", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.mcmmo-skills")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-skills"),
-                    String.class)) {
-                if (config.contains("quests." + questKey + ".requirements.mcmmo-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".requirements.mcmmo-amounts"),
-                            Integer.class)) {
-                        final List<String> skills = config.getStringList("quests." + questKey
-                                + ".requirements.mcmmo-skills");
-                        final List<Integer> amounts = config.getIntegerList("quests." + questKey 
-                                + ".requirements.mcmmo-amounts");
-                        if (skills.size() != amounts.size()) {
-                            throw new QuestFormatException("Requirement 'mcmmo-skills' and 'mcmmo-amounts' are not the "
-                                    + "same size", questKey);
-                        }
-                        requires.setMcmmoSkills(skills);
-                        requires.setMcmmoAmounts(amounts);
-                    } else {
-                        throw new QuestFormatException("Requirement 'mcmmo-amounts' is not a list of numbers", questKey);
-                    }
-                } else {
-                    throw new QuestFormatException("Requirement 'mcmmo-amounts' is missing", questKey);
-                }
-            } else {
-                throw new QuestFormatException("Requirement 'mcmmo-skills' is not a list of skills", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.heroes-primary-class")) {
-            final String className = config.getString("quests." + questKey + ".requirements.heroes-primary-class");
-            if (depends.getHeroClass(className) != null && depends.getHeroClass(className).isPrimary()) {
-                requires.setHeroesPrimaryClass(depends.getHeroClass(className).getName());
-            } else if (depends.getHeroClass(className) != null) {
-                throw new QuestFormatException("Requirement 'heroes-primary-class' is not a primary Heroes class",
-                        questKey);
-            } else {
-                throw new QuestFormatException("Requirement 'heroes-primary-class' has invalid Heroes class", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.heroes-secondary-class")) {
-            final String className = config.getString("quests." + questKey + ".requirements.heroes-secondary-class");
-            if (depends.getHeroClass(className) != null && depends.getHeroClass(className).isSecondary()) {
-                requires.setHeroesSecondaryClass(depends.getHeroClass(className).getName());
-            } else if (depends.getHeroClass(className) != null) {
-                throw new QuestFormatException("Requirement 'heroes-secondary-class' is not a secondary Heroes class",
-                        questKey);
-            } else {
-                throw new QuestFormatException("Requirement 'heroes-secondary-class' has invalid Heroes class", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".requirements.details-override")) {
-            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey
-                    + ".requirements.details-override"), String.class)) {
-                requires.setDetailsOverride(config.getStringList("quests." + questKey + ".requirements.details-override"));
-            }  else {
-                throw new QuestFormatException("Requirement 'details-override' is not a list of strings", questKey);
-            }
-        }
-    }
-    
-    private void loadQuestPlanner(final FileConfiguration config, final Quest quest, final String questKey)
-            throws QuestFormatException {
-        final Planner pln = quest.getPlanner();
-        if (config.contains("quests." + questKey + ".planner.start")) {
-            pln.setStart(config.getString("quests." + questKey + ".planner.start"));
-        }
-        if (config.contains("quests." + questKey + ".planner.end")) {
-            pln.setEnd(config.getString("quests." + questKey + ".planner.end"));
-        }
-        if (config.contains("quests." + questKey + ".planner.repeat")) {
-            if (config.getInt("quests." + questKey + ".planner.repeat", -999) != -999) {
-                pln.setRepeat(config.getInt("quests." + questKey + ".planner.repeat") * 1000L);
-            } else {
-                throw new QuestFormatException("Planner 'repeat' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".planner.cooldown")) {
-            if (config.getInt("quests." + questKey + ".planner.cooldown", -999) != -999) {
-                pln.setCooldown(config.getInt("quests." + questKey + ".planner.cooldown") * 1000L);
-            } else {
-                throw new QuestFormatException("Planner 'cooldown' is not a number", questKey);
-            }
-        }
-        if (config.contains("quests." + questKey + ".planner.override")) {
-            pln.setOverride(config.getBoolean("quests." + questKey + ".planner.override"));
-        }
-    }
-    
-    private void loadQuestOptions(final FileConfiguration config, final Quest quest, final String questKey)
-            throws QuestFormatException {
-        final Options opts = quest.getOptions();
-        if (config.contains("quests." + questKey + ".options.allow-commands")) {
-            opts.setAllowCommands(config.getBoolean("quests." + questKey + ".options.allow-commands"));
-        }
-        if (config.contains("quests." + questKey + ".options.allow-quitting")) {
-            opts.setAllowQuitting(config.getBoolean("quests." + questKey + ".options.allow-quitting"));
-        } else if (getConfig().contains("allow-quitting")) {
-            // Legacy
-            opts.setAllowQuitting(getConfig().getBoolean("allow-quitting"));
-        }
-        if (config.contains("quests." + questKey + ".options.ignore-silk-touch")) {
-            opts.setIgnoreSilkTouch(config.getBoolean("quests." + questKey + ".options.ignore-silk-touch"));
-        }
-        if (config.contains("quests." + questKey + ".options.external-party-plugin")) {
-            opts.setExternalPartyPlugin(config.getString("quests." + questKey + ".options.external-party-plugin"));
-        }
-        if (config.contains("quests." + questKey + ".options.use-parties-plugin")) {
-            opts.setUsePartiesPlugin(config.getBoolean("quests." + questKey + ".options.use-parties-plugin"));
-        }
-        if (config.contains("quests." + questKey + ".options.share-progress-level")) {
-            opts.setShareProgressLevel(config.getInt("quests." + questKey + ".options.share-progress-level"));
-        }
-        if (config.contains("quests." + questKey + ".options.same-quest-only")) {
-            opts.setShareSameQuestOnly(config.getBoolean("quests." + questKey + ".options.same-quest-only"));
-        }
-        if (config.contains("quests." + questKey + ".options.share-distance")) {
-            opts.setShareDistance(config.getDouble("quests." + questKey + ".options.share-distance"));
-        }
-        if (config.contains("quests." + questKey + ".options.handle-offline-players")) {
-            opts.setHandleOfflinePlayers(config.getBoolean("quests." + questKey + ".options.handle-offline-players"));
-        }
-        if (config.contains("quests." + questKey + ".options.ignore-block-replace")) {
-            opts.setIgnoreBlockReplace(config.getBoolean("quests." + questKey + ".options.ignore-block-replace"));
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "unused"})
-    private void loadQuestStages(final Quest quest, final FileConfiguration config, final String questKey)
-            throws StageFormatException, ActionFormatException, ConditionFormatException {
-        final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
-                + ".stages.ordered");
-        if (questStages == null) {
-            getLogger().severe(ChatColor.RED + questKey + " must have at least one stage!");
-            return;
-        }
-        for (final String stage : questStages.getKeys(false)) {
-            final int stageNum;
-            try {
-                stageNum = Integer.parseInt(stage);
-            } catch (final NumberFormatException e) {
-                getLogger().severe("Stage key " + stage + "must be a number!");
-                continue;
-            }
-            final BukkitStage oStage = new BukkitStage();
-            List<String> breakNames = new LinkedList<>();
-            List<Integer> breakAmounts = new LinkedList<>();
-            List<Short> breakDurability = new LinkedList<>();
-            List<String> damageNames = new LinkedList<>();
-            List<Integer> damageAmounts = new LinkedList<>();
-            List<Short> damageDurability = new LinkedList<>();
-            List<String> placeNames = new LinkedList<>();
-            List<Integer> placeAmounts = new LinkedList<>();
-            List<Short> placeDurability = new LinkedList<>();
-            List<String> useNames = new LinkedList<>();
-            List<Integer> useAmounts = new LinkedList<>();
-            List<Short> useDurability = new LinkedList<>();
-            List<String> cutNames = new LinkedList<>();
-            List<Integer> cutAmounts = new LinkedList<>();
-            List<Short> cutDurability = new LinkedList<>();
-            final List<EntityType> mobsToKill = new LinkedList<>();
-            final List<Integer> mobNumsToKill = new LinkedList<>();
-            final List<Location> locationsToKillWithin = new LinkedList<>();
-            final List<Integer> radiiToKillWithin = new LinkedList<>();
-            final List<String> areaNames = new LinkedList<>();
-            final List<ItemStack> itemsToCraft;
-            final List<ItemStack> itemsToSmelt;
-            final List<ItemStack> itemsToEnchant;
-            final List<ItemStack> itemsToBrew;
-            final List<ItemStack> itemsToConsume;
-            final List<String> npcUuidsToTalkTo;
-            final List<Integer> npcIdsToTalkTo;
-            final List<ItemStack> itemsToDeliver;
-            final List<String> itemDeliveryTargetUuids;
-            final List<Integer> itemDeliveryTargetIds;
-            final List<String> deliveryMessages;
-            final List<String> npcUuidsToKill;
-            final List<Integer> npcIdsToKill;
-            final List<Integer> npcAmountsToKill;
-            // Legacy Denizen script load
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".script-to-run")) {
-                if (getDependencies().getDenizenApi().containsScript(config.getString("quests." + questKey 
-                        + ".stages.ordered." + stageNum + ".script-to-run"))) {
-                    oStage.setScript(config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".script-to-run"));
-                } else {
-                    throw new StageFormatException("'script-to-run' is not a valid Denizen script", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".break-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".break-block-names"), String.class)) {
-                    breakNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".break-block-names");
-                } else {
-                    throw new StageFormatException("'break-block-names' is not a list of strings", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".break-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".break-block-amounts"), Integer.class)) {
-                        breakAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".break-block-amounts");
-                    } else {
-                        throw new StageFormatException("'break-block-amounts' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'break-block-amounts' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".break-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".break-block-durability"), Integer.class)) {
-                        breakDurability = config.getShortList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".break-block-durability");
-                    } else {
-                        throw new StageFormatException("'break-block-durability' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'break-block-durability' is missing", quest, stageNum);
-                }
-            }
-            int breakIndex = 0;
-            for (final String s : breakNames) {
-                final ItemStack is;
-                if (breakIndex < breakDurability.size() && breakDurability.get(breakIndex) != -1) {
-                    is = BukkitItemUtil.processItemStack(s, breakAmounts.get(breakIndex), breakDurability.get(breakIndex));
-                } else {
-                    // Legacy
-                    is = BukkitItemUtil.processItemStack(s, breakAmounts.get(breakIndex), (short) 0);
-                }
-                if (Material.matchMaterial(s) != null) {
-                    oStage.addBlockToBreak(is);
-                } else {
-                    throw new StageFormatException("'break-block-names' has invalid item name " + s, quest, stageNum);
-                }
-                breakIndex++;
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".damage-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".damage-block-names"), String.class)) {
-                    damageNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".damage-block-names");
-                } else {
-                    throw new StageFormatException("'damage-block-names' is not a list of strings", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".damage-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".damage-block-amounts"), Integer.class)) {
-                        damageAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".damage-block-amounts");
-                    } else {
-                        throw new StageFormatException("'damage-block-amounts' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'damage-block-amounts' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".damage-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".damage-block-durability"), Integer.class)) {
-                        damageDurability = config.getShortList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".damage-block-durability");
-                    } else {
-                        throw new StageFormatException("'damage-block-durability' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'damage-block-durability' is missing", quest, stageNum);
-                }
-            }
-            int damageIndex = 0;
-            for (final String s : damageNames) {
-                final ItemStack is;
-                if (damageIndex < damageDurability.size() && damageDurability.get(damageIndex) != -1) {
-                    is = BukkitItemUtil.processItemStack(s, damageAmounts.get(damageIndex),
-                            damageDurability.get(damageIndex));
-                } else {
-                    // Legacy
-                    is = BukkitItemUtil.processItemStack(s, damageAmounts.get(damageIndex), (short) 0);
-                }
-                if (Material.matchMaterial(s) != null) {
-                    oStage.addBlockToDamage(is);
-                } else {
-                    throw new StageFormatException("'damage-block-names' has invalid item name " + s, quest, stageNum);
-                }
-                damageIndex++;
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".place-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".place-block-names"), String.class)) {
-                    placeNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".place-block-names");
-                } else {
-                    throw new StageFormatException("'place-block-names' is not a list of strings", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".place-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".place-block-amounts"), Integer.class)) {
-                        placeAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".place-block-amounts");
-                    } else {
-                        throw new StageFormatException("'place-block-amounts' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'place-block-amounts' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".place-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".place-block-durability"), Integer.class)) {
-                        placeDurability = config.getShortList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".place-block-durability");
-                    } else {
-                        throw new StageFormatException("'place-block-durability' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'place-block-durability' is missing", quest, stageNum);
-                }
-            }
-            int placeIndex = 0;
-            for (final String s : placeNames) {
-                final ItemStack is;
-                if (placeIndex < placeDurability.size() && placeDurability.get(placeIndex) != -1) {
-                    is = BukkitItemUtil.processItemStack(s, placeAmounts.get(placeIndex), placeDurability.get(placeIndex));
-                } else {
-                    // Legacy
-                    is = BukkitItemUtil.processItemStack(s, placeAmounts.get(placeIndex), (short) 0);
-                }
-                if (Material.matchMaterial(s) != null) {
-                    oStage.addBlockToPlace(is);
-                } else {
-                    throw new StageFormatException("'place-block-names' has invalid item name " + s, quest, stageNum);
-                }
-                placeIndex++;
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".use-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".use-block-names"), String.class)) {
-                    useNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".use-block-names");
-                } else {
-                    throw new StageFormatException("'use-block-names' is not a list of strings", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".use-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".use-block-amounts"),Integer.class)) {
-                        useAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".use-block-amounts");
-                    } else {
-                        throw new StageFormatException("'use-block-amounts' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'use-block-amounts' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".use-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".use-block-durability"), Integer.class)) {
-                        useDurability = config.getShortList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".use-block-durability");
-                    } else {
-                        throw new StageFormatException("'use-block-durability' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'use-block-durability' is missing", quest, stageNum);
-                }
-            }
-            int useIndex = 0;
-            for (final String s : useNames) {
-                final ItemStack is;
-                if (useIndex < useDurability.size() && useDurability.get(useIndex) != -1) {
-                    is = BukkitItemUtil.processItemStack(s, useAmounts.get(useIndex), useDurability.get(useIndex));
-                } else {
-                    // Legacy
-                    is = BukkitItemUtil.processItemStack(s, useAmounts.get(useIndex), (short) 0);
-                }
-                if (Material.matchMaterial(s) != null) {
-                    oStage.addBlockToUse(is);
-                } else {
-                    throw new StageFormatException("'use-block-names' has invalid item name " + s, quest, stageNum);
-                }
-                useIndex++;
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".cut-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".cut-block-names"), String.class)) {
-                    cutNames = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".cut-block-names");
-                } else {
-                    throw new StageFormatException("'cut-block-names' is not a list of strings", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".cut-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".cut-block-amounts"), Integer.class)) {
-                        cutAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".cut-block-amounts");
-                    } else {
-                        throw new StageFormatException("'cut-block-amounts' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'cut-block-amounts' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".cut-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".cut-block-durability"), Integer.class)) {
-                        cutDurability = config.getShortList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".cut-block-durability");
-                    } else {
-                        throw new StageFormatException("'cut-block-durability' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'cut-block-durability' is missing", quest, stageNum);
-                }
-            }
-            int cutIndex = 0;
-            for (final String s : cutNames) {
-                final ItemStack is;
-                if (cutIndex < cutDurability.size() && cutDurability.get(cutIndex) != -1) {
-                    is = BukkitItemUtil.processItemStack(s, cutAmounts.get(cutIndex), cutDurability.get(cutIndex));
-                } else {
-                    // Legacy
-                    is = BukkitItemUtil.processItemStack(s, cutAmounts.get(cutIndex), (short) 0);
-                }
-                if (Material.matchMaterial(s) != null) {
-                    oStage.addBlockToCut(is);
-                } else {
-                    throw new StageFormatException("'cut-block-names' has invalid item name " + s, quest, stageNum);
-                }
-                cutIndex++;
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-craft")) {
-                itemsToCraft = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".items-to-craft");
-                if (BukkitConfigUtil.checkList(itemsToCraft, ItemStack.class)) {
-                    for (final ItemStack stack : itemsToCraft) {
-                        if (stack != null) {
-                            oStage.addItemToCraft(stack);
-                        } else {
-                            throw new StageFormatException("'items-to-craft' has invalid formatting", quest, stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'items-to-craft' is not formatted properly", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-smelt")) {
-                itemsToSmelt = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".items-to-smelt");
-                if (BukkitConfigUtil.checkList(itemsToSmelt, ItemStack.class)) {
-                    for (final ItemStack stack : itemsToSmelt) {
-                        if (stack != null) {
-                            oStage.addItemToSmelt(stack);
-                        } else {
-                            throw new StageFormatException("'items-to-smelt' has invalid formatting", quest, stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'items-to-smelt' is not formatted properly", quest, stageNum);
-                }
-            }
-            
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-enchant")) {
-                itemsToEnchant = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".items-to-enchant");
-                if (BukkitConfigUtil.checkList(itemsToEnchant, ItemStack.class)) {
-                    for (final ItemStack stack : itemsToEnchant) {
-                        if (stack != null) {
-                            oStage.addItemToEnchant(stack);
-                        } else {
-                            throw new StageFormatException("'items-to-enchant' has invalid formatting", quest, stageNum);
-                        }
-                    }
-                } else {
-                    // Legacy
-                    final LinkedList<Material> types = new LinkedList<>();
-                    final LinkedList<Enchantment> enchs = new LinkedList<>();
-                    final LinkedList<Integer> amts;
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantments")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".enchantments"), String.class)) {
-                            for (final String enchant : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                                    + ".enchantments")) {
-                                final Enchantment e = BukkitItemUtil.getEnchantmentFromProperName(enchant);
-                                if (e != null) {
-                                    enchs.add(e);
-                                } else {
-                                    throw new StageFormatException("'enchantments' has invalid enchantment "
-                                            + enchant, quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'enchantments' is not a list of enchantment names", quest, stageNum);
-                        }
-                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-item-names")) {
-                            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                    + ".enchantment-item-names"), String.class)) {
-                                for (final String item : config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                                        + ".enchantment-item-names")) {
-                                    if (Material.matchMaterial(item) != null) {
-                                        types.add(Material.matchMaterial(item));
-                                    } else {
-                                        throw new StageFormatException("'enchantment-item-names' has invalid item name "
-                                                + item, quest, stageNum);
-                                    }
-                                }
-                            } else {
-                                throw new StageFormatException("'enchantment-item-names' has invalid item name", quest, stageNum);
-                            }
-                        } else {
-                            throw new StageFormatException("'enchantment-item-names' is missing", quest, stageNum);
-                        }
-                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".enchantment-amounts")) {
-                            if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                    + ".enchantment-amounts"), Integer.class)) {
-                                amts = new LinkedList<>(config.getIntegerList("quests." + questKey + ".stages.ordered."
-                                        + stageNum + ".enchantment-amounts"));
-                            } else {
-                                throw new StageFormatException("'enchantment-amounts' is not a list of numbers", quest, stageNum);
-                            }
-                        } else {
-                            throw new StageFormatException("'enchantment-amounts' is missing", quest, stageNum);
-                        }
-                        if (!enchs.isEmpty() && !types.isEmpty() && !amts.isEmpty()) {
-                            for (int i = 0; i < enchs.size(); i++) {
-                                final ItemStack stack = new ItemStack(types.get(i), amts.get(i));
-                                stack.addEnchantment(enchs.get(0), 1);
-                                oStage.addItemToEnchant(stack);
-                            }
-                        }
-                    }
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-brew")) {
-                itemsToBrew = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".items-to-brew");
-                if (BukkitConfigUtil.checkList(itemsToBrew, ItemStack.class)) {
-                    for (final ItemStack stack : itemsToBrew) {
-                        if (stack != null) {
-                            oStage.addItemsToBrew(stack);
-                        } else {
-                            throw new StageFormatException("'items-to-brew' has invalid formatting", quest, stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'items-to-brew' has invalid formatting", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-consume")) {
-                itemsToConsume = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".items-to-consume");
-                if (BukkitConfigUtil.checkList(itemsToConsume, ItemStack.class)) {
-                    for (final ItemStack stack : itemsToConsume) {
-                        if (stack != null) {
-                            oStage.addItemToConsume(stack);
-                        } else {
-                            throw new StageFormatException("'items-to-consume' has invalid formatting", quest, stageNum);
-                        }
-                    }
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".cows-to-milk")) {
-                if (config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".cows-to-milk", -999) 
-                        != -999) {
-                    oStage.setCowsToMilk(config.getInt("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".cows-to-milk"));
-                } else {
-                    throw new StageFormatException("'cows-to-milk' is not a number", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".fish-to-catch")) {
-                if (config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".fish-to-catch", -999) 
-                        != -999) {
-                    oStage.setFishToCatch(config.getInt("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".fish-to-catch"));
-                } else {
-                    throw new StageFormatException("'fish-to-catch' is not a number", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".players-to-kill")) {
-                if (config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".players-to-kill", -999) 
-                        != -999) {
-                    oStage.setPlayersToKill(config.getInt("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".players-to-kill"));
-                } else {
-                    throw new StageFormatException("'players-to-kill' is not a number", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-uuids-to-talk-to")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".npc-uuids-to-talk-to"), String.class)) {
-                    npcUuidsToTalkTo = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".npc-uuids-to-talk-to");
-                    for (final String s : npcUuidsToTalkTo) {
-                        final UUID uuid = UUID.fromString(s);
-                        oStage.addNpcToInteract(uuid);
-                        questNpcUuids.add(uuid);
-                    }
-                } else {
-                    throw new StageFormatException("'npc-uuids-to-talk-to' is not a list of numbers", quest, stageNum);
-                }
-            } else if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-ids-to-talk-to")) {
-                // Legacy
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".npc-ids-to-talk-to"), Integer.class)) {
-                    npcIdsToTalkTo = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".npc-ids-to-talk-to");
-                    for (final int i : npcIdsToTalkTo) {
-                        if (getDependencies().getCitizens() != null) {
-                            final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
-                            if (npc != null) {
-                                final UUID npcUuid = npc.getUniqueId();
-                                oStage.addNpcToInteract(npcUuid);
-                                questNpcUuids.add(npcUuid);
-                            } else {
-                                throw new StageFormatException("'npc-ids-to-talk-to' has invalid NPC ID of " + i, quest,
-                                        stageNum);
-                            }
-                        } else {
-                            throw new StageFormatException("Citizens not found for 'npc-ids-to-talk-to'", quest,
-                                    stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'npc-ids-to-talk-to' is not a list of numbers", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".items-to-deliver")) {
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-delivery-uuids")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".npc-delivery-uuids"), String.class)) {
-                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".delivery-messages")) {
-                            itemsToDeliver = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".items-to-deliver");
-                            itemDeliveryTargetUuids = config.getStringList("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".npc-delivery-uuids");
-                            deliveryMessages = config.getStringList("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".delivery-messages");
-                            int index = 0;
-                            if (BukkitConfigUtil.checkList(itemsToDeliver, ItemStack.class)) {
-                                for (final ItemStack stack : itemsToDeliver) {
-                                    if (stack != null) {
-                                        final UUID npcUuid = UUID.fromString(itemDeliveryTargetUuids.get(index));
-                                        final String msg = deliveryMessages.size() > index
-                                                ? deliveryMessages.get(index)
-                                                : deliveryMessages.get(deliveryMessages.size() - 1);
-                                        index++;
-                                        oStage.addItemToDeliver(stack);
-                                        oStage.addItemDeliveryTarget(npcUuid);
-                                        oStage.addDeliverMessage(msg);
-                                    }
-                                }
-                            } else {
-                                throw new StageFormatException("'items-to-deliver' has invalid formatting", quest,
-                                        stageNum);
-                            }
-                        }
-                    } else {
-                        throw new StageFormatException("'npc-delivery-uuids' is not a list of numbers", quest, stageNum);
-                    }
-                } else if (config.contains("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".npc-delivery-ids")) {
-                    // Legacy
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".npc-delivery-ids"), Integer.class)) {
-                        if (config.contains("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".delivery-messages")) {
-                            itemsToDeliver = (List<ItemStack>) config.get("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".items-to-deliver");
-                            itemDeliveryTargetIds = config.getIntegerList("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".npc-delivery-ids");
-                            deliveryMessages = config.getStringList("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".delivery-messages");
-                            int index = 0;
-                            if (BukkitConfigUtil.checkList(itemsToDeliver, ItemStack.class)) {
-                                for (final ItemStack stack : itemsToDeliver) {
-                                    if (stack != null) {
-                                        final int npcId = itemDeliveryTargetIds.get(index);
-                                        final String msg = deliveryMessages.size() > index
-                                                ? deliveryMessages.get(index)
-                                                : deliveryMessages.get(deliveryMessages.size() - 1);
-                                        index++;
-                                        if (getDependencies().getCitizens() != null) {
-                                            final NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
-                                            if (npc != null) {
-                                                oStage.addItemToDeliver(stack);
-                                                oStage.addItemDeliveryTarget(npc.getUniqueId());
-                                                oStage.addDeliverMessage(msg);
-                                            } else {
-                                                throw new StageFormatException("'npc-delivery-ids' has invalid NPC " +
-                                                        "ID of " + npcId, quest, stageNum);
-                                            }
-                                        } else {
-                                            throw new StageFormatException(
-                                                    "Citizens not found for 'npc-delivery-ids'", quest, stageNum);
-                                        }
-                                    }
-                                }
-                            } else {
-                                throw new StageFormatException("'items-to-deliver' has invalid formatting", quest,
-                                        stageNum);
-                            }
-                        }
-                    } else {
-                        throw new StageFormatException("'npc-delivery-ids' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'npc-delivery-uuid' is missing", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-uuids-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".npc-uuids-to-kill"), String.class)) {
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-kill-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".npc-kill-amounts"), Integer.class)) {
-                            npcUuidsToKill = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum
-                                    + ".npc-uuids-to-kill");
-                            npcAmountsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered." 
-                                    + stageNum + ".npc-kill-amounts");
-                            for (final String s : npcUuidsToKill) {
-                                final UUID npcUuid = UUID.fromString(s);
-                                if (npcAmountsToKill.get(npcUuidsToKill.indexOf(s)) > 0) {
-                                    oStage.addNpcToKill(npcUuid);
-                                    oStage.addNpcNumToKill(npcAmountsToKill.get(npcUuidsToKill.indexOf(s)));
-                                    questNpcUuids.add(npcUuid);
-                                } else {
-                                    throw new StageFormatException("'npc-kill-amounts' is not a positive number",
-                                            quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'npc-kill-amounts' is not a list of numbers", quest,
-                                    stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'npc-kill-amounts' is missing", quest, stageNum);
-                    }
-                }
-            } else if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-ids-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".npc-ids-to-kill"), Integer.class)) {
-                    // Legacy
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".npc-kill-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".npc-kill-amounts"), Integer.class)) {
-                            npcIdsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum
-                                    + ".npc-ids-to-kill");
-                            npcAmountsToKill = config.getIntegerList("quests." + questKey + ".stages.ordered."
-                                    + stageNum + ".npc-kill-amounts");
-                            for (final int i : npcIdsToKill) {
-                                if (getDependencies().getCitizens() != null) {
-                                    final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
-                                    if (npc != null) {
-                                        if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
-                                            final UUID npcUuid = npc.getUniqueId();
-                                            oStage.addNpcToKill(npcUuid);
-                                            oStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
-                                            questNpcUuids.add(npcUuid);
-                                        } else {
-                                            throw new StageFormatException("'npc-kill-amounts' is not a positive number",
-                                                    quest, stageNum);
-                                        }
-                                    } else {
-                                        throw new StageFormatException("'npc-ids-to-kill' has invalid NPC ID of " + i, quest,
-                                                stageNum);
-                                    }
-                                } else {
-                                    throw new StageFormatException(
-                                            "Citizens not found for 'npc-ids-to-kill'", quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'npc-kill-amounts' is not a list of numbers", quest,
-                                    stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'npc-kill-amounts' is missing", quest, stageNum);
-                    }
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".mobs-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".mobs-to-kill"), String.class)) {
-                    final List<String> mobNames = config.getStringList("quests." + questKey + ".stages.ordered." 
-                            + stageNum + ".mobs-to-kill");
-                    for (final String mob : mobNames) {
-                        final EntityType type = BukkitMiscUtil.getProperMobType(mob);
-                        if (type != null) {
-                            mobsToKill.add(type);
-                        } else {
-                            throw new StageFormatException("'mobs-to-kill' has invalid mob name " + mob, quest, stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'mobs-to-kill' is not a list of mob names", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".mob-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".mob-amounts"), Integer.class)) {
-                        mobNumsToKill.addAll(config.getIntegerList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".mob-amounts"));
-                    } else {
-                        throw new StageFormatException("'mob-amounts' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'mob-amounts' is missing", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".locations-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".locations-to-kill"), String.class)) {
-                    final List<String> locations = config.getStringList("quests." + questKey + ".stages.ordered."
-                            + stageNum + ".locations-to-kill");
-                    for (final String loc : locations) {
-                        if (BukkitConfigUtil.getLocation(loc) != null) {
-                            locationsToKillWithin.add(BukkitConfigUtil.getLocation(loc));
-                        } else {
-                            throw new StageFormatException("'locations-to-kill' has invalid formatting " + loc, quest,
-                                    stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'locations-to-kill' is not a list of locations", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".kill-location-radii")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".kill-location-radii"), Integer.class)) {
-                        final List<Integer> radii = config.getIntegerList("quests." + questKey + ".stages.ordered."
-                                + stageNum + ".kill-location-radii");
-                        radiiToKillWithin.addAll(radii);
-                    } else {
-                        throw new StageFormatException("'kill-location-radii' is not a list of numbers", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'kill-location-radii' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".kill-location-names")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".kill-location-names"), String.class)) {
-                        final List<String> locationNames = config.getStringList("quests." + questKey
-                                + ".stages.ordered." + stageNum + ".kill-location-names");
-                        areaNames.addAll(locationNames);
-                    } else {
-                        throw new StageFormatException("'kill-location-names' is not a list of names", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'kill-location-names' is missing", quest, stageNum);
-                }
-            }
-            for (EntityType mobToKill : mobsToKill) {
-                oStage.addMobToKill(mobToKill);
-            }
-            for (Integer mobNumToKill : mobNumsToKill) {
-                oStage.addMobNumToKill(mobNumToKill);
-            }
-            for (Location locationToKillWithin : locationsToKillWithin) {
-                oStage.addLocationToKillWithin(locationToKillWithin);
-            }
-            for (Integer radiusToKillWithin : radiiToKillWithin) {
-                oStage.addRadiusToKillWithin(radiusToKillWithin);
-            }
-            for (String killName : areaNames) {
-                oStage.addKillName(killName);
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".locations-to-reach")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".locations-to-reach"), String.class)) {
-                    final List<String> locations = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".locations-to-reach");
-                    for (final String loc : locations) {
-                        if (BukkitConfigUtil.getLocation(loc) != null) {
-                            oStage.addLocationToReach(BukkitConfigUtil.getLocation(loc));
-                        } else {
-                            throw new StageFormatException("'locations-to-reach' has invalid formatting" + loc, quest,
-                                    stageNum);
-                        }
-                    }
-                } else {
-                    throw new StageFormatException("'locations-to-reach' is not a list of locations", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".reach-location-radii")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".reach-location-radii"), Integer.class)) {
-                        final List<Integer> radii = config.getIntegerList("quests." + questKey + ".stages.ordered."
-                                + stageNum + ".reach-location-radii");
-                        for (Integer radius : radii) {
-                            oStage.addRadiusToReachWithin(radius);
-                        }
-                    } else {
-                        throw new StageFormatException("'reach-location-radii' is not a list of numbers", quest,
-                                stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'reach-location-radii' is missing", quest, stageNum);
-                }
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".reach-location-names")) {
-                    if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                            + ".reach-location-names"), String.class)) {
-                        final List<String> locationNames = config.getStringList("quests." + questKey
-                                + ".stages.ordered." + stageNum + ".reach-location-names");
-                        for (String locationName : locationNames) {
-                            oStage.addLocationName(locationName);
-                        }
-                    } else {
-                        throw new StageFormatException("'reach-location-names' is not a list of names", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'reach-location-names' is missing", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".mobs-to-tame")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".mobs-to-tame"), String.class)) {
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".mob-tame-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".mob-tame-amounts"), Integer.class)) {
-                            final List<String> mobs = config.getStringList("quests." + questKey + ".stages.ordered." 
-                                    + stageNum + ".mobs-to-tame");
-                            final List<Integer> mobAmounts = config.getIntegerList("quests." + questKey + ".stages.ordered." 
-                                    + stageNum + ".mob-tame-amounts");
-                            for (final String mob : mobs) {
-                                final EntityType type = BukkitMiscUtil.getProperMobType(mob);
-                                if (type != null) {
-                                    final Class<? extends Entity> ec = type.getEntityClass();
-                                    if (ec != null && Tameable.class.isAssignableFrom(ec)) {
-                                        oStage.addMobToTame(type);
-                                        oStage.addMobNumToTame(mobAmounts.get(mobs.indexOf(mob)));
-                                    } else {
-                                        throw new StageFormatException("'mobs-to-tame' has invalid tameable mob " + mob,
-                                                quest, stageNum);
-                                    }
-                                } else {
-                                    throw new StageFormatException("'mobs-to-tame' has invalid mob name " + mob, quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'mob-tame-amounts' is not a list of numbers", quest,
-                                    stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'mob-tame-amounts' is missing", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'mobs-to-tame' is not a list of mob names", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".sheep-to-shear")) {
-                if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".sheep-to-shear"), String.class)) {
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".sheep-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList("quests." + questKey + ".stages.ordered." + stageNum
-                                + ".sheep-amounts"), Integer.class)) {
-                            final List<String> sheep = config.getStringList("quests." + questKey + ".stages.ordered." 
-                                    + stageNum + ".sheep-to-shear");
-                            final List<Integer> shearAmounts = config.getIntegerList("quests." + questKey
-                                    + ".stages.ordered." + stageNum + ".sheep-amounts");
-                            for (String sheepColor : sheep) {
-                                final String originalColor = sheepColor;
-                                DyeColor dc = null;
-                                if (sheepColor.equalsIgnoreCase("NULL")) {
-                                    dc = DyeColor.WHITE;
-                                }
-                                sheepColor = sheepColor.replace(" ", "_");
-                                try {
-                                    if (dc == null) {
-                                        for (final DyeColor val : DyeColor.values()) {
-                                            if (val.name().replace("_", "").equalsIgnoreCase(sheepColor
-                                                    .replace("_", ""))) {
-                                                dc = val;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                } catch (final IllegalArgumentException e) {
-                                    // Fail silently
-                                }
-                                if (dc != null) {
-                                    oStage.addSheepToShear(dc);
-                                    // Legacy start -->
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BLACK"))) {
-                                    oStage.addSheepToShear(DyeColor.BLACK);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BLUE"))) {
-                                    oStage.addSheepToShear(DyeColor.BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BROWN"))) {
-                                    oStage.addSheepToShear(DyeColor.BROWN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_CYAN"))) {
-                                    oStage.addSheepToShear(DyeColor.CYAN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_GRAY"))) {
-                                    oStage.addSheepToShear(DyeColor.GRAY);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_GREEN"))) {
-                                    oStage.addSheepToShear(DyeColor.GREEN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_LIGHT_BLUE"))) {
-                                    oStage.addSheepToShear(DyeColor.LIGHT_BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_LIME"))) {
-                                    oStage.addSheepToShear(DyeColor.LIME);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_MAGENTA"))) {
-                                    oStage.addSheepToShear(DyeColor.MAGENTA);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_ORANGE"))) {
-                                    oStage.addSheepToShear(DyeColor.ORANGE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_PINK"))) {
-                                    oStage.addSheepToShear(DyeColor.PINK);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_PURPLE"))) {
-                                    oStage.addSheepToShear(DyeColor.PURPLE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_RED"))) {
-                                    oStage.addSheepToShear(DyeColor.RED);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_SILVER"))) {
-                                    // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-                                    oStage.addSheepToShear(DyeColor.getByColor(Color.SILVER));
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_WHITE"))) {
-                                    oStage.addSheepToShear(DyeColor.WHITE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_YELLOW"))) {
-                                    oStage.addSheepToShear(DyeColor.YELLOW);
-                                    // <-- Legacy end
-                                } else {
-                                    throw new StageFormatException("'sheep-to-shear' has invalid color " + sheepColor,
-                                            quest, stageNum);
-                                }
-                                oStage.addSheepNumToShear(shearAmounts.get(sheep.indexOf(originalColor)));
-                            }
-                        } else {
-                            throw new StageFormatException("'sheep-amounts' is not a list of numbers", quest, stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'sheep-amounts' is missing", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'sheep-to-shear' is not a list of colors", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".password-displays")) {
-                final List<String> displays = config.getStringList("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".password-displays");
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".password-phrases")) {
-                    final List<String> phrases = config.getStringList("quests." + questKey + ".stages.ordered."
-                            + stageNum + ".password-phrases");
-                    if (displays.size() == phrases.size()) {
-                        for (int passIndex = 0; passIndex < displays.size(); passIndex++) {
-                            oStage.addPasswordDisplay(displays.get(passIndex));
-                            oStage.addPasswordPhrase(phrases.get(passIndex));
-                        }
-                    } else {
-                        throw new StageFormatException("'password-displays' and 'password-phrases' are not the same size",
-                                quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'password-phrases' is missing", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".objective-override")) {
-                final Object o = config.get("quests." + questKey + ".stages.ordered." + stageNum 
-                        + ".objective-override");
-                if (o instanceof List) {
-                    for (String objectiveOverride : config.getStringList("quests." + questKey
-                            + ".stages.ordered." + stageNum + ".objective-override")) {
-                        oStage.addObjectiveOverride(objectiveOverride);
-                    }
-                } else {
-                    // Legacy
-                    final String s = config.getString("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".objective-override");
-                    oStage.addObjectiveOverride(s);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".start-event")) {
-                final String actionName = config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".start-event");
-                final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName)).findAny();
-                if (action.isPresent()) {
-                    oStage.setStartAction(action.get());
-                } else {
-                    throw new StageFormatException("'start-event' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".finish-event")) {
-                final String actionName = config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".finish-event");
-                final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName)).findAny();
-                if (action.isPresent()) {
-                    oStage.setFinishAction(action.get());
-                } else {
-                    throw new StageFormatException("'finish-event' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".fail-event")) {
-                final String actionName = config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".fail-event");
-                final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName)).findAny();
-                if (action.isPresent()) {
-                    oStage.setFailAction(action.get());
-                } else {
-                    throw new StageFormatException("'fail-event' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".death-event")) {
-                final String actionName = config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".death-event");
-                final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName)).findAny();
-                if (action.isPresent()) {
-                    oStage.setDeathAction(action.get());
-                } else {
-                    throw new StageFormatException("'death-event' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".disconnect-event")) {
-                final String actionName = config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".disconnect-event");
-                final Optional<Action> action = actions.stream().filter(a -> a.getName().equals(actionName)).findAny();
-                if (action.isPresent()) {
-                    oStage.setDisconnectAction(action.get());
-                } else {
-                    throw new StageFormatException("'disconnect-event' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".chat-events")) {
-                if (config.isList("quests." + questKey + ".stages.ordered." + stageNum + ".chat-events")) {
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".chat-event-triggers")) {
-                        if (config.isList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".chat-event-triggers")) {
-                            final List<String> chatEvents = config.getStringList("quests." + questKey
-                                    + ".stages.ordered." + stageNum + ".chat-events");
-                            final List<String> chatEventTriggers = config.getStringList("quests." + questKey 
-                                    + ".stages.ordered." + stageNum + ".chat-event-triggers");
-                            for (int i = 0; i < chatEvents.size(); i++) {
-                                final String actionName = chatEvents.get(i);
-                                final Optional<Action> action = actions.stream()
-                                        .filter(a -> a.getName().equals(actionName)).findAny();
-                                if (action.isPresent()) {
-                                    if (i < chatEventTriggers.size()) {
-                                        oStage.addChatAction(new AbstractMap.SimpleEntry<>(chatEventTriggers.get(i),
-                                                action.get()));
-                                    } else {
-                                        throw new StageFormatException("'chat-event-triggers' list is too small",
-                                                quest, stageNum);
-                                    }
-                                } else {
-                                    throw new StageFormatException("'chat-events' failed to load " + chatEvents.get(i),
-                                            quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'chat-event-triggers' is not in list format", quest,
-                                    stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'chat-event-triggers' is missing", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'chat-events' is not in list format", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".command-events")) {
-                if (config.isList("quests." + questKey + ".stages.ordered." + stageNum + ".command-events")) {
-                    if (config.contains("quests." + questKey + ".stages.ordered." + stageNum 
-                            + ".command-event-triggers")) {
-                        if (config.isList("quests." + questKey + ".stages.ordered." + stageNum 
-                                + ".command-event-triggers")) {
-                            final List<String> commandEvents = config.getStringList("quests." + questKey
-                                    + ".stages.ordered." + stageNum + ".command-events");
-                            final List<String> commandEventTriggers = config.getStringList("quests." + questKey 
-                                    + ".stages.ordered." + stageNum + ".command-event-triggers");
-                            for (int i = 0; i < commandEvents.size(); i++) {
-                                final String actionName = commandEvents.get(i);
-                                final Optional<Action> action = actions.stream()
-                                        .filter(a -> a.getName().equals(actionName)).findAny();
-                                if (action.isPresent()) {
-                                    if (i < commandEventTriggers.size()) {
-                                        oStage.addCommandAction(new AbstractMap.SimpleEntry<>(commandEventTriggers
-                                                .get(i), action.get()));
-                                    } else {
-                                        throw new StageFormatException("'command-event-triggers' list is too small",
-                                                quest, stageNum);
-                                    }
-                                } else {
-                                    throw new StageFormatException("'command-events' failed to load "
-                                            + commandEvents.get(i), quest, stageNum);
-                                }
-                            }
-                        } else {
-                            throw new StageFormatException("'command-event-triggers' is not in list format", quest,
-                                    stageNum);
-                        }
-                    } else {
-                        throw new StageFormatException("'command-event-triggers' is missing", quest, stageNum);
-                    }
-                } else {
-                    throw new StageFormatException("'command-events' is not in list format", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".condition")) {
-                final String conditionName = config.getString("quests." + questKey + ".stages.ordered."
-                        + stageNum + ".condition");
-                final Optional<Condition> condition = conditions.stream().filter(c -> c.getName().equals(conditionName))
-                        .findAny();
-                if (condition.isPresent()) {
-                    oStage.setCondition(condition.get());
-                } else {
-                    throw new StageFormatException("'condition' failed to load", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".delay")) {
-                final int delay = config.getInt("quests." + questKey + ".stages.ordered." + stageNum + ".delay", -999);
-                if (delay > 0) {
-                    oStage.setDelay(delay * 1000L);
-                } else if (delay != -999) {
-                    throw new StageFormatException("'delay' is not a positive number", quest, stageNum);
-                }
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".delay-message")) {
-                oStage.setDelayMessage(config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".delay-message"));
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".start-message")) {
-                oStage.setStartMessage(config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".start-message"));
-            }
-            if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".complete-message")) {
-                oStage.setCompleteMessage(config.getString("quests." + questKey + ".stages.ordered." + stageNum
-                        + ".complete-message"));
-            }
-            quest.getStages().add(oStage);
-        }
-    }
-    
-    private void loadCustomSections(final Quest quest, final FileConfiguration config, final String questKey)
-            throws StageFormatException, QuestFormatException {
-        final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
-                + ".stages.ordered");
-        if (questStages != null) {
-            for (final String stageNum : questStages.getKeys(false)) {
-                if (quest == null) {
-                    getLogger().warning("Unable to consider custom objectives because quest for " + questKey
-                            + " was null");
-                    return;
-                }
-                if (quest.getStage(Integer.parseInt(stageNum) - 1) == null) {
-                    getLogger().severe("Unable to load custom objectives because stage" + (Integer.parseInt(stageNum)
-                            - 1) + " for " + quest.getName() + " was null");
-                    return;
-                }
-                final BukkitStage oStage = (BukkitStage) quest.getStage(Integer.parseInt(stageNum) - 1);
-                oStage.clearCustomObjectives();
-                oStage.clearCustomObjectiveCounts();
-                oStage.clearCustomObjectiveData();
-                oStage.clearCustomObjectiveDisplays();
-                if (config.contains("quests." + questKey + ".stages.ordered." + stageNum + ".custom-objectives")) {
-                    final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey
-                            + ".stages.ordered." + stageNum + ".custom-objectives");
-                    if (sec != null) {
-                        for (final String path : sec.getKeys(false)) {
-                            final String name = sec.getString(path + ".name");
-                            final int count = sec.getInt(path + ".count");
-                            Optional<CustomObjective> found = Optional.empty();
-                            for (final CustomObjective cr : customObjectives) {
-                                if (cr.getName().equalsIgnoreCase(name)) {
-                                    found = Optional.of(cr);
-                                    break;
-                                }
-                            }
-                            if (found.isPresent()) {
-                                oStage.addCustomObjectives(found.get());
-                                oStage.addCustomObjectiveCounts(Math.max(count, 0));
-                                final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                                for (final Entry<String,Object> prompt : found.get().getData()) {
-                                    final Entry<String, Object> data = populateCustoms(sec2, prompt);
-                                    oStage.addCustomObjectiveData(data);
-                                }
-                            } else {
-                                throw new QuestFormatException(name + " custom objective not found for Stage "
-                                        + stageNum, questKey);
-                            }
-                        }
-                    }
-                }
-            }
-            final Rewards rews = quest.getRewards();
-            if (config.contains("quests." + questKey + ".rewards.custom-rewards")) {
-                final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey
-                        + ".rewards.custom-rewards");
-                final Map<String, Map<String, Object>> temp = new HashMap<>();
-                if (sec != null) {
-                    for (final String path : sec.getKeys(false)) {
-                        final String name = sec.getString(path + ".name");
-                        Optional<CustomReward> found = Optional.empty();
-                        for (final CustomReward cr : customRewards) {
-                            if (cr.getName().equalsIgnoreCase(name)) {
-                                found = Optional.of(cr);
-                                break;
-                            }
-                        }
-                        if (found.isPresent()) {
-                            final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            final Map<String, Object> data = populateCustoms(sec2, found.get().getData());
-                            temp.put(name, data);
-                        } else {
-                            throw new QuestFormatException(name + " custom reward not found", questKey);
-                        }
-                    }
-                }
-                rews.setCustomRewards(temp);
-            }
-            final Requirements reqs = quest.getRequirements();
-            if (config.contains("quests." + questKey + ".requirements.custom-requirements")) {
-                final ConfigurationSection sec = config.getConfigurationSection("quests." + questKey
-                        + ".requirements.custom-requirements");
-                final Map<String, Map<String, Object>> temp = new HashMap<>();
-                if (sec != null) {
-                    for (final String path : sec.getKeys(false)) {
-                        final String name = sec.getString(path + ".name");
-                        Optional<CustomRequirement> found = Optional.empty();
-                        for (final CustomRequirement cr : customRequirements) {
-                            if (cr.getName().equalsIgnoreCase(name)) {
-                                found = Optional.of(cr);
-                                break;
-                            }
-                        }
-                        if (found.isPresent()) {
-                            final ConfigurationSection sec2 = sec.getConfigurationSection(path + ".data");
-                            final Map<String, Object> data = populateCustoms(sec2, found.get().getData());
-                            temp.put(name, data);
-                        } else {
-                            throw new QuestFormatException(name + " custom requirement not found", questKey);
-                        }
-                    }
-                }
-                reqs.setCustomRequirements(temp);
-            }
-        }
-    }
-    
-    /**
-     * Permits use of fallbacks for customs maps<p>
-     * 
-     * Avoid null objects in datamap by initializing the entry value with empty string if no fallback present.
-     * 
-     * @param section The section of configuration to check
-     * @param dataMap The map to process
-     * @return Populated map
-     */
-    private static Map<String, Object> populateCustoms(final ConfigurationSection section,
-                                                       final Map<String, Object> dataMap) {
-        final Map<String,Object> data = new HashMap<>();
-        if (section != null) {
-            for (final String key : dataMap.keySet()) {
-                data.put(key, section.contains(key) ? section.get(key) : dataMap.get(key) != null
-                        ? dataMap.get(key) : "");
-            }
-        }
-        return data;
-    }
-
-    /**
-     * Permits use of fallbacks for customs entries<p>
-     * 
-     * Avoid null objects in datamap by initializing the entry value with empty string if no fallback present.
-     * 
-     * @param section The section of configuration to check
-     * @param dataMap The entry to process
-     * @return Populated entry, or null
-     */
-    private static Entry<String, Object> populateCustoms(final ConfigurationSection section,
-                                                         final Entry<String, Object> dataMap) {
-        Entry<String, Object> data = null;
-        if (section != null) {
-            final String key = dataMap.getKey();
-            final Object value = dataMap.getValue();
-            data = new AbstractMap.SimpleEntry<>(key, section.contains(key) ? section.get(key) : value != null
-                    ? value : "");
-        }
-        return data;
-    }
-
-    /**
-     * Checks if player can use Quests
+     * Checks if player can use the Quests plugin
      * 
      * @param uuid the entity UUID to be checked
      * @return {@code true} if entity is a Player that has permission

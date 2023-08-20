@@ -15,7 +15,7 @@ package me.pikamug.quests.item;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.BukkitObjective;
+import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.Language;

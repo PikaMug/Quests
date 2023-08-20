@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.BukkitQuestData;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.BukkitStage;
+import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.storage.implementation.StorageImplementation;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;

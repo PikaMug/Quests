@@ -28,17 +28,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class BukkitActionSettings implements ActionSettings {
+public class BukkitActionLoader implements ActionLoader {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitActionSettings(final BukkitQuestsPlugin plugin) {
+    public BukkitActionLoader(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
     /**
      * Load actions from file
      */
+    @Override
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
         final File legacyFile = new File(plugin.getDataFolder(), "events.yml");

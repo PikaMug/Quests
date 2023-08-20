@@ -234,6 +234,7 @@ public class BukkitConfigSettings implements ConfigSettings {
     /**
      * Load config from file
      */
+    @Override
     public void init() {
         final FileConfiguration config = plugin.getConfig();
         acceptTimeout = config.getInt("accept-timeout", 20);

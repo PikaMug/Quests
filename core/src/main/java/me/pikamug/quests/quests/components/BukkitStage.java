@@ -10,12 +10,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.quests;
+package me.pikamug.quests.quests.components;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.quests.components.Stage;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;

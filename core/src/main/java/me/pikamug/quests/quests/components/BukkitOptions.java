@@ -10,7 +10,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.quests;
+package me.pikamug.quests.quests.components;
+
+import me.pikamug.quests.quests.components.Options;
 
 public class BukkitOptions implements Options {
     private boolean allowCommands = true;

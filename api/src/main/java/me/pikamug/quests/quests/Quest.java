@@ -14,6 +14,11 @@ package me.pikamug.quests.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.components.Options;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.Rewards;
+import me.pikamug.quests.quests.components.Stage;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -56,11 +61,19 @@ public interface Quest extends Comparable<Quest> {
 
     Requirements getRequirements();
 
+    void setRequirements(final Requirements requirements);
+
     Planner getPlanner();
+
+    void setPlanner(final Planner planner);
 
     Rewards getRewards();
 
+    void setRewards(final Rewards rewards);
+
     Options getOptions();
+
+    void setOptions(final Options options);
 
     void nextStage(final Quester quester, final boolean allowSharedProgress);
 

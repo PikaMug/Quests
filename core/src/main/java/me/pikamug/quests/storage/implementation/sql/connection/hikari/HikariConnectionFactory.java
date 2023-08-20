@@ -12,21 +12,19 @@
 
 package me.pikamug.quests.storage.implementation.sql.connection.hikari;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import me.pikamug.quests.Quests;
+import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
+import me.pikamug.quests.storage.misc.StorageCredentials;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
-import me.pikamug.quests.storage.misc.StorageCredentials;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import me.pikamug.quests.BukkitQuestsPlugin;
 
 public abstract class HikariConnectionFactory implements ConnectionFactory {
     private final StorageCredentials configuration;
@@ -81,7 +79,7 @@ public abstract class HikariConnectionFactory implements ConnectionFactory {
     }
 
     @Override
-    public void init(final BukkitQuestsPlugin plugin) {
+    public void init(final Quests plugin) {
         final HikariConfig config = new HikariConfig();
         config.setPoolName("quests-hikari");
 

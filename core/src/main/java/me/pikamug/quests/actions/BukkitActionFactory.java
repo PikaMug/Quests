@@ -378,28 +378,27 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
                 int count = 0;
                 for (final QuestMob mob : (LinkedList<QuestMob>) Objects.requireNonNull(context
                         .getSessionData(Key.A_MOBS))) {
-                    ConfigurationSection ss = section.getConfigurationSection("mob-spawns." + count);
-                    if (ss == null) {
-                        ss = section.createSection("mob-spawns." + count);
+                    ConfigurationSection cs = section.getConfigurationSection("mob-spawns." + count);
+                    if (cs == null) {
+                        cs = section.createSection("mob-spawns." + count);
                     }
                     final BukkitQuestMob questMob = (BukkitQuestMob) mob;
                     if (questMob.getName() != null) {
-                        ss.set("name", questMob.getName());
+                        cs.set("name", questMob.getName());
                     }
-                    // TODO - save ItemStack better way
-                    ss.set("spawn-location", BukkitConfigUtil.getLocationInfo(questMob.getSpawnLocation()));
-                    ss.set("mob-type", questMob.getType().name());
-                    ss.set("spawn-amounts", questMob.getSpawnAmounts());
-                    ss.set("held-item", questMob.getInventory()[0]);
-                    ss.set("held-item-drop-chance", questMob.getDropChances()[0]);
-                    ss.set("boots", questMob.getInventory()[1]);
-                    ss.set("boots-drop-chance", questMob.getDropChances()[1]);
-                    ss.set("leggings", questMob.getInventory()[2]);
-                    ss.set("leggings-drop-chance", questMob.getDropChances()[2]);
-                    ss.set("chest-plate", questMob.getInventory()[3]);
-                    ss.set("chest-plate-drop-chance", questMob.getDropChances()[3]);
-                    ss.set("helmet", questMob.getInventory()[4]);
-                    ss.set("helmet-drop-chance", questMob.getDropChances()[4]);
+                    cs.set("spawn-location", BukkitConfigUtil.getLocationInfo(questMob.getSpawnLocation()));
+                    cs.set("mob-type", questMob.getType().name());
+                    cs.set("spawn-amounts", questMob.getSpawnAmounts());
+                    cs.set("held-item", questMob.getInventory()[0]);
+                    cs.set("held-item-drop-chance", questMob.getDropChances()[0]);
+                    cs.set("boots", questMob.getInventory()[1]);
+                    cs.set("boots-drop-chance", questMob.getDropChances()[1]);
+                    cs.set("leggings", questMob.getInventory()[2]);
+                    cs.set("leggings-drop-chance", questMob.getDropChances()[2]);
+                    cs.set("chest-plate", questMob.getInventory()[3]);
+                    cs.set("chest-plate-drop-chance", questMob.getDropChances()[3]);
+                    cs.set("helmet", questMob.getInventory()[4]);
+                    cs.set("helmet-drop-chance", questMob.getDropChances()[4]);
                     count++;
                 }
             }

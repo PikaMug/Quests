@@ -35,6 +35,15 @@ import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.components.BukkitOptions;
+import me.pikamug.quests.quests.components.BukkitPlanner;
+import me.pikamug.quests.quests.components.BukkitRequirements;
+import me.pikamug.quests.quests.components.BukkitRewards;
+import me.pikamug.quests.quests.components.Options;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.Rewards;
+import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -80,10 +89,10 @@ public class BukkitQuest implements Quest {
     protected Location blockStart;
     protected String regionStart = null;
     protected BukkitAction initialAction;
-    private final BukkitRequirements requirements = new BukkitRequirements();
-    private final BukkitPlanner planner = new BukkitPlanner();
-    private final BukkitRewards rewards = new BukkitRewards();
-    private final BukkitOptions options = new BukkitOptions();
+    private BukkitRequirements requirements = new BukkitRequirements();
+    private BukkitPlanner planner = new BukkitPlanner();
+    private BukkitRewards rewards = new BukkitRewards();
+    private BukkitOptions options = new BukkitOptions();
 
     public BukkitQuest(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -217,8 +226,18 @@ public class BukkitQuest implements Quest {
     }
 
     @Override
+    public void setRequirements(final Requirements requirements) {
+        this.requirements = (BukkitRequirements) requirements;
+    }
+
+    @Override
     public Planner getPlanner() {
         return planner;
+    }
+
+    @Override
+    public void setPlanner(final Planner planner) {
+        this.planner = (BukkitPlanner) planner;
     }
 
     @Override
@@ -227,8 +246,18 @@ public class BukkitQuest implements Quest {
     }
 
     @Override
+    public void setRewards(final Rewards rewards) {
+        this.rewards = (BukkitRewards) rewards;
+    }
+
+    @Override
     public Options getOptions() {
         return options;
+    }
+
+    @Override
+    public void setOptions(final Options options) {
+        this.options = (BukkitOptions) options;
     }
 
     /**

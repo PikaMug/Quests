@@ -10,11 +10,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.storage.implementation.custom;
+package me.pikamug.quests.quests.components;
 
-import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.storage.implementation.StorageImplementation;
+public interface Planner {
+    String getStart();
 
-public interface CustomStorageProvider {
-    StorageImplementation provide(BukkitQuestsPlugin plugin);
+    long getStartInMillis();
+
+    boolean hasStart();
+
+    void setStart(final String start);
+
+    String getEnd();
+
+    long getEndInMillis();
+
+    boolean hasEnd();
+
+    void setEnd(final String end);
+
+    long getRepeat();
+
+    boolean hasRepeat();
+
+    void setRepeat(final long repeat);
+
+    long getCooldown();
+
+    boolean hasCooldown();
+
+    void setCooldown(final long cooldown);
+
+    boolean getOverride();
+
+    void setOverride(final boolean override);
 }

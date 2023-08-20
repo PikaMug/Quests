@@ -1,5 +1,5 @@
 package me.pikamug.quests.conditions;
 
-public interface ConditionSettings {
+public interface ConditionLoader {
     void init();
 }

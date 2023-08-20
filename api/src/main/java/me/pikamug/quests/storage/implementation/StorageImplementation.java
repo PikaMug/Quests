@@ -10,38 +10,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.quests;
+package me.pikamug.quests.storage.implementation;
 
-public interface Planner {
-    String getStart();
+import me.pikamug.quests.Quests;
+import me.pikamug.quests.player.Quester;
 
-    long getStartInMillis();
+import java.util.Collection;
+import java.util.UUID;
 
-    boolean hasStart();
+public interface StorageImplementation {
+    Quests getPlugin();
 
-    void setStart(final String start);
+    String getImplementationName();
 
-    String getEnd();
+    void init() throws Exception;
 
-    long getEndInMillis();
+    void close();
+    
+    Quester loadQuester(UUID uniqueId) throws Exception;
 
-    boolean hasEnd();
+    void saveQuester(Quester quester) throws Exception;
 
-    void setEnd(final String end);
+    void deleteQuester(UUID uniqueId) throws Exception;
 
-    long getRepeat();
-
-    boolean hasRepeat();
-
-    void setRepeat(final long repeat);
-
-    long getCooldown();
-
-    boolean hasCooldown();
-
-    void setCooldown(final long cooldown);
-
-    boolean getOverride();
-
-    void setOverride(final boolean override);
+    String getQuesterLastKnownName(UUID uniqueId) throws Exception;
+    
+    Collection<UUID> getSavedUniqueIds() throws Exception;
 }
