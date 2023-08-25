@@ -13,7 +13,7 @@
 package me.pikamug.quests.storage.implementation.file;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.player.BukkitQuestData;
+import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.BukkitStage;
@@ -83,6 +83,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<Long> questTimes = data.getLongList("completedQuestTimes");
             final ConcurrentHashMap<Quest, Long> completedTimes = quester.getCompletedTimes();
             for (int i = 0; i < questIds.size(); i++) {
+                if (questTimes.size() < questIds.size()) {
+                    plugin.getLogger().warning("completedQuestTimes was less than completedRedoableQuests "
+                            + "while loading quester of UUID " + quester.getUUID());
+                }
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     completedTimes.put(plugin.getQuestById(questIds.get(i)), questTimes.get(i));
                 } else if (plugin.getQuest(questIds.get(i)) != null) {
@@ -97,6 +101,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final List<Integer> questAmounts = data.getIntegerList("amountsCompleted");
             final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
+                if (questAmounts.size() < questIds.size()) {
+                    plugin.getLogger().warning("amountsCompletedQuests was less than amountsCompleted "
+                            + "while loading quester of UUID " + quester.getUUID());
+                }
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     amountsCompleted.put(plugin.getQuestById(questIds.get(i)), questAmounts.get(i));
                 } else if (plugin.getQuest(questIds.get(i)) != null) {
@@ -134,6 +142,10 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final int maxSize = Math.min(questIds.size(), questStages.size());
             final ConcurrentHashMap<Quest, Integer> currentQuests = quester.getCurrentQuests();
             for (int i = 0; i < maxSize; i++) {
+                if (questStages.size() < questIds.size()) {
+                    plugin.getLogger().warning("currentStages was less than currentQuests "
+                            + "while loading quester of UUID " + quester.getUUID());
+                }
                 if (plugin.getQuestById(questIds.get(i)) != null) {
                     currentQuests.put(plugin.getQuestById(questIds.get(i)), questStages.get(i));
                 } else if (plugin.getQuest(questIds.get(i)) != null) {
@@ -163,7 +175,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 if (questSec == null) {
                     continue;
                 }
-                final BukkitQuestData bukkitQuestData = (BukkitQuestData) quester.getQuestData(quest);
+                final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(quest);
                 if (questSec.contains("blocks-broken-amounts")) {
                     final List<Integer> brokenAmounts = questSec.getIntegerList("blocks-broken-amounts");
                     int index = 0;
@@ -311,7 +323,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("has-talked-to")) {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
-                    quester.getQuestData(quest).setNpcsInteracted(new LinkedList<>(talkAmount));
+                    quester.getQuestDataOrDefault(quest).setNpcsInteracted(new LinkedList<>(talkAmount));
                 }
                 if (questSec.contains("npc-killed-amounts")) {
                     final List<Integer> npcAmounts = questSec.getIntegerList("npc-killed-amounts");
@@ -334,19 +346,19 @@ public class SeparatedYamlStorage implements StorageImplementation {
                     }
                 }
                 if (questSec.contains("cows-milked")) {
-                    quester.getQuestData(quest).setCowsMilked(questSec.getInt("cows-milked"));
+                    quester.getQuestDataOrDefault(quest).setCowsMilked(questSec.getInt("cows-milked"));
                 }
                 if (questSec.contains("fish-caught")) {
-                    quester.getQuestData(quest).setFishCaught(questSec.getInt("fish-caught"));
+                    quester.getQuestDataOrDefault(quest).setFishCaught(questSec.getInt("fish-caught"));
                 }
                 if (questSec.contains("players-killed")) {
-                    quester.getQuestData(quest).setPlayersKilled(questSec.getInt("players-killed"));
+                    quester.getQuestDataOrDefault(quest).setPlayersKilled(questSec.getInt("players-killed"));
                 }
                 if (questSec.contains("mobs-killed-amounts")) {
                     final List<Integer> mobAmounts = questSec.getIntegerList("mobs-killed-amounts");
                     int index = 0;
                     for (final int amt : mobAmounts) {
-                        if (quester.getQuestData(quest).getMobNumKilled().size() > 0) {
+                        if (quester.getQuestDataOrDefault(quest).getMobNumKilled().size() > 0) {
                             bukkitQuestData.mobNumKilled.set(index, amt);
                         }
                         index++;
@@ -354,26 +366,26 @@ public class SeparatedYamlStorage implements StorageImplementation {
                 }
                 if (questSec.contains("locations-to-reach")) {
                     final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");
-                    quester.getQuestData(quest).setLocationsReached(new LinkedList<>(hasReached));
+                    quester.getQuestDataOrDefault(quest).setLocationsReached(new LinkedList<>(hasReached));
                 }
                 if (questSec.contains("mob-tame-amounts")) {
                     final List<Integer> tameAmounts = questSec.getIntegerList("mob-tame-amounts");
-                    quester.getQuestData(quest).setMobsTamed(new LinkedList<>(tameAmounts));
+                    quester.getQuestDataOrDefault(quest).setMobsTamed(new LinkedList<>(tameAmounts));
                 }
                 if (questSec.contains("sheep-sheared")) {
                     final List<Integer> sheepAmounts = questSec.getIntegerList("sheep-sheared");
-                    quester.getQuestData(quest).setSheepSheared(new LinkedList<>(sheepAmounts));
+                    quester.getQuestDataOrDefault(quest).setSheepSheared(new LinkedList<>(sheepAmounts));
                 }
                 if (questSec.contains("passwords-said")) {
                     final List<Boolean> passAmounts = questSec.getBooleanList("passwords-said");
-                    quester.getQuestData(quest).setPasswordsSaid(new LinkedList<>(passAmounts));
+                    quester.getQuestDataOrDefault(quest).setPasswordsSaid(new LinkedList<>(passAmounts));
                 }
                 if (questSec.contains("custom-objective-counts")) {
                     final List<Integer> customObjCounts = questSec.getIntegerList("custom-objective-counts");
-                    quester.getQuestData(quest).setCustomObjectiveCounts(new LinkedList<>(customObjCounts));
+                    quester.getQuestDataOrDefault(quest).setCustomObjectiveCounts(new LinkedList<>(customObjCounts));
                 }
                 if (questSec.contains("stage-delay")) {
-                    quester.getQuestData(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
+                    quester.getQuestDataOrDefault(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
                 }
             }
         }
