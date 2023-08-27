@@ -1,8 +1,15 @@
-package me.pikamug.quests.module;
+package me.pikamug.quests.storage.implementation.jar;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.exceptions.QuestFormatException;
 import me.pikamug.quests.exceptions.StageFormatException;
+import me.pikamug.quests.module.BukkitCustomObjective;
+import me.pikamug.quests.module.BukkitCustomRequirement;
+import me.pikamug.quests.module.BukkitCustomReward;
+import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
+import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.module.CustomRequirement;
+import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.components.Requirements;
@@ -29,17 +36,24 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class BukkitCustomLoader implements CustomLoader {
+public class BukkitModuleJarStorage implements ModuleStorageImpl {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitCustomLoader(final BukkitQuestsPlugin plugin) {
+    public BukkitModuleJarStorage(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Load modules from file
-     */
+    @Override
+    public BukkitQuestsPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public String getImplementationName() {
+        return "JAR";
+    }
+
     @Override
     public void init() {
         final File f = new File(plugin.getDataFolder(), "modules");
@@ -84,6 +98,10 @@ public class BukkitCustomLoader implements CustomLoader {
         } else {
             plugin.getLogger().severe("Unable to load module data from quests.yml");
         }
+    }
+
+    @Override
+    public void close() {
     }
 
     /**

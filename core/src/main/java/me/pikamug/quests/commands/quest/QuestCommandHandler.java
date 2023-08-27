@@ -19,7 +19,7 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,33 +49,33 @@ public class QuestCommandHandler {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
-                            if (plugin.getQuester(player.getUniqueId()).getQuestData(q).getDelayStartTime() == 0
+                            if (plugin.getQuester(player.getUniqueId()).getQuestDataOrDefault(q).getDelayStartTime() == 0
                                     || plugin.getQuester(player.getUniqueId()).getStageTime(q) < 0L) {
-                                final String msg = Language.get(player, "questObjectivesTitle")
+                                final String msg = BukkitLanguage.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
-                                Language.send(player, ChatColor.GOLD + msg);
+                                BukkitLanguage.send(player, ChatColor.GOLD + msg);
                                 quester.showCurrentObjectives(q, quester, false);
                             } else {
                                 final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
-                                String msg = ChatColor.YELLOW + "(" + Language.get(player, "delay") + ") " + ChatColor.RED
-                                        +  Language.get(player, "plnTooEarly");
+                                String msg = ChatColor.YELLOW + "(" + BukkitLanguage.get(player, "delay") + ") " + ChatColor.RED
+                                        +  BukkitLanguage.get(player, "plnTooEarly");
                                 msg = msg.replace("<quest>", q.getName());
                                 msg = msg.replace("<time>", BukkitMiscUtil.getTime(time));
-                                Language.send(player, msg);
+                                BukkitLanguage.send(player, msg);
                             }
                         }
                     } else {
-                        Language.send(player, ChatColor.YELLOW + Language.get(player, "noActiveQuest"));
+                        BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "noActiveQuest"));
                     }
                 } else {
                     showQuestDetails(cs, args);
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
                 return true;
             }
         } else {
-            cs.sendMessage(ChatColor.YELLOW + Language.get("consoleError"));
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
             return true;
         }
         return true;
@@ -117,7 +117,7 @@ public class QuestCommandHandler {
                 cs.sendMessage(ChatColor.GOLD + "- " + q.getName() + " -");
                 cs.sendMessage(" ");
                 if (q.getNpcStart() != null) {
-                    String msg = Language.get("speakTo");
+                    String msg = BukkitLanguage.get("speakTo");
                     msg = msg.replace("<npc>", q.getNpcStartName());
                     cs.sendMessage(ChatColor.YELLOW + msg);
                 } else {
@@ -127,13 +127,13 @@ public class QuestCommandHandler {
                 if (plugin.getConfigSettings().canShowQuestReqs()) {
                     final BukkitRequirements reqs = (BukkitRequirements) q.getRequirements();
                     if (reqs.hasRequirement()) {
-                        cs.sendMessage(ChatColor.GOLD + Language.get("requirements"));
+                        cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get("requirements"));
                         if (!reqs.getPermissions().isEmpty()) {
                             for (final String perm : reqs.getPermissions()) {
                                 if (plugin.getDependencies().getVaultPermission().has(player, perm)) {
-                                    cs.sendMessage(ChatColor.GREEN + Language.get("permissionDisplay") + " " + perm);
+                                    cs.sendMessage(ChatColor.GREEN + BukkitLanguage.get("permissionDisplay") + " " + perm);
                                 } else {
-                                    cs.sendMessage(ChatColor.RED + Language.get("permissionDisplay") + " " + perm);
+                                    cs.sendMessage(ChatColor.RED + BukkitLanguage.get("permissionDisplay") + " " + perm);
                                 }
                             }
                         }
@@ -141,20 +141,20 @@ public class QuestCommandHandler {
                             if (plugin.getDependencies()
                                     .testPrimaryHeroesClass(reqs.getHeroesPrimaryClass(), player.getUniqueId())) {
                                 cs.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + reqs.getHeroesPrimaryClass()
-                                        + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Language.get("heroesClass"));
+                                        + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + BukkitLanguage.get("heroesClass"));
                             } else {
                                 cs.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + reqs.getHeroesPrimaryClass()
-                                        + ChatColor.RESET + "" + ChatColor.RED + " " + Language.get("heroesClass"));
+                                        + ChatColor.RESET + "" + ChatColor.RED + " " + BukkitLanguage.get("heroesClass"));
                             }
                         }
                         if (reqs.getHeroesSecondaryClass() != null) {
                             if (plugin.getDependencies()
                                     .testSecondaryHeroesClass(reqs.getHeroesSecondaryClass(), player.getUniqueId())) {
                                 cs.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_RED + reqs.getHeroesSecondaryClass()
-                                        + ChatColor.RESET + "" + ChatColor.RED + " " + Language.get("heroesClass"));
+                                        + ChatColor.RESET + "" + ChatColor.RED + " " + BukkitLanguage.get("heroesClass"));
                             } else {
                                 cs.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + reqs.getHeroesSecondaryClass()
-                                        + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + Language.get("heroesClass"));
+                                        + ChatColor.RESET + "" + ChatColor.DARK_GREEN + " " + BukkitLanguage.get("heroesClass"));
                             }
                         }
                         for (final String skill : reqs.getMcmmoSkills()) {
@@ -163,18 +163,18 @@ public class QuestCommandHandler {
                             final int req = reqs.getMcmmoAmounts().get(reqs.getMcmmoSkills().indexOf(skill));
                             final String skillName = BukkitMiscUtil.getCapitalized(skill);
                             if (level >= req) {
-                                cs.sendMessage(ChatColor.GREEN + skillName + " " + Language.get("mcMMOLevel") + " " + req);
+                                cs.sendMessage(ChatColor.GREEN + skillName + " " + BukkitLanguage.get("mcMMOLevel") + " " + req);
                             } else {
-                                cs.sendMessage(ChatColor.RED + skillName + " " + Language.get("mcMMOLevel") + " " + req);
+                                cs.sendMessage(ChatColor.RED + skillName + " " + BukkitLanguage.get("mcMMOLevel") + " " + req);
                             }
                         }
                         if (reqs.getQuestPoints() != 0) {
                             if (quester.getQuestPoints() >= reqs.getQuestPoints()) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + reqs.getQuestPoints() + " "
-                                        + Language.get("questPoints"));
+                                        + BukkitLanguage.get("questPoints"));
                             } else {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + reqs.getQuestPoints() + " "
-                                        + Language.get("questPoints"));
+                                        + BukkitLanguage.get("questPoints"));
                             }
                         }
                         if (reqs.getMoney() != 0) {
@@ -200,10 +200,10 @@ public class QuestCommandHandler {
                         }
                         for (Quest quest : quester.getCompletedQuests()) {
                             if (reqs.getNeededQuestIds().contains(quest.getId())) {
-                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + Language.get("complete") + " "
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + BukkitLanguage.get("complete") + " "
                                         + ChatColor.ITALIC + quest.getName());
                             } else {
-                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + Language.get("complete") + " "
+                                cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + BukkitLanguage.get("complete") + " "
                                         + ChatColor.ITALIC + quest.getName());
                             }
                         }
@@ -211,12 +211,12 @@ public class QuestCommandHandler {
                                 .collect(Collectors.toMap(Quest::getId, Quest::getName));
                         for (final String questId : reqs.getBlockQuestIds()) {
                             if (completed.containsKey(questId)) {
-                                String msg = Language.get("haveCompleted");
+                                String msg = BukkitLanguage.get("haveCompleted");
                                 msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
                                         + completed.get(questId) + ChatColor.RED);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
-                                String msg = Language.get("cannotComplete");
+                                String msg = BukkitLanguage.get("cannotComplete");
                                 msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
                                         + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
@@ -225,10 +225,10 @@ public class QuestCommandHandler {
                     }
                 }
             } else {
-                cs.sendMessage(ChatColor.YELLOW + Language.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("questNotFound"));
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 }

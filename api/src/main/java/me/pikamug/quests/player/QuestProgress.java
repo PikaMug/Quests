@@ -14,7 +14,7 @@ package me.pikamug.quests.player;
 
 import java.util.LinkedList;
 
-public interface QuestData {
+public interface QuestProgress {
     LinkedList<?> getBlocksBroken();
 
     LinkedList<?> getBlocksDamaged();

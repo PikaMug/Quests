@@ -21,7 +21,7 @@ import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumeri
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -49,7 +49,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("eventEditorPlayer");
+        return BukkitLanguage.get("eventEditorPlayer");
     }
     
     @Override
@@ -70,13 +70,13 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Language.get("conditionEditorPermissions");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorPermissions");
         case 2:
-            return ChatColor.YELLOW + Language.get("conditionEditorItemsInMainHand");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorItemsInMainHand");
         case 3:
-            return ChatColor.YELLOW + Language.get("conditionEditorItemsWear");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorItemsWear");
         case 4:
-            return ChatColor.GREEN + Language.get("done");
+            return ChatColor.GREEN + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -88,7 +88,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         switch(number) {
         case 1:
             if (context.getSessionData(Key.C_WHILE_PERMISSION) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> whilePermission = (List<String>) context.getSessionData(Key.C_WHILE_PERMISSION);
@@ -103,7 +103,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             }
         case 2:
             if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> whileHoldingMainHand
@@ -119,7 +119,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             }
         case 3:
             if (context.getSessionData(Key.C_WHILE_WEARING) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> whileWearing
@@ -181,7 +181,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
@@ -202,7 +202,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorPermissionsPrompt");
+            return BukkitLanguage.get("conditionEditorPermissionsPrompt");
         }
         
         @Override
@@ -219,7 +219,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> permissions = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     permissions.add(s.trim());
@@ -245,7 +245,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorItemsInMainHand");
+            return BukkitLanguage.get("conditionEditorItemsInMainHand");
         }
         
         @Override
@@ -266,11 +266,11 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + Language.get("clear");
+                return ChatColor.RED + BukkitLanguage.get("clear");
             case 3:
-                return ChatColor.GREEN + Language.get("done");
+                return ChatColor.GREEN + BukkitLanguage.get("done");
             default:
                 return null;
             }
@@ -282,7 +282,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> whileHoldingMainHand
@@ -342,7 +342,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, ConditionItemsInMainHandListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorConditionCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("conditionEditorConditionCleared"));
                 context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, null);
                 return new ConditionItemsInMainHandListPrompt(context);
             case 3:
@@ -368,7 +368,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorItemsWear");
+            return BukkitLanguage.get("conditionEditorItemsWear");
         }
 
         @Override
@@ -389,11 +389,11 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
                 case 1:
-                    return ChatColor.YELLOW + Language.get("stageEditorDeliveryAddItem");
+                    return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
                 case 2:
-                    return ChatColor.RED + Language.get("clear");
+                    return ChatColor.RED + BukkitLanguage.get("clear");
                 case 3:
-                    return ChatColor.GREEN + Language.get("done");
+                    return ChatColor.GREEN + BukkitLanguage.get("done");
                 default:
                     return null;
             }
@@ -405,7 +405,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             switch(number) {
                 case 1:
                     if (context.getSessionData(Key.C_WHILE_WEARING) == null) {
-                        return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                        return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
                         final List<ItemStack> whileWearing
@@ -465,7 +465,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
                 case 1:
                     return new ItemStackPrompt(context, ConditionItemsWearListPrompt.this);
                 case 2:
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorConditionCleared"));
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("conditionEditorConditionCleared"));
                     context.setSessionData(Key.C_WHILE_WEARING, null);
                     return new ConditionItemsWearListPrompt(context);
                 case 3:

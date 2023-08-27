@@ -17,7 +17,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.events.misc.MiscPostNpcOfferQuestEvent;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -62,7 +62,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     @Override
     public String getTitle(final ConversationContext context) {
         final String npc = (String) context.getSessionData("npc");
-        return Language.get("questNPCListTitle").replace("<npc>", npc != null ? npc : "NPC");
+        return BukkitLanguage.get("questNPCListTitle").replace("<npc>", npc != null ? npc : "NPC");
     }
 
     @SuppressWarnings("unchecked")
@@ -101,7 +101,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                         return ChatColor.YELLOW + "" + ChatColor.ITALIC + quest.getName();
                     }
                 } else if (number == (quests.size() + 1)) {
-                    return ChatColor.GRAY + Language.get("cancel");
+                    return ChatColor.GRAY + BukkitLanguage.get("cancel");
                 }
             }
         }
@@ -117,7 +117,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
                     if (quester.getCompletedQuests().contains(quest)) {
-                        return ChatColor.GREEN + "" + Language.get("redoCompleted");
+                        return ChatColor.GREEN + "" + BukkitLanguage.get("redoCompleted");
                     }
                 }
             }
@@ -126,7 +126,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
     }
 
     public String getQueryText(final ConversationContext context) {
-        return Language.get("enterAnOption");
+        return BukkitLanguage.get("enterAnOption");
     }
 
     @SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final LinkedList<BukkitQuest> quests = (LinkedList<BukkitQuest>) context.getSessionData("npcQuests");
         final String npc = (String) context.getSessionData("npc");
         if (plugin == null || quests == null || npc == null) {
-            return ChatColor.YELLOW + Language.get("itemCreateCriticalError");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateCriticalError");
         }
         quests.sort(Comparator.comparing(BukkitQuest::getName));
 
@@ -189,8 +189,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         } catch (final NumberFormatException e) {
             // Continue
         }
-        if (input.equalsIgnoreCase(Language.get("cancel")) || numInput == (quests.size() + 1)) {
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("cancelled"));
+        if (input.equalsIgnoreCase(BukkitLanguage.get("cancel")) || numInput == (quests.size() + 1)) {
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("cancelled"));
             return Prompt.END_OF_CONVERSATION;
         } else {
             Quest q = null;
@@ -217,7 +217,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                 }
             }
             if (q == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidOption"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidOption"));
                 return new NpcOfferQuestPrompt(context);
             } else {
                 final Player player = quester.getPlayer();

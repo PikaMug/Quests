@@ -13,7 +13,6 @@
 package me.pikamug.quests.convo;
 
 import me.pikamug.quests.Quests;
-import me.pikamug.quests.util.Language;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -64,7 +63,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
      */
     public static String sendClickableSelection(final String input, final ConversationContext context) {
         if (context.getPlugin() == null) {
-            return Language.get("itemCreateCriticalError");
+            return "ERROR";
         }
         if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getConfigSettings().canClickablePrompts()) {
             return input;

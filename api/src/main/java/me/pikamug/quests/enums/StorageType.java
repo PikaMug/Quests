@@ -18,11 +18,14 @@ import java.util.List;
 
 public enum StorageType {
 
-    // Local file
+    // Local text file
     YAML("YAML", "yaml", "yml"),
 
     // Remote database
     MYSQL("MySQL", "mysql"),
+
+    // Local archive
+    JAR("JAR", "jar"),
 
     // Custom
     CUSTOM("Custom", "custom");

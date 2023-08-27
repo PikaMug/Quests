@@ -21,7 +21,7 @@ import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumeri
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,7 +54,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("conditionEditorWorld");
+        return BukkitLanguage.get("conditionEditorWorld");
     }
     
     @Override
@@ -76,19 +76,19 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Language.get("conditionEditorStayWithinWorld");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorStayWithinWorld");
         case 2:
-            return ChatColor.YELLOW + Language.get("conditionEditorStayWithinTicks");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorStayWithinTicks");
         case 3:
-            return ChatColor.YELLOW + Language.get("conditionEditorStayWithinBiome");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorStayWithinBiome");
         case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
-                return ChatColor.YELLOW + Language.get("conditionEditorStayWithinRegion");
+                return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorStayWithinRegion");
             } else {
-                return ChatColor.GRAY + Language.get("conditionEditorStayWithinRegion");
+                return ChatColor.GRAY + BukkitLanguage.get("conditionEditorStayWithinRegion");
             }
         case 5:
-            return ChatColor.GREEN + Language.get("done");
+            return ChatColor.GREEN + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -100,7 +100,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
         switch(number) {
         case 1:
             if (context.getSessionData(Key.C_WHILE_WITHIN_WORLD) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> whileWithinWorld = (List<String>) context.getSessionData(Key.C_WHILE_WITHIN_WORLD);
@@ -114,14 +114,14 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
         case 2:
             if (context.getSessionData(Key.C_WHILE_WITHIN_TICKS_START) == null
                     || context.getSessionData(Key.C_WHILE_WITHIN_TICKS_END) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.C_WHILE_WITHIN_TICKS_START)
                         + " - " + context.getSessionData(Key.C_WHILE_WITHIN_TICKS_END)+ ChatColor.GRAY + ")";
             }
         case 3:
             if (context.getSessionData(Key.C_WHILE_WITHIN_BIOME) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> whileWithinBiome = (List<String>) context.getSessionData(Key.C_WHILE_WITHIN_BIOME);
@@ -135,7 +135,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
         case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 if (context.getSessionData(Key.C_WHILE_WITHIN_REGION) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> whileWithinRegion
@@ -148,7 +148,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
             }
         case 5:
             return "";
@@ -191,7 +191,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
@@ -207,12 +207,12 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorWorldsTitle");
+            return BukkitLanguage.get("conditionEditorWorldsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorWorldsPrompt");
+            return BukkitLanguage.get("conditionEditorWorldsPrompt");
         }
         
         @Override
@@ -238,13 +238,13 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> worlds = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (Bukkit.getWorld(s) != null) {
                         worlds.add(s);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorInvalidWorld")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorInvalidWorld")
                                 .replace("<input>", s));
                         return new ConditionWorldsPrompt(context);
                     }
@@ -271,7 +271,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorTicksTitle");
+            return BukkitLanguage.get("conditionEditorTicksTitle");
         }
         @Override
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
@@ -292,13 +292,13 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
-                    return ChatColor.YELLOW + Language.get("conditionEditorSetStartTick");
+                    return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorSetStartTick");
                 case 2:
-                    return ChatColor.YELLOW + Language.get("conditionEditorSetEndTick");
+                    return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorSetEndTick");
                 case 3:
-                    return ChatColor.RED + Language.get("clear");
+                    return ChatColor.RED + BukkitLanguage.get("clear");
                 case 4:
-                    return ChatColor.GREEN + Language.get("done");
+                    return ChatColor.GREEN + BukkitLanguage.get("done");
                 default:
                     return null;
             }
@@ -309,14 +309,14 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             switch (number) {
                 case 1:
                     if (context.getSessionData(Key.C_WHILE_WITHIN_TICKS_START) == null) {
-                        return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                        return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                     } else {
                         final int i = (int) Objects.requireNonNull(context.getSessionData(Key.C_WHILE_WITHIN_TICKS_START));
                         return ChatColor.GRAY + "(" + ChatColor.AQUA + i + ChatColor.GRAY + ")";
                     }
                 case 2:
                     if (context.getSessionData(Key.C_WHILE_WITHIN_TICKS_END) == null) {
-                        return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                        return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                     } else {
                         final int i = (int) Objects.requireNonNull(context.getSessionData(Key.C_WHILE_WITHIN_TICKS_END));
                         return ChatColor.GRAY + "(" + ChatColor.AQUA + i + ChatColor.GRAY + ")";
@@ -352,7 +352,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
                 case 2:
                     return new ConditionTickEndPrompt(context);
                 case 3:
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorConditionCleared"));
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("conditionEditorConditionCleared"));
                     context.setSessionData(Key.C_WHILE_WITHIN_TICKS_START, null);
                     context.setSessionData(Key.C_WHILE_WITHIN_TICKS_END, null);
                     return new ConditionWorldPrompt(context);
@@ -363,7 +363,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
                             && context.getSessionData(Key.C_WHILE_WITHIN_TICKS_END) == null)) {
                         return new ConditionMainPrompt(context);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("listsNotSameSize"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listsNotSameSize"));
                         return new ConditionTicksListPrompt(context);
                     }
                 default:
@@ -385,7 +385,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorTicksPrompt");
+            return BukkitLanguage.get("conditionEditorTicksPrompt");
         }
 
         @Override
@@ -402,18 +402,18 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0 || i > 24000) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "24000"));
                         return new ConditionTickStartPrompt(context);
                     } else {
                         context.setSessionData(Key.C_WHILE_WITHIN_TICKS_START, i);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                     return new ConditionTickStartPrompt(context);
                 }
@@ -435,7 +435,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorTicksPrompt");
+            return BukkitLanguage.get("conditionEditorTicksPrompt");
         }
 
         @Override
@@ -452,18 +452,18 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0 || i > 24000) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "24000"));
                         return new ConditionTickEndPrompt(context);
                     } else {
                         context.setSessionData(Key.C_WHILE_WITHIN_TICKS_END, i);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                     return new ConditionTickEndPrompt(context);
                 }
@@ -480,12 +480,12 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorBiomesTitle");
+            return BukkitLanguage.get("conditionEditorBiomesTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorBiomesPrompt");
+            return BukkitLanguage.get("conditionEditorBiomesPrompt");
         }
         
         @Override
@@ -511,13 +511,13 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> biomes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (BukkitMiscUtil.getProperBiome(s) != null) {
                         biomes.add(s);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorInvalidBiome")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorInvalidBiome")
                                 .replace("<input>", s));
                         return new ConditionBiomesPrompt(context);
                     }
@@ -536,12 +536,12 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorRegionsTitle");
+            return BukkitLanguage.get("conditionEditorRegionsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorRegionsPrompt");
+            return BukkitLanguage.get("conditionEditorRegionsPrompt");
         }
         
         @Override
@@ -567,7 +567,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (any) {
                 regions = new StringBuilder(regions.substring(0, regions.length() - 2) + "\n");
             } else {
-                regions.append(ChatColor.GRAY).append("(").append(Language.get("none")).append(")\n");
+                regions.append(ChatColor.GRAY).append("(").append(BukkitLanguage.get("none")).append(")\n");
             }
             return regions.toString() + ChatColor.YELLOW + getQueryText(context);
         }
@@ -577,7 +577,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> regions = new LinkedList<>();
                 for (final String r : input.split(" ")) {
                     boolean found = false;
@@ -599,7 +599,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
                         }
                     }
                     if (!found) {
-                        String error = Language.get("questWGInvalidRegion");
+                        String error = BukkitLanguage.get("questWGInvalidRegion");
                         error = error.replace("<region>", ChatColor.RED + r + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + error);
                         return new ConditionRegionsPrompt(context);

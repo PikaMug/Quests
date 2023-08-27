@@ -23,7 +23,7 @@ import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
@@ -52,8 +52,8 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        final String title = Language.get("conditionEditorTitle");
-        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + Language.get("trialMode")
+        final String title = BukkitLanguage.get("conditionEditorTitle");
+        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + BukkitLanguage.get("trialMode")
                 + ")" : "");
     }
     
@@ -75,13 +75,13 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + Language.get("conditionEditorCreate");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorCreate");
         case 2:
-            return ChatColor.YELLOW + Language.get("conditionEditorEdit");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorEdit");
         case 3:
-            return ChatColor.YELLOW + Language.get("conditionEditorDelete");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorDelete");
         case 4:
-            return ChatColor.RED + Language.get("exit");
+            return ChatColor.RED + BukkitLanguage.get("exit");
         default:
             return null;
         }
@@ -115,37 +115,37 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 context.setSessionData(Key.C_OLD_CONDITION, "");
                 return new ConditionSelectCreatePrompt(context);
             } else {
-                cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 2:
             if (cs.hasPermission("quests.conditions.edit")) {
                 if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
-                            + Language.get("conditionEditorNoneToEdit"));
+                            + BukkitLanguage.get("conditionEditorNoneToEdit"));
                     return new ConditionMenuPrompt(context);
                 } else {
                     return new ConditionSelectEditPrompt(context);
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 3:
             if (cs.hasPermission("quests.conditions.delete")) {
                 if (plugin.getLoadedConditions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
-                            + Language.get("conditionEditorNoneToDelete"));
+                            + BukkitLanguage.get("conditionEditorNoneToDelete"));
                     return new ConditionMenuPrompt(context);
                 } else {
                     return new ConditionSelectDeletePrompt(context);
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
                 return new ConditionMenuPrompt(context);
             }
         case 4:
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("exited"));
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("exited"));
             return Prompt.END_OF_CONVERSATION;
         default:
             return new ConditionMenuPrompt(context);
@@ -160,12 +160,12 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionCreateTitle");
+            return BukkitLanguage.get("conditionCreateTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorEnterName");
+            return BukkitLanguage.get("conditionEditorEnterName");
         }
 
         @Override
@@ -180,28 +180,28 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final @NotNull ConversationContext context, String input) {
             if (input == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                 return new ConditionSelectCreatePrompt(context);
             }
             input = input.trim();
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 for (final Condition c : plugin.getLoadedConditions()) {
                     if (c.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorExists"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorExists"));
                         return new ConditionSelectCreatePrompt(context);
                     }
                 }
                 final List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
                 if (actionNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questEditorBeingEdited"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorBeingEdited"));
                     return new ConditionSelectCreatePrompt(context);
                 }
                 if (input.contains(".") || input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questEditorInvalidQuestName"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorInvalidQuestName"));
                     return new ConditionSelectCreatePrompt(context);
                 }
                 if (input.equals("")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new ConditionSelectCreatePrompt(context);
                 }
                 context.setSessionData(Key.C_NAME, input);
@@ -222,12 +222,12 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditTitle");
+            return BukkitLanguage.get("conditionEditTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorEnterName");
+            return BukkitLanguage.get("conditionEditorEnterName");
         }
 
         @Override
@@ -245,7 +245,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
                     context.setSessionData(Key.C_OLD_CONDITION, c.getName());
@@ -253,7 +253,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     plugin.getConditionFactory().loadData(context, c);
                     return new ConditionMainPrompt(context);
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorNotFound"));
                 return new ConditionSelectEditPrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);
@@ -269,12 +269,12 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionDeleteTitle");
+            return BukkitLanguage.get("conditionDeleteTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorEnterName");
+            return BukkitLanguage.get("conditionEditorEnterName");
         }
         
         @Override
@@ -292,7 +292,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
@@ -309,17 +309,17 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                         context.setSessionData(Key.ED_CONDITION_DELETE, c.getName());
                         return new ConditionConfirmDeletePrompt(context);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorInUse")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorInUse")
                         + " \"" + ChatColor.DARK_PURPLE + c.getName() + ChatColor.RED + "\":");
                         for (final String s : used) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
                         context.getForWhom().sendRawMessage(ChatColor.RED 
-                                + Language.get("eventEditorMustModifyQuests"));
+                                + BukkitLanguage.get("eventEditorMustModifyQuests"));
                         return new ConditionSelectDeletePrompt(context);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("conditionEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("conditionEditorNotFound"));
                 return new ConditionSelectDeletePrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);
@@ -360,9 +360,9 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GREEN + Language.get("yesWord");
+                return ChatColor.GREEN + BukkitLanguage.get("yesWord");
             case 2:
-                return ChatColor.RED + Language.get("noWord");
+                return ChatColor.RED + BukkitLanguage.get("noWord");
             default:
                 return null;
             }
@@ -370,7 +370,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("confirmDelete");
+            return BukkitLanguage.get("confirmDelete");
         }
         
         @Override
@@ -393,10 +393,10 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(Language.get("yesWord"))) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
                 plugin.getConditionFactory().deleteCondition(context);
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(Language.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
                 return new ConditionMenuPrompt(context);
             } else {
                 return new ConditionConfirmDeletePrompt(context);

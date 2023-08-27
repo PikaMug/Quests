@@ -22,7 +22,7 @@ import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPostCreat
 import com.alessiodp.parties.api.events.bukkit.player.BukkitPartiesPlayerPostJoinEvent;
 import com.alessiodp.parties.api.events.bukkit.player.BukkitPartiesPlayerPostLeaveEvent;
 
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 
 public class BukkitPartiesListener implements Listener {
 
@@ -31,8 +31,8 @@ public class BukkitPartiesListener implements Listener {
         if (event.getCreator() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID());
             if (p != null) {
-                if (Language.get("questPartiesCreate").length() > 0) {
-                    Language.send(p, ChatColor.YELLOW + Language.get("questPartiesCreate"));
+                if (BukkitLanguage.get("questPartiesCreate").length() > 0) {
+                    BukkitLanguage.send(p, ChatColor.YELLOW + BukkitLanguage.get("questPartiesCreate"));
                 }
             }
         }
@@ -41,18 +41,18 @@ public class BukkitPartiesListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(final BukkitPartiesPlayerPostJoinEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && Language.get("questPartiesLeave").length() > 0) {
-            Language.send(p, ChatColor.GREEN + Language.get(p, "questPartiesJoin"));
-            event.getParty().broadcastMessage(ChatColor.GREEN + Language.get("questPartiesJoinBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+        if (p != null && BukkitLanguage.get("questPartiesLeave").length() > 0) {
+            BukkitLanguage.send(p, ChatColor.GREEN + BukkitLanguage.get(p, "questPartiesJoin"));
+            event.getParty().broadcastMessage(ChatColor.GREEN + BukkitLanguage.get("questPartiesJoinBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
         }
     }
 
     @EventHandler
     public void onPlayerLeaveEvent(final BukkitPartiesPlayerPostLeaveEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && Language.get("questPartiesLeave").length() > 0) {
-            Language.send(p, ChatColor.RED + Language.get(p, "questPartiesLeave"));
-            event.getParty().broadcastMessage(ChatColor.RED + Language.get("questPartiesLeaveBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
+        if (p != null && BukkitLanguage.get("questPartiesLeave").length() > 0) {
+            BukkitLanguage.send(p, ChatColor.RED + BukkitLanguage.get(p, "questPartiesLeave"));
+            event.getParty().broadcastMessage(ChatColor.RED + BukkitLanguage.get("questPartiesLeaveBroadcast").replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
         }
     }
 }

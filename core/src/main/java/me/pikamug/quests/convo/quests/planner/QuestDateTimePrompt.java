@@ -18,7 +18,7 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -52,7 +52,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("dateTimeTitle");
+        return BukkitLanguage.get("dateTimeTitle");
     }
     
     public String getDataText(final ConversationContext context) {
@@ -112,25 +112,25 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 0:
-            return ChatColor.GOLD + Language.get("dateCreateLoadTime");
+            return ChatColor.GOLD + BukkitLanguage.get("dateCreateLoadTime");
         case 1:
-            return ChatColor.YELLOW + Language.get("timeYear");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeYear");
         case 2:
-            return ChatColor.YELLOW + Language.get("timeMonth");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeMonth");
         case 3:
-            return ChatColor.YELLOW + Language.get("timeDay");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeDay");
         case 4:
-            return ChatColor.YELLOW + Language.get("timeHour");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeHour");
         case 5:
-            return ChatColor.YELLOW + Language.get("timeMinute");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeMinute");
         case 6:
-            return ChatColor.YELLOW + Language.get("timeSecond");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeSecond");
         case 7:
-            return ChatColor.YELLOW + Language.get("timeZone");
+            return ChatColor.YELLOW + BukkitLanguage.get("timeZone");
         case 8:
-            return ChatColor.RED + Language.get("cancel");
+            return ChatColor.RED + BukkitLanguage.get("cancel");
         case 9:
-            return ChatColor.GREEN + Language.get("done");
+            return ChatColor.GREEN + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -275,7 +275,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                     || context.getSessionData("tempDay") != null || context.getSessionData("tempHour") != null
                     || context.getSessionData("tempMinute") != null || context.getSessionData("tempSecond") != null
                     || context.getSessionData("tempZone") != null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("listsNotSameSize"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listsNotSameSize"));
                 return new QuestDateTimePrompt(context, oldPrompt, source);
             } else {
                 return oldPrompt;
@@ -298,7 +298,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterYear");
+            return BukkitLanguage.get("dateCreateEnterYear");
         }
 
         @Override
@@ -315,11 +315,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1000 || amt > 9999) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "1000").replace("<greatest>", "9999"));
                         return new QuestYearPrompt(context);
                     } else {
@@ -327,7 +327,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestYearPrompt(context);
                 }
             } else {
@@ -349,7 +349,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterMonth");
+            return BukkitLanguage.get("dateCreateEnterMonth");
         }
 
         @Override
@@ -366,11 +366,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 12) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "12"));
                         return new QuestMonthPrompt(context);
                     } else {
@@ -378,7 +378,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestMonthPrompt(context);
                 }
             } else {
@@ -400,7 +400,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterDay");
+            return BukkitLanguage.get("dateCreateEnterDay");
         }
 
         @Override
@@ -417,11 +417,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 31) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "31"));
                         return new QuestDayPrompt(context);
                     } else {
@@ -429,7 +429,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestDayPrompt(context);
                 }
             } else {
@@ -451,7 +451,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterHour");
+            return BukkitLanguage.get("dateCreateEnterHour");
         }
 
         @Override
@@ -468,11 +468,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 23) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "23"));
                         return new QuestHourPrompt(context);
                     } else {
@@ -480,7 +480,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestHourPrompt(context);
                 }
             } else {
@@ -502,7 +502,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterMinute");
+            return BukkitLanguage.get("dateCreateEnterMinute");
         }
 
         @Override
@@ -519,11 +519,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
                         return new QuestMinutePrompt(context);
                     } else {
@@ -531,7 +531,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestMinutePrompt(context);
                 }
             } else {
@@ -553,7 +553,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterSecond");
+            return BukkitLanguage.get("dateCreateEnterSecond");
         }
 
         @Override
@@ -570,11 +570,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
                         return new QuestSecondPrompt(context);
                     } else {
@@ -582,7 +582,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestSecondPrompt(context);
                 }
             } else {
@@ -604,7 +604,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterOffset");
+            return BukkitLanguage.get("dateCreateEnterOffset");
         }
 
         @Override
@@ -621,11 +621,11 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final double amt = Double.parseDouble(input.replace("UTC", "").replace(":", "."));
                     if (amt < -12.0 || amt > 14.0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                             .replace("<least>", "-12:00").replace("<greatest>", "14:00"));
                         return new QuestOffsetPrompt(context);
                     } else {
@@ -635,12 +635,12 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                         } else if (t.length > 0) {
                             context.setSessionData("tempZone", t[0]);
                         }  else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                         }    
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestOffsetPrompt(context);
                 }
             } else {
@@ -660,12 +660,12 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("timeZoneTitle");
+            return BukkitLanguage.get("timeZoneTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("dateCreateEnterZone");
+            return BukkitLanguage.get("dateCreateEnterZone");
         }
 
         @Override
@@ -687,14 +687,14 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 for (final String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
                         context.setSessionData("tempZone", z);
                         return new QuestDateTimePrompt(context, oldPrompt, source);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                 return new QuestZonePrompt(context, zones);
             } else {
                 return new QuestDateTimePrompt(context, oldPrompt, source);

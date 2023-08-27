@@ -20,7 +20,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitFakeConversable;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -169,7 +169,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
         }
@@ -181,16 +181,16 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         try {
             data.save(conditionsFile);
         } catch (final IOException e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = response -> {
             if (!response) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("unknownError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("unknownError"));
             }
         };
         plugin.reload(callback);
-        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorDeleted"));
+        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("conditionEditorDeleted"));
         if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
@@ -211,7 +211,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questErrorReadingFile")
                     .replace("<file>", conditionsFile.getName()));
             return;
         }
@@ -269,16 +269,16 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
         try {
             data.save(conditionsFile);
         } catch (final IOException e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = response -> {
             if (!response) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("unknownError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("unknownError"));
             }
         };
         plugin.reload(callback);
-        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("conditionEditorSaved"));
+        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("conditionEditorSaved"));
         if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ? 
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";

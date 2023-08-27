@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -42,12 +42,12 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_STATS");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_STATS");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_STATS_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_STATS_HELP");
     }
 
     @Override
@@ -77,29 +77,29 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get("playerNotFound"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("playerNotFound"));
                     return;
                 }
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");
-            cs.sendMessage(ChatColor.YELLOW + Language.get("questPoints") + " - " + ChatColor.DARK_PURPLE
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
             if (quester.getCurrentQuests().isEmpty()) {
-                cs.sendMessage(ChatColor.YELLOW + Language.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ Language.get("none"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("currentQuest") + " " + ChatColor.DARK_PURPLE+ BukkitLanguage.get("none"));
             } else {
-                cs.sendMessage(ChatColor.YELLOW + Language.get("currentQuest"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("currentQuest"));
                 for (final Map.Entry<Quest, Integer> set : quester.getCurrentQuests().entrySet()) {
                     final Quest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
-                            + ChatColor.LIGHT_PURPLE + " (" + Language.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
+                            + ChatColor.LIGHT_PURPLE + " (" + BukkitLanguage.get("stageEditorStage") + " " +  (set.getValue() + 1) + ")";
                     cs.sendMessage(msg);
                 }
             }
-            cs.sendMessage(ChatColor.YELLOW + Language.get("completedQuest"));
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("completedQuest"));
 
             if (quester.getCompletedQuests().isEmpty()) {
-                cs.sendMessage(ChatColor.DARK_PURPLE + Language.get("none"));
+                cs.sendMessage(ChatColor.DARK_PURPLE + BukkitLanguage.get("none"));
             } else {
                 final StringBuilder completed = new StringBuilder(" ");
                 int index = 1;
@@ -117,7 +117,7 @@ public class QuestadminStatsCommand extends QuestsSubCommand {
                 cs.sendMessage(completed.toString());
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 

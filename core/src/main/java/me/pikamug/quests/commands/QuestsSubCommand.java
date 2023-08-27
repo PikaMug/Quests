@@ -12,7 +12,7 @@
 
 package me.pikamug.quests.commands;
 
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +47,7 @@ public abstract class QuestsSubCommand {
 
     public static boolean assertNonPlayer(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ChatColor.YELLOW + Language.get("consoleError"));
+            commandSender.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
             return true;
         }
         return false;

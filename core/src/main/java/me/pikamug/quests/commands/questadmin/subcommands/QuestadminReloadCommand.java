@@ -15,7 +15,7 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -34,12 +34,12 @@ public class QuestadminReloadCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_RELOAD");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_RELOAD");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_RELOAD_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_RELOAD_HELP");
     }
 
     @Override
@@ -62,18 +62,18 @@ public class QuestadminReloadCommand extends QuestsSubCommand {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             final ReloadCallback<Boolean> callback = response -> {
                 if (response) {
-                    cs.sendMessage(ChatColor.GOLD + Language.get("questsReloaded"));
-                    String msg = Language.get("numQuestsLoaded");
+                    cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get("questsReloaded"));
+                    String msg = BukkitLanguage.get("numQuestsLoaded");
                     msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getLoadedQuests().size())
                             + ChatColor.GOLD);
                     cs.sendMessage(ChatColor.GOLD + msg);
                 } else {
-                    cs.sendMessage(ChatColor.RED + Language.get("unknownError"));
+                    cs.sendMessage(ChatColor.RED + BukkitLanguage.get("unknownError"));
                 }
             };
             plugin.reload(callback);
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 }

@@ -96,7 +96,7 @@ public interface Quests {
 
     LocaleManager getLocaleManager();
 
-    Storage getStorage();*/
+    QuesterStorage getStorage();*/
 
     void saveResourceAs(String resourcePath, final String outputPath, final boolean replace);
 }

@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,12 +40,12 @@ public class QuestsTakeCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_TAKE");
+        return BukkitLanguage.get("COMMAND_TAKE");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_TAKE_HELP");
+        return BukkitLanguage.get("COMMAND_TAKE_HELP");
     }
 
     @Override
@@ -80,19 +80,19 @@ public class QuestsTakeCommand extends QuestsSubCommand {
                 if (questToFind != null) {
                     for (final Quest q : quester.getCurrentQuests().keySet()) {
                         if (q.getId().equals(questToFind.getId())) {
-                            Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
+                            BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "questAlreadyOn"));
                             return;
                         }
                     }
                     quester.offerQuest(questToFind, true);
                 } else {
-                    Language.send(player, ChatColor.YELLOW + Language.get(player, "questNotFound"));
+                    BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "questNotFound"));
                 }
             } else {
-                Language.send(player, ChatColor.RED + Language.get(player, "noPermission"));
+                BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "noPermission"));
             }
         } else {
-            Language.send(player, ChatColor.YELLOW + Language.get(player, "questTakeDisabled"));
+            BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "questTakeDisabled"));
         }
     }
 

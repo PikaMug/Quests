@@ -18,7 +18,7 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import org.bukkit.Bukkit;
@@ -70,7 +70,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("createItemTitle");
+        return BukkitLanguage.get("createItemTitle");
     }
     
     @Override
@@ -103,29 +103,29 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 0:
-            return ChatColor.YELLOW + Language.get("itemCreateLoadHand");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateLoadHand");
         case 1:
-            return ChatColor.YELLOW + Language.get("itemCreateSetName");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetName");
         case 2:
-            return ChatColor.YELLOW + Language.get("itemCreateSetAmount");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetAmount");
         case 3:
-            return ChatColor.YELLOW + Language.get("itemCreateSetDurab");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetDurab");
         case 4:
-            return ChatColor.YELLOW + Language.get("itemCreateSetEnchs");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetEnchs");
         case 5:
-            return ChatColor.YELLOW + Language.get("itemCreateSetDisplay");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetDisplay");
         case 6:
-            return ChatColor.YELLOW + Language.get("itemCreateSetLore");
+            return ChatColor.YELLOW + BukkitLanguage.get("itemCreateSetLore");
         case 7:
             if (context.getSessionData("tempMeta") != null) {
-                return ChatColor.DARK_GREEN + Language.get("itemCreateSetClearMeta");
+                return ChatColor.DARK_GREEN + BukkitLanguage.get("itemCreateSetClearMeta");
             } else {
-                return ChatColor.GRAY + Language.get("itemCreateSetClearMeta");
+                return ChatColor.GRAY + BukkitLanguage.get("itemCreateSetClearMeta");
             }
         case 8:
-            return ChatColor.RED + Language.get("cancel");
+            return ChatColor.RED + BukkitLanguage.get("cancel");
         case 9:
-            return ChatColor.GREEN + Language.get("done");
+            return ChatColor.GREEN + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -141,28 +141,28 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             return "";
         case 1:
             if (context.getSessionData("tempName") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final String text = (String) context.getSessionData("tempName");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(text) + ChatColor.GRAY + ")";
             }
         case 2:
             if (context.getSessionData("tempAmount") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final Integer text = (Integer) context.getSessionData("tempAmount");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 3:
             if (context.getSessionData("tempData") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final Short text = (Short) context.getSessionData("tempData");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 4:
             if (context.getSessionData("tempEnchantments") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final Map<Enchantment, Integer> map 
@@ -177,14 +177,14 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             }
         case 5:
             if (context.getSessionData("tempDisplay") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final String text = (String) context.getSessionData("tempDisplay");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 6:
             if (context.getSessionData("tempLore") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> list = (List<String>) context.getSessionData("tempLore");
@@ -197,7 +197,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             }
         case 7:
             if (context.getSessionData("tempMeta") == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedHashMap<String, Object> map 
@@ -276,7 +276,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 final Player player = (Player) context.getForWhom();
                 final ItemStack is = item == null ? player.getItemInHand() : item;
                 if (is.getType().equals(Material.AIR)) {
-                    player.sendMessage(ChatColor.RED + Language.get("itemCreateNoItem"));
+                    player.sendMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoItem"));
                 } else {
                     context.setSessionData("tempName", is.getType().name());
                     context.setSessionData("tempAmount", is.getAmount());
@@ -311,7 +311,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("consoleError"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
             }
             return new ItemStackPrompt(context, oldPrompt);
         case 1:
@@ -321,42 +321,42 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             if (context.getSessionData("tempName") != null) {
                 return new ItemAmountPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoName"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoName"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 3:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
                 return new ItemDataPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 4:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
                 return new ItemEnchantmentPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 5:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
                 return new ItemDisplayPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 6:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
                 return new ItemLorePrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         case 7:
             if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
                 context.setSessionData("tempMeta", null);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
             }
             return new ItemStackPrompt(context, oldPrompt);
         case 8:
@@ -419,14 +419,14 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     return oldPrompt;
                 }
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateNoNameAmount"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateNoNameAmount"));
                 return new ItemStackPrompt(context, oldPrompt);
             }
         default:
             try {
                 return new ItemStackPrompt(context, oldPrompt);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         }
@@ -445,7 +445,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterName");
+            return BukkitLanguage.get("itemCreateEnterName");
         }
 
         @Override
@@ -458,18 +458,18 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final String s = input.replace(":", "");
                 final Material mat = Material.matchMaterial(s.toUpperCase().replace(" ", "_"));
                 if (mat == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidName"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidName"));
                     return new ItemNamePrompt(context);
                 } else {
                     if (context.getPlugin() instanceof BukkitQuestsPlugin) {
                         final BukkitQuestsPlugin plugin = (BukkitQuestsPlugin)context.getPlugin();
                         if (plugin.hasLimitedAccess(context.getForWhom())) {
                             if (plugin.getServer().getRecipesFor(new ItemStack(mat)).isEmpty()) {
-                                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("noPermission"));
+                                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
                                 return new ItemStackPrompt(context, oldPrompt);
                             }
                         }
@@ -497,7 +497,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterAmount");
+            return BukkitLanguage.get("itemCreateEnterAmount");
         }
 
         @Override
@@ -510,11 +510,11 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 64) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidRange")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "64"));
                         return new ItemAmountPrompt(context);
                     } else {
@@ -522,7 +522,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                         return new ItemStackPrompt(context, oldPrompt);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new ItemAmountPrompt(context);
                 }
             } else {
@@ -544,7 +544,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterDurab");
+            return BukkitLanguage.get("itemCreateEnterDurab");
         }
 
         @Override
@@ -557,11 +557,11 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidDurab"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidDurab"));
                         return new ItemDataPrompt(context);
                     } else {
                         context.setSessionData("tempData", Short.parseShort(input));
@@ -572,10 +572,10 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                         context.setSessionData("tempData", Short.parseShort("999")); // wildcard value
                         return new ItemStackPrompt(context, oldPrompt);
                     }
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new ItemDataPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData("tempData", null);
             }
             return new ItemStackPrompt(context, oldPrompt);
@@ -590,12 +590,12 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("enchantmentsTitle");
+            return BukkitLanguage.get("enchantmentsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterEnch");
+            return BukkitLanguage.get("itemCreateEnterEnch");
         }
 
         @Override
@@ -614,16 +614,16 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             final String s = input.replace(":", "");
-            if (!s.equalsIgnoreCase(Language.get("cmdClear")) && !s.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!s.equalsIgnoreCase(BukkitLanguage.get("cmdClear")) && !s.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final Enchantment e = BukkitItemUtil.getEnchantmentFromPrettyName(BukkitMiscUtil.getCapitalized(s));
                 if (e != null) {
                     context.setSessionData("tempEnchant", e);
                     return new ItemEnchantmentLevelPrompt(context, BukkitItemUtil.getPrettyEnchantmentName(e));
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidEnch"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidEnch"));
                     return new ItemEnchantmentPrompt(context);
                 }
-            } else if (s.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (s.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData("tempEnchantments", null);
             }
             return new ItemStackPrompt(context, oldPrompt);
@@ -646,7 +646,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterLevel").replace("<enchantment>", enchantment);
+            return BukkitLanguage.get("itemCreateEnterLevel").replace("<enchantment>", enchantment);
         }
 
         @Override
@@ -659,7 +659,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             try {
                 final int num = Integer.parseInt(input);
                 if (num < 1) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidMinimum")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidMinimum")
                             .replace("<number>", "1"));
                     return new ItemEnchantmentLevelPrompt(context, enchantment);
                 } else {
@@ -680,7 +680,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                     return new ItemStackPrompt(context, oldPrompt);
                 }
             } catch (final NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber").replace("<input>", input));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber").replace("<input>", input));
                 return new ItemEnchantmentLevelPrompt(context, enchantment);
             }
         }
@@ -699,7 +699,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterDisplay");
+            return BukkitLanguage.get("itemCreateEnterDisplay");
         }
 
         @Override
@@ -713,10 +713,10 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             String s = input.replace(":", "");
-            if (!s.equalsIgnoreCase(Language.get("cmdCancel")) && !s.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!s.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !s.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 s = BukkitConfigUtil.parseString(s);
                 context.setSessionData("tempDisplay", s);
-            } else if (s.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (s.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData("tempDisplay", null);
             }
             return new ItemStackPrompt(context, oldPrompt);
@@ -736,7 +736,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("itemCreateEnterLore");
+            return BukkitLanguage.get("itemCreateEnterLore");
         }
 
         @Override
@@ -750,9 +750,9 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return null;
             }
             String s = input.replace(":", "");
-            if (!s.equalsIgnoreCase(Language.get("cmdCancel")) && !s.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!s.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !s.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 s = BukkitConfigUtil.parseString(s);
-                final LinkedList<String> lore = new LinkedList<>(Arrays.asList(s.split(Language.get("charSemi"))));
+                final LinkedList<String> lore = new LinkedList<>(Arrays.asList(s.split(BukkitLanguage.get("charSemi"))));
                 context.setSessionData("tempLore", lore);
             } else if (s.equalsIgnoreCase("clear")) {
                 context.setSessionData("tempLore", null);

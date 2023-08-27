@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.quest.QuestCommandHandler;
 import me.pikamug.quests.commands.questadmin.QuestadminCommandHandler;
 import me.pikamug.quests.commands.quests.QuestsCommandHandler;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,12 +38,12 @@ public class BukkitCommandManager implements TabExecutor {
     public boolean onCommand(final @NotNull CommandSender cs, final @NotNull Command cmd,
                              final @NotNull String label, final String[] args) {
         if (plugin.isLoading()) {
-            cs.sendMessage(ChatColor.RED + Language.get("errorLoading"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("errorLoading"));
             return true;
         }
         if (cs instanceof Player) {
             if (!plugin.canUseQuests(((Player) cs).getUniqueId())) {
-                cs.sendMessage(ChatColor.RED + Language.get((Player) cs, "noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get((Player) cs, "noPermission"));
                 return true;
             }
         }

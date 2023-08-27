@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,12 +38,12 @@ public class QuestsStatsCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_STATS");
+        return BukkitLanguage.get("COMMAND_STATS");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_STATS_HELP");
+        return BukkitLanguage.get("COMMAND_STATS_HELP");
     }
 
     @Override
@@ -70,25 +70,25 @@ public class QuestsStatsCommand extends QuestsSubCommand {
         if (cs.hasPermission(getPermission())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + player.getName() + " -");
-            cs.sendMessage(ChatColor.YELLOW + Language.get(player, "questPoints") + " - " + ChatColor.DARK_PURPLE
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "questPoints") + " - " + ChatColor.DARK_PURPLE
                     + quester.getQuestPoints());
             if (quester.getCurrentQuests().isEmpty()) {
-                cs.sendMessage(ChatColor.YELLOW + Language.get(player, "currentQuest") + " " + ChatColor.DARK_PURPLE
-                        + Language.get("none"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "currentQuest") + " " + ChatColor.DARK_PURPLE
+                        + BukkitLanguage.get("none"));
             } else {
-                cs.sendMessage(ChatColor.YELLOW + Language.get(player, "currentQuest"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "currentQuest"));
                 for (final Map.Entry<Quest, Integer> set : quester.getCurrentQuests().entrySet()) {
                     final Quest q = set.getKey();
                     final String msg = ChatColor.LIGHT_PURPLE + " - " + ChatColor.DARK_PURPLE + q.getName()
-                            + ChatColor.LIGHT_PURPLE + " (" + Language.get(player, "stageEditorStage") + " "
+                            + ChatColor.LIGHT_PURPLE + " (" + BukkitLanguage.get(player, "stageEditorStage") + " "
                             +  (set.getValue() + 1) + ")";
                     cs.sendMessage(msg);
                 }
             }
-            cs.sendMessage(ChatColor.YELLOW + Language.get(player, "completedQuest"));
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "completedQuest"));
 
             if (quester.getCompletedQuests().isEmpty()) {
-                cs.sendMessage(ChatColor.DARK_PURPLE + Language.get("none"));
+                cs.sendMessage(ChatColor.DARK_PURPLE + BukkitLanguage.get("none"));
             } else {
                 final StringBuilder completed = new StringBuilder(" ");
                 int index = 1;

@@ -13,12 +13,10 @@
 package me.pikamug.quests.storage.implementation;
 
 import me.pikamug.quests.Quests;
-import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.exceptions.ActionFormatException;
 
-import java.util.Collection;
-import java.util.UUID;
-
-public interface StorageImplementation {
+public interface ActionStorageImpl {
     Quests getPlugin();
 
     String getImplementationName();
@@ -26,14 +24,6 @@ public interface StorageImplementation {
     void init() throws Exception;
 
     void close();
-    
-    Quester loadQuester(UUID uniqueId) throws Exception;
 
-    void saveQuester(Quester quester) throws Exception;
-
-    void deleteQuester(UUID uniqueId) throws Exception;
-
-    String getQuesterLastKnownName(UUID uniqueId) throws Exception;
-    
-    Collection<UUID> getSavedUniqueIds() throws Exception;
+    Action loadAction(final String name) throws ActionFormatException;
 }

@@ -12,12 +12,11 @@
 
 package me.pikamug.quests.storage.implementation.sql.connection.hikari;
 
+import com.zaxxer.hikari.HikariConfig;
+import me.pikamug.quests.storage.misc.StorageCredentials;
+
 import java.util.Map;
 import java.util.function.Function;
-
-import com.zaxxer.hikari.HikariConfig;
-
-import me.pikamug.quests.storage.misc.StorageCredentials;
 
 public class MySqlConnectionFactory extends HikariConnectionFactory {
     public MySqlConnectionFactory(final StorageCredentials configuration) {

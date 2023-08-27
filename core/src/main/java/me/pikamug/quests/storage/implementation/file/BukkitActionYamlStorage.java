@@ -1,9 +1,12 @@
-package me.pikamug.quests.actions;
+package me.pikamug.quests.storage.implementation.file;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.exceptions.ActionFormatException;
+import me.pikamug.quests.storage.implementation.ActionStorageImpl;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -28,17 +31,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class BukkitActionLoader implements ActionLoader {
+public class BukkitActionYamlStorage implements ActionStorageImpl {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitActionLoader(final BukkitQuestsPlugin plugin) {
+    public BukkitActionYamlStorage(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Load actions from file
-     */
+    @Override
+    public BukkitQuestsPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public String getImplementationName() {
+        return "YAML";
+    }
+
     @Override
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
@@ -101,8 +111,13 @@ public class BukkitActionLoader implements ActionLoader {
         }
     }
 
+    @Override
+    public void close() {
+    }
+
     @SuppressWarnings({ "unchecked"})
-    private BukkitAction loadAction(final String name) throws ActionFormatException {
+    @Override
+    public BukkitAction loadAction(final String name) throws ActionFormatException {
         if (name == null) {
             return null;
         }

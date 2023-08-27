@@ -17,9 +17,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.pikamug.quests.Quests;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
 import me.pikamug.quests.storage.misc.StorageCredentials;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -126,7 +124,7 @@ public abstract class HikariConnectionFactory implements ConnectionFactory {
         return connection;
     }
     
-    public static String identifyClassLoader(final ClassLoader classLoader) throws ReflectiveOperationException {
+    /*public static String identifyClassLoader(final ClassLoader classLoader) throws ReflectiveOperationException {
         final Class<?> pluginClassLoaderClass = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
         if (pluginClassLoaderClass.isInstance(classLoader)) {
             final Method getPluginMethod = pluginClassLoaderClass.getDeclaredMethod("getPlugin");
@@ -136,5 +134,5 @@ public abstract class HikariConnectionFactory implements ConnectionFactory {
             return plugin.getName();
         }
         return null;
-    }
+    }*/
 }

@@ -20,7 +20,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import net.citizensnpcs.api.CitizensAPI;
@@ -123,7 +123,7 @@ public class BukkitPlayerListener implements Listener {
         }
         final BukkitQuester quester = plugin.getQuester(event.getWhoClicked().getUniqueId());
         final Player player = (Player) event.getWhoClicked();
-        if (event.getView().getTitle().contains(Language.get(player, "quests"))) {
+        if (event.getView().getTitle().contains(BukkitLanguage.get(player, "quests"))) {
             final ItemStack clicked = event.getCurrentItem();
             if (BukkitItemUtil.isItem(clicked)) {
                 event.setCancelled(true);
@@ -194,14 +194,14 @@ public class BukkitPlayerListener implements Listener {
                     if (event.getClickedBlock().getType().name().equals("LECTERN")
                             || event.getClickedBlock().getType().name().equals("CHISELED_BOOKSHELF")) {
                         event.setCancelled(true);
-                        Language.send(player, ChatColor.RED + Language.get(event.getPlayer(), "journalDenied")
-                                .replace("<journal>", Language.get(event.getPlayer(), "journalTitle")));
+                        BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(event.getPlayer(), "journalDenied")
+                                .replace("<journal>", BukkitLanguage.get(event.getPlayer(), "journalTitle")));
                         return;
                     }
                     if (plugin.getConfigSettings().canAllowPranks()
                             && event.getClickedBlock().getType().name().contains("PORTAL")) {
                         event.setCancelled(true);
-                        Language.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
+                        BukkitLanguage.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
                                 + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
                         return;
                     }
@@ -211,7 +211,7 @@ public class BukkitPlayerListener implements Listener {
                         && (event.getPlayer().getInventory().getHelmet().getType().name().equals("PUMPKIN")
                         || event.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
                         if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                            Language.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
+                            BukkitLanguage.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
                                 + "https://www.youtube.com/watch?v=v4IC7qaNr7I");
                         }
                         event.setCancelled(true);
@@ -243,7 +243,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedBlockStarts(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation")
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation")
                                         + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -260,7 +260,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedExplosionLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -277,7 +277,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedEffectLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -294,7 +294,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedMobLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -311,7 +311,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedLightningLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -328,7 +328,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedTeleportLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -345,7 +345,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedKillLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -362,7 +362,7 @@ public class BukkitPlayerListener implements Listener {
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedReachLocations(temp);
                             if (loc.getWorld() != null) {
-                                Language.send(player, ChatColor.GOLD + Language.get(player, "questSelectedLocation") + " "
+                                BukkitLanguage.send(player, ChatColor.GOLD + BukkitLanguage.get(player, "questSelectedLocation") + " "
                                         + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
@@ -375,34 +375,34 @@ public class BukkitPlayerListener implements Listener {
                                     if (bukkitQuest.getBlockStart().equals(event.getClickedBlock().getLocation())) {
                                         if (quester.getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()
                                                 && plugin.getConfigSettings().getMaxQuests() > 0) {
-                                            String msg = Language.get(player, "questMaxAllowed");
+                                            String msg = BukkitLanguage.get(player, "questMaxAllowed");
                                             msg = msg.replace("<number>", String
                                                     .valueOf(plugin.getConfigSettings().getMaxQuests()));
-                                            Language.send(player, ChatColor.YELLOW + msg);
+                                            BukkitLanguage.send(player, ChatColor.YELLOW + msg);
                                         } else {
                                             if (quester.getCompletedQuests().contains(bukkitQuest)) {
                                                 if (bukkitQuest.getPlanner().getCooldown() > -1
                                                         && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
-                                                    String early = Language.get(player, "questTooEarly");
+                                                    String early = BukkitLanguage.get(player, "questTooEarly");
                                                     early = early.replace("<quest>", ChatColor.AQUA + bukkitQuest.getName()
                                                             + ChatColor.YELLOW);
                                                     early = early.replace("<time>", ChatColor.DARK_PURPLE 
                                                             + BukkitMiscUtil.getTime(quester.getRemainingCooldown(bukkitQuest))
                                                             + ChatColor.YELLOW);
-                                                    Language.send(player, ChatColor.YELLOW + early);
+                                                    BukkitLanguage.send(player, ChatColor.YELLOW + early);
                                                     continue;
                                                 } else if (quester.getCompletedQuests().contains(bukkitQuest)
                                                         && bukkitQuest.getPlanner().getCooldown() < 0) {
-                                                    String completed = Language.get(player, "questAlreadyCompleted");
+                                                    String completed = BukkitLanguage.get(player, "questAlreadyCompleted");
                                                     completed = completed.replace("<quest>", ChatColor.AQUA 
                                                             + bukkitQuest.getName() + ChatColor.YELLOW);
-                                                    Language.send(player, ChatColor.YELLOW + completed);
+                                                    BukkitLanguage.send(player, ChatColor.YELLOW + completed);
                                                     continue;
                                                 }
                                             }
                                             for (final Quest currentQuest : quester.getCurrentQuests().keySet()) {
                                                 if (currentQuest.getId().equals(bukkitQuest.getId())) {
-                                                    Language.send(player, ChatColor.RED + Language.get(player, "questAlreadyOn"));
+                                                    BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "questAlreadyOn"));
                                                     return;
                                                 }
                                             }
@@ -415,7 +415,7 @@ public class BukkitPlayerListener implements Listener {
                                                         + toTake.getName() + ChatColor.GOLD + " -\n" + "\n"
                                                         + ChatColor.RESET + toTake.getDescription() + "\n";
                                                 for (final String msg : s.split("<br>")) {
-                                                    Language.send(player, msg);
+                                                    BukkitLanguage.send(player, msg);
                                                 }
                                                 plugin.getConversationFactory().buildConversation(player).begin();
                                             }
@@ -434,7 +434,7 @@ public class BukkitPlayerListener implements Listener {
                     if (event.getAction().equals(Action.LEFT_CLICK_AIR)
                             || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                         quester.resetCompass();
-                        Language.send(player, ChatColor.YELLOW + Language.get(player, "compassReset"));
+                        BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "compassReset"));
                     } else if (event.getAction().equals(Action.RIGHT_CLICK_AIR)
                             || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                         quester.findNextCompassTarget(true);
@@ -451,8 +451,8 @@ public class BukkitPlayerListener implements Listener {
             final Player player = event.getPlayer();
             if (BukkitItemUtil.isJournal(player.getItemInHand())) {
                 event.setCancelled(true);
-                Language.send(player, ChatColor.RED + Language.get(player, "journalDenied")
-                        .replace("<journal>", Language.get(player, "journalTitle")));
+                BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "journalDenied")
+                        .replace("<journal>", BukkitLanguage.get(player, "journalTitle")));
             }
         }
     }
@@ -554,7 +554,7 @@ public class BukkitPlayerListener implements Listener {
                     if (!quest.getOptions().canAllowCommands()) {
                         if (!event.getMessage().startsWith("/quest")) {
                             final Player player = event.getPlayer();
-                            Language.send(player, ChatColor.RED + Language.get(player, "optCommandsDenied")
+                            BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "optCommandsDenied")
                                     .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
                             event.setCancelled(true);
                             plugin.getLogger().info("Player " + player.getName() + " tried to use command "
@@ -870,7 +870,7 @@ public class BukkitPlayerListener implements Listener {
             new BukkitUpdateChecker(plugin, 3711).getVersion(version -> {
                 if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
                     event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
-                            + "] " + ChatColor.GREEN + Language.get(player, "updateTo").replace("<version>",
+                            + "] " + ChatColor.GREEN + BukkitLanguage.get(player, "updateTo").replace("<version>",
                             version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
                             + plugin.getDescription().getWebsite()));
                 }

@@ -19,7 +19,7 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.unite.api.objects.PartyProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -48,7 +48,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("optionsTitle").replace("<quest>", (String) Objects
+        return BukkitLanguage.get("optionsTitle").replace("<quest>", (String) Objects
                 .requireNonNull(context.getSessionData(Key.Q_NAME)));
     }
     
@@ -69,11 +69,11 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.GOLD + Language.get("optGeneral");
+            return ChatColor.GOLD + BukkitLanguage.get("optGeneral");
         case 2:
-            return ChatColor.GOLD + Language.get("optMultiplayer");
+            return ChatColor.GOLD + BukkitLanguage.get("optMultiplayer");
         case 3:
-            return ChatColor.YELLOW + Language.get("done");
+            return ChatColor.YELLOW + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -122,12 +122,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("optPluginListTitle");
+            return BukkitLanguage.get("optPluginListTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("optExternalPartyPluginPrompt");
+            return BukkitLanguage.get("optExternalPartyPluginPrompt");
         }
 
         @Override
@@ -144,7 +144,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 none = false;
             }
             if (none) {
-                text.append("(").append(Language.get("none")).append(")\n");
+                text.append("(").append(BukkitLanguage.get("none")).append(")\n");
             } else {
                 text = new StringBuilder(text.substring(0, (text.length() - 2)));
                 text.append("\n");
@@ -158,7 +158,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 if (input.equalsIgnoreCase("Quests")) {
                     context.getForWhom().sendRawMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
                             + "https://www.youtube.com/watch?v=gvdf5n-zI14");
@@ -171,13 +171,13 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (properCase == null) {
-                    String text = Language.get("optNotAPluginName");
+                    String text = BukkitLanguage.get("optNotAPluginName");
                     text = text.replace("<plugin>", ChatColor.LIGHT_PURPLE + input + ChatColor.RED);
                     context.getForWhom().sendRawMessage(text);
                     return new QuestOptionsPluginPrompt(context);
                 }
                 context.setSessionData(Key.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
                 return tempPrompt;
             }
@@ -204,21 +204,21 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("optBooleanQuery").replace("<true>", Language.get("true"))
-                    .replace("<false>", Language.get("false"));
+            return BukkitLanguage.get("optBooleanQuery").replace("<true>", BukkitLanguage.get("true"))
+                    .replace("<false>", BukkitLanguage.get("false"));
         }
 
         @SuppressWarnings("unused")
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("true");
+                return ChatColor.YELLOW + BukkitLanguage.get("true");
             case 2:
-                return ChatColor.YELLOW + Language.get("false");
+                return ChatColor.YELLOW + BukkitLanguage.get("false");
             case 3:
-                return ChatColor.RED + Language.get("cmdClear");
+                return ChatColor.RED + BukkitLanguage.get("cmdClear");
             case 4:
-                return ChatColor.RED + Language.get("cmdCancel");
+                return ChatColor.RED + BukkitLanguage.get("cmdCancel");
             default:
                 return null;
             }
@@ -230,8 +230,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + Language.get("optBooleanPrompt").replace("<true>", Language.get("true"))
-                    .replace("<false>", Language.get("false"));
+            return ChatColor.YELLOW + BukkitLanguage.get("optBooleanPrompt").replace("<true>", BukkitLanguage.get("true"))
+                    .replace("<false>", BukkitLanguage.get("false"));
         }
         
         @Override
@@ -239,18 +239,18 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                if (input.startsWith("t") || input.equalsIgnoreCase(Language.get("true"))
-                        || input.equalsIgnoreCase(Language.get("yesWord"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+                if (input.startsWith("t") || input.equalsIgnoreCase(BukkitLanguage.get("true"))
+                        || input.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
                     context.setSessionData(tempKey, true);
-                } else if (input.startsWith("f") || input.equalsIgnoreCase(Language.get("false"))
-                        || input.equalsIgnoreCase(Language.get("noWord"))) {
+                } else if (input.startsWith("f") || input.equalsIgnoreCase(BukkitLanguage.get("false"))
+                        || input.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
                     context.setSessionData(tempKey, false);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                     return new QuestOptionsTrueFalsePrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
                 return tempPrompt;
             }
@@ -277,7 +277,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("optNumberQuery");
+            return BukkitLanguage.get("optNumberQuery");
         }
 
         @SuppressWarnings("unused")
@@ -292,9 +292,9 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             case 4:
                 return ChatColor.GOLD + "4";
             case 5:
-                return ChatColor.RED + Language.get("cmdClear");
+                return ChatColor.RED + BukkitLanguage.get("cmdClear");
             case 6:
-                return ChatColor.RED + Language.get("cmdCancel");
+                return ChatColor.RED + BukkitLanguage.get("cmdCancel");
             default:
                 return null;
             }
@@ -304,13 +304,13 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GRAY + Language.get("everything");
+                return ChatColor.GRAY + BukkitLanguage.get("everything");
             case 2:
-                return ChatColor.GRAY + Language.get("objectives");
+                return ChatColor.GRAY + BukkitLanguage.get("objectives");
             case 3:
-                return ChatColor.GRAY + Language.get("stageEditorStages");
+                return ChatColor.GRAY + BukkitLanguage.get("stageEditorStages");
             case 4:
-                return ChatColor.GRAY + Language.get("quests");
+                return ChatColor.GRAY + BukkitLanguage.get("quests");
             case 5:
             case 6:
                 return "";
@@ -325,15 +325,15 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = Language.get("optNumberPrompt");
+            String text = BukkitLanguage.get("optNumberPrompt");
             text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "1" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Language.get("everything");
+                    + BukkitLanguage.get("everything");
             text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "2" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Language.get("objectives");
+                    + BukkitLanguage.get("objectives");
             text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "3" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Language.get("stageEditorStages");
+                    + BukkitLanguage.get("stageEditorStages");
             text += "\n" + ChatColor.GRAY + "\u2515 " + ChatColor.GOLD + "4" + ChatColor.RESET + " = " + ChatColor.GRAY
-                    + Language.get("quests");
+                    + BukkitLanguage.get("quests");
             return ChatColor.YELLOW + text;
         }
 
@@ -342,15 +342,15 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     context.setSessionData(tempKey, i);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
                 return tempPrompt;
             }
@@ -371,7 +371,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("optDistancePrompt");
+            return BukkitLanguage.get("optDistancePrompt");
         }
 
         @Override
@@ -388,15 +388,15 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final double d = Double.parseDouble(input);
                     context.setSessionData(tempKey, d);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(tempKey, null);
                 return tempPrompt;
             }
@@ -419,7 +419,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return ChatColor.DARK_GREEN + Language.get("optGeneral");
+            return ChatColor.DARK_GREEN + BukkitLanguage.get("optGeneral");
         }
         
         @Override
@@ -441,15 +441,15 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("optAllowCommands");
+                return ChatColor.YELLOW + BukkitLanguage.get("optAllowCommands");
             case 2:
-                return ChatColor.YELLOW + Language.get("optAllowQuitting");
+                return ChatColor.YELLOW + BukkitLanguage.get("optAllowQuitting");
             case 3:
-                return ChatColor.YELLOW + Language.get("optIgnoreSilkTouch");
+                return ChatColor.YELLOW + BukkitLanguage.get("optIgnoreSilkTouch");
             case 4:
-                return ChatColor.YELLOW + Language.get("optIgnoreBlockReplace");
+                return ChatColor.YELLOW + BukkitLanguage.get("optIgnoreBlockReplace");
             case 5:
-                return ChatColor.YELLOW + Language.get("done");
+                return ChatColor.YELLOW + BukkitLanguage.get("done");
             default:
                 return null;
             }
@@ -462,41 +462,41 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 final Boolean commandsOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_COMMANDS);
                 if (commandsOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canAllowCommands();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + (commandsOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (commandsOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 }
             case 2:
                 final Boolean quittingOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_QUITTING);
                 if (quittingOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canAllowQuitting();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (quittingOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 }
             case 3:
                 final Boolean ignoreOpt = (Boolean) context.getSessionData(Key.OPT_IGNORE_SILK_TOUCH);
                 if (ignoreOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canIgnoreSilkTouch();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + (ignoreOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (ignoreOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 }
             case 4:
                 final Boolean ignoreBlockReplaceOpt = (Boolean) context.getSessionData(Key.OPT_IGNORE_BLOCK_REPLACE);
                 if (ignoreBlockReplaceOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canIgnoreBlockReplace();
-                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + (ignoreBlockReplaceOpt ? ChatColor.GREEN + Language.get("true")
-                            : ChatColor.RED + Language.get("false")) + ChatColor.GRAY + ")";
+                    return ChatColor.GRAY + "(" + (ignoreBlockReplaceOpt ? ChatColor.GREEN + BukkitLanguage.get("true")
+                            : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
                 }
             case 5:
                 return "";
@@ -545,7 +545,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 try {
                     return new QuestOptionsPrompt(context);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;
                 }
             default:
@@ -569,7 +569,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return ChatColor.DARK_GREEN + Language.get("optMultiplayer");
+            return ChatColor.DARK_GREEN + BukkitLanguage.get("optMultiplayer");
         }
         
         @Override
@@ -593,19 +593,19 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("optExternalPartyPlugin");
+                return ChatColor.YELLOW + BukkitLanguage.get("optExternalPartyPlugin");
             case 2:
-                return ChatColor.YELLOW + Language.get("optUsePartiesPlugin");
+                return ChatColor.YELLOW + BukkitLanguage.get("optUsePartiesPlugin");
             case 3:
-                return ChatColor.YELLOW + Language.get("optShareProgressLevel");
+                return ChatColor.YELLOW + BukkitLanguage.get("optShareProgressLevel");
             case 4:
-                return ChatColor.YELLOW + Language.get("optShareOnlySameQuest");
+                return ChatColor.YELLOW + BukkitLanguage.get("optShareOnlySameQuest");
             case 5:
-                return ChatColor.YELLOW + Language.get("optShareDistance");
+                return ChatColor.YELLOW + BukkitLanguage.get("optShareDistance");
             case 6:
-                return ChatColor.YELLOW + Language.get("optHandleOfflinePlayer");
+                return ChatColor.YELLOW + BukkitLanguage.get("optHandleOfflinePlayer");
             case 7:
-                return ChatColor.YELLOW + Language.get("done");
+                return ChatColor.YELLOW + BukkitLanguage.get("done");
              default:
                 return null;
             }
@@ -617,7 +617,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 final String externalOpt = (String) context.getSessionData(Key.OPT_EXTERNAL_PARTY_PLUGIN);
                 if (plugin.getDependencies().getPartyProvider() == null) {
-                    return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
                 } else if (externalOpt != null){
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + externalOpt + ChatColor.GRAY + ")";
                 } else {
@@ -628,12 +628,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 if (partiesOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canUsePartiesPlugin();
                     return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
-                           + Language.get(String.valueOf(defaultOpt)) : ChatColor.RED
-                           + Language.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                           + BukkitLanguage.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                           + BukkitLanguage.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
                     return ChatColor.GRAY + "(" + (partiesOpt ? ChatColor.GREEN 
-                            + Language.get(String.valueOf(partiesOpt)) : ChatColor.RED
-                            + Language.get(String.valueOf(partiesOpt))) + ChatColor.GRAY +  ")";
+                            + BukkitLanguage.get(String.valueOf(partiesOpt)) : ChatColor.RED
+                            + BukkitLanguage.get(String.valueOf(partiesOpt))) + ChatColor.GRAY +  ")";
                 }
             case 3:
                 final Integer shareOpt = (Integer) context.getSessionData(Key.OPT_SHARE_PROGRESS_LEVEL);
@@ -648,12 +648,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 if (requireOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canShareSameQuestOnly();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
-                            + Language.get(String.valueOf(defaultOpt)) : ChatColor.RED
-                            + Language.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                            + BukkitLanguage.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                            + BukkitLanguage.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
                     return ChatColor.GRAY + "(" + (requireOpt ? ChatColor.GREEN 
-                            + Language.get(String.valueOf(requireOpt)) : ChatColor.RED
-                            + Language.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
+                            + BukkitLanguage.get(String.valueOf(requireOpt)) : ChatColor.RED
+                            + BukkitLanguage.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                 }
             case 5:
                 final Double distanceOpt = (Double) context.getSessionData(Key.OPT_SHARE_DISTANCE);
@@ -668,12 +668,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 if (handleOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canHandleOfflinePlayers();
                     return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
-                           + Language.get(String.valueOf(defaultOpt)) : ChatColor.RED
-                           + Language.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                           + BukkitLanguage.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                           + BukkitLanguage.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
                 } else {
                     return ChatColor.GRAY + "(" + (handleOpt ? ChatColor.GREEN 
-                            + Language.get(String.valueOf(handleOpt)) : ChatColor.RED
-                            + Language.get(String.valueOf(handleOpt))) + ChatColor.GRAY +  ")";
+                            + BukkitLanguage.get(String.valueOf(handleOpt)) : ChatColor.RED
+                            + BukkitLanguage.get(String.valueOf(handleOpt))) + ChatColor.GRAY +  ")";
                 }
             case 7:
                 return "";
@@ -730,7 +730,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 try {
                     return new QuestOptionsPrompt(context);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                     return Prompt.END_OF_CONVERSATION;
                 }
             default:

@@ -14,10 +14,10 @@ package me.pikamug.quests.storage;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.StorageType;
-import me.pikamug.quests.storage.implementation.StorageImplementation;
+import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import me.pikamug.quests.storage.implementation.custom.CustomStorageProviders;
-import me.pikamug.quests.storage.implementation.file.SeparatedYamlStorage;
-import me.pikamug.quests.storage.implementation.sql.SqlStorage;
+import me.pikamug.quests.storage.implementation.file.BukkitQuesterYamlStorage;
+import me.pikamug.quests.storage.implementation.sql.BukkitQuesterSqlStorage;
 import me.pikamug.quests.storage.implementation.sql.connection.hikari.MySqlConnectionFactory;
 import me.pikamug.quests.storage.misc.StorageCredentials;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,36 +26,36 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StorageFactory {
+public class BukkitStorageFactory {
     private final BukkitQuestsPlugin plugin;
 
-    public StorageFactory(final BukkitQuestsPlugin plugin) {
+    public BukkitStorageFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public Storage getInstance() {
-        final Storage storage;
+    public QuesterStorage getInstance() {
+        final QuesterStorage storage;
         final StorageType type = StorageType.parse(plugin.getConfig().getString("storage-method.player-data", "yaml"),
                 StorageType.YAML);
         plugin.getLogger().info("Loading storage implementation: " + type.name());
-        storage = new Storage(plugin, createNewImplementation(type));
+        storage = new QuesterStorage(plugin, createNewImplementation(type));
 
         storage.init();
         return storage;
     }
 
-    public StorageImplementation createNewImplementation(final StorageType method) {
+    public QuesterStorageImpl createNewImplementation(final StorageType method) {
         switch (method) {
             case CUSTOM:
                 return CustomStorageProviders.getProvider().provide(plugin);
             case MYSQL:
-                return new SqlStorage(
+                return new BukkitQuesterSqlStorage(
                         plugin,
                         new MySqlConnectionFactory(getDatabaseValues(plugin.getConfig())),
                         plugin.getConfig().getString("storage-data.table_prefix")
                 );
             case YAML:
-                return new SeparatedYamlStorage(plugin, plugin.getDataFolder() + File.separator + "data");
+                return new BukkitQuesterYamlStorage(plugin, plugin.getDataFolder() + File.separator + "data");
             default:
                 throw new RuntimeException("Unknown method: " + method);
         }

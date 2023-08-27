@@ -4,13 +4,13 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.player.BukkitQuestData;
+import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
@@ -101,64 +101,64 @@ public class BukkitZnpcsListener implements Listener {
                                     text += " x " + ChatColor.DARK_AQUA + hand.getAmount() + ChatColor.GRAY;
                                     if (plugin.getConfigSettings().canTranslateNames() && !hasMeta
                                             && !hand.getItemMeta().hasDisplayName()) {
-                                        plugin.getLocaleManager().sendMessage(player, Language
+                                        plugin.getLocaleManager().sendMessage(player, BukkitLanguage
                                                 .get(player, "questInvalidDeliveryItem").replace("<item>", text), hand
                                                 .getType(), hand.getDurability(), null);
                                     } else {
-                                        player.sendMessage(Language.get(player, "questInvalidDeliveryItem")
+                                        player.sendMessage(BukkitLanguage.get(player, "questInvalidDeliveryItem")
                                                 .replace("<item>", text).replace("<item>", BukkitItemUtil.getName(hand)));
                                     }
                                     switch (reasonCode) {
                                         case 1:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "one item is null"));
                                             break;
                                         case 0:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "ERROR"));
                                             break;
                                         case -1:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "name"));
                                             break;
                                         case -2:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "amount"));
                                             break;
                                         case -3:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "durability"));
                                             break;
                                         case -4:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "display name or lore"));
                                             break;
                                         case -5:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "enchantments"));
                                             break;
                                         case -6:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "stored enchants"));
                                             break;
                                         case -7:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "item flags"));
                                             break;
                                         case -8:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "book data"));
                                             break;
                                         case -9:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "potion type"));
                                             break;
                                         case -10:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "fish variant"));
                                             break;
                                         default:
-                                            player.sendMessage(ChatColor.GRAY + Language.get(player, "difference")
+                                            player.sendMessage(ChatColor.GRAY + BukkitLanguage.get(player, "difference")
                                                     .replace("<data>", "unknown"));
                                     }
                                     if (hasMeta) {
@@ -190,8 +190,8 @@ public class BukkitZnpcsListener implements Listener {
                         if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNpc().getUUID())) {
                             final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNpc()
                                     .getUUID());
-                            if (quester.getQuestData(quest) != null && npcIndex > -1
-                                    && !((BukkitQuestData) quester.getQuestData(quest)).npcsInteracted.get(npcIndex)) {
+                            if (quester.getQuestDataOrDefault(quest) != null && npcIndex > -1
+                                    && !((BukkitQuestProgress) quester.getQuestDataOrDefault(quest)).npcsInteracted.get(npcIndex)) {
                                 hasObjective = true;
                             }
                             quester.interactWithNPC(quest, event.getNpc().getUUID());
@@ -254,7 +254,7 @@ public class BukkitZnpcsListener implements Listener {
                         c.begin();
                     }
                 } else {
-                    Language.send(player, ChatColor.YELLOW + Language.get(player, "noMoreQuest"));
+                    BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "noMoreQuest"));
                 }
             }
         }

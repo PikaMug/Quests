@@ -15,7 +15,7 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -41,12 +41,12 @@ public class QuestadminPointsCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_POINTS");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_POINTS");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_POINTS_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_POINTS_HELP");
     }
 
     @Override
@@ -76,7 +76,7 @@ public class QuestadminPointsCommand extends QuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get("playerNotFound"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("playerNotFound"));
                     return;
                 }
             }
@@ -84,25 +84,25 @@ public class QuestadminPointsCommand extends QuestsSubCommand {
             try {
                 points = Integer.parseInt(args[2]);
             } catch (final NumberFormatException e) {
-                cs.sendMessage(ChatColor.YELLOW + Language.get("inputNum"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("inputNum"));
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(points);
-            String msg1 = Language.get("setQuestPoints").replace("<points>", Language.get("questPoints"));
+            String msg1 = BukkitLanguage.get("setQuestPoints").replace("<points>", BukkitLanguage.get("questPoints"));
             msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
             cs.sendMessage(ChatColor.GOLD + msg1);
             if (target.isOnline()) {
                 final Player p = (Player)target;
-                String msg2 = Language.get(p, "questPointsSet").replace("<points>", Language.get("questPoints"));
+                String msg2 = BukkitLanguage.get(p, "questPointsSet").replace("<points>", BukkitLanguage.get("questPoints"));
                 msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
                 msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
                 p.sendMessage(ChatColor.GREEN + msg2);
             }
             quester.saveData();
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 

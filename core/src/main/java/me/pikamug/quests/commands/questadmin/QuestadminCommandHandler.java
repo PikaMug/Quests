@@ -27,7 +27,7 @@ import me.pikamug.quests.commands.questadmin.subcommands.QuestadminSetstageComma
 import me.pikamug.quests.commands.questadmin.subcommands.QuestadminStatsCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.QuestadminTakepointsCommand;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -76,7 +76,7 @@ public class QuestadminCommandHandler {
                 return true;
             }
         }
-        cs.sendMessage(ChatColor.YELLOW + Language.get("questsUnknownAdminCommand"));
+        cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("questsUnknownAdminCommand"));
         return true;
     }
 
@@ -100,92 +100,92 @@ public class QuestadminCommandHandler {
 
     private void printAdminHelp(final CommandSender cs) {
         if (!(cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin"))) {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
             return;
         }
-        cs.sendMessage(ChatColor.GOLD + Language.get("questAdminHelpTitle"));
-        cs.sendMessage(ChatColor.YELLOW + "/questadmin" + ChatColor.RED + " " + Language.get("COMMAND_QUESTADMIN_HELP"));
+        cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get("questAdminHelpTitle"));
+        cs.sendMessage(ChatColor.YELLOW + "/questadmin" + ChatColor.RED + " " + BukkitLanguage.get("COMMAND_QUESTADMIN_HELP"));
         final boolean translateSubCommands = plugin.getConfigSettings().canTranslateSubCommands();
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.stats")) {
-            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Language.get("COMMAND_QUESTADMIN_STATS_HELP")
-                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_STATS")
+            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + BukkitLanguage.get("COMMAND_QUESTADMIN_STATS_HELP")
+                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_STATS")
                             : "stats") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.give")) {
-            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Language.get("COMMAND_QUESTADMIN_GIVE_HELP")
-                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_GIVE")
+            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + BukkitLanguage.get("COMMAND_QUESTADMIN_GIVE_HELP")
+                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_GIVE")
                             : "give") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.quit")) {
-            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + Language.get("COMMAND_QUESTADMIN_QUIT_HELP")
-                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_QUIT")
+            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED + BukkitLanguage.get("COMMAND_QUESTADMIN_QUIT_HELP")
+                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_QUIT")
                             : "quit") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.points")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_POINTS_HELP")
-                    .replace("<points>", Language.get("questPoints"))
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_POINTS_HELP")
+                    .replace("<points>", BukkitLanguage.get("questPoints"))
                     .replace("<command>", ChatColor.GOLD
-                            + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_POINTS") : "points") + ChatColor.RED));
+                            + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_POINTS") : "points") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.takepoints")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
-                    .replace("<points>", Language.get("questPoints"))
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_TAKEPOINTS_HELP")
+                    .replace("<points>", BukkitLanguage.get("questPoints"))
                     .replace("<command>", ChatColor.GOLD
-                            + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints")
+                            + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_TAKEPOINTS") : "takepoints")
                             + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.givepoints")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
-                    .replace("<points>", Language.get("questPoints"))
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_GIVEPOINTS_HELP")
+                    .replace("<points>", BukkitLanguage.get("questPoints"))
                     .replace("<command>", ChatColor.GOLD
-                            + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints")
+                            + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints")
                             + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
-                    .replace("<points>", Language.get("questPoints"))
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
+                    .replace("<points>", BukkitLanguage.get("questPoints"))
                     .replace("<command>", ChatColor.GOLD
-                            + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall") + ChatColor.RED));
+                            + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_FINISH_HELP").replace("<command>", ChatColor.GOLD
-                    + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_FINISH") : "finish") + ChatColor.RED));
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_FINISH_HELP").replace("<command>", ChatColor.GOLD
+                    + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_FINISH") : "finish") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.nextstage")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP").replace("<command>", ChatColor.GOLD
-                    + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage") + ChatColor.RED));
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_NEXTSTAGE_HELP").replace("<command>", ChatColor.GOLD
+                    + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_NEXTSTAGE") : "nextstage") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.setstage")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_SETSTAGE_HELP").replace("<command>", ChatColor.GOLD
-                    + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage") + ChatColor.RED));
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_SETSTAGE_HELP").replace("<command>", ChatColor.GOLD
+                    + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_SETSTAGE") : "setstage") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reset")) {
-            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED+ Language.get("COMMAND_QUESTADMIN_RESET_HELP")
-                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_RESET")
+            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED+ BukkitLanguage.get("COMMAND_QUESTADMIN_RESET_HELP")
+                    .replace("<command>", ChatColor.GOLD + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_RESET")
                             : "reset") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.remove")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_REMOVE_HELP").replace("<command>", ChatColor.GOLD
-                    + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_REMOVE") : "remove") + ChatColor.RED));
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_REMOVE_HELP").replace("<command>", ChatColor.GOLD
+                    + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_REMOVE") : "remove") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get("COMMAND_QUESTADMIN_RELOAD_HELP").replace("<command>", ChatColor.GOLD
-                    + (translateSubCommands ? Language.get("COMMAND_QUESTADMIN_RELOAD") : "reload") + ChatColor.RED));
+                    + BukkitLanguage.get("COMMAND_QUESTADMIN_RELOAD_HELP").replace("<command>", ChatColor.GOLD
+                    + (translateSubCommands ? BukkitLanguage.get("COMMAND_QUESTADMIN_RELOAD") : "reload") + ChatColor.RED));
         }
     }
 
     private String getAdminCommandUsage(final CommandSender cs, final String cmd) {
-        return ChatColor.RED + Language.get(cs, "usage") + ": " + ChatColor.YELLOW + "/questadmin "
-                + Language.get(cs, Language.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP")
+        return ChatColor.RED + BukkitLanguage.get(cs, "usage") + ": " + ChatColor.YELLOW + "/questadmin "
+                + BukkitLanguage.get(cs, BukkitLanguage.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP")
                 .replace("<command>", cmd.toLowerCase());
     }
 }

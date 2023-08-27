@@ -17,7 +17,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.events.command.QuestsCommandPreQuestsListEvent;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,12 +37,12 @@ public class QuestsListCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_LIST");
+        return BukkitLanguage.get("COMMAND_LIST");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_LIST_HELP");
+        return BukkitLanguage.get("COMMAND_LIST_HELP");
     }
 
     @Override
@@ -65,7 +65,7 @@ public class QuestsListCommand extends QuestsSubCommand {
         if (cs.hasPermission(getPermission())) {
             if (!(cs instanceof Player)) {
                 int num = 1;
-                cs.sendMessage(ChatColor.GOLD + Language.get("questListTitle"));
+                cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get("questListTitle"));
                 for (final Quest q : plugin.getLoadedQuests()) {
                     cs.sendMessage(ChatColor.YELLOW + "" + num + ". " + q.getName());
                     num++;
@@ -87,7 +87,7 @@ public class QuestsListCommand extends QuestsSubCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                     if (page < 1) {
-                        cs.sendMessage(ChatColor.YELLOW + Language.get(player, "pageSelectionPosNum"));
+                        cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "pageSelectionPosNum"));
                     } else {
                         final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
                         final QuestsCommandPreQuestsListEvent preEvent
@@ -100,11 +100,11 @@ public class QuestsListCommand extends QuestsSubCommand {
                         quester.listQuests(quester, page);
                     }
                 } catch (final NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get(player, "pageSelectionNum"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(player, "pageSelectionNum"));
                 }
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get(cs, "noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get(cs, "noPermission"));
         }
     }
 }

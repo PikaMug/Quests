@@ -17,7 +17,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,12 +41,12 @@ public class QuestsQuitCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUIT");
+        return BukkitLanguage.get("COMMAND_QUIT");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUIT_HELP");
+        return BukkitLanguage.get("COMMAND_QUIT_HELP");
     }
 
     @Override
@@ -80,20 +80,20 @@ public class QuestsQuitCommand extends QuestsSubCommand {
                 final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
-                        final String msg = ChatColor.YELLOW + Language.get(player, "questQuit").replace("<quest>",
+                        final String msg = ChatColor.YELLOW + BukkitLanguage.get(player, "questQuit").replace("<quest>",
                                 ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
                         quester.abandonQuest(quest, msg);
                     } else {
-                        Language.send(player, ChatColor.YELLOW + Language.get(player, "questQuitDisabled"));
+                        BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "questQuitDisabled"));
                     }
                 } else {
-                    Language.send(player, ChatColor.RED + Language.get(player, "questNotFound"));
+                    BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "questNotFound"));
                 }
             } else {
-                Language.send(player, ChatColor.YELLOW + Language.get(player, "noActiveQuest"));
+                BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "noActiveQuest"));
             }
         } else {
-            Language.send(player, ChatColor.RED + Language.get(player, "noPermission"));
+            BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "noPermission"));
         }
     }
 

@@ -1,7 +1,10 @@
-package me.pikamug.quests.conditions;
+package me.pikamug.quests.storage.implementation.file;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.conditions.BukkitCondition;
+import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.exceptions.ConditionFormatException;
+import me.pikamug.quests.storage.implementation.ConditionStorageImpl;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import net.citizensnpcs.api.CitizensAPI;
@@ -24,17 +27,24 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BukkitConditionLoader implements ConditionLoader {
+public class BukkitConditionYamlStorage implements ConditionStorageImpl {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitConditionLoader(final BukkitQuestsPlugin plugin) {
+    public BukkitConditionYamlStorage(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Load conditions from file
-     */
+    @Override
+    public BukkitQuestsPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public String getImplementationName() {
+        return "YAML";
+    }
+
     @Override
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
@@ -73,7 +83,12 @@ public class BukkitConditionLoader implements ConditionLoader {
         }
     }
 
-    private BukkitCondition loadCondition(final String name) throws ConditionFormatException {
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public BukkitCondition loadCondition(final String name) throws ConditionFormatException {
         if (name == null) {
             return null;
         }

@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * Quest objective data for a specified Quester
+ * Quest objective progress for a specified Quester
  */
-public class BukkitQuestData implements QuestData {
+public class BukkitQuestProgress implements QuestProgress {
 
     private final Quester quester;
 
-    public BukkitQuestData(final Quester quester) {
+    public BukkitQuestProgress(final Quester quester) {
         this.quester = quester;
     }
     

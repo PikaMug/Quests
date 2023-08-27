@@ -37,44 +37,44 @@ public class BukkitMiscUtil {
         final long milliSeconds2 = (((milliseconds % 86400000) % 3600000) % 60000) % 1000;
         if (days > 0L) {
             if (days == 1L) {
-                message += " 1 " + Language.get("timeDay") + ",";
+                message += " 1 " + BukkitLanguage.get("timeDay") + ",";
             } else {
-                message += " " + days + " " + Language.get("timeDays") + ",";
+                message += " " + days + " " + BukkitLanguage.get("timeDays") + ",";
             }
         }
         if (hours > 0L) {
             if (hours == 1L) {
-                message += " 1 " + Language.get("timeHour") + ",";
+                message += " 1 " + BukkitLanguage.get("timeHour") + ",";
             } else {
-                message += " " + hours + " " + Language.get("timeHours") + ",";
+                message += " " + hours + " " + BukkitLanguage.get("timeHours") + ",";
             }
         }
         if (minutes > 0L) {
             if (minutes == 1L) {
-                message += " 1 " + Language.get("timeMinute") + ",";
+                message += " 1 " + BukkitLanguage.get("timeMinute") + ",";
             } else {
-                message += " " + minutes + " " + Language.get("timeMinutes") + ",";
+                message += " " + minutes + " " + BukkitLanguage.get("timeMinutes") + ",";
             }
         }
         if (seconds > 0L) {
             if (seconds == 1L) {
-                message += " 1 " + Language.get("timeSecond") + ",";
+                message += " 1 " + BukkitLanguage.get("timeSecond") + ",";
             } else {
-                message += " " + seconds + " " + Language.get("timeSeconds") + ",";
+                message += " " + seconds + " " + BukkitLanguage.get("timeSeconds") + ",";
             }
         } else {
             if (milliSeconds2 > 0L) {
                 if (milliSeconds2 == 1L) {
-                    message += " 1 " + Language.get("timeMillisecond") + ",";
+                    message += " 1 " + BukkitLanguage.get("timeMillisecond") + ",";
                 } else {
-                    message += " " + milliSeconds2 + " " + Language.get("timeMilliseconds") + ",";
+                    message += " " + milliSeconds2 + " " + BukkitLanguage.get("timeMilliseconds") + ",";
                 }
             }
         }
         if (message.length() > 0) {
             message = message.substring(1, message.length() - 1);
         } else {
-            message = "-1 " + Language.get("timeSeconds");
+            message = "-1 " + BukkitLanguage.get("timeSeconds");
         }
         return message;
     }
@@ -180,9 +180,9 @@ public class BukkitMiscUtil {
         if (color == null) {
             return "White";
         }
-        if (!Language.get("COLOR_" + color.name()).equals("NULL")) {
+        if (!BukkitLanguage.get("COLOR_" + color.name()).equals("NULL")) {
             // Legacy
-            return Language.get("COLOR_" + color.name());
+            return BukkitLanguage.get("COLOR_" + color.name());
         } else {
             final String baseString = color.toString();
             final String[] substrings = baseString.split("_");

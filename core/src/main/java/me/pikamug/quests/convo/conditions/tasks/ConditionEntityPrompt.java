@@ -19,7 +19,7 @@ import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -54,7 +54,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("conditionEditorEntity");
+        return BukkitLanguage.get("conditionEditorEntity");
     }
     
     @Override
@@ -74,11 +74,11 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + Language.get("conditionEditorRideEntity");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorRideEntity");
         case 2:
-            return ChatColor.YELLOW + Language.get("conditionEditorRideNPC");
+            return ChatColor.YELLOW + BukkitLanguage.get("conditionEditorRideNPC");
         case 3:
-            return ChatColor.GREEN + Language.get("done");
+            return ChatColor.GREEN + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -90,7 +90,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
         switch(number) {
         case 1:
             if (context.getSessionData(Key.C_WHILE_RIDING_ENTITY) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> whileRidingEntity = (List<String>) context.getSessionData(Key.C_WHILE_RIDING_ENTITY);
@@ -105,7 +105,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
         case 2:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 if (context.getSessionData(Key.C_WHILE_RIDING_NPC) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<UUID> whileRidingNpc = (List<UUID>) context.getSessionData(Key.C_WHILE_RIDING_NPC);
@@ -118,7 +118,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
             }
         case 3:
             return "";
@@ -153,7 +153,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
             try {
                 return new ConditionMainPrompt(context);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
@@ -169,12 +169,12 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorEntitiesTitle");
+            return BukkitLanguage.get("conditionEditorEntitiesTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("conditionEditorEntitiesPrompt");
+            return BukkitLanguage.get("conditionEditorEntitiesPrompt");
         }
         
         @Override
@@ -208,7 +208,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (BukkitMiscUtil.getProperMobType(s) != null) {
@@ -218,12 +218,12 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                             mobTypes.add(s);
                             context.setSessionData(Key.C_WHILE_RIDING_ENTITY, mobTypes);
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("stageEditorInvalidMob")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidMob")
                                     .replace("<input>", s));
                             return new ConditionEntitiesPrompt(context);
                         }
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("stageEditorInvalidMob")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
                         return new ConditionEntitiesPrompt(context);
                     }
@@ -241,12 +241,12 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("conditionEditorNpcsTitle");
+            return BukkitLanguage.get("conditionEditorNpcsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("enterNpcUniqueIds");
+            return BukkitLanguage.get("enterNpcUniqueIds");
         }
         
         @Override
@@ -259,7 +259,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + Language.get("questEditorClickNPCStart");
+                return ChatColor.YELLOW + BukkitLanguage.get("questEditorClickNPCStart");
             } else {
                 return ChatColor.YELLOW + getQueryText(context);
             }
@@ -271,7 +271,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final LinkedList<String> npcs = context.getSessionData(Key.C_WHILE_RIDING_NPC) != null
                         ? (LinkedList<String>) context.getSessionData(Key.C_WHILE_RIDING_NPC) : new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -280,12 +280,12 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                         if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("stageEditorInvalidNPC")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             return new ConditionNpcsPrompt(context);
                         }
                     } catch (final IllegalArgumentException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("stageEditorNotListOfUniqueIds")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", input));
                         return new ConditionNpcsPrompt(context);
                     }

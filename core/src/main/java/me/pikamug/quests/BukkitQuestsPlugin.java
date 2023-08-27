@@ -14,13 +14,9 @@ package me.pikamug.quests;
 
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.actions.ActionLoader;
 import me.pikamug.quests.actions.BukkitActionFactory;
-import me.pikamug.quests.actions.BukkitActionLoader;
 import me.pikamug.quests.conditions.BukkitConditionFactory;
-import me.pikamug.quests.conditions.BukkitConditionLoader;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.conditions.ConditionLoader;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
@@ -38,24 +34,25 @@ import me.pikamug.quests.listeners.BukkitPlayerListener;
 import me.pikamug.quests.listeners.BukkitUniteListener;
 import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
-import me.pikamug.quests.module.BukkitCustomLoader;
-import me.pikamug.quests.module.CustomLoader;
+import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
+import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuestFactory;
-import me.pikamug.quests.quests.BukkitQuestLoader;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.QuestLoader;
 import me.pikamug.quests.statistics.BukkitMetrics;
-import me.pikamug.quests.storage.Storage;
-import me.pikamug.quests.storage.StorageFactory;
+import me.pikamug.quests.storage.BukkitStorageFactory;
+import me.pikamug.quests.storage.QuesterStorage;
+import me.pikamug.quests.storage.implementation.file.BukkitActionYamlStorage;
+import me.pikamug.quests.storage.implementation.file.BukkitConditionYamlStorage;
+import me.pikamug.quests.storage.implementation.file.BukkitQuestYamlStorage;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitUpdateChecker;
-import me.pikamug.quests.util.Language;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -90,11 +87,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private boolean loading = true;
     private String bukkitVersion = "0";
     private BukkitDependencies depends;
-    private ActionLoader actionLoader;
-    private ConditionLoader conditionLoader;
+    private BukkitActionYamlStorage actionLoader;
+    private BukkitConditionYamlStorage conditionLoader;
     private ConfigSettings configSettings;
-    private CustomLoader customLoader;
-    private QuestLoader questLoader;
+    private ModuleStorageImpl customLoader;
+    private BukkitQuestYamlStorage questLoader;
     private List<CustomObjective> customObjectives = new LinkedList<>();
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
@@ -121,7 +118,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitPartiesListener partiesListener;
     private BukkitDenizenTrigger trigger;
     private LocaleManager localeManager;
-    private Storage storage;
+    private QuesterStorage storage;
 
     @Override
     public void onEnable() {
@@ -137,11 +134,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // 2 - Initialize variables
         bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        actionLoader = new BukkitActionLoader(this);
-        conditionLoader = new BukkitConditionLoader(this);
+        actionLoader = new BukkitActionYamlStorage(this);
+        conditionLoader = new BukkitConditionYamlStorage(this);
         configSettings = new BukkitConfigSettings(this);
-        customLoader = new BukkitCustomLoader(this);
-        questLoader = new BukkitQuestLoader(this);
+        customLoader = new BukkitModuleJarStorage(this);
+        questLoader = new BukkitQuestYamlStorage(this);
         try {
             Class.forName("me.pikamug.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
@@ -173,7 +170,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         
         // 4 - Setup language files
         try {
-            Language.init(this);
+            BukkitLanguage.init(this);
         } catch (final IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -193,7 +190,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         getConfig().options().copyDefaults(true);
         getConfig().options().header("See https://pikamug.gitbook.io/quests/setup/configuration");
         saveConfig();
-        final StorageFactory storageFactory = new StorageFactory(this);
+        final BukkitStorageFactory storageFactory = new BukkitStorageFactory(this);
         storage = storageFactory.getInstance();
         
         // 9 - Setup commands
@@ -241,7 +238,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // 12 - Attempt to check for updates
         new BukkitUpdateChecker(this, 3711).getVersion(version -> {
             if (!getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
-                getLogger().info(ChatColor.DARK_GREEN + Language.get("updateTo").replace("<version>",
+                getLogger().info(ChatColor.DARK_GREEN + BukkitLanguage.get("updateTo").replace("<version>",
                         version).replace("<url>", ChatColor.AQUA + getDescription().getWebsite()));
             }
         });
@@ -555,7 +552,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return localeManager;
     }
 
-    public Storage getStorage() {
+    public QuesterStorage getStorage() {
         return storage;
     }
 
@@ -621,7 +618,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             actionLoader.init();
             questLoader.init();
             getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
-                    + conditions.size() + " Condition(s) and " + Language.size() + " Phrase(s)");
+                    + conditions.size() + " Condition(s) and " + BukkitLanguage.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
                 final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
                 if (!quester.hasData()) {
@@ -652,7 +649,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     public void reload(final ReloadCallback<Boolean> callback) {
         if (loading) {
-            getLogger().warning(ChatColor.YELLOW + Language.get("errorLoading"));
+            getLogger().warning(ChatColor.YELLOW + BukkitLanguage.get("errorLoading"));
             return;
         }
         loading = true;
@@ -660,9 +657,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 getStorage().saveOfflineQuesters().get();
-                Language.clear();
+                BukkitLanguage.clear();
                 configSettings.init();
-                Language.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
+                BukkitLanguage.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
                 quests.clear();
                 actions.clear();
                 conditions.clear();

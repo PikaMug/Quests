@@ -10,11 +10,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.storage.implementation.custom;
+package me.pikamug.quests.storage.implementation;
 
 import me.pikamug.quests.Quests;
-import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
+import me.pikamug.quests.exceptions.QuestFormatException;
+import me.pikamug.quests.quests.Quest;
 
-public interface CustomStorageProvider {
-    QuesterStorageImpl provide(Quests plugin);
+public interface QuestStorageImpl {
+    Quests getPlugin();
+
+    String getImplementationName();
+
+    void init() throws Exception;
+
+    void close();
+
+    Quest loadQuest(final String name) throws QuestFormatException;
 }

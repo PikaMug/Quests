@@ -25,7 +25,7 @@ import me.pikamug.quests.commands.quests.subcommands.QuestsStatsCommand;
 import me.pikamug.quests.commands.quests.subcommands.QuestsTakeCommand;
 import me.pikamug.quests.commands.quests.subcommands.QuestsTopCommand;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -73,7 +73,7 @@ public class QuestsCommandHandler {
                 return true;
             }
         }
-        cs.sendMessage(ChatColor.YELLOW + Language.get(cs, "questsUnknownCommand"));
+        cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(cs, "questsUnknownCommand"));
         return true;
     }
 
@@ -97,11 +97,11 @@ public class QuestsCommandHandler {
 
     private void printHelp(final CommandSender cs) {
         if (!cs.hasPermission("quests.quests")) {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
             return;
         }
-        cs.sendMessage(ChatColor.GOLD + Language.get("questHelpTitle"));
-        cs.sendMessage(ChatColor.YELLOW + "/quests " + Language.get("questDisplayHelp"));
+        cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get("questHelpTitle"));
+        cs.sendMessage(ChatColor.YELLOW + "/quests " + BukkitLanguage.get("questDisplayHelp"));
         for (final QuestsSubCommand cmd : subCommands.values()) {
             if (cmd.getName().equals("choice")) {
                 continue;
@@ -111,21 +111,21 @@ public class QuestsCommandHandler {
                     + ChatColor.YELLOW));
         }
         if (cs instanceof Player) {
-            cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + Language.get(cs, "COMMAND_QUEST_HELP"));
+            cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + BukkitLanguage.get(cs, "COMMAND_QUEST_HELP"));
             if (cs.hasPermission("quests.questinfo")) {
                 cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW
-                        + Language.get(cs, "COMMAND_QUESTINFO_HELP"));
+                        + BukkitLanguage.get(cs, "COMMAND_QUESTINFO_HELP"));
             }
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + Language.get(cs, "COMMAND_QUESTADMIN_HELP"));
+                    + BukkitLanguage.get(cs, "COMMAND_QUESTADMIN_HELP"));
         }
     }
 
     private String getCommandUsage(final CommandSender cs, final String cmd) {
-        return ChatColor.RED + Language.get(cs, "usage") + ": " + ChatColor.YELLOW + "/quests "
-                + Language.get(cs, Language.getKeyFromPrefix("COMMAND_", cmd) + "_HELP")
+        return ChatColor.RED + BukkitLanguage.get(cs, "usage") + ": " + ChatColor.YELLOW + "/quests "
+                + BukkitLanguage.get(cs, BukkitLanguage.getKeyFromPrefix("COMMAND_", cmd) + "_HELP")
                 .replace("<command>", cmd.toLowerCase());
     }
 }

@@ -102,7 +102,7 @@ public interface Quester extends Comparable<Quester> {
 
     Stage getCurrentStage(final Quest quest);
 
-    QuestData getQuestData(final Quest quest);
+    QuestProgress getQuestDataOrDefault(final Quest quest);
 
     boolean hasJournal();
 
@@ -224,7 +224,7 @@ public interface Quester extends Comparable<Quester> {
 
     void hardStagePut(final Quest key, final Integer val);
 
-    void hardDataPut(final Quest key, final QuestData val);
+    void hardDataPut(final Quest key, final QuestProgress val);
 
     boolean canUseCompass();
 

@@ -10,11 +10,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package me.pikamug.quests.storage.implementation.custom;
+package me.pikamug.quests.storage.implementation;
 
 import me.pikamug.quests.Quests;
-import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
+import me.pikamug.quests.player.Quester;
 
-public interface CustomStorageProvider {
-    QuesterStorageImpl provide(Quests plugin);
+import java.util.Collection;
+import java.util.UUID;
+
+public interface QuesterStorageImpl {
+    Quests getPlugin();
+
+    String getImplementationName();
+
+    void init() throws Exception;
+
+    void close();
+    
+    Quester loadQuester(final UUID uniqueId) throws Exception;
+
+    void saveQuester(final Quester quester) throws Exception;
+
+    void deleteQuester(final UUID uniqueId) throws Exception;
+
+    String getQuesterLastKnownName(final UUID uniqueId) throws Exception;
+    
+    Collection<UUID> getSavedUniqueIds() throws Exception;
 }

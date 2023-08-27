@@ -14,7 +14,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -43,12 +43,12 @@ public class QuestsTopCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_TOP");
+        return BukkitLanguage.get("COMMAND_TOP");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_TOP_HELP");
+        return BukkitLanguage.get("COMMAND_TOP_HELP");
     }
 
     @Override
@@ -76,12 +76,12 @@ public class QuestsTopCommand extends QuestsSubCommand {
                 try {
                     topNumber = Integer.parseInt(args[1]);
                 } catch (final NumberFormatException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get(cs, "inputNum"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(cs, "inputNum"));
                     return;
                 }
             }
             if (topNumber < 1 || topNumber > plugin.getConfigSettings().getTopLimit()) {
-                cs.sendMessage(ChatColor.YELLOW + Language.get(cs, "invalidRange").replace("<least>", "1")
+                cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get(cs, "invalidRange").replace("<least>", "1")
                         .replace("<greatest>", String.valueOf(plugin.getConfigSettings().getTopLimit())));
                 return;
             }
@@ -105,14 +105,14 @@ public class QuestsTopCommand extends QuestsSubCommand {
                 }
                 final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
                 int numPrinted = 0;
-                String msg = Language.get(cs, "topQuestersTitle");
+                String msg = BukkitLanguage.get(cs, "topQuestersTitle");
                 msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
                 cs.sendMessage(ChatColor.GOLD + msg);
                 for (final Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
                     numPrinted++;
                     cs.sendMessage(ChatColor.YELLOW + String.valueOf(numPrinted) + ". " + entry.getKey() + " - "
                             + ChatColor.DARK_PURPLE + entry.getValue() + ChatColor.YELLOW + " "
-                            + Language.get(cs, "questPoints"));
+                            + BukkitLanguage.get(cs, "questPoints"));
                     if (numPrinted == topNumber) {
                         break;
                     }

@@ -16,8 +16,8 @@ import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.storage.Storage;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.storage.QuesterStorage;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -43,12 +43,12 @@ public class QuestadminResetCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_RESET");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_RESET");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_RESET_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_RESET_HELP");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class QuestadminResetCommand extends QuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get("playerNotFound"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("playerNotFound"));
                     return;
                 }
             }
@@ -92,9 +92,9 @@ public class QuestadminResetCommand extends QuestsSubCommand {
                 quester.hardClear();
                 quester.saveData();
                 quester.updateJournal();
-                final Storage storage = plugin.getStorage();
+                final QuesterStorage storage = plugin.getStorage();
                 storage.deleteQuester(id);
-                String msg = Language.get("questReset");
+                String msg = BukkitLanguage.get("questReset");
                 if (target.getName() != null) {
                     msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
                 } else {
@@ -111,7 +111,7 @@ public class QuestadminResetCommand extends QuestsSubCommand {
             temp2.add(quester);
             plugin.setOfflineQuesters(temp2);
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 

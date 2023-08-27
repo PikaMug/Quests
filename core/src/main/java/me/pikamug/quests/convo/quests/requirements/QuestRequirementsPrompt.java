@@ -25,7 +25,7 @@ import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -67,7 +67,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return Language.get("requirementsTitle").replace("<quest>", (String) Objects
+        return BukkitLanguage.get("requirementsTitle").replace("<quest>", (String) Objects
                 .requireNonNull(context.getSessionData(Key.Q_NAME)));
     }
     
@@ -122,44 +122,44 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                return ChatColor.YELLOW + Language.get("reqSetMoney");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqSetMoney");
             } else {
-                return ChatColor.GRAY + Language.get("reqSetMoney");
+                return ChatColor.GRAY + BukkitLanguage.get("reqSetMoney");
             }
         case 2:
-            return ChatColor.YELLOW + Language.get("reqSetQuestPoints").replace("<points>", Language.get("questPoints"));
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetQuestPoints").replace("<points>", BukkitLanguage.get("questPoints"));
         case 3:
-            return ChatColor.YELLOW + Language.get("reqSetItem");
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetItem");
         case 4:
-            return ChatColor.YELLOW + Language.get("reqSetExperience");
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetExperience");
         case 5:
-            return ChatColor.YELLOW + Language.get("reqSetPerms");
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetPerms");
         case 6:
-            return ChatColor.YELLOW + Language.get("reqSetQuest");
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetQuest");
         case 7:
-            return ChatColor.YELLOW + Language.get("reqSetQuestBlocks");
+            return ChatColor.YELLOW + BukkitLanguage.get("reqSetQuestBlocks");
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
-                return ChatColor.YELLOW + Language.get("reqSetMcMMO");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqSetMcMMO");
             } else {
-                return ChatColor.GRAY + Language.get("reqSetMcMMO");
+                return ChatColor.GRAY + BukkitLanguage.get("reqSetMcMMO");
             }
         case 9:
             if (plugin.getDependencies().getHeroes() != null) {
-                return ChatColor.YELLOW + Language.get("reqSetHeroes");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqSetHeroes");
             } else {
-                return ChatColor.GRAY + Language.get("reqSetHeroes");
+                return ChatColor.GRAY + BukkitLanguage.get("reqSetHeroes");
             }
         case 10:
-            return ChatColor.DARK_PURPLE + Language.get("reqSetCustom");
+            return ChatColor.DARK_PURPLE + BukkitLanguage.get("reqSetCustom");
         case 11:
             if (!hasRequirement) {
-                return ChatColor.GRAY + Language.get("overrideCreateSet");
+                return ChatColor.GRAY + BukkitLanguage.get("overrideCreateSet");
             } else {
-                return ChatColor.YELLOW + Language.get("overrideCreateSet");
+                return ChatColor.YELLOW + BukkitLanguage.get("overrideCreateSet");
             }
         case 12:
-            return ChatColor.YELLOW + Language.get("done");
+            return ChatColor.YELLOW + BukkitLanguage.get("done");
         default:
             return null;
         }
@@ -173,25 +173,25 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 final Integer moneyReq = (Integer) context.getSessionData(Key.REQ_MONEY);
                 if (moneyReq == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
                             + (moneyReq > 1 ? plugin.getDependencies().getVaultEconomy().currencyNamePlural()
                             : plugin.getDependencies().getVaultEconomy().currencyNameSingular() + ChatColor.GRAY + ")");
                 }
             } else {
-                return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
             }
         case 2:
             if (context.getSessionData(Key.REQ_QUEST_POINTS) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.REQ_QUEST_POINTS) + " "
-                        + Language.get("questPoints") + ChatColor.GRAY + ")";
+                        + BukkitLanguage.get("questPoints") + ChatColor.GRAY + ")";
             }
         case 3:
             if (context.getSessionData(Key.REQ_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(Key.REQ_ITEMS);
@@ -206,14 +206,14 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         case 4:
             if (context.getSessionData(Key.REQ_EXP) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.REQ_EXP) + " "
-                        + Language.get("points") + ChatColor.GRAY + ")";
+                        + BukkitLanguage.get("points") + ChatColor.GRAY + ")";
             }
         case 5:
             if (context.getSessionData(Key.REQ_PERMISSION) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> perms = (List<String>) context.getSessionData(Key.REQ_PERMISSION);
@@ -226,7 +226,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         case 6:
             if (context.getSessionData(Key.REQ_QUEST) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> questReq = (List<String>) context.getSessionData(Key.REQ_QUEST);
@@ -242,7 +242,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             }
         case 7:
             if (context.getSessionData(Key.REQ_QUEST_BLOCK) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final List<String> questBlockReq = (List<String>) context.getSessionData(Key.REQ_QUEST_BLOCK);
@@ -259,7 +259,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 if (context.getSessionData(Key.REQ_MCMMO_SKILLS) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> skills = (List<String>) context.getSessionData(Key.REQ_MCMMO_SKILLS);
@@ -268,38 +268,38 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                         for (final String s : skills) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_GREEN)
                                     .append(s).append(ChatColor.RESET).append(ChatColor.YELLOW).append(" ")
-                                    .append(Language.get("mcMMOLevel")).append(" ").append(ChatColor.GREEN)
+                                    .append(BukkitLanguage.get("mcMMOLevel")).append(" ").append(ChatColor.GREEN)
                                     .append(amounts.get(skills.indexOf(s)));
                         }
                     }
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
             }
         case 9:
             if (plugin.getDependencies().getHeroes() != null) {
                 if (context.getSessionData(Key.REQ_HEROES_PRIMARY_CLASS) == null
                         && context.getSessionData(Key.REQ_HEROES_SECONDARY_CLASS) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")\n";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")\n";
                 } else {
                     String text = "\n";
                     if (context.getSessionData(Key.REQ_HEROES_PRIMARY_CLASS) != null) {
-                        text += ChatColor.AQUA + "    " + Language.get("reqHeroesPrimaryDisplay") + " "
+                        text += ChatColor.AQUA + "    " + BukkitLanguage.get("reqHeroesPrimaryDisplay") + " "
                                 + ChatColor.BLUE + context.getSessionData(Key.REQ_HEROES_PRIMARY_CLASS);
                     }
                     if (context.getSessionData(Key.REQ_HEROES_SECONDARY_CLASS) != null) {
-                        text += ChatColor.AQUA + "    " + Language.get("reqHeroesSecondaryDisplay") + " "
+                        text += ChatColor.AQUA + "    " + BukkitLanguage.get("reqHeroesSecondaryDisplay") + " "
                                 + ChatColor.BLUE + context.getSessionData(Key.REQ_HEROES_SECONDARY_CLASS);
                     }
                     return text;
                 }
             } else {
-                return ChatColor.GRAY + "(" + Language.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
             }
         case 10:
            if (context.getSessionData(Key.REQ_CUSTOM) == null) {
-                return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
            } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<String> customReq = (LinkedList<String>) context.getSessionData(Key.REQ_CUSTOM);
@@ -313,9 +313,9 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         case 11:
             if (context.getSessionData(Key.REQ_FAIL_MESSAGE) == null) {
                 if (!hasRequirement) {
-                    return ChatColor.GRAY + "(" + Language.get("stageEditorOptional") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("stageEditorOptional") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 }
             } else {
                 final StringBuilder text = new StringBuilder();
@@ -339,8 +339,8 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
     @Override
     public @NotNull String getBasicPromptText(final ConversationContext context) {
         final String input = (String) context.getSessionData(classPrefix + "-override");
-        if (input != null && !input.equalsIgnoreCase(Language.get("cancel"))) {
-            if (input.equalsIgnoreCase(Language.get("clear"))) {
+        if (input != null && !input.equalsIgnoreCase(BukkitLanguage.get("cancel"))) {
+            if (input.equalsIgnoreCase(BukkitLanguage.get("clear"))) {
                 context.setSessionData(Key.REQ_FAIL_MESSAGE, null);
             } else {
                 final LinkedList<String> overrides = new LinkedList<>();
@@ -409,10 +409,10 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 return new OverridePrompt.Builder()
                         .context(context)
                         .source(this)
-                        .promptText(Language.get("overrideCreateEnter"))
+                        .promptText(BukkitLanguage.get("overrideCreateEnter"))
                         .build();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("invalidOption"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidOption"));
                 return new QuestRequirementsPrompt(context);
             }
         case 12:
@@ -453,7 +453,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("rewMoneyPrompt");
+            return BukkitLanguage.get("rewMoneyPrompt");
         }
 
         @Override
@@ -465,10 +465,10 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 text = text.replace("<money>", ChatColor.DARK_PURPLE+ ((plugin.getDependencies().getVaultEconomy()
-                        .currencyNamePlural().isEmpty() ? Language.get("money") : plugin.getDependencies().getVaultEconomy()
+                        .currencyNamePlural().isEmpty() ? BukkitLanguage.get("money") : plugin.getDependencies().getVaultEconomy()
                         .currencyNamePlural())) + ChatColor.YELLOW);
             } else {
-                text = text.replace("<money>", ChatColor.DARK_PURPLE + Language.get("money") + ChatColor.YELLOW);
+                text = text.replace("<money>", ChatColor.DARK_PURPLE + BukkitLanguage.get("money") + ChatColor.YELLOW);
             }
             return ChatColor.YELLOW + text;
         }
@@ -478,21 +478,21 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
                         context.setSessionData(Key.REQ_MONEY, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("inputPosNum"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("inputPosNum"));
                         return new QuestRequirementsMoneyPrompt(context);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                     return new QuestRequirementsMoneyPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_MONEY, null);
                 return new QuestRequirementsPrompt(context);
             }
@@ -513,7 +513,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("rewQuestPointsPrompt").replace("<points>", Language.get("questPoints"));
+            return BukkitLanguage.get("rewQuestPointsPrompt").replace("<points>", BukkitLanguage.get("questPoints"));
         }
 
         @Override
@@ -530,21 +530,21 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
                         context.setSessionData(Key.REQ_QUEST_POINTS, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("inputPosNum"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("inputPosNum"));
                         return new QuestRequirementsQuestPointsPrompt(context);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                     return new QuestRequirementsQuestPointsPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_QUEST_POINTS, null);
                 return new QuestRequirementsPrompt(context);
             }
@@ -567,7 +567,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("itemRequirementsTitle");
+            return BukkitLanguage.get("itemRequirementsTitle");
         }
         
         @Override
@@ -594,17 +594,17 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
             case 2:
                 if (context.getSessionData(Key.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + Language.get("reqSetRemoveItems");
+                    return ChatColor.GRAY + BukkitLanguage.get("reqSetRemoveItems");
                 } else {
-                    return ChatColor.YELLOW + Language.get("reqSetRemoveItems");
+                    return ChatColor.YELLOW + BukkitLanguage.get("reqSetRemoveItems");
                 }
             case 3:
-                return ChatColor.RED + Language.get("clear");
+                return ChatColor.RED + BukkitLanguage.get("clear");
             case 4:
-                return ChatColor.GREEN + Language.get("done");
+                return ChatColor.GREEN + BukkitLanguage.get("done");
             default:
                 return null;
             }
@@ -616,7 +616,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             switch (number) {
             case 1:
                 if (context.getSessionData(Key.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> reqItems = (List<ItemStack>) context.getSessionData(Key.REQ_ITEMS);
@@ -630,10 +630,10 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(Key.REQ_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     if (context.getSessionData(Key.REQ_ITEMS_REMOVE) == null) {
-                        return ChatColor.GRAY + "(" + Language.get("noneSet") + ")";
+                        return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
                         final List<Boolean> reqItemsRemove
@@ -641,7 +641,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                         if (reqItemsRemove != null) {
                             for (final Boolean b : reqItemsRemove) {
                                 text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
-                                        .append(b.equals(Boolean.TRUE) ? Language.get("yesWord") : Language.get("noWord"));
+                                        .append(b.equals(Boolean.TRUE) ? BukkitLanguage.get("yesWord") : BukkitLanguage.get("noWord"));
                             }
                         }
                         return text.toString();
@@ -699,13 +699,13 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 return new ItemStackPrompt(context, QuestRequirementsItemListPrompt.this);
             case 2:
                 if (context.getSessionData(Key.REQ_ITEMS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqMustAddItem"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqMustAddItem"));
                     return new QuestRequirementsItemListPrompt(context);
                 } else {
                     return new QuestRemoveItemsPrompt(context);
                 }
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqItemCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqItemCleared"));
                 context.setSessionData(Key.REQ_ITEMS, null);
                 context.setSessionData(Key.REQ_ITEMS_REMOVE, null);
                 return new QuestRequirementsItemListPrompt(context);
@@ -745,7 +745,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqRemoveItemsPrompt");
+            return BukkitLanguage.get("reqRemoveItemsPrompt");
         }
 
         @Override
@@ -762,18 +762,18 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Boolean> booleans = new LinkedList<>();
                 for (final String s : args) {
-                    if (input.startsWith("t") || s.equalsIgnoreCase(Language.get("true"))
-                            || s.equalsIgnoreCase(Language.get("yesWord"))) {
+                    if (input.startsWith("t") || s.equalsIgnoreCase(BukkitLanguage.get("true"))
+                            || s.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
                         booleans.add(true);
-                    } else if (input.startsWith("f") || s.equalsIgnoreCase(Language.get("false"))
-                            || s.equalsIgnoreCase(Language.get("noWord"))) {
+                    } else if (input.startsWith("f") || s.equalsIgnoreCase(BukkitLanguage.get("false"))
+                            || s.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
                         booleans.add(false);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("itemCreateInvalidInput"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
                         return new QuestRemoveItemsPrompt(context);
                     }
                 }
@@ -796,7 +796,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqExperiencePrompt");
+            return BukkitLanguage.get("reqExperiencePrompt");
         }
 
         @Override
@@ -813,21 +813,21 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
                         context.setSessionData(Key.REQ_EXP, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("inputPosNum"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("inputPosNum"));
                         return new QuestRequirementsExperiencePrompt(context);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
                             .replace("<input>", input));
                     return new QuestRequirementsExperiencePrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_EXP, null);
                 return new QuestRequirementsPrompt(context);
             }
@@ -848,7 +848,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqPermissionsPrompt");
+            return BukkitLanguage.get("reqPermissionsPrompt");
         }
 
         @Override
@@ -865,11 +865,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> permissions = new LinkedList<>(Arrays.asList(args));
                 context.setSessionData(Key.REQ_PERMISSION, permissions);
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_PERMISSION, null);
             }
             return new QuestRequirementsPrompt(context);
@@ -887,12 +887,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("reqQuestListTitle");
+            return BukkitLanguage.get("reqQuestListTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqQuestPrompt");
+            return BukkitLanguage.get("reqQuestPrompt");
         }
 
         @Override
@@ -911,19 +911,19 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                final String[] args = input.split(Language.get("charSemi"));
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+                final String[] args = input.split(BukkitLanguage.get("charSemi"));
                 final LinkedList<String> questIds = new LinkedList<>();
                 for (String s : args) {
                     s = s.trim();
                     if (plugin.getQuest(s) == null) {
-                        String text = Language.get("reqNotAQuestName");
+                        String text = BukkitLanguage.get("reqNotAQuestName");
                         text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
                         context.getForWhom().sendRawMessage(text);
                         return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
                     if (questIds.contains(plugin.getQuest(s).getId())) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("listDuplicate"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listDuplicate"));
                         return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
                     questIds.add(plugin.getQuest(s).getId());
@@ -933,7 +933,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 } else {
                     context.setSessionData(Key.REQ_QUEST_BLOCK, questIds);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 if (isRequiredQuest) {
                     context.setSessionData(Key.REQ_QUEST, null);
                 } else {
@@ -959,7 +959,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("mcMMORequirementsTitle");
+            return BukkitLanguage.get("mcMMORequirementsTitle");
         }
         
         @Override
@@ -979,11 +979,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("reqSetSkills");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqSetSkills");
             case 2:
-                return ChatColor.YELLOW + Language.get("reqSetSkillAmounts");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqSetSkillAmounts");
             case 3:
-                return ChatColor.GREEN + Language.get("done");
+                return ChatColor.GREEN + BukkitLanguage.get("done");
             default:
                 return null;
             }
@@ -995,7 +995,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(Key.REQ_MCMMO_SKILLS) == null) {
-                    return ChatColor.GRAY + " (" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + " (" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final LinkedList<String> skills = (LinkedList<String>) context.getSessionData(Key.REQ_MCMMO_SKILLS);
@@ -1009,7 +1009,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(Key.REQ_MCMMO_SKILL_AMOUNTS) == null) {
-                    return ChatColor.GRAY + " (" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + " (" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final LinkedList<Integer> skillAmounts
@@ -1064,12 +1064,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("skillListTitle");
+            return BukkitLanguage.get("skillListTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("rewMcMMOPrompt");
+            return BukkitLanguage.get("rewMcMMOPrompt");
         }
 
         @Override
@@ -1095,17 +1095,17 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 final LinkedList<String> skills = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     final String formatted = BukkitMiscUtil.getCapitalized(s);
                     if (plugin.getDependencies().getMcMMOSkill(formatted) != null) {
                         skills.add(formatted);
                     } else if (skills.contains(formatted)) {
-                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("listDuplicate"));
+                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("listDuplicate"));
                         return new QuestMcMMOSkillsPrompt(context);
                     } else {
-                        String text = Language.get("reqMcMMOError");
+                        String text = BukkitLanguage.get("reqMcMMOError");
                         text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new QuestMcMMOSkillsPrompt(context);
@@ -1113,11 +1113,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(Key.REQ_MCMMO_SKILLS, skills);
                 return new QuestRequirementsMcMMOListPrompt(context);
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqMcMMOCleared"));
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqMcMMOCleared"));
                 context.setSessionData(Key.REQ_MCMMO_SKILLS, null);
                 return new QuestRequirementsMcMMOListPrompt(context);
-            } else if (input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 return new QuestRequirementsMcMMOListPrompt(context);
             }
             return new QuestMcMMOSkillsPrompt(context);
@@ -1137,7 +1137,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqMcMMOAmountsPrompt");
+            return BukkitLanguage.get("reqMcMMOAmountsPrompt");
         }
 
         @Override
@@ -1154,14 +1154,14 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 final LinkedList<Integer> amounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     try {
                         final int i = Integer.parseInt(s);
                         amounts.add(i);
                     } catch (final NumberFormatException nfe) {
-                        String text = Language.get("reqNotANumber");
+                        String text = BukkitLanguage.get("reqNotANumber");
                         text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new QuestMcMMOAmountsPrompt(context);
@@ -1169,11 +1169,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
                 context.setSessionData(Key.REQ_MCMMO_SKILL_AMOUNTS, amounts);
                 return new QuestRequirementsMcMMOListPrompt(context);
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqMcMMOAmountsCleared"));
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqMcMMOAmountsCleared"));
                 context.setSessionData(Key.REQ_MCMMO_SKILL_AMOUNTS, null);
                 return new QuestRequirementsMcMMOListPrompt(context);
-            } else if (input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 return new QuestRequirementsMcMMOListPrompt(context);
             }
             return new QuestMcMMOAmountsPrompt(context);
@@ -1195,7 +1195,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("heroesRequirementsTitle");
+            return BukkitLanguage.get("heroesRequirementsTitle");
         }
         
         @Override
@@ -1215,11 +1215,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + Language.get("reqHeroesSetPrimary");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqHeroesSetPrimary");
             case 2:
-                return ChatColor.YELLOW + Language.get("reqHeroesSetSecondary");
+                return ChatColor.YELLOW + BukkitLanguage.get("reqHeroesSetSecondary");
             case 3:
-                return ChatColor.GREEN + Language.get("done");
+                return ChatColor.GREEN + BukkitLanguage.get("done");
             default:
                 return null;
             }
@@ -1230,14 +1230,14 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(Key.REQ_HEROES_PRIMARY_CLASS) == null) {
-                    return ChatColor.GRAY + " (" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + " (" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     return "(" + ChatColor.AQUA + context.getSessionData(Key.REQ_HEROES_PRIMARY_CLASS) + ChatColor.GREEN
                             + ")\n";
                 }
             case 2:
                 if (context.getSessionData(Key.REQ_HEROES_SECONDARY_CLASS) == null) {
-                    return ChatColor.GRAY + " (" + Language.get("noneSet") + ")";
+                    return ChatColor.GRAY + " (" + BukkitLanguage.get("noneSet") + ")";
                 } else {
                     return "(" + ChatColor.AQUA + context.getSessionData(Key.REQ_HEROES_SECONDARY_CLASS)
                             + ChatColor.GREEN + ")\n";
@@ -1286,12 +1286,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("heroesPrimaryTitle");
+            return BukkitLanguage.get("heroesPrimaryTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqHeroesPrimaryPrompt");
+            return BukkitLanguage.get("reqHeroesPrimaryPrompt");
         }
 
         @Override
@@ -1308,7 +1308,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             if (list.isEmpty()) {
-                text.append(ChatColor.GRAY).append("(").append(Language.get("none")).append(")\n");
+                text.append(ChatColor.GRAY).append("(").append(BukkitLanguage.get("none")).append(")\n");
             } else {
                 Collections.sort(list);
                 for (final String s : list) {
@@ -1325,25 +1325,25 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdClear")) && !input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdClear")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
                     if (hc.isPrimary()) {
                         context.setSessionData(Key.REQ_HEROES_PRIMARY_CLASS, hc.getName());
                         return new QuestRequirementsHeroesListPrompt(context);
                     } else {
-                        String text = Language.get("reqHeroesNotPrimary");
+                        String text = BukkitLanguage.get("reqHeroesNotPrimary");
                         text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesPrimaryPrompt(context);
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqHeroesClassNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqHeroesClassNotFound"));
                     return new QuestHeroesPrimaryPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_HEROES_PRIMARY_CLASS, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqHeroesPrimaryCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqHeroesPrimaryCleared"));
                 return new QuestRequirementsHeroesListPrompt(context);
             } else {
                 return new QuestRequirementsHeroesListPrompt(context);
@@ -1359,12 +1359,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("heroesSecondaryTitle");
+            return BukkitLanguage.get("heroesSecondaryTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqHeroesSecondaryPrompt");
+            return BukkitLanguage.get("reqHeroesSecondaryPrompt");
         }
 
         @Override
@@ -1381,7 +1381,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             if (list.isEmpty()) {
-                text.append(ChatColor.GRAY).append("(").append(Language.get("none")).append(")\n");
+                text.append(ChatColor.GRAY).append("(").append(BukkitLanguage.get("none")).append(")\n");
             } else {
                 Collections.sort(list);
                 for (final String s : list) {
@@ -1398,25 +1398,25 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdClear")) && !input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdClear")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
                     if (hc.isSecondary()) {
                         context.setSessionData(Key.REQ_HEROES_SECONDARY_CLASS, hc.getName());
                         return new QuestRequirementsHeroesListPrompt(context);
                     } else {
-                        String text = Language.get("reqHeroesNotSecondary");
+                        String text = BukkitLanguage.get("reqHeroesNotSecondary");
                         text = text.replace("<class>", ChatColor.LIGHT_PURPLE + hc.getName() + ChatColor.RED);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesSecondaryPrompt(context);
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqHeroesClassNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqHeroesClassNotFound"));
                     return new QuestHeroesSecondaryPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("clear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("clear"))) {
                 context.setSessionData(Key.REQ_HEROES_SECONDARY_CLASS, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqHeroesSecondaryCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqHeroesSecondaryCleared"));
                 return new QuestRequirementsHeroesListPrompt(context);
             } else {
                 return new QuestRequirementsHeroesListPrompt(context);
@@ -1432,12 +1432,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("stageEditorModules");
+            return BukkitLanguage.get("stageEditorModules");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("stageEditorModulePrompt");
+            return BukkitLanguage.get("stageEditorModulePrompt");
         }
 
         @Override
@@ -1452,7 +1452,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                             .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
                             .append("\n");
-                    text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")")
+                    text.append(ChatColor.RED).append("(").append(BukkitLanguage.get("stageEditorNoModules")).append(")")
                             .append("\n");
                 } else {
                     for (final String name : plugin.getCustomRequirements().stream()
@@ -1470,7 +1470,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
                 link.setUnderlined(true);
                 line.addExtra(link);
-                line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
+                line.addExtra(ChatColor.RED + "(" + BukkitLanguage.get("stageEditorNoModules") + ")\n");
             } else {
                 for (final String name : plugin.getCustomRequirements().stream().map(CustomRequirement::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
@@ -1487,8 +1487,8 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public Prompt acceptInput(@NotNull final ConversationContext context, @Nullable final String input) {
-            if (input != null && !input.equalsIgnoreCase(Language.get("cmdCancel"))
-                    && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (input != null && !input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 String found = null;
                 // Check if we have a module with the specified name
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
@@ -1509,16 +1509,16 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (found != null) {
                     return new QuestCustomRequirementsPrompt(found, context);
                 }
-            } else if (input != null && input.equalsIgnoreCase(Language.get("cmdCancel"))) {
+            } else if (input != null && input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
                 return new QuestRequirementsPrompt(context);
-            } else if (input != null && input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input != null && input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_CUSTOM, null);
                 context.setSessionData(Key.REQ_CUSTOM_DATA, null);
                 context.setSessionData(Key.REQ_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqCustomCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqCustomCleared"));
                 return new QuestRequirementsPrompt(context);
             }
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqCustomNotFound"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqCustomNotFound"));
             return new QuestCustomRequirementModulePrompt(context);
         }
     }
@@ -1538,12 +1538,12 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return Language.get("customRequirementsTitle");
+            return BukkitLanguage.get("customRequirementsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return Language.get("reqCustomPrompt");
+            return BukkitLanguage.get("reqCustomPrompt");
         }
 
         @Override
@@ -1557,7 +1557,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                             .append("https://pikamug.gitbook.io/quests/casual/modules\n");
-                    text.append(ChatColor.RED).append("(").append(Language.get("stageEditorNoModules")).append(")\n");
+                    text.append(ChatColor.RED).append("(").append(BukkitLanguage.get("stageEditorNoModules")).append(")\n");
                 } else {
                     for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                         if (cr.getModuleName().equals(moduleName)) {
@@ -1575,7 +1575,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 link.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
                 link.setUnderlined(true);
                 line.addExtra(link);
-                line.addExtra(ChatColor.RED + "(" + Language.get("stageEditorNoModules") + ")\n");
+                line.addExtra(ChatColor.RED + "(" + BukkitLanguage.get("stageEditorNoModules") + ")\n");
             } else {
                 for (final CustomRequirement co : plugin.getCustomRequirements()) {
                     if (co.getModuleName().equals(moduleName)) {
@@ -1599,7 +1599,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(Language.get("cmdCancel")) && !input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 CustomRequirement found = null;
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getModuleName().equals(moduleName)) {
@@ -1623,7 +1623,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                             context.setSessionData(Key.REQ_CUSTOM_DATA, dataMapList);
                         } else {
                             // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqCustomAlreadyAdded"));
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqCustomAlreadyAdded"));
                             return new QuestCustomRequirementsPrompt(moduleName, context);
                         }
                     } else {
@@ -1641,14 +1641,14 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                         return new QuestRequirementCustomDataListPrompt();
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("reqCustomNotFound"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqCustomNotFound"));
                     return new QuestCustomRequirementsPrompt(moduleName, context);
                 }
-            } else if (input.equalsIgnoreCase(Language.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
                 context.setSessionData(Key.REQ_CUSTOM, null);
                 context.setSessionData(Key.REQ_CUSTOM_DATA, null);
                 context.setSessionData(Key.REQ_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + Language.get("reqCustomCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("reqCustomCleared"));
             }
             return new QuestRequirementsPrompt(context);
         }
@@ -1678,13 +1678,13 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                                 .append(ChatColor.translateAlternateColorCodes('&', dataMap.get(dataKey).toString()))
                                 .append(ChatColor.GRAY).append(")\n");
                     } else {
-                        text.append(ChatColor.GRAY).append(" (").append(Language.get("noneSet")).append(ChatColor.GRAY)
+                        text.append(ChatColor.GRAY).append(" (").append(BukkitLanguage.get("noneSet")).append(ChatColor.GRAY)
                                 .append(")\n");
                     }
                     index++;
                 }
                 text.append(ChatColor.GREEN).append(ChatColor.BOLD).append(index).append(ChatColor.YELLOW).append(" - ")
-                        .append(Language.get("done"));
+                        .append(BukkitLanguage.get("done"));
             }
             return text.toString();
         }
@@ -1736,7 +1736,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                 if (descriptions.get(temp) != null) {
                     text += ChatColor.GOLD + descriptions.get(temp) + "\n";
                 }
-                String lang = Language.get("stageEditorCustomDataPrompt");
+                String lang = BukkitLanguage.get("stageEditorCustomDataPrompt");
                 lang = lang.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
                 text += ChatColor.YELLOW + lang;
             }

@@ -17,7 +17,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -44,12 +44,12 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_REMOVE");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_REMOVE");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_REMOVE_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_REMOVE_HELP");
     }
 
     @Override
@@ -79,17 +79,17 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + Language.get("playerNotFound"));
+                    cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("playerNotFound"));
                     return;
                 }
             }
             final Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
             if (toRemove == null) {
-                cs.sendMessage(ChatColor.RED + Language.get("questNotFound"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("questNotFound"));
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            String msg = Language.get("questRemoved");
+            String msg = BukkitLanguage.get("questRemoved");
             if (target.getName() != null) {
                 msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
             } else {
@@ -102,7 +102,7 @@ public class QuestadminRemoveCommand extends QuestsSubCommand {
             quester.saveData();
             quester.updateJournal();
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 

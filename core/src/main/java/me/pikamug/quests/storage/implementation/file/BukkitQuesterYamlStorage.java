@@ -18,7 +18,7 @@ import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.storage.implementation.StorageImplementation;
+import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -35,11 +35,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class SeparatedYamlStorage implements StorageImplementation {
+public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     private final BukkitQuestsPlugin plugin;
     private final String directoryPath;
     
-    public SeparatedYamlStorage(final BukkitQuestsPlugin plugin, final String directoryPath) {
+    public BukkitQuesterYamlStorage(final BukkitQuestsPlugin plugin, final String directoryPath) {
         this.plugin = plugin;
         this.directoryPath = directoryPath;
     }
@@ -102,7 +102,7 @@ public class SeparatedYamlStorage implements StorageImplementation {
             final ConcurrentHashMap<Quest, Integer> amountsCompleted = quester.getAmountsCompleted();
             for (int i = 0; i < questIds.size(); i++) {
                 if (questAmounts.size() < questIds.size()) {
-                    plugin.getLogger().warning("amountsCompletedQuests was less than amountsCompleted "
+                    plugin.getLogger().warning("amountsCompleted was less than amountsCompletedQuests "
                             + "while loading quester of UUID " + quester.getUUID());
                 }
                 if (plugin.getQuestById(questIds.get(i)) != null) {

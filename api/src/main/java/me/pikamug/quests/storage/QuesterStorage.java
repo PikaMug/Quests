@@ -12,9 +12,9 @@
 
 package me.pikamug.quests.storage;
 
+import me.pikamug.quests.Quests;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.storage.implementation.StorageImplementation;
+import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,20 +23,20 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-public class Storage {
-    private final BukkitQuestsPlugin plugin;
-    private final StorageImplementation implementation;
+public class QuesterStorage {
+    private final Quests plugin;
+    private final QuesterStorageImpl implementation;
 
-    public Storage(final BukkitQuestsPlugin plugin, final StorageImplementation implementation) {
+    public QuesterStorage(final Quests plugin, final QuesterStorageImpl implementation) {
         this.plugin = plugin;
         this.implementation = implementation;
     }
 
-    public StorageImplementation getImplementation() {
+    public QuesterStorageImpl getImplementation() {
         return implementation;
     }
 
-    public Collection<StorageImplementation> getImplementations() {
+    public Collection<QuesterStorageImpl> getImplementations() {
         return Collections.singleton(implementation);
     }
 
@@ -71,7 +71,7 @@ public class Storage {
         try {
             implementation.init();
         } catch (final Exception e) {
-            plugin.getLogger().severe("Failed to initialize storage implementation");
+            // Failed to initialize storage implementation
             e.printStackTrace();
         }
     }
@@ -80,7 +80,7 @@ public class Storage {
         try {
             implementation.close();
         } catch (final Exception e) {
-            plugin.getLogger().severe("Failed to close storage implementation");
+            // Failed to close storage implementation
             e.printStackTrace();
         }
     }

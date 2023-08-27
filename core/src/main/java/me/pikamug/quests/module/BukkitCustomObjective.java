@@ -16,7 +16,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quester.QuesterPostUpdateObjectiveEvent;
 import me.pikamug.quests.events.quester.QuesterPreUpdateObjectiveEvent;
-import me.pikamug.quests.player.BukkitQuestData;
+import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.BukkitObjective;
@@ -224,7 +224,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                     return;
                 }
                 int index = -1;
-                final BukkitQuestData bukkitQuestData = (BukkitQuestData) quester.getQuestData(bukkitQuest);
+                final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(bukkitQuest);
                 final LinkedList<Integer> customObjCounts = bukkitQuestData.customObjectiveCounts;
                 for (final CustomObjective co : quester.getCurrentStage(bukkitQuest).getCustomObjectives()) {
                     index++;
@@ -255,7 +255,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                         // Multiplayer
                         final int finalIndex = index;
                         quester.dispatchMultiplayerObjectives(bukkitQuest, quester.getCurrentStage(bukkitQuest), (final Quester q) -> {
-                            final BukkitQuestData qBukkitQuestData = (BukkitQuestData) q.getQuestData(bukkitQuest);
+                            final BukkitQuestProgress qBukkitQuestData = (BukkitQuestProgress) q.getQuestDataOrDefault(bukkitQuest);
                             final int old = qBukkitQuestData.customObjectiveCounts.get(finalIndex);
                             qBukkitQuestData.customObjectiveCounts.set(finalIndex, old + count);
                             q.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),

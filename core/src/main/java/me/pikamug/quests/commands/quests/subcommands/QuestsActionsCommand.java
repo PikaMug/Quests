@@ -14,7 +14,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversable;
@@ -34,12 +34,12 @@ public class QuestsActionsCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_EVENTS_EDITOR");
+        return BukkitLanguage.get("COMMAND_EVENTS_EDITOR");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_EVENTS_EDITOR_HELP");
+        return BukkitLanguage.get("COMMAND_EVENTS_EDITOR_HELP");
     }
 
     @Override
@@ -66,10 +66,10 @@ public class QuestsActionsCommand extends QuestsSubCommand {
             if (!c.isConversing()) {
                 plugin.getActionFactory().getConversationFactory().buildConversation(c).begin();
             } else {
-                cs.sendMessage(ChatColor.RED + Language.get(cs, "duplicateEditor"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get(cs, "duplicateEditor"));
             }
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get(cs, "noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get(cs, "noPermission"));
         }
     }
 }

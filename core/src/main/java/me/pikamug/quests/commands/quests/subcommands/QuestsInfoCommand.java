@@ -14,7 +14,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -33,11 +33,11 @@ public class QuestsInfoCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_INFO");
+        return BukkitLanguage.get("COMMAND_INFO");
     }
 
     public String getDescription() {
-        return Language.get("COMMAND_INFO_HELP");
+        return BukkitLanguage.get("COMMAND_INFO_HELP");
     }
 
     @Override
@@ -59,9 +59,7 @@ public class QuestsInfoCommand extends QuestsSubCommand {
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.info")) {
             cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD + plugin.getDescription().getVersion());
-            cs.sendMessage(ChatColor.GOLD + Language.get(cs, "createdBy") + " " + ChatColor.RED + "Blackvein"
-                    + ChatColor.GOLD + " " + Language.get(cs, "continuedBy") + " " + ChatColor.RED
-                    + "PikaMug & contributors");
+            cs.sendMessage(ChatColor.GOLD + BukkitLanguage.get(cs, "developedBy") + " " + "PikaMug & contributors");
             cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://github.com/PikaMug/Quests");
         }
     }

@@ -19,7 +19,7 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.BukkitActionTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -402,7 +402,7 @@ public class BukkitAction implements Action {
             quest.failQuest(quester, true);
         }
         if (timer > 0) {
-            player.sendMessage(ChatColor.GREEN + Language.get(player, "timerStart")
+            player.sendMessage(ChatColor.GREEN + BukkitLanguage.get(player, "timerStart")
                     .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(timer * 1000L) + ChatColor.GREEN)
                     .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
             final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);

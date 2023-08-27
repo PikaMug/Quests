@@ -1,4 +1,4 @@
-package me.pikamug.quests.quests;
+package me.pikamug.quests.storage.implementation.file;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
@@ -8,15 +8,18 @@ import me.pikamug.quests.exceptions.ActionFormatException;
 import me.pikamug.quests.exceptions.ConditionFormatException;
 import me.pikamug.quests.exceptions.QuestFormatException;
 import me.pikamug.quests.exceptions.StageFormatException;
+import me.pikamug.quests.quests.BukkitQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitRequirements;
 import me.pikamug.quests.quests.components.BukkitRewards;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.components.Options;
 import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.storage.implementation.QuestStorageImpl;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
@@ -48,17 +51,24 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BukkitQuestLoader implements QuestLoader {
+public class BukkitQuestYamlStorage implements QuestStorageImpl {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestLoader(final BukkitQuestsPlugin plugin) {
+    public BukkitQuestYamlStorage(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Load quests from file
-     */
+    @Override
+    public BukkitQuestsPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public String getImplementationName() {
+        return "YAML";
+    }
+
     @Override
     public void init() {
         boolean needsSaving = false;
@@ -84,7 +94,7 @@ public class BukkitQuestLoader implements QuestLoader {
             }
             for (final String questKey : questsSection.getKeys(false)) {
                 try {
-                    final Quest quest = loadQuest(config, questKey);
+                    final Quest quest = loadQuest(questKey);
                     if (config.contains("quests." + questKey + ".requirements")) {
                         loadQuestRequirements(config, questsSection, quest, questKey);
                     }
@@ -119,38 +129,53 @@ public class BukkitQuestLoader implements QuestLoader {
         }
     }
 
-    private Quest loadQuest(final FileConfiguration config, final String questKey) throws QuestFormatException,
-            ActionFormatException {
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public Quest loadQuest(final String questId) throws QuestFormatException {
+        if (questId == null) {
+            return null;
+        }
+        FileConfiguration config = null;
+        final File file = new File(plugin.getDataFolder(), "quests.yml");
+        try {
+            config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
+                    StandardCharsets.UTF_8));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
         final BukkitQuest quest = new BukkitQuest(plugin);
         final BukkitDependencies depends = plugin.getDependencies();
-        quest.setId(questKey);
-        if (config.contains("quests." + questKey + ".name")) {
-            quest.setName(BukkitConfigUtil.parseString(config.getString("quests." + questKey + ".name"), quest));
+        quest.setId(questId);
+        if (config.contains("quests." + questId + ".name")) {
+            quest.setName(BukkitConfigUtil.parseString(config.getString("quests." + questId + ".name"), quest));
         } else {
-            throw new QuestFormatException("'name' is missing", questKey);
+            throw new QuestFormatException("'name' is missing", questId);
         }
-        if (config.contains("quests." + questKey + ".ask-message")) {
-            quest.setDescription(BukkitConfigUtil.parseString(config.getString("quests." + questKey
+        if (config.contains("quests." + questId + ".ask-message")) {
+            quest.setDescription(BukkitConfigUtil.parseString(config.getString("quests." + questId
                     + ".ask-message"), quest));
         } else {
-            throw new QuestFormatException("'ask-message' is missing", questKey);
+            throw new QuestFormatException("'ask-message' is missing", questId);
         }
-        if (config.contains("quests." + questKey + ".finish-message")) {
-            quest.setFinished(BukkitConfigUtil.parseString(config.getString("quests." + questKey
+        if (config.contains("quests." + questId + ".finish-message")) {
+            quest.setFinished(BukkitConfigUtil.parseString(config.getString("quests." + questId
                     + ".finish-message"), quest));
         } else {
-            throw new QuestFormatException("'finish-message' is missing", questKey);
+            throw new QuestFormatException("'finish-message' is missing", questId);
         }
-        if (config.contains("quests." + questKey + ".npc-giver-uuid")) {
-            final UUID uuid = UUID.fromString(Objects.requireNonNull(config.getString("quests." + questKey
+        if (config.contains("quests." + questId + ".npc-giver-uuid")) {
+            final UUID uuid = UUID.fromString(Objects.requireNonNull(config.getString("quests." + questId
                     + ".npc-giver-uuid")));
             quest.setNpcStart(uuid);
             final Collection<UUID> npcUuids = plugin.getQuestNpcUuids();
             npcUuids.add(uuid);
             plugin.setQuestNpcUuids(npcUuids);
-        } else if (depends.getCitizens() != null && config.contains("quests." + questKey + ".npc-giver-id")) {
+        } else if (depends.getCitizens() != null && config.contains("quests." + questId + ".npc-giver-id")) {
             // Legacy
-            final int id = config.getInt("quests." + questKey + ".npc-giver-id");
+            final int id = config.getInt("quests." + questId + ".npc-giver-id");
             if (CitizensAPI.getNPCRegistry().getById(id) != null) {
                 final NPC npc = CitizensAPI.getNPCRegistry().getById(id);
                 quest.setNpcStart(npc.getUniqueId());
@@ -158,25 +183,25 @@ public class BukkitQuestLoader implements QuestLoader {
                 npcUuids.add(npc.getUniqueId());
                 plugin.setQuestNpcUuids(npcUuids);
             } else {
-                throw new QuestFormatException("'npc-giver-id' has invalid NPC ID " + id, questKey);
+                throw new QuestFormatException("'npc-giver-id' has invalid NPC ID " + id, questId);
             }
         }
-        if (config.contains("quests." + questKey + ".block-start")) {
-            final String blockStart = config.getString("quests." + questKey + ".block-start");
+        if (config.contains("quests." + questId + ".block-start")) {
+            final String blockStart = config.getString("quests." + questId + ".block-start");
             if (blockStart != null) {
                 final Location location = BukkitConfigUtil.getLocation(blockStart);
                 if (location != null) {
                     quest.setBlockStart(location);
                 } else {
-                    throw new QuestFormatException("'block-start' has invalid location", questKey);
+                    throw new QuestFormatException("'block-start' has invalid location", questId);
                 }
             } else {
-                throw new QuestFormatException("'block-start' has invalid location format", questKey);
+                throw new QuestFormatException("'block-start' has invalid location format", questId);
             }
         }
-        if (config.contains("quests." + questKey + ".region")
+        if (config.contains("quests." + questId + ".region")
                 && depends.getWorldGuardApi() != null) {
-            final String region = config.getString("quests." + questKey + ".region");
+            final String region = config.getString("quests." + questId + ".region");
             if (region != null) {
                 boolean exists = false;
                 for (final World world : plugin.getServer().getWorlds()) {
@@ -190,51 +215,50 @@ public class BukkitQuestLoader implements QuestLoader {
                     }
                 }
                 if (!exists) {
-                    throw new QuestFormatException("'region' has invalid WorldGuard region name", questKey);
+                    throw new QuestFormatException("'region' has invalid WorldGuard region name", questId);
                 }
             } else {
-                throw new QuestFormatException("'region' has invalid WorldGuard region", questKey);
+                throw new QuestFormatException("'region' has invalid WorldGuard region", questId);
             }
         }
-        if (config.contains("quests." + questKey + ".gui-display")) {
-            ItemStack stack = config.getItemStack("quests." + questKey + ".gui-display");
+        if (config.contains("quests." + questId + ".gui-display")) {
+            ItemStack stack = config.getItemStack("quests." + questId + ".gui-display");
             if (stack != null) {
                 quest.setGUIDisplay(stack);
             } else {
-                throw new QuestFormatException("'gui-display' has invalid item format", questKey);
+                throw new QuestFormatException("'gui-display' has invalid item format", questId);
             }
         }
-        if (config.contains("quests." + questKey + ".redo-delay")) {
+        if (config.contains("quests." + questId + ".redo-delay")) {
             // Legacy
-            if (config.getInt("quests." + questKey + ".redo-delay", -999) != -999) {
-                quest.getPlanner().setCooldown(config.getInt("quests." + questKey + ".redo-delay") * 1000L);
+            if (config.getInt("quests." + questId + ".redo-delay", -999) != -999) {
+                quest.getPlanner().setCooldown(config.getInt("quests." + questId + ".redo-delay") * 1000L);
             } else {
-                throw new QuestFormatException("'redo-delay' is not a number", questKey);
+                throw new QuestFormatException("'redo-delay' is not a number", questId);
             }
         }
-        if (config.contains("quests." + questKey + ".action")) {
-            final String actionName = config.getString("quests." + questKey + ".action");
+        if (config.contains("quests." + questId + ".action")) {
+            final String actionName = config.getString("quests." + questId + ".action");
             final Optional<Action> action = plugin.getLoadedActions().stream().filter(a -> a.getName()
                     .equals(actionName)).findAny();
             if (action.isPresent()) {
                 quest.setInitialAction(action.get());
             } else {
-                throw new QuestFormatException("'action' failed to load", questKey);
+                throw new QuestFormatException("'action' failed to load", questId);
             }
-        } else if (config.contains("quests." + questKey + ".event")) {
-            final String actionName = config.getString("quests." + questKey + ".event");
+        } else if (config.contains("quests." + questId + ".event")) {
+            final String actionName = config.getString("quests." + questId + ".event");
             final Optional<Action> action = plugin.getLoadedActions().stream().filter(a -> a.getName()
                     .equals(actionName)).findAny();
             if (action.isPresent()) {
                 quest.setInitialAction(action.get());
             } else {
-                throw new QuestFormatException("'event' failed to load", questKey);
+                throw new QuestFormatException("'event' failed to load", questId);
             }
         }
         return quest;
     }
 
-    @Override
     public void importQuests() {
         final File f = new File(plugin.getDataFolder(), "import");
         if (f.exists() && f.isDirectory()) {
@@ -266,27 +290,27 @@ public class BukkitQuestLoader implements QuestLoader {
                 return;
             }
             int count = 0;
-            for (final String questKey : questsSection.getKeys(false)) {
+            for (final String questId : questsSection.getKeys(false)) {
                 try {
                     for (final Quest lq : plugin.getLoadedQuests()) {
-                        if (lq.getId().equals(questKey)) {
-                            throw new QuestFormatException("id already exists", questKey);
+                        if (lq.getId().equals(questId)) {
+                            throw new QuestFormatException("id already exists", questId);
                         }
                     }
-                    final Quest quest = loadQuest(config, questKey);
-                    if (config.contains("quests." + questKey + ".requirements")) {
-                        loadQuestRequirements(config, questsSection, quest, questKey);
+                    final Quest quest = loadQuest(questId);
+                    if (config.contains("quests." + questId + ".requirements")) {
+                        loadQuestRequirements(config, questsSection, quest, questId);
                     }
-                    if (config.contains("quests." + questKey + ".planner")) {
-                        loadQuestPlanner(config, quest, questKey);
+                    if (config.contains("quests." + questId + ".planner")) {
+                        loadQuestPlanner(config, quest, questId);
                     }
-                    if (config.contains("quests." + questKey + ".options")) {
-                        loadQuestOptions(config, quest, questKey);
+                    if (config.contains("quests." + questId + ".options")) {
+                        loadQuestOptions(config, quest, questId);
                     }
                     // TODO was this necessary?
                     //quest.setPlugin(this);
-                    loadQuestStages(quest, config, questKey);
-                    loadQuestRewards(config, quest, questKey);
+                    loadQuestStages(quest, config, questId);
+                    loadQuestRewards(config, quest, questId);
                     final Collection<Quest> loadedQuests = plugin.getLoadedQuests();
                     loadedQuests.add(quest);
                     plugin.setLoadedQuests(loadedQuests);
@@ -1582,38 +1606,38 @@ public class BukkitQuestLoader implements QuestLoader {
                                 if (dc != null) {
                                     oStage.addSheepToShear(dc);
                                     // Legacy start -->
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BLACK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BLACK"))) {
                                     oStage.addSheepToShear(DyeColor.BLACK);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BLUE"))) {
                                     oStage.addSheepToShear(DyeColor.BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_BROWN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BROWN"))) {
                                     oStage.addSheepToShear(DyeColor.BROWN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_CYAN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_CYAN"))) {
                                     oStage.addSheepToShear(DyeColor.CYAN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_GRAY"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_GRAY"))) {
                                     oStage.addSheepToShear(DyeColor.GRAY);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_GREEN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_GREEN"))) {
                                     oStage.addSheepToShear(DyeColor.GREEN);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_LIGHT_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_LIGHT_BLUE"))) {
                                     oStage.addSheepToShear(DyeColor.LIGHT_BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_LIME"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_LIME"))) {
                                     oStage.addSheepToShear(DyeColor.LIME);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_MAGENTA"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_MAGENTA"))) {
                                     oStage.addSheepToShear(DyeColor.MAGENTA);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_ORANGE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_ORANGE"))) {
                                     oStage.addSheepToShear(DyeColor.ORANGE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_PINK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_PINK"))) {
                                     oStage.addSheepToShear(DyeColor.PINK);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_PURPLE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_PURPLE"))) {
                                     oStage.addSheepToShear(DyeColor.PURPLE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_RED"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_RED"))) {
                                     oStage.addSheepToShear(DyeColor.RED);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_SILVER"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_SILVER"))) {
                                     // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
                                     oStage.addSheepToShear(DyeColor.getByColor(Color.SILVER));
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_WHITE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_WHITE"))) {
                                     oStage.addSheepToShear(DyeColor.WHITE);
-                                } else if (sheepColor.equalsIgnoreCase(Language.get("COLOR_YELLOW"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_YELLOW"))) {
                                     oStage.addSheepToShear(DyeColor.YELLOW);
                                     // <-- Legacy end
                                 } else {

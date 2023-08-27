@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 
 public class QuestsChoiceCommand extends QuestsSubCommand {
 
@@ -16,12 +16,12 @@ public class QuestsChoiceCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_CHOICE");
+        return BukkitLanguage.get("COMMAND_CHOICE");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_CHOICE_HELP");
+        return BukkitLanguage.get("COMMAND_CHOICE_HELP");
     }
 
     @Override
@@ -46,11 +46,11 @@ public class QuestsChoiceCommand extends QuestsSubCommand {
         }
         final Player player = (Player) cs;
         if (!cs.hasPermission(getPermission())) {
-            Language.send(player, ChatColor.RED + Language.get(player, "noPermission"));
+            BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "noPermission"));
             return;
         }
         if (!player.isConversing()) {
-            Language.send(player, ChatColor.RED + Language.get(player, "notConversing"));
+            BukkitLanguage.send(player, ChatColor.RED + BukkitLanguage.get(player, "notConversing"));
             return;
         }
         if (args.length == 1) {

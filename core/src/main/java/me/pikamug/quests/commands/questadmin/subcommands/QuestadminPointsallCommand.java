@@ -15,7 +15,7 @@ package me.pikamug.quests.commands.questadmin.subcommands;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -41,12 +41,12 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_QUESTADMIN_POINTSALL");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_POINTSALL");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_QUESTADMIN_POINTSALL_HELP");
+        return BukkitLanguage.get("COMMAND_QUESTADMIN_POINTSALL_HELP");
     }
 
     @Override
@@ -75,15 +75,15 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
             try {
                 amount = Integer.parseInt(args[1]);
                 if (amount < 0) {
-                    cs.sendMessage(ChatColor.RED + Language.get("inputPosNum"));
+                    cs.sendMessage(ChatColor.RED + BukkitLanguage.get("inputPosNum"));
                     return;
                 }
             } catch (final NumberFormatException e) {
-                cs.sendMessage(ChatColor.RED + Language.get("inputNum"));
+                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("inputNum"));
                 return;
             }
-            cs.sendMessage(ChatColor.YELLOW + Language.get("settingAllQuestPoints")
-                    .replace("<points>", Language.get("questPoints")));
+            cs.sendMessage(ChatColor.YELLOW + BukkitLanguage.get("settingAllQuestPoints")
+                    .replace("<points>", BukkitLanguage.get("questPoints")));
             for (final Quester q : plugin.getOfflineQuesters()) {
                 q.setQuestPoints(amount);
             }
@@ -102,12 +102,12 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
                                 data.save(f);
                             } catch (final IOException | InvalidConfigurationException e) {
                                 if (failCount < 10) {
-                                    String msg = Language.get("errorReading");
+                                    String msg = BukkitLanguage.get("errorReading");
                                     msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
                                     cs.sendMessage(ChatColor.RED + msg);
                                     failCount++;
                                 } else if (!suppressed) {
-                                    String msg = Language.get("errorReadingSuppress");
+                                    String msg = BukkitLanguage.get("errorReadingSuppress");
                                     msg = msg.replace("<file>", ChatColor.DARK_AQUA + f.getName() + ChatColor.RED);
                                     cs.sendMessage(ChatColor.RED + msg);
                                     suppressed = true;
@@ -115,16 +115,16 @@ public class QuestadminPointsallCommand extends QuestsSubCommand {
                             }
                         }
                     }
-                    cs.sendMessage(ChatColor.GREEN + Language.get("done"));
-                    String msg = Language.get("allQuestPointsSet").replace("<points>", Language.get("questPoints"));
+                    cs.sendMessage(ChatColor.GREEN + BukkitLanguage.get("done"));
+                    String msg = BukkitLanguage.get("allQuestPointsSet").replace("<points>", BukkitLanguage.get("questPoints"));
                     msg = msg.replace("<number>", ChatColor.AQUA + "" + amount + ChatColor.GOLD);
                     plugin.getServer().broadcastMessage(ChatColor.YELLOW + "" + ChatColor.GOLD + msg);
                 } else {
-                    cs.sendMessage(ChatColor.RED + Language.get("errorDataFolder"));
+                    cs.sendMessage(ChatColor.RED + BukkitLanguage.get("errorDataFolder"));
                 }
             });
         } else {
-            cs.sendMessage(ChatColor.RED + Language.get("noPermission"));
+            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
         }
     }
 }

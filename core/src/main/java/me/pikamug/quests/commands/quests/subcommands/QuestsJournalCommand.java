@@ -17,7 +17,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.QuestsSubCommand;
 import me.pikamug.quests.events.command.QuestsCommandPreQuestsJournalEvent;
 import me.pikamug.quests.item.BukkitQuestJournal;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -41,12 +41,12 @@ public class QuestsJournalCommand extends QuestsSubCommand {
 
     @Override
     public String getNameI18N() {
-        return Language.get("COMMAND_JOURNAL");
+        return BukkitLanguage.get("COMMAND_JOURNAL");
     }
 
     @Override
     public String getDescription() {
-        return Language.get("COMMAND_JOURNAL_HELP");
+        return BukkitLanguage.get("COMMAND_JOURNAL_HELP");
     }
 
     @Override
@@ -87,27 +87,27 @@ public class QuestsJournalCommand extends QuestsSubCommand {
                 final int index = quester.getJournalIndex();
                 if (index != -1) {
                     inv.setItem(index, null);
-                    Language.send(player, ChatColor.YELLOW + Language.get(player, "journalPutAway")
-                            .replace("<journal>", Language.get(player, "journalTitle")));
+                    BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "journalPutAway")
+                            .replace("<journal>", BukkitLanguage.get(player, "journalTitle")));
                 } else if (player.getItemInHand().getType().equals(Material.AIR)) {
                     final BukkitQuestJournal journal = new BukkitQuestJournal(plugin, quester);
                     player.setItemInHand(journal.toItemStack());
-                    Language.send(player, ChatColor.YELLOW + Language.get(player, "journalTaken")
-                            .replace("<journal>", Language.get(player, "journalTitle")));
+                    BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "journalTaken")
+                            .replace("<journal>", BukkitLanguage.get(player, "journalTitle")));
                 } else if (inv.firstEmpty() != -1) {
                     final ItemStack[] arr = inv.getContents();
                     for (int i = 0; i < arr.length; i++) {
                         if (arr[i] == null) {
                             final BukkitQuestJournal journal = new BukkitQuestJournal(plugin, quester);
                             inv.setItem(i, journal.toItemStack());
-                            Language.send(player, ChatColor.YELLOW + Language.get(player, "journalTaken")
-                                    .replace("<journal>", Language.get(player, "journalTitle")));
+                            BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "journalTaken")
+                                    .replace("<journal>", BukkitLanguage.get(player, "journalTitle")));
                             break;
                         }
                     }
                 } else {
-                    Language.send(player, ChatColor.YELLOW + Language.get(player, "journalNoRoom")
-                            .replace("<journal>", Language.get(player, "journalTitle")));
+                    BukkitLanguage.send(player, ChatColor.YELLOW + BukkitLanguage.get(player, "journalNoRoom")
+                            .replace("<journal>", BukkitLanguage.get(player, "journalTitle")));
                 }
             }
         }

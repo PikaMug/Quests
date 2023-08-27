@@ -27,7 +27,7 @@ import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
-import me.pikamug.quests.util.Language;
+import me.pikamug.quests.util.BukkitLanguage;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -544,7 +544,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questErrorReadingFile")
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questErrorReadingFile")
                     .replace("<quest>", questsFile.getName()));
             return;
         }
@@ -562,16 +562,16 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         try {
             data.save(questsFile);
         } catch (final IOException e) {
-            context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("questSaveError"));
+            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questSaveError"));
             return;
         }
         final ReloadCallback<Boolean> callback = response -> {
             if (!response) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + Language.get("unknownError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("unknownError"));
             }
         };
         plugin.reload(callback);
-        context.getForWhom().sendRawMessage(ChatColor.GREEN + Language.get("questDeleted"));
+        context.getForWhom().sendRawMessage(ChatColor.GREEN + BukkitLanguage.get("questDeleted"));
         if (plugin.getConfigSettings().getConsoleLogging() > 0) {
             final String identifier = context.getForWhom() instanceof Player ?
                     "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";

@@ -43,7 +43,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Language {
+public class BukkitLanguage {
 
     private static Quests plugin;
     private static final LinkedHashMap<String, String> defaultLang = new LinkedHashMap<>();
@@ -77,25 +77,25 @@ public class Language {
         }
         final int separator = locale.indexOf("_");
         if (separator == -1) {
-            return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
+            return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(player, defaultLang.get(key)) : "NULL";
         }
         final String language = locale.substring(0, separator);
         final String country = locale.substring(separator + 1).toUpperCase();
         locale = language + "-" + country;
         if (plugin.getConfigSettings().canLanguageOverrideClient() || locale.equals(plugin.getConfigSettings().getLanguage())) {
-            return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
+            return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(player, defaultLang.get(key)) : "NULL";
         }
         if (!otherLang.containsKey(locale)) {
             try {
                 load(plugin, locale);
             } catch (Exception e) {
-                return defaultLang.containsKey(key) ? LangToken.convertString(player, defaultLang.get(key)) : "NULL";
+                return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(player, defaultLang.get(key)) : "NULL";
             }
         }
         if (otherLang.get(locale).get(key) == null) {
             return defaultLang.get(key);
         }
-        return LangToken.convertString(otherLang.get(locale).get(key));
+        return BukkitFormatToken.convertString(otherLang.get(locale).get(key));
     }
 
     /**
@@ -125,7 +125,7 @@ public class Language {
         if (key == null) {
             return null;
         }
-        return defaultLang.containsKey(key) ? LangToken.convertString(defaultLang.get(key)) : "NULL";
+        return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(defaultLang.get(key)) : "NULL";
     }
 
     /**
@@ -191,7 +191,7 @@ public class Language {
      * Transfer language files from jar to disk, then load default setting
      */
     public static void init(final Quests plugin) throws IOException, URISyntaxException {
-        Language.plugin = plugin;
+        BukkitLanguage.plugin = plugin;
         final String path = "lang";
         final File jarFile = new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
         if (jarFile.isFile()) {
@@ -226,7 +226,7 @@ public class Language {
      * @throws IOException file issue
      */
     public static void load(final Quests plugin, String iso) throws InvalidConfigurationException, IOException {
-        Language.plugin = plugin;
+        BukkitLanguage.plugin = plugin;
         final File langFile = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
                 + File.separator + "strings.yml");
         final File langFile_new = new File(plugin.getPluginDataFolder(), File.separator + "lang" + File.separator + iso
@@ -346,7 +346,7 @@ public class Language {
         }
     }
 
-    public static class LangToken {
+    public static class BukkitFormatToken {
 
         static Map<String, String> tokenMap = new HashMap<>();
 
@@ -383,7 +383,7 @@ public class Language {
                 return null;
             }
             if (tokenMap.isEmpty()) {
-                LangToken.init();
+                BukkitFormatToken.init();
             }
             for (final Entry<String, String> token : tokenMap.entrySet()) {
                 s = s.replace(token.getKey(), token.getValue());
@@ -407,7 +407,7 @@ public class Language {
                 return null;
             }
             if (tokenMap.isEmpty()) {
-                LangToken.init();
+                BukkitFormatToken.init();
             }
             s = convertString(s);
             final Plugin placeholderApi = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI");
