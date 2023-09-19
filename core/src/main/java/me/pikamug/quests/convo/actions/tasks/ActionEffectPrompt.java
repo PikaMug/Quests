@@ -20,7 +20,7 @@ import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromp
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -55,7 +55,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("eventEditorEffect");
+        return BukkitLang.get("eventEditorEffect");
     }
     
     @Override
@@ -75,11 +75,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetEffects");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorSetEffects");
         case 2:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetExplosions");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorSetExplosions");
         case 3:
-            return ChatColor.GREEN + BukkitLanguage.get("done");
+            return ChatColor.GREEN + BukkitLang.get("done");
         default:
             return null;
         }
@@ -91,7 +91,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         switch (number) {
         case 1:
             if (context.getSessionData(Key.A_EFFECTS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS);
@@ -108,7 +108,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             }
         case 2:
             if (context.getSessionData(Key.A_EXPLOSIONS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.A_EXPLOSIONS);
@@ -153,7 +153,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionEffectExplosionPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                 return new ActionEffectPrompt(context);
             }
         case 3:
@@ -179,7 +179,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEffectsTitle");
+            return BukkitLang.get("eventEditorEffectsTitle");
         }
         @Override
         public ChatColor getNumberColor(final ConversationContext context, final int number) {
@@ -200,13 +200,13 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorAddEffect");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorAddEffect");
             case 2:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorAddEffectLocation");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorAddEffectLocation");
             case 3:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 4:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -218,7 +218,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             switch (number) {
             case 1:
                 if (context.getSessionData(Key.A_EFFECTS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(Key.A_EFFECTS))) {
@@ -228,7 +228,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(Key.A_EFFECTS_LOCATIONS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     for (final String s : (List<String>) Objects.requireNonNull(context
@@ -268,7 +268,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return new ActionEffectSoundPrompt(context);
             case 2:
                 if (context.getSessionData(Key.A_EFFECTS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorMustAddEffects"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustAddEffects"));
                     return new ActionEffectSoundListPrompt(context);
                 } else {
                     if (context.getForWhom() instanceof Player) {
@@ -277,12 +277,12 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                         return new ActionEffectSoundLocationPrompt(context);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
+                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                         return new ActionEffectSoundListPrompt(context);
                     }
                 }
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("eventEditorEffectsCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorEffectsCleared"));
                 context.setSessionData(Key.A_EFFECTS, null);
                 context.setSessionData(Key.A_EFFECTS_LOCATIONS, null);
                 return new ActionEffectSoundListPrompt(context);
@@ -304,7 +304,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 if (one == two) {
                     return new ActionMainPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     return new ActionEffectSoundListPrompt(context);
                 }
             default:
@@ -321,12 +321,12 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEffectsTitle");
+            return BukkitLang.get("eventEditorEffectsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("effEnterName");
+            return BukkitLang.get("effEnterName");
         }
 
         @Override
@@ -353,7 +353,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperEffect(input) != null) {
                     final LinkedList<String> effects;
                     if (context.getSessionData(Key.A_EFFECTS) != null) {
@@ -373,7 +373,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     }
                     return new ActionEffectSoundListPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorInvalidEffect")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidEffect")
                             .replace("<input>", input));
                     return new ActionEffectSoundPrompt(context);
                 }
@@ -402,7 +402,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEffectLocationPrompt");
+            return BukkitLang.get("eventEditorEffectLocationPrompt");
         }
 
         @Override
@@ -421,7 +421,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdAdd"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 final Block block = selectedEffectLocations.get(player.getUniqueId());
                 if (block != null) {
@@ -438,11 +438,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     context.setSessionData(Key.A_EFFECTS_LOCATIONS, locations);
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLanguage.get("eventEditorSelectBlockFirst"));
+                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     return new ActionEffectSoundLocationPrompt(context);
                 }
                 return new ActionEffectSoundListPrompt(context);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
@@ -466,7 +466,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorExplosionPrompt");
+            return BukkitLang.get("eventEditorExplosionPrompt");
         }
 
         @Override
@@ -485,7 +485,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdAdd"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 final Block block = selectedExplosionLocations.get(player.getUniqueId());
                 if (block != null) {
@@ -503,17 +503,17 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     selectedExplosionLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLanguage.get("eventEditorSelectBlockFirst"));
+                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     return new ActionEffectExplosionPrompt(context);
                 }
                 return new ActionMainPrompt(context);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(Key.A_EXPLOSIONS, null);
                 final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);

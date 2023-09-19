@@ -15,7 +15,7 @@ package me.pikamug.quests.convo.quests.stages;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -40,7 +40,7 @@ public class QuestStageMenuPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("stageEditorStages");
+        return BukkitLang.get("stageEditorStages");
     }
     
     @Override
@@ -63,11 +63,11 @@ public class QuestStageMenuPrompt extends QuestsEditorNumericPrompt {
         final int stages = getStages(context);
         if (number > 0) {
             if (number < stages + 1) {
-                return ChatColor.GOLD + BukkitLanguage.get("stageEditorEditStage") + " " + number;
+                return ChatColor.GOLD + BukkitLang.get("stageEditorEditStage") + " " + number;
             } else if (number == stages + 1) {
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorNewStage");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorNewStage");
             } else if (number == stages + 2) {
-                return ChatColor.YELLOW + BukkitLanguage.get("done");
+                return ChatColor.YELLOW + BukkitLang.get("done");
             }
         }
         return null;

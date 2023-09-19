@@ -19,7 +19,7 @@ import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -44,7 +44,7 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("eventEditorTimer");
+        return BukkitLang.get("eventEditorTimer");
     }
     
     @Override
@@ -64,11 +64,11 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetTimer");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorSetTimer");
         case 2:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorCancelTimer");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorCancelTimer");
         case 3:
-            return ChatColor.GREEN + BukkitLanguage.get("done");
+            return ChatColor.GREEN + BukkitLang.get("done");
         default:
             return null;
         }
@@ -79,7 +79,7 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
         switch (number) {
         case 1:
             if (context.getSessionData(Key.A_TIMER) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final Integer timer = (Integer)context.getSessionData(Key.A_TIMER);
                 if (timer != null) {
@@ -89,11 +89,11 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
             }
         case 2:
             if (context.getSessionData(Key.A_CANCEL_TIMER) == null) {
-                return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLanguage.get("false") + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLang.get("false") + ChatColor.GRAY + ")";
             } else {
                 final Boolean timerOpt = (Boolean) context.getSessionData(Key.A_CANCEL_TIMER);
-                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(timerOpt) ? ChatColor.GREEN + BukkitLanguage.get("true")
-                        : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(timerOpt) ? ChatColor.GREEN + BukkitLang.get("true")
+                        : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
             }
         case 3:
             return "";
@@ -154,7 +154,7 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEnterTimerSeconds");
+            return BukkitLang.get("eventEditorEnterTimerSeconds");
         }
 
         @Override
@@ -171,13 +171,13 @@ public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorPositiveAmount"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorPositiveAmount"));
                 } else {
                     context.setSessionData(Key.A_TIMER, i);
                 }
             } catch (final NumberFormatException e) {
                 context.getForWhom().sendRawMessage(ChatColor.RED
-                        + BukkitLanguage.get("reqNotANumber").replace("<input>", input));
+                        + BukkitLang.get("reqNotANumber").replace("<input>", input));
                 return new ActionTimerFailPrompt(context);
             }
             return new ActionTimerPrompt(context);

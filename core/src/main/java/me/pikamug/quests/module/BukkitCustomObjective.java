@@ -14,8 +14,8 @@ package me.pikamug.quests.module;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.events.quester.QuesterPostUpdateObjectiveEvent;
-import me.pikamug.quests.events.quester.QuesterPreUpdateObjectiveEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostUpdateObjectiveEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreUpdateObjectiveEvent;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
@@ -244,8 +244,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                     final int goal = quester.getCurrentStage(bukkitQuest).getCustomObjectiveCounts().get(index);
 
                     final ObjectiveType type = ObjectiveType.CUSTOM;
-                    final QuesterPreUpdateObjectiveEvent preEvent
-                            = new QuesterPreUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
+                    final BukkitQuesterPreUpdateObjectiveEvent preEvent
+                            = new BukkitQuesterPreUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     if (progress >= goal) {
@@ -264,8 +264,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                         });
                     }
 
-                    final QuesterPostUpdateObjectiveEvent postEvent
-                            = new QuesterPostUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
+                    final BukkitQuesterPostUpdateObjectiveEvent postEvent
+                            = new BukkitQuesterPostUpdateObjectiveEvent(quester, bukkitQuest, new BukkitObjective(type, null, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(postEvent);
                 }
             }

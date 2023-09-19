@@ -15,7 +15,7 @@ package me.pikamug.quests.tasks;
 import me.pikamug.quests.enums.BukkitPreBuiltParticle;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.events.quester.QuesterPostViewEffectEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostViewEffectEvent;
 import me.pikamug.quests.nms.BukkitParticleProvider;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -67,17 +67,17 @@ public class BukkitNpcEffectThread implements Runnable {
     public void showConfigEffect(final BukkitQuester quester, final Entity entity) {
         UUID uuid = plugin.getDependencies().getUuidFromNpc(entity);
         if (uuid != null) {
-            final QuesterPostViewEffectEvent event;
+            final BukkitQuesterPostViewEffectEvent event;
             if (quester.canAcceptQuest(uuid)) {
                 showEffect(quester.getPlayer(), entity, plugin.getConfigSettings().getEffect());
 
-                event = new QuesterPostViewEffectEvent(quester, entity,
+                event = new BukkitQuesterPostViewEffectEvent(quester, entity,
                         plugin.getConfigSettings().getEffect(), false);
                 plugin.getServer().getPluginManager().callEvent(event);
             } else if (quester.canAcceptCompletedRedoableQuest(uuid)) {
                 showEffect(quester.getPlayer(), entity, plugin.getConfigSettings().getRedoEffect());
 
-                event = new QuesterPostViewEffectEvent(quester, entity,
+                event = new BukkitQuesterPostViewEffectEvent(quester, entity,
                         plugin.getConfigSettings().getEffect(), true);
                 plugin.getServer().getPluginManager().callEvent(event);
             }

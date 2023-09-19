@@ -14,7 +14,7 @@ package me.pikamug.quests.convo.generic;
 
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -62,10 +62,10 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     @Override
     public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
         if (input != null) {
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorMessageCleared"));
-                context.setSessionData(classPrefix + "-override", BukkitLanguage.get("cmdClear"));
-            } else if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorMessageCleared"));
+                context.setSessionData(classPrefix + "-override", BukkitLang.get("cmdClear"));
+            } else if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 context.setSessionData(classPrefix + "-override", input);
             }
         }

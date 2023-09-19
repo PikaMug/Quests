@@ -13,10 +13,10 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.commands.quest.QuestCommandHandler;
-import me.pikamug.quests.commands.questadmin.QuestadminCommandHandler;
-import me.pikamug.quests.commands.quests.QuestsCommandHandler;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.commands.quest.BukkitQuestCommandHandler;
+import me.pikamug.quests.commands.questadmin.BukkitQuestadminCommandHandler;
+import me.pikamug.quests.commands.quests.BukkitQuestsCommandHandler;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,21 +38,21 @@ public class BukkitCommandManager implements TabExecutor {
     public boolean onCommand(final @NotNull CommandSender cs, final @NotNull Command cmd,
                              final @NotNull String label, final String[] args) {
         if (plugin.isLoading()) {
-            cs.sendMessage(ChatColor.RED + BukkitLanguage.get("errorLoading"));
+            cs.sendMessage(ChatColor.RED + BukkitLang.get("errorLoading"));
             return true;
         }
         if (cs instanceof Player) {
             if (!plugin.canUseQuests(((Player) cs).getUniqueId())) {
-                cs.sendMessage(ChatColor.RED + BukkitLanguage.get((Player) cs, "noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get((Player) cs, "noPermission"));
                 return true;
             }
         }
         if (cmd.getName().equalsIgnoreCase("quest")) {
-            return new QuestCommandHandler(plugin).check(cs, args);
+            return new BukkitQuestCommandHandler(plugin).check(cs, args);
         } else if (cmd.getName().equalsIgnoreCase("quests")) {
-            return new QuestsCommandHandler(plugin).check(cs, args);
+            return new BukkitQuestsCommandHandler(plugin).check(cs, args);
         } else if (cmd.getName().equalsIgnoreCase("questadmin") || cmd.getName().equalsIgnoreCase("questsadmin")) {
-            return new QuestadminCommandHandler(plugin).check(cs, args);
+            return new BukkitQuestadminCommandHandler(plugin).check(cs, args);
         }
         return false;
     }
@@ -63,11 +63,11 @@ public class BukkitCommandManager implements TabExecutor {
                                       @NotNull String label, @NotNull String[] args) {
         if (args.length > 0) {
             if (cmd.getName().equalsIgnoreCase("quest")) {
-                return new QuestCommandHandler(plugin).suggest(cs, args);
+                return new BukkitQuestCommandHandler(plugin).suggest(cs, args);
             } else if (cmd.getName().equalsIgnoreCase("quests")) {
-                return new QuestsCommandHandler(plugin).suggest(cs, args);
+                return new BukkitQuestsCommandHandler(plugin).suggest(cs, args);
             } else if (cmd.getName().equalsIgnoreCase("questadmin")) {
-                return new QuestadminCommandHandler(plugin).suggest(cs, args);
+                return new BukkitQuestadminCommandHandler(plugin).suggest(cs, args);
             }
         }
         return null;

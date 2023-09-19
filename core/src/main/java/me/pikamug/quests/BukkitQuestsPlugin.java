@@ -51,7 +51,7 @@ import me.pikamug.quests.storage.implementation.file.BukkitConditionYamlStorage;
 import me.pikamug.quests.storage.implementation.file.BukkitQuestYamlStorage;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
@@ -170,7 +170,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         
         // 4 - Setup language files
         try {
-            BukkitLanguage.init(this);
+            BukkitLang.init(this);
         } catch (final IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -238,7 +238,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // 12 - Attempt to check for updates
         new BukkitUpdateChecker(this, 3711).getVersion(version -> {
             if (!getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
-                getLogger().info(ChatColor.DARK_GREEN + BukkitLanguage.get("updateTo").replace("<version>",
+                getLogger().info(ChatColor.DARK_GREEN + BukkitLang.get("updateTo").replace("<version>",
                         version).replace("<url>", ChatColor.AQUA + getDescription().getWebsite()));
             }
         });
@@ -618,7 +618,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             actionLoader.init();
             questLoader.init();
             getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
-                    + conditions.size() + " Condition(s) and " + BukkitLanguage.size() + " Phrase(s)");
+                    + conditions.size() + " Condition(s) and " + BukkitLang.size() + " Phrase(s)");
             for (final Player p : getServer().getOnlinePlayers()) {
                 final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
                 if (!quester.hasData()) {
@@ -649,7 +649,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     public void reload(final ReloadCallback<Boolean> callback) {
         if (loading) {
-            getLogger().warning(ChatColor.YELLOW + BukkitLanguage.get("errorLoading"));
+            getLogger().warning(ChatColor.YELLOW + BukkitLang.get("errorLoading"));
             return;
         }
         loading = true;
@@ -657,9 +657,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 getStorage().saveOfflineQuesters().get();
-                BukkitLanguage.clear();
+                BukkitLang.clear();
                 configSettings.init();
-                BukkitLanguage.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
+                BukkitLang.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
                 quests.clear();
                 actions.clear();
                 conditions.clear();

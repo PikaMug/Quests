@@ -21,7 +21,7 @@ import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptE
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -57,7 +57,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("stageEditorNPCs");
+        return BukkitLang.get("stageEditorNPCs");
     }
     
     @Override
@@ -78,13 +78,13 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliverItems");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliverItems");
         case 2:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorTalkToNPCs");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorTalkToNPCs");
         case 3:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorKillNPCs");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorKillNPCs");
         case 4:
-            return ChatColor.GREEN + BukkitLanguage.get("done");
+            return ChatColor.GREEN + BukkitLang.get("done");
         default:
             return null;
         }
@@ -97,7 +97,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         case 1:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 if (context.getSessionData(pref + Key.S_DELIVERY_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final LinkedList<String> npcs
@@ -109,19 +109,19 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                     .append(BukkitItemUtil.getName(items.get(i))).append(ChatColor.GRAY).append(" x ")
                                     .append(ChatColor.AQUA).append(items.get(i).getAmount()).append(ChatColor.GRAY)
-                                    .append(" ").append(BukkitLanguage.get("to")).append(" ").append(ChatColor.BLUE)
+                                    .append(" ").append(BukkitLang.get("to")).append(" ").append(ChatColor.BLUE)
                                     .append(plugin.getDependencies().getNpcName(UUID.fromString(npcs.get(i))));
                         }
                     }
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + " (" + BukkitLanguage.get("notInstalled") + ")";
+                return ChatColor.GRAY + " (" + BukkitLang.get("notInstalled") + ")";
             }
         case 2:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 if (context.getSessionData(pref + Key.S_NPCS_TO_TALK_TO) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final LinkedList<String> npcs
@@ -135,12 +135,12 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 3:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 if (context.getSessionData(pref + Key.S_NPCS_TO_KILL) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final LinkedList<String> npcs
@@ -157,7 +157,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 4:
             return "";
@@ -190,28 +190,28 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 return new QuestNpcsDeliveryListPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNoCitizens"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 return new QuestStageMainPrompt(stageNum, context);
             }
         case 2:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 return new QuestNpcsIdsToTalkToPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNoCitizens"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 return new QuestStageMainPrompt(stageNum, context);
             }
         case 3:
             if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                 return new QuestNpcsKillListPrompt(context);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNoCitizens"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 return new QuestStageMainPrompt(stageNum, context);
             }
         case 4:
             try {
                 return new QuestStageMainPrompt(stageNum, context);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
@@ -234,7 +234,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorDeliverItems");
+            return BukkitLang.get("stageEditorDeliverItems");
         }
         
         @Override
@@ -257,15 +257,15 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorNPCUniqueIds");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorNPCUniqueIds");
             case 3:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryMessages");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryMessages");
             case 4:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 5:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -277,7 +277,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_DELIVERY_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> deliveryItems
@@ -292,7 +292,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 2:
                 if (context.getSessionData(pref + Key.S_DELIVERY_NPCS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> deliveryNpcs = (List<String>) context.getSessionData(pref + Key.S_DELIVERY_NPCS);
@@ -308,7 +308,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 }
             case 3:
                 if (context.getSessionData(pref + Key.S_DELIVERY_MESSAGES) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<String> deliveryMessages
@@ -373,7 +373,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 return new QuestNpcDeliveryMessagesPrompt(context);
             case 4:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("cleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("cleared"));
                 context.setSessionData(pref + Key.S_DELIVERY_ITEMS, null);
                 context.setSessionData(pref + Key.S_DELIVERY_NPCS, null);
                 context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, null);
@@ -395,13 +395,13 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 }
                 if (one == two) {
                     if (context.getSessionData(pref + Key.S_DELIVERY_MESSAGES) == null && one != 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNoDeliveryMessage"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNoDeliveryMessage"));
                         return new QuestNpcsDeliveryListPrompt(context);
                     } else {
                         return new QuestNpcsPrompt(stageNum, context);
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     return new QuestNpcsDeliveryListPrompt(context);
                 }
             default:
@@ -423,7 +423,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("enterNpcUniqueIds");
+            return BukkitLang.get("enterNpcUniqueIds");
         }
 
         @Override
@@ -436,7 +436,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + BukkitLanguage.get("questEditorClickNPCStart");
+                return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
             } else {
                 return ChatColor.YELLOW + getQueryText(context);
             }
@@ -448,7 +448,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> npcs = context.getSessionData(pref + Key.S_DELIVERY_NPCS) != null
                         ? (LinkedList<String>) context.getSessionData(pref + Key.S_DELIVERY_NPCS) : new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -457,12 +457,12 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidNPC")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             return new QuestNpcDeliveryNpcsPrompt(context);
                         }
                     } catch (final IllegalArgumentException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNotListOfUniqueIds")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", input));
                         return new QuestNpcDeliveryNpcsPrompt(context);
                     }
@@ -474,7 +474,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                     messages = (LinkedList<String>) context.getSessionData(pref + Key.S_DELIVERY_MESSAGES);
                 }
                 if (messages != null && messages.size() == 0) {
-                    messages.add(BukkitLanguage.get("thankYouMore"));
+                    messages.add(BukkitLang.get("thankYouMore"));
                 }
                 context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, messages);
             }
@@ -500,7 +500,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorDeliveryMessagesPrompt");
+            return BukkitLang.get("stageEditorDeliveryMessagesPrompt");
         }
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
@@ -508,7 +508,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + BukkitLanguage.get("stageEditorNPCNote");
+            return ChatColor.YELLOW + getQueryText(context) + "\n" + ChatColor.GOLD + BukkitLang.get("stageEditorNPCNote");
         }
 
         @Override
@@ -516,8 +516,8 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
-                final String[] args = input.split(BukkitLanguage.get("charSemi"));
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
+                final String[] args = input.split(BukkitLang.get("charSemi"));
                 final LinkedList<String> messages = new LinkedList<>(Arrays.asList(args));
                 context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, messages);
             }
@@ -538,7 +538,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("enterOrClearNpcUniqueIds");
+            return BukkitLang.get("enterOrClearNpcUniqueIds");
         }
 
         @Override
@@ -551,7 +551,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + BukkitLanguage.get("questEditorClickNPCStart");
+                return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
             } else {
                 return ChatColor.YELLOW + getQueryText(context);
             }
@@ -563,7 +563,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> npcs = context.getSessionData(pref + Key.S_NPCS_TO_TALK_TO) != null
                         ? (LinkedList<String>) context.getSessionData(pref + Key.S_NPCS_TO_TALK_TO) : new LinkedList<>();
@@ -573,18 +573,18 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidNPC")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             return new QuestNpcsIdsToTalkToPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNotListOfUniqueIds")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", s));
                         return new QuestNpcsIdsToTalkToPrompt(context);
                     }
                 }
                 context.setSessionData(pref + Key.S_NPCS_TO_TALK_TO, npcs);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(pref + Key.S_NPCS_TO_TALK_TO, null);
             }
             if (context.getForWhom() instanceof Player) {
@@ -611,7 +611,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorNPCs");
+            return BukkitLang.get("stageEditorNPCs");
         }
 
         @Override
@@ -633,13 +633,13 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorNPCUniqueIds");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorNPCUniqueIds");
             case 2:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorSetKillAmounts");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorSetKillAmounts");
             case 3:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 4:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -652,7 +652,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
                     if (context.getSessionData(pref + Key.S_NPCS_TO_KILL) == null) {
-                        return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                        return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
                         final List<String> npcsToKill = (List<String>) context.getSessionData(pref + Key.S_NPCS_TO_KILL);
@@ -667,11 +667,11 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         return text.toString();
                     }
                 } else {
-                    return ChatColor.GRAY + " (" + BukkitLanguage.get("notInstalled") + ")";
+                    return ChatColor.GRAY + " (" + BukkitLang.get("notInstalled") + ")";
                 }
             case 2:
                 if (context.getSessionData(pref + Key.S_NPCS_TO_KILL_AMOUNTS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<Integer> npcsToKillAmounts
@@ -715,7 +715,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             case 2:
                 return new QuestNpcAmountsToKillPrompt(context);
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_NPCS_TO_KILL, null);
                 context.setSessionData(pref + Key.S_NPCS_TO_KILL_AMOUNTS, null);
                 return new QuestNpcsKillListPrompt(context);
@@ -738,7 +738,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 if (one == two) {
                     return new QuestStageMainPrompt(stageNum, context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("listsNotSameSize"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     return new QuestNpcsKillListPrompt(context);
                 }
             default:
@@ -760,7 +760,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("enterNpcUniqueIds");
+            return BukkitLang.get("enterNpcUniqueIds");
         }
 
         @Override
@@ -773,7 +773,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                return ChatColor.YELLOW + BukkitLanguage.get("questEditorClickNPCStart");
+                return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
             } else {
                 return ChatColor.YELLOW + getQueryText(context);
             }
@@ -785,7 +785,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> npcs = context.getSessionData(pref + Key.S_NPCS_TO_KILL) != null
                         ? (LinkedList<String>) context.getSessionData(pref + Key.S_NPCS_TO_KILL) : new LinkedList<>();
@@ -795,12 +795,12 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
                             npcs.add(uuid.toString());
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidNPC")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             return new QuestNpcIdsToKillPrompt(context);
                         }
                     } catch (final IllegalArgumentException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNotListOfUniqueIds")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", s));
                         return new QuestNpcIdsToKillPrompt(context);
                     }
@@ -840,7 +840,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorKillNPCsPrompt");
+            return BukkitLang.get("stageEditorKillNPCsPrompt");
         }
 
         @Override
@@ -857,7 +857,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();
                 for (final String s : args) {
@@ -865,12 +865,12 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                         if (Integer.parseInt(s) > 0) {
                             amounts.add(Integer.parseInt(s));
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidMinimum")
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             return new QuestNpcAmountsToKillPrompt(context);
                         }
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorNotListOfUniqueIds")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", s));
                         return new QuestNpcAmountsToKillPrompt(context);
                     }

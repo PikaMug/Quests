@@ -23,7 +23,7 @@ import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
@@ -52,8 +52,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        final String title = BukkitLanguage.get("eventEditorTitle");
-        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + BukkitLanguage.get("trialMode")
+        final String title = BukkitLang.get("eventEditorTitle");
+        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + BukkitLang.get("trialMode")
                 + ")" : "");
     }
     
@@ -75,13 +75,13 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorCreate");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorCreate");
         case 2:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorEdit");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorEdit");
         case 3:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorDelete");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorDelete");
         case 4:
-            return ChatColor.RED + BukkitLanguage.get("exit");
+            return ChatColor.RED + BukkitLang.get("exit");
         default:
             return null;
         }
@@ -115,7 +115,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 context.setSessionData(Key.A_OLD_ACTION, "");
                 return new ActionSelectCreatePrompt(context);
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 2:
@@ -123,13 +123,13 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     || cs.hasPermission("quests.editor.events.edit")) {
                 if (plugin.getLoadedActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
-                            + BukkitLanguage.get("eventEditorNoneToEdit"));
+                            + BukkitLang.get("eventEditorNoneToEdit"));
                     return new ActionMenuPrompt(context);
                 } else {
                     return new ActionSelectEditPrompt(context);
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 3:
@@ -137,17 +137,17 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     || cs.hasPermission("quests.editor.events.delete")) {
                 if (plugin.getLoadedActions().isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.YELLOW 
-                            + BukkitLanguage.get("eventEditorNoneToDelete"));
+                            + BukkitLang.get("eventEditorNoneToDelete"));
                     return new ActionMenuPrompt(context);
                 } else {
                     return new ActionSelectDeletePrompt(context);
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLanguage.get("noPermission"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 return new ActionMenuPrompt(context);
             }
         case 4:
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("exited"));
+            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
             return Prompt.END_OF_CONVERSATION;
         default:
             return new ActionMenuPrompt(context);
@@ -161,12 +161,12 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventCreateTitle");
+            return BukkitLang.get("eventCreateTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEnterEventName");
+            return BukkitLang.get("eventEditorEnterEventName");
         }
 
         @Override
@@ -181,28 +181,28 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         @Override
         public Prompt acceptInput(final @NotNull ConversationContext context, String input) {
             if (input == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 return new ActionSelectCreatePrompt(context);
             }
             input = input.trim();
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final Action action : plugin.getLoadedActions()) {
                     if (action.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorExists"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorExists"));
                         return new ActionSelectCreatePrompt(context);
                     }
                 }
                 final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorBeingEdited"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     return new ActionSelectCreatePrompt(context);
                 }
                 if (input.contains(".") || input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorInvalidQuestName"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     return new ActionSelectCreatePrompt(context);
                 }
                 if (input.equals("")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateInvalidInput"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     return new ActionSelectCreatePrompt(context);
                 }
                 context.setSessionData(Key.A_NAME, input);
@@ -223,12 +223,12 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditTitle");
+            return BukkitLang.get("eventEditTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEnterEventName");
+            return BukkitLang.get("eventEditorEnterEventName");
         }
 
         @Override
@@ -245,7 +245,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Action action = plugin.getAction(input);
                 if (action != null) {
                     context.setSessionData(Key.A_OLD_ACTION, action.getName());
@@ -253,7 +253,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().loadData(context, action);
                     return new ActionMainPrompt(context);
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound"));
                 return new ActionSelectEditPrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
@@ -269,12 +269,12 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventDeleteTitle");
+            return BukkitLang.get("eventDeleteTitle");
         }
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEnterEventName");
+            return BukkitLang.get("eventEditorEnterEventName");
         }
         
         @Override
@@ -291,7 +291,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Action action = plugin.getAction(input);
                 if (action != null) {
@@ -308,17 +308,17 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                         context.setSessionData(Key.ED_EVENT_DELETE, action.getName());
                         return new ActionConfirmDeletePrompt(context);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorEventInUse")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorEventInUse")
                         + " \"" + ChatColor.DARK_PURPLE + action.getName() + ChatColor.RED + "\":");
                         for (final String s : used) {
                             context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
                         context.getForWhom().sendRawMessage(ChatColor.RED 
-                                + BukkitLanguage.get("eventEditorMustModifyQuests"));
+                                + BukkitLang.get("eventEditorMustModifyQuests"));
                         return new ActionSelectDeletePrompt(context);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound"));
                 return new ActionSelectDeletePrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
@@ -359,9 +359,9 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GREEN + BukkitLanguage.get("yesWord");
+                return ChatColor.GREEN + BukkitLang.get("yesWord");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("noWord");
+                return ChatColor.RED + BukkitLang.get("noWord");
             default:
                 return null;
             }
@@ -369,7 +369,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("confirmDelete");
+            return BukkitLang.get("confirmDelete");
         }
 
         @Override
@@ -392,10 +392,10 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 plugin.getActionFactory().deleteAction(context);
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 return new ActionMenuPrompt(context);
             } else {
                 return new ActionConfirmDeletePrompt(context);

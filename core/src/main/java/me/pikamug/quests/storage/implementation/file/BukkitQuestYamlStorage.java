@@ -19,7 +19,7 @@ import me.pikamug.quests.storage.implementation.QuestStorageImpl;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
@@ -1606,38 +1606,38 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                 if (dc != null) {
                                     oStage.addSheepToShear(dc);
                                     // Legacy start -->
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BLACK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BLACK"))) {
                                     oStage.addSheepToShear(DyeColor.BLACK);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BLUE"))) {
                                     oStage.addSheepToShear(DyeColor.BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_BROWN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BROWN"))) {
                                     oStage.addSheepToShear(DyeColor.BROWN);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_CYAN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_CYAN"))) {
                                     oStage.addSheepToShear(DyeColor.CYAN);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_GRAY"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_GRAY"))) {
                                     oStage.addSheepToShear(DyeColor.GRAY);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_GREEN"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_GREEN"))) {
                                     oStage.addSheepToShear(DyeColor.GREEN);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_LIGHT_BLUE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_LIGHT_BLUE"))) {
                                     oStage.addSheepToShear(DyeColor.LIGHT_BLUE);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_LIME"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_LIME"))) {
                                     oStage.addSheepToShear(DyeColor.LIME);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_MAGENTA"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_MAGENTA"))) {
                                     oStage.addSheepToShear(DyeColor.MAGENTA);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_ORANGE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_ORANGE"))) {
                                     oStage.addSheepToShear(DyeColor.ORANGE);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_PINK"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_PINK"))) {
                                     oStage.addSheepToShear(DyeColor.PINK);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_PURPLE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_PURPLE"))) {
                                     oStage.addSheepToShear(DyeColor.PURPLE);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_RED"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_RED"))) {
                                     oStage.addSheepToShear(DyeColor.RED);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_SILVER"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_SILVER"))) {
                                     // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
                                     oStage.addSheepToShear(DyeColor.getByColor(Color.SILVER));
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_WHITE"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_WHITE"))) {
                                     oStage.addSheepToShear(DyeColor.WHITE);
-                                } else if (sheepColor.equalsIgnoreCase(BukkitLanguage.get("COLOR_YELLOW"))) {
+                                } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_YELLOW"))) {
                                     oStage.addSheepToShear(DyeColor.YELLOW);
                                     // <-- Legacy end
                                 } else {

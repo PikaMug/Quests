@@ -19,7 +19,7 @@ import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -51,7 +51,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("stageEditorItems");
+        return BukkitLang.get("stageEditorItems");
     }
     
     @Override
@@ -74,17 +74,17 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch(number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorCraftItems");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorCraftItems");
         case 2:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorSmeltItems");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorSmeltItems");
         case 3:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorEnchantItems");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorEnchantItems");
         case 4:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorBrewPotions");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorBrewPotions");
         case 5:
-            return ChatColor.YELLOW + BukkitLanguage.get("stageEditorConsumeItems");
+            return ChatColor.YELLOW + BukkitLang.get("stageEditorConsumeItems");
         case 6:
-            return ChatColor.GREEN + BukkitLanguage.get("done");
+            return ChatColor.GREEN + BukkitLang.get("done");
         default:
             return null;
         }
@@ -96,7 +96,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         switch(number) {
         case 1:
             if (context.getSessionData(pref + Key.S_CRAFT_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
@@ -112,7 +112,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             }
         case 2:
             if (context.getSessionData(pref + Key.S_SMELT_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
@@ -128,7 +128,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             }
         case 3:
             if (context.getSessionData(pref + Key.S_ENCHANT_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(pref + Key.S_ENCHANT_ITEMS);
@@ -143,7 +143,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             }
         case 4:
             if (context.getSessionData(pref + Key.S_BREW_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
@@ -159,7 +159,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             }
         case 5:
             if (context.getSessionData(pref + Key.S_CONSUME_ITEMS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> items
@@ -231,7 +231,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             try {
                 return new QuestStageMainPrompt(stageNum, context);
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("itemCreateCriticalError"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return Prompt.END_OF_CONVERSATION;
             }
         default:
@@ -254,7 +254,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorCraftItems");
+            return BukkitLang.get("stageEditorCraftItems");
         }
         
         @Override
@@ -275,11 +275,11 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -291,7 +291,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_CRAFT_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> craftItems
@@ -350,7 +350,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, QuestItemsCraftListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_CRAFT_ITEMS, null);
                 return new QuestItemsCraftListPrompt(context);
             default:
@@ -374,7 +374,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorSmeltItems");
+            return BukkitLang.get("stageEditorSmeltItems");
         }
         
         @Override
@@ -395,11 +395,11 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -411,7 +411,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_SMELT_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> smeltItems
@@ -470,7 +470,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, QuestItemsSmeltListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_SMELT_ITEMS, null);
                 return new QuestItemsSmeltListPrompt(context);
             default:
@@ -494,7 +494,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorEnchantItems");
+            return BukkitLang.get("stageEditorEnchantItems");
         }
         
         @Override
@@ -515,11 +515,11 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -531,7 +531,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_ENCHANT_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> enchantItems
@@ -590,7 +590,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, QuestItemsEnchantListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_ENCHANT_ITEMS, null);
                 return new QuestItemsEnchantListPrompt(context);
             default:
@@ -614,7 +614,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorBrewPotions");
+            return BukkitLang.get("stageEditorBrewPotions");
         }
         
         @Override
@@ -635,11 +635,11 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -651,7 +651,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_BREW_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> brewItems = (List<ItemStack>) context.getSessionData(pref + Key.S_BREW_ITEMS);
@@ -709,7 +709,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, QuestItemsBrewListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_BREW_ITEMS, null);
                 return new QuestItemsBrewListPrompt(context);
             default:
@@ -733,7 +733,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorConsumeItems");
+            return BukkitLang.get("stageEditorConsumeItems");
         }
         
         @Override
@@ -754,11 +754,11 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch(number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDeliveryAddItem");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -770,7 +770,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             switch(number) {
             case 1:
                 if (context.getSessionData(pref + Key.S_CONSUME_ITEMS) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> consumeItems
@@ -829,7 +829,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 return new ItemStackPrompt(context, QuestItemsConsumeListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorObjectiveCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 context.setSessionData(pref + Key.S_CONSUME_ITEMS, null);
                 return new QuestItemsConsumeListPrompt(context);
             default:

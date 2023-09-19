@@ -1,6 +1,6 @@
 package me.pikamug.quests.listeners;
 
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
@@ -14,7 +14,7 @@ public class BukkitConvoListener implements ConversationAbandonedListener {
         if (!abandonedEvent.gracefulExit()) {
             try {
                 abandonedEvent.getContext().getForWhom().sendRawMessage(ChatColor.YELLOW
-                        + BukkitLanguage.get((Player) abandonedEvent.getContext().getForWhom(), "questTimeout"));
+                        + BukkitLang.get((Player) abandonedEvent.getContext().getForWhom(), "questTimeout"));
             } catch (final Exception e) {
                 // Do nothing
             }

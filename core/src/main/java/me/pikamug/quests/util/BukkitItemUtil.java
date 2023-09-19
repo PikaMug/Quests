@@ -287,7 +287,7 @@ public class BukkitItemUtil {
             } else if (arg.startsWith("enchantment-")) {
                 final String[] temp = arg.substring(12).split(" ");
                 try {
-                    final String key = BukkitLanguage.getKey(temp[0]).replace(" ", "");
+                    final String key = BukkitLang.getKey(temp[0]).replace(" ", "");
                     if (!key.equals("NULL")) {
                         // Legacy localized name
                         final Enchantment e = Enchantment.getByName(key.replace("ENCHANTMENT_", ""));
@@ -550,7 +550,7 @@ public class BukkitItemUtil {
                 text.append(ChatColor.AQUA).append(":").append(is.getDurability());
             }
             if (!is.getEnchantments().isEmpty()) {
-                text.append(" ").append(ChatColor.GRAY).append(BukkitLanguage.get("with")).append(ChatColor.DARK_PURPLE);
+                text.append(" ").append(ChatColor.GRAY).append(BukkitLang.get("with")).append(ChatColor.DARK_PURPLE);
                 for (final Entry<Enchantment, Integer> e : is.getEnchantments().entrySet()) {
                     text.append(" ").append(BukkitItemUtil.getPrettyEnchantmentName(e.getKey())).append(":")
                             .append(e.getValue());
@@ -638,7 +638,7 @@ public class BukkitItemUtil {
         if (!is.getItemMeta().hasDisplayName()) {
             return false;
         }
-        return is.getItemMeta().getDisplayName().equals(ChatColor.LIGHT_PURPLE + BukkitLanguage.get("journalTitle"));
+        return is.getItemMeta().getDisplayName().equals(ChatColor.LIGHT_PURPLE + BukkitLang.get("journalTitle"));
     }
     
 
@@ -716,53 +716,53 @@ public class BukkitItemUtil {
      */
     @Deprecated
     public static Enchantment getEnchantmentFromProperLegacyName(final String enchant) {
-        if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_ARROW_DAMAGE"))) {
+        if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
             return Enchantment.ARROW_DAMAGE;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_ARROW_FIRE"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_FIRE"))) {
             return Enchantment.ARROW_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_ARROW_INFINITE"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_INFINITE"))) {
             return Enchantment.ARROW_INFINITE;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
             return Enchantment.ARROW_KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_DAMAGE_ALL"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ALL"))) {
             return Enchantment.DAMAGE_ALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
             return Enchantment.DAMAGE_ARTHROPODS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
             return Enchantment.DAMAGE_UNDEAD;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_DIG_SPEED"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DIG_SPEED"))) {
             return Enchantment.DIG_SPEED;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_DURABILITY"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DURABILITY"))) {
             return Enchantment.DURABILITY;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_FIRE_ASPECT"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_FIRE_ASPECT"))) {
             return Enchantment.FIRE_ASPECT;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_KNOCKBACK"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_KNOCKBACK"))) {
             return Enchantment.KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
             return Enchantment.LOOT_BONUS_BLOCKS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
             return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_LUCK"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LUCK"))) {
             return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_LURE"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LURE"))) {
             return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_OXYGEN"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_OXYGEN"))) {
             return Enchantment.OXYGEN;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
             return Enchantment.PROTECTION_ENVIRONMENTAL;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
             return Enchantment.PROTECTION_EXPLOSIONS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_PROTECTION_FALL"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FALL"))) {
             return Enchantment.PROTECTION_FALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_PROTECTION_FIRE"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
             return Enchantment.PROTECTION_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
             return Enchantment.PROTECTION_PROJECTILE;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_SILK_TOUCH"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_SILK_TOUCH"))) {
             return Enchantment.SILK_TOUCH;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_THORNS"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_THORNS"))) {
             return Enchantment.THORNS;
-        } else if (enchant.equalsIgnoreCase(BukkitLanguage.get("ENCHANTMENT_WATER_WORKER"))) {
+        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_WATER_WORKER"))) {
             return Enchantment.WATER_WORKER;
         } else {
             return null;

@@ -18,7 +18,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -45,7 +45,7 @@ public class BukkitQuestJournal {
         this.plugin = plugin;
         this.owner = owner;
         final Player player = owner.getPlayer();
-        final String title = ChatColor.LIGHT_PURPLE + BukkitLanguage.get(player, "journalTitle");
+        final String title = ChatColor.LIGHT_PURPLE + BukkitLang.get(player, "journalTitle");
         journal = BookUtil.writtenBook()
                 .author(player.getName())
                 .title(title)
@@ -61,9 +61,9 @@ public class BukkitQuestJournal {
     public List<BaseComponent[]> getPages() {
         if (owner.getCurrentQuests().isEmpty()) {
             final Player player = owner.getPlayer();
-            final String title = BukkitLanguage.get(player, "journalTitle");
+            final String title = BukkitLang.get(player, "journalTitle");
             return Collections.singletonList(new BookUtil.PageBuilder().add(new TextComponent(ChatColor.DARK_RED
-                    + BukkitLanguage.get(player, "journalNoQuests").replace("<journal>", title))).build());
+                    + BukkitLang.get(player, "journalNoQuests").replace("<journal>", title))).build());
         } else {
             final List<BaseComponent[]> pages = new LinkedList<>();
             final List<Quest> sortedList = owner.getCurrentQuests().keySet().stream()

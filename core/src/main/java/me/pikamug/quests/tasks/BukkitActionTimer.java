@@ -14,7 +14,7 @@ package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,7 +38,7 @@ public class BukkitActionTimer extends BukkitRunnable {
             quest.failQuest(quester, false);
             quester.updateJournal();
         } else {
-            quester.getPlayer().sendMessage(ChatColor.GREEN + BukkitLanguage.get(quester.getPlayer(), "timerMessage")
+            quester.getPlayer().sendMessage(ChatColor.GREEN + BukkitLang.get(quester.getPlayer(), "timerMessage")
                     .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(time * 1000L) + ChatColor.GREEN)
                     .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
         }

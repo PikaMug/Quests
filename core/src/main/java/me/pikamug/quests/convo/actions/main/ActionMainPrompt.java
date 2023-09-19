@@ -32,7 +32,7 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.BukkitLanguage;
+import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -66,7 +66,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     public String getTitle(final ConversationContext context) {
-        return BukkitLanguage.get("event") + ": " + context.getSessionData(Key.A_NAME);
+        return BukkitLang.get("event") + ": " + context.getSessionData(Key.A_NAME);
     }
     
     @Override
@@ -99,29 +99,29 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public String getSelectionText(final ConversationContext context, final int number) {
         switch (number) {
         case 1:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetName");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorSetName");
         case 2:
-            return ChatColor.GOLD + BukkitLanguage.get("eventEditorPlayer");
+            return ChatColor.GOLD + BukkitLang.get("eventEditorPlayer");
         case 3:
-            return ChatColor.GOLD + BukkitLanguage.get("eventEditorTimer");
+            return ChatColor.GOLD + BukkitLang.get("eventEditorTimer");
         case 4:
-            return ChatColor.GOLD + BukkitLanguage.get("eventEditorEffect");
+            return ChatColor.GOLD + BukkitLang.get("eventEditorEffect");
         case 5:
-            return ChatColor.GOLD + BukkitLanguage.get("eventEditorWeather");
+            return ChatColor.GOLD + BukkitLang.get("eventEditorWeather");
         case 6:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobSpawns");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobSpawns");
         case 7:
             if (plugin.getDependencies().getDenizenApi() == null) {
-                return ChatColor.GRAY + BukkitLanguage.get("stageEditorDenizenScript");
+                return ChatColor.GRAY + BukkitLang.get("stageEditorDenizenScript");
             } else {
-                return ChatColor.YELLOW + BukkitLanguage.get("stageEditorDenizenScript");
+                return ChatColor.YELLOW + BukkitLang.get("stageEditorDenizenScript");
             }
         case 8:
-            return ChatColor.YELLOW + BukkitLanguage.get("eventEditorFailQuest");
+            return ChatColor.YELLOW + BukkitLang.get("eventEditorFailQuest");
         case 9:
-            return ChatColor.GREEN + BukkitLanguage.get("save");
+            return ChatColor.GREEN + BukkitLang.get("save");
         case 10:
-            return ChatColor.RED + BukkitLanguage.get("exit");
+            return ChatColor.RED + BukkitLang.get("exit");
         default:
             return null;
         }
@@ -141,7 +141,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             return "";
         case 6:
             if (context.getSessionData(Key.A_MOBS) == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final LinkedList<QuestMob> mobs = (LinkedList<QuestMob>) context.getSessionData(Key.A_MOBS);
                 final StringBuilder text = new StringBuilder();
@@ -160,10 +160,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         case 7:
             if (plugin.getDependencies().getDenizenApi() == null) {
-                return ChatColor.GRAY + "(" + BukkitLanguage.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             } else {
                 if (context.getSessionData(Key.A_DENIZEN) == null) {
-                    return ChatColor.GRAY + "(" + BukkitLanguage.get("noneSet") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_DENIZEN)
                             + ChatColor.GRAY + ")";
@@ -171,11 +171,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
         case 8:
             if (context.getSessionData(Key.A_FAIL_QUEST) == null) {
-                return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLanguage.get("false") + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLang.get("false") + ChatColor.GRAY + ")";
             } else {
                 final Boolean failOpt = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
-                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + BukkitLanguage.get("true")
-                        : ChatColor.RED + BukkitLanguage.get("false")) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + BukkitLang.get("true")
+                        : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
             }
         default:
             return null;
@@ -218,8 +218,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 if (!plugin.hasLimitedAccess(context.getForWhom())) {
                     return new ActionDenizenPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("modeDeny")
-                            .replace("<mode>", BukkitLanguage.get("trialMode")));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("modeDeny")
+                            .replace("<mode>", BukkitLang.get("trialMode")));
                     return new ActionMainPrompt(context);
                 }
             } else {
@@ -259,7 +259,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorEnterEventName");
+            return BukkitLang.get("eventEditorEnterEventName");
         }
         
         @Override
@@ -276,20 +276,20 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorExists"));
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorExists"));
                         return new ActionNamePrompt(context);
                     }
                 }
                 final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorBeingEdited"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     return new ActionNamePrompt(context);
                 }
                 if (input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("questEditorInvalidQuestName"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     return new ActionNamePrompt(context);
                 }
                 actionNames.remove((String) context.getSessionData(Key.A_NAME));
@@ -316,7 +316,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorMobSpawnsTitle");
+            return BukkitLang.get("eventEditorMobSpawnsTitle");
         }
         
         @Override
@@ -337,11 +337,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorAddMobTypes");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorAddMobTypes");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("clear");
+                return ChatColor.RED + BukkitLang.get("clear");
             case 3:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -398,7 +398,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             case 1:
                 return new ActionMobPrompt(context, null);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("eventEditorMobSpawnsCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorMobSpawnsCleared"));
                 context.setSessionData(Key.A_MOBS, null);
                 return new ActionMobListPrompt(context);
             case 3:
@@ -427,7 +427,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorAddMobTypesTitle");
+            return BukkitLang.get("eventEditorAddMobTypesTitle");
         }
         
         @Override
@@ -452,19 +452,19 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobName");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobName");
             case 2:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobType");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobType");
             case 3:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobSpawnAmount");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobSpawnAmount");
             case 4:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorAddSpawnLocation");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorAddSpawnLocation");
             case 5:
-                return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetEquipment");
+                return ChatColor.YELLOW + BukkitLang.get("eventEditorSetEquipment");
             case 6:
-                return ChatColor.RED + BukkitLanguage.get("cancel");
+                return ChatColor.RED + BukkitLang.get("cancel");
             case 7:
-                return ChatColor.GREEN + BukkitLanguage.get("done");
+                return ChatColor.GREEN + BukkitLang.get("done");
             default:
                 return null;
             }
@@ -474,22 +474,22 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getAdditionalText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GRAY + "(" + (questMob.getName() == null ? BukkitLanguage.get("noneSet") : ChatColor.AQUA
+                return ChatColor.GRAY + "(" + (questMob.getName() == null ? BukkitLang.get("noneSet") : ChatColor.AQUA
                         + questMob.getName()) + ChatColor.GRAY + ")";
             case 2:
-                return ChatColor.GRAY + "(" + (questMob.getType() == null ? BukkitLanguage.get("noneSet") : ChatColor.AQUA
+                return ChatColor.GRAY + "(" + (questMob.getType() == null ? BukkitLang.get("noneSet") : ChatColor.AQUA
                         + questMob.getType().name()) + ChatColor.GRAY + ")";
             case 3:
                 return ChatColor.GRAY + "(" + (questMob.getSpawnAmounts() == null ? ChatColor.GRAY
-                        + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY
+                        + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getSpawnAmounts()) + ChatColor.GRAY
                         + ")";
             case 4:
                 return ChatColor.GRAY + "(" + (questMob.getSpawnLocation() == null ? ChatColor.GRAY
-                        + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitConfigUtil.getLocationInfo(questMob
+                        + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitConfigUtil.getLocationInfo(questMob
                         .getSpawnLocation())) + ChatColor.GRAY + ")";
             case 5:
                 return ChatColor.GRAY + "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY
-                        + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob.getInventory()[0]))
+                        + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob.getInventory()[0]))
                         + ChatColor.GRAY + ")";
             case 6:
             case 7:
@@ -535,7 +535,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                     return new ActionMobLocationPrompt(context, questMob);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("consoleError"));
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                     return new ActionMainPrompt(context);
                 }
             case 5:
@@ -544,13 +544,13 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobListPrompt(context);
             case 7:
                 if (questMob.getType() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorMustSetMobTypesFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobTypesFirst"));
                     return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnLocation() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorMustSetMobLocationFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobLocationFirst"));
                     return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnAmounts() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("eventEditorMustSetMobAmountsFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobAmountsFirst"));
                     return new ActionMobPrompt(context, questMob);
                 }
                 final LinkedList<QuestMob> list = context.getSessionData(Key.A_MOBS) == null ? new LinkedList<>()
@@ -585,7 +585,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorAddEquipmentTitle");
+            return BukkitLang.get("eventEditorAddEquipmentTitle");
         }
 
         @Override
@@ -615,29 +615,29 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobItemInHand");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobItemInHand");
                 case 2:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobItemInHandDrop");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobItemInHandDrop");
                 case 3:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobBoots");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobBoots");
                 case 4:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobBootsDrop");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobBootsDrop");
                 case 5:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobLeggings");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobLeggings");
                 case 6:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobLeggingsDrop");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobLeggingsDrop");
                 case 7:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobChestPlate");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobChestPlate");
                 case 8:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobChestPlateDrop");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobChestPlateDrop");
                 case 9:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobHelmet");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobHelmet");
                 case 10:
-                    return ChatColor.YELLOW + BukkitLanguage.get("eventEditorSetMobHelmetDrop");
+                    return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMobHelmetDrop");
                 case 11:
-                    return ChatColor.RED + BukkitLanguage.get("cancel");
+                    return ChatColor.RED + BukkitLang.get("cancel");
                 case 12:
-                    return ChatColor.GREEN + BukkitLanguage.get("done");
+                    return ChatColor.GREEN + BukkitLang.get("done");
                 default:
                     return null;
             }
@@ -648,43 +648,43 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             switch (number) {
                 case 1:
                     return ChatColor.GRAY + "(" + (questMob.getInventory()[0] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
                             .getInventory()[0])) + ChatColor.GRAY + ")";
                 case 2:
                     return ChatColor.GRAY + "(" + (questMob.getDropChances()[0] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[0])
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[0])
                             + ChatColor.GRAY + ")";
                 case 3:
                     return ChatColor.GRAY + "(" + (questMob.getInventory()[1] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
                             .getInventory()[1])) + ChatColor.GRAY + ")";
                 case 4:
                     return ChatColor.GRAY + "(" + (questMob.getDropChances()[1] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[1])
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[1])
                             + ChatColor.GRAY + ")";
                 case 5:
                     return ChatColor.GRAY + "(" + (questMob.getInventory()[2] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
                             .getInventory()[2])) + ChatColor.GRAY + ")";
                 case 6:
                     return ChatColor.GRAY + "(" + (questMob.getDropChances()[2] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[2])
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[2])
                             + ChatColor.GRAY + ")";
                 case 7:
                     return ChatColor.GRAY + "(" + (questMob.getInventory()[3] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
                             .getInventory()[3])) + ChatColor.GRAY + ")";
                 case 8:
                     return ChatColor.GRAY + "(" + (questMob.getDropChances()[3] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[3])
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[3])
                             + ChatColor.GRAY + ")";
                 case 9:
                     return ChatColor.GRAY + "(" + (questMob.getInventory()[4] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + BukkitItemUtil.getDisplayString(questMob
                             .getInventory()[4])) + ChatColor.GRAY + ")";
                 case 10:
                     return ChatColor.GRAY + "(" + (questMob.getDropChances()[4] == null ? ChatColor.GRAY
-                            + BukkitLanguage.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[4])
+                            + BukkitLang.get("noneSet") : ChatColor.AQUA + "" + questMob.getDropChances()[4])
                             + ChatColor.GRAY + ")";
                 case 11:
                 case 12:
@@ -782,7 +782,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorSetMobNamePrompt");
+            return BukkitLang.get("eventEditorSetMobNamePrompt");
         }
 
         @Override
@@ -799,9 +799,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 return new ActionMobPrompt(context, questMob);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 questMob.setName(null);
                 return new ActionMobPrompt(context, questMob);
             } else {
@@ -823,12 +823,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorMobsTitle");
+            return BukkitLang.get("eventEditorMobsTitle");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorSetMobTypesPrompt");
+            return BukkitLang.get("eventEditorSetMobTypesPrompt");
         }
 
         @Override
@@ -858,11 +858,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperMobType(input) != null) {
                     questMob.setType(BukkitMiscUtil.getProperMobType(input));
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidMob")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                             .replace("<input>", input));
                     return new ActionMobTypePrompt(context, questMob);
                 }
@@ -887,7 +887,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorSetMobAmountsPrompt");
+            return BukkitLang.get("eventEditorSetMobAmountsPrompt");
         }
 
         @Override
@@ -904,18 +904,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 1) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidMinimum")
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                 .replace("<number>", "1"));
                         return new ActionMobAmountPrompt(context, questMob);
                     }
                     questMob.setSpawnAmounts(i);
                     return new ActionMobPrompt(context, questMob);
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("reqNotANumber")
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     return new ActionMobAmountPrompt(context, questMob);
                 }
@@ -940,7 +940,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorSetMobLocationPrompt");
+            return BukkitLang.get("eventEditorSetMobLocationPrompt");
         }
 
         @Override
@@ -958,7 +958,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return null;
             }
             final Player player = (Player) context.getForWhom();
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdAdd"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                 final Block block = selectedMobLocations.get(player.getUniqueId());
                 if (block != null) {
@@ -967,11 +967,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                     selectedMobLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLanguage.get("eventEditorSelectBlockFirst"));
+                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     return new ActionMobLocationPrompt(context, questMob);
                 }
                 return new ActionMobPrompt(context, questMob);
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
                 selectedMobLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
@@ -1000,7 +1000,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("eventEditorSetDropChance").replace("<least>", "0.0").replaceFirst("<greatest>", "1.0");
+            return BukkitLang.get("eventEditorSetDropChance").replace("<least>", "0.0").replaceFirst("<greatest>", "1.0");
         }
 
         @Override
@@ -1017,19 +1017,19 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))) {
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 return new ActionMobPrompt(context, questMob);
             }
             final float chance;
             try {
                 chance = Float.parseFloat(input);
             } catch (final NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
                 return new ActionMobDropPrompt(context, invIndex, questMob);
             }
             if (chance > 1 || chance < 0) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("invalidRange")
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
                 return new ActionMobDropPrompt(context, invIndex, questMob);
             }
@@ -1048,12 +1048,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorDenizenScript");
+            return BukkitLang.get("stageEditorDenizenScript");
         }
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("stageEditorScriptPrompt");
+            return BukkitLang.get("stageEditorScriptPrompt");
         }
 
         @Override
@@ -1077,18 +1077,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (!input.equalsIgnoreCase(BukkitLanguage.get("cmdCancel"))
-                    && !input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (plugin.getDependencies().getDenizenApi().containsScript(input)) {
                     context.setSessionData(Key.A_DENIZEN, input.toUpperCase());
                     return new ActionMainPrompt(context);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("stageEditorInvalidScript"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidScript"));
                     return new ActionDenizenPrompt(context);
                 }
-            } else if (input.equalsIgnoreCase(BukkitLanguage.get("cmdClear"))) {
+            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(Key.A_DENIZEN, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLanguage.get("stageEditorDenizenCleared"));
+                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorDenizenCleared"));
                 return new ActionMainPrompt(context);
             } else {
                 return new ActionMainPrompt(context);
@@ -1145,9 +1145,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GREEN + BukkitLanguage.get("yesWord");
+                return ChatColor.GREEN + BukkitLang.get("yesWord");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("noWord");
+                return ChatColor.RED + BukkitLang.get("noWord");
             default:
                 return null;
             }
@@ -1155,7 +1155,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("questEditorSave");
+            return BukkitLang.get("questEditorSave");
         }
 
         @Override
@@ -1166,11 +1166,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
             if (!modified.isEmpty()) {
-                text.append("\n").append(ChatColor.RED).append(" ").append(BukkitLanguage.get("eventEditorModifiedNote"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(BukkitLang.get("eventEditorModifiedNote"));
                 for (final String s : modified) {
                     text.append("\n").append(ChatColor.GRAY).append("    - ").append(ChatColor.DARK_RED).append(s);
                 }
-                text.append("\n").append(ChatColor.RED).append(" ").append(BukkitLanguage.get("eventEditorForcedToQuit"));
+                text.append("\n").append(ChatColor.RED).append(" ").append(BukkitLang.get("eventEditorForcedToQuit"));
             }
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
@@ -1184,15 +1184,15 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 if (plugin.hasLimitedAccess(context.getForWhom()) && !plugin.getConfigSettings().canTrialSave()) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLanguage.get("modeDeny")
-                            .replace("<mode>", BukkitLanguage.get("trialMode")));
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("modeDeny")
+                            .replace("<mode>", BukkitLang.get("trialMode")));
                     return new ActionMainPrompt(context);
                 }
                 plugin.getActionFactory().saveAction(context);
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 return new ActionMainPrompt(context);
             } else {
                 return new ActionSavePrompt(context, modName);
@@ -1233,9 +1233,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
             case 1:
-                return ChatColor.GREEN + BukkitLanguage.get("yesWord");
+                return ChatColor.GREEN + BukkitLang.get("yesWord");
             case 2:
-                return ChatColor.RED + BukkitLanguage.get("noWord");
+                return ChatColor.RED + BukkitLang.get("noWord");
             default:
                 return null;
             }
@@ -1243,7 +1243,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public String getQueryText(final ConversationContext context) {
-            return BukkitLanguage.get("confirmDelete");
+            return BukkitLang.get("confirmDelete");
         }
 
         @Override
@@ -1265,11 +1265,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (input == null) {
                 return null;
             }
-            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLanguage.get("yesWord"))) {
-                context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLanguage.get("exited"));
+            if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
+                context.getForWhom().sendRawMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
                 plugin.getActionFactory().clearData(context);
                 return Prompt.END_OF_CONVERSATION;
-            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLanguage.get("noWord"))) {
+            } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 return new ActionMainPrompt(context);
             } else {
                 return new ActionExitPrompt(context);
