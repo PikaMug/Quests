@@ -7,7 +7,8 @@ quests:
     redo-delay: 1800
     requirements:
       items:
-        - name-stone_pickaxe:amount-1
+      - ==: org.bukkit.inventory.ItemStack
+        type: STONE_PICKAXE
       remove-items:
         - false
       fail-requirement-message: '<red>You must have a <pink>Stone Pickaxe<red> first.'
@@ -51,7 +52,8 @@ quests:
             - 1
     rewards:
       items:
-        - name-DIAMOND_SWORD:amount-1
+      - ==: org.bukkit.inventory.ItemStack
+        type: DIAMOND_SWORD
       exp: 100
       quest-points: 1
   default3:
@@ -86,5 +88,6 @@ quests:
           disconnect-event: CancelTimer
     rewards:
       items:
-        - name-GOLD_INGOT:amount-1
+      - ==: org.bukkit.inventory.ItemStack
+        type: GOLD_INGOT
       exp: 150

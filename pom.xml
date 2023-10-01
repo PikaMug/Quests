@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.blackvein.quests</groupId>
+    <groupId>me.pikamug.quests</groupId>
     <version>${revision}</version>
     <artifactId>quests-parent</artifactId>
     <packaging>pom</packaging>
@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-    	<revision>4.8.4</revision>
+    	<revision>5.0.0-rc.1</revision>
         <updatePomFile>true</updatePomFile>
         <flattenMode>resolveCiFriendliesOnly</flattenMode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>me.blackvein.quests</groupId>
+        <groupId>me.pikamug.quests</groupId>
         <artifactId>quests-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -46,27 +46,27 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-api</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-v1_8_R3</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-v1_8_R2</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-v1_8_R1</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-core</artifactId>
             <version>${revision}</version>
         </dependency>

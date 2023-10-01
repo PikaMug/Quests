@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>me.blackvein.quests</groupId>
+        <groupId>me.pikamug.quests</groupId>
         <artifactId>quests-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -157,29 +157,6 @@
             <version>1.6</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.28</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <!-- Do not update until Java 11 is min -->
-            <version>4.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.33</version>
@@ -190,7 +167,7 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
-            <groupId>me.blackvein.quests</groupId>
+            <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -265,8 +242,6 @@
                         <includes>
                             <include>me.*</include>
                             <include>com.github.PikaMug:LocaleLib</include>
-                            <include>com.zaxxer:HikariCP</include>
-                            <include>mysql</include>
                             <include>org.slf4j:slf4j-simple</include>
                             <include>org.slf4j:slf4j-api</include>
                             <include>xyz.upperlevel.spigot.book:spigot-book-api</include>
@@ -289,23 +264,15 @@
                     <relocations>
                         <relocation>
                             <pattern>me.pikamug.localelib</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.localelib</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.hikari</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.mysql</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.mysql</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.localelib</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.slf4j</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.slf4j</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>xyz.upperlevel.spigot.book</pattern>
-                            <shadedPattern>me.blackvein.quests.libs.bookutil</shadedPattern>
+                            <shadedPattern>me.pikamug.quests.libs.bookutil</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
