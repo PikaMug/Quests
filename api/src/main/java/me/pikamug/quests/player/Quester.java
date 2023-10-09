@@ -130,7 +130,7 @@ public interface Quester extends Comparable<Quester> {
 
     LinkedList<String> getCurrentRequirements(final Quest quest, final boolean ignoreOverrides);
 
-    LinkedList<String> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides);
+    LinkedList<Objective> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides, final boolean formatNames);
 
     void showCurrentObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides);
 

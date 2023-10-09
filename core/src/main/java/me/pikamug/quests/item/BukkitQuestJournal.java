@@ -10,11 +10,11 @@
 
 package me.pikamug.quests.item;
 
-import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -72,17 +72,18 @@ public class BukkitQuestJournal {
                 title.setColor(net.md_5.bungee.api.ChatColor.DARK_PURPLE);
                 title.setBold(true);
                 final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
-                for (final BukkitObjective obj : ((BukkitQuester)owner).getCurrentObjectivesTemp(quest, false, false)) {
+                for (final Objective obj : owner.getCurrentObjectives(quest, false, false)) {
+                    final BukkitObjective objective = (BukkitObjective) obj;
                     if (!plugin.getConfigSettings().canShowCompletedObjs()
-                            && obj.getMessage().startsWith(ChatColor.GRAY.toString())) {
+                            && objective.getMessage().startsWith(ChatColor.GRAY.toString())) {
                         continue;
                     }
-                    if (obj.getMessage() != null) {
+                    if (objective.getMessage() != null) {
                         String[] split = null;
-                        if (obj.getMessage().contains("<item>") && obj.getGoalAsItem() != null) {
-                            split = obj.getMessage().split("<item>");
+                        if (objective.getMessage().contains("<item>") && objective.getGoalAsItem() != null) {
+                            split = objective.getMessage().split("<item>");
                             builder.add(split[0]);
-                            final ItemStack goal = obj.getGoalAsItem();
+                            final ItemStack goal = objective.getGoalAsItem();
                             if (goal.getItemMeta() != null && goal.getItemMeta().hasDisplayName()) {
                                 builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
                                         + goal.getItemMeta().getDisplayName());
@@ -98,21 +99,21 @@ public class BukkitQuestJournal {
                             }
                             builder.add(split[1]).newLine();
                         }
-                        if (obj.getMessage().contains("<mob>") && obj.getGoalAsMob() != null) {
-                            split = obj.getMessage().split("<mob>");
+                        if (objective.getMessage().contains("<mob>") && objective.getGoalAsMob() != null) {
+                            split = objective.getMessage().split("<mob>");
                             builder.add(split[0]);
                             if (plugin.getConfigSettings().canTranslateNames()) {
                                 final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
-                                        .queryEntityType(obj.getGoalAsMob().getEntityType(), null)); // TODO extra data
+                                        .queryEntityType(objective.getGoalAsMob().getEntityType(), null)); // TODO extra data
                                 tc.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
                                 builder.add(tc);
                             } else {
-                                builder.add(BukkitMiscUtil.snakeCaseToUpperCamelCase(obj.getGoalAsMob().getEntityType().name()));
+                                builder.add(BukkitMiscUtil.snakeCaseToUpperCamelCase(objective.getGoalAsMob().getEntityType().name()));
                             }
                             builder.add(split[1]).newLine();
                         }
                         if (split == null) {
-                            builder.add(obj.getMessage()).newLine();
+                            builder.add(objective.getMessage()).newLine();
                         }
                     }
                 }
