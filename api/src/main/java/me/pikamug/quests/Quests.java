@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 
 public interface Quests {
 
+    boolean isEnabled();
+
     boolean isLoading();
 
     String getDetectedServerSoftwareVersion();
