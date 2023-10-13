@@ -14,3 +14,38 @@ COMMAND_EVENTS_EDITOR_HELP: "<command> - ایجاد، ویرایش یا حذف �
 COMMAND_CONDITIONS_EDITOR: "شرایط"
 COMMAND_CONDITIONS_EDITOR_HELP: "<command> - ایجاد، ویرایش یا حذف شرایط"
 COMMAND_STATS: "آمار"
+COMMAND_STATS_HELP: "<command> - مشاهده آمار تلاش"
+COMMAND_TOP: "بالا"
+COMMAND_TOP_HELP: "<command> [number] - تابلوهای امتیازات پلاگین را مشاهده کنید"
+COMMAND_INFO: "اطلاعات"
+COMMAND_INFO_HELP: "<command> - مشاهده اطلاعات افزونه"
+COMMAND_CHOICE: "انتخاب"
+COMMAND_CHOICE_HELP: "<command> [choice] - یک منو انتخاب کنید"
+COMMAND_QUEST_HELP: "- مشاهده اهداف تلاش فعلی"
+COMMAND_QUESTINFO_HELP: "[quest] - مشاهده اطلاعات در مورد یک تلاش"
+COMMAND_QUESTADMIN_HELP: "- نمایش راهنمای مدیر"
+COMMAND_QUESTADMIN_STATS: "آمار"
+COMMAND_QUESTADMIN_STATS_HELP: "<command> [player] - مشاهده آمار تلاش یک بازیکن"
+COMMAND_QUESTADMIN_GIVE: "دادن"
+COMMAND_QUESTADMIN_GIVE_HELP: "<command> [player] [quest] - بازیکن را مجبور به انجام یک کوئست کنید"
+COMMAND_QUESTADMIN_QUIT: "ترک کردن"
+COMMAND_QUESTADMIN_QUIT_HELP: "<command> [player] [quest] - بازیکن را مجبور به ترک یک کوئست کنید"
+COMMAND_QUESTADMIN_POINTS: "نکته ها"
+COMMAND_QUESTADMIN_POINTS_HELP: "<command> [player] [amount] - یک بازیکن را تنظیم کنید <points>"
+COMMAND_QUESTADMIN_TAKEPOINTS: "نقاط برداشت"
+COMMAND_QUESTADMIN_TAKEPOINTS_HELP: "<command> [player] [amount] - یک بازیکن را بردارید <points>"
+COMMAND_QUESTADMIN_GIVEPOINTS: "امتیاز دادن"
+COMMAND_QUESTADMIN_GIVEPOINTS_HELP: "<command> [player] [amount] - به یک بازیکن اضافه کنید <points>"
+COMMAND_QUESTADMIN_POINTSALL: "تمام نقاط"
+COMMAND_QUESTADMIN_POINTSALL_HELP: "<command> [amount] - تنظیم همه بازیکنان <points>"
+COMMAND_QUESTADMIN_FINISH: "تمام کردن"
+COMMAND_QUESTADMIN_FINISH_HELP: "<command> [player] [quest] - بازیکن را مجبور کنید تا یک تلاش را انجام دهد"
+COMMAND_QUESTADMIN_NEXTSTAGE: "مرحله بعد"
+COMMAND_QUESTADMIN_NEXTSTAGE_HELP: "<command> [player] [quest] - یک بازیکن را مجبور به تکمیل مرحله فعلی کنید"
+COMMAND_QUESTADMIN_SETSTAGE: "صحنه"
+COMMAND_QUESTADMIN_SETSTAGE_HELP: "<command> [player] [quest] [stage] - مرحله فعلی را برای یک بازیکن تنظیم کنید"
+COMMAND_QUESTADMIN_RESET: "تنظیم مجدد"
+COMMAND_QUESTADMIN_RESET_HELP: "<command> [player] - پاک کردن تمام داده های جستجوی یک بازیکن"
+COMMAND_QUESTADMIN_REMOVE: "برداشتن"
+COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [player] [quest] - یک ماموریت تکمیل شده را از یک بازیکن حذف کنید"
+COMMAND_QUESTADMIN_RELOAD: "بارگذاری مجدد"
