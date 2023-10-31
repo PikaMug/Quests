@@ -1444,14 +1444,14 @@ public class BukkitQuester implements Quester {
         int interactIndex = 0;
         for (final UUID n : stage.getNpcsToInteract()) {
             if (data.npcsInteracted.size() > interactIndex) {
-                boolean interacted = data.npcsInteracted.get(interactIndex);
+                final boolean interacted = data.npcsInteracted.get(interactIndex);
                 final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + BukkitLang.get(getPlayer(), "talkTo")
                         .replace("<npc>", depends.getNpcName(n));
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
-                objectives.add(new BukkitObjective(ObjectiveType.TALK_TO_NPC, message, 0, 1));
+                objectives.add(new BukkitObjective(ObjectiveType.TALK_TO_NPC, message, interacted ? 1 : 0, 1));
             }
             interactIndex++;
         }
@@ -1613,10 +1613,11 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
             if (i < data.locationsReached.size()) {
-                final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
+                final boolean reached = data.locationsReached.get(i);
+                final ChatColor color = !reached ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = color + BukkitLang.get(getPlayer(), "goTo");
                 message = message.replace("<location>", stage.getLocationNames().get(i));
-                objectives.add(new BukkitObjective(ObjectiveType.REACH_LOCATION, message, 0, 1));
+                objectives.add(new BukkitObjective(ObjectiveType.REACH_LOCATION, message, reached ? 1 : 0, 1));
             }
         }
         int passIndex = 0;
@@ -1627,7 +1628,7 @@ public class BukkitQuester implements Quester {
             }
             final ChatColor color = !said ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + s;
-            objectives.add(new BukkitObjective(ObjectiveType.PASSWORD, message, 0, 1));
+            objectives.add(new BukkitObjective(ObjectiveType.PASSWORD, message, said ? 1 : 0, 1));
             passIndex++;
         }
         int customIndex = 0;
