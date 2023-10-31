@@ -1645,7 +1645,7 @@ public class BukkitQuester implements Quester {
                     for (final Entry<String, Object> e : stage.getCustomObjectiveData()) {
                         if (e.getKey().equals(prompt.getKey())) {
                             if (message.contains(replacement)) {
-                                message = message.replace(replacement, ((String) e.getValue()));
+                                message = message.replace(replacement, String.valueOf(e.getValue()));
                             }
                         }
                     }
