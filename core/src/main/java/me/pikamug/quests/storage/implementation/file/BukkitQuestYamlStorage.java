@@ -222,7 +222,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
         }
         if (config.contains("quests." + questId + ".gui-display")) {
-            ItemStack stack = config.getItemStack("quests." + questId + ".gui-display");
+            final ItemStack stack = config.getItemStack("quests." + questId + ".gui-display");
             if (stack != null) {
                 quest.setGUIDisplay(stack);
             } else {
@@ -335,11 +335,26 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
         final BukkitDependencies depends = plugin.getDependencies();
         if (config.contains("quests." + questKey + ".rewards.items")) {
             final LinkedList<ItemStack> temp = new LinkedList<>();
-            final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey + ".rewards.items");
-            if (BukkitConfigUtil.checkList(stackList, ItemStack.class)) {
-                for (final ItemStack stack : stackList) {
+            final List<?> itemList = (List<?>) config.get("quests." + questKey + ".rewards.items");
+            if (BukkitConfigUtil.checkList(itemList, ItemStack.class)) {
+                for (final Object item : itemList) {
+                    final ItemStack stack = (ItemStack) item;
                     if (stack != null) {
                         temp.add(stack);
+                    }
+                }
+            } else if (BukkitConfigUtil.checkList(itemList, String.class)) {
+                // Legacy
+                for (final Object item : itemList) {
+                    final String stack = (String) item;
+                    if (stack != null) {
+                        final String itemName = stack.substring(5, stack.indexOf(':'));
+                        final Material itemMat = Material.matchMaterial(itemName);
+                        if (itemMat != null) {
+                            temp.add(new ItemStack(itemMat, 1));
+                        } else {
+                            throw new QuestFormatException("Reward 'items' has invalid name" + itemName, questKey);
+                        }
                     }
                 }
             } else {
@@ -505,12 +520,27 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
         }
         if (config.contains("quests." + questKey + ".requirements.items")) {
             final List<ItemStack> temp = new LinkedList<>();
-            final List<ItemStack> stackList = (List<ItemStack>) config.get("quests." + questKey
+            final List<?> itemList = (List<?>) config.get("quests." + questKey
                     + ".requirements.items");
-            if (BukkitConfigUtil.checkList(stackList, ItemStack.class)) {
-                for (final ItemStack stack : stackList) {
+            if (BukkitConfigUtil.checkList(itemList, ItemStack.class)) {
+                for (final Object item : itemList) {
+                    final ItemStack stack = (ItemStack) item;
                     if (stack != null) {
                         temp.add(stack);
+                    }
+                }
+            } else if (BukkitConfigUtil.checkList(itemList, String.class)) {
+                // Legacy
+                for (final Object item : itemList) {
+                    final String stack = (String) item;
+                    if (stack != null) {
+                        final String itemName = stack.substring(5, stack.indexOf(':'));
+                        final Material itemMat = Material.matchMaterial(itemName);
+                        if (itemMat != null) {
+                            temp.add(new ItemStack(itemMat, 1));
+                        } else {
+                            throw new QuestFormatException("Requirement 'items' has invalid name" + itemName, questKey);
+                        }
                     }
                 }
             } else {

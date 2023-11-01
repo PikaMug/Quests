@@ -12,6 +12,7 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -211,11 +212,26 @@ public class BukkitActionYamlStorage implements ActionStorageImpl {
         }
         if (data.contains(actionKey + "items")) {
             final LinkedList<ItemStack> temp = new LinkedList<>();
-            final List<ItemStack> stackList = (List<ItemStack>) data.get(actionKey + "items");
-            if (BukkitConfigUtil.checkList(stackList, ItemStack.class)) {
-                for (final ItemStack stack : stackList) {
+            final List<?> itemList = (List<?>) data.get(actionKey + "items");
+            if (BukkitConfigUtil.checkList(itemList, ItemStack.class)) {
+                for (final Object item : itemList) {
+                    final ItemStack stack = (ItemStack) item;
                     if (stack != null) {
                         temp.add(stack);
+                    }
+                }
+            } else if (BukkitConfigUtil.checkList(itemList, String.class)) {
+                // Legacy
+                for (final Object item : itemList) {
+                    final String stack = (String) item;
+                    if (stack != null) {
+                        final String itemName = stack.substring(5, stack.indexOf(':'));
+                        final Material itemMat = Material.matchMaterial(itemName);
+                        if (itemMat != null) {
+                            temp.add(new ItemStack(itemMat, 1));
+                        } else {
+                            throw new ActionFormatException("'items' has invalid name" + itemName, actionKey);
+                        }
                     }
                 }
             } else {
