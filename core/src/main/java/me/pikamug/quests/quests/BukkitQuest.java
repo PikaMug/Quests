@@ -72,6 +72,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 public class BukkitQuest implements Quest {
@@ -729,7 +730,9 @@ public class BukkitQuest implements Quest {
             return;
         }
         quester.hardQuit(this);
-        quester.getCompletedQuests().add(this);
+        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
+        completedQuests.add(this);
+        quester.setCompletedQuests(completedQuests);
         for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
                 plugin.getServer().getScheduler().cancelTask(entry.getKey());
