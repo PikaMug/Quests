@@ -44,11 +44,11 @@ COMMAND_QUESTADMIN_NEXTSTAGE: "مرحله بعد"
 COMMAND_QUESTADMIN_NEXTSTAGE_HELP: "<command> [بازیکن] [جستجو] - یک بازیکن را مجبور به تکمیل مرحله فعلی کنید"
 COMMAND_QUESTADMIN_SETSTAGE: "صحنه"
 COMMAND_QUESTADMIN_SETSTAGE_HELP: "<command> [بازیکن] [جستجو] [مرحله] - مرحله فعلی را برای یک بازیکن تنظیم کنید"
-COMMAND_QUESTADMIN_RESET: "تنظیم مجدد"
+COMMAND_QUESTADMIN_RESET: "تنظیممجدد"
 COMMAND_QUESTADMIN_RESET_HELP: "<command> [بازیکن] - پاک کردن تمام داده های جستجوی یک بازیکن"
 COMMAND_QUESTADMIN_REMOVE: "برداشتن"
 COMMAND_QUESTADMIN_REMOVE_HELP: "<command> [بازیکن] [جستجو] - یک ماموریت تکمیل شده را از یک بازیکن حذف کنید"
-COMMAND_QUESTADMIN_RELOAD: "بارگذاری مجدد"
+COMMAND_QUESTADMIN_RELOAD: "بارگذاریمجدد"
 COMMAND_QUESTADMIN_RELOAD_HELP: "<command> - افزونه را با خیال راحت بارگیری مجدد کنید"
 questEditorCreate: "تلاش جدید ایجاد کنید"
 questEditorEdit: "یک تلاش را ویرایش کنید"
@@ -70,8 +70,8 @@ questEditorEnterQuestName: "نام جستجو را وارد کنید، <cancel>"
 questEditorEnterAskMessage: "پیام درخواست را وارد کنید، <cancel>"
 questEditorEnterFinishMessage: "پیام پایان را وارد کنید، <cancel>"
 questEditorEnterNPCStart: "NPC UUID را وارد کنید، <clear>, <cancel>"
-questEditorClickNPCStart: "روی NPC کلیک کنید، <clear>, <cancel>"
-questEditorEnterBlockStart: "برای استفاده به عنوان نقطه شروع، روی بلوک راست کلیک کنید، <done>, <clear>, <cancel>"
+questEditorClickNPCStart: "روی NPC کلیک کنید، <clear>، <cancel>"
+questEditorEnterBlockStart: "برای استفاده به عنوان نقطه شروع، روی بلوک راست کلیک کنید، <done>، <clear>، <cancel>"
 questDungeonsCreate: "بازیکنانی که به این گروه اضافه می شوند ممکن است با هم کوئست انجام دهند!"
 questDungeonsDisband: "گروه کوئست منحل شد."
 questDungeonsInvite: "<player> اکنون می تواند ماموریت ها را با شما انجام دهد!"
@@ -85,7 +85,7 @@ questPartiesJoinBroadcast: "<player> اکنون می توانید ماموریت
 questPartiesLeave: "دیگر نمی‌توانید ماموریت‌ها را با مهمانی انجام دهید."
 questPartiesLeaveBroadcast: "<player> دیگر نمی تواند ماموریت ها را با شما انجام دهد."
 questWGSetRegion: "تنظیم شروع منطقه"
-questWGPrompt: "وارد منطقه گارد جهانی شوید، <clear>, <cancel>"
+questWGPrompt: "وارد منطقه گارد جهانی شوید، <clear>، <cancel>"
 questWGInvalidRegion: "<region> یک منطقه گارد جهانی معتبر نیست!"
 questWGRegionCleared: "منطقه کوئست پاک شد."
 questCurrentItem: "مورد فعلی:"
@@ -102,7 +102,7 @@ questEditorQuestAsRequirement3: "شما باید این کوئست ها را ت�
 stageEditorDeathEvent: "اکشن مرگ"
 stageEditorDisconnectEvent: "اقدام قطع اتصال"
 stageEditorConditions: "شرایط"
-stageEditorConditionCleared: "وضعیت پاک شد"
+stageEditorConditionCleared: "وضعیت پاک شد."
 stageEditorDelayMessage: "پیام تاخیر"
 stageEditorDenizenScript: "اسکریپت Denizen"
 stageEditorStartMessage: "شروع پیام"
@@ -133,11 +133,11 @@ stageEditorCustom: "اهداف سفارشی"
 stageEditorModules: "- ماژول ها -"
 stageEditorNoModules: "هیچ ماژولی بارگذاری نشده است"
 stageEditorModuleNotFound: "ماژول هدف سفارشی یافت نشد."
-stageEditorModulePrompt: "نام یک ماژول را وارد کنید، <clear>, <cancel>"
-stageEditorCustomPrompt: "نام یک هدف سفارشی را برای افزودن وارد کنید، <clear>, <cancel>"
+stageEditorModulePrompt: "نام یک ماژول را وارد کنید، <clear>، <cancel>"
+stageEditorCustomPrompt: "نام یک هدف سفارشی را برای افزودن وارد کنید، <clear>، <cancel>"
 stageEditorCustomAlreadyAdded: "آن هدف سفارشی قبلاً اضافه شده است!"
-stageEditorCustomCleared: "اهداف سفارشی پاک شد"
+stageEditorCustomCleared: "اهداف سفارشی پاک شد."
 stageEditorCustomDataPrompt: "مقدار را برای <data>:"
-stageEditorEnterBlockNames: "نام بلوک ها را وارد کنید، <space>, <cancel>"
-stageEditorEnterBlockAmounts: "مقادیر بلوک را وارد کنید، <space>, <cancel>"
-stageEditorEnterBlockDurability: "دوام بلوک (اعداد) را وارد کنید <space>, <cancel>"
+stageEditorEnterBlockNames: "نام بلوک ها را وارد کنید، <space>، <cancel>"
+stageEditorEnterBlockAmounts: "مقادیر بلوک را وارد کنید، <space>، <cancel>"
+stageEditorEnterBlockDurability: "دوام بلوک (اعداد) را وارد کنید <space>، <cancel>"
