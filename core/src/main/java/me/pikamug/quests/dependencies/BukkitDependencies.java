@@ -23,6 +23,7 @@ import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
+import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
@@ -195,10 +196,31 @@ public class BukkitDependencies implements Dependencies {
 
     public ZNPCsPlus getZnpcsPlus() {
         if (znpcsPlus == null) {
-            znpcsPlus = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
-            startNpcEffectThread();
+            linkZnpcsPlus();
         }
         return znpcsPlus;
+    }
+
+    public void linkZnpcsPlus() {
+        if (isPluginAvailable("ZNPCsPlus")) {
+            try {
+                znpcsPlus = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
+                boolean found = false;
+                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
+                    if (listener.getListener() instanceof BukkitZnpcsListener) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    plugin.getServer().getPluginManager().registerEvents(plugin.getZnpcsListener(), plugin);
+                    startNpcEffectThread();
+                    plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus "
+                            + znpcsPlus.getDescription().getVersion());
+                }
+            } catch (final Exception e) {
+                plugin.getLogger().warning("Incompatible version of ZNPCsPlus found. ZNPCsPlus in Quests not enabled.");
+            }
+        }
     }
 
     public Set<UUID> getZnpcsPlusUuids() {
