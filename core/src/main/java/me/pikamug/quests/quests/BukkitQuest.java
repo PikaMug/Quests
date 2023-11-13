@@ -16,6 +16,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
@@ -421,6 +422,11 @@ public class BukkitQuest implements Quest {
                     if (opt.isPresent()) {
                         targetLocation = opt.get().getLocation();
                     }
+                }
+                if (plugin.getDependencies().getZnpcsPlusApi() != null
+                        && plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
+                    Npc znpc = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
+                    targetLocation = znpc.getLocation().toBukkitLocation(znpc.getWorld());
                 }
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
                 if (quester.getPlayer() == null) {

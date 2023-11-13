@@ -22,15 +22,7 @@ import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.listeners.BukkitBlockListener;
-import me.pikamug.quests.listeners.BukkitCitizensListener;
-import me.pikamug.quests.listeners.BukkitCommandManager;
-import me.pikamug.quests.listeners.BukkitConvoListener;
-import me.pikamug.quests.listeners.BukkitItemListener;
-import me.pikamug.quests.listeners.BukkitPartiesListener;
-import me.pikamug.quests.listeners.BukkitPlayerListener;
-import me.pikamug.quests.listeners.BukkitUniteListener;
-import me.pikamug.quests.listeners.BukkitZnpcsListener;
+import me.pikamug.quests.listeners.*;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
 import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
 import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
@@ -109,6 +101,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitItemListener itemListener;
     private BukkitCitizensListener citizensListener;
     private BukkitZnpcsListener znpcsListener;
+    private BukkitZnpcsPlusListener znpcsPlusListener;
     private BukkitPlayerListener playerListener;
     private BukkitNpcEffectThread effectThread;
     private BukkitPlayerMoveThread moveThread;
@@ -148,6 +141,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         itemListener = new BukkitItemListener(this);
         citizensListener = new BukkitCitizensListener(this);
         znpcsListener = new BukkitZnpcsListener(this);
+        znpcsPlusListener = new BukkitZnpcsPlusListener(this);
         playerListener = new BukkitPlayerListener(this);
         uniteListener = new BukkitUniteListener();
         partiesListener = new BukkitPartiesListener();
@@ -221,6 +215,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         depends.linkCitizens();
         if (depends.getZnpcsPlus() != null) {
             getServer().getPluginManager().registerEvents(getZnpcsListener(), this);
+        }
+        if (depends.getZnpcsPlusApi() != null) {
+            getServer().getPluginManager().registerEvents(getZNpcsPlusListener(), this);
         }
         getServer().getPluginManager().registerEvents(getPlayerListener(), this);
         if (configSettings.getStrictPlayerMovement() > 0) {
@@ -522,6 +519,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return znpcsListener;
     }
 
+    public BukkitZnpcsPlusListener getZNpcsPlusListener() {
+        return znpcsPlusListener;
+    }
+
     public BukkitPlayerListener getPlayerListener() {
         return playerListener;
     }
@@ -606,8 +607,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Load quests, actions, conditions, and modules
-     * 
+     * Load quests, actions, conditions, and modules<br>
      * At startup, this lets soft-depends (namely Citizens) fully load first
      */
     private void delayLoadQuestInfo() {

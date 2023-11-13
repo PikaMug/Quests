@@ -105,7 +105,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -130,7 +130,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.YELLOW + BukkitLang.get("questEditorFinishMessage");
         case 4:
             if (context.getSessionData(Key.Q_START_NPC) == null || plugin.getDependencies().getCitizens() != null
-                    || plugin.getDependencies().getZnpcsPlus() != null) {
+                    || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorNPCStart");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorNPCStart");
@@ -148,7 +148,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + BukkitLang.get("questWGSetRegion");
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorSetGUI");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorSetGUI");
@@ -192,9 +192,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     + ChatColor.RESET + ChatColor.GRAY + ")";
         case 4:
             if (context.getSessionData(Key.Q_START_NPC) == null && (plugin.getDependencies().getCitizens() != null
-                    || plugin.getDependencies().getZnpcsPlus() != null)) {
+                    || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null)) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
-            } else if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            } else if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 final UUID uuid = UUID.fromString((String) Objects.requireNonNull(context
                         .getSessionData(Key.Q_START_NPC)));
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + plugin.getDependencies().getNpcName(uuid)
@@ -224,7 +224,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 if (context.getSessionData(Key.Q_GUIDISPLAY) == null) {
                     return ChatColor.GRAY +  "(" + BukkitLang.get("noneSet") + ")";
                 } else {
@@ -268,7 +268,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return new QuestFinishMessagePrompt(context);
         case 4:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return new QuestNPCStartPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -290,7 +290,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMainPrompt(context);
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return new QuestGuiDisplayPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -501,7 +501,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final UUID uuid = UUID.fromString(input);
-                    if (plugin.getDependencies().getNpcEntity(uuid) == null) {
+                    if (plugin.getDependencies().getNpcEntity(uuid) == null && (plugin.getDependencies().getZnpcsPlusApi() == null
+                            || plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) == null)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
                         return new QuestNPCStartPrompt(context);

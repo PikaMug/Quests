@@ -101,7 +101,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 if (context.getSessionData(Key.C_WHILE_RIDING_NPC) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
@@ -276,6 +276,9 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                     try {
                         final UUID uuid = UUID.fromString(s);
                         if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
+                            npcs.add(uuid.toString());
+                        } else if (plugin.getDependencies().getZnpcsPlusApi() != null && npcs!= null
+                                && plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
