@@ -28,11 +28,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
-public class BukkitZnpcsPlusListener implements Listener {
+/**
+ * Listener for ZNPCsPlus 2.x+
+ */
+public class BukkitZnpcsApiListener implements Listener {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitZnpcsPlusListener(final BukkitQuestsPlugin plugin) {
+    public BukkitZnpcsApiListener(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 

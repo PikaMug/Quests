@@ -168,7 +168,7 @@ public class BukkitConfigUtil {
         if (parsed.contains("<npc>")) {
             if (BukkitDependencies.citizens != null) {
                 parsed = parsed.replace("<npc>", BukkitDependencies.citizens.getNPCRegistry().getByUniqueId(npc).getName());
-            } else if (BukkitDependencies.znpcsPlus != null) {
+            } else if (BukkitDependencies.znpcsPlusLegacy != null) {
                 String name = "null";
                 final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(npc)).findAny();
                 if (opt.isPresent()) {
@@ -180,6 +180,8 @@ public class BukkitConfigUtil {
                     }
                 }
                 parsed = parsed.replace("<npc>", name);
+            } else if (BukkitDependencies.znpcsPlusApi != null) {
+                // TODO - Find some way to get NPC name
             }
         }
         return parsed;

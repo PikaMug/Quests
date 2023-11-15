@@ -30,7 +30,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
-import me.pikamug.quests.listeners.BukkitZnpcsListener;
+import me.pikamug.quests.listeners.BukkitZnpcsApiListener;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -64,7 +64,7 @@ public class BukkitDependencies implements Dependencies {
     public static CitizensPlugin citizens = null;
     private static DenizenAPI denizen = null;
     private static AstralBooksAPI astralBooks = null;
-    public static ZNPCsPlus znpcsPlus = null;
+    public static ZNPCsPlus znpcsPlusLegacy = null;
     public static NpcApi znpcsPlusApi = null;
     private static PartiesAPI parties = null;
     private int npcEffectThread = -1;
@@ -195,32 +195,15 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public ZNPCsPlus getZnpcsPlus() {
-        if (znpcsPlus == null) {
-            linkZnpcsPlus();
-        }
-        return znpcsPlus;
-    }
-
-    public void linkZnpcsPlus() {
-        if (isPluginAvailable("ZNPCsPlus")) {
+        if (znpcsPlusLegacy == null) {
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNPCsPlus");
-                znpcsPlus = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
-                boolean found = false;
-                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
-                    if (listener.getListener() instanceof BukkitZnpcsListener) {
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    plugin.getServer().getPluginManager().registerEvents(plugin.getZnpcsListener(), plugin);
-                    startNpcEffectThread();
-                    plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus "
-                            + znpcsPlus.getDescription().getVersion());
-                }
+                znpcsPlusLegacy = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
+                startNpcEffectThread();
             } catch (Exception ignored) {
             }
         }
+        return znpcsPlusLegacy;
     }
 
     public NpcApi getZnpcsPlusApi() {
@@ -235,16 +218,29 @@ public class BukkitDependencies implements Dependencies {
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNpcsPlus");
                 znpcsPlusApi = NpcApiProvider.get();
-                startNpcEffectThread();
-                //noinspection ConstantConditions
-                plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus " + plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus").getDescription().getVersion());
+                boolean found = false;
+                for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
+                    if (listener.getListener() instanceof BukkitZnpcsApiListener) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    plugin.getServer().getPluginManager().registerEvents(plugin.getZNpcsPlusListener(), plugin);
+                    startNpcEffectThread();
+                    //noinspection ConstantConditions
+                    plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus " + plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus").getDescription().getVersion());
+                }
             } catch (Exception ignored) {
             }
         }
     }
 
+    public void unlinkZnpcsPlusApi() {
+        znpcsPlusApi = null;
+    }
+
     public Set<UUID> getZnpcsPlusUuids() {
-        if (znpcsPlus != null && isPluginAvailable("ZNPCsPlus")) {
+        if (znpcsPlusLegacy != null && isPluginAvailable("ZNPCsPlus")) {
             return io.github.znetworkw.znpcservers.npc.NPC.all().stream()
                     .map(io.github.znetworkw.znpcservers.npc.NPC::getUUID).collect(Collectors.toSet());
         }
@@ -323,7 +319,7 @@ public class BukkitDependencies implements Dependencies {
     public @Nullable Location getNpcLocation(final UUID uuid) {
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getStoredLocation();
-        } else if (znpcsPlus != null && getZnpcsPlusUuids().contains(uuid)) {
+        } else if (znpcsPlusLegacy != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 return opt.get().getLocation();
@@ -339,7 +335,7 @@ public class BukkitDependencies implements Dependencies {
     public @Nullable Entity getNpcEntity(final UUID uuid) {
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getEntity();
-        } else if (znpcsPlus != null && getZnpcsPlusUuids().contains(uuid)) {
+        } else if (znpcsPlusLegacy != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 return (Entity) opt.get().getBukkitEntity();
@@ -352,7 +348,7 @@ public class BukkitDependencies implements Dependencies {
         final Entity npc;
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
             return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
-        } else if (znpcsPlus != null && getZnpcsPlusUuids().contains(uuid)) {
+        } else if (znpcsPlusLegacy != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 npc = (Entity) opt.get().getBukkitEntity();
@@ -375,7 +371,7 @@ public class BukkitDependencies implements Dependencies {
     public @Nullable UUID getUuidFromNpc(final Entity entity) {
         if (citizens != null && citizens.getNPCRegistry().isNPC(entity)) {
             return citizens.getNPCRegistry().getNPC(entity).getUniqueId();
-        } else if (znpcsPlus != null && getZnpcsPlusUuids().contains(entity.getUniqueId())) {
+        } else if (znpcsPlusLegacy != null && getZnpcsPlusUuids().contains(entity.getUniqueId())) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(entity.getUniqueId())).findAny();
             if (opt.isPresent()) {
                 return opt.get().getUUID();

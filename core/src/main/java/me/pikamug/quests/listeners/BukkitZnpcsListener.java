@@ -38,6 +38,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Listener for legacy ZNPCsPlus 1.x
+ */
 public class BukkitZnpcsListener implements Listener {
 
     private final BukkitQuestsPlugin plugin;

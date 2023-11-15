@@ -101,7 +101,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitItemListener itemListener;
     private BukkitCitizensListener citizensListener;
     private BukkitZnpcsListener znpcsListener;
-    private BukkitZnpcsPlusListener znpcsPlusListener;
+    private BukkitZnpcsApiListener znpcsPlusListener;
     private BukkitPlayerListener playerListener;
     private BukkitNpcEffectThread effectThread;
     private BukkitPlayerMoveThread moveThread;
@@ -141,7 +141,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         itemListener = new BukkitItemListener(this);
         citizensListener = new BukkitCitizensListener(this);
         znpcsListener = new BukkitZnpcsListener(this);
-        znpcsPlusListener = new BukkitZnpcsPlusListener(this);
+        znpcsPlusListener = new BukkitZnpcsApiListener(this);
         playerListener = new BukkitPlayerListener(this);
         uniteListener = new BukkitUniteListener();
         partiesListener = new BukkitPartiesListener();
@@ -519,7 +519,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return znpcsListener;
     }
 
-    public BukkitZnpcsPlusListener getZNpcsPlusListener() {
+    public BukkitZnpcsApiListener getZNpcsPlusListener() {
         return znpcsPlusListener;
     }
 
@@ -632,6 +632,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                             "Citizens was enabled but NPCRegistry was null. Disabling linkage.");
                     depends.unlinkCitizens();
                 }
+            }
+            if (depends.getZnpcsPlusApi() == null) {
+                getLogger().log(Level.SEVERE,
+                        "ZNPCsPlus was enabled but NpcApiProvider was null. Disabling linkage.");
+                depends.unlinkZnpcsPlusApi();
             }
             customLoader.init();
             questLoader.importQuests();
