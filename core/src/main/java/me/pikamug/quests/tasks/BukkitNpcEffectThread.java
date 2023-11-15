@@ -10,6 +10,8 @@
 
 package me.pikamug.quests.tasks;
 
+import lol.pyr.znpcsplus.api.npc.Npc;
+import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import me.pikamug.quests.enums.BukkitPreBuiltParticle;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
@@ -20,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +57,20 @@ public class BukkitNpcEffectThread implements Runnable {
                     }
                 }
             }
+            if (plugin.getDependencies().getZnpcsPlusApi() != null) {
+                Collection<? extends NpcEntry> znpcs = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getAllPlayerMade();
+                for (NpcEntry npc : znpcs) {
+                    if (npc.getNpc().getWorld() == null || player.getLocation().getWorld() == null) {
+                        return;
+                    }
+                    if (npc.getNpc().getWorld().equals(player.getLocation().getWorld())) {
+                        if (npc.getNpc().getLocation().toBukkitLocation(npc.getNpc().getWorld())
+                                .distanceSquared(player.getLocation()) < 24) {
+                            showConfigEffect(plugin.getQuester(player.getUniqueId()), npc.getNpc());
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -76,9 +93,34 @@ public class BukkitNpcEffectThread implements Runnable {
                 showEffect(quester.getPlayer(), entity, plugin.getConfigSettings().getRedoEffect());
 
                 event = new BukkitQuesterPostViewEffectEvent(quester, entity,
-                        plugin.getConfigSettings().getEffect(), true);
+                        plugin.getConfigSettings().getRedoEffect(), true);
                 plugin.getServer().getPluginManager().callEvent(event);
             }
+        }
+    }
+
+    /**
+     * Display config setting particle effect above an {@link Npc} one time
+     * @param quester Target quester to let view the effect
+     * @param npc Target NPC to place the effect above
+     */
+    public void showConfigEffect(final BukkitQuester quester, final Npc npc) {
+        if (npc == null) return;
+        final BukkitQuesterPostViewEffectEvent event;
+        if (quester.canAcceptQuest(npc.getUuid())) {
+            if (npc.getWorld() == null) return;
+            showEffect(quester.getPlayer(), npc.getLocation().toBukkitLocation(npc.getWorld()).add(0, 2, 0), plugin.getConfigSettings().getEffect());
+
+            event = new BukkitQuesterPostViewEffectEvent(quester, npc,
+                    plugin.getConfigSettings().getEffect(), false);
+            plugin.getServer().getPluginManager().callEvent(event);
+        } else if (quester.canAcceptCompletedRedoableQuest(npc.getUuid())) {
+            if (npc.getWorld() == null) return;
+            showEffect(quester.getPlayer(), npc.getLocation().toBukkitLocation(npc.getWorld()).add(0, 2, 0), plugin.getConfigSettings().getRedoEffect());
+
+            event = new BukkitQuesterPostViewEffectEvent(quester, npc,
+                    plugin.getConfigSettings().getRedoEffect(), true);
+            plugin.getServer().getPluginManager().callEvent(event);
         }
     }
     
@@ -111,13 +153,21 @@ public class BukkitNpcEffectThread implements Runnable {
      * @param effectType Value of {@link org.bukkit.Particle} or {@link BukkitPreBuiltParticle}
      */
     public void showEffect(final Player player, final Entity entity, final String effectType) {
-        if (player == null || entity == null) {
+        showEffect(player, entity.getLocation().add(0, 2, 0), effectType);
+    }
+
+    /**
+     * Display specified particle effect at a location one time
+     * @param player Target player to let view the effect
+     * @param location Target location to place the effect at
+     * @param effectType Value of {@link org.bukkit.Particle} or {@link BukkitPreBuiltParticle}
+     */
+    public void showEffect(final Player player, final Location location, final String effectType) {
+        if (player == null || location == null) {
             return;
         }
-        final Location eyeLoc = entity.getLocation();
-        eyeLoc.setY(eyeLoc.getY() + 2);
         try {
-            BukkitParticleProvider.sendToPlayer(player, eyeLoc, effectType.toUpperCase());
+            BukkitParticleProvider.sendToPlayer(player, location, effectType.toUpperCase());
         } catch (final NoClassDefFoundError e) {
             // Unsupported Minecraft version
         }

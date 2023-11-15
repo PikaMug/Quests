@@ -21,13 +21,17 @@ import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.ZNPCsPlus;
+import lol.pyr.znpcsplus.api.NpcApi;
+import lol.pyr.znpcsplus.api.NpcApiProvider;
+import lol.pyr.znpcsplus.api.entity.EntityProperty;
+import lol.pyr.znpcsplus.api.npc.Npc;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
 import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
-import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
@@ -43,12 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import ro.niconeko.astralbooks.api.AstralBooks;
 import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BukkitDependencies implements Dependencies {
@@ -66,6 +65,7 @@ public class BukkitDependencies implements Dependencies {
     private static DenizenAPI denizen = null;
     private static AstralBooksAPI astralBooks = null;
     public static ZNPCsPlus znpcsPlus = null;
+    public static NpcApi znpcsPlusApi = null;
     private static PartiesAPI parties = null;
     private int npcEffectThread = -1;
     
@@ -204,6 +204,7 @@ public class BukkitDependencies implements Dependencies {
     public void linkZnpcsPlus() {
         if (isPluginAvailable("ZNPCsPlus")) {
             try {
+                Class.forName("lol.pyr.znpcsplus.ZNPCsPlus");
                 znpcsPlus = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
                 boolean found = false;
                 for (final RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
@@ -217,8 +218,27 @@ public class BukkitDependencies implements Dependencies {
                     plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus "
                             + znpcsPlus.getDescription().getVersion());
                 }
-            } catch (final Exception e) {
-                plugin.getLogger().warning("Incompatible version of ZNPCsPlus found. ZNPCsPlus in Quests not enabled.");
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    public NpcApi getZnpcsPlusApi() {
+        if (znpcsPlusApi == null) {
+            linkZnpcsPlusApi();
+        }
+        return znpcsPlusApi;
+    }
+
+    public void linkZnpcsPlusApi() {
+        if (isPluginAvailable("ZNPCsPlus")) {
+            try {
+                Class.forName("lol.pyr.znpcsplus.ZNpcsPlus");
+                znpcsPlusApi = NpcApiProvider.get();
+                startNpcEffectThread();
+                //noinspection ConstantConditions
+                plugin.getLogger().info("Successfully linked Quests with ZNPCsPlus " + plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus").getDescription().getVersion());
+            } catch (Exception ignored) {
             }
         }
     }
@@ -308,6 +328,10 @@ public class BukkitDependencies implements Dependencies {
             if (opt.isPresent()) {
                 return opt.get().getLocation();
             }
+        } else if (znpcsPlusApi != null && znpcsPlusApi.getNpcRegistry().getByUuid(uuid) != null) {
+            Npc znpc = znpcsPlusApi.getNpcRegistry().getByUuid(uuid).getNpc();
+            if (znpc.getWorld() == null) return null;
+            return znpc.getLocation().toBukkitLocation(znpc.getWorld());
         }
         return null;
     }
@@ -337,6 +361,12 @@ public class BukkitDependencies implements Dependencies {
                 } else {
                     return opt.get().getNpcPojo().getHologramLines().get(0);
                 }
+            }
+        } else if (znpcsPlusApi != null && getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
+            Npc znpc = getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
+            EntityProperty<String> displayNameProperty = getZnpcsPlusApi().getPropertyRegistry().getByName("display_name", String.class);
+            if (displayNameProperty != null && znpc.hasProperty(displayNameProperty)) {
+                return znpc.getProperty(displayNameProperty);
             }
         }
         return "NPC";
@@ -424,5 +454,6 @@ public class BukkitDependencies implements Dependencies {
         getVaultEconomy();
         getVaultPermission();
         getZnpcsPlus();
+        getZnpcsPlusApi();
     }
 }

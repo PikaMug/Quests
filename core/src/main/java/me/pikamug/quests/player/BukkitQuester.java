@@ -15,6 +15,7 @@ import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
@@ -567,6 +568,19 @@ public class BukkitQuester implements Quester {
                     sendMessage(ChatColor.YELLOW + msg);
                 }
                 return false;
+            }
+            if (plugin.getDependencies().getZnpcsPlusApi() != null &&
+                    plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
+                Npc znpc = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
+                if (znpc.getWorld() != null && znpc.getWorld().equals(getPlayer().getWorld()) &&
+                        znpc.getLocation().toBukkitLocation(znpc.getWorld()).distance(getPlayer().getLocation()) > 6.0) {
+                    if (giveReason) {
+                        final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo")
+                                .replace("<npc>", ChatColor.DARK_PURPLE + plugin.getDependencies().getNpcName(znpc.getUuid()) + ChatColor.YELLOW);
+                        sendMessage(ChatColor.YELLOW + msg);
+                    }
+                    return false;
+                }
             }
         }
         if (getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()
@@ -3347,10 +3361,8 @@ public class BukkitQuester implements Quester {
                     final String display = getCurrentStage(quest).getPasswordDisplays().get(index);
                     bukkitQuestData.passwordsSaid.set(index, true);
 
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                        finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                                new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null);
-                    });
+                    plugin.getServer().getScheduler().runTask(plugin, () -> finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
+                            new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null));
 
                     final int finalIndex = index;
                     dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -4384,8 +4396,7 @@ public class BukkitQuester implements Quester {
     }
 
     /**
-     * Forcibly set Quester's current stage, then update Quest Journal
-     * 
+     * Forcibly set Quester's current stage, then update Quest Journal<br>
      * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
      * 
      * @param key The quest to set stage of

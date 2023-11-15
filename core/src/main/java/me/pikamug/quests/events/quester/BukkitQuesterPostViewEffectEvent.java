@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.events.quester;
 
+import lol.pyr.znpcsplus.api.npc.Npc;
 import me.pikamug.quests.player.BukkitQuester;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class BukkitQuesterPostViewEffectEvent extends BukkitQuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Entity entity;
+    private final Npc npc;
     private final String effect;
     private final boolean redoable;
 
@@ -26,6 +28,15 @@ public class BukkitQuesterPostViewEffectEvent extends BukkitQuesterEvent {
         this.entity = entity;
         this.effect = effect;
         this.redoable = redoable;
+        this.npc=null;
+    }
+
+    public BukkitQuesterPostViewEffectEvent(final BukkitQuester quester, Npc npc, String effect, boolean redoable) {
+        super(quester);
+        this.npc = npc;
+        this.effect = effect;
+        this.redoable = redoable;
+        this.entity = null;
     }
 
     /**
@@ -35,6 +46,15 @@ public class BukkitQuesterPostViewEffectEvent extends BukkitQuesterEvent {
      */
     public Entity getEntity() {
         return entity;
+    }
+
+    /**
+     * Returns the npc involved in this event (only if using ZNPCsPlus 2.0.0 or higher)
+     *
+     * @return npc who is involved in this event
+     */
+    public Npc getNpc() {
+        return npc;
     }
 
     /**
