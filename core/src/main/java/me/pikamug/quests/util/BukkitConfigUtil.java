@@ -11,6 +11,9 @@
 package me.pikamug.quests.util;
 
 import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.api.entity.EntityProperty;
+import lol.pyr.znpcsplus.api.npc.Npc;
+import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.quests.Quest;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -168,7 +171,8 @@ public class BukkitConfigUtil {
         if (parsed.contains("<npc>")) {
             if (BukkitDependencies.citizens != null) {
                 parsed = parsed.replace("<npc>", BukkitDependencies.citizens.getNPCRegistry().getByUniqueId(npc).getName());
-            } else if (BukkitDependencies.znpcsPlusLegacy != null) {
+            }
+            if (BukkitDependencies.znpcsPlusLegacy != null) {
                 String name = "null";
                 final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(npc)).findAny();
                 if (opt.isPresent()) {
@@ -181,7 +185,18 @@ public class BukkitConfigUtil {
                 }
                 parsed = parsed.replace("<npc>", name);
             } else if (BukkitDependencies.znpcsPlusApi != null) {
-                // TODO - Find some way to get NPC name
+                String name = "null";
+                NpcEntry entry = BukkitDependencies.znpcsPlusApi.getNpcRegistry().getByUuid(npc);
+                if (entry != null) {
+                    Npc znpc = entry.getNpc();
+                    EntityProperty<String> displayNameProperty = BukkitDependencies.znpcsPlusApi.getPropertyRegistry().getByName("display_name", String.class);
+                    if (displayNameProperty != null) {
+                        if (znpc.hasProperty(displayNameProperty)) {
+                            name = znpc.getProperty(displayNameProperty);
+                        }
+                    }
+                }
+                parsed = parsed.replace("<npc>", name);
             }
         }
         return parsed;
