@@ -362,7 +362,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                         index++;
                     }
                 }
-                if (questSec.contains("locations-to-reach")) {
+                if (questSec.contains("has-reached-location")) {
                     final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");
                     quester.getQuestDataOrDefault(quest).setLocationsReached(new LinkedList<>(hasReached));
                 }
