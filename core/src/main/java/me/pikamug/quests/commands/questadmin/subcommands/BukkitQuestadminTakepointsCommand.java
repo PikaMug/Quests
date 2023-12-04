@@ -86,19 +86,24 @@ public class BukkitQuestadminTakepointsCommand extends BukkitQuestsSubCommand {
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
-            String msg1 = BukkitLang.get("takeQuestPoints").replace("<points>", BukkitLang.get("questPoints"));
-            msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-            msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-            cs.sendMessage(ChatColor.GOLD + msg1);
-            if (target.isOnline()) {
-                final Player p = (Player)target;
-                String msg2 = BukkitLang.get(p, "questPointsTaken").replace("<points>", BukkitLang.get("questPoints"));
-                msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
-                p.sendMessage(ChatColor.GREEN + msg2);
+            final int newPoints = quester.getQuestPoints() - Math.abs(points);
+            if (newPoints < 0) {
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("questEditorPositiveAmount"));
+            } else {
+                quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
+                String msg1 = BukkitLang.get("takeQuestPoints").replace("<points>", BukkitLang.get("questPoints"));
+                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                cs.sendMessage(ChatColor.GOLD + msg1);
+                if (target.isOnline()) {
+                    final Player p = (Player)target;
+                    String msg2 = BukkitLang.get(p, "questPointsTaken").replace("<points>", BukkitLang.get("questPoints"));
+                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
+                    msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                    p.sendMessage(ChatColor.GREEN + msg2);
+                }
+                quester.saveData();
             }
-            quester.saveData();
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
         }
