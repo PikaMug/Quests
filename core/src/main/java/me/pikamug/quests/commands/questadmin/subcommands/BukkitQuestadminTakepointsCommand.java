@@ -88,7 +88,7 @@ public class BukkitQuestadminTakepointsCommand extends BukkitQuestsSubCommand {
             final Quester quester = plugin.getQuester(target.getUniqueId());
             final int newPoints = quester.getQuestPoints() - Math.abs(points);
             if (newPoints < 0) {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("questEditorPositiveAmount"));
+                quester.setQuestPoints(0);
             } else {
                 quester.setQuestPoints(quester.getQuestPoints() - Math.abs(points));
                 String msg1 = BukkitLang.get("takeQuestPoints").replace("<points>", BukkitLang.get("questPoints"));
