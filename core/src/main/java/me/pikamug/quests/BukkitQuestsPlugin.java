@@ -633,10 +633,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     depends.unlinkCitizens();
                 }
             }
-            if (depends.getZnpcsPlusApi() == null) {
-                getLogger().log(Level.SEVERE,
-                        "ZNPCsPlus was enabled but NpcApiProvider was null. Disabling linkage.");
-                depends.unlinkZnpcsPlusApi();
+            if (depends.getZnpcsPlusApi() != null) {
+                if (depends.getZnpcsPlusApi().getNpcRegistry() == null) {
+                    getLogger().log(Level.SEVERE,
+                            "ZNPCsPlus was enabled but NpcApiProvider was null. Disabling linkage.");
+                    depends.unlinkZnpcsPlusApi();
+                }
             }
             customLoader.init();
             questLoader.importQuests();
