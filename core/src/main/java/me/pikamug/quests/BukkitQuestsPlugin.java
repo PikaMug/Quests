@@ -636,7 +636,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (depends.getZnpcsPlusApi() != null) {
                 if (depends.getZnpcsPlusApi().getNpcRegistry() == null) {
                     getLogger().log(Level.SEVERE,
-                            "ZNPCsPlus was enabled but NpcApiProvider was null. Disabling linkage.");
+                            "ZNPCsPlus was enabled but NpcRegistry was null. Disabling linkage.");
                     depends.unlinkZnpcsPlusApi();
                 }
             }
