@@ -216,9 +216,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (depends.getZnpcsPlus() != null) {
             getServer().getPluginManager().registerEvents(getZnpcsListener(), this);
         }
-        if (depends.getZnpcsPlusApi() != null) {
-            getServer().getPluginManager().registerEvents(getZNpcsPlusListener(), this);
-        }
+        depends.linkZnpcsPlusApi();
         getServer().getPluginManager().registerEvents(getPlayerListener(), this);
         if (configSettings.getStrictPlayerMovement() > 0) {
             final long ticks = configSettings.getStrictPlayerMovement() * 20L;
