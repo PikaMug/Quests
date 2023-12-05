@@ -210,7 +210,7 @@ public class BukkitPlayerListener implements Listener {
                         || event.getPlayer().getInventory().getHelmet().getType().name().equals("CARVED_PUMPKIN"))) {
                         if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                             BukkitLang.send(player, " " + ChatColor.AQUA + ChatColor.UNDERLINE
-                                + "https://www.youtube.com/watch?v=v4IC7qaNr7I");
+                                + "https://www.youtube.com/watch?v=nJROKaZJgbI");
                         }
                         event.setCancelled(true);
                         return;
