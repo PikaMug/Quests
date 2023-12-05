@@ -127,7 +127,7 @@ public class BukkitModuleJarStorage implements ModuleStorageImpl {
                 try {
                     c = Class.forName(className, true, cl);
                 } catch (final NoClassDefFoundError e) {
-                    plugin.getLogger().severe("Module error! Seek help from developer of module:");
+                    plugin.getLogger().severe("Module error! Seek help from developer of jar " + jar.getName());
                     e.printStackTrace();
                 }
                 if (c != null) {
