@@ -268,7 +268,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
 
     public void deleteAction(final ConversationContext context) {
         final YamlConfiguration data = new YamlConfiguration();
-        final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
+        final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
         try {
             data.load(actionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -316,7 +316,7 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
     @SuppressWarnings("unchecked")
     public void saveAction(final ConversationContext context) {
         final YamlConfiguration data = new YamlConfiguration();
-        final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
+        final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
         try {
             data.load(actionsFile);
         } catch (final IOException | InvalidConfigurationException e) {

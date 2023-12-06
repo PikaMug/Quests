@@ -162,7 +162,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
 
     public void deleteCondition(final ConversationContext context) {
         final YamlConfiguration data = new YamlConfiguration();
-        final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
+        final File conditionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
         try {
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -204,7 +204,7 @@ public class BukkitConditionFactory implements ConditionFactory, ConversationAba
 
     public void saveCondition(final ConversationContext context) {
         final YamlConfiguration data = new YamlConfiguration();
-        final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
+        final File conditionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
         try {
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {

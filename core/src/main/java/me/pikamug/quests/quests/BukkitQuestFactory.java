@@ -539,7 +539,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
 
     public void deleteQuest(final ConversationContext context) {
         final FileConfiguration data = new YamlConfiguration();
-        final File questsFile = new File(plugin.getDataFolder(), "quests.yml");
+        final File questsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
         try {
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {

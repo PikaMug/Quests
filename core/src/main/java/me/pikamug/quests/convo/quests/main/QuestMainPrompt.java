@@ -858,7 +858,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 }
                 final FileConfiguration data = new YamlConfiguration();
                 try {
-                    data.load(new File(plugin.getDataFolder(), "quests.yml"));
+                    data.load(new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml"));
                     ConfigurationSection questSection = data.getConfigurationSection("quests");
                     if (questSection == null) {
                         questSection = data.createSection("quests");
@@ -884,7 +884,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     }
                     if (newSection != null) {
                         plugin.getQuestFactory().saveQuest(context, newSection);
-                        data.save(new File(plugin.getDataFolder(), "quests.yml"));
+                        data.save(new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml"));
                         context.getForWhom().sendRawMessage(ChatColor.GREEN
                                 + BukkitLang.get("questEditorSaved").replace("<command>", "/questadmin "
                                 + BukkitLang.get("COMMAND_QUESTADMIN_RELOAD")));

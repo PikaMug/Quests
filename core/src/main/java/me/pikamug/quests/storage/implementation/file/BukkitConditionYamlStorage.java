@@ -48,7 +48,7 @@ public class BukkitConditionYamlStorage implements ConditionStorageImpl {
     @Override
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
-        final File conditionsFile = new File(plugin.getDataFolder(), "conditions.yml");
+        final File conditionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
         // Using #isFile because #exists and #renameTo can return false positives
         if (conditionsFile.length() != 0) {
             try {
@@ -92,7 +92,7 @@ public class BukkitConditionYamlStorage implements ConditionStorageImpl {
         if (name == null) {
             return null;
         }
-        final File conditions = new File(plugin.getDataFolder(), "conditions.yml");
+        final File conditions = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
         final FileConfiguration data = new YamlConfiguration();
         try {
             if (conditions.isFile()) {

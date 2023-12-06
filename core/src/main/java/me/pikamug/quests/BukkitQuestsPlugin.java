@@ -173,10 +173,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // 6 - Load soft-depends
         depends.init();
         
-        // 7 - Save resources from jar
-        saveResourceAs("quests.yml", "quests.yml", false);
-        saveResourceAs("actions.yml", "actions.yml", false);
-        saveResourceAs("conditions.yml", "conditions.yml", false);
+        // 7 - Transfer resources from jar
+        moveStorageResource("quests.yml");
+        moveStorageResource("actions.yml");
+        moveStorageResource("conditions.yml");
+        saveResourceAs("quests.yml", "storage/quests.yml", false);
+        saveResourceAs("actions.yml", "storage/actions.yml", false);
+        saveResourceAs("conditions.yml", "storage/conditions.yml", false);
         
         // 8 - Save config with any new options
         getConfig().options().copyDefaults(true);
@@ -551,6 +554,33 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public QuesterStorage getStorage() {
         return storage;
+    }
+
+    /**
+     * Move a storage file from legacy location, if present
+     *
+     * @param fileName Name of file to attempt move
+     */
+    private void moveStorageResource(String fileName) {
+        File storageFile = new File(getDataFolder(), fileName);
+        if (!storageFile.isFile()) {
+            return;
+        }
+        final File outFile = new File(getDataFolder(), "storage" + File.separatorChar + fileName);
+        final File outDir = new File(outFile.getPath().replace(fileName, ""));
+
+        if (!outDir.exists()) {
+            if (!outDir.mkdirs()) {
+                getLogger().log(Level.SEVERE, "Failed to make directories for " + fileName + " (canWrite= "
+                        + outDir.canWrite() + ")");
+            }
+        }
+        boolean q = storageFile.renameTo(outFile);
+        if (!q) {
+            getLogger().severe("Unable to move " + fileName + " file. Check folder permissions and restart.");
+            getServer().getPluginManager().disablePlugin(this);
+            setEnabled(false);
+        }
     }
 
     /**

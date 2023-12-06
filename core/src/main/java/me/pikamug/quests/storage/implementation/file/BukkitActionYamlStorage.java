@@ -54,7 +54,7 @@ public class BukkitActionYamlStorage implements ActionStorageImpl {
     public void init() {
         final YamlConfiguration config = new YamlConfiguration();
         final File legacyFile = new File(plugin.getDataFolder(), "events.yml");
-        final File actionsFile = new File(plugin.getDataFolder(), "actions.yml");
+        final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
         // Using #isFile because #exists and #renameTo can return false positives
         if (legacyFile.isFile()) {
             try {
@@ -123,7 +123,7 @@ public class BukkitActionYamlStorage implements ActionStorageImpl {
             return null;
         }
         final File legacy = new File(plugin.getDataFolder(), "events.yml");
-        final File actions = new File(plugin.getDataFolder(), "actions.yml");
+        final File actions = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
         final FileConfiguration data = new YamlConfiguration();
         try {
             if (actions.isFile()) {

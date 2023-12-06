@@ -73,7 +73,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
     public void init() {
         boolean needsSaving = false;
         FileConfiguration config = null;
-        final File file = new File(plugin.getDataFolder(), "quests.yml");
+        final File file = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
         try {
             config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8));
@@ -139,7 +139,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             return null;
         }
         FileConfiguration config = null;
-        final File file = new File(plugin.getDataFolder(), "quests.yml");
+        final File file = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
         try {
             config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8));

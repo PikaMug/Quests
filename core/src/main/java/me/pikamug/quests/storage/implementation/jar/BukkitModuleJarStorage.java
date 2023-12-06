@@ -70,7 +70,7 @@ public class BukkitModuleJarStorage implements ModuleStorageImpl {
             plugin.getLogger().warning("Unable to create module directory");
         }
         FileConfiguration config = null;
-        final File file = new File(plugin.getDataFolder(), "quests.yml");
+        final File file = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
         try {
             config = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(file),
                     StandardCharsets.UTF_8));
