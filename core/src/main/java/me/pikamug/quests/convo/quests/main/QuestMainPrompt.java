@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -866,15 +867,17 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     ConfigurationSection newSection = null;
                     if (context.getSessionData(Key.Q_ID) == null) {
                         // Creating
-                        int customNum = 1;
+                        int num = 1;
+                        final int padding = 6;
+                        final String customNum = String.format(Locale.US, "%0" + padding + "d", num);
                         while (true) {
-                            if (questSection.contains("custom" + customNum)) {
-                                customNum++;
+                            if (questSection.contains(customNum)) {
+                                num++;
                             } else {
                                 break;
                             }
                         }
-                        newSection = questSection.createSection("custom" + customNum);
+                        newSection = questSection.createSection(customNum);
                     } else {
                         // Editing
                         final String qid = (String)context.getSessionData(Key.Q_ID);

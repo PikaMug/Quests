@@ -562,7 +562,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @param fileName Name of file to attempt move
      */
     private void moveStorageResource(String fileName) {
-        File storageFile = new File(getDataFolder(), fileName);
+        final File storageFile = new File(getDataFolder(), fileName);
         if (!storageFile.isFile()) {
             return;
         }
@@ -575,9 +575,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                         + outDir.canWrite() + ")");
             }
         }
-        boolean q = storageFile.renameTo(outFile);
-        if (!q) {
-            getLogger().severe("Unable to move " + fileName + " file. Check folder permissions and restart.");
+        final boolean moved = storageFile.renameTo(outFile);
+        if (!moved) {
+            getLogger().severe("Unable to move " + fileName + " file. Check folder permissions and restart server.");
             getServer().getPluginManager().disablePlugin(this);
             setEnabled(false);
         }
