@@ -89,7 +89,6 @@ questWGPrompt: "وارد منطقه گارد جهانی شوید، <clear>، <ca
 questWGInvalidRegion: "<region> یک منطقه گارد جهانی معتبر نیست!"
 questWGRegionCleared: "منطقه کوئست پاک شد."
 questCurrentItem: "مورد فعلی:"
-questGUICleared: "نمایش مورد Quest GUI پاک شد."
 questDeleted: "تلاش حذف شد! داده‌های جستجو و اقدام دوباره بارگیری شده است."
 questEditorNameExists: "جستجویی با این نام از قبل وجود دارد!"
 questEditorBeingEdited: "چیزی با آن نام در حال تغییر است!"
