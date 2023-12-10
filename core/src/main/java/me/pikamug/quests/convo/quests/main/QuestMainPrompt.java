@@ -867,15 +867,14 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     ConfigurationSection newSection = null;
                     if (context.getSessionData(Key.Q_ID) == null) {
                         // Creating
-                        int num = 1;
+                        final Locale locale = Locale.US;
                         final int padding = 6;
-                        final String customNum = String.format(Locale.US, "%0" + padding + "d", num);
-                        while (true) {
-                            if (questSection.contains(customNum)) {
-                                num++;
-                            } else {
-                                break;
-                            }
+                        String format = "%0" + padding + "d";
+                        int num = 1;
+                        String customNum = String.format(locale, format, num);
+                        while (questSection.contains(customNum)) {
+                            num++;
+                            customNum = String.format(locale, format, num);
                         }
                         newSection = questSection.createSection(customNum);
                     } else {
