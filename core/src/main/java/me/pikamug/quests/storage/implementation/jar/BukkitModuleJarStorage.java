@@ -175,7 +175,6 @@ public class BukkitModuleJarStorage implements ModuleStorageImpl {
                         plugin.getLogger().info("Loaded \"" + name + "\" by " + author);
                         try {
                             plugin.getServer().getPluginManager().registerEvents(objective, plugin);
-                            plugin.getLogger().info("Registered events for custom objective \"" + name + "\"");
                         } catch (final Exception ex) {
                             plugin.getLogger().warning("Failed to register events for custom objective \"" + name
                                     + "\". Does the objective class listen for events?");
