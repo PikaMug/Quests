@@ -348,12 +348,17 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 for (final Object item : itemList) {
                     final String stack = (String) item;
                     if (stack != null) {
-                        final String itemName = stack.substring(5, stack.indexOf(':'));
+                        final String[] result = stack.split(":");
+                        if (result.length < 1) {
+                            throw new QuestFormatException("Reward 'items' has invalid length", questKey);
+                        }
+                        final String itemName = result[0].replace("name-", "");
                         final Material itemMat = Material.matchMaterial(itemName);
+                        final int itemAmt = Integer.parseInt(result[1].replace("amount-", ""));
                         if (itemMat != null) {
-                            temp.add(new ItemStack(itemMat, 1));
+                            temp.add(new ItemStack(itemMat, itemAmt));
                         } else {
-                            throw new QuestFormatException("Reward 'items' has invalid name" + itemName, questKey);
+                            throw new QuestFormatException("Reward 'items' has invalid name " + itemName, questKey);
                         }
                     }
                 }
@@ -534,12 +539,17 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 for (final Object item : itemList) {
                     final String stack = (String) item;
                     if (stack != null) {
-                        final String itemName = stack.substring(5, stack.indexOf(':'));
+                        final String[] result = stack.split(":");
+                        if (result.length < 1) {
+                            throw new QuestFormatException("Requirement 'items' has invalid length", questKey);
+                        }
+                        final String itemName = result[0].replace("name-", "");
                         final Material itemMat = Material.matchMaterial(itemName);
+                        final int itemAmt = Integer.parseInt(result[1].replace("amount-", ""));
                         if (itemMat != null) {
-                            temp.add(new ItemStack(itemMat, 1));
+                            temp.add(new ItemStack(itemMat, itemAmt));
                         } else {
-                            throw new QuestFormatException("Requirement 'items' has invalid name" + itemName, questKey);
+                            throw new QuestFormatException("Requirement 'items' has invalid name " + itemName, questKey);
                         }
                     }
                 }
