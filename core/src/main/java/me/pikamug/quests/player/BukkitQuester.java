@@ -4445,6 +4445,7 @@ public class BukkitQuester implements Quester {
         if (player == null) {
             return;
         }
+        compassTargetQuestId = null;
         if (!canUseCompass()) {
             return;
         }
@@ -4453,7 +4454,6 @@ public class BukkitQuester implements Quester {
         if (defaultLocation == null) {
             defaultLocation = player.getWorld().getSpawnLocation();
         }
-        compassTargetQuestId = null;
         player.setCompassTarget(defaultLocation);
     }
 
@@ -4461,7 +4461,8 @@ public class BukkitQuester implements Quester {
      * Update compass target to current stage of first available current quest, if possible
      */
     public void findCompassTarget() {
-        if (!canUseCompass()) {
+        // Here we apply this method to OPs by not checking #canUseCompass
+        if (getPlayer() == null || !getPlayer().hasPermission("quests.compass")) {
             return;
         }
         for (final Quest quest : currentQuests.keySet()) {
