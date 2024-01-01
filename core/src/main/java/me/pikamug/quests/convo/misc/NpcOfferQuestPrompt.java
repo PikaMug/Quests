@@ -10,10 +10,10 @@
 
 package me.pikamug.quests.convo.misc;
 
-import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.events.misc.MiscPostNpcOfferQuestEvent;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -227,7 +227,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                     if (!plugin.getConfigSettings().canConfirmAccept()) {
                         quester.takeQuest(q, false);
                     } else {
-                        plugin.getConversationFactory().buildConversation(player).begin();
+                        new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
                     }
                 }
                 return Prompt.END_OF_CONVERSATION;

@@ -4,6 +4,7 @@ import lol.pyr.znpcsplus.api.event.NpcInteractEvent;
 import lol.pyr.znpcsplus.api.interaction.InteractionType;
 import lol.pyr.znpcsplus.api.npc.Npc;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.Quester;
@@ -244,7 +245,7 @@ public class BukkitZnpcsApiListener implements Listener {
                                     for (final String msg : extracted(quester).split("<br>")) {
                                         player.sendMessage(msg);
                                     }
-                                    plugin.getConversationFactory().buildConversation(player).begin();
+                                    new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
                                 }
                             }
                         }

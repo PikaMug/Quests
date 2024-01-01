@@ -16,7 +16,7 @@
 
     <repositories>
         <repository>
-            <!-- DungeonsXL, LocaleLib, mcMMO Classic, PhatLoots, Unite, ZNPCsPlus -->
+            <!-- ConversationAPI, DungeonsXL, LocaleLib, mcMMO Classic, PhatLoots, Unite, ZNPCsPlus -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -179,6 +179,11 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
+            <groupId>com.github.Browsit</groupId>
+            <artifactId>ConversationAPI</artifactId>
+            <version>67983728aa</version>
+        </dependency>
+        <dependency>
             <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-api</artifactId>
             <version>${project.version}</version>
@@ -250,8 +255,12 @@
                 </executions>
 
                 <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
                     <artifactSet>
                         <includes>
+                            <include>com.github.Browsit.ConversationAPI:*</include>
                             <include>me.*</include>
                             <include>com.github.PikaMug:LocaleLib</include>
                             <include>org.slf4j:slf4j-simple</include>
@@ -261,12 +270,6 @@
                     </artifactSet>
                     <filters>
                         <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.MF</exclude>
-                            </excludes>
-                        </filter>
-                        <filter>
                             <artifact>com.github.PikaMug:LocaleLib</artifact>
                             <excludes>
                                 <exclude>plugin.yml</exclude>
@@ -274,6 +277,14 @@
                         </filter>
                     </filters>
                     <relocations>
+                        <relocation>
+                            <pattern>org.browsit.conversation</pattern>
+                            <shadedPattern>me.pikamug.quests.libs.conversation</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.browsit.libs.kyori</pattern>
+                            <shadedPattern>me.pikamug.quests.libs.kyori</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>me.pikamug.localelib</pattern>
                             <shadedPattern>me.pikamug.quests.libs.localelib</shadedPattern>

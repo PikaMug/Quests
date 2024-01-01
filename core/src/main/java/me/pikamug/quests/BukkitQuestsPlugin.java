@@ -18,14 +18,20 @@ import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
-import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.listeners.*;
+import me.pikamug.quests.listeners.BukkitBlockListener;
+import me.pikamug.quests.listeners.BukkitCitizensListener;
+import me.pikamug.quests.listeners.BukkitCommandManager;
+import me.pikamug.quests.listeners.BukkitConvoListener;
+import me.pikamug.quests.listeners.BukkitItemListener;
+import me.pikamug.quests.listeners.BukkitPartiesListener;
+import me.pikamug.quests.listeners.BukkitPlayerListener;
+import me.pikamug.quests.listeners.BukkitUniteListener;
+import me.pikamug.quests.listeners.BukkitZnpcsApiListener;
+import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
-import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
-import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
@@ -36,14 +42,19 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.statistics.BukkitMetrics;
 import me.pikamug.quests.storage.BukkitStorageFactory;
 import me.pikamug.quests.storage.QuesterStorage;
+import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
 import me.pikamug.quests.storage.implementation.file.BukkitActionYamlStorage;
 import me.pikamug.quests.storage.implementation.file.BukkitConditionYamlStorage;
 import me.pikamug.quests.storage.implementation.file.BukkitQuestYamlStorage;
+import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitUpdateChecker;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apache.logging.log4j.LogManager;
+import org.browsit.conversations.api.Conversations;
+import org.browsit.conversations.bukkit.BukkitConversationsForwarder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -114,6 +125,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
+        Conversations.init(BukkitAudiences.create(this));
+        new BukkitConversationsForwarder().register(this);
 
         // 1 - Trigger server to initialize Legacy Material Support
         try {
@@ -203,11 +216,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         
         // 10 - Build conversation factories
-        this.conversationFactory = new ConversationFactory(this).withModality(false)
+        /*this.conversationFactory = new ConversationFactory(this).withModality(false)
                 .withPrefix(context -> ChatColor.GRAY.toString())
                 .withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(configSettings.getAcceptTimeout())
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
-                .addConversationAbandonedListener(convoListener);
+                .addConversationAbandonedListener(convoListener);*/
         this.npcConversationFactory = new ConversationFactory(this).withModality(false)
                 .withFirstPrompt(new NpcOfferQuestPrompt(this)).withTimeout(configSettings.getAcceptTimeout())
                 .withLocalEcho(false).addConversationAbandonedListener(convoListener);
@@ -245,6 +258,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @Override
     public void onDisable() {
+        Conversations.cleanUp();
         getLogger().info("Saving Quester data...");
         for (final Player p : getServer().getOnlinePlayers()) {
             getQuester(p.getUniqueId()).saveData();

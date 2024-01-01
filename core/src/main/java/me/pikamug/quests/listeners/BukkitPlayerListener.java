@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.listeners;
 
+import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
@@ -415,7 +416,7 @@ public class BukkitPlayerListener implements Listener {
                                                 for (final String msg : s.split("<br>")) {
                                                     BukkitLang.send(player, msg);
                                                 }
-                                                plugin.getConversationFactory().buildConversation(player).begin();
+                                                new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
                                             }
                                             break;
                                         }

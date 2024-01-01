@@ -23,6 +23,7 @@ import me.pikamug.quests.conditions.BukkitCondition;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.QuestAbandonPrompt;
+import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
@@ -522,7 +523,7 @@ public class BukkitQuester implements Quester {
                     if (!plugin.getConfigSettings().canConfirmAccept()) {
                         takeQuest(quest, false);
                     } else {
-                        plugin.getConversationFactory().buildConversation(getPlayer()).begin();
+                        new QuestAcceptPrompt(getPlayer().getUniqueId(), plugin).start();
                     }
                     return true;
                 } else {
