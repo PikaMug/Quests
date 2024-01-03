@@ -43,6 +43,7 @@ import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.tasks.BukkitStageTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -263,7 +264,7 @@ public class BukkitQuest implements Quest {
     /**
      * Force player to proceed to the next ordered stage
      * 
-     * @param quester Player to force
+     * @param quester Player to force progression
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
     public void nextStage(final Quester quester, final boolean allowSharedProgress) {
@@ -284,41 +285,49 @@ public class BukkitQuest implements Quest {
             quester.findCompassTarget();
         }
         if (currentStage.getDelay() < 0) {
-            if (currentStage.getFinishAction() != null) {
-                currentStage.getFinishAction().fire(quester, this);
-            }
-            if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
-                if (currentStage.getScript() != null) {
-                    plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
-                }
-                completeQuest(quester);
-            } else {
-                setStage(quester, quester.getCurrentQuests().get(this) + 1);
-            }
-            if (quester.getQuestDataOrDefault(this) != null) {
-                quester.getQuestDataOrDefault(this).setDelayStartTime(0);
-                quester.getQuestDataOrDefault(this).setDelayTimeLeft(-1);
-            }
-            
-            // Multiplayer
-            if (allowSharedProgress && options.getShareProgressLevel() == 3) {
-                final List<Quester> mq = quester.getMultiplayerQuesters(this);
-                for (final Quester qq : mq) {
-                    if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, true);
-                    }
-                }
-            }
+            doNextStage(quester, allowSharedProgress);
         } else {
-            quester.startStageTimer(this);
+            // Here we avoid BukkitStageTimer as the stage objectives are incomplete
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                doNextStage(quester, allowSharedProgress);
+            }, (long) (currentStage.getDelay() * 0.02));
         }
         quester.updateJournal();
+    }
+
+    private void doNextStage(final Quester quester, final boolean allowSharedProgress) {
+        final Stage currentStage = quester.getCurrentStage(this);
+        if (currentStage.getFinishAction() != null) {
+            currentStage.getFinishAction().fire(quester, this);
+        }
+        if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
+            if (currentStage.getScript() != null) {
+                plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
+            }
+            completeQuest(quester);
+        } else {
+            setStage(quester, quester.getCurrentQuests().get(this) + 1);
+        }
+        if (quester.getQuestDataOrDefault(this) != null) {
+            quester.getQuestDataOrDefault(this).setDelayStartTime(0);
+            quester.getQuestDataOrDefault(this).setDelayTimeLeft(-1);
+        }
+
+        // Multiplayer
+        if (allowSharedProgress && options.getShareProgressLevel() == 3) {
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            for (final Quester qq : mq) {
+                if (currentStage.equals(qq.getCurrentStage(this))) {
+                    nextStage(qq, true);
+                }
+            }
+        }
     }
 
     /**
      * Force player to proceed to the specified stage
      * 
-     * @param quester Player to force
+     * @param quester Player to force progression
      * @param stage Stage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
@@ -907,6 +916,10 @@ public class BukkitQuest implements Quest {
                     quester.sendMessage("- " + message);
                 }
             } else {
+                if (rewards.getExp() > 0) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getExp() + " "
+                            + BukkitLang.get(p, "experience"));
+                }
                 if (rewards.getQuestPoints() > 0) {
                     quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
                             + BukkitLang.get(p, "questPoints"));

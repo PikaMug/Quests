@@ -37,6 +37,9 @@ public class BukkitStageTimer implements Runnable {
         if (quester.getCurrentStage(quest) == null) {
             return;
         }
+        if (!quester.testComplete(quest)) {
+            return;
+        }
         if (quester.getCurrentStage(quest).getFinishAction() != null) {
             quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
         }
@@ -45,7 +48,7 @@ public class BukkitStageTimer implements Runnable {
                 plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester, null);
             }
             quest.completeQuest(quester);
-        } else if (quester.testComplete(quest)) {
+        } else {
             final int stageNum = quester.getCurrentQuests().get(quest) + 1;
             quester.getQuestDataOrDefault(quest).setDelayStartTime(0);
             quester.getQuestDataOrDefault(quest).setDelayTimeLeft(-1);
