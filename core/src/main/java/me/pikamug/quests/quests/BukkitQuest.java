@@ -43,7 +43,6 @@ import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.tasks.BukkitStageTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -279,10 +278,6 @@ public class BukkitQuest implements Quest {
                 quester.getPlayer().sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(stageCompleteMessage,
                         this, quester.getPlayer()));
             }
-        }
-        if (quester.getPlayer().hasPermission("quests.compass")) {
-            quester.resetCompass();
-            quester.findCompassTarget();
         }
         if (currentStage.getDelay() < 0) {
             doNextStage(quester, allowSharedProgress);

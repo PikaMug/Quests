@@ -174,8 +174,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + moneyReq + " " 
-                            + (moneyReq > 1 ? plugin.getDependencies().getVaultEconomy().currencyNamePlural()
-                            : plugin.getDependencies().getVaultEconomy().currencyNameSingular() + ChatColor.GRAY + ")");
+                            + plugin.getDependencies().getVaultEconomy().format(moneyReq) + ChatColor.GRAY + ")";
                 }
             } else {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";

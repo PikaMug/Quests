@@ -424,6 +424,7 @@ public class BukkitQuester implements Quester {
 
     /**
      * Get quest progress for given quest, or default values if not found
+     *
      * @param quest The quest to check
      * @return Existing or current progress, or default
      */
@@ -432,12 +433,6 @@ public class BukkitQuester implements Quester {
         if (questProgress.get(quest) != null) {
             return questProgress.get(quest);
         }
-        // TODO - the above should suffice since Quest extends Comparable, but test it
-        /*for (final Quest q : questData.keySet()) {
-            if (q.getId().equals(quest.getId())) {
-                return questData.get(q);
-            }
-        }*/
         if (currentQuests.get(quest) != null) {
             addEmptiesFor(quest, currentQuests.get(quest));
         }
@@ -4350,6 +4345,9 @@ public class BukkitQuester implements Quester {
      */
     public void hardQuit(final Quest quest) {
         try {
+            if (compassTargetQuestId.equals(quest.getId())) {
+                compassTargetQuestId = null;
+            }
             currentQuests.remove(quest);
             questProgress.remove(quest);
             if (!timers.isEmpty()) {
@@ -4441,11 +4439,11 @@ public class BukkitQuester implements Quester {
      * Will set to Quester's spawn location if bed spawn does not exist
      */
     public void resetCompass() {
+        compassTargetQuestId = null;
         final Player player = getPlayer();
         if (player == null) {
             return;
         }
-        compassTargetQuestId = null;
         if (!canUseCompass()) {
             return;
         }
@@ -4485,7 +4483,8 @@ public class BukkitQuester implements Quester {
      * @param notify Whether to notify this quester of result
      */
     public void findNextCompassTarget(final boolean notify) {
-        if (!canUseCompass()) {
+        // Here we apply this method to OPs by not checking #canUseCompass
+        if (getPlayer() == null || !getPlayer().hasPermission("quests.compass")) {
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
