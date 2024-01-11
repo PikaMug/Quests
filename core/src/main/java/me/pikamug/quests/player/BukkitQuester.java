@@ -1648,7 +1648,7 @@ public class BukkitQuester implements Quester {
             }
             final int toClear = stage.getCustomObjectiveCounts().get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + co.getDisplay();
+            String message = color + co.getDisplay(getUUID(), quest);
             for (final Entry<String,Object> prompt : co.getData()) {
                 final String replacement = "%" + prompt.getKey() + "%";
                 try {
@@ -3748,7 +3748,7 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.PASSWORD)) {
             sendMessage(ChatColor.GREEN + "(" + BukkitLang.get(p, "completed") + ") " + pass);
         } else if (co != null) {
-            String message = ChatColor.GREEN + "(" + BukkitLang.get(p, "completed") + ") " + co.getDisplay();
+            String message = ChatColor.GREEN + "(" + BukkitLang.get(p, "completed") + ") " + co.getFinishDisplay();
             int index = -1;
             for (int i = 0; i < getCurrentStage(quest).getCustomObjectives().size(); i++) {
                 if (getCurrentStage(quest).getCustomObjectives().get(i).getName().equals(co.getName())) {

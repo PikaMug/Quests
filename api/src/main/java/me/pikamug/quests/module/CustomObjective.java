@@ -33,7 +33,13 @@ public interface CustomObjective {
 
     String getDisplay();
 
+    String getDisplay(UUID uuid, Quest quest);
+
     void setDisplay(final String display);
+
+    String getFinishDisplay();
+
+    void setFinishDisplay(final String finishDisplay);
 
     Map.Entry<String, Short> getItem();
 

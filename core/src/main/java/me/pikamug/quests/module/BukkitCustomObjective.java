@@ -39,6 +39,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
     private String name = null;
     private String author = null;
     private String display = "Progress: %count%";
+    private String finishDisplay = "Progress: %count%";
     private Entry<String, Short> item = new AbstractMap.SimpleEntry<>("BOOK", (short) 0);
     private final LinkedList<Entry<String, Object>> data = new LinkedList<>();
     private final Map<String, String> descriptions = new HashMap<>();
@@ -78,6 +79,11 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
     }
 
     @Override
+    public String getDisplay(UUID uuid, Quest quest) {
+        return this.display;
+    }
+
+    @Override
     public String getDisplay() {
         return display;
     }
@@ -85,6 +91,16 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
     @Override
     public void setDisplay(final String display) {
         this.display = display;
+    }
+
+    @Override
+    public String getFinishDisplay() {
+        return finishDisplay;
+    }
+
+    @Override
+    public void setFinishDisplay(final String finishDisplay) {
+        this.finishDisplay = finishDisplay;
     }
 
     @Override
