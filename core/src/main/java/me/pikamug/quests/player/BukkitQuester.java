@@ -1714,7 +1714,8 @@ public class BukkitQuester implements Quester {
         }
         for (final Objective obj : q.getCurrentObjectives(quest, false, false)) {
             final BukkitObjective objective = (BukkitObjective) obj;
-            final String message = "- " + objective.getMessage();
+            final String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
+                    objective.getMessage());
             if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
                 final ItemStack progress = objective.getProgressAsItem();
                 final ItemStack goal = objective.getGoalAsItem();
