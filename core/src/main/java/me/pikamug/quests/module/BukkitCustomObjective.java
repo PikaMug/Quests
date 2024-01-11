@@ -95,7 +95,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
 
     @Override
     public String getFinishDisplay() {
-        return finishDisplay;
+        return getDisplay();
     }
 
     @Override
