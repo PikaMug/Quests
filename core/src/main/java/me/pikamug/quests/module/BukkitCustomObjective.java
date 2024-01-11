@@ -80,7 +80,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
 
     @Override
     public String getDisplay(UUID uuid, Quest quest) {
-        return this.display;
+        return getDisplay();
     }
 
     @Override
