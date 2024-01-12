@@ -1668,7 +1668,7 @@ public class BukkitQuester implements Quester {
             if (co.canShowCount()) {
                 message = message.replace("%count%", cleared + "/" + toClear);
             }
-            message = BukkitConfigUtil.parseString(message);
+            message = BukkitConfigUtil.parseString(message.trim().replaceAll("\\s{2,}", ""));
             objectives.add(new BukkitObjective(ObjectiveType.CUSTOM, message, cleared, toClear));
             customIndex++;
         }
@@ -1760,7 +1760,11 @@ public class BukkitQuester implements Quester {
                 if (!settings.canShowCompletedObjs() && objective.getProgress() >= objective.getGoal()) {
                     continue;
                 }
-                quester.sendMessage(message);
+                if (obj.getType().equals(ObjectiveType.CUSTOM)) {
+                    quester.sendMessage(message.trim().replaceAll("\\s{2,}", ""));
+                } else {
+                    quester.sendMessage(message);
+                }
             }
         }
     }
