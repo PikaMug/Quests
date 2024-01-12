@@ -4346,7 +4346,7 @@ public class BukkitQuester implements Quester {
      */
     public void hardQuit(final Quest quest) {
         try {
-            if (compassTargetQuestId.equals(quest.getId())) {
+            if (compassTargetQuestId != null && compassTargetQuestId.equals(quest.getId())) {
                 compassTargetQuestId = null;
             }
             currentQuests.remove(quest);
