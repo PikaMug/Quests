@@ -349,7 +349,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     final String stack = (String) item;
                     if (stack != null) {
                         final String[] result = stack.split(":");
-                        if (result.length < 1) {
+                        if (result.length < 2) {
                             throw new QuestFormatException("Reward 'items' has invalid length", questKey);
                         }
                         final String itemName = result[0].replace("name-", "");
@@ -358,7 +358,8 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                         if (itemMat != null) {
                             temp.add(new ItemStack(itemMat, itemAmt));
                         } else {
-                            throw new QuestFormatException("Reward 'items' has invalid name " + itemName, questKey);
+                            throw new QuestFormatException("Reward 'items' has invalid name or amount "
+                                    + itemName + ":" + itemAmt, questKey);
                         }
                     }
                 }
