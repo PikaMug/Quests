@@ -166,8 +166,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
      *
      * @param uuid UUID of player attempting this objective
      * @param customObj The objective being attempted
-     * @param quest Current me.pikamug.quests.Quest which includes this objective
-     * @return data Map of custom objective data
+     * @param quest Current quest which includes this objective
+     * @return Mapping of custom objective data
      */
     public Map<String, Object> getDataForPlayer(final UUID uuid, final CustomObjective customObj,
                                                 final Quest quest) {
@@ -208,7 +208,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
      *
      * @param uuid UUID of player attempting this objective
      * @param customObj The objective being attempted
-     * @param quest Current me.pikamug.quests.Quest which includes this objective
+     * @param quest Current quest which includes this objective
      * @param count Amount to increase objective count by
      */
     public void incrementObjective(final UUID uuid, final CustomObjective customObj, final Quest quest,
