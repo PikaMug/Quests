@@ -195,7 +195,7 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public ZNPCsPlus getZnpcsPlus() {
-        if (znpcsPlusLegacy == null) {
+        if (znpcsPlusLegacy == null && isPluginAvailable("ZNPCsPlus")) {
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNPCsPlus");
                 znpcsPlusLegacy = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
