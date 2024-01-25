@@ -5,6 +5,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.browsit.conversations.api.Conversations;
 import org.browsit.conversations.api.action.Prompt;
 import org.browsit.conversations.api.data.Conversation;
 import org.bukkit.Bukkit;
@@ -127,9 +128,9 @@ public class QuestAcceptPrompt {
     }
 
     public void start() {
-        new Conversation(uuid)
-                .prompt(new Prompt<String>(getPromptText(uuid))
+        Conversations.create(uuid)
+                .prompt(getPromptText(uuid), String.class, prompt -> prompt
                 .fetch((input, sender) -> acceptInput(uuid, input)))
-                .run();
+                .start();
     }
 }
