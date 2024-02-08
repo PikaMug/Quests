@@ -179,9 +179,9 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.Browsit</groupId>
-            <artifactId>ConversationAPI</artifactId>
-            <version>158a0ee8e3</version>
+            <groupId>com.github.Browsit.ConversationAPI</groupId>
+            <artifactId>conversation-bukkit</artifactId>
+            <version>f5e587e641</version>
         </dependency>
         <dependency>
             <groupId>me.pikamug.quests</groupId>

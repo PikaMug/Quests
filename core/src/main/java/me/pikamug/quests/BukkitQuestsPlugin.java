@@ -51,12 +51,10 @@ import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitUpdateChecker;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.apache.logging.log4j.LogManager;
 import org.browsit.conversations.api.Conversations;
+import org.browsit.conversations.bukkit.BukkitConversations;
 import org.browsit.conversations.bukkit.BukkitConversationsForwarder;
-import org.browsit.conversations.impl.provider.AdventureConversationsProvider;
-import org.browsit.libs.kyori.adventure.platform.AudienceProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -127,7 +125,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
-        Conversations.init(AdventureConversationsProvider.create((AudienceProvider) BukkitAudiences.create(this)));
+        BukkitConversations.init(this);
         new BukkitConversationsForwarder().register(this);
 
         // 1 - Trigger server to initialize Legacy Material Support

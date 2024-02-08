@@ -6,8 +6,6 @@ import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.browsit.conversations.api.Conversations;
-import org.browsit.conversations.api.action.Prompt;
-import org.browsit.conversations.api.data.Conversation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -112,24 +110,22 @@ public class QuestAcceptPrompt {
             } else {
                 quester.takeQuest(plugin.getQuestById(questIdToTake), false);
             }
-            return;
         } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
                 || input.equalsIgnoreCase(BukkitLang.get("noWord"))
                 || input.equalsIgnoreCase(BukkitLang.get(player, "noWord"))) {
             BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get("cancelled"));
-            return;
         } else {
             final String msg = BukkitLang.get(player, "questInvalidChoice")
                     .replace("<yes>", BukkitLang.get(player, "yesWord"))
                     .replace("<no>", BukkitLang.get(player, "noWord"));
             BukkitLang.send(player, ChatColor.RED + msg);
-            return;
         }
     }
 
     public void start() {
         Conversations.create(uuid)
                 .prompt(getPromptText(uuid), String.class, prompt -> prompt
+                .converter(String::valueOf)
                 .fetch((input, sender) -> acceptInput(uuid, input)))
                 .start();
     }
