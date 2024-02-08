@@ -10,55 +10,49 @@
 
 package me.pikamug.quests.events.quester;
 
-import lol.pyr.znpcsplus.api.npc.Npc;
 import me.pikamug.quests.player.BukkitQuester;
-import org.bukkit.entity.Entity;
+import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class BukkitQuesterPostViewEffectEvent extends BukkitQuesterEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Entity entity;
-    private final Npc npc;
+    private final UUID targetUuid;
+    private final Location targetLocation;
     private final String effect;
     private final boolean redoable;
 
-    public BukkitQuesterPostViewEffectEvent(final BukkitQuester quester, Entity entity, String effect, boolean redoable) {
+    public BukkitQuesterPostViewEffectEvent(final BukkitQuester quester, UUID targetUuid, Location targetLocation,
+                                            String effect, boolean redoable) {
         super(quester);
-        this.entity = entity;
+        this.targetUuid = targetUuid;
+        this.targetLocation = targetLocation;
         this.effect = effect;
         this.redoable = redoable;
-        this.npc=null;
-    }
-
-    public BukkitQuesterPostViewEffectEvent(final BukkitQuester quester, Npc npc, String effect, boolean redoable) {
-        super(quester);
-        this.npc = npc;
-        this.effect = effect;
-        this.redoable = redoable;
-        this.entity = null;
     }
 
     /**
-     * Returns the entity involved in this event
+     * Get the target of this event, usually an NPC
      *
-     * @return entity who is involved in this event
+     * @return UUID of target
      */
-    public Entity getEntity() {
-        return entity;
+    public UUID getTargetUuid() {
+        return targetUuid;
     }
 
     /**
-     * Returns the npc involved in this event (only if using ZNPCsPlus 2.0.0 or higher)
+     * Get the target location for this event
      *
-     * @return npc who is involved in this event
+     * @return Location of target
      */
-    public Npc getNpc() {
-        return npc;
+    public Location getTargetLocation() {
+        return targetLocation;
     }
 
     /**
-     * Returns the effect involved in this event
+     * Get the effect involved in this event
      *
      * @return Effect which is involved in this event
      */
