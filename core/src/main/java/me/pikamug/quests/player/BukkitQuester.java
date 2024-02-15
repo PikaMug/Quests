@@ -1129,12 +1129,23 @@ public class BukkitQuester implements Quester {
             for (final Entry<String, Map<String, Object>> m : requirements.getCustomRequirements().entrySet()) {
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
                     if (cr.getName().equalsIgnoreCase(m.getKey())) {
+                        String message = cr.getDisplay() != null ? cr.getDisplay() : m.getKey();
+                        for (Entry<String, Object> prompt : cr.getData().entrySet()) {
+                            final String replacement = "%" + prompt.getKey() + "%";
+                            try {
+                                if (message.contains(replacement)) {
+                                    message = message.replace(replacement, String.valueOf(m.getValue().get(prompt.getKey())));
+                                }
+                            } catch (final NullPointerException ne) {
+                                plugin.getLogger().severe("Unable to gather display for " + cr.getName() + " on "
+                                        + quest.getName());
+                                ne.printStackTrace();
+                            }
+                        }
                         if (cr.testRequirement(getPlayer().getUniqueId(), m.getValue())) {
-                            finishedRequirements.add(ChatColor.GREEN + ""
-                                    + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
+                            finishedRequirements.add(ChatColor.GREEN + "" + message);
                         } else {
-                            unfinishedRequirements.add(ChatColor.GRAY + ""
-                                    + (cr.getDisplay() != null ? cr.getDisplay() : m.getKey()));
+                            unfinishedRequirements.add(ChatColor.GRAY + "" + message);
                         }
                     }
                 }
