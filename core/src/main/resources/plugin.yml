@@ -151,26 +151,6 @@ permissions:
   quests.editor.delete:
     description: Ability to delete existing quests
     default: op
-  quests.events.*:
-    description: LEGACY - Access all Actions Editor functionality
-    default: op
-    children:
-      quests.events.editor: true
-      quests.events.create: true
-      quests.events.edit: true
-      quests.events.delete: true
-  quests.events.editor:
-    description: LEGACY - Ability to open Actions Editor
-    default: op
-  quests.events.create:
-    description: LEGACY - Ability to create new actions
-    default: op
-  quests.events.edit:
-    description: LEGACY - Ability to edit existing actions
-    default: op
-  quests.events.delete:
-    description: LEGACY - Ability to delete existing actions
-    default: op
   quests.actions.*:
     description: Access all Actions Editor functionality
     default: op
