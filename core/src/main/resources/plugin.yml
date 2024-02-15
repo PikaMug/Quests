@@ -75,7 +75,6 @@ permissions:
       quests.admin.points: true
       quests.admin.takepoints: true
       quests.admin.givepoints: true
-      quests.admin.pointsall: true
       quests.admin.finish: true
       quests.admin.nextstage: true
       quests.admin.setstage: true
@@ -104,9 +103,6 @@ permissions:
     default: op
   quests.admin.givepoints:
     description: Add to a player's Quest Points
-    default: op
-  quests.admin.pointsall:
-    description: Set ALL players' Quest Points
     default: op
   quests.admin.finish:
     description: Force a player to complete a quest

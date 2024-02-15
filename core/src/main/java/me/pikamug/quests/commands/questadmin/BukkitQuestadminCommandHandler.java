@@ -16,7 +16,6 @@ import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminGiveCom
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminGivepointsCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminNextstageCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminPointsCommand;
-import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminPointsallCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminQuitCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminReloadCommand;
 import me.pikamug.quests.commands.questadmin.subcommands.BukkitQuestadminRemoveCommand;
@@ -50,7 +49,6 @@ public class BukkitQuestadminCommandHandler {
                         new BukkitQuestadminPointsCommand(plugin),
                         new BukkitQuestadminTakepointsCommand(plugin),
                         new BukkitQuestadminGivepointsCommand(plugin),
-                        new BukkitQuestadminPointsallCommand(plugin),
                         new BukkitQuestadminFinishCommand(plugin),
                         new BukkitQuestadminNextstageCommand(plugin),
                         new BukkitQuestadminSetstageCommand(plugin),
@@ -141,13 +139,6 @@ public class BukkitQuestadminCommandHandler {
                     .replace("<command>", ChatColor.GOLD
                             + (translateSubCommands ? BukkitLang.get("COMMAND_QUESTADMIN_GIVEPOINTS") : "givepoints")
                             + ChatColor.RED));
-        }
-        if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.pointsall")) {
-            cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
-                    + BukkitLang.get("COMMAND_QUESTADMIN_POINTSALL_HELP")
-                    .replace("<points>", BukkitLang.get("questPoints"))
-                    .replace("<command>", ChatColor.GOLD
-                            + (translateSubCommands ? BukkitLang.get("COMMAND_QUESTADMIN_POINTSALL") : "pointsall") + ChatColor.RED));
         }
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.finish")) {
             cs.sendMessage(ChatColor.YELLOW + "/questadmin " + ChatColor.RED
