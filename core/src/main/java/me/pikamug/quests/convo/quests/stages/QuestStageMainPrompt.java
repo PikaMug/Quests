@@ -2440,7 +2440,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLang.get("stageEditorCustom");
+            return BukkitLang.get("customObjectivesTitle");
         }
 
         @Override
