@@ -46,6 +46,9 @@ public class BukkitQuestsLog4JFilter extends AbstractFilter {
             return Result.DENY;
         }
         // Paper outputs errors when dependencies for module events are missing
+        if (message.contains("Failed to register events") && message.contains("does not exist.")) {
+            return Result.DENY;
+        }
         return (message.contains("Plugin Quests") && message.contains("failed to register events"))
                 ? Result.DENY : Result.NEUTRAL;
     }
