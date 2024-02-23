@@ -906,9 +906,7 @@ public class BukkitPlayerListener implements Listener {
                         if (quester.hasJournal()) {
                             quester.updateJournal();
                         }
-                        if (quester.canUseCompass()) {
-                            quester.findCompassTarget();
-                        }
+                        quester.findCompassTarget();
                     }, 40L);
                 } catch (final Exception e) {
                     e.printStackTrace();
