@@ -91,7 +91,6 @@ questsUnknownCommand: "أمر المسعى غير معروف. اكتب/quests ل
 pageNotExist: "الصفحة غير موجودة."
 questForceNextStage: "<player>متقدمة إلى المرحلة التالية في السعي إلى <quest>."
 questForcedNextStage: "<player>متقدم عليك إلى المرحلة التالية في السعي إلى <quest>."
-allQuestPointsSet: "تم تعيين نقاط جميع اللاعبين السعي ل <number>!"
 noCurrentQuest: "<player>ليس لديه حاليا أي مسعى نشط."
 playerNotFound: "لم يتم العثور على اللاعب."
 questSaveError: "حدث خطأ أثناء الحفظ."
