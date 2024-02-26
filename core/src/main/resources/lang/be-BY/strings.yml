@@ -24,7 +24,6 @@ COMMAND_CHOICE_HELP: "<command> [выбар] - Зрабіць выбар ў ме
 COMMAND_QUESTADMIN_STATS: "статыстыку"
 COMMAND_QUESTADMIN_QUIT: "пакідаць"
 COMMAND_QUESTADMIN_POINTS: "балы"
-COMMAND_QUESTADMIN_POINTSALL_HELP: "<command> [amount] - Задаць усім гульцам колькасць <points>"
 COMMAND_QUESTADMIN_FINISH: "скончыць"
 COMMAND_QUESTADMIN_FINISH_HELP: "<command> [player] [quest] - Прымусіць гульца скончыць заданне"
 COMMAND_QUESTADMIN_RESET: "скід"
