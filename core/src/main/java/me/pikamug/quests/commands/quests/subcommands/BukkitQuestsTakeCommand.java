@@ -96,7 +96,7 @@ public class BukkitQuestsTakeCommand extends BukkitQuestsSubCommand {
 
     @Override
     public List<String> tabComplete(CommandSender commandSender, String[] args) {
-        if (args.length == 2) {
+        if (args.length == 2 && commandSender.hasPermission(getPermission())) {
             final List<String> results = new ArrayList<>();
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (quest.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
