@@ -80,16 +80,20 @@ public class BukkitQuestCommandHandler {
     }
 
     public List<String> suggest(final CommandSender cs, final String[] args) {
-        if (args.length != 1) {
+        if (cs.hasPermission("quests.quest.tab")) {
+            if (args.length != 1) {
+                return Collections.emptyList();
+            }
+            final List<String> results = new ArrayList<>();
+            for (final Quest quest : plugin.getLoadedQuests()) {
+                if (quest.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                    results.add(ChatColor.stripColor(quest.getName()));
+                }
+            }
+            return results;
+        } else {
             return Collections.emptyList();
         }
-        final List<String> results = new ArrayList<>();
-        for (final Quest quest : plugin.getLoadedQuests()) {
-            if (quest.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
-                results.add(ChatColor.stripColor(quest.getName()));
-            }
-        }
-        return results;
     }
 
     private void showQuestDetails(final CommandSender cs, final String[] args) {
