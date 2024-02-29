@@ -12,6 +12,7 @@ permissions:
     default: op
     children:
       quests.quest: true
+      quests.quest.tab: true
       quests.questinfo: true
       quests.quests: true
       quests.list: true
@@ -30,6 +31,9 @@ permissions:
       quests.mode.trial: false
   quests.quest:
     description: View current quest objectives
+    default: true
+  quests.quest.tab:
+    description: View quests tab suggestion
     default: true
   quests.questinfo:
     description: View information about a quest
