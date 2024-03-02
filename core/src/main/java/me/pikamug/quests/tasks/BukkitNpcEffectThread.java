@@ -41,8 +41,7 @@ public class BukkitNpcEffectThread implements Runnable {
                     for (final Entity entity : nearby) {
                         final UUID uuid = plugin.getDependencies().getUuidFromNpc(entity);
                         if (uuid != null) {
-                            showConfigEffect(plugin.getQuester(player.getUniqueId()), entity.getUniqueId(),
-                                    entity.getLocation());
+                            showConfigEffect(plugin.getQuester(player.getUniqueId()), uuid, entity.getLocation());
                         }
                     }
                 }
@@ -91,6 +90,7 @@ public class BukkitNpcEffectThread implements Runnable {
      */
     public void showConfigEffect(final BukkitQuester quester, final UUID targetUuid, final Location targetLocation) {
         if (targetUuid != null) {
+            targetLocation.add(0, 2, 0);
             final BukkitQuesterPostViewEffectEvent event;
             if (quester.canAcceptQuest(targetUuid)) {
                 showEffect(quester.getPlayer(), targetLocation, plugin.getConfigSettings().getEffect());
