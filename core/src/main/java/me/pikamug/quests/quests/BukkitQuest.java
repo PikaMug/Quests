@@ -292,6 +292,9 @@ public class BukkitQuest implements Quest {
 
     private void doNextStage(final Quester quester, final boolean allowSharedProgress) {
         final Stage currentStage = quester.getCurrentStage(this);
+        if (currentStage == null) {
+            return;
+        }
         if (currentStage.getFinishAction() != null) {
             currentStage.getFinishAction().fire(quester, this);
         }
