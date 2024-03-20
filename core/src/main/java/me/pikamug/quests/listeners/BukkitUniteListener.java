@@ -40,8 +40,8 @@ public class BukkitUniteListener implements Listener {
         if (event.getDisbander() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getDisbander());
             if (p != null) {
-                if (BukkitLang.get("questDungeonsDisband").length() > 0) {
-                    BukkitLang.send(p, ChatColor.RED + BukkitLang.get("questDungeonsDisband"));
+                if (BukkitLang.get("questPartiesDelete").length() > 0) {
+                    BukkitLang.send(p, ChatColor.RED + BukkitLang.get("questPartiesDelete"));
                 }
             }
         }

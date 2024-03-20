@@ -16,7 +16,7 @@
 
     <repositories>
         <repository>
-            <!-- DungeonsXL, LocaleLib, mcMMO Classic, PhatLoots, Unite, ZNPCsPlus -->
+            <!-- LocaleLib, mcMMO Classic, PhatLoots, Unite, ZNPCsPlus -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
