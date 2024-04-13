@@ -101,7 +101,9 @@ public class BukkitQuestJournal {
                                 builder.add(ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
                             }
                         }
-                        builder.add(split[1]).newLine();
+                        if (split.length > 1) {
+                            builder.add(split[1]).newLine();
+                        }
                     }
                     if (message.contains("<mob>") && objective.getGoalAsMob() != null) {
                         split = message.split("<mob>");
@@ -114,7 +116,9 @@ public class BukkitQuestJournal {
                         } else {
                             builder.add(BukkitMiscUtil.snakeCaseToUpperCamelCase(objective.getGoalAsMob().getEntityType().name()));
                         }
-                        builder.add(split[1]).newLine();
+                        if (split.length > 1) {
+                            builder.add(split[1]).newLine();
+                        }
                     }
                     if (split == null) {
                         builder.add(message).newLine();
