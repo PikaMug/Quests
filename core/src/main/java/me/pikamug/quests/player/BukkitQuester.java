@@ -898,10 +898,10 @@ public class BukkitQuester implements Quester {
         }
         hardQuit(quest);
         if (plugin.getConfigSettings().getConsoleLogging() > 1) {
-            plugin.getLogger().info(getPlayer().getUniqueId() + " quit quest " + quest.getName());
+            plugin.getLogger().info(getOfflinePlayer().getUniqueId() + " quit quest " + quest.getName());
         }
         for (final String message : messages) {
-            if (message != null && !message.equals("") && getPlayer().isOnline()) {
+            if (message != null && !message.equals("") && getOfflinePlayer().isOnline()) {
                 sendMessage(message);
             }
         }
