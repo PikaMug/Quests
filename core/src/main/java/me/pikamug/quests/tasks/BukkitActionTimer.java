@@ -35,7 +35,7 @@ public class BukkitActionTimer extends BukkitRunnable {
         if (time < 1) {
             quest.failQuest(quester, false);
             quester.updateJournal();
-        } else {
+        } else if (quester.getOfflinePlayer().isOnline()){
             quester.getPlayer().sendMessage(ChatColor.GREEN + BukkitLang.get(quester.getPlayer(), "timerMessage")
                     .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(time * 1000L) + ChatColor.GREEN)
                     .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
