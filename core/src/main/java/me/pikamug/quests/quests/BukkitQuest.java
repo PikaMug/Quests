@@ -1117,7 +1117,7 @@ public class BukkitQuest implements Quest {
                 quester.getTimers().remove(entry.getKey());
             }
         }
-        final Player player = quester.getPlayer();
+        final OfflinePlayer player = quester.getOfflinePlayer();
         if (!ignoreFailAction) {
             final Stage stage = quester.getCurrentStage(this);
             if (stage != null && stage.getFailAction() != null) {
@@ -1125,11 +1125,12 @@ public class BukkitQuest implements Quest {
             }
         }
         final String[] messages = {
-                ChatColor.RED + BukkitLang.get(player, "questFailed").replace("<quest>", name)
+                ChatColor.RED + BukkitLang.get(player.isOnline() ? (Player)player : null, "questFailed")
+                        .replace("<quest>", name)
         };
         quester.quitQuest(this, messages);
         if (player.isOnline()) {
-            player.updateInventory();
+            ((Player)player).updateInventory();
         }
         final BukkitQuesterPostFailQuestEvent postEvent = new BukkitQuesterPostFailQuestEvent((BukkitQuester) quester, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);
