@@ -558,8 +558,7 @@ public class BukkitQuester implements Quester {
                     .equals(getPlayer().getLocation().getWorld().getName())
                     && npc.getLocation().distance(getPlayer().getLocation()) > 6.0) {
                 if (giveReason) {
-                    final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo")
-                            .replace("<npc>", ChatColor.DARK_PURPLE + npc.getName() + ChatColor.YELLOW);
+                    final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo").replace("<npc>", npc.getName());
                     sendMessage(ChatColor.YELLOW + msg);
                 }
                 return false;
@@ -571,7 +570,7 @@ public class BukkitQuester implements Quester {
                         znpc.getLocation().toBukkitLocation(znpc.getWorld()).distance(getPlayer().getLocation()) > 6.0) {
                     if (giveReason) {
                         final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo")
-                                .replace("<npc>", ChatColor.DARK_PURPLE + plugin.getDependencies().getNpcName(znpc.getUuid()) + ChatColor.YELLOW);
+                                .replace("<npc>", plugin.getDependencies().getNpcName(znpc.getUuid()));
                         sendMessage(ChatColor.YELLOW + msg);
                     }
                     return false;
@@ -595,31 +594,31 @@ public class BukkitQuester implements Quester {
         } else if (getCompletedQuests().contains(bukkitQuest) && bukkitQuest.getPlanner().getCooldown() < 0) {
             if (giveReason) {
                 final String msg = BukkitLang.get(getPlayer(), "questAlreadyCompleted")
-                        .replace("<quest>", ChatColor.DARK_PURPLE + bukkitQuest.getName() + ChatColor.YELLOW);
+                        .replace("<quest>", bukkitQuest.getName());
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
         } else if (bukkitQuest.getBlockStart() != null) {
             if (giveReason) {
-                final String msg = BukkitLang.get(getPlayer(), "noCommandStart").replace("<quest>", ChatColor.DARK_PURPLE
-                        + bukkitQuest.getName() + ChatColor.YELLOW);
+                final String msg = BukkitLang.get(getPlayer(), "noCommandStart").replace("<quest>",
+                        bukkitQuest.getName());
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
         } else if (getCompletedQuests().contains(bukkitQuest) && getRemainingCooldown(bukkitQuest) > 0
                 && !bukkitQuest.getPlanner().getOverride()) {
             if (giveReason) {
-                final String msg = BukkitLang.get(getPlayer(), "questTooEarly").replace("<quest>", ChatColor.AQUA
-                        + bukkitQuest.getName()+ ChatColor.YELLOW).replace("<time>", ChatColor.DARK_PURPLE
-                        + BukkitMiscUtil.getTime(getRemainingCooldown(bukkitQuest)) + ChatColor.YELLOW);
+                final String msg = BukkitLang.get(getPlayer(), "questTooEarly").replace("<quest>",
+                        bukkitQuest.getName()).replace("<time>", BukkitMiscUtil
+                        .getTime(getRemainingCooldown(bukkitQuest)));
                 getPlayer().sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
         } else if (bukkitQuest.getRegionStart() != null) {
             if (!bukkitQuest.isInRegionStart(this)) {
                 if (giveReason) {
-                    final String msg = BukkitLang.get(getPlayer(), "questInvalidLocation").replace("<quest>", ChatColor.AQUA
-                            + bukkitQuest.getName() + ChatColor.YELLOW);
+                    final String msg = BukkitLang.get(getPlayer(), "questInvalidLocation").replace("<quest>",
+                            bukkitQuest.getName());
                     getPlayer().sendMessage(ChatColor.YELLOW + msg);
                 }
                 return false;
@@ -648,9 +647,8 @@ public class BukkitQuester implements Quester {
             if (currentTime < start) {
                 if (giveReason) {
                     String early = BukkitLang.get("plnTooEarly");
-                    early = early.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW);
-                    early = early.replace("<time>", ChatColor.RED
-                            + BukkitMiscUtil.getTime(start - currentTime) + ChatColor.YELLOW);
+                    early = early.replace("<quest>", quest.getName());
+                    early = early.replace("<time>", BukkitMiscUtil.getTime(start - currentTime));
                     sendMessage(ChatColor.YELLOW + early);
                 }
                 return false;
@@ -660,9 +658,8 @@ public class BukkitQuester implements Quester {
             if (currentTime > end) {
                 if (giveReason) {
                     String late = BukkitLang.get("plnTooLate");
-                    late = late.replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.RED);
-                    late = late.replace("<time>", ChatColor.DARK_PURPLE
-                            + BukkitMiscUtil.getTime(currentTime - end) + ChatColor.RED);
+                    late = late.replace("<quest>", quest.getName());
+                    late = late.replace("<time>", BukkitMiscUtil.getTime(currentTime - end));
                     sendMessage(ChatColor.RED + late);
                 }
                 return false;
@@ -712,10 +709,8 @@ public class BukkitQuester implements Quester {
                 // If quest is not active, or new period of activity should override player cooldown
                 if (!active || (quest.getPlanner().getOverride() && completedEnd > 0L && currentTime < completedEnd)) {
                     if (giveReason) {
-                        final String early = BukkitLang.get("plnTooEarly")
-                                .replace("<quest>", ChatColor.AQUA + quest.getName() + ChatColor.YELLOW)
-                                .replace("<time>", ChatColor.DARK_PURPLE
-                                        + BukkitMiscUtil.getTime((completedEnd) - currentTime) + ChatColor.YELLOW);
+                        final String early = BukkitLang.get("plnTooEarly").replace("<quest>", quest.getName())
+                                .replace("<time>", BukkitMiscUtil.getTime((completedEnd) - currentTime));
                         sendMessage(ChatColor.YELLOW + early);
                     }
                     return false;
@@ -1046,21 +1041,18 @@ public class BukkitQuester implements Quester {
         for (final String questId : requirements.getNeededQuestIds()) {
             if (completed.containsKey(questId)) {
                 String msg = BukkitLang.get("haveCompleted");
-                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                        + completed.get(questId) + ChatColor.GREEN);
+                msg = msg.replace("<quest>", completed.get(questId));
                 finishedRequirements.add(ChatColor.GREEN + msg);
             } else {
                 String msg = BukkitLang.get("mustComplete");
-                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                        + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
+                msg = msg.replace("<quest>", plugin.getQuestById(questId).getName());
                 unfinishedRequirements.add(ChatColor.GRAY + msg);
             }
         }
         for (final String questId : requirements.getBlockQuestIds()) {
             if (completed.containsKey(questId)) {
                 String msg = BukkitLang.get("cannotComplete");
-                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                        + quest.getName() + ChatColor.RED);
+                msg = msg.replace("<quest>", quest.getName());
                 current.add(ChatColor.RED + msg);
             }
         }
@@ -3561,7 +3553,7 @@ public class BukkitQuester implements Quester {
     private String formatCompletedObjectiveMessage(final String langKey, final int goal) {
         String message = ChatColor.GREEN + "(" + BukkitLang.get("completed") + ") " + BukkitLang.get(langKey);
         if (message.contains("<count>")) {
-            message = message.replace("<count>", "" + ChatColor.GREEN + goal + "/" + goal);
+            message = message.replace("<count>", goal + "/" + goal);
         }
         if (plugin.getDependencies().getPlaceholderApi() != null) {
             message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
@@ -4071,7 +4063,7 @@ public class BukkitQuester implements Quester {
                         /*if (q.equals(quest) == false) {
                             if (getPlayer() != null && getPlayer().isOnline()) {
                                 quitQuest(quest, ChatColor.GOLD + Lang.get("questModified")
-                                        .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD));
+                                        .replace("<quest>", quest.getName()));
                             }
                         }*/
                     }
@@ -4080,8 +4072,7 @@ public class BukkitQuester implements Quester {
                 }
             }
             if (!exists) {
-                sendMessage(ChatColor.RED + BukkitLang.get("questNotExist").replace("<quest>", ChatColor.DARK_PURPLE
-                        + quest.getName() + ChatColor.RED));
+                sendMessage(ChatColor.RED + BukkitLang.get("questNotExist").replace("<quest>", quest.getName()));
             }
         }
     }
@@ -4301,14 +4292,14 @@ public class BukkitQuester implements Quester {
                         quest.updateCompass(BukkitQuester.this, stage);
                         if (notify) {
                             sendMessage(ChatColor.YELLOW + BukkitLang.get(getPlayer(), "compassSet")
-                                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.YELLOW));
+                                    .replace("<quest>", quest.getName()));
                         }
                     } else {
                         resetCompass();
                         setCompassTarget(quest);
                         if (notify) {
                             sendMessage(ChatColor.RED + BukkitLang.get(getPlayer(), "compassNone")
-                                    .replace("<quest>", ChatColor.GRAY + quest.getName() + ChatColor.RED));
+                                    .replace("<quest>", quest.getName()));
                         }
                     }
                 }

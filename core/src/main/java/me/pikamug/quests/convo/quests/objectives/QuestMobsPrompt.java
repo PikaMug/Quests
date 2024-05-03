@@ -133,8 +133,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
                         if (locations != null && radii != null && names != null) {
                             for (int i = 0; i < mobs.size(); i++) {
                                 String msg = BukkitLang.get("blocksWithin");
-                                msg = msg.replace("<amount>", ChatColor.DARK_PURPLE + "" + radii.get(i)
-                                        + ChatColor.GRAY);
+                                msg = msg.replace("<amount>", String.valueOf(radii.get(i)));
                                 text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                         .append(BukkitMiscUtil.getPrettyMobName(Objects.requireNonNull(BukkitMiscUtil
                                                 .getProperMobType(mobs.get(i))))).append(ChatColor.GRAY).append(" x ")

@@ -76,9 +76,12 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
+            }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
             }
             final UUID id = target.getUniqueId();
             final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
@@ -94,9 +97,9 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
                 storage.deleteQuester(id);
                 String msg = BukkitLang.get("questReset");
                 if (target.getName() != null) {
-                    msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                    msg = msg.replace("<player>", target.getName());
                 } else {
-                    msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
+                    msg = msg.replace("<player>", args[1]);
                 }
                 cs.sendMessage(ChatColor.GOLD + msg);
                 cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + id);

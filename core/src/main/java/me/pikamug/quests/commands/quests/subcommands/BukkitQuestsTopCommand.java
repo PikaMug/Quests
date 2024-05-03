@@ -104,7 +104,7 @@ public class BukkitQuestsTopCommand extends BukkitQuestsSubCommand {
                 final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
                 int numPrinted = 0;
                 String msg = BukkitLang.get(cs, "topQuestersTitle");
-                msg = msg.replace("<number>", ChatColor.DARK_PURPLE + "" + topNumber + ChatColor.GOLD);
+                msg = msg.replace("<number>", String.valueOf(topNumber));
                 cs.sendMessage(ChatColor.GOLD + msg);
                 for (final Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
                     numPrinted++;

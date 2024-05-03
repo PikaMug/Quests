@@ -77,11 +77,14 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
             }
-            int stage = -1;
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
+            }
+            int stage;
             try {
                 stage = Integer.parseInt(args[args.length - 1]);
             } catch (final NumberFormatException e) {
@@ -101,13 +104,13 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
                 }
                 if (!quester.getCurrentQuests().containsKey(quest)) {
                     String msg1 = BukkitLang.get("questForceTake");
-                    msg1 = msg1.replace("<player>", ChatColor.GREEN + quester.getLastKnownName() + ChatColor.GOLD);
-                    msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                    msg1 = msg1.replace("<player>", quester.getLastKnownName());
+                    msg1 = msg1.replace("<quest>", quest.getName());
                     cs.sendMessage(ChatColor.GOLD + msg1);
                     if (quester.getPlayer() != null && quester.getPlayer().isOnline()) {
                         String msg2 = BukkitLang.get("questForcedTake");
-                        msg2 = msg2.replace("<player>", ChatColor.GREEN + quester.getLastKnownName() + ChatColor.GOLD);
-                        msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                        msg2 = msg2.replace("<player>", quester.getLastKnownName());
+                        msg2 = msg2.replace("<quest>", quest.getName());
                         quester.sendMessage(ChatColor.GREEN + msg2);
                     }
                     quester.takeQuest(quest, true);

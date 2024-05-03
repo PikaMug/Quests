@@ -77,9 +77,12 @@ public class BukkitQuestadminQuitCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
+            }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
             if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
@@ -93,12 +96,12 @@ public class BukkitQuestadminQuitCommand extends BukkitQuestsSubCommand {
                     return;
                 }
                 String msg1 = BukkitLang.get("questForceQuit");
-                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<player>", target.getName());
+                msg1 = msg1.replace("<quest>", quest.getName());
                 cs.sendMessage(ChatColor.GOLD + msg1);
                 String msg2 = BukkitLang.get((Player) target, "questForcedQuit");
-                msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                msg2 = msg2.replace("<player>", cs.getName());
+                msg2 = msg2.replace("<quest>", quest.getName());
                 quester.quitQuest(quest, msg2);
             }
         } else {

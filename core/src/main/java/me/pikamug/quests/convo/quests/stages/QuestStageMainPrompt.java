@@ -2751,7 +2751,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
             String msg = BukkitLang.get("stageEditorCustomDataPrompt");
-            msg = msg.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
+            msg = msg.replace("<data>", temp);
             text += ChatColor.YELLOW + msg;
             return text;
         }

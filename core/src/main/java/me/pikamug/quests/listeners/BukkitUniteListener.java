@@ -58,7 +58,8 @@ public class BukkitUniteListener implements Listener {
                         continue;
                     }
                     if (event.getPartyProvider().areInSameParty(p, online)) {
-                        online.sendMessage(ChatColor.GREEN + BukkitLang.get("questPartiesJoinBroadcast").replace("<player>", p.getName()));
+                        online.sendMessage(ChatColor.GREEN + BukkitLang.get("questPartiesJoinBroadcast")
+                                .replace("<player>", p.getName()));
                     }
                 }
             }
@@ -76,7 +77,8 @@ public class BukkitUniteListener implements Listener {
                         continue;
                     }
                     if (event.getPartyProvider().areInSameParty(p, online)) {
-                        online.sendMessage(ChatColor.RED + BukkitLang.get("questPartiesLeaveBroadcast").replace("<player>", p.getName()));
+                        online.sendMessage(ChatColor.RED + BukkitLang.get("questPartiesLeaveBroadcast")
+                                .replace("<player>", p.getName()));
                     }
                 }
             }

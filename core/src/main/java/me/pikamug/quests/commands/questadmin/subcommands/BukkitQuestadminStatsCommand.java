@@ -75,9 +75,12 @@ public class BukkitQuestadminStatsCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
+            }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
             cs.sendMessage(ChatColor.GOLD + "- " + target.getName() + " -");

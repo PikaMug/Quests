@@ -37,8 +37,7 @@ public class BukkitActionTimer extends BukkitRunnable {
             quester.updateJournal();
         } else if (quester.getOfflinePlayer().isOnline()){
             quester.getPlayer().sendMessage(ChatColor.GREEN + BukkitLang.get(quester.getPlayer(), "timerMessage")
-                    .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(time * 1000L) + ChatColor.GREEN)
-                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
+                    .replace("<time>", BukkitMiscUtil.getTime(time * 1000L)).replace("<quest>", quest.getName()));
         }
     }
 }

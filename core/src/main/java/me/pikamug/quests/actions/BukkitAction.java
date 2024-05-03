@@ -401,8 +401,7 @@ public class BukkitAction implements Action {
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + BukkitLang.get(player, "timerStart")
-                    .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(timer * 1000L) + ChatColor.GREEN)
-                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
+                    .replace("<time>", BukkitMiscUtil.getTime(timer * 1000L)).replace("<quest>", quest.getName()));
             final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
             for (final int seconds : toNotify) {
                 if (timer > seconds) {

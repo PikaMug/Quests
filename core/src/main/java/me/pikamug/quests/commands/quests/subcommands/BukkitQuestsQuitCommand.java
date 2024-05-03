@@ -79,7 +79,7 @@ public class BukkitQuestsQuitCommand extends BukkitQuestsSubCommand {
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
                         final String msg = ChatColor.YELLOW + BukkitLang.get(player, "questQuit").replace("<quest>",
-                                ChatColor.DARK_PURPLE + quest.getName() + ChatColor.YELLOW);
+                                quest.getName());
                         quester.abandonQuest(quest, msg);
                     } else {
                         BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "questQuitDisabled"));

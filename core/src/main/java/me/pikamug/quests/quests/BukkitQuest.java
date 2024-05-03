@@ -894,8 +894,7 @@ public class BukkitQuest implements Quest {
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            BukkitLang.send(p, ChatColor.GOLD + BukkitLang.get(p, "questCompleteTitle").replace("<quest>",
-                    ChatColor.YELLOW + name + ChatColor.GOLD));
+            BukkitLang.send(p, ChatColor.GOLD + BukkitLang.get(p, "questCompleteTitle").replace("<quest>", name));
             if (plugin.getConfigSettings().canShowQuestTitles()) {
                 final String title = ChatColor.GOLD + BukkitLang.get(p, "quest") + " " + BukkitLang.get(p, "complete");
                 final String subtitle = ChatColor.YELLOW + name;

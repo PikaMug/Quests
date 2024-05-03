@@ -490,8 +490,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replace("<money>", ChatColor.AQUA
-                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural() + ChatColor.YELLOW);
+                text = text.replace("<money>", plugin.getDependencies().getVaultEconomy().currencyNamePlural());
             }
             return ChatColor.YELLOW + text;
         }
@@ -1266,7 +1265,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         }
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestMcMMOSkillsPrompt(context);
                     }
@@ -1315,7 +1314,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         amounts.add(Integer.parseInt(s));
                     } catch (final NumberFormatException e) {
                         String text = BukkitLang.get("reqNotANumber");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestMcMMOAmountsPrompt(context);
                     }
@@ -1525,7 +1524,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
                     if (hc == null) {
                         String text = BukkitLang.get("rewHeroesInvalidClass");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesClassesPrompt(context);
                     } else {
@@ -1579,7 +1578,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         amounts.add(d);
                     } catch (final NumberFormatException nfe) {
                         String text = BukkitLang.get("reqNotANumber");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesExperiencePrompt(context);
                     }
@@ -1953,10 +1952,10 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     = (Map<String, String>) context.getSessionData(Key.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (temp != null && descriptions != null) {
                 if (descriptions.get(temp) != null) {
-                    text += ChatColor.GOLD + descriptions.get(temp) + "\n";
+                    text += descriptions.get(temp) + "\n";
                 }
                 String lang = BukkitLang.get("stageEditorCustomDataPrompt");
-                lang = lang.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
+                lang = lang.replace("<data>", temp);
                 text += ChatColor.YELLOW + lang;
             }
             return text;

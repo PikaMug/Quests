@@ -461,11 +461,11 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replace("<money>", ChatColor.DARK_PURPLE+ ((plugin.getDependencies().getVaultEconomy()
-                        .currencyNamePlural().isEmpty() ? BukkitLang.get("money") : plugin.getDependencies().getVaultEconomy()
-                        .currencyNamePlural())) + ChatColor.YELLOW);
+                text = text.replace("<money>", ((plugin.getDependencies().getVaultEconomy()
+                        .currencyNamePlural().isEmpty() ? BukkitLang.get("money")
+                        : plugin.getDependencies().getVaultEconomy().currencyNamePlural())));
             } else {
-                text = text.replace("<money>", ChatColor.DARK_PURPLE + BukkitLang.get("money") + ChatColor.YELLOW);
+                text = text.replace("<money>", BukkitLang.get("money"));
             }
             return ChatColor.YELLOW + text;
         }
@@ -915,7 +915,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     s = s.trim();
                     if (plugin.getQuest(s) == null) {
                         String text = BukkitLang.get("reqNotAQuestName");
-                        text = text.replace("<quest>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<quest>", s);
                         context.getForWhom().sendRawMessage(text);
                         return new QuestRequirementsQuestListPrompt(context, isRequiredQuest);
                     }
@@ -1103,7 +1103,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                         return new QuestMcMMOSkillsPrompt(context);
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
-                        text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new QuestMcMMOSkillsPrompt(context);
                     }
@@ -1159,7 +1159,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                         amounts.add(i);
                     } catch (final NumberFormatException nfe) {
                         String text = BukkitLang.get("reqNotANumber");
-                        text = text.replace("<input>", ChatColor.RED + s + ChatColor.YELLOW);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.YELLOW + text);
                         return new QuestMcMMOAmountsPrompt(context);
                     }
@@ -1734,7 +1734,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
                     text += ChatColor.GOLD + descriptions.get(temp) + "\n";
                 }
                 String lang = BukkitLang.get("stageEditorCustomDataPrompt");
-                lang = lang.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
+                lang = lang.replace("<data>", temp);
                 text += ChatColor.YELLOW + lang;
             }
             return text;

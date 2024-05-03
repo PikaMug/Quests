@@ -382,18 +382,15 @@ public class BukkitPlayerListener implements Listener {
                                                 if (bukkitQuest.getPlanner().getCooldown() > -1
                                                         && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
                                                     String early = BukkitLang.get(player, "questTooEarly");
-                                                    early = early.replace("<quest>", ChatColor.AQUA + bukkitQuest.getName()
-                                                            + ChatColor.YELLOW);
-                                                    early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                            + BukkitMiscUtil.getTime(quester.getRemainingCooldown(bukkitQuest))
-                                                            + ChatColor.YELLOW);
+                                                    early = early.replace("<quest>", bukkitQuest.getName());
+                                                    early = early.replace("<time>", BukkitMiscUtil.getTime(
+                                                            quester.getRemainingCooldown(bukkitQuest)));
                                                     BukkitLang.send(player, ChatColor.YELLOW + early);
                                                     continue;
                                                 } else if (quester.getCompletedQuests().contains(bukkitQuest)
                                                         && bukkitQuest.getPlanner().getCooldown() < 0) {
                                                     String completed = BukkitLang.get(player, "questAlreadyCompleted");
-                                                    completed = completed.replace("<quest>", ChatColor.AQUA 
-                                                            + bukkitQuest.getName() + ChatColor.YELLOW);
+                                                    completed = completed.replace("<quest>", bukkitQuest.getName());
                                                     BukkitLang.send(player, ChatColor.YELLOW + completed);
                                                     continue;
                                                 }
@@ -553,7 +550,7 @@ public class BukkitPlayerListener implements Listener {
                         if (!event.getMessage().startsWith("/quest")) {
                             final Player player = event.getPlayer();
                             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "optCommandsDenied")
-                                    .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
+                                    .replace("<quest>", quest.getName()));
                             event.setCancelled(true);
                             plugin.getLogger().info("Player " + player.getName() + " tried to use command "
                                     + event.getMessage() + " but was denied because they are currently on quest "

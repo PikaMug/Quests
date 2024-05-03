@@ -210,13 +210,11 @@ public class BukkitQuestCommandHandler {
                         for (final String questId : reqs.getBlockQuestIds()) {
                             if (completed.containsKey(questId)) {
                                 String msg = BukkitLang.get("haveCompleted");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + completed.get(questId) + ChatColor.RED);
+                                msg = msg.replace("<quest>", completed.get(questId));
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
                                 String msg = BukkitLang.get("cannotComplete");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
+                                msg = msg.replace("<quest>", plugin.getQuestById(questId).getName());
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
                             }
                         }

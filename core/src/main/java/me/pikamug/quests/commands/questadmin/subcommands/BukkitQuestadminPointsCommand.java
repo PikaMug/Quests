@@ -74,9 +74,12 @@ public class BukkitQuestadminPointsCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
+            }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
             }
             final int points;
             try {
@@ -88,14 +91,14 @@ public class BukkitQuestadminPointsCommand extends BukkitQuestsSubCommand {
             final Quester quester = plugin.getQuester(target.getUniqueId());
             quester.setQuestPoints(points);
             String msg1 = BukkitLang.get("setQuestPoints").replace("<points>", BukkitLang.get("questPoints"));
-            msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-            msg1 = msg1.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+            msg1 = msg1.replace("<player>", target.getName());
+            msg1 = msg1.replace("<number>", String.valueOf(points));
             cs.sendMessage(ChatColor.GOLD + msg1);
             if (target.isOnline()) {
                 final Player p = (Player)target;
                 String msg2 = BukkitLang.get(p, "questPointsSet").replace("<points>", BukkitLang.get("questPoints"));
-                msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                msg2 = msg2.replace("<number>", ChatColor.DARK_PURPLE + "" + points + ChatColor.GOLD);
+                msg2 = msg2.replace("<player>", cs.getName());
+                msg2 = msg2.replace("<number>", String.valueOf(points));
                 p.sendMessage(ChatColor.GREEN + msg2);
             }
             quester.saveData();
