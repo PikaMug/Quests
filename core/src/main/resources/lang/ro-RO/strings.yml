@@ -246,7 +246,7 @@ stageEditorMessageCleared: "Mesajele șterse."
 stageEditorConfirmStageNote: "Orice etape după ce va fi deplasat înapoi un punct"
 stageEditorDeleteSucces: "Etapa a fost ștearsă."
 stageEditorEnchantments: "Vrăjitoriile"
-stageEditorNPCNote: 'Notă: Puteţi specifica numele NPC cu <npc>'
+stageEditorNPCNote: "Notă: Puteţi specifica numele NPC cu <npc>"
 stageEditorOptional: "Opțional"
 stageEditorColors: "Culoarea Oilor"
 eventEditorCreate: "Crează o Acțiune"
