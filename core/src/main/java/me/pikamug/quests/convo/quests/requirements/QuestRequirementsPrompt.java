@@ -461,11 +461,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replace("<money>", ((plugin.getDependencies().getVaultEconomy()
-                        .currencyNamePlural().isEmpty() ? BukkitLang.get("money")
-                        : plugin.getDependencies().getVaultEconomy().currencyNamePlural())));
-            } else {
-                text = text.replace("<money>", BukkitLang.get("money"));
+                text = text.replace("<money>",  plugin.getDependencies().getVaultEconomy().currencyNamePlural());
             }
             return ChatColor.YELLOW + text;
         }
