@@ -22,6 +22,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -156,6 +157,25 @@ public class BukkitItemListener implements Listener {
                             }
                             return null;
                         }));
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(final InventoryDragEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getWhoClicked() instanceof Player) {
+            if (event.getInventory().getType() == InventoryType.BREWING) {
+                final Quester quester = plugin.getQuester(event.getWhoClicked().getUniqueId());
+                for (final Quest quest : plugin.getLoadedQuests()) {
+                    if (quester.getCurrentQuests().containsKey(quest)
+                            && quester.getCurrentStage(quest).containsObjective(ObjectiveType.BREW_ITEM)) {
+                        event.setCancelled(true);
+                        return;
                     }
                 }
             }
