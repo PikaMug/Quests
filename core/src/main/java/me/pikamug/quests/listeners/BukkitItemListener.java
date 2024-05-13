@@ -183,9 +183,6 @@ public class BukkitItemListener implements Listener {
     }
 
     public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
-        if (event.getCursor() != null && isWaterBottle(event.getCursor())) {
-            return true;
-        }
         final int slot = event.getRawSlot();
         final InventoryAction action = event.getAction();
         // Prevent shift-click into Brewing Stand
@@ -193,7 +190,11 @@ public class BukkitItemListener implements Listener {
             event.setCancelled(true);
             return false;
         }
-        // Prevent placing into Brewing Stand
+        // Allow placing Water Bottle into Brewing Stand
+        if (event.getCursor() != null && isWaterBottle(event.getCursor())) {
+            return true;
+        }
+        // Prevent placing other items into Brewing Stand
         if (slot == 0 || slot == 1 || slot == 2) {
             if (action.equals(InventoryAction.PLACE_ONE) || action.equals(InventoryAction.PLACE_SOME)
                     || action.equals(InventoryAction.PLACE_ALL)) {
