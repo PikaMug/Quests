@@ -1605,11 +1605,11 @@ public class BukkitQuester implements Quester {
                     // Bukkit version is 1.9+ and item lacks custom name
                     if (goal.getType().equals(Material.POTION) && localeManager.hasBasePotionData()) {
                         final PotionMeta meta = (PotionMeta) goal.getItemMeta();
-                        if (meta.getBasePotionData().isUpgraded()) {
+                        if (meta != null && meta.getBasePotionData().isUpgraded()) {
                             final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
                             message = message.replace("<level>", ChatColor.GREEN + RomanNumeral.getNumeral(level)
                                     + ChatColor.RESET);
-                        } else if (meta.getBasePotionData().isExtended()) {
+                        } else if (meta != null && meta.getBasePotionData().isExtended()) {
                             message = message.replace("<level>", ChatColor.GREEN + "+" + ChatColor.RESET);
                         } else {
                             message = message.replace(" <level>", "");
@@ -3430,9 +3430,21 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.BREW_ITEM)) {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToBrew().get(getCurrentStage(quest).getItemsToBrew()
                     .indexOf(goal));
-            final String message = formatCompletedObjectiveMessage("brewItem", goal.getAmount());
+            String message = formatCompletedObjectiveMessage("brewItem", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
+                if (goal.getType().equals(Material.POTION) && plugin.getLocaleManager().hasBasePotionData()) {
+                    final PotionMeta meta = (PotionMeta) goal.getItemMeta();
+                    if (meta != null && meta.getBasePotionData().isUpgraded()) {
+                        final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
+                        message = message.replace("<level>", ChatColor.GREEN + RomanNumeral.getNumeral(level)
+                                + ChatColor.RESET);
+                    } else if (meta != null && meta.getBasePotionData().isExtended()) {
+                        message = message.replace("<level>", ChatColor.GREEN + "+" + ChatColor.RESET);
+                    } else {
+                        message = message.replace(" <level>", "");
+                    }
+                }
                 if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments(), goal.getItemMeta())) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(is)));
