@@ -38,20 +38,20 @@ import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.nms.BukkitTitleProvider;
-import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.BukkitQuest;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.BukkitRequirements;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Planner;
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.BukkitStageTimer;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensAPI;
@@ -74,6 +74,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.Crops;
 import org.jetbrains.annotations.NotNull;
 
@@ -1587,7 +1588,7 @@ public class BukkitQuester implements Quester {
         }
         for (final Objective obj : q.getCurrentObjectives(quest, false, false)) {
             final BukkitObjective objective = (BukkitObjective) obj;
-            final String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
+            String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
                     objective.getMessage());
             if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
                 final ItemStack progress = objective.getProgressAsItem();
@@ -1602,6 +1603,18 @@ public class BukkitQuester implements Quester {
                 } else if (localeManager != null && settings.canTranslateNames() && goal.getItemMeta() != null
                         && !goal.getItemMeta().hasDisplayName() && !goal.getType().equals(Material.WRITTEN_BOOK)) {
                     // Bukkit version is 1.9+ and item lacks custom name
+                    if (goal.getType().equals(Material.POTION) && localeManager.hasBasePotionData()) {
+                        final PotionMeta meta = (PotionMeta) goal.getItemMeta();
+                        if (meta.getBasePotionData().isUpgraded()) {
+                            final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
+                            message = message.replace("<level>", ChatColor.GREEN + RomanNumeral.getNumeral(level)
+                                    + ChatColor.RESET);
+                        } else if (meta.getBasePotionData().isExtended()) {
+                            message = message.replace("<level>", ChatColor.GREEN + "+" + ChatColor.RESET);
+                        } else {
+                            message = message.replace(" <level>", "");
+                        }
+                    }
                     localeManager.sendMessage(quester.getPlayer(), message, goal);
                 } else {
                     if (goal.getEnchantments().isEmpty()) {
