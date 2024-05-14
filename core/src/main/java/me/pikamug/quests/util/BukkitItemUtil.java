@@ -668,11 +668,11 @@ public class BukkitItemUtil {
     /**
      * Gets player-friendly name from enchantment. 'FIRE_ASPECT' becomes 'Fire Aspect'
      * 
-     * @param e Enchantment to get pretty localized name of
+     * @param enchant Enchantment to get pretty localized name of
      * @return pretty localized name
      */
-    public static String getPrettyEnchantmentName(final Enchantment e) {
-        final String baseString = e.getName();
+    public static String getPrettyEnchantmentName(final Enchantment enchant) {
+        final String baseString = enchant.getName();
         final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
@@ -774,5 +774,26 @@ public class BukkitItemUtil {
             }
         }
         return getEnchantmentFromProperName(enchant);
+    }
+
+    /**
+     * Gets player-friendly level from 1.9+ Potion meta. Upgrade returns numeral, extended returns '+'
+     *
+     * @param itemMeta Potion meta to get pretty localized level of
+     * @return pretty localized level or empty
+     */
+    public static String getPrettyPotionLevel(final ItemMeta itemMeta) {
+        String prettyString = "";
+        if (Material.getMaterial("LINGERING_POTION") == null) {
+            return prettyString;
+        }
+        final PotionMeta meta = (PotionMeta) itemMeta;
+        if (meta != null && meta.getBasePotionData().isUpgraded()) {
+            final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
+            prettyString = ChatColor.GREEN + RomanNumeral.getNumeral(level) + ChatColor.RESET;
+        } else if (meta != null && meta.getBasePotionData().isExtended()) {
+            prettyString = ChatColor.GREEN + "+" + ChatColor.RESET;
+        }
+        return prettyString;
     }
 }

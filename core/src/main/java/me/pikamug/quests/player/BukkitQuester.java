@@ -74,7 +74,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.Crops;
 import org.jetbrains.annotations.NotNull;
 
@@ -1316,6 +1315,12 @@ public class BukkitQuester implements Quester {
                 if (formatNames) {
                     message = message.replace("<item>", BukkitItemUtil.getName(goal));
                 }
+                final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                if (level.isEmpty()) {
+                    message = message.replace(" <level>", level);
+                } else {
+                    message = message.replace("<level>", level);
+                }
                 objectives.add(new BukkitObjective(ObjectiveType.BREW_ITEM, message, progress, goal));
             }
             brewIndex++;
@@ -1603,16 +1608,12 @@ public class BukkitQuester implements Quester {
                 } else if (localeManager != null && settings.canTranslateNames() && goal.getItemMeta() != null
                         && !goal.getItemMeta().hasDisplayName() && !goal.getType().equals(Material.WRITTEN_BOOK)) {
                     // Bukkit version is 1.9+ and item lacks custom name
-                    if (goal.getType().equals(Material.POTION) && localeManager.hasBasePotionData()) {
-                        final PotionMeta meta = (PotionMeta) goal.getItemMeta();
-                        if (meta != null && meta.getBasePotionData().isUpgraded()) {
-                            final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
-                            message = message.replace("<level>", ChatColor.GREEN + RomanNumeral.getNumeral(level)
-                                    + ChatColor.RESET);
-                        } else if (meta != null && meta.getBasePotionData().isExtended()) {
-                            message = message.replace("<level>", ChatColor.GREEN + "+" + ChatColor.RESET);
+                    if (goal.getType().name().contains("POTION") && localeManager.hasBasePotionData()) {
+                        final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                        if (level.isEmpty()) {
+                            message = message.replace(" <level>", level);
                         } else {
-                            message = message.replace(" <level>", "");
+                            message = message.replace("<level>", level);
                         }
                     }
                     localeManager.sendMessage(quester.getPlayer(), message, goal);
@@ -3433,16 +3434,12 @@ public class BukkitQuester implements Quester {
             String message = formatCompletedObjectiveMessage("brewItem", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
-                if (goal.getType().equals(Material.POTION) && plugin.getLocaleManager().hasBasePotionData()) {
-                    final PotionMeta meta = (PotionMeta) goal.getItemMeta();
-                    if (meta != null && meta.getBasePotionData().isUpgraded()) {
-                        final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
-                        message = message.replace("<level>", ChatColor.GREEN + RomanNumeral.getNumeral(level)
-                                + ChatColor.RESET);
-                    } else if (meta != null && meta.getBasePotionData().isExtended()) {
-                        message = message.replace("<level>", ChatColor.GREEN + "+" + ChatColor.RESET);
+                if (goal.getType().name().contains("POTION") && plugin.getLocaleManager().hasBasePotionData()) {
+                    final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                    if (level.isEmpty()) {
+                        message = message.replace(" <level>", level);
                     } else {
-                        message = message.replace(" <level>", "");
+                        message = message.replace("<level>", level);
                     }
                 }
                 if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
