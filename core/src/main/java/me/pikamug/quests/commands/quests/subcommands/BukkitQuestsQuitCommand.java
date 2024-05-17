@@ -75,6 +75,7 @@ public class BukkitQuestsQuitCommand extends BukkitQuestsSubCommand {
         if (player.hasPermission(getPermission())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             if (!quester.getCurrentQuests().isEmpty()) {
+                final String questName = concatArgArray(args, 1, args.length - 1, ' ');
                 final Quest quest = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
                 if (quest != null) {
                     if (quest.getOptions().canAllowQuitting()) {
@@ -85,7 +86,8 @@ public class BukkitQuestsQuitCommand extends BukkitQuestsSubCommand {
                         BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "questQuitDisabled"));
                     }
                 } else {
-                    BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "questNotFound"));
+                    BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "questNotFound")
+                            .replace("<input>", questName != null ? questName : ""));
                 }
             } else {
                 BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "noActiveQuest"));

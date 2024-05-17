@@ -84,9 +84,11 @@ public class BukkitQuestadminRemoveCommand extends BukkitQuestsSubCommand {
                 cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
                 return;
             }
-            final Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+            final String questName = concatArgArray(args, 2, args.length - 1, ' ');
+            final Quest toRemove = plugin.getQuest(questName);
             if (toRemove == null) {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                        .replace("<input>", questName != null ? questName : ""));
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());

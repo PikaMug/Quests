@@ -97,9 +97,11 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
+                final String questName = concatArgArray(args, 2, args.length - 2, ' ');
                 final Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 2, ' '));
                 if (quest == null) {
-                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound"));
+                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                            .replace("<input>", questName != null ? questName : ""));
                     return;
                 }
                 if (!quester.getCurrentQuests().containsKey(quest)) {

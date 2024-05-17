@@ -73,9 +73,10 @@ public class BukkitQuestsTakeCommand extends BukkitQuestsSubCommand {
         final Player player = (Player) cs;
         if (plugin.getConfigSettings().canAllowCommands()) {
             if (player.hasPermission(getPermission())) {
-                final Quest questToFind = plugin.getQuest(concatArgArray(args, 1, args.length - 1, ' '));
-                final Quester quester = plugin.getQuester(player.getUniqueId());
+                final String questToFindName = concatArgArray(args, 1, args.length - 1, ' ');
+                final Quest questToFind = plugin.getQuest(questToFindName);
                 if (questToFind != null) {
+                    final Quester quester = plugin.getQuester(player.getUniqueId());
                     for (final Quest q : quester.getCurrentQuests().keySet()) {
                         if (q.getId().equals(questToFind.getId())) {
                             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "questAlreadyOn"));
@@ -84,7 +85,8 @@ public class BukkitQuestsTakeCommand extends BukkitQuestsSubCommand {
                     }
                     quester.offerQuest(questToFind, true);
                 } else {
-                    BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "questNotFound"));
+                    BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "questNotFound")
+                            .replace("<input>", questToFindName != null ? questToFindName : ""));
                 }
             } else {
                 BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "noPermission"));

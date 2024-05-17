@@ -99,7 +99,7 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
             }
             questToGive = plugin.getQuest(name.toString());
             if (questToGive == null) {
-                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound").replace("<input>", name.toString()));
             } else {
                 final Quester quester = plugin.getQuester(target.getUniqueId());
                 for (final Quest q : quester.getCurrentQuests().keySet()) {

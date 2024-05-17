@@ -235,7 +235,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     plugin.getQuestFactory().loadQuest(context, q);
                     return new QuestMainPrompt(context);
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorQuestNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                        .replace("<input>", input));
                 return new QuestSelectEditPrompt(context);
             } else {
                 return new QuestMenuPrompt(context);
@@ -300,7 +301,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                         return new QuestSelectDeletePrompt(context);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorQuestNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                        .replace("<input>", input));
                 return new QuestSelectDeletePrompt(context);
             } else {
                 return new QuestMenuPrompt(context);

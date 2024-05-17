@@ -251,7 +251,8 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     plugin.getConditionFactory().loadData(context, c);
                     return new ConditionMainPrompt(context);
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound")
+                        .replace("<input>", input));
                 return new ConditionSelectEditPrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);
@@ -317,7 +318,8 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                         return new ConditionSelectDeletePrompt(context);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound")
+                        .replace("<input>", input));
                 return new ConditionSelectDeletePrompt(context);
             } else {
                 return new ConditionMenuPrompt(context);

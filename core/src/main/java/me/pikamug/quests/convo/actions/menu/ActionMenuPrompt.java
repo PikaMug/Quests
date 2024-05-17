@@ -251,7 +251,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                     plugin.getActionFactory().loadData(context, action);
                     return new ActionMainPrompt(context);
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound")
+                        .replace("<input>", input));
                 return new ActionSelectEditPrompt(context);
             } else {
                 return new ActionMenuPrompt(context);
@@ -316,7 +317,8 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                         return new ActionSelectDeletePrompt(context);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound"));
+                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound")
+                        .replace("<input>", input));
                 return new ActionSelectDeletePrompt(context);
             } else {
                 return new ActionMenuPrompt(context);

@@ -90,9 +90,11 @@ public class BukkitQuestadminQuitCommand extends BukkitQuestsSubCommand {
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                final Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+                final String questName = concatArgArray(args, 2, args.length - 1, ' ');
+                final Quest quest = plugin.getQuest(questName);
                 if (quest == null) {
-                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound"));
+                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                            .replace("<input>", questName != null ? questName : ""));
                     return;
                 }
                 String msg1 = BukkitLang.get("questForceQuit");

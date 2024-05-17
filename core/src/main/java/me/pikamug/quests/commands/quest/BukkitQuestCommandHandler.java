@@ -221,7 +221,7 @@ public class BukkitQuestCommandHandler {
                     }
                 }
             } else {
-                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound").replace("<input>", name.toString()));
             }
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
