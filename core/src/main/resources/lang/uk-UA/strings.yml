@@ -91,7 +91,6 @@ questEditorPositiveAmount: "Сума має бути додатнім число
 questEditorQuestAsRequirement1: "Наступні квести мають"
 questEditorQuestAsRequirement2: "як вимога:"
 questEditorQuestAsRequirement3: "Вам слід змінити ці завдання, так щоб вони не використовували його перед видаленням."
-questEditorQuestNotFound: "Квест не знайдено!"
 questEditorSave: "Закінчити та зберегти?"
 questEditorNeedAskMessage: "Ви повинні встановити повідомлення для запитів!"
 questEditorNeedFinishMessage: "Ви повинні встановити кінцеве повідомлення!"
