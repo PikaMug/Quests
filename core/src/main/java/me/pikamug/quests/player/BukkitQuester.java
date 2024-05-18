@@ -1259,6 +1259,12 @@ public class BukkitQuester implements Quester {
                 final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
                 String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "craftItem"),
                         progress.getAmount(), goal.getAmount());
+                if (goal.getType().name().equals("TIPPED_ARROW")) {
+                    final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                    if (!level.isEmpty()) {
+                        message = message.replace("<item>", "<item> " + level);
+                    }
+                }
                 if (formatNames) {
                     message = message.replace("<item>", BukkitItemUtil.getName(goal));
                 }
@@ -3375,9 +3381,17 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.CRAFT_ITEM)) {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToCraft().get(getCurrentStage(quest).getItemsToCraft()
                     .indexOf(goal));
-            final String message = formatCompletedObjectiveMessage("craftItem", goal.getAmount());
+            String message = formatCompletedObjectiveMessage("craftItem", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
+                plugin.getLogger().info(goal.getType().name());
+                // Bukkit version is 1.9+
+                if (goal.getType().name().equals("TIPPED_ARROW")) {
+                    final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                    if (!level.isEmpty()) {
+                        message = message.replace("<item>", "<item> " + level);
+                    }
+                }
                 if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(is)));
                 }
@@ -3400,7 +3414,8 @@ public class BukkitQuester implements Quester {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToEnchant().get(getCurrentStage(quest)
                     .getItemsToEnchant().indexOf(goal));
             final String message = formatCompletedObjectiveMessage("enchItem", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+            if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta()
+                    && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
                 if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         goal.getEnchantments(), goal.getItemMeta())) {
@@ -3429,10 +3444,11 @@ public class BukkitQuester implements Quester {
                 }
             }
         } else if (type.equals(ObjectiveType.BREW_ITEM)) {
-            final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToBrew().get(getCurrentStage(quest).getItemsToBrew()
-                    .indexOf(goal));
+            final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToBrew().get(getCurrentStage(quest)
+                    .getItemsToBrew().indexOf(goal));
             String message = formatCompletedObjectiveMessage("brewItem", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta() && !is.getItemMeta().hasDisplayName()) {
+            if (plugin.getConfigSettings().canTranslateNames() && is.hasItemMeta()
+                    && !is.getItemMeta().hasDisplayName()) {
                 // Bukkit version is 1.9+
                 if (goal.getType().name().contains("POTION") && plugin.getLocaleManager().hasBasePotionData()) {
                     final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
