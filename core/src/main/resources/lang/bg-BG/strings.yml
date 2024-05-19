@@ -91,7 +91,6 @@ questEditorPositiveAmount: "Числото трябва да е позитивн
 questEditorQuestAsRequirement1: "Следните задачи имат"
 questEditorQuestAsRequirement2: "като изискване:"
 questEditorQuestAsRequirement3: "Трябва да промените тези задачи така, че да не бъдат използвани преди да изтриете тази задача."
-questEditorQuestNotFound: "Задачата не съществува!"
 questEditorSave: "Приключи и запиши задачата?"
 questEditorNeedAskMessage: "Трябва да въведете запитващо съобщение!"
 questEditorNeedFinishMessage: "Трябва да въведете приключващо съобщение!"
