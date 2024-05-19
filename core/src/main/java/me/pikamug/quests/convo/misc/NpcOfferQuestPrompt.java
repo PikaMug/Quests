@@ -77,7 +77,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                         return ChatColor.GOLD;
                     }
                 } else if (number == (quests.size() + 1)) {
-                    //return ChatColor.RED;
                     return ChatColor.GOLD;
                 }
             }

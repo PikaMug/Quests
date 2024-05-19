@@ -23,19 +23,20 @@ public abstract class BukkitParticleProvider {
     private static BukkitParticleProvider loaded;
 
     static {
-        final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         try {
             final String packageName = BukkitParticleProvider.class.getPackage().getName();
-            if (internalsName.startsWith("v1_8_R")) {
-                loaded = (BukkitParticleProvider) Class.forName(packageName + ".BukkitParticleProvider_" + internalsName)
-                        .newInstance();
+            if (bukkitVersion.startsWith("1.8.")) {
+                final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                loaded = (BukkitParticleProvider) Class.forName(packageName + ".BukkitParticleProvider_"
+                        + internalsName).newInstance();
             } else {
-                // Should not be an issue because single thread, alternatives welcome!
+                // Referencing subclass should not be an issue because single thread, alternatives welcome!
                 loaded = new BukkitParticleProvider_Modern();
             }
         } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
-            Bukkit.getLogger().severe("[Quests] No valid particle implementation for version " + internalsName);
+            Bukkit.getLogger().severe("[Quests] No valid particle implementation for version " + bukkitVersion);
         }
     }
 
@@ -68,8 +69,9 @@ public abstract class BukkitParticleProvider {
      *                   packets such as block crack or particle colour on redstone /
      *                   firework particles.
      */
-    public static void sendToPlayer(final Player player, final Location location, final String particleId, final float offsetX, final float offsetY,
-            final float offsetZ, final float speed, final int count, final int[] data) {
+    public static void sendToPlayer(final Player player, final Location location, final String particleId,
+                                    final float offsetX, final float offsetY, final float offsetZ, final float speed,
+                                    final int count, final int[] data) {
         final Object particle;
         final BukkitPreBuiltParticle pbp = BukkitPreBuiltParticle.fromIdentifier(particleId);
         if (pbp != null) {
@@ -123,7 +125,8 @@ public abstract class BukkitParticleProvider {
      * @param particle
      *                 The pre-built particle.
      */
-    public static void sendToPlayer(final Player player, final Location location, final BukkitPreBuiltParticle particle) {
+    public static void sendToPlayer(final Player player, final Location location,
+                                    final BukkitPreBuiltParticle particle) {
         final Location pos = location.clone();
         if (particle.getVector() != null) {
             pos.add(particle.getVector());
