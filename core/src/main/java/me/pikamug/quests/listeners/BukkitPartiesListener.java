@@ -29,7 +29,7 @@ public class BukkitPartiesListener implements Listener {
         if (event.getCreator() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCreator().getPlayerUUID());
             if (p != null) {
-                if (BukkitLang.get("questPartiesCreate").length() > 0) {
+                if (!BukkitLang.get("questPartiesCreate").isEmpty()) {
                     BukkitLang.send(p, ChatColor.YELLOW + BukkitLang.get("questPartiesCreate"));
                 }
             }
@@ -39,7 +39,7 @@ public class BukkitPartiesListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(final BukkitPartiesPlayerPostJoinEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && BukkitLang.get("questPartiesLeave").length() > 0) {
+        if (p != null && !BukkitLang.get("questPartiesLeave").isEmpty()) {
             BukkitLang.send(p, ChatColor.GREEN + BukkitLang.get(p, "questPartiesJoin"));
             event.getParty().broadcastMessage(ChatColor.GREEN + BukkitLang.get("questPartiesJoinBroadcast")
                     .replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());
@@ -49,7 +49,7 @@ public class BukkitPartiesListener implements Listener {
     @EventHandler
     public void onPlayerLeaveEvent(final BukkitPartiesPlayerPostLeaveEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPartyPlayer().getPlayerUUID());
-        if (p != null && BukkitLang.get("questPartiesLeave").length() > 0) {
+        if (p != null && !BukkitLang.get("questPartiesLeave").isEmpty()) {
             BukkitLang.send(p, ChatColor.RED + BukkitLang.get(p, "questPartiesLeave"));
             event.getParty().broadcastMessage(ChatColor.RED + BukkitLang.get("questPartiesLeaveBroadcast")
                     .replace("<player>", event.getPartyPlayer().getName()), event.getPartyPlayer());

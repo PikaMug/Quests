@@ -592,7 +592,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      */
     @Override
     public void saveResourceAs(String resourcePath, final String outputPath, final boolean replace) {
-        if (resourcePath == null || resourcePath.equals("")) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 

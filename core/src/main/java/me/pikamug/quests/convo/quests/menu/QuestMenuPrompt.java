@@ -182,7 +182,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     return new QuestSelectCreatePrompt(context);
                 }
-                if (input.equals("")) {
+                if (input.isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     return new QuestSelectCreatePrompt(context);
                 }

@@ -69,7 +69,7 @@ public class BukkitMiscUtil {
                 }
             }
         }
-        if (message.length() > 0) {
+        if (!message.isEmpty()) {
             message = message.substring(1, message.length() - 1);
         } else {
             message = "-1 " + BukkitLang.get("timeSeconds");
@@ -260,7 +260,7 @@ public class BukkitMiscUtil {
                 currentLength += piece.length() + 1;
             }
         }
-        if (!line.toString().equals(""))
+        if (!line.toString().isEmpty())
             if (lineColor != null) {
                 toReturn.add(lineColor + line.toString());
             } else {

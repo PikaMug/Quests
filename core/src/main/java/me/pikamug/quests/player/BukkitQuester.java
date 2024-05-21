@@ -896,7 +896,7 @@ public class BukkitQuester implements Quester {
             plugin.getLogger().info(getOfflinePlayer().getUniqueId() + " quit quest " + quest.getName());
         }
         for (final String message : messages) {
-            if (message != null && !message.equals("") && getOfflinePlayer().isOnline()) {
+            if (message != null && !message.isEmpty() && getOfflinePlayer().isOnline()) {
                 sendMessage(message);
             }
         }
@@ -1582,7 +1582,7 @@ public class BukkitQuester implements Quester {
         }
         if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
             for (final String s: stage.getObjectiveOverrides()) {
-                String message = (s.trim().length() > 0 ? "- " : "") + ChatColor.GREEN + BukkitConfigUtil
+                String message = (!s.trim().isEmpty() ? "- " : "") + ChatColor.GREEN + BukkitConfigUtil
                         .parseString(s, quest, quester.getPlayer());
                 if (plugin.getDependencies().getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
@@ -4321,7 +4321,7 @@ public class BukkitQuester implements Quester {
                     index = 0;
                 }
             }
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 final Quest quest = plugin.getQuestById(list.get(index));
                 compassTargetQuestId = quest.getId();
                 final Stage stage = getCurrentStage(quest);

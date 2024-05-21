@@ -180,7 +180,7 @@ public class BukkitLang {
      * @param message The message to be sent
      */
     public static void send(final Player player, final String message) {
-        if (message != null && !ChatColor.stripColor(message).equals("")) {
+        if (message != null && !ChatColor.stripColor(message).isEmpty()) {
             player.sendMessage(message);
         }
     }

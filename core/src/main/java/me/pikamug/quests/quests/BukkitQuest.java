@@ -995,7 +995,7 @@ public class BukkitQuest implements Quest {
                     for (final String s : rewards.getCommands()) {
                         if (!rewards.getCommandsOverrideDisplay().isEmpty()
                                 && rewards.getCommandsOverrideDisplay().size() > index) {
-                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().isEmpty()) {
                                 quester.sendMessage("- " + ChatColor.DARK_GREEN
                                         + rewards.getCommandsOverrideDisplay().get(index));
                             }

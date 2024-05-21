@@ -198,7 +198,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                     context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     return new ConditionSelectCreatePrompt(context);
                 }
-                if (input.equals("")) {
+                if (input.isEmpty()) {
                     context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     return new ConditionSelectCreatePrompt(context);
                 }

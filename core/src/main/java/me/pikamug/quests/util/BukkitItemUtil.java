@@ -273,7 +273,7 @@ public class BukkitItemUtil {
         final EnchantmentStorageMeta esMeta;
         for (final String targ : args) {
             final String arg = targ.replace("minecraft|", "minecraft:");
-            if (arg.equals("")) {
+            if (arg.isEmpty()) {
                 continue;
             }
             if (arg.startsWith("name-")) {
@@ -429,7 +429,7 @@ public class BukkitItemUtil {
                 meta.setLore(lore);
             }
             for (final String flag : flags) {
-                if (flag != null && !flag.equals("")) {
+                if (flag != null && !flag.isEmpty()) {
                     try {
                         meta.addItemFlags(ItemFlag.valueOf(flag));
                     } catch (final NullPointerException npe) {
