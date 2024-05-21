@@ -17,11 +17,11 @@ import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.RomanNumeral;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,9 +36,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     
@@ -244,7 +244,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             return new ActionPlayerHealthPrompt(context);
         case 7:
             if (context.getForWhom() instanceof Player) {
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory().getSelectedTeleportLocations();
+                final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
+                        = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionPlayerTeleportPrompt(context);
@@ -962,8 +963,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(BukkitLang.get("cmdDone"))) {
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
-                        .getSelectedTeleportLocations();
+                final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
+                        = plugin.getActionFactory().getSelectedTeleportLocations();
                 final Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
@@ -977,14 +978,14 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(Key.A_TELEPORT, null);
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
-                        .getSelectedTeleportLocations();
+                final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
+                        = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedTeleportLocations = plugin.getActionFactory()
-                        .getSelectedTeleportLocations();
+                final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
+                        = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionMainPrompt(context);

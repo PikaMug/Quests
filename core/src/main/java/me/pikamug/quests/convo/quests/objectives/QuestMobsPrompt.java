@@ -16,10 +16,10 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
 
@@ -417,7 +418,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMobsAmountsPrompt(context);
             case 3:
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+                    final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                     temp.put(((Player) context.getForWhom()).getUniqueId(), null);
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                     return new QuestMobsLocationPrompt(context);
@@ -672,7 +673,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
                     context.setSessionData(pref + Key.S_MOB_KILL_LOCATIONS, locations);
-                    final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+                    final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                     temp.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                 } else {
@@ -681,7 +682,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
                 }
                 return new QuestMobsKillListPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+                final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                 temp.remove(player.getUniqueId());
                 plugin.getQuestFactory().setSelectedKillLocations(temp);
                 return new QuestMobsKillListPrompt(context);

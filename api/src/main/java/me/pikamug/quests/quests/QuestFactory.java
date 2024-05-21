@@ -16,14 +16,14 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public interface QuestFactory {
 
-    Set<UUID> getSelectingNpcs();
+    ConcurrentSkipListSet<UUID> getSelectingNpcs();
 
-    void setSelectingNpcs(final Set<UUID> selectingNpcs);
+    void setSelectingNpcs(final ConcurrentSkipListSet<UUID> selectingNpcs);
 
     List<String> getNamesOfQuestsBeingEdited();
 

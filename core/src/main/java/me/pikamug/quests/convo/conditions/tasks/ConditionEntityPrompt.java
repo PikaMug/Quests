@@ -16,9 +16,9 @@ import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
     
@@ -254,7 +254,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -294,7 +294,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 context.setSessionData(Key.C_WHILE_RIDING_NPC, npcs);
             }
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }

@@ -932,7 +932,7 @@ public class BukkitQuester implements Quester {
                     }
                 }
             }
-            if ((available.size() + rows) <= (page * rows) || available.size() == 0) {
+            if ((available.size() + rows) <= (page * rows) || available.isEmpty()) {
                 BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "pageNotExist"));
             } else {
                 BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questListTitle"));
@@ -959,7 +959,7 @@ public class BukkitQuester implements Quester {
                 BukkitLang.send(player, ChatColor.GOLD + msg);
             }
         } else {
-            if ((quests.size() + rows) <= (page * rows) || quests.size() == 0) {
+            if ((quests.size() + rows) <= (page * rows) || quests.isEmpty()) {
                 BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "pageNotExist"));
             } else {
                 BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questListTitle"));

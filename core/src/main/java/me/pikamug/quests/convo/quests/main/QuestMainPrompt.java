@@ -21,13 +21,13 @@ import me.pikamug.quests.convo.quests.planner.QuestPlannerPrompt;
 import me.pikamug.quests.convo.quests.requirements.QuestRequirementsPrompt;
 import me.pikamug.quests.convo.quests.rewards.QuestRewardsPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -48,8 +48,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
@@ -276,7 +277,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 5:
             if (context.getForWhom() instanceof Player) {
-                final Map<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
                 blockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
                 plugin.getQuestFactory().setSelectedBlockStarts(blockStarts);
                 return new QuestBlockStartPrompt(context);
@@ -485,7 +486,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -510,7 +511,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                     }
                     context.setSessionData(Key.Q_START_NPC, uuid.toString());
                     if (context.getForWhom() instanceof Player) {
-                        final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                        final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                         selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                     }
@@ -524,7 +525,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(Key.Q_START_NPC, null);
             }
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
@@ -576,14 +577,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                         return new QuestBlockStartPrompt(context);
                     }
                 } else {
-                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final ConcurrentHashMap<UUID, Block> selectedBlockStarts
+                            = plugin.getQuestFactory().getSelectedBlockStarts();
                     selectedBlockStarts.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
                 return new QuestMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final ConcurrentHashMap<UUID, Block> selectedBlockStarts
+                            = plugin.getQuestFactory().getSelectedBlockStarts();
                     selectedBlockStarts.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }

@@ -22,11 +22,11 @@ import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -49,23 +49,23 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedListener {
 
     private final BukkitQuestsPlugin plugin;
     private final ConversationFactory conversationFactory;
-    private Map<UUID, Block> selectedBlockStarts = new HashMap<>();
-    private Map<UUID, Block> selectedKillLocations = new HashMap<>();
-    private Map<UUID, Block> selectedReachLocations = new HashMap<>();
-    private Set<UUID> selectingNpcs = new HashSet<>();
+    private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
+    private ConcurrentSkipListSet<UUID> selectingNpcs = new ConcurrentSkipListSet<>();
     private List<String> editingQuestNames = new LinkedList<>();
 
     public BukkitQuestFactory(final BukkitQuestsPlugin plugin) {
@@ -84,35 +84,35 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         }
     }
 
-    public Map<UUID, Block> getSelectedBlockStarts() {
+    public ConcurrentHashMap<UUID, Block> getSelectedBlockStarts() {
         return selectedBlockStarts;
     }
 
-    public void setSelectedBlockStarts(final Map<UUID, Block> selectedBlockStarts) {
+    public void setSelectedBlockStarts(final ConcurrentHashMap<UUID, Block> selectedBlockStarts) {
         this.selectedBlockStarts = selectedBlockStarts;
     }
 
-    public Map<UUID, Block> getSelectedKillLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedKillLocations() {
         return selectedKillLocations;
     }
 
-    public void setSelectedKillLocations(final Map<UUID, Block> selectedKillLocations) {
+    public void setSelectedKillLocations(final ConcurrentHashMap<UUID, Block> selectedKillLocations) {
         this.selectedKillLocations = selectedKillLocations;
     }
 
-    public Map<UUID, Block> getSelectedReachLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedReachLocations() {
         return selectedReachLocations;
     }
 
-    public void setSelectedReachLocations(final Map<UUID, Block> selectedReachLocations) {
+    public void setSelectedReachLocations(final ConcurrentHashMap<UUID, Block> selectedReachLocations) {
         this.selectedReachLocations = selectedReachLocations;
     }
 
-    public Set<UUID> getSelectingNpcs() {
+    public ConcurrentSkipListSet<UUID> getSelectingNpcs() {
         return selectingNpcs;
     }
 
-    public void setSelectingNpcs(final Set<UUID> selectingNpcs) {
+    public void setSelectingNpcs(final ConcurrentSkipListSet<UUID> selectingNpcs) {
         this.selectingNpcs = selectingNpcs;
     }
 

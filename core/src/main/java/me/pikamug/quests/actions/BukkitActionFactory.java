@@ -20,8 +20,8 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -46,20 +46,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitActionFactory implements ActionFactory, ConversationAbandonedListener {
 
     private final BukkitQuestsPlugin plugin;
     private final ConversationFactory conversationFactory;
-    private Map<UUID, Block> selectedExplosionLocations = new HashMap<>();
-    private Map<UUID, Block> selectedEffectLocations = new HashMap<>();
-    private Map<UUID, Block> selectedMobLocations = new HashMap<>();
-    private Map<UUID, Block> selectedLightningLocations = new HashMap<>();
-    private Map<UUID, Block> selectedTeleportLocations = new HashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedExplosionLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedEffectLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedMobLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedLightningLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedTeleportLocations = new ConcurrentHashMap<>();
     private List<String> editingActionNames = new LinkedList<>();
 
     public BukkitActionFactory(final BukkitQuestsPlugin plugin) {
@@ -78,44 +78,43 @@ public class BukkitActionFactory implements ActionFactory, ConversationAbandoned
         }
     }
     
-    public Map<UUID, Block> getSelectedExplosionLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedExplosionLocations() {
         return selectedExplosionLocations;
     }
 
-    public void setSelectedExplosionLocations(final Map<UUID, Block> selectedExplosionLocations) {
+    public void setSelectedExplosionLocations(final ConcurrentHashMap<UUID, Block> selectedExplosionLocations) {
         this.selectedExplosionLocations = selectedExplosionLocations;
     }
 
-    public Map<UUID, Block> getSelectedEffectLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedEffectLocations() {
         return selectedEffectLocations;
     }
 
-    public void setSelectedEffectLocations(final Map<UUID, Block> selectedEffectLocations) {
+    public void setSelectedEffectLocations(final ConcurrentHashMap<UUID, Block> selectedEffectLocations) {
         this.selectedEffectLocations = selectedEffectLocations;
     }
 
-    public Map<UUID, Block> getSelectedMobLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedMobLocations() {
         return selectedMobLocations;
     }
 
-    public void setSelectedMobLocations(final Map<UUID, Block> selectedMobLocations) {
+    public void setSelectedMobLocations(final ConcurrentHashMap<UUID, Block> selectedMobLocations) {
         this.selectedMobLocations = selectedMobLocations;
     }
 
-    public Map<UUID, Block> getSelectedLightningLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedLightningLocations() {
         return selectedLightningLocations;
     }
 
-    public void setSelectedLightningLocations(final Map<UUID, Block> selectedLightningLocations) {
+    public void setSelectedLightningLocations(final ConcurrentHashMap<UUID, Block> selectedLightningLocations) {
         this.selectedLightningLocations = selectedLightningLocations;
     }
 
-    public Map<UUID, Block> getSelectedTeleportLocations() {
+    public ConcurrentHashMap<UUID, Block> getSelectedTeleportLocations() {
         return selectedTeleportLocations;
     }
 
-    public void setSelectedTeleportLocations(
-            final Map<UUID, Block> selectedTeleportLocations) {
+    public void setSelectedTeleportLocations(final ConcurrentHashMap<UUID, Block> selectedTeleportLocations) {
         this.selectedTeleportLocations = selectedTeleportLocations;
     }
 
