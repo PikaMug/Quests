@@ -26,7 +26,7 @@ public abstract class BukkitParticleProvider {
         final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         try {
             final String packageName = BukkitParticleProvider.class.getPackage().getName();
-            if (bukkitVersion.startsWith("1.8.")) {
+            if (bukkitVersion.startsWith("1.8.") || bukkitVersion.equals("1.8")) {
                 final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 loaded = (BukkitParticleProvider) Class.forName(packageName + ".BukkitParticleProvider_"
                         + internalsName).newInstance();
