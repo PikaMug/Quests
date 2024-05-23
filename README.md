@@ -19,7 +19,6 @@ Distributed through these fine vendors:
 - CurseForge (https://www.curseforge.com/minecraft/bukkit-plugins/quests/)
 - Modrinth (https://modrinth.com/plugin/quests.classic)
 - SpigotMC (https://www.spigotmc.org/resources/quests.3711/)
-- BuiltByBit (https://builtbybit.com/resources/quests.19187/)
 
 Usage
 ---
