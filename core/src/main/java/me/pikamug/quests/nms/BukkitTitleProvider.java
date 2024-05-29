@@ -18,19 +18,20 @@ public abstract class BukkitTitleProvider {
     private static BukkitTitleProvider loaded;
 
     static {
-        final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         try {
-            final String packageName = BukkitTitleProvider.class.getPackage().getName();
-            if (internalsName.startsWith("v1_8_R")) {
+            final String packageName = BukkitParticleProvider.class.getPackage().getName();
+            if (bukkitVersion.startsWith("1.8.") || bukkitVersion.equals("1.8")) {
+                final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 loaded = (BukkitTitleProvider) Class.forName(packageName + ".BukkitTitleProvider_" + internalsName)
                         .newInstance();
             } else {
-                // Should not be an issue because single thread, alternatives welcome!
+                // Referencing subclass should not be an issue because single thread, alternatives welcome!
                 loaded = new BukkitTitleProvider_Modern();
             }
         } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
-            Bukkit.getLogger().severe("[Quests] No valid title implementation for version " + internalsName);
+            Bukkit.getLogger().severe("[Quests] No valid title implementation for version " + bukkitVersion);
         }
     }
 
