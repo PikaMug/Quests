@@ -23,6 +23,7 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.RomanNumeral;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -246,7 +247,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
-                selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 return new ActionPlayerTeleportPrompt(context);
             } else {

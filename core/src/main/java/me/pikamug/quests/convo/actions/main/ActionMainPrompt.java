@@ -31,6 +31,7 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -530,7 +531,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 if (context.getForWhom() instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> selectedMobLocations
                             = plugin.getActionFactory().getSelectedMobLocations();
-                    selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                     return new ActionMobLocationPrompt(context, questMob);
                 } else {

@@ -20,6 +20,7 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -158,7 +159,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
-                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionLightningPrompt(context);
             } else {

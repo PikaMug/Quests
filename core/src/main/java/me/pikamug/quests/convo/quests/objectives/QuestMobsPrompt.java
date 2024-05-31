@@ -20,6 +20,7 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -36,7 +37,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -419,7 +419,8 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
             case 3:
                 if (context.getForWhom() instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
-                    temp.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    temp.put(((Player) context.getForWhom()).getUniqueId(),
+                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                     return new QuestMobsLocationPrompt(context);
                 } else {

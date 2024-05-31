@@ -28,6 +28,7 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -270,7 +271,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return new QuestFinishMessagePrompt(context);
         case 4:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null
+                    || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return new QuestNPCStartPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -278,7 +280,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 5:
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
-                blockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
+                blockStarts.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getQuestFactory().setSelectedBlockStarts(blockStarts);
                 return new QuestBlockStartPrompt(context);
             } else {
@@ -292,7 +295,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMainPrompt(context);
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null
+                    || plugin.getDependencies().getZnpcsPlusApi() != null) {
                 return new QuestGuiDisplayPrompt(context);
             } else {
                 return new QuestMainPrompt(context);

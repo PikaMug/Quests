@@ -30,6 +30,7 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -752,7 +753,8 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 if (context.getForWhom() instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
-                    temp.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    temp.put(((Player) context.getForWhom()).getUniqueId(),
+                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedReachLocations(temp);
                     return new QuestReachLocationPrompt(context);
                 } else {

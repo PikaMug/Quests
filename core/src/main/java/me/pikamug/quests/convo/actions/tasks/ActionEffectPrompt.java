@@ -20,6 +20,7 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -149,7 +150,8 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
-                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionEffectExplosionPrompt(context);
             } else {
@@ -274,7 +276,8 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     if (context.getForWhom() instanceof Player) {
                         final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                                 = plugin.getActionFactory().getSelectedEffectLocations();
-                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                                Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                         return new ActionEffectSoundLocationPrompt(context);
                     } else {
