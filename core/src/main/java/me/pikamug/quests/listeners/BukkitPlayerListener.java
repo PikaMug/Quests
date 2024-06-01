@@ -872,7 +872,7 @@ public class BukkitPlayerListener implements Listener {
         final Player player = event.getPlayer();
         if (player.hasPermission("quests.admin.update")) {
             new BukkitUpdateChecker(plugin, 3711).getVersion(version -> {
-                if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
+                if (BukkitUpdateChecker.compareVersions(plugin.getDescription().getVersion().split("-")[0], version)) {
                     event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
                             + "] " + ChatColor.GREEN + BukkitLang.get(player, "updateTo").replace("<version>",
                             version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
