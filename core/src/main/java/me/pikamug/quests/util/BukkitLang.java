@@ -159,6 +159,7 @@ public class BukkitLang {
 
     public static void clear() {
         defaultLang.clear();
+        otherLang.clear();
     }
 
     public static int size() {
