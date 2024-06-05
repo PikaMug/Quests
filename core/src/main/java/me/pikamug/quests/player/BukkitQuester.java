@@ -793,7 +793,7 @@ public class BukkitQuester implements Quester {
             if (offlinePlayer.isOnline()) {
                 final Player p = getPlayer();
                 final String title = BukkitLang.get(p, "objectives").replace("<quest>", bukkitQuest.getName());
-                sendMessage(ChatColor.GOLD + title);
+                BukkitLang.send(p, ChatColor.GOLD + title);
                 showCurrentObjectives(bukkitQuest, this, false);
                 final String stageStartMessage = stage.getStartMessage();
                 if (stageStartMessage != null) {
@@ -896,8 +896,8 @@ public class BukkitQuester implements Quester {
             plugin.getLogger().info(getOfflinePlayer().getUniqueId() + " quit quest " + quest.getName());
         }
         for (final String message : messages) {
-            if (message != null && !message.isEmpty() && getOfflinePlayer().isOnline()) {
-                sendMessage(message);
+            if (getOfflinePlayer().isOnline()) {
+                BukkitLang.send(getPlayer(), message);
             }
         }
         saveData();

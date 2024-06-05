@@ -106,7 +106,7 @@ public class BukkitQuestadminFinishCommand extends BukkitQuestsSubCommand {
                     String msg2 = BukkitLang.get(p, "questForcedFinish");
                     msg2 = msg2.replace("<player>", cs.getName());
                     msg2 = msg2.replace("<quest>", quest.getName());
-                    p.sendMessage(ChatColor.GREEN + msg2);
+                    BukkitLang.send(p, ChatColor.GREEN + msg2);
                 }
                 quest.completeQuest(quester);
                 quester.saveData();

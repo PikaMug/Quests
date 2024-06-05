@@ -362,7 +362,7 @@ public class BukkitQuest implements Quest {
         if (player.isOnline()) {
             final Player p = quester.getPlayer();
             final String title = BukkitLang.get(p, "objectives").replace("<quest>", name);
-            quester.sendMessage(ChatColor.GOLD + title);
+            BukkitLang.send(p, ChatColor.GOLD + title);
             quester.showCurrentObjectives(this, quester, false);
             if (quester.getCurrentStage(this) == null) {
                 quester.sendMessage(ChatColor.RED + "itemCreateCriticalError");

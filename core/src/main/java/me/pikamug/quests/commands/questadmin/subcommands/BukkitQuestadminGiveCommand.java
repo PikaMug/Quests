@@ -121,7 +121,7 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
                     String msg2 = BukkitLang.get(p, "questForcedTake");
                     msg2 = msg2.replace("<player>", cs.getName());
                     msg2 = msg2.replace("<quest>", questToGive.getName());
-                    p.sendMessage(ChatColor.GREEN + msg2);
+                    BukkitLang.send(p, ChatColor.GREEN + msg2);
                 }
                 quester.takeQuest(questToGive, true);
             }

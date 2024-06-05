@@ -106,7 +106,7 @@ public class BukkitQuestadminNextstageCommand extends BukkitQuestsSubCommand {
                     String msg2 = BukkitLang.get(p, "questForcedNextStage");
                     msg2 = msg2.replace("<player>", cs.getName());
                     msg2 = msg2.replace("<quest>", quest.getName());
-                    p.sendMessage(ChatColor.GREEN + msg2);
+                    BukkitLang.send(p, ChatColor.GREEN + msg2);
                 }
                 quest.nextStage(quester, false);
                 quester.saveData();

@@ -113,7 +113,7 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
                         String msg2 = BukkitLang.get("questForcedTake");
                         msg2 = msg2.replace("<player>", quester.getLastKnownName());
                         msg2 = msg2.replace("<quest>", quest.getName());
-                        quester.sendMessage(ChatColor.GREEN + msg2);
+                        BukkitLang.send(quester.getPlayer(), ChatColor.GREEN + msg2);
                     }
                     quester.takeQuest(quest, true);
                     quester.saveData();
