@@ -45,6 +45,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,8 +73,11 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
         this.plugin = plugin;
         // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
         this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, new BukkitFakeConversable(),
-                        new HashMap<>()))).withTimeout(3600)
+                .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, new BukkitFakeConversable() {
+                    @Override
+                    public void sendRawMessage(@Nullable final UUID uuid, @NotNull final String s) {
+                    }
+                }, new HashMap<>()))).withTimeout(3600)
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);
     }
 

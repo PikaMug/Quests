@@ -23,7 +23,6 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -178,9 +177,7 @@ public class BukkitItemUtil {
         if (Material.getMaterial("LINGERING_POTION") == null) {
             if (one.getType().equals(Material.POTION)) {
                 // Bukkit version is below 1.9
-                final Potion pot1 = new Potion(one.getDurability());
-                final Potion pot2 = new Potion(two.getDurability());
-                if (!pot1.getType().equals(pot2.getType())) {
+                if (one.getDurability() != two.getDurability()) {
                     return -9;
                 }
             }
@@ -698,73 +695,8 @@ public class BukkitItemUtil {
             if (e.getName().replace("_", "").equalsIgnoreCase(properName.replace("_", ""))) {
                 return e;
             }
-            if (getEnchantmentFromProperLegacyName(properName) != null) {
-                return e;
-            }
         }
         return null;
-    }
-
-    /**
-     * Gets Enchantment from name as it appears in lang file
-     * 
-     * @deprecated Use {@link #getEnchantmentFromProperName(String)}
-     * @param enchant Name to match lang value to
-     * @return Enchantment or null if invalid
-     */
-    @Deprecated
-    public static Enchantment getEnchantmentFromProperLegacyName(final String enchant) {
-        if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
-            return Enchantment.ARROW_DAMAGE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_FIRE"))) {
-            return Enchantment.ARROW_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_INFINITE"))) {
-            return Enchantment.ARROW_INFINITE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
-            return Enchantment.ARROW_KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ALL"))) {
-            return Enchantment.DAMAGE_ALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
-            return Enchantment.DAMAGE_ARTHROPODS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
-            return Enchantment.DAMAGE_UNDEAD;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DIG_SPEED"))) {
-            return Enchantment.DIG_SPEED;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DURABILITY"))) {
-            return Enchantment.DURABILITY;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_FIRE_ASPECT"))) {
-            return Enchantment.FIRE_ASPECT;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_KNOCKBACK"))) {
-            return Enchantment.KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
-            return Enchantment.LOOT_BONUS_BLOCKS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LUCK"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LURE"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_OXYGEN"))) {
-            return Enchantment.OXYGEN;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
-            return Enchantment.PROTECTION_ENVIRONMENTAL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
-            return Enchantment.PROTECTION_EXPLOSIONS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FALL"))) {
-            return Enchantment.PROTECTION_FALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
-            return Enchantment.PROTECTION_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
-            return Enchantment.PROTECTION_PROJECTILE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_SILK_TOUCH"))) {
-            return Enchantment.SILK_TOUCH;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_THORNS"))) {
-            return Enchantment.THORNS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_WATER_WORKER"))) {
-            return Enchantment.WATER_WORKER;
-        } else {
-            return null;
-        }
     }
 
     public static Enchantment getEnchantmentFromPrettyName(String enchant) {

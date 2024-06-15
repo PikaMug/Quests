@@ -67,12 +67,7 @@ public class BukkitLang {
         if (player == null) {
             return get(key);
         }
-        String locale;
-        try {
-            locale = player.getLocale();
-        } catch (NoSuchMethodError e) {
-            locale = player.spigot().getLocale();
-        }
+        String locale= player.getLocale();
         final int separator = locale.indexOf("_");
         if (separator == -1) {
             return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(player, defaultLang.get(key)) : "NULL";
