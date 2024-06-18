@@ -128,7 +128,8 @@ public class BukkitPlayerListener implements Listener {
                 for (final Quest quest : plugin.getLoadedQuests()) {
                     final BukkitQuest bukkitQuest = (BukkitQuest)quest;
                     if (bukkitQuest.getGUIDisplay() != null) {
-                        if (BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false) == 0) {
+                        final int i = BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false);
+                        if (i == 0 || i == -7) {
                             if (quester.canAcceptOffer(quest, true)) {
                                 try { 
                                     quester.takeQuest(quest, false);

@@ -51,8 +51,8 @@ public class BukkitItemUtil {
      * -4 if stack display name/lore is unequal<br>
      * -5 if stack enchantments are unequal<br>
      * -6 if stack stored enchants are unequal<br>
-     * -7 if stack item flags are unequal
-     * -8 if stack Written Book data is unequal
+     * -7 if stack item flags are unequal<br>
+     * -8 if stack Written Book data is unequal<br>
      * -9 if stack Potion type is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount) {
@@ -75,9 +75,9 @@ public class BukkitItemUtil {
      * -4 if stack display name/lore is unequal<br>
      * -5 if stack enchantments are unequal<br>
      * -6 if stack stored enchants are unequal<br>
-     * -7 if stack item flags are unequal
-     * -8 if stack Written Book data is unequal
-     * -9 if stack Potion type is unequal
+     * -7 if stack item flags are unequal<br>
+     * -8 if stack Written Book data is unequal<br>
+     * -9 if stack Potion type is unequal<br>
      * -10 if stack Tropical Fish variant is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, 
