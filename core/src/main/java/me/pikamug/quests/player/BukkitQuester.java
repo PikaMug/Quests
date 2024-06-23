@@ -3635,7 +3635,8 @@ public class BukkitQuester implements Quester {
         final BukkitStage bukkitStage = (BukkitStage) quest.getStage(stage);
         if (!bukkitStage.getBlocksToBreak().isEmpty()) {
             for (final ItemStack toBreak : bukkitStage.getBlocksToBreak()) {
-                final ItemStack temp = new ItemStack(toBreak.getType(), 0, toBreak.getDurability());
+                final ItemStack temp = new ItemStack(toBreak.getType(), 1, toBreak.getDurability());
+                temp.setAmount(0);
                 if (data.blocksBroken.contains(toBreak)) {
                     data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
                 } else {
@@ -3645,7 +3646,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getBlocksToDamage().isEmpty()) {
             for (final ItemStack toDamage : bukkitStage.getBlocksToDamage()) {
-                final ItemStack temp = new ItemStack(toDamage.getType(), 0, toDamage.getDurability());
+                final ItemStack temp = new ItemStack(toDamage.getType(), 1, toDamage.getDurability());
+                temp.setAmount(0);
                 if (data.blocksDamaged.contains(toDamage)) {
                     data.blocksDamaged.set(data.blocksDamaged.indexOf(temp), temp);
                 } else {
@@ -3655,7 +3657,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getBlocksToPlace().isEmpty()) {
             for (final ItemStack toPlace : bukkitStage.getBlocksToPlace()) {
-                final ItemStack temp = new ItemStack(toPlace.getType(), 0, toPlace.getDurability());
+                final ItemStack temp = new ItemStack(toPlace.getType(), 1, toPlace.getDurability());
+                temp.setAmount(0);
                 if (data.blocksPlaced.contains(toPlace)) {
                     data.blocksPlaced.set(data.blocksPlaced.indexOf(temp), temp);
                 } else {
@@ -3665,7 +3668,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getBlocksToUse().isEmpty()) {
             for (final ItemStack toUse : bukkitStage.getBlocksToUse()) {
-                final ItemStack temp = new ItemStack(toUse.getType(), 0, toUse.getDurability());
+                final ItemStack temp = new ItemStack(toUse.getType(), 1, toUse.getDurability());
+                temp.setAmount(0);
                 if (data.blocksUsed.contains(toUse)) {
                     data.blocksUsed.set(data.blocksUsed.indexOf(temp), temp);
                 } else {
@@ -3675,7 +3679,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getBlocksToCut().isEmpty()) {
             for (final ItemStack toCut : bukkitStage.getBlocksToCut()) {
-                final ItemStack temp = new ItemStack(toCut.getType(), 0, toCut.getDurability());
+                final ItemStack temp = new ItemStack(toCut.getType(), 1, toCut.getDurability());
+                temp.setAmount(0);
                 if (data.blocksCut.contains(toCut)) {
                     data.blocksCut.set(data.blocksCut.indexOf(temp), temp);
                 } else {
@@ -3685,7 +3690,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToCraft().isEmpty()) {
             for (final ItemStack toCraft : bukkitStage.getItemsToCraft()) {
-                final ItemStack temp = new ItemStack(toCraft.getType(), 0, toCraft.getDurability());
+                final ItemStack temp = new ItemStack(toCraft.getType(), 1, toCraft.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toCraft.getEnchantments());
                 temp.setItemMeta(toCraft.getItemMeta());
                 data.itemsCrafted.add(temp);
@@ -3693,7 +3699,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToSmelt().isEmpty()) {
             for (final ItemStack toSmelt : bukkitStage.getItemsToSmelt()) {
-                final ItemStack temp = new ItemStack(toSmelt.getType(), 0, toSmelt.getDurability());
+                final ItemStack temp = new ItemStack(toSmelt.getType(), 1, toSmelt.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toSmelt.getEnchantments());
                 temp.setItemMeta(toSmelt.getItemMeta());
                 data.itemsSmelted.add(temp);
@@ -3701,7 +3708,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToEnchant().isEmpty()) {
             for (final ItemStack toEnchant : bukkitStage.getItemsToEnchant()) {
-                final ItemStack temp = new ItemStack(toEnchant.getType(), 0, toEnchant.getDurability());
+                final ItemStack temp = new ItemStack(toEnchant.getType(), 1, toEnchant.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toEnchant.getEnchantments());
                 temp.setItemMeta(toEnchant.getItemMeta());
                 data.itemsEnchanted.add(temp);
@@ -3709,7 +3717,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToBrew().isEmpty()) {
             for (final ItemStack toBrew : bukkitStage.getItemsToBrew()) {
-                final ItemStack temp = new ItemStack(toBrew.getType(), 0, toBrew.getDurability());
+                final ItemStack temp = new ItemStack(toBrew.getType(), 1, toBrew.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toBrew.getEnchantments());
                 temp.setItemMeta(toBrew.getItemMeta());
                 data.itemsBrewed.add(temp);
@@ -3717,7 +3726,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToConsume().isEmpty()) {
             for (final ItemStack toConsume : bukkitStage.getItemsToConsume()) {
-                final ItemStack temp = new ItemStack(toConsume.getType(), 0, toConsume.getDurability());
+                final ItemStack temp = new ItemStack(toConsume.getType(), 1, toConsume.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toConsume.getEnchantments());
                 temp.setItemMeta(toConsume.getItemMeta());
                 data.itemsConsumed.add(temp);
@@ -3725,7 +3735,8 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToDeliver().isEmpty()) {
             for (final ItemStack toDeliver : bukkitStage.getItemsToDeliver()) {
-                final ItemStack temp = new ItemStack(toDeliver.getType(), 0, toDeliver.getDurability());
+                final ItemStack temp = new ItemStack(toDeliver.getType(), 1, toDeliver.getDurability());
+                temp.setAmount(0);
                 temp.addUnsafeEnchantments(toDeliver.getEnchantments());
                 temp.setItemMeta(toDeliver.getItemMeta());
                 data.itemsDelivered.add(temp);
