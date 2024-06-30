@@ -336,8 +336,14 @@ public class BukkitBlockListener implements Listener {
                 }
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!event.isCancelled() && event.getClickedBlock() != null) {
-                        final ItemStack blockItemStack = new ItemStack(event.getClickedBlock().getType(), 1, event
-                                .getClickedBlock().getState().getData().toItemStack().getDurability());
+                        short durability = 0;
+                        try {
+                            // Occurs with certain builds of Paper server software
+                            durability = event.getClickedBlock().getState().getData().toItemStack().getDurability();
+                        } catch (final IllegalArgumentException ex) {
+                            // Do nothing
+                        }
+                        final ItemStack blockItemStack = new ItemStack(event.getClickedBlock().getType(), 1, durability);
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
                         for (final Quest quest : plugin.getLoadedQuests()) {
