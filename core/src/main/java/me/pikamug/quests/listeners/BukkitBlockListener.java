@@ -18,13 +18,14 @@ import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.BukkitStage;
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,8 +58,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, event.getBlock().getState()
-                    .getData().toItemStack().getDurability());
+            final short durability = getBlockDurability(event.getBlock());
+            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
@@ -185,8 +186,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, event.getBlock().getState()
-                    .getData().toItemStack().getDurability());
+            final short durability = getBlockDurability(event.getBlock());
+            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -219,8 +220,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, event.getBlock().getState()
-                    .getData().toItemStack().getDurability());
+            final short durability = getBlockDurability(event.getBlock());
+            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
@@ -336,13 +337,7 @@ public class BukkitBlockListener implements Listener {
                 }
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!event.isCancelled() && event.getClickedBlock() != null) {
-                        short durability = 0;
-                        try {
-                            // Occurs with certain builds of Paper server software
-                            durability = event.getClickedBlock().getState().getData().toItemStack().getDurability();
-                        } catch (final IllegalArgumentException ex) {
-                            // Do nothing
-                        }
+                        final short durability = getBlockDurability(event.getClickedBlock());
                         final ItemStack blockItemStack = new ItemStack(event.getClickedBlock().getType(), 1, durability);
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -367,6 +362,23 @@ public class BukkitBlockListener implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Gets durability for item equivalent of Block, unless server is on certain builds of Paper
+     * server software, in which case returns 0
+     *
+     * @param block Block of item
+     * @return durability or 0
+     */
+    @SuppressWarnings("deprecation")
+    private short getBlockDurability(final Block block) {
+        try {
+            // Occurs with certain builds of Paper server software
+            return block.getState().getData().toItemStack().getDurability();
+        } catch (final IllegalArgumentException ex) {
+            return 0;
         }
     }
 }
