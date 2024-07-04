@@ -169,7 +169,7 @@ public class BukkitInventoryUtil {
     public static int getEmptySlots(final Player player) {
         final ItemStack[] contents = player.getInventory().getContents();
         int i = 0;
-        for (ItemStack item : contents)
+        for (final ItemStack item : contents)
             if (item != null && item.getType() != Material.AIR) {
                 i++;
             }

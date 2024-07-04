@@ -85,7 +85,10 @@ public class BukkitObjective implements Objective {
     public @NotNull Object getGoalObject() {
         return goalObj;
     }
-    
+
+    /**
+     * @deprecated Paper 1.21 builds do not allow ItemStack with 0 amount
+     */
     public @Nullable ItemStack getProgressAsItem() {
         return progressObj instanceof ItemStack ? (ItemStack) progressObj : null;
     }

@@ -1601,10 +1601,10 @@ public class BukkitQuester implements Quester {
             final BukkitObjective objective = (BukkitObjective) obj;
             String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
                     objective.getMessage());
-            if (objective.getProgressAsItem() != null && objective.getGoalAsItem() != null) {
-                final ItemStack progress = objective.getProgressAsItem();
+            if (objective.getGoalAsItem() != null) {
+                final int progress = objective.getProgress();
                 final ItemStack goal = objective.getGoalAsItem();
-                if (!settings.canShowCompletedObjs() && progress.getAmount() >= goal.getAmount()) {
+                if (!settings.canShowCompletedObjs() && progress >= goal.getAmount()) {
                     continue;
                 }
                 if (localeManager != null && settings.canTranslateNames() && !goal.hasItemMeta()
@@ -3310,8 +3310,6 @@ public class BukkitQuester implements Quester {
         }
         final Player p = getPlayer();
         final ObjectiveType type = objective.getType();
-        final ItemStack increment = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getProgressObject()
-                : new ItemStack(Material.AIR, objective.getProgress());
         final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getGoalObject()
                 : new ItemStack(Material.AIR, objective.getGoal());
         if (!getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
@@ -3327,23 +3325,23 @@ public class BukkitQuester implements Quester {
             final String message = formatCompletedObjectiveMessage("break", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(),
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         null)) {
-                    sendMessage(message.replace("<item>", BukkitItemUtil.getName(increment)));
+                    sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
-                sendMessage(message.replace("<item>", BukkitItemUtil.getName(increment)));
+                sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
             }
         } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("damage", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, increment.getType(), increment.getDurability(),
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
                         null)) {
-                    sendMessage(message.replace("<item>", BukkitItemUtil.getName(increment)));
+                    sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
-                sendMessage(message.replace("<item>", BukkitItemUtil.getName(increment)));
+                sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
             }
         } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("place", goal.getAmount());
