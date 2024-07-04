@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.util;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
@@ -157,5 +158,21 @@ public class BukkitInventoryUtil {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get number of empty inventory slots
+     *
+     * @param player Player to check
+     * @return number of empty slots
+     */
+    public static int getEmptySlots(final Player player) {
+        final ItemStack[] contents = player.getInventory().getContents();
+        int i = 0;
+        for (ItemStack item : contents)
+            if (item != null && item.getType() != Material.AIR) {
+                i++;
+            }
+        return 36 - i;
     }
 }
