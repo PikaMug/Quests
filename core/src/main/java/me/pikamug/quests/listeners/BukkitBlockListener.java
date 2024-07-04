@@ -58,8 +58,10 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final short durability = getBlockDurability(event.getBlock());
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
+            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
+            if (blockItemStack == null) {
+                return;
+            }
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
@@ -186,8 +188,10 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final short durability = getBlockDurability(event.getBlock());
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
+            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
+            if (blockItemStack == null) {
+                return;
+            }
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -220,8 +224,10 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final short durability = getBlockDurability(event.getBlock());
-            final ItemStack blockItemStack = new ItemStack(event.getBlock().getType(), 1, durability);
+            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
+            if (blockItemStack == null) {
+                return;
+            }
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
@@ -337,8 +343,10 @@ public class BukkitBlockListener implements Listener {
                 }
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!event.isCancelled() && event.getClickedBlock() != null) {
-                        final short durability = getBlockDurability(event.getClickedBlock());
-                        final ItemStack blockItemStack = new ItemStack(event.getClickedBlock().getType(), 1, durability);
+                        final ItemStack blockItemStack = getItemEquivalent(event.getClickedBlock());
+                        if (blockItemStack == null) {
+                            return;
+                        }
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
                         for (final Quest quest : plugin.getLoadedQuests()) {
@@ -366,19 +374,25 @@ public class BukkitBlockListener implements Listener {
     }
 
     /**
-     * Gets durability for item equivalent of Block, unless server is on certain builds of Paper
-     * server software, in which case returns 0
+     * Gets item equivalent of Block, unless server is on certain builds of Paper
+     * server software, in which case may return null
      *
-     * @param block Block of item
-     * @return durability or 0
+     * @param block Block to convert
+     * @return item or null
      */
     @SuppressWarnings("deprecation")
-    private short getBlockDurability(final Block block) {
+    private ItemStack getItemEquivalent(final Block block) {
+        short durability = 0;
         try {
-            // Occurs with certain builds of Paper server software
-            return block.getState().getData().toItemStack().getDurability();
-        } catch (final IllegalArgumentException ex) {
-            return 0;
+            durability = block.getState().getData().toItemStack().getDurability();
+        } catch (final IllegalArgumentException e) {
+            // https://github.com/PikaMug/Quests/issues/2236
         }
+        try {
+            return new ItemStack(block.getType(), 1, durability);
+        } catch (final IllegalArgumentException e) {
+            // https://github.com/PikaMug/Quests/issues/2243
+        }
+        return null;
     }
 }
