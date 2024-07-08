@@ -40,6 +40,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class BukkitBlockListener implements Listener {
@@ -103,16 +104,16 @@ public class BukkitBlockListener implements Listener {
                         if (currentStage.containsObjective(placeType)) {
                             for (final ItemStack is : questData.blocksPlaced) {
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack toPlace = new ItemStack(is.getType(), 64);
+                                    ItemStack goal = new ItemStack(is.getType(), 64);
                                     for (final ItemStack stack : currentStage.getBlocksToPlace()) {
                                         if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
-                                            toPlace = stack;
+                                            goal = stack;
                                         }
                                     }
 
                                     final BukkitQuesterPreUpdateObjectiveEvent preEvent
                                             = new BukkitQuesterPreUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, null, is.getAmount(), toPlace.getAmount()));
+                                            new BukkitObjective(placeType, null, is.getAmount(), goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                     final int index = questData.blocksPlaced.indexOf(is);
@@ -122,7 +123,7 @@ public class BukkitBlockListener implements Listener {
 
                                     final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                             = new BukkitQuesterPostUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, null, newAmount, toPlace.getAmount()));
+                                            new BukkitObjective(placeType, null, newAmount, goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }
                             }
@@ -134,16 +135,16 @@ public class BukkitBlockListener implements Listener {
                                 final BukkitQuestProgress qQuestData = (BukkitQuestProgress) q.getQuestDataOrDefault(cq);
                                 for (final ItemStack is : qQuestData.blocksPlaced) {
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack toPlace = new ItemStack(is.getType(), 64);
+                                        ItemStack goal = new ItemStack(is.getType(), 64);
                                         for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
                                             if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
-                                                toPlace = stack;
+                                                goal = stack;
                                             }
                                         }
 
                                         final BukkitQuesterPreUpdateObjectiveEvent preEvent
                                                 = new BukkitQuesterPreUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(placeType, null, is.getAmount(), toPlace.getAmount()));
+                                                new BukkitObjective(placeType, null, is.getAmount(), goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(preEvent);
 
                                         final int index = qQuestData.blocksPlaced.indexOf(is);
@@ -153,7 +154,7 @@ public class BukkitBlockListener implements Listener {
 
                                         final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                                 = new BukkitQuesterPostUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(placeType, null, newAmount, toPlace.getAmount()));
+                                                new BukkitObjective(placeType, null, newAmount, goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(postEvent);
                                     }
                                 }
@@ -249,28 +250,30 @@ public class BukkitBlockListener implements Listener {
                     if (quest.getOptions().canIgnoreBlockReplace()) {
                         // Ignore blocks replaced once broken (self)
                         if (currentStage.containsObjective(breakType)) {
-                            for (final ItemStack is : questData.blocksBroken) {
+                            for (int i = 0; i < questData.blocksBroken.size(); i++) {
+                                final int progress = questData.blocksBroken.get(i) - 1;
+                                if (progress < 0) {
+                                    break;
+                                }
+                                final ItemStack is = currentStage.getBlocksToBreak().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack toBreak = new ItemStack(is.getType(), 64);
+                                    ItemStack goal = new ItemStack(is.getType(), 64);
                                     for (final ItemStack stack : currentStage.getBlocksToBreak()) {
                                         if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
-                                            toBreak = stack;
+                                            goal = stack;
                                         }
                                     }
 
                                     final BukkitQuesterPreUpdateObjectiveEvent preEvent
                                             = new BukkitQuesterPreUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, null, is.getAmount(), toBreak.getAmount()));
+                                            new BukkitObjective(placeType, null, is.getAmount(), goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
-                                    final int index = questData.blocksBroken.indexOf(is);
-                                    final int newAmount = is.getAmount() - 1;
-                                    is.setAmount(newAmount);
-                                    questData.blocksBroken.set(index, is);
+                                    questData.blocksBroken.set(i, progress);
 
                                     final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                             = new BukkitQuesterPostUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, null, newAmount, toBreak.getAmount()));
+                                            new BukkitObjective(placeType, null, progress, goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }
                             }
@@ -280,28 +283,30 @@ public class BukkitBlockListener implements Listener {
                                 (final Quester q, final Quest cq) -> {
                             if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
                                 final BukkitQuestProgress qQuestData = (BukkitQuestProgress) q.getQuestDataOrDefault(cq);
-                                for (final ItemStack is : qQuestData.blocksBroken) {
+                                for (final int i : new LinkedList<>(qQuestData.blocksBroken)) {
+                                    final int progress = qQuestData.blocksBroken.get(i) - 1;
+                                    if (progress < 0) {
+                                        break;
+                                    }
+                                    final ItemStack is = currentStage.getBlocksToBreak().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack toBreak = new ItemStack(is.getType(), 64);
+                                        ItemStack goal = new ItemStack(is.getType(), 64);
                                         for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToBreak()) {
                                             if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
-                                                toBreak = stack;
+                                                goal = stack;
                                             }
                                         }
 
                                         final BukkitQuesterPreUpdateObjectiveEvent preEvent
                                                 = new BukkitQuesterPreUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(breakType, null, is.getAmount(), toBreak.getAmount()));
+                                                new BukkitObjective(breakType, null, is.getAmount(), goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-                                        final int index = qQuestData.blocksBroken.indexOf(is);
-                                        final int newAmount = is.getAmount() - 1;
-                                        is.setAmount(newAmount);
-                                        qQuestData.blocksBroken.set(index, is);
+                                        qQuestData.blocksBroken.set(i, progress);
 
                                         final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                                 = new BukkitQuesterPostUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(breakType, null, newAmount, toBreak.getAmount()));
+                                                new BukkitObjective(breakType, null, progress, goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(postEvent);
                                     }
                                 }

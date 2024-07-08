@@ -360,7 +360,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_PROGRESS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
-                        ps.setString(3, serializeItemStackProgress(entry.getValue().getBlocksBroken()));
+                        ps.setString(3, serializeProgress(entry.getValue().getBlocksBroken()));
                         ps.setString(4, serializeItemStackProgress(entry.getValue().getBlocksDamaged()));
                         ps.setString(5, serializeItemStackProgress(entry.getValue().getBlocksPlaced()));
                         ps.setString(6, serializeItemStackProgress(entry.getValue().getBlocksUsed()));
@@ -462,8 +462,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         final BukkitQuestProgress data = new BukkitQuestProgress(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
                             final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
-                            data.blocksBroken.addAll(deserializeItemStackProgress(rs.getString("blocks_broken"),
-                                    stage.getBlocksToBreak()));
+                            data.blocksBroken.addAll(deserializeIntProgress(rs.getString("blocks_broken")));
                             data.blocksDamaged.addAll(deserializeItemStackProgress(rs.getString("blocks_damaged"),
                                     stage.getBlocksToDamage()));
                             data.blocksPlaced.addAll(deserializeItemStackProgress(rs.getString("blocks_placed"),
@@ -623,6 +622,9 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         }
     }
 
+    /**
+     * @deprecated Legacy code, do not use. Will be removed in a later version.
+     */
     @SuppressWarnings("deprecation")
     public LinkedList<ItemStack> deserializeItemStackProgress(String string, final LinkedList<ItemStack> objective) {
         final LinkedList<ItemStack> list = new LinkedList<>();

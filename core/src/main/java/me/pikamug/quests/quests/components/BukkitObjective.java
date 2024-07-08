@@ -44,13 +44,17 @@ public class BukkitObjective implements Objective {
             this.progress = ((ItemStack) progressObj).getAmount();
         } else if (progressObj instanceof BukkitCountableMob) {
             this.progress = ((BukkitCountableMob) progressObj).getCount();
+        } else if (progressObj instanceof Integer) {
+            this.progress = (int) progress;
         } else {
             this.progress = 0;
         }
         if (goalObj instanceof ItemStack) {
             this.goal = ((ItemStack) goalObj).getAmount();
-        }  else if (goalObj instanceof BukkitCountableMob) {
+        } else if (goalObj instanceof BukkitCountableMob) {
             this.goal = ((BukkitCountableMob) goalObj).getCount();
+        } else if (goalObj instanceof Integer) {
+            this.goal = (int) goalObj;
         } else {
             this.goal = 0;
         }

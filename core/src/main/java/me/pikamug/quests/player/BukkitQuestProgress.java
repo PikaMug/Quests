@@ -25,33 +25,40 @@ public class BukkitQuestProgress implements QuestProgress {
     public BukkitQuestProgress(final Quester quester) {
         this.quester = quester;
     }
-    
-    public LinkedList<ItemStack> blocksBroken = new LinkedList<ItemStack>() {
+    // TODO increase serial id
+    public LinkedList<Integer> blocksBroken = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = -6071822509475270168L;
+        private static final long serialVersionUID = -6071822509475270169L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -62,11 +69,27 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
 
@@ -1057,11 +1080,11 @@ public class BukkitQuestProgress implements QuestProgress {
     private boolean doJournalUpdate = true;
 
     @Override
-    public LinkedList<ItemStack> getBlocksBroken() {
+    public LinkedList<Integer> getBlocksBroken() {
         return blocksBroken;
     }
 
-    public void setBlocksBroken(final LinkedList<ItemStack> blocksBroken) {
+    public void setBlocksBroken(final LinkedList<Integer> blocksBroken) {
         this.blocksBroken = blocksBroken;
         if (doJournalUpdate) {
             quester.updateJournal();

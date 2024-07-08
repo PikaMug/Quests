@@ -1187,18 +1187,16 @@ public class BukkitQuester implements Quester {
         }
         final BukkitQuestProgress data = (BukkitQuestProgress) getQuestDataOrDefault(quest);
         final LinkedList<Objective> objectives = new LinkedList<>();
-        for (final ItemStack goal : stage.getBlocksToBreak()) {
-            for (final ItemStack progress : data.blocksBroken) {
-                if (progress.getType().equals(goal.getType()) && progress.getDurability() == goal.getDurability()) {
-                    final ChatColor color = progress.getAmount() < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "break"),
-                            progress.getAmount(), goal.getAmount());
-                    if (formatNames) {
-                        message = message.replace("<item>", BukkitItemUtil.getName(progress));
-                    }
-                    objectives.add(new BukkitObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
-                }
+        for (int i = 0; i < data.getBlocksBroken().size(); i++) {
+            final int progress = data.getBlocksBroken().get(i);
+            final ItemStack goal = stage.getBlocksToBreak().get(i);
+            final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
+            String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "break"),
+                    progress, goal.getAmount());
+            if (formatNames) {
+                message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
+            objectives.add(new BukkitObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
         }
         for (final ItemStack goal : stage.getBlocksToDamage()) {
             for (final ItemStack progress : data.blocksDamaged) {
@@ -1800,107 +1798,79 @@ public class BukkitQuester implements Quester {
      * Marks block as broken if Quester has such an objective
      * 
      * @param quest The quest for which the block is being broken
-     * @param itemStack The block being broken
+     * @param broken The block being broken
      */
     @SuppressWarnings("deprecation")
-    public void breakBlock(final Quest quest, final ItemStack itemStack) {
-        itemStack.setAmount(0);
-        ItemStack broken = itemStack;
-        ItemStack toBreak = itemStack;
+    public void breakBlock(final Quest quest, final ItemStack broken) {
+        ItemStack goal = null;
         final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        for (final ItemStack is : bukkitQuestData.blocksBroken) {
-            if (itemStack.getType() == is.getType()) {
-                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
+        for (final ItemStack toBreak : ((BukkitStage) getCurrentStage(quest)).getBlocksToBreak()) {
+            if (goal != null) {
+                break;
+            }
+            if (broken.getType() == toBreak.getType()) {
+                if (broken.getType().isSolid() && toBreak.getType().isSolid()) {
                     // Blocks are solid so check for durability
-                    if (itemStack.getDurability() == is.getDurability()) {
-                        broken = is;
+                    if (broken.getDurability() == toBreak.getDurability()) {
+                        goal = toBreak;
                     } else if (!plugin.getLocaleManager().isBelow113()) {
                         // Ignore durability for 1.13+
-                        broken = is;
+                        goal = toBreak;
                     }
-                } else if (itemStack.getData() instanceof Crops && is.getData() instanceof Crops) {
-                    if (is.getDurability() > 0) {
-                        // Age is specified so check for durability
-                        if (itemStack.getDurability() == is.getDurability()) {
-                            broken = is;
+                } else if (broken.getData() instanceof Crops && toBreak.getData() instanceof Crops) {
+                    if (toBreak.getDurability() > 0) {
+                        // Age toBreak specified so check for durability
+                        if (broken.getDurability() == toBreak.getDurability()) {
+                            goal = toBreak;
                         }
                     } else {
-                        // Age is unspecified so ignore durability
-                        broken = is;
+                        // Age toBreak unspecified so ignore durability
+                        goal = toBreak;
                     }
-                } else if (itemStack.getType().name().equals("RED_ROSE")) {
+                } else if (broken.getType().name().equals("RED_ROSE")) {
                     // Flowers are unique so check for durability
-                    if (itemStack.getDurability() == is.getDurability()) {
-                        broken = is;
+                    if (broken.getDurability() == toBreak.getDurability()) {
+                        goal = toBreak;
                     }
                 } else {
                     // Blocks are not solid so ignore durability
-                    broken = is;
+                    goal = toBreak;
                 }
             }
         }
-        for (final ItemStack is : ((BukkitStage) getCurrentStage(quest)).getBlocksToBreak()) {
-            if (itemStack.getType() == is.getType()) {
-                if (itemStack.getType().isSolid() && is.getType().isSolid()) {
-                    // Blocks are solid so check for durability
-                    if (itemStack.getDurability() == is.getDurability()) {
-                        toBreak = is;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
-                        // Ignore durability for 1.13+
-                        toBreak = is;
-                    }
-                } else if (itemStack.getData() instanceof Crops && is.getData() instanceof Crops) {
-                    if (is.getDurability() > 0) {
-                        // Age is specified so check for durability
-                        if (itemStack.getDurability() == is.getDurability()) {
-                            toBreak = is;
-                        }
-                    } else {
-                        // Age is unspecified so ignore durability
-                        toBreak = is;
-                    }
-                } else if (itemStack.getType().name().equals("RED_ROSE")) {
-                    // Flowers are unique so check for durability
-                    if (itemStack.getDurability() == is.getDurability()) {
-                        toBreak = is;
-                    }
-                } else {
-                    // Blocks are not solid so ignore durability
-                    toBreak = is;
-                }
-            }
+
+        if (goal == null) {
+            // No match found
+            return;
         }
-        
+
         final ObjectiveType type = ObjectiveType.BREAK_BLOCK;
         final BukkitQuesterPreUpdateObjectiveEvent preEvent = new BukkitQuesterPreUpdateObjectiveEvent(this, quest,
-                new BukkitObjective(type, null, broken.getAmount(), toBreak.getAmount()));
+                new BukkitObjective(type, null, broken.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final ItemStack newBroken = broken;
-        if (broken.getAmount() < toBreak.getAmount()) {
-            newBroken.setAmount(broken.getAmount() + 1);
-
-            if (bukkitQuestData.blocksBroken.contains(broken)) {
-                bukkitQuestData.blocksBroken.set(bukkitQuestData.blocksBroken.indexOf(broken), newBroken);
-                if (broken.getAmount() == toBreak.getAmount()) {
-                    finishObjective(quest, new BukkitObjective(type, null, itemStack, toBreak), null, null, null, null, null, null, null);
-                    
-                    // Multiplayer
-                    final ItemStack finalBroken = broken;
-                    final ItemStack finalToBreak = toBreak;
-                    dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                        ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksBroken.set(bukkitQuestData.blocksBroken
-                                .indexOf(finalBroken), newBroken);
-                        q.finishObjective(quest, new BukkitObjective(type, null, itemStack, finalToBreak), null, null, null, null, null,
-                                null, null);
-                        return null;
-                    });
-                }
-            }
+        final int breakIndex = getCurrentStage(quest).getBlocksToBreak().indexOf(goal);
+        if (bukkitQuestData.blocksBroken.get(breakIndex) > goal.getAmount()) {
+            return;
         }
-        
+        final int progress = bukkitQuestData.blocksBroken.get(breakIndex) + 1;
+        bukkitQuestData.blocksBroken.set(breakIndex, progress);
+        if (progress >= goal.getAmount()) {
+            finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
+                    null, null, null, null);
+
+            // Multiplayer
+            final ItemStack finalGoal = goal;
+            dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
+                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksBroken.set(breakIndex, progress);
+                q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
+                        null, null, null, null);
+                return null;
+            });
+        }
+
         final BukkitQuesterPostUpdateObjectiveEvent postEvent = new BukkitQuesterPostUpdateObjectiveEvent(this, quest,
-                new BukkitObjective(type, null, newBroken.getAmount(), toBreak.getAmount()));
+                new BukkitObjective(type, null, progress, goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     
@@ -3649,13 +3619,8 @@ public class BukkitQuester implements Quester {
         }
         final BukkitStage bukkitStage = (BukkitStage) quest.getStage(stage);
         if (!bukkitStage.getBlocksToBreak().isEmpty()) {
-            for (final ItemStack toBreak : bukkitStage.getBlocksToBreak()) {
-                final ItemStack temp = getLowItemStack(toBreak.getType(), toBreak.getDurability());
-                if (data.blocksBroken.contains(toBreak)) {
-                    data.blocksBroken.set(data.blocksBroken.indexOf(temp), temp);
-                } else {
-                    data.blocksBroken.add(temp);
-                }
+            for (final ItemStack ignored : bukkitStage.getBlocksToBreak()) {
+                data.blocksBroken.add(0);
             }
         }
         if (!bukkitStage.getBlocksToDamage().isEmpty()) {
@@ -3860,11 +3825,7 @@ public class BukkitQuester implements Quester {
                     continue;
                 }
                 if (!questData.blocksBroken.isEmpty()) {
-                    final LinkedList<Integer> blockAmounts = new LinkedList<>();
-                    for (final ItemStack m : questData.blocksBroken) {
-                        blockAmounts.add(m.getAmount());
-                    }
-                    questSec.set("blocks-broken-amounts", blockAmounts);
+                    questSec.set("blocks-broken-amounts", questData.blocksBroken);
                 }
                 if (!questData.blocksDamaged.isEmpty()) {
                     final LinkedList<Integer> blockAmounts = new LinkedList<>();

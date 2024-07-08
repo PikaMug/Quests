@@ -176,15 +176,8 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(quest);
                 if (questSec.contains("blocks-broken-amounts")) {
                     final List<Integer> brokenAmounts = questSec.getIntegerList("blocks-broken-amounts");
-                    int index = 0;
-                    for (final int amt : brokenAmounts) {
-                        final ItemStack is = stage.getBlocksToBreak().get(index);
-                        final ItemStack temp = is.clone();
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getBlocksBroken().size() > 0) {
-                            bukkitQuestData.blocksBroken.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < brokenAmounts.size(); i++) {
+                        bukkitQuestData.blocksBroken.set(i, brokenAmounts.get(i));
                     }
                 }
                 if (questSec.contains("blocks-damaged-amounts")) {
