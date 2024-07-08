@@ -54,11 +54,6 @@ public class BukkitItemListener implements Listener {
             final Player player = (Player) event.getWhoClicked();
             if (plugin.canUseQuests(player.getUniqueId())) {
                 final ItemStack craftedItem = getCraftedItem(event);
-                if (BukkitInventoryUtil.getEmptySlots(player)
-                        < craftedItem.getAmount() / craftedItem.getMaxStackSize()) {
-                    event.setCancelled(true);
-                    return;
-                }
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
                 final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -69,6 +64,11 @@ public class BukkitItemListener implements Listener {
                     
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
+                        if (BukkitInventoryUtil.getEmptySlots(player)
+                                < craftedItem.getAmount() / craftedItem.getMaxStackSize()) {
+                            event.setCancelled(true);
+                            return;
+                        }
                         quester.craftItem(quest, craftedItem);
                     }
                     
