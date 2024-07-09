@@ -12,9 +12,12 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitInventoryUtil;
+import me.pikamug.quests.util.BukkitLang;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,6 +69,8 @@ public class BukkitItemListener implements Listener {
                             && quester.getCurrentStage(quest).containsObjective(type)) {
                         if (BukkitInventoryUtil.getEmptySlots(player)
                                 < craftedItem.getAmount() / craftedItem.getMaxStackSize()) {
+                            BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang.get(player,
+                                    "inventoryFull"));
                             event.setCancelled(true);
                             return;
                         }
