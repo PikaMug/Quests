@@ -361,16 +361,16 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
                         ps.setString(3, serializeProgress(entry.getValue().getBlocksBroken()));
-                        ps.setString(4, serializeItemStackProgress(entry.getValue().getBlocksDamaged()));
-                        ps.setString(5, serializeItemStackProgress(entry.getValue().getBlocksPlaced()));
-                        ps.setString(6, serializeItemStackProgress(entry.getValue().getBlocksUsed()));
-                        ps.setString(7, serializeItemStackProgress(entry.getValue().getBlocksCut()));
-                        ps.setString(8, serializeItemStackProgress(entry.getValue().getItemsCrafted()));
-                        ps.setString(9, serializeItemStackProgress(entry.getValue().getItemsSmelted()));
-                        ps.setString(10, serializeItemStackProgress(entry.getValue().getItemsEnchanted()));
-                        ps.setString(11, serializeItemStackProgress(entry.getValue().getItemsBrewed()));
-                        ps.setString(12, serializeItemStackProgress(entry.getValue().getItemsConsumed()));
-                        ps.setString(13, serializeItemStackProgress(entry.getValue().getItemsDelivered()));
+                        ps.setString(4, serializeProgress(entry.getValue().getBlocksDamaged()));
+                        ps.setString(5, serializeProgress(entry.getValue().getBlocksPlaced()));
+                        ps.setString(6, serializeProgress(entry.getValue().getBlocksUsed()));
+                        ps.setString(7, serializeProgress(entry.getValue().getBlocksCut()));
+                        ps.setString(8, serializeProgress(entry.getValue().getItemsCrafted()));
+                        ps.setString(9, serializeProgress(entry.getValue().getItemsSmelted()));
+                        ps.setString(10, serializeProgress(entry.getValue().getItemsEnchanted()));
+                        ps.setString(11, serializeProgress(entry.getValue().getItemsBrewed()));
+                        ps.setString(12, serializeProgress(entry.getValue().getItemsConsumed()));
+                        ps.setString(13, serializeProgress(entry.getValue().getItemsDelivered()));
                         ps.setString(14, serializeProgress(entry.getValue().getNpcsInteracted()));
                         ps.setString(15, serializeProgress(entry.getValue().getNpcsNumKilled()));
                         ps.setString(16, serializeProgress(entry.getValue().getMobNumKilled()));
@@ -463,26 +463,16 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         if (quest != null && quester.getCurrentStage(quest) != null) {
                             final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
                             data.blocksBroken.addAll(deserializeIntProgress(rs.getString("blocks_broken")));
-                            data.blocksDamaged.addAll(deserializeItemStackProgress(rs.getString("blocks_damaged"),
-                                    stage.getBlocksToDamage()));
-                            data.blocksPlaced.addAll(deserializeItemStackProgress(rs.getString("blocks_placed"),
-                                    stage.getBlocksToPlace()));
-                            data.blocksUsed.addAll(deserializeItemStackProgress(rs.getString("blocks_used"),
-                                    stage.getBlocksToUse()));
-                            data.blocksCut.addAll(deserializeItemStackProgress(rs.getString("blocks_cut"),
-                                    stage.getBlocksToCut()));
-                            data.itemsCrafted.addAll(deserializeItemStackProgress(rs.getString("items_crafted"),
-                                    stage.getItemsToCraft()));
-                            data.itemsSmelted.addAll(deserializeItemStackProgress(rs.getString("items_smelted"),
-                                    stage.getItemsToSmelt()));
-                            data.itemsEnchanted.addAll(deserializeItemStackProgress(rs.getString("items_enchanted"),
-                                    stage.getItemsToEnchant()));
-                            data.itemsBrewed.addAll(deserializeItemStackProgress(rs.getString("items_brewed"),
-                                    stage.getItemsToBrew()));
-                            data.itemsConsumed.addAll(deserializeItemStackProgress(rs.getString("items_consumed"),
-                                    stage.getItemsToConsume()));
-                            data.itemsDelivered.addAll(deserializeItemStackProgress(rs.getString("items_delivered"),
-                                    stage.getItemsToDeliver()));
+                            data.blocksDamaged.addAll(deserializeIntProgress(rs.getString("blocks_damaged")));
+                            data.blocksPlaced.addAll(deserializeIntProgress(rs.getString("blocks_placed")));
+                            data.blocksUsed.addAll(deserializeIntProgress(rs.getString("blocks_used")));
+                            data.blocksCut.addAll(deserializeIntProgress(rs.getString("blocks_cut")));
+                            data.itemsCrafted.addAll(deserializeIntProgress(rs.getString("items_crafted")));
+                            data.itemsSmelted.addAll(deserializeIntProgress(rs.getString("items_smelted")));
+                            data.itemsEnchanted.addAll(deserializeIntProgress(rs.getString("items_enchanted")));
+                            data.itemsBrewed.addAll(deserializeIntProgress(rs.getString("items_brewed")));
+                            data.itemsConsumed.addAll(deserializeIntProgress(rs.getString("items_consumed")));
+                            data.itemsDelivered.addAll(deserializeIntProgress(rs.getString("items_delivered")));
                             data.npcsInteracted.addAll(deserializeBooleanProgress(rs.getString("npcs_interacted")));
                             data.npcsNumKilled.addAll(deserializeIntProgress(rs.getString("npcs_killed")));
                             data.mobNumKilled.addAll(deserializeIntProgress(rs.getString("mobs_killed")));

@@ -14,15 +14,14 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +59,6 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     public void close() {
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public Quester loadQuester(final UUID uniqueId) throws IOException, InvalidConfigurationException {
         final FileConfiguration data = new YamlConfiguration();
@@ -182,134 +180,62 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 }
                 if (questSec.contains("blocks-damaged-amounts")) {
                     final List<Integer> damagedAmounts = questSec.getIntegerList("blocks-damaged-amounts");
-                    int index = 0;
-                    for (final int amt : damagedAmounts) {
-                        final ItemStack is = stage.getBlocksToDamage().get(index);
-                        final ItemStack temp = is.clone();
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getBlocksDamaged().size() > 0) {
-                            bukkitQuestData.blocksDamaged.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < damagedAmounts.size(); i++) {
+                        bukkitQuestData.blocksDamaged.set(i, damagedAmounts.get(i));
                     }
                 }
                 if (questSec.contains("blocks-placed-amounts")) {
                     final List<Integer> placedAmounts = questSec.getIntegerList("blocks-placed-amounts");
-                    int index = 0;
-                    for (final int amt : placedAmounts) {
-                        final ItemStack is = stage.getBlocksToPlace().get(index);
-                        final ItemStack temp = is.clone();
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getBlocksPlaced().size() > 0) {
-                            bukkitQuestData.blocksPlaced.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < placedAmounts.size(); i++) {
+                        bukkitQuestData.blocksPlaced.set(i, placedAmounts.get(i));
                     }
                 }
                 if (questSec.contains("blocks-used-amounts")) {
                     final List<Integer> usedAmounts = questSec.getIntegerList("blocks-used-amounts");
-                    int index = 0;
-                    for (final int amt : usedAmounts) {
-                        final ItemStack is = stage.getBlocksToUse().get(index);
-                        final ItemStack temp = is.clone();
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getBlocksUsed().size() > 0) {
-                            bukkitQuestData.blocksUsed.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < usedAmounts.size(); i++) {
+                        bukkitQuestData.blocksUsed.set(i, usedAmounts.get(i));
                     }
                 }
                 if (questSec.contains("blocks-cut-amounts")) {
                     final List<Integer> cutAmounts = questSec.getIntegerList("blocks-cut-amounts");
-                    int index = 0;
-                    for (final int amt : cutAmounts) {
-                        final ItemStack is = stage.getBlocksToCut().get(index);
-                        final ItemStack temp = is.clone();
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getBlocksCut().size() > 0) {
-                            bukkitQuestData.blocksCut.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < cutAmounts.size(); i++) {
+                        bukkitQuestData.blocksCut.set(i, cutAmounts.get(i));
                     }
                 }
                 if (questSec.contains("item-craft-amounts")) {
                     final List<Integer> craftAmounts = questSec.getIntegerList("item-craft-amounts");
-                    int index = 0;
-                    for (final int amt : craftAmounts) {
-                        final ItemStack is = stage.getItemsToCraft().get(index);
-                        final ItemStack temp = new ItemStack(is.clone());
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getItemsCrafted().size() > 0) {
-                            bukkitQuestData.itemsCrafted.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < craftAmounts.size(); i++) {
+                        bukkitQuestData.itemsCrafted.set(i, craftAmounts.get(i));
                     }
                 }
                 if (questSec.contains("item-smelt-amounts")) {
                     final List<Integer> smeltAmounts = questSec.getIntegerList("item-smelt-amounts");
-                    int index = 0;
-                    for (final int amt : smeltAmounts) {
-                        final ItemStack is = stage.getItemsToSmelt().get(index);
-                        final ItemStack temp = new ItemStack(is.clone());
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getItemsSmelted().size() > 0) {
-                            bukkitQuestData.itemsSmelted.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < smeltAmounts.size(); i++) {
+                        bukkitQuestData.itemsSmelted.set(i, smeltAmounts.get(i));
                     }
                 }
                 if (questSec.contains("item-enchant-amounts")) {
                     final List<Integer> enchantAmounts = questSec.getIntegerList("item-enchant-amounts");
-                    int index = 0;
-                    for (final int amt : enchantAmounts) {
-                        final ItemStack is = stage.getItemsToEnchant().get(index);
-                        final ItemStack temp = new ItemStack(is.clone());
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getItemsEnchanted().size() > 0) {
-                            bukkitQuestData.itemsEnchanted.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < enchantAmounts.size(); i++) {
+                        bukkitQuestData.itemsEnchanted.set(i, enchantAmounts.get(i));
                     }
                 }
                 if (questSec.contains("item-brew-amounts")) {
                     final List<Integer> brewAmounts = questSec.getIntegerList("item-brew-amounts");
-                    int index = 0;
-                    for (final int amt : brewAmounts) {
-                        final ItemStack is = stage.getItemsToBrew().get(index);
-                        final ItemStack temp = new ItemStack(is.clone());
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getItemsBrewed().size() > 0) {
-                            bukkitQuestData.itemsBrewed.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < brewAmounts.size(); i++) {
+                        bukkitQuestData.itemsBrewed.set(i, brewAmounts.get(i));
                     }
                 }
                 if (questSec.contains("item-consume-amounts")) {
                     final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
-                    int index = 0;
-                    for (final int amt : consumeAmounts) {
-                        final ItemStack is = stage.getItemsToConsume().get(index);
-                        final ItemStack temp = new ItemStack(is.clone());
-                        temp.setAmount(amt);
-                        if (bukkitQuestData.getItemsConsumed().size() > 0) {
-                            bukkitQuestData.itemsConsumed.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < consumeAmounts.size(); i++) {
+                        bukkitQuestData.itemsConsumed.set(i, consumeAmounts.get(i));
                     }
                 }
-                
                 if (questSec.contains("item-delivery-amounts")) {
                     final List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-                    int index = 0;
-                    for (final int amt : deliveryAmounts) {
-                        final ItemStack is = stage.getItemsToDeliver().get(index);
-                        final ItemStack temp = new ItemStack(is.getType(), amt, is.getDurability());
-                        temp.addUnsafeEnchantments(is.getEnchantments());
-                        temp.setItemMeta(is.getItemMeta());
-                        if (bukkitQuestData.getItemsDelivered().size() > 0) {
-                            bukkitQuestData.itemsDelivered.set(index, temp);
-                        }
-                        index++;
+                    for (int i = 0; i < deliveryAmounts.size(); i++) {
+                        bukkitQuestData.itemsDelivered.set(i, deliveryAmounts.get(i));
                     }
                 }
                 if (questSec.contains("has-talked-to")) {
@@ -320,7 +246,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                     final List<Integer> npcAmounts = questSec.getIntegerList("npc-killed-amounts");
                     int index = 0;
                     for (final int amt : npcAmounts) {
-                        if (bukkitQuestData.getNpcsNumKilled().size() > 0) {
+                        if (!bukkitQuestData.getNpcsNumKilled().isEmpty()) {
                             bukkitQuestData.npcsNumKilled.set(index, amt);
                         }
                         index++;
@@ -330,7 +256,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                     final List<Integer> npcAmounts = questSec.getIntegerList("citizen-amounts-killed");
                     int index = 0;
                     for (final int amt : npcAmounts) {
-                        if (bukkitQuestData.getNpcsNumKilled().size() > 0) {
+                        if (!bukkitQuestData.getNpcsNumKilled().isEmpty()) {
                             bukkitQuestData.npcsNumKilled.set(index, amt);
                         }
                         index++;
@@ -349,7 +275,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                     final List<Integer> mobAmounts = questSec.getIntegerList("mobs-killed-amounts");
                     int index = 0;
                     for (final int amt : mobAmounts) {
-                        if (quester.getQuestDataOrDefault(quest).getMobNumKilled().size() > 0) {
+                        if (!quester.getQuestDataOrDefault(quest).getMobNumKilled().isEmpty()) {
                             bukkitQuestData.mobNumKilled.set(index, amt);
                         }
                         index++;

@@ -102,7 +102,12 @@ public class BukkitBlockListener implements Listener {
                     if (quest.getOptions().canIgnoreBlockReplace()) {
                         // Ignore blocks broken once replaced (self)
                         if (currentStage.containsObjective(placeType)) {
-                            for (final ItemStack is : questData.blocksPlaced) {
+                            for (int i = 0; i < questData.blocksPlaced.size(); i++) {
+                                final int progress = questData.blocksPlaced.get(i) - 1;
+                                if (progress < 0) {
+                                    break;
+                                }
+                                final ItemStack is = currentStage.getBlocksToBreak().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                     ItemStack goal = new ItemStack(is.getType(), 64);
                                     for (final ItemStack stack : currentStage.getBlocksToPlace()) {
@@ -116,14 +121,11 @@ public class BukkitBlockListener implements Listener {
                                             new BukkitObjective(placeType, null, is.getAmount(), goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
-                                    final int index = questData.blocksPlaced.indexOf(is);
-                                    final int newAmount = is.getAmount() - 1;
-                                    is.setAmount(newAmount);
-                                    questData.blocksPlaced.set(index, is);
+                                    questData.blocksPlaced.set(i, progress);
 
                                     final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                             = new BukkitQuesterPostUpdateObjectiveEvent(quester, quest,
-                                            new BukkitObjective(placeType, null, newAmount, goal.getAmount()));
+                                            new BukkitObjective(placeType, null, progress, goal.getAmount()));
                                     plugin.getServer().getPluginManager().callEvent(postEvent);
                                 }
                             }
@@ -133,7 +135,12 @@ public class BukkitBlockListener implements Listener {
                                 (final Quester q, final Quest cq) -> {
                             if (!dispatchedPlaceQuestIDs.contains(cq.getId())) {
                                 final BukkitQuestProgress qQuestData = (BukkitQuestProgress) q.getQuestDataOrDefault(cq);
-                                for (final ItemStack is : qQuestData.blocksPlaced) {
+                                for (int i = 0; i < qQuestData.blocksPlaced.size(); i++) {
+                                    final int progress = qQuestData.blocksPlaced.get(i) - 1;
+                                    if (progress < 0) {
+                                        break;
+                                    }
+                                    final ItemStack is = currentStage.getBlocksToBreak().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                         ItemStack goal = new ItemStack(is.getType(), 64);
                                         for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
@@ -147,14 +154,11 @@ public class BukkitBlockListener implements Listener {
                                                 new BukkitObjective(placeType, null, is.getAmount(), goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-                                        final int index = qQuestData.blocksPlaced.indexOf(is);
-                                        final int newAmount = is.getAmount() - 1;
-                                        is.setAmount(newAmount);
-                                        qQuestData.blocksPlaced.set(index, is);
+                                        qQuestData.blocksPlaced.set(i, progress);
 
                                         final BukkitQuesterPostUpdateObjectiveEvent postEvent
                                                 = new BukkitQuesterPostUpdateObjectiveEvent((BukkitQuester) q, cq,
-                                                new BukkitObjective(placeType, null, newAmount, goal.getAmount()));
+                                                new BukkitObjective(placeType, null, progress, goal.getAmount()));
                                         plugin.getServer().getPluginManager().callEvent(postEvent);
                                     }
                                 }

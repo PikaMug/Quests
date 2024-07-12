@@ -10,8 +10,6 @@
 
 package me.pikamug.quests.player;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -25,7 +23,7 @@ public class BukkitQuestProgress implements QuestProgress {
     public BukkitQuestProgress(final Quester quester) {
         this.quester = quester;
     }
-    // TODO increase serial id
+
     public LinkedList<Integer> blocksBroken = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = -6071822509475270169L;
@@ -93,76 +91,39 @@ public class BukkitQuestProgress implements QuestProgress {
         }
     };
 
-    public LinkedList<ItemStack> blocksDamaged = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> blocksDamaged = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = -4211891633163257743L;
+        private static final long serialVersionUID = -4211891633163257744L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
-        }
-    };
-    
-    public LinkedList<ItemStack> blocksPlaced = new LinkedList<ItemStack>() {
-
-        private static final long serialVersionUID = 4226366446050903433L;
-
-        @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
+            return b;
         }
 
         @Override
@@ -173,40 +134,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> blocksUsed = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> blocksPlaced = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = -9057864863810306890L;
+        private static final long serialVersionUID = 4226366446050903434L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -217,40 +201,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> blocksCut = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> blocksUsed = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = -8204359763290995080L;
+        private static final long serialVersionUID = -9057864863810306891L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -261,40 +268,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> itemsCrafted = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> blocksCut = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = 2774356294049526105L;
+        private static final long serialVersionUID = -8204359763290995081L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -305,40 +335,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> itemsSmelted = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> itemsCrafted = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = 2774356235274526106L;
+        private static final long serialVersionUID = 2774356294049526106L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -349,84 +402,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> itemsEnchanted = new LinkedList<ItemStack>() {
-
-        private static final long serialVersionUID = 416869352279205852L;
-
-        @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return data;
-        }
-
-        @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return i;
-        }
-    };
-    
-    public LinkedList<ItemStack> itemsBrewed = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> itemsSmelted = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = 2774356235274526107L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -437,40 +469,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> itemsConsumed = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> itemsEnchanted = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = -5475073316902757883L;
-        
+        private static final long serialVersionUID = 416869352279205853L;
+
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -481,40 +536,63 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
     
-    public LinkedList<ItemStack> itemsDelivered = new LinkedList<ItemStack>() {
+    public LinkedList<Integer> itemsBrewed = new LinkedList<Integer>() {
 
-        private static final long serialVersionUID = 2712497347022734646L;
+        private static final long serialVersionUID = 2774356235274526108L;
 
         @Override
-        public ItemStack set(final int index, final ItemStack key) {
-            final ItemStack data = super.set(index, key);
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
+            return b;
         }
 
         @Override
-        public boolean add(final ItemStack key) {
-            final boolean data = super.add(key);
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return data;
         }
 
         @Override
-        public boolean remove(final Object key) {
-            final boolean i = super.remove(key);
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
         }
 
         @Override
@@ -525,11 +603,161 @@ public class BukkitQuestProgress implements QuestProgress {
         }
 
         @Override
-        public boolean addAll(final Collection<? extends ItemStack> m) {
-            final boolean i = super.addAll(m);
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
             if (doJournalUpdate)
                 quester.updateJournal();
-            return i;
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
+    
+    public LinkedList<Integer> itemsConsumed = new LinkedList<Integer>() {
+
+        private static final long serialVersionUID = -5475073316902757884L;
+
+        @Override
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+    };
+    
+    public LinkedList<Integer> itemsDelivered = new LinkedList<Integer>() {
+
+        private static final long serialVersionUID = 2712497347022734647L;
+
+        @Override
+        public boolean add(final Integer e) {
+            final boolean b = super.add(e);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void add(final int index, final Integer element) {
+            super.add(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends Integer> c) {
+            final boolean b = super.addAll(index, c);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            if (doJournalUpdate)
+                quester.updateJournal();
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            final boolean b = super.remove(o);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return b;
+        }
+
+        @Override
+        public Integer remove(final int index) {
+            final Integer s = super.remove(index);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
+        }
+
+        @Override
+        public Integer set(final int index, final Integer element) {
+            final Integer s = super.set(index, element);
+            if (doJournalUpdate)
+                quester.updateJournal();
+            return s;
         }
     };
 
@@ -1092,11 +1320,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getBlocksDamaged() {
+    public LinkedList<Integer> getBlocksDamaged() {
         return blocksDamaged;
     }
 
-    public void setBlocksDamaged(final LinkedList<ItemStack> blocksDamaged) {
+    public void setBlocksDamaged(final LinkedList<Integer> blocksDamaged) {
         this.blocksDamaged = blocksDamaged;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1104,11 +1332,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getBlocksPlaced() {
+    public LinkedList<Integer> getBlocksPlaced() {
         return blocksPlaced;
     }
 
-    public void setBlocksPlaced(final LinkedList<ItemStack> blocksPlaced) {
+    public void setBlocksPlaced(final LinkedList<Integer> blocksPlaced) {
         this.blocksPlaced = blocksPlaced;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1116,11 +1344,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getBlocksUsed() {
+    public LinkedList<Integer> getBlocksUsed() {
         return blocksUsed;
     }
 
-    public void setBlocksUsed(final LinkedList<ItemStack> blocksUsed) {
+    public void setBlocksUsed(final LinkedList<Integer> blocksUsed) {
         this.blocksUsed = blocksUsed;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1128,11 +1356,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getBlocksCut() {
+    public LinkedList<Integer> getBlocksCut() {
         return blocksCut;
     }
 
-    public void setBlocksCut(final LinkedList<ItemStack> blocksCut) {
+    public void setBlocksCut(final LinkedList<Integer> blocksCut) {
         this.blocksCut = blocksCut;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1140,11 +1368,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsCrafted() {
+    public LinkedList<Integer> getItemsCrafted() {
         return itemsCrafted;
     }
 
-    public void setItemsCrafted(final LinkedList<ItemStack> itemsCrafted) {
+    public void setItemsCrafted(final LinkedList<Integer> itemsCrafted) {
         this.itemsCrafted = itemsCrafted;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1152,11 +1380,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsSmelted() {
+    public LinkedList<Integer> getItemsSmelted() {
         return itemsSmelted;
     }
 
-    public void setItemsSmelted(final LinkedList<ItemStack> itemsSmelted) {
+    public void setItemsSmelted(final LinkedList<Integer> itemsSmelted) {
         this.itemsSmelted = itemsSmelted;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1164,11 +1392,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsEnchanted() {
+    public LinkedList<Integer> getItemsEnchanted() {
         return itemsEnchanted;
     }
 
-    public void setItemsEnchanted(final LinkedList<ItemStack> itemsEnchanted) {
+    public void setItemsEnchanted(final LinkedList<Integer> itemsEnchanted) {
         this.itemsEnchanted = itemsEnchanted;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1176,11 +1404,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsBrewed() {
+    public LinkedList<Integer> getItemsBrewed() {
         return itemsBrewed;
     }
 
-    public void setItemsBrewed(final LinkedList<ItemStack> itemsBrewed) {
+    public void setItemsBrewed(final LinkedList<Integer> itemsBrewed) {
         this.itemsBrewed = itemsBrewed;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1188,11 +1416,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsConsumed() {
+    public LinkedList<Integer> getItemsConsumed() {
         return itemsConsumed;
     }
 
-    public void setItemsConsumed(final LinkedList<ItemStack> itemsConsumed) {
+    public void setItemsConsumed(final LinkedList<Integer> itemsConsumed) {
         this.itemsConsumed = itemsConsumed;
         if (doJournalUpdate) {
             quester.updateJournal();
@@ -1200,11 +1428,11 @@ public class BukkitQuestProgress implements QuestProgress {
     }
 
     @Override
-    public LinkedList<ItemStack> getItemsDelivered() {
+    public LinkedList<Integer> getItemsDelivered() {
         return itemsDelivered;
     }
 
-    public void setItemsDelivered(final LinkedList<ItemStack> itemsDelivered) {
+    public void setItemsDelivered(final LinkedList<Integer> itemsDelivered) {
         this.itemsDelivered = itemsDelivered;
         if (doJournalUpdate) {
             quester.updateJournal();

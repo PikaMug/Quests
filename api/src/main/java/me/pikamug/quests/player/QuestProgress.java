@@ -13,27 +13,27 @@ package me.pikamug.quests.player;
 import java.util.LinkedList;
 
 public interface QuestProgress {
-    LinkedList<?> getBlocksBroken();
+    LinkedList<Integer> getBlocksBroken();
 
-    LinkedList<?> getBlocksDamaged();
+    LinkedList<Integer> getBlocksDamaged();
 
-    LinkedList<?> getBlocksPlaced();
+    LinkedList<Integer> getBlocksPlaced();
 
-    LinkedList<?> getBlocksUsed();
+    LinkedList<Integer> getBlocksUsed();
 
-    LinkedList<?> getBlocksCut();
+    LinkedList<Integer> getBlocksCut();
 
-    LinkedList<?> getItemsCrafted();
+    LinkedList<Integer> getItemsCrafted();
 
-    LinkedList<?> getItemsSmelted();
+    LinkedList<Integer> getItemsSmelted();
 
-    LinkedList<?> getItemsEnchanted();
+    LinkedList<Integer> getItemsEnchanted();
 
-    LinkedList<?> getItemsBrewed();
+    LinkedList<Integer> getItemsBrewed();
 
-    LinkedList<?> getItemsConsumed();
+    LinkedList<Integer> getItemsConsumed();
 
-    LinkedList<?> getItemsDelivered();
+    LinkedList<Integer> getItemsDelivered();
 
     LinkedList<Boolean> getNpcsInteracted();
 
