@@ -174,69 +174,47 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(quest);
                 if (questSec.contains("blocks-broken-amounts")) {
                     final List<Integer> brokenAmounts = questSec.getIntegerList("blocks-broken-amounts");
-                    for (int i = 0; i < brokenAmounts.size(); i++) {
-                        bukkitQuestData.blocksBroken.set(i, brokenAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setBlocksBroken(new LinkedList<>(brokenAmounts));
                 }
                 if (questSec.contains("blocks-damaged-amounts")) {
                     final List<Integer> damagedAmounts = questSec.getIntegerList("blocks-damaged-amounts");
-                    for (int i = 0; i < damagedAmounts.size(); i++) {
-                        bukkitQuestData.blocksDamaged.set(i, damagedAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setBlocksDamaged(new LinkedList<>(damagedAmounts));
                 }
                 if (questSec.contains("blocks-placed-amounts")) {
                     final List<Integer> placedAmounts = questSec.getIntegerList("blocks-placed-amounts");
-                    for (int i = 0; i < placedAmounts.size(); i++) {
-                        bukkitQuestData.blocksPlaced.set(i, placedAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setBlocksPlaced(new LinkedList<>(placedAmounts));
                 }
                 if (questSec.contains("blocks-used-amounts")) {
                     final List<Integer> usedAmounts = questSec.getIntegerList("blocks-used-amounts");
-                    for (int i = 0; i < usedAmounts.size(); i++) {
-                        bukkitQuestData.blocksUsed.set(i, usedAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setBlocksUsed(new LinkedList<>(usedAmounts));
                 }
                 if (questSec.contains("blocks-cut-amounts")) {
                     final List<Integer> cutAmounts = questSec.getIntegerList("blocks-cut-amounts");
-                    for (int i = 0; i < cutAmounts.size(); i++) {
-                        bukkitQuestData.blocksCut.set(i, cutAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setBlocksCut(new LinkedList<>(cutAmounts));
                 }
                 if (questSec.contains("item-craft-amounts")) {
                     final List<Integer> craftAmounts = questSec.getIntegerList("item-craft-amounts");
-                    for (int i = 0; i < craftAmounts.size(); i++) {
-                        bukkitQuestData.itemsCrafted.set(i, craftAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsCrafted(new LinkedList<>(craftAmounts));
                 }
                 if (questSec.contains("item-smelt-amounts")) {
                     final List<Integer> smeltAmounts = questSec.getIntegerList("item-smelt-amounts");
-                    for (int i = 0; i < smeltAmounts.size(); i++) {
-                        bukkitQuestData.itemsSmelted.set(i, smeltAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsSmelted(new LinkedList<>(smeltAmounts));
                 }
                 if (questSec.contains("item-enchant-amounts")) {
                     final List<Integer> enchantAmounts = questSec.getIntegerList("item-enchant-amounts");
-                    for (int i = 0; i < enchantAmounts.size(); i++) {
-                        bukkitQuestData.itemsEnchanted.set(i, enchantAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsEnchanted(new LinkedList<>(enchantAmounts));
                 }
                 if (questSec.contains("item-brew-amounts")) {
                     final List<Integer> brewAmounts = questSec.getIntegerList("item-brew-amounts");
-                    for (int i = 0; i < brewAmounts.size(); i++) {
-                        bukkitQuestData.itemsBrewed.set(i, brewAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsBrewed(new LinkedList<>(brewAmounts));
                 }
                 if (questSec.contains("item-consume-amounts")) {
                     final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
-                    for (int i = 0; i < consumeAmounts.size(); i++) {
-                        bukkitQuestData.itemsConsumed.set(i, consumeAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsConsumed(new LinkedList<>(consumeAmounts));
                 }
                 if (questSec.contains("item-delivery-amounts")) {
                     final List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-                    for (int i = 0; i < deliveryAmounts.size(); i++) {
-                        bukkitQuestData.itemsDelivered.set(i, deliveryAmounts.get(i));
-                    }
+                    quester.getQuestDataOrDefault(quest).setItemsDelivered(new LinkedList<>(deliveryAmounts));
                 }
                 if (questSec.contains("has-talked-to")) {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
@@ -244,23 +222,11 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 }
                 if (questSec.contains("npc-killed-amounts")) {
                     final List<Integer> npcAmounts = questSec.getIntegerList("npc-killed-amounts");
-                    int index = 0;
-                    for (final int amt : npcAmounts) {
-                        if (!bukkitQuestData.getNpcsNumKilled().isEmpty()) {
-                            bukkitQuestData.npcsNumKilled.set(index, amt);
-                        }
-                        index++;
-                    }
+                    quester.getQuestDataOrDefault(quest).setNpcsNumKilled(new LinkedList<>(npcAmounts));
                 } else if (questSec.contains("citizen-amounts-killed")) {
                     // Legacy
                     final List<Integer> npcAmounts = questSec.getIntegerList("citizen-amounts-killed");
-                    int index = 0;
-                    for (final int amt : npcAmounts) {
-                        if (!bukkitQuestData.getNpcsNumKilled().isEmpty()) {
-                            bukkitQuestData.npcsNumKilled.set(index, amt);
-                        }
-                        index++;
-                    }
+                    quester.getQuestDataOrDefault(quest).setNpcsNumKilled(new LinkedList<>(npcAmounts));
                 }
                 if (questSec.contains("cows-milked")) {
                     quester.getQuestDataOrDefault(quest).setCowsMilked(questSec.getInt("cows-milked"));
@@ -273,13 +239,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 }
                 if (questSec.contains("mobs-killed-amounts")) {
                     final List<Integer> mobAmounts = questSec.getIntegerList("mobs-killed-amounts");
-                    int index = 0;
-                    for (final int amt : mobAmounts) {
-                        if (!quester.getQuestDataOrDefault(quest).getMobNumKilled().isEmpty()) {
-                            bukkitQuestData.mobNumKilled.set(index, amt);
-                        }
-                        index++;
-                    }
+                    quester.getQuestDataOrDefault(quest).setMobNumKilled(new LinkedList<>(mobAmounts));
                 }
                 if (questSec.contains("has-reached-location")) {
                     final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");

@@ -2868,78 +2868,61 @@ public class BukkitQuester implements Quester {
      * @param location The location being reached
      */
     public void reachLocation(final Quest quest, final Location location) {
-        // TODO - redo this method
         final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
         if (bukkitQuestData == null || bukkitQuestData.locationsReached == null || getCurrentStage(quest) == null
                 || getCurrentStage(quest).getLocationsToReach() == null) {
             return;
         }
 
-        int locationsReached = 0;
-        for (final Boolean b : bukkitQuestData.locationsReached) {
-            if (b) {
-                locationsReached++;
+        final LinkedList<Location> locationsToReach = ((BukkitStage) getCurrentStage(quest)).getLocationsToReach();
+        final int goal = locationsToReach.size();
+        for (int i = 0; i < goal; i++) {
+            final Location toReach = locationsToReach.get(i);
+            if (location.getWorld() == null || toReach.getWorld() == null
+                    || !location.getWorld().getName().equals(toReach.getWorld().getName())) {
+                continue;
             }
-        }
-        final int locationsToReach = getCurrentStage(quest).getLocationsToReach().size();
-
-        int index = 0;
-        try {
-            for (final Location toReach : ((BukkitStage) getCurrentStage(quest)).getLocationsToReach()) {
-                if (location.getWorld() == null || toReach.getWorld() == null) {
-                    index++;
-                    continue;
-                }
-                if (!location.getWorld().getName().equals(toReach.getWorld().getName())) {
-                    index++;
-                    continue;
-                }
-                final double radius = getCurrentStage(quest).getRadiiToReachWithin().get(index);
-                if (toReach.distanceSquared(location) <= radius * radius) {
-                    if (!bukkitQuestData.locationsReached.get(index)) {
-                        final ObjectiveType type = ObjectiveType.REACH_LOCATION;
-                        final Set<String> dispatchedQuestIDs = new HashSet<>();
-                        final BukkitQuesterPreUpdateObjectiveEvent preEvent
-                                = new BukkitQuesterPreUpdateObjectiveEvent(this, quest,
-                                new BukkitObjective(type, null, locationsReached, locationsToReach));
-                        plugin.getServer().getPluginManager().callEvent(preEvent);
-
-                        bukkitQuestData.locationsReached.set(index, true);
-                        finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                                new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null, null);
-
-                        int finalIndex = index;
-                        dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
-                                (final Quester q, final Quest cq) -> {
-                                    if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                        ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).locationsReached
-                                                .set(finalIndex, true);
-                                        if (q.testComplete(quest)) {
-                                            quest.nextStage(q, false);
-                                        }
-                                    }
-                                    return null;
-                                }));
-                        
-                        final BukkitQuesterPostUpdateObjectiveEvent postEvent
-                                = new BukkitQuesterPostUpdateObjectiveEvent(this, quest,
-                                new BukkitObjective(type, null, locationsReached + 1, locationsToReach));
-                        plugin.getServer().getPluginManager().callEvent(postEvent);
-                        
-                        break;
+            final double radius = getCurrentStage(quest).getRadiiToReachWithin().get(i);
+            if (toReach.distanceSquared(location) <= radius * radius) {
+                if (!bukkitQuestData.locationsReached.get(i)) {
+                    int progress = 0;
+                    for (final Boolean b : bukkitQuestData.locationsReached) {
+                        if (b) {
+                            progress++;
+                        }
                     }
+                    final ObjectiveType type = ObjectiveType.REACH_LOCATION;
+                    final Set<String> dispatchedQuestIDs = new HashSet<>();
+                    final BukkitQuesterPreUpdateObjectiveEvent preEvent
+                            = new BukkitQuesterPreUpdateObjectiveEvent(this, quest,
+                            new BukkitObjective(type, null, progress, goal));
+                    plugin.getServer().getPluginManager().callEvent(preEvent);
+
+                    bukkitQuestData.locationsReached.set(i, true);
+                    finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
+                            new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null, null);
+
+                    int finalIndex = i;
+                    dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
+                            (final Quester q, final Quest cq) -> {
+                                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).locationsReached
+                                            .set(finalIndex, true);
+                                    if (q.testComplete(quest)) {
+                                        quest.nextStage(q, false);
+                                    }
+                                }
+                                return null;
+                            }));
+
+                    final BukkitQuesterPostUpdateObjectiveEvent postEvent
+                            = new BukkitQuesterPostUpdateObjectiveEvent(this, quest,
+                            new BukkitObjective(type, null, progress + 1, goal));
+                    plugin.getServer().getPluginManager().callEvent(postEvent);
+
+                    break;
                 }
-                index++;
             }
-        } catch (final Exception e) {
-            plugin.getLogger().severe("An error has occurred with Quests. Please report on Github with info below");
-            plugin.getLogger().warning("quest = " + quest.getId());
-            plugin.getLogger().warning("index = " + index);
-            plugin.getLogger().warning("location = " + location.toString());
-            plugin.getLogger().warning("locationsToReach = " + getCurrentStage(quest).getLocationsToReach().size());
-            plugin.getLogger().warning("locationsReached = " + bukkitQuestData.locationsReached.size());
-            plugin.getLogger().warning("hasReached = " + bukkitQuestData.locationsReached.size());
-            e.printStackTrace();
         }
     }
 

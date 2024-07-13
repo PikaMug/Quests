@@ -15,25 +15,47 @@ import java.util.LinkedList;
 public interface QuestProgress {
     LinkedList<Integer> getBlocksBroken();
 
+    void setBlocksBroken(final LinkedList<Integer> blocksBroken);
+
     LinkedList<Integer> getBlocksDamaged();
+
+    void setBlocksDamaged(final LinkedList<Integer> blocksDamaged);
 
     LinkedList<Integer> getBlocksPlaced();
 
+    void setBlocksPlaced(final LinkedList<Integer> blocksPlaced);
+
     LinkedList<Integer> getBlocksUsed();
+
+    void setBlocksUsed(final LinkedList<Integer> blocksUsed);
 
     LinkedList<Integer> getBlocksCut();
 
+    void setBlocksCut(final LinkedList<Integer> blocksCut);
+
     LinkedList<Integer> getItemsCrafted();
+
+    void setItemsCrafted(final LinkedList<Integer> itemsCrafted);
 
     LinkedList<Integer> getItemsSmelted();
 
+    void setItemsSmelted(final LinkedList<Integer> itemsSmelted);
+
     LinkedList<Integer> getItemsEnchanted();
+
+    void setItemsEnchanted(final LinkedList<Integer> itemsEnchanted);
 
     LinkedList<Integer> getItemsBrewed();
 
+    void setItemsBrewed(final LinkedList<Integer> itemsBrewed);
+
     LinkedList<Integer> getItemsConsumed();
 
+    void setItemsConsumed(final LinkedList<Integer> itemsConsumed);
+
     LinkedList<Integer> getItemsDelivered();
+
+    void setItemsDelivered(final LinkedList<Integer> itemsDelivered);
 
     LinkedList<Boolean> getNpcsInteracted();
 
