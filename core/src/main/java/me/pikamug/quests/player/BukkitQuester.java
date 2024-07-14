@@ -3476,17 +3476,17 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getBlocksToCut().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getBlocksToCut()) {
-                data.blocksUsed.add(0);
+                data.blocksCut.add(0);
             }
         }
         if (!bukkitStage.getItemsToCraft().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getItemsToCraft()) {
-                data.blocksUsed.add(0);
+                data.itemsCrafted.add(0);
             }
         }
         if (!bukkitStage.getItemsToSmelt().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getItemsToSmelt()) {
-                data.blocksUsed.add(0);
+                data.itemsSmelted.add(0);
             }
         }
         if (!bukkitStage.getItemsToEnchant().isEmpty()) {
@@ -3496,17 +3496,17 @@ public class BukkitQuester implements Quester {
         }
         if (!bukkitStage.getItemsToBrew().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getItemsToBrew()) {
-                data.blocksUsed.add(0);
+                data.itemsBrewed.add(0);
             }
         }
         if (!bukkitStage.getItemsToConsume().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getItemsToConsume()) {
-                data.blocksUsed.add(0);
+                data.itemsConsumed.add(0);
             }
         }
         if (!bukkitStage.getItemsToDeliver().isEmpty()) {
             for (final ItemStack ignored : bukkitStage.getItemsToDeliver()) {
-                data.blocksUsed.add(0);
+                data.itemsDelivered.add(0);
             }
         }
         if (!quest.getStage(stage).getNpcsToInteract().isEmpty()) {

@@ -62,7 +62,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     @Override
     public Quester loadQuester(final UUID uniqueId) throws IOException, InvalidConfigurationException {
         final FileConfiguration data = new YamlConfiguration();
-        Quester quester = plugin.getQuester(uniqueId);
+        BukkitQuester quester = plugin.getQuester(uniqueId);
         if (quester != null) {
             quester.hardClear();
         } else {
@@ -154,6 +154,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
             if (dataSec == null || dataSec.getKeys(false).isEmpty()) {
                 return null;
             }
+            final ConcurrentHashMap<Quest, BukkitQuestProgress> questProgress = new ConcurrentHashMap<>();
             for (final String key : dataSec.getKeys(false)) {
                 final ConfigurationSection questSec = dataSec.getConfigurationSection(key);
                 final Quest quest = plugin.getQuestById(key) != null ? plugin.getQuestById(key) : plugin.getQuest(key);
@@ -264,7 +265,9 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 if (questSec.contains("stage-delay")) {
                     quester.getQuestDataOrDefault(quest).setDelayTimeLeft(questSec.getLong("stage-delay"));
                 }
+                questProgress.put(quest, bukkitQuestData);
             }
+            quester.setQuestProgress(questProgress);
         }
         return quester;
     }
