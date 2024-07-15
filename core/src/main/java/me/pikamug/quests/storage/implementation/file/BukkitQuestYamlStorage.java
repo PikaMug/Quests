@@ -788,21 +788,21 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
     @SuppressWarnings({ "unchecked", "unused"})
     private void loadQuestStages(final Quest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, ActionFormatException, ConditionFormatException {
-        final ConfigurationSection questStages = config.getConfigurationSection("quests." + questKey
+        final ConfigurationSection ordered = config.getConfigurationSection("quests." + questKey
                 + ".stages.ordered");
-        if (questStages == null) {
+        if (ordered == null) {
             plugin.getLogger().severe(ChatColor.RED + questKey + " must have at least one stage!");
             return;
         }
-        for (final String stage : questStages.getKeys(false)) {
+        for (final String stageKey : ordered.getKeys(false)) {
             final int stageNum;
             try {
-                stageNum = Integer.parseInt(stage);
+                stageNum = Integer.parseInt(stageKey);
             } catch (final NumberFormatException e) {
-                plugin.getLogger().severe("Stage key " + stage + "must be a number!");
+                plugin.getLogger().severe("Stage key " + stageKey + "must be a number!");
                 continue;
             }
-            final BukkitStage oStage = new BukkitStage();
+            final BukkitStage bukkitStage = new BukkitStage();
             List<String> breakNames = new LinkedList<>();
             List<Integer> breakAmounts = new LinkedList<>();
             List<Short> breakDurability = new LinkedList<>();
@@ -837,38 +837,37 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             final List<String> npcUuidsToKill;
             final List<Integer> npcIdsToKill;
             final List<Integer> npcAmountsToKill;
-            final ConfigurationSection ordered
-                    = config.getConfigurationSection("quests." + questKey + ".stages.ordered." + stageNum);
-            if (ordered == null || ordered.getKeys(false).isEmpty()) {
+            final ConfigurationSection obj = config.getConfigurationSection(ordered.getCurrentPath() + "." + stageNum);
+            if (obj == null || obj.getKeys(false).isEmpty()) {
                 throw new StageFormatException("Stage cannot be empty", quest, stageNum);
             }
+            final String path = obj.getCurrentPath();
             // Legacy Denizen script load
-            if (config.contains(ordered + ".script-to-run")) {
-                if (plugin.getDependencies().getDenizenApi().containsScript(config.getString(ordered
-                        + ".script-to-run"))) {
-                    oStage.setScript(config.getString(ordered + ".script-to-run"));
+            if (config.contains(path + ".script-to-run")) {
+                if (plugin.getDependencies().getDenizenApi().containsScript(config.getString(path + ".script-to-run"))) {
+                    bukkitStage.setScript(config.getString(path + ".script-to-run"));
                 } else {
                     throw new StageFormatException("'script-to-run' is not a valid Denizen script", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".break-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".break-block-names"), String.class)) {
-                    breakNames = config.getStringList(ordered + ".break-block-names");
+            if (config.contains(path + ".break-block-names")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".break-block-names"), String.class)) {
+                    breakNames = config.getStringList(path + ".break-block-names");
                 } else {
                     throw new StageFormatException("'break-block-names' is not a list of strings", quest, stageNum);
                 }
-                if (config.contains(ordered + ".break-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".break-block-amounts"), Integer.class)) {
-                        breakAmounts = config.getIntegerList(ordered + ".break-block-amounts");
+                if (config.contains(path + ".break-block-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".break-block-amounts"), Integer.class)) {
+                        breakAmounts = config.getIntegerList(path + ".break-block-amounts");
                     } else {
                         throw new StageFormatException("'break-block-amounts' is not a list of numbers", quest, stageNum);
                     }
                 } else {
                     throw new StageFormatException("'break-block-amounts' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".break-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".break-block-durability"), Integer.class)) {
-                        breakDurability = config.getShortList(ordered + ".break-block-durability");
+                if (config.contains(path + ".break-block-durability")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".break-block-durability"), Integer.class)) {
+                        breakDurability = config.getShortList(path + ".break-block-durability");
                     } else {
                         throw new StageFormatException("'break-block-durability' is not a list of numbers", quest,
                                 stageNum);
@@ -887,20 +886,20 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     is = BukkitItemUtil.processItemStack(name, breakAmounts.get(i), (short) 0);
                 }
                 if (Material.matchMaterial(name) != null) {
-                    oStage.addBlockToBreak(is);
+                    bukkitStage.addBlockToBreak(is);
                 } else {
                     throw new StageFormatException("'break-block-names' has invalid item name " + name, quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".damage-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".damage-block-names"), String.class)) {
-                    damageNames = config.getStringList(ordered + ".damage-block-names");
+            if (config.contains(path + ".damage-block-names")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".damage-block-names"), String.class)) {
+                    damageNames = config.getStringList(path + ".damage-block-names");
                 } else {
                     throw new StageFormatException("'damage-block-names' is not a list of strings", quest, stageNum);
                 }
-                if (config.contains(ordered + ".damage-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".damage-block-amounts"), Integer.class)) {
-                        damageAmounts = config.getIntegerList(ordered + ".damage-block-amounts");
+                if (config.contains(path + ".damage-block-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".damage-block-amounts"), Integer.class)) {
+                        damageAmounts = config.getIntegerList(path + ".damage-block-amounts");
                     } else {
                         throw new StageFormatException("'damage-block-amounts' is not a list of numbers", quest,
                                 stageNum);
@@ -908,9 +907,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'damage-block-amounts' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".damage-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".damage-block-durability"), Integer.class)) {
-                        damageDurability = config.getShortList(ordered + ".damage-block-durability");
+                if (config.contains(path + ".damage-block-durability")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".damage-block-durability"), Integer.class)) {
+                        damageDurability = config.getShortList(path + ".damage-block-durability");
                     } else {
                         throw new StageFormatException("'damage-block-durability' is not a list of numbers", quest,
                                 stageNum);
@@ -923,36 +922,35 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 final String name = damageNames.get(i);
                 final ItemStack is;
                 if (i < damageDurability.size() && damageDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i),
-                            damageDurability.get(i));
+                    is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i), damageDurability.get(i));
                 } else {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i), (short) 0);
                 }
                 if (Material.matchMaterial(name) != null) {
-                    oStage.addBlockToDamage(is);
+                    bukkitStage.addBlockToDamage(is);
                 } else {
                     throw new StageFormatException("'damage-block-names' has invalid item name " + name, quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".place-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".place-block-names"), String.class)) {
-                    placeNames = config.getStringList(ordered + ".place-block-names");
+            if (config.contains(path + ".place-block-names")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".place-block-names"), String.class)) {
+                    placeNames = config.getStringList(path + ".place-block-names");
                 } else {
                     throw new StageFormatException("'place-block-names' is not a list of strings", quest, stageNum);
                 }
-                if (config.contains(ordered + ".place-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".place-block-amounts"), Integer.class)) {
-                        placeAmounts = config.getIntegerList(ordered + ".place-block-amounts");
+                if (config.contains(path + ".place-block-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".place-block-amounts"), Integer.class)) {
+                        placeAmounts = config.getIntegerList(path + ".place-block-amounts");
                     } else {
                         throw new StageFormatException("'place-block-amounts' is not a list of numbers", quest, stageNum);
                     }
                 } else {
                     throw new StageFormatException("'place-block-amounts' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".place-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".place-block-durability"), Integer.class)) {
-                        placeDurability = config.getShortList(ordered + ".place-block-durability");
+                if (config.contains(path + ".place-block-durability")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".place-block-durability"), Integer.class)) {
+                        placeDurability = config.getShortList(path + ".place-block-durability");
                     } else {
                         throw new StageFormatException("'place-block-durability' is not a list of numbers", quest,
                                 stageNum);
@@ -971,29 +969,29 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     is = BukkitItemUtil.processItemStack(name, placeAmounts.get(i), (short) 0);
                 }
                 if (Material.matchMaterial(name) != null) {
-                    oStage.addBlockToPlace(is);
+                    bukkitStage.addBlockToPlace(is);
                 } else {
                     throw new StageFormatException("'place-block-names' has invalid item name " + name, quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".use-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".use-block-names"), String.class)) {
-                    useNames = config.getStringList(ordered + ".use-block-names");
+            if (config.contains(path + ".use-block-names")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".use-block-names"), String.class)) {
+                    useNames = config.getStringList(path + ".use-block-names");
                 } else {
                     throw new StageFormatException("'use-block-names' is not a list of strings", quest, stageNum);
                 }
-                if (config.contains(ordered + ".use-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".use-block-amounts"),Integer.class)) {
-                        useAmounts = config.getIntegerList(ordered + ".use-block-amounts");
+                if (config.contains(path + ".use-block-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".use-block-amounts"),Integer.class)) {
+                        useAmounts = config.getIntegerList(path + ".use-block-amounts");
                     } else {
                         throw new StageFormatException("'use-block-amounts' is not a list of numbers", quest, stageNum);
                     }
                 } else {
                     throw new StageFormatException("'use-block-amounts' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".use-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".use-block-durability"), Integer.class)) {
-                        useDurability = config.getShortList(ordered + ".use-block-durability");
+                if (config.contains(path + ".use-block-durability")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".use-block-durability"), Integer.class)) {
+                        useDurability = config.getShortList(path + ".use-block-durability");
                     } else {
                         throw new StageFormatException("'use-block-durability' is not a list of numbers", quest,
                                 stageNum);
@@ -1012,29 +1010,29 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     is = BukkitItemUtil.processItemStack(name, useAmounts.get(i), (short) 0);
                 }
                 if (Material.matchMaterial(name) != null) {
-                    oStage.addBlockToUse(is);
+                    bukkitStage.addBlockToUse(is);
                 } else {
                     throw new StageFormatException("'use-block-names' has invalid item name " + name, quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".cut-block-names")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".cut-block-names"), String.class)) {
-                    cutNames = config.getStringList(ordered + ".cut-block-names");
+            if (config.contains(path + ".cut-block-names")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".cut-block-names"), String.class)) {
+                    cutNames = config.getStringList(path + ".cut-block-names");
                 } else {
                     throw new StageFormatException("'cut-block-names' is not a list of strings", quest, stageNum);
                 }
-                if (config.contains(ordered + ".cut-block-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".cut-block-amounts"), Integer.class)) {
-                        cutAmounts = config.getIntegerList(ordered + ".cut-block-amounts");
+                if (config.contains(path + ".cut-block-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".cut-block-amounts"), Integer.class)) {
+                        cutAmounts = config.getIntegerList(path + ".cut-block-amounts");
                     } else {
                         throw new StageFormatException("'cut-block-amounts' is not a list of numbers", quest, stageNum);
                     }
                 } else {
                     throw new StageFormatException("'cut-block-amounts' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".cut-block-durability")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".cut-block-durability"), Integer.class)) {
-                        cutDurability = config.getShortList(ordered + ".cut-block-durability");
+                if (config.contains(path + ".cut-block-durability")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".cut-block-durability"), Integer.class)) {
+                        cutDurability = config.getShortList(path + ".cut-block-durability");
                     } else {
                         throw new StageFormatException("'cut-block-durability' is not a list of numbers", quest,
                                 stageNum);
@@ -1053,17 +1051,17 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     is = BukkitItemUtil.processItemStack(name, cutAmounts.get(i), (short) 0);
                 }
                 if (Material.matchMaterial(name) != null) {
-                    oStage.addBlockToCut(is);
+                    bukkitStage.addBlockToCut(is);
                 } else {
                     throw new StageFormatException("'cut-block-names' has invalid item name " + name, quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".items-to-craft")) {
-                itemsToCraft = (List<ItemStack>) config.get(ordered + ".items-to-craft");
+            if (config.contains(path + ".items-to-craft")) {
+                itemsToCraft = (List<ItemStack>) config.get(path + ".items-to-craft");
                 if (BukkitConfigUtil.checkList(itemsToCraft, ItemStack.class)) {
                     for (final ItemStack stack : itemsToCraft) {
                         if (stack != null) {
-                            oStage.addItemToCraft(stack);
+                            bukkitStage.addItemToCraft(stack);
                         } else {
                             throw new StageFormatException("'items-to-craft' has invalid formatting", quest, stageNum);
                         }
@@ -1072,12 +1070,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'items-to-craft' is not formatted properly", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".items-to-smelt")) {
-                itemsToSmelt = (List<ItemStack>) config.get(ordered + ".items-to-smelt");
+            if (config.contains(path + ".items-to-smelt")) {
+                itemsToSmelt = (List<ItemStack>) config.get(path + ".items-to-smelt");
                 if (BukkitConfigUtil.checkList(itemsToSmelt, ItemStack.class)) {
                     for (final ItemStack stack : itemsToSmelt) {
                         if (stack != null) {
-                            oStage.addItemToSmelt(stack);
+                            bukkitStage.addItemToSmelt(stack);
                         } else {
                             throw new StageFormatException("'items-to-smelt' has invalid formatting", quest, stageNum);
                         }
@@ -1086,12 +1084,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'items-to-smelt' is not formatted properly", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".items-to-enchant")) {
-                itemsToEnchant = (List<ItemStack>) config.get(ordered + ".items-to-enchant");
+            if (config.contains(path + ".items-to-enchant")) {
+                itemsToEnchant = (List<ItemStack>) config.get(path + ".items-to-enchant");
                 if (BukkitConfigUtil.checkList(itemsToEnchant, ItemStack.class)) {
                     for (final ItemStack stack : itemsToEnchant) {
                         if (stack != null) {
-                            oStage.addItemToEnchant(stack);
+                            bukkitStage.addItemToEnchant(stack);
                         } else {
                             throw new StageFormatException("'items-to-enchant' has invalid formatting", quest, stageNum);
                         }
@@ -1101,9 +1099,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     final LinkedList<Material> types = new LinkedList<>();
                     final LinkedList<Enchantment> enchs = new LinkedList<>();
                     final LinkedList<Integer> amts;
-                    if (config.contains(ordered + ".enchantments")) {
-                        if (BukkitConfigUtil.checkList(config.getList(ordered + ".enchantments"), String.class)) {
-                            for (final String enchant : config.getStringList(ordered + ".enchantments")) {
+                    if (config.contains(path + ".enchantments")) {
+                        if (BukkitConfigUtil.checkList(config.getList(path + ".enchantments"), String.class)) {
+                            for (final String enchant : config.getStringList(path + ".enchantments")) {
                                 final Enchantment e = BukkitItemUtil.getEnchantmentFromProperName(enchant);
                                 if (e != null) {
                                     enchs.add(e);
@@ -1116,10 +1114,10 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                             throw new StageFormatException("'enchantments' is not a list of enchantment names", quest,
                                     stageNum);
                         }
-                        if (config.contains(ordered + ".enchantment-item-names")) {
-                            if (BukkitConfigUtil.checkList(config.getList(ordered + ".enchantment-item-names"),
+                        if (config.contains(path + ".enchantment-item-names")) {
+                            if (BukkitConfigUtil.checkList(config.getList(path + ".enchantment-item-names"),
                                     String.class)) {
-                                for (final String item : config.getStringList(ordered + ".enchantment-item-names")) {
+                                for (final String item : config.getStringList(path + ".enchantment-item-names")) {
                                     if (Material.matchMaterial(item) != null) {
                                         types.add(Material.matchMaterial(item));
                                     } else {
@@ -1134,10 +1132,10 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                         } else {
                             throw new StageFormatException("'enchantment-item-names' is missing", quest, stageNum);
                         }
-                        if (config.contains(ordered + ".enchantment-amounts")) {
-                            if (BukkitConfigUtil.checkList(config.getList(ordered
+                        if (config.contains(path + ".enchantment-amounts")) {
+                            if (BukkitConfigUtil.checkList(config.getList(path
                                     + ".enchantment-amounts"), Integer.class)) {
-                                amts = new LinkedList<>(config.getIntegerList(ordered + ".enchantment-amounts"));
+                                amts = new LinkedList<>(config.getIntegerList(path + ".enchantment-amounts"));
                             } else {
                                 throw new StageFormatException("'enchantment-amounts' is not a list of numbers", quest,
                                         stageNum);
@@ -1149,18 +1147,18 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                             for (int i = 0; i < enchs.size(); i++) {
                                 final ItemStack stack = new ItemStack(types.get(i), amts.get(i));
                                 stack.addEnchantment(enchs.get(0), 1);
-                                oStage.addItemToEnchant(stack);
+                                bukkitStage.addItemToEnchant(stack);
                             }
                         }
                     }
                 }
             }
-            if (config.contains(ordered + ".items-to-brew")) {
-                itemsToBrew = (List<ItemStack>) config.get(ordered + ".items-to-brew");
+            if (config.contains(path + ".items-to-brew")) {
+                itemsToBrew = (List<ItemStack>) config.get(path + ".items-to-brew");
                 if (BukkitConfigUtil.checkList(itemsToBrew, ItemStack.class)) {
                     for (final ItemStack stack : itemsToBrew) {
                         if (stack != null) {
-                            oStage.addItemsToBrew(stack);
+                            bukkitStage.addItemsToBrew(stack);
                         } else {
                             throw new StageFormatException("'items-to-brew' has invalid formatting", quest, stageNum);
                         }
@@ -1169,45 +1167,45 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'items-to-brew' has invalid formatting", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".items-to-consume")) {
-                itemsToConsume = (List<ItemStack>) config.get(ordered + ".items-to-consume");
+            if (config.contains(path + ".items-to-consume")) {
+                itemsToConsume = (List<ItemStack>) config.get(path + ".items-to-consume");
                 if (BukkitConfigUtil.checkList(itemsToConsume, ItemStack.class)) {
                     for (final ItemStack stack : itemsToConsume) {
                         if (stack != null) {
-                            oStage.addItemToConsume(stack);
+                            bukkitStage.addItemToConsume(stack);
                         } else {
                             throw new StageFormatException("'items-to-consume' has invalid formatting", quest, stageNum);
                         }
                     }
                 }
             }
-            if (config.contains(ordered + ".cows-to-milk")) {
-                if (config.getInt(ordered + ".cows-to-milk", -999) != -999) {
-                    oStage.setCowsToMilk(config.getInt(ordered + ".cows-to-milk"));
+            if (config.contains(path + ".cows-to-milk")) {
+                if (config.getInt(path + ".cows-to-milk", -999) != -999) {
+                    bukkitStage.setCowsToMilk(config.getInt(path + ".cows-to-milk"));
                 } else {
                     throw new StageFormatException("'cows-to-milk' is not a number", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".fish-to-catch")) {
-                if (config.getInt(ordered + ".fish-to-catch", -999) != -999) {
-                    oStage.setFishToCatch(config.getInt(ordered + ".fish-to-catch"));
+            if (config.contains(path + ".fish-to-catch")) {
+                if (config.getInt(path + ".fish-to-catch", -999) != -999) {
+                    bukkitStage.setFishToCatch(config.getInt(path + ".fish-to-catch"));
                 } else {
                     throw new StageFormatException("'fish-to-catch' is not a number", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".players-to-kill")) {
-                if (config.getInt(ordered + ".players-to-kill", -999) != -999) {
-                    oStage.setPlayersToKill(config.getInt(ordered + ".players-to-kill"));
+            if (config.contains(path + ".players-to-kill")) {
+                if (config.getInt(path + ".players-to-kill", -999) != -999) {
+                    bukkitStage.setPlayersToKill(config.getInt(path + ".players-to-kill"));
                 } else {
                     throw new StageFormatException("'players-to-kill' is not a number", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".npc-uuids-to-talk-to")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-uuids-to-talk-to"), String.class)) {
-                    npcUuidsToTalkTo = config.getStringList(ordered + ".npc-uuids-to-talk-to");
+            if (config.contains(path + ".npc-uuids-to-talk-to")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".npc-uuids-to-talk-to"), String.class)) {
+                    npcUuidsToTalkTo = config.getStringList(path + ".npc-uuids-to-talk-to");
                     for (final String s : npcUuidsToTalkTo) {
                         final UUID uuid = UUID.fromString(s);
-                        oStage.addNpcToInteract(uuid);
+                        bukkitStage.addNpcToInteract(uuid);
                         final Collection<UUID> npcUuids = plugin.getQuestNpcUuids();
                         npcUuids.add(uuid);
                         plugin.setQuestNpcUuids(npcUuids);
@@ -1215,16 +1213,16 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'npc-uuids-to-talk-to' is not a list of numbers", quest, stageNum);
                 }
-            } else if (config.contains(ordered + ".npc-ids-to-talk-to")) {
+            } else if (config.contains(path + ".npc-ids-to-talk-to")) {
                 // Legacy
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-ids-to-talk-to"), Integer.class)) {
-                    npcIdsToTalkTo = config.getIntegerList(ordered + ".npc-ids-to-talk-to");
+                if (BukkitConfigUtil.checkList(config.getList(path + ".npc-ids-to-talk-to"), Integer.class)) {
+                    npcIdsToTalkTo = config.getIntegerList(path + ".npc-ids-to-talk-to");
                     for (final int i : npcIdsToTalkTo) {
                         if (plugin.getDependencies().getCitizens() != null) {
                             final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
                             if (npc != null) {
                                 final UUID npcUuid = npc.getUniqueId();
-                                oStage.addNpcToInteract(npcUuid);
+                                bukkitStage.addNpcToInteract(npcUuid);
                                 final Collection<UUID> npcUuids = plugin.getQuestNpcUuids();
                                 npcUuids.add(npcUuid);
                                 plugin.setQuestNpcUuids(npcUuids);
@@ -1241,15 +1239,15 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'npc-ids-to-talk-to' is not a list of numbers", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".items-to-deliver")) {
-                if (config.contains(ordered + ".npc-delivery-uuids")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered
+            if (config.contains(path + ".items-to-deliver")) {
+                if (config.contains(path + ".npc-delivery-uuids")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path
                             + ".npc-delivery-uuids"), String.class)) {
-                        if (config.contains(ordered
+                        if (config.contains(path
                                 + ".delivery-messages")) {
-                            itemsToDeliver = (List<ItemStack>) config.get(ordered + ".items-to-deliver");
-                            itemDeliveryTargetUuids = config.getStringList(ordered + ".npc-delivery-uuids");
-                            deliveryMessages = config.getStringList(ordered + ".delivery-messages");
+                            itemsToDeliver = (List<ItemStack>) config.get(path + ".items-to-deliver");
+                            itemDeliveryTargetUuids = config.getStringList(path + ".npc-delivery-uuids");
+                            deliveryMessages = config.getStringList(path + ".delivery-messages");
                             int index = 0;
                             if (BukkitConfigUtil.checkList(itemsToDeliver, ItemStack.class)) {
                                 for (final ItemStack stack : itemsToDeliver) {
@@ -1259,9 +1257,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                                 ? deliveryMessages.get(index)
                                                 : deliveryMessages.get(deliveryMessages.size() - 1);
                                         index++;
-                                        oStage.addItemToDeliver(stack);
-                                        oStage.addItemDeliveryTarget(npcUuid);
-                                        oStage.addDeliverMessage(msg);
+                                        bukkitStage.addItemToDeliver(stack);
+                                        bukkitStage.addItemDeliveryTarget(npcUuid);
+                                        bukkitStage.addDeliverMessage(msg);
                                     }
                                 }
                             } else {
@@ -1272,13 +1270,13 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     } else {
                         throw new StageFormatException("'npc-delivery-uuids' is not a list of numbers", quest, stageNum);
                     }
-                } else if (config.contains(ordered + ".npc-delivery-ids")) {
+                } else if (config.contains(path + ".npc-delivery-ids")) {
                     // Legacy
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-delivery-ids"), Integer.class)) {
-                        if (config.contains(ordered + ".delivery-messages")) {
-                            itemsToDeliver = (List<ItemStack>) config.get(ordered + ".items-to-deliver");
-                            itemDeliveryTargetIds = config.getIntegerList(ordered + ".npc-delivery-ids");
-                            deliveryMessages = config.getStringList(ordered + ".delivery-messages");
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".npc-delivery-ids"), Integer.class)) {
+                        if (config.contains(path + ".delivery-messages")) {
+                            itemsToDeliver = (List<ItemStack>) config.get(path + ".items-to-deliver");
+                            itemDeliveryTargetIds = config.getIntegerList(path + ".npc-delivery-ids");
+                            deliveryMessages = config.getStringList(path + ".delivery-messages");
                             int index = 0;
                             if (BukkitConfigUtil.checkList(itemsToDeliver, ItemStack.class)) {
                                 for (final ItemStack stack : itemsToDeliver) {
@@ -1290,9 +1288,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                         if (plugin.getDependencies().getCitizens() != null) {
                                             final NPC npc = CitizensAPI.getNPCRegistry().getById(npcId);
                                             if (npc != null) {
-                                                oStage.addItemToDeliver(stack);
-                                                oStage.addItemDeliveryTarget(npc.getUniqueId());
-                                                oStage.addDeliverMessage(msg);
+                                                bukkitStage.addItemToDeliver(stack);
+                                                bukkitStage.addItemDeliveryTarget(npc.getUniqueId());
+                                                bukkitStage.addDeliverMessage(msg);
                                             } else {
                                                 throw new StageFormatException("'npc-delivery-ids' has invalid NPC " +
                                                         "ID of " + npcId, quest, stageNum);
@@ -1315,17 +1313,17 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'npc-delivery-uuid' is missing", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".npc-uuids-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-uuids-to-kill"), String.class)) {
-                    if (config.contains(ordered + ".npc-kill-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-kill-amounts"), Integer.class)) {
-                            npcUuidsToKill = config.getStringList(ordered + ".npc-uuids-to-kill");
-                            npcAmountsToKill = config.getIntegerList(ordered + ".npc-kill-amounts");
+            if (config.contains(path + ".npc-uuids-to-kill")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".npc-uuids-to-kill"), String.class)) {
+                    if (config.contains(path + ".npc-kill-amounts")) {
+                        if (BukkitConfigUtil.checkList(config.getList(path + ".npc-kill-amounts"), Integer.class)) {
+                            npcUuidsToKill = config.getStringList(path + ".npc-uuids-to-kill");
+                            npcAmountsToKill = config.getIntegerList(path + ".npc-kill-amounts");
                             for (final String s : npcUuidsToKill) {
                                 final UUID npcUuid = UUID.fromString(s);
                                 if (npcAmountsToKill.get(npcUuidsToKill.indexOf(s)) > 0) {
-                                    oStage.addNpcToKill(npcUuid);
-                                    oStage.addNpcNumToKill(npcAmountsToKill.get(npcUuidsToKill.indexOf(s)));
+                                    bukkitStage.addNpcToKill(npcUuid);
+                                    bukkitStage.addNpcNumToKill(npcAmountsToKill.get(npcUuidsToKill.indexOf(s)));
                                     final Collection<UUID> npcUuids = plugin.getQuestNpcUuids();
                                     npcUuids.add(npcUuid);
                                     plugin.setQuestNpcUuids(npcUuids);
@@ -1342,21 +1340,21 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                         throw new StageFormatException("'npc-kill-amounts' is missing", quest, stageNum);
                     }
                 }
-            } else if (config.contains(ordered + ".npc-ids-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-ids-to-kill"), Integer.class)) {
+            } else if (config.contains(path + ".npc-ids-to-kill")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".npc-ids-to-kill"), Integer.class)) {
                     // Legacy
-                    if (config.contains(ordered + ".npc-kill-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList(ordered + ".npc-kill-amounts"), Integer.class)) {
-                            npcIdsToKill = config.getIntegerList(ordered + ".npc-ids-to-kill");
-                            npcAmountsToKill = config.getIntegerList(ordered + ".npc-kill-amounts");
+                    if (config.contains(path + ".npc-kill-amounts")) {
+                        if (BukkitConfigUtil.checkList(config.getList(path + ".npc-kill-amounts"), Integer.class)) {
+                            npcIdsToKill = config.getIntegerList(path + ".npc-ids-to-kill");
+                            npcAmountsToKill = config.getIntegerList(path + ".npc-kill-amounts");
                             for (final int i : npcIdsToKill) {
                                 if (plugin.getDependencies().getCitizens() != null) {
                                     final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
                                     if (npc != null) {
                                         if (npcAmountsToKill.get(npcIdsToKill.indexOf(i)) > 0) {
                                             final UUID npcUuid = npc.getUniqueId();
-                                            oStage.addNpcToKill(npcUuid);
-                                            oStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
+                                            bukkitStage.addNpcToKill(npcUuid);
+                                            bukkitStage.addNpcNumToKill(npcAmountsToKill.get(npcIdsToKill.indexOf(i)));
                                             final Collection<UUID> npcUuids = plugin.getQuestNpcUuids();
                                             npcUuids.add(npcUuid);
                                             plugin.setQuestNpcUuids(npcUuids);
@@ -1382,9 +1380,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     }
                 }
             }
-            if (config.contains(ordered + ".mobs-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".mobs-to-kill"), String.class)) {
-                    final List<String> mobNames = config.getStringList(ordered + ".mobs-to-kill");
+            if (config.contains(path + ".mobs-to-kill")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".mobs-to-kill"), String.class)) {
+                    final List<String> mobNames = config.getStringList(path + ".mobs-to-kill");
                     for (final String mob : mobNames) {
                         final EntityType type = BukkitMiscUtil.getProperMobType(mob);
                         if (type != null) {
@@ -1396,9 +1394,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'mobs-to-kill' is not a list of mob names", quest, stageNum);
                 }
-                if (config.contains(ordered + ".mob-amounts")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".mob-amounts"), Integer.class)) {
-                        mobNumsToKill.addAll(config.getIntegerList(ordered + ".mob-amounts"));
+                if (config.contains(path + ".mob-amounts")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".mob-amounts"), Integer.class)) {
+                        mobNumsToKill.addAll(config.getIntegerList(path + ".mob-amounts"));
                     } else {
                         throw new StageFormatException("'mob-amounts' is not a list of numbers", quest, stageNum);
                     }
@@ -1406,9 +1404,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'mob-amounts' is missing", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".locations-to-kill")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".locations-to-kill"), String.class)) {
-                    final List<String> locations = config.getStringList(ordered + ".locations-to-kill");
+            if (config.contains(path + ".locations-to-kill")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".locations-to-kill"), String.class)) {
+                    final List<String> locations = config.getStringList(path + ".locations-to-kill");
                     for (final String loc : locations) {
                         if (BukkitConfigUtil.getLocation(loc) != null) {
                             locationsToKillWithin.add(BukkitConfigUtil.getLocation(loc));
@@ -1420,9 +1418,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'locations-to-kill' is not a list of locations", quest, stageNum);
                 }
-                if (config.contains(ordered + ".kill-location-radii")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".kill-location-radii"), Integer.class)) {
-                        final List<Integer> radii = config.getIntegerList(ordered + ".kill-location-radii");
+                if (config.contains(path + ".kill-location-radii")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".kill-location-radii"), Integer.class)) {
+                        final List<Integer> radii = config.getIntegerList(path + ".kill-location-radii");
                         radiiToKillWithin.addAll(radii);
                     } else {
                         throw new StageFormatException("'kill-location-radii' is not a list of numbers", quest, stageNum);
@@ -1430,9 +1428,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'kill-location-radii' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".kill-location-names")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".kill-location-names"), String.class)) {
-                        final List<String> locationNames = config.getStringList(ordered + ".kill-location-names");
+                if (config.contains(path + ".kill-location-names")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".kill-location-names"), String.class)) {
+                        final List<String> locationNames = config.getStringList(path + ".kill-location-names");
                         areaNames.addAll(locationNames);
                     } else {
                         throw new StageFormatException("'kill-location-names' is not a list of names", quest, stageNum);
@@ -1442,26 +1440,26 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 }
             }
             for (EntityType mobToKill : mobsToKill) {
-                oStage.addMobToKill(mobToKill);
+                bukkitStage.addMobToKill(mobToKill);
             }
             for (Integer mobNumToKill : mobNumsToKill) {
-                oStage.addMobNumToKill(mobNumToKill);
+                bukkitStage.addMobNumToKill(mobNumToKill);
             }
             for (Location locationToKillWithin : locationsToKillWithin) {
-                oStage.addLocationToKillWithin(locationToKillWithin);
+                bukkitStage.addLocationToKillWithin(locationToKillWithin);
             }
             for (Integer radiusToKillWithin : radiiToKillWithin) {
-                oStage.addRadiusToKillWithin(radiusToKillWithin);
+                bukkitStage.addRadiusToKillWithin(radiusToKillWithin);
             }
             for (String killName : areaNames) {
-                oStage.addKillName(killName);
+                bukkitStage.addKillName(killName);
             }
-            if (config.contains(ordered + ".locations-to-reach")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".locations-to-reach"), String.class)) {
-                    final List<String> locations = config.getStringList(ordered + ".locations-to-reach");
+            if (config.contains(path + ".locations-to-reach")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".locations-to-reach"), String.class)) {
+                    final List<String> locations = config.getStringList(path + ".locations-to-reach");
                     for (final String loc : locations) {
                         if (BukkitConfigUtil.getLocation(loc) != null) {
-                            oStage.addLocationToReach(BukkitConfigUtil.getLocation(loc));
+                            bukkitStage.addLocationToReach(BukkitConfigUtil.getLocation(loc));
                         } else {
                             throw new StageFormatException("'locations-to-reach' has invalid formatting" + loc, quest,
                                     stageNum);
@@ -1470,12 +1468,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'locations-to-reach' is not a list of locations", quest, stageNum);
                 }
-                if (config.contains(ordered + ".reach-location-radii")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered
+                if (config.contains(path + ".reach-location-radii")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path
                             + ".reach-location-radii"), Integer.class)) {
-                        final List<Integer> radii = config.getIntegerList(ordered + ".reach-location-radii");
+                        final List<Integer> radii = config.getIntegerList(path + ".reach-location-radii");
                         for (Integer radius : radii) {
-                            oStage.addRadiusToReachWithin(radius);
+                            bukkitStage.addRadiusToReachWithin(radius);
                         }
                     } else {
                         throw new StageFormatException("'reach-location-radii' is not a list of numbers", quest,
@@ -1484,11 +1482,11 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                 } else {
                     throw new StageFormatException("'reach-location-radii' is missing", quest, stageNum);
                 }
-                if (config.contains(ordered + ".reach-location-names")) {
-                    if (BukkitConfigUtil.checkList(config.getList(ordered + ".reach-location-names"), String.class)) {
-                        final List<String> locationNames = config.getStringList(ordered + ".reach-location-names");
+                if (config.contains(path + ".reach-location-names")) {
+                    if (BukkitConfigUtil.checkList(config.getList(path + ".reach-location-names"), String.class)) {
+                        final List<String> locationNames = config.getStringList(path + ".reach-location-names");
                         for (String locationName : locationNames) {
-                            oStage.addLocationName(locationName);
+                            bukkitStage.addLocationName(locationName);
                         }
                     } else {
                         throw new StageFormatException("'reach-location-names' is not a list of names", quest, stageNum);
@@ -1497,19 +1495,19 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'reach-location-names' is missing", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".mobs-to-tame")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".mobs-to-tame"), String.class)) {
-                    if (config.contains(ordered + ".mob-tame-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList(ordered + ".mob-tame-amounts"), Integer.class)) {
-                            final List<String> mobs = config.getStringList(ordered + ".mobs-to-tame");
-                            final List<Integer> mobAmounts = config.getIntegerList(ordered + ".mob-tame-amounts");
+            if (config.contains(path + ".mobs-to-tame")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".mobs-to-tame"), String.class)) {
+                    if (config.contains(path + ".mob-tame-amounts")) {
+                        if (BukkitConfigUtil.checkList(config.getList(path + ".mob-tame-amounts"), Integer.class)) {
+                            final List<String> mobs = config.getStringList(path + ".mobs-to-tame");
+                            final List<Integer> mobAmounts = config.getIntegerList(path + ".mob-tame-amounts");
                             for (final String mob : mobs) {
                                 final EntityType type = BukkitMiscUtil.getProperMobType(mob);
                                 if (type != null) {
                                     final Class<? extends Entity> ec = type.getEntityClass();
                                     if (ec != null && Tameable.class.isAssignableFrom(ec)) {
-                                        oStage.addMobToTame(type);
-                                        oStage.addMobNumToTame(mobAmounts.get(mobs.indexOf(mob)));
+                                        bukkitStage.addMobToTame(type);
+                                        bukkitStage.addMobNumToTame(mobAmounts.get(mobs.indexOf(mob)));
                                     } else {
                                         throw new StageFormatException("'mobs-to-tame' has invalid tameable mob " + mob,
                                                 quest, stageNum);
@@ -1530,12 +1528,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'mobs-to-tame' is not a list of mob names", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".sheep-to-shear")) {
-                if (BukkitConfigUtil.checkList(config.getList(ordered + ".sheep-to-shear"), String.class)) {
-                    if (config.contains(ordered + ".sheep-amounts")) {
-                        if (BukkitConfigUtil.checkList(config.getList(ordered + ".sheep-amounts"), Integer.class)) {
-                            final List<String> sheep = config.getStringList(ordered + ".sheep-to-shear");
-                            final List<Integer> shearAmounts = config.getIntegerList(ordered + ".sheep-amounts");
+            if (config.contains(path + ".sheep-to-shear")) {
+                if (BukkitConfigUtil.checkList(config.getList(path + ".sheep-to-shear"), String.class)) {
+                    if (config.contains(path + ".sheep-amounts")) {
+                        if (BukkitConfigUtil.checkList(config.getList(path + ".sheep-amounts"), Integer.class)) {
+                            final List<String> sheep = config.getStringList(path + ".sheep-to-shear");
+                            final List<Integer> shearAmounts = config.getIntegerList(path + ".sheep-amounts");
                             for (String sheepColor : sheep) {
                                 final String originalColor = sheepColor;
                                 DyeColor dc = null;
@@ -1557,47 +1555,47 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                     // Fail silently
                                 }
                                 if (dc != null) {
-                                    oStage.addSheepToShear(dc);
+                                    bukkitStage.addSheepToShear(dc);
                                     // Legacy start -->
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BLACK"))) {
-                                    oStage.addSheepToShear(DyeColor.BLACK);
+                                    bukkitStage.addSheepToShear(DyeColor.BLACK);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BLUE"))) {
-                                    oStage.addSheepToShear(DyeColor.BLUE);
+                                    bukkitStage.addSheepToShear(DyeColor.BLUE);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_BROWN"))) {
-                                    oStage.addSheepToShear(DyeColor.BROWN);
+                                    bukkitStage.addSheepToShear(DyeColor.BROWN);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_CYAN"))) {
-                                    oStage.addSheepToShear(DyeColor.CYAN);
+                                    bukkitStage.addSheepToShear(DyeColor.CYAN);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_GRAY"))) {
-                                    oStage.addSheepToShear(DyeColor.GRAY);
+                                    bukkitStage.addSheepToShear(DyeColor.GRAY);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_GREEN"))) {
-                                    oStage.addSheepToShear(DyeColor.GREEN);
+                                    bukkitStage.addSheepToShear(DyeColor.GREEN);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_LIGHT_BLUE"))) {
-                                    oStage.addSheepToShear(DyeColor.LIGHT_BLUE);
+                                    bukkitStage.addSheepToShear(DyeColor.LIGHT_BLUE);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_LIME"))) {
-                                    oStage.addSheepToShear(DyeColor.LIME);
+                                    bukkitStage.addSheepToShear(DyeColor.LIME);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_MAGENTA"))) {
-                                    oStage.addSheepToShear(DyeColor.MAGENTA);
+                                    bukkitStage.addSheepToShear(DyeColor.MAGENTA);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_ORANGE"))) {
-                                    oStage.addSheepToShear(DyeColor.ORANGE);
+                                    bukkitStage.addSheepToShear(DyeColor.ORANGE);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_PINK"))) {
-                                    oStage.addSheepToShear(DyeColor.PINK);
+                                    bukkitStage.addSheepToShear(DyeColor.PINK);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_PURPLE"))) {
-                                    oStage.addSheepToShear(DyeColor.PURPLE);
+                                    bukkitStage.addSheepToShear(DyeColor.PURPLE);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_RED"))) {
-                                    oStage.addSheepToShear(DyeColor.RED);
+                                    bukkitStage.addSheepToShear(DyeColor.RED);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_SILVER"))) {
                                     // 1.13 changed DyeColor.SILVER -> DyeColor.LIGHT_GRAY
-                                    oStage.addSheepToShear(DyeColor.getByColor(Color.SILVER));
+                                    bukkitStage.addSheepToShear(DyeColor.getByColor(Color.SILVER));
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_WHITE"))) {
-                                    oStage.addSheepToShear(DyeColor.WHITE);
+                                    bukkitStage.addSheepToShear(DyeColor.WHITE);
                                 } else if (sheepColor.equalsIgnoreCase(BukkitLang.get("COLOR_YELLOW"))) {
-                                    oStage.addSheepToShear(DyeColor.YELLOW);
+                                    bukkitStage.addSheepToShear(DyeColor.YELLOW);
                                     // <-- Legacy end
                                 } else {
                                     throw new StageFormatException("'sheep-to-shear' has invalid color " + sheepColor,
                                             quest, stageNum);
                                 }
-                                oStage.addSheepNumToShear(shearAmounts.get(sheep.indexOf(originalColor)));
+                                bukkitStage.addSheepNumToShear(shearAmounts.get(sheep.indexOf(originalColor)));
                             }
                         } else {
                             throw new StageFormatException("'sheep-amounts' is not a list of numbers", quest, stageNum);
@@ -1609,14 +1607,14 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'sheep-to-shear' is not a list of colors", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".password-displays")) {
-                final List<String> displays = config.getStringList(ordered + ".password-displays");
-                if (config.contains(ordered + ".password-phrases")) {
-                    final List<String> phrases = config.getStringList(ordered + ".password-phrases");
+            if (config.contains(path + ".password-displays")) {
+                final List<String> displays = config.getStringList(path + ".password-displays");
+                if (config.contains(path + ".password-phrases")) {
+                    final List<String> phrases = config.getStringList(path + ".password-phrases");
                     if (displays.size() == phrases.size()) {
                         for (int passIndex = 0; passIndex < displays.size(); passIndex++) {
-                            oStage.addPasswordDisplay(displays.get(passIndex));
-                            oStage.addPasswordPhrase(phrases.get(passIndex));
+                            bukkitStage.addPasswordDisplay(displays.get(passIndex));
+                            bukkitStage.addPasswordPhrase(phrases.get(passIndex));
                         }
                     } else {
                         throw new StageFormatException("'password-displays' and 'password-phrases' are not the same size",
@@ -1626,81 +1624,81 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'password-phrases' is missing", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".objective-override")) {
-                final Object o = config.get(ordered + ".objective-override");
+            if (config.contains(path + ".objective-override")) {
+                final Object o = config.get(path + ".objective-override");
                 if (o instanceof List) {
-                    for (String objectiveOverride : config.getStringList(ordered + ".objective-override")) {
-                        oStage.addObjectiveOverride(objectiveOverride);
+                    for (String objectiveOverride : config.getStringList(path + ".objective-override")) {
+                        bukkitStage.addObjectiveOverride(objectiveOverride);
                     }
                 } else {
                     // Legacy
-                    final String s = config.getString(ordered + ".objective-override");
-                    oStage.addObjectiveOverride(s);
+                    final String s = config.getString(path + ".objective-override");
+                    bukkitStage.addObjectiveOverride(s);
                 }
             }
-            if (config.contains(ordered + ".start-event")) {
-                final String actionName = config.getString(ordered + ".start-event");
+            if (config.contains(path + ".start-event")) {
+                final String actionName = config.getString(path + ".start-event");
                 final Optional<Action> action = plugin.getLoadedActions().stream()
                         .filter(a -> a.getName().equals(actionName)).findAny();
                 if (action.isPresent()) {
-                    oStage.setStartAction(action.get());
+                    bukkitStage.setStartAction(action.get());
                 } else {
                     throw new StageFormatException("'start-event' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".finish-event")) {
-                final String actionName = config.getString(ordered + ".finish-event");
+            if (config.contains(path + ".finish-event")) {
+                final String actionName = config.getString(path + ".finish-event");
                 final Optional<Action> action = plugin.getLoadedActions().stream()
                         .filter(a -> a.getName().equals(actionName)).findAny();
                 if (action.isPresent()) {
-                    oStage.setFinishAction(action.get());
+                    bukkitStage.setFinishAction(action.get());
                 } else {
                     throw new StageFormatException("'finish-event' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".fail-event")) {
-                final String actionName = config.getString(ordered + ".fail-event");
+            if (config.contains(path + ".fail-event")) {
+                final String actionName = config.getString(path + ".fail-event");
                 final Optional<Action> action = plugin.getLoadedActions().stream()
                         .filter(a -> a.getName().equals(actionName)).findAny();
                 if (action.isPresent()) {
-                    oStage.setFailAction(action.get());
+                    bukkitStage.setFailAction(action.get());
                 } else {
                     throw new StageFormatException("'fail-event' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".death-event")) {
-                final String actionName = config.getString(ordered + ".death-event");
+            if (config.contains(path + ".death-event")) {
+                final String actionName = config.getString(path + ".death-event");
                 final Optional<Action> action = plugin.getLoadedActions().stream()
                         .filter(a -> a.getName().equals(actionName)).findAny();
                 if (action.isPresent()) {
-                    oStage.setDeathAction(action.get());
+                    bukkitStage.setDeathAction(action.get());
                 } else {
                     throw new StageFormatException("'death-event' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".disconnect-event")) {
-                final String actionName = config.getString(ordered + ".disconnect-event");
+            if (config.contains(path + ".disconnect-event")) {
+                final String actionName = config.getString(path + ".disconnect-event");
                 final Optional<Action> action = plugin.getLoadedActions().stream()
                         .filter(a -> a.getName().equals(actionName)).findAny();
                 if (action.isPresent()) {
-                    oStage.setDisconnectAction(action.get());
+                    bukkitStage.setDisconnectAction(action.get());
                 } else {
                     throw new StageFormatException("'disconnect-event' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".chat-events")) {
-                if (config.isList(ordered + ".chat-events")) {
-                    if (config.contains(ordered + ".chat-event-triggers")) {
-                        if (config.isList(ordered + ".chat-event-triggers")) {
-                            final List<String> chatEvents = config.getStringList(ordered + ".chat-events");
-                            final List<String> chatEventTriggers = config.getStringList(ordered + ".chat-event-triggers");
+            if (config.contains(path + ".chat-events")) {
+                if (config.isList(path + ".chat-events")) {
+                    if (config.contains(path + ".chat-event-triggers")) {
+                        if (config.isList(path + ".chat-event-triggers")) {
+                            final List<String> chatEvents = config.getStringList(path + ".chat-events");
+                            final List<String> chatEventTriggers = config.getStringList(path + ".chat-event-triggers");
                             for (int i = 0; i < chatEvents.size(); i++) {
                                 final String actionName = chatEvents.get(i);
                                 final Optional<Action> action = plugin.getLoadedActions().stream()
                                         .filter(a -> a.getName().equals(actionName)).findAny();
                                 if (action.isPresent()) {
                                     if (i < chatEventTriggers.size()) {
-                                        oStage.addChatAction(new AbstractMap.SimpleEntry<>(chatEventTriggers.get(i),
+                                        bukkitStage.addChatAction(new AbstractMap.SimpleEntry<>(chatEventTriggers.get(i),
                                                 action.get()));
                                     } else {
                                         throw new StageFormatException("'chat-event-triggers' list is too small",
@@ -1722,12 +1720,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'chat-events' is not in list format", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".command-events")) {
-                if (config.isList(ordered + ".command-events")) {
-                    if (config.contains(ordered + ".command-event-triggers")) {
-                        if (config.isList(ordered + ".command-event-triggers")) {
-                            final List<String> commandEvents = config.getStringList(ordered + ".command-events");
-                            final List<String> commandEventTriggers = config.getStringList(ordered
+            if (config.contains(path + ".command-events")) {
+                if (config.isList(path + ".command-events")) {
+                    if (config.contains(path + ".command-event-triggers")) {
+                        if (config.isList(path + ".command-event-triggers")) {
+                            final List<String> commandEvents = config.getStringList(path + ".command-events");
+                            final List<String> commandEventTriggers = config.getStringList(path
                                     + ".command-event-triggers");
                             for (int i = 0; i < commandEvents.size(); i++) {
                                 final String actionName = commandEvents.get(i);
@@ -1735,7 +1733,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                         .filter(a -> a.getName().equals(actionName)).findAny();
                                 if (action.isPresent()) {
                                     if (i < commandEventTriggers.size()) {
-                                        oStage.addCommandAction(new AbstractMap.SimpleEntry<>(commandEventTriggers
+                                        bukkitStage.addCommandAction(new AbstractMap.SimpleEntry<>(commandEventTriggers
                                                 .get(i), action.get()));
                                     } else {
                                         throw new StageFormatException("'command-event-triggers' list is too small",
@@ -1757,34 +1755,34 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     throw new StageFormatException("'command-events' is not in list format", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".condition")) {
-                final String conditionName = config.getString(ordered + ".condition");
+            if (config.contains(path + ".condition")) {
+                final String conditionName = config.getString(path + ".condition");
                 final Optional<Condition> condition = plugin.getLoadedConditions().stream()
                         .filter(c -> c.getName().equals(conditionName)).findAny();
                 if (condition.isPresent()) {
-                    oStage.setCondition(condition.get());
+                    bukkitStage.setCondition(condition.get());
                 } else {
                     throw new StageFormatException("'condition' failed to load", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".delay")) {
-                final int delay = config.getInt(ordered + ".delay", -999);
+            if (config.contains(path + ".delay")) {
+                final int delay = config.getInt(path + ".delay", -999);
                 if (delay > 0) {
-                    oStage.setDelay(delay * 1000L);
+                    bukkitStage.setDelay(delay * 1000L);
                 } else if (delay != -999) {
                     throw new StageFormatException("'delay' is not a positive number", quest, stageNum);
                 }
             }
-            if (config.contains(ordered + ".delay-message")) {
-                oStage.setDelayMessage(config.getString(ordered + ".delay-message"));
+            if (config.contains(path + ".delay-message")) {
+                bukkitStage.setDelayMessage(config.getString(path + ".delay-message"));
             }
-            if (config.contains(ordered + ".start-message")) {
-                oStage.setStartMessage(config.getString(ordered + ".start-message"));
+            if (config.contains(path + ".start-message")) {
+                bukkitStage.setStartMessage(config.getString(path + ".start-message"));
             }
-            if (config.contains(ordered + ".complete-message")) {
-                oStage.setCompleteMessage(config.getString(ordered + ".complete-message"));
+            if (config.contains(path + ".complete-message")) {
+                bukkitStage.setCompleteMessage(config.getString(path + ".complete-message"));
             }
-            quest.getStages().add(oStage);
+            quest.getStages().add(bukkitStage);
         }
     }
 }
