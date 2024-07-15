@@ -701,6 +701,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 questLoader.init();
                 for (final Quester quester : questers) {
                     final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
+                    if (loaded == null) {
+                        getLogger().severe("Unable to load quester of UUID " + quester.getUUID());
+                        continue;
+                    }
                     for (final Quest quest : loaded.getCurrentQuests().keySet()) {
                         loaded.checkQuest(quest);
                     }

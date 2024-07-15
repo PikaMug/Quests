@@ -31,7 +31,7 @@ public class BukkitStageTimer implements Runnable {
         if (quester == null) {
             return;
         }
-        if (quester.getQuestDataOrDefault(quest) == null) {
+        if (quester.getQuestProgressOrDefault(quest) == null) {
             return;
         }
         if (quester.getCurrentStage(quest) == null) {
@@ -50,8 +50,8 @@ public class BukkitStageTimer implements Runnable {
             quest.completeQuest(quester);
         } else {
             final int stageNum = quester.getCurrentQuests().get(quest) + 1;
-            quester.getQuestDataOrDefault(quest).setDelayStartTime(0);
-            quester.getQuestDataOrDefault(quest).setDelayTimeLeft(-1);
+            quester.getQuestProgressOrDefault(quest).setDelayStartTime(0);
+            quester.getQuestProgressOrDefault(quest).setDelayTimeLeft(-1);
             try {
                 quest.setStage(quester, stageNum);
             } catch (final IndexOutOfBoundsException e) {

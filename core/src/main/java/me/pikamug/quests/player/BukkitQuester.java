@@ -425,11 +425,22 @@ public class BukkitQuester implements Quester {
     /**
      * Get quest progress for given quest, or default values if not found
      *
+     * @deprecated Use {@link #getQuestProgressOrDefault(Quest)} instead
+     * @param quest The quest to check
+     * @return Existing or current progress, or default
+     */
+    public QuestProgress getQuestDataOrDefault(final Quest quest) {
+        return getQuestProgressOrDefault(quest);
+    }
+
+    /**
+     * Get quest progress for given quest, or default values if not found
+     *
      * @param quest The quest to check
      * @return Existing or current progress, or default
      */
     @Override
-    public QuestProgress getQuestDataOrDefault(final Quest quest) {
+    public QuestProgress getQuestProgressOrDefault(final Quest quest) {
         if (questProgress.get(quest) != null) {
             return questProgress.get(quest);
         }
@@ -1168,7 +1179,7 @@ public class BukkitQuester implements Quester {
             plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
             return new LinkedList<>();
         }
-        if (getQuestDataOrDefault(quest) == null) {
+        if (getQuestProgressOrDefault(quest) == null) {
             plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
             return new LinkedList<>();
         }
@@ -1190,7 +1201,7 @@ public class BukkitQuester implements Quester {
             }
             return objectives;
         }
-        final BukkitQuestProgress data = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress data = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final LinkedList<Objective> objectives = new LinkedList<>();
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {
             final int progress = data.getBlocksBroken().get(i);
@@ -1683,7 +1694,7 @@ public class BukkitQuester implements Quester {
             plugin.getLogger().severe("Quest was null when getting conditions for " + quester.getLastKnownName());
             return;
         }
-        if (quester.getQuestDataOrDefault(quest) == null) {
+        if (quester.getQuestProgressOrDefault(quest) == null) {
             plugin.getLogger().warning("Quest data was null when showing conditions for " + quest.getName());
             return;
         }
@@ -1827,13 +1838,13 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, broken.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int breakIndex = getCurrentStage(quest).getBlocksToBreak().indexOf(goal);
-        if (bukkitQuestData.blocksBroken.get(breakIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksBroken.get(breakIndex) > goal.getAmount()) {
             return;
         }
-        final int progress = bukkitQuestData.blocksBroken.get(breakIndex) + 1;
-        bukkitQuestData.blocksBroken.set(breakIndex, progress);
+        final int progress = bukkitQuestProgress.blocksBroken.get(breakIndex) + 1;
+        bukkitQuestProgress.blocksBroken.set(breakIndex, progress);
         if (progress >= goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
@@ -1841,7 +1852,7 @@ public class BukkitQuester implements Quester {
             // Multiplayer
             final ItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksBroken.set(breakIndex, progress);
+                ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksBroken.set(breakIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
                         null, null, null, null);
                 return null;
@@ -1897,13 +1908,13 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, damaged.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int damageIndex = getCurrentStage(quest).getBlocksToDamage().indexOf(goal);
-        if (bukkitQuestData.blocksDamaged.get(damageIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksDamaged.get(damageIndex) > goal.getAmount()) {
             return;
         }
-        final int progress = bukkitQuestData.blocksDamaged.get(damageIndex) + 1;
-        bukkitQuestData.blocksDamaged.set(damageIndex, progress);
+        final int progress = bukkitQuestProgress.blocksDamaged.get(damageIndex) + 1;
+        bukkitQuestProgress.blocksDamaged.set(damageIndex, progress);
         if (progress >= goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
@@ -1911,7 +1922,7 @@ public class BukkitQuester implements Quester {
             // Multiplayer
             final ItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksDamaged.set(damageIndex, progress);
+                ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksDamaged.set(damageIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
                         null, null, null, null);
                 return null;
@@ -1967,13 +1978,13 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, placed.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int placeIndex = getCurrentStage(quest).getBlocksToPlace().indexOf(goal);
-        if (bukkitQuestData.blocksPlaced.get(placeIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksPlaced.get(placeIndex) > goal.getAmount()) {
             return;
         }
-        final int progress = bukkitQuestData.blocksPlaced.get(placeIndex) + 1;
-        bukkitQuestData.blocksPlaced.set(placeIndex, progress);
+        final int progress = bukkitQuestProgress.blocksPlaced.get(placeIndex) + 1;
+        bukkitQuestProgress.blocksPlaced.set(placeIndex, progress);
         if (progress >= goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
@@ -1981,7 +1992,7 @@ public class BukkitQuester implements Quester {
             // Multiplayer
             final ItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksPlaced.set(placeIndex, progress);
+                ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksPlaced.set(placeIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
                         null, null, null, null);
                 return null;
@@ -2037,13 +2048,13 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, used.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int useIndex = getCurrentStage(quest).getBlocksToUse().indexOf(goal);
-        if (bukkitQuestData.blocksUsed.get(useIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksUsed.get(useIndex) > goal.getAmount()) {
             return;
         }
-        final int progress = bukkitQuestData.blocksUsed.get(useIndex) + 1;
-        bukkitQuestData.blocksUsed.set(useIndex, progress);
+        final int progress = bukkitQuestProgress.blocksUsed.get(useIndex) + 1;
+        bukkitQuestProgress.blocksUsed.set(useIndex, progress);
         if (progress >= goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
@@ -2051,7 +2062,7 @@ public class BukkitQuester implements Quester {
             // Multiplayer
             final ItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksUsed.set(useIndex, progress);
+                ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksUsed.set(useIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
                         null, null, null, null);
                 return null;
@@ -2107,13 +2118,13 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, cut.getAmount(), goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int cutIndex = getCurrentStage(quest).getBlocksToCut().indexOf(goal);
-        if (bukkitQuestData.blocksCut.get(cutIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksCut.get(cutIndex) > goal.getAmount()) {
             return;
         }
-        final int progress = bukkitQuestData.blocksCut.get(cutIndex) + 1;
-        bukkitQuestData.blocksCut.set(cutIndex, progress);
+        final int progress = bukkitQuestProgress.blocksCut.get(cutIndex) + 1;
+        bukkitQuestProgress.blocksCut.set(cutIndex, progress);
         if (progress >= goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
@@ -2121,7 +2132,7 @@ public class BukkitQuester implements Quester {
             // Multiplayer
             final ItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).blocksCut.set(cutIndex, progress);
+                ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksCut.set(cutIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
                         null, null, null, null);
                 return null;
@@ -2142,7 +2153,7 @@ public class BukkitQuester implements Quester {
     public void craftItem(final Quest quest, final ItemStack crafted) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toCraft : ((BukkitStage) getCurrentStage(quest)).getItemsToCraft()) {
             currentIndex++;
             if (BukkitItemUtil.compareItems(crafted, toCraft, true) == 0) {
@@ -2153,7 +2164,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsCrafted.get(match);
+            final int amount = bukkitQuestProgress.itemsCrafted.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToCraft().get(match);
 
             final ObjectiveType type = ObjectiveType.CRAFT_ITEM;
@@ -2162,14 +2173,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             final int progress = crafted.getAmount() + amount;
-            bukkitQuestData.itemsCrafted.set(match, progress);
+            bukkitQuestProgress.itemsCrafted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsCrafted.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsCrafted.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2191,7 +2202,7 @@ public class BukkitQuester implements Quester {
     public void smeltItem(final Quest quest, final ItemStack smelted) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toSmelt : ((BukkitStage) getCurrentStage(quest)).getItemsToSmelt()) {
             currentIndex++;
             if (BukkitItemUtil.compareItems(smelted, toSmelt, true) == 0) {
@@ -2202,7 +2213,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsSmelted.get(match);
+            final int amount = bukkitQuestProgress.itemsSmelted.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToSmelt().get(match);
 
             final ObjectiveType type = ObjectiveType.SMELT_ITEM;
@@ -2211,14 +2222,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             final int progress = smelted.getAmount() + amount;
-            bukkitQuestData.itemsSmelted.set(match, progress);
+            bukkitQuestProgress.itemsSmelted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsSmelted.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsSmelted.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2241,7 +2252,7 @@ public class BukkitQuester implements Quester {
                             final Map<Enchantment, Integer> enchantsToAdd) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toEnchant : ((BukkitStage) getCurrentStage(quest)).getItemsToEnchant()) {
             currentIndex++;
             if (toEnchant.getItemMeta() instanceof EnchantmentStorageMeta) {
@@ -2254,7 +2265,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsEnchanted.get(match);
+            final int amount = bukkitQuestProgress.itemsEnchanted.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToEnchant().get(match);
 
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
@@ -2263,14 +2274,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             final int progress = enchantedBook.getAmount() + amount;
-            bukkitQuestData.itemsEnchanted.set(match, progress);
+            bukkitQuestProgress.itemsEnchanted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsEnchanted.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsEnchanted.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2292,7 +2303,7 @@ public class BukkitQuester implements Quester {
     public void enchantItem(final Quest quest, final ItemStack enchanted) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         if (!enchanted.getType().equals(Material.BOOK)) {
             for (final ItemStack toEnchant : ((BukkitStage) getCurrentStage(quest)).getItemsToEnchant()) {
                 currentIndex++;
@@ -2311,7 +2322,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsEnchanted.get(match);
+            final int amount = bukkitQuestProgress.itemsEnchanted.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToEnchant().get(match);
 
             final ObjectiveType type = ObjectiveType.ENCHANT_ITEM;
@@ -2320,14 +2331,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             final int progress = enchanted.getAmount() + amount;
-            bukkitQuestData.itemsEnchanted.set(match, progress);
+            bukkitQuestProgress.itemsEnchanted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsEnchanted.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsEnchanted.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2349,7 +2360,7 @@ public class BukkitQuester implements Quester {
     public void brewItem(final Quest quest, final ItemStack brewed) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toBrew : ((BukkitStage) getCurrentStage(quest)).getItemsToBrew()) {
             currentIndex++;
             if (BukkitItemUtil.compareItems(brewed, toBrew, true) == 0) {
@@ -2360,7 +2371,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsBrewed.get(match);
+            final int amount = bukkitQuestProgress.itemsBrewed.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToBrew().get(match);
 
             final ObjectiveType type = ObjectiveType.BREW_ITEM;
@@ -2369,14 +2380,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             final int progress = brewed.getAmount() + amount;
-            bukkitQuestData.itemsBrewed.set(match, progress);
+            bukkitQuestProgress.itemsBrewed.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsBrewed.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsBrewed.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2398,7 +2409,7 @@ public class BukkitQuester implements Quester {
     public void consumeItem(final Quest quest, final ItemStack consumed) {
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toConsume : ((BukkitStage) getCurrentStage(quest)).getItemsToConsume()) {
             currentIndex++;
             if (BukkitItemUtil.compareItems(consumed, toConsume, true) == 0) {
@@ -2409,7 +2420,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         for (final Integer match : matches) {
-            final int amount = bukkitQuestData.itemsConsumed.get(match);
+            final int amount = bukkitQuestProgress.itemsConsumed.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToConsume().get(match);
             
             final ObjectiveType type = ObjectiveType.CONSUME_ITEM;
@@ -2418,14 +2429,14 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
             
             final int progress = consumed.getAmount() + amount;
-            bukkitQuestData.itemsConsumed.set(match, progress);
+            bukkitQuestProgress.itemsConsumed.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
                         null, null, null);
 
                 // Multiplayer
                 dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
-                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsConsumed.set(match, progress);
+                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsConsumed.set(match, progress);
                     q.finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                             null, null, null, null);
                     return null;
@@ -2452,7 +2463,7 @@ public class BukkitQuester implements Quester {
 
         int currentIndex = -1;
         final LinkedList<Integer> matches = new LinkedList<>();
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         for (final ItemStack toDeliver : ((BukkitStage) getCurrentStage(quest)).getItemsToDeliver()) {
             currentIndex++;
             if (BukkitItemUtil.compareItems(delivered, toDeliver, true) == 0) {
@@ -2467,7 +2478,7 @@ public class BukkitQuester implements Quester {
             if (!getCurrentStage(quest).getItemDeliveryTargets().get(match).equals(npc)) {
                 continue;
             }
-            final int amount = bukkitQuestData.itemsDelivered.get(match);
+            final int amount = bukkitQuestProgress.itemsDelivered.get(match);
             final ItemStack goal = ((BukkitStage) getCurrentStage(quest)).getItemsToDeliver().get(match);
             
             final ObjectiveType type = ObjectiveType.DELIVER_ITEM;
@@ -2482,7 +2493,7 @@ public class BukkitQuester implements Quester {
                 // Already delivered in previous loop
                 return;
             }
-            bukkitQuestData.itemsDelivered.set(match, progress);
+            bukkitQuestProgress.itemsDelivered.set(match, progress);
             if (progress >= goal.getAmount()) {
                 if ((delivered.getAmount() + amount) >= goal.getAmount()) {
                     // Take away remaining amount to be delivered
@@ -2508,7 +2519,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, ObjectiveType.DELIVER_ITEM,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).itemsDelivered.set(match, progress);
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).itemsDelivered.set(match, progress);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2534,8 +2545,8 @@ public class BukkitQuester implements Quester {
         }
 
         final int index = getCurrentStage(quest).getNpcsToInteract().indexOf(npc);
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        final boolean npcsInteracted = bukkitQuestData.npcsInteracted.get(index);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        final boolean npcsInteracted = bukkitQuestProgress.npcsInteracted.get(index);
 
         final ObjectiveType type = ObjectiveType.TALK_TO_NPC;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -2544,14 +2555,14 @@ public class BukkitQuester implements Quester {
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
         if (!npcsInteracted) {
-            bukkitQuestData.npcsInteracted.set(index, true);
+            bukkitQuestProgress.npcsInteracted.set(index, true);
             finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).npcsInteracted.set(index, true);
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).npcsInteracted.set(index, true);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2577,8 +2588,8 @@ public class BukkitQuester implements Quester {
         }
         
         final int index = getCurrentStage(quest).getNpcsToKill().indexOf(npc);
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        final int npcsKilled = bukkitQuestData.npcsNumKilled.get(index);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        final int npcsKilled = bukkitQuestProgress.npcsNumKilled.get(index);
         final int npcsToKill = getCurrentStage(quest).getNpcNumToKill().get(index);
         
         final ObjectiveType type = ObjectiveType.KILL_NPC;
@@ -2587,9 +2598,9 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, npcsKilled, npcsToKill));
         plugin.getServer().getPluginManager().callEvent(preEvent);
         
-        final int newNpcsKilled = bukkitQuestData.npcsNumKilled.get(index) + 1;
+        final int newNpcsKilled = bukkitQuestProgress.npcsNumKilled.get(index) + 1;
         if (npcsKilled < npcsToKill) {
-            bukkitQuestData.npcsNumKilled.set(index, newNpcsKilled);
+            bukkitQuestProgress.npcsNumKilled.set(index, newNpcsKilled);
             if (newNpcsKilled >= npcsToKill) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
@@ -2598,7 +2609,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).npcsNumKilled
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).npcsNumKilled
                                     .set(index, newNpcsKilled);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
@@ -2619,8 +2630,8 @@ public class BukkitQuester implements Quester {
      * @param quest The quest for which the fish is being caught
      */
     public void milkCow(final Quest quest) {
-        final BukkitQuestProgress questData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        if (questData == null) {
+        final BukkitQuestProgress questProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        if (questProgress == null) {
             return;
         }
         final Stage currentStage = getCurrentStage(quest);
@@ -2631,7 +2642,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         
-        final int cowsMilked = questData.getCowsMilked();
+        final int cowsMilked = questProgress.getCowsMilked();
         final int cowsToMilk = currentStage.getCowsToMilk();
         
         final ObjectiveType type = ObjectiveType.MILK_COW;
@@ -2642,7 +2653,7 @@ public class BukkitQuester implements Quester {
         
         final int newCowsMilked = cowsMilked + 1;
         if (cowsMilked < cowsToMilk) {
-            questData.setCowsMilked(newCowsMilked);
+            questProgress.setCowsMilked(newCowsMilked);
             
             if (newCowsMilked >= cowsToMilk) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
@@ -2652,7 +2663,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestDataOrDefault(quest).setCowsMilked(newCowsMilked);
+                            q.getQuestProgressOrDefault(quest).setCowsMilked(newCowsMilked);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2672,8 +2683,8 @@ public class BukkitQuester implements Quester {
      * @param quest The quest for which the fish is being caught
      */
     public void catchFish(final Quest quest) {
-        final BukkitQuestProgress questData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        if (questData == null) {
+        final BukkitQuestProgress questProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        if (questProgress == null) {
             return;
         }
         final Stage currentStage = getCurrentStage(quest);
@@ -2684,7 +2695,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         
-        final int fishCaught = questData.getFishCaught();
+        final int fishCaught = questProgress.getFishCaught();
         final int fishToCatch = currentStage.getFishToCatch();
         
         final ObjectiveType type = ObjectiveType.CATCH_FISH;
@@ -2695,7 +2706,7 @@ public class BukkitQuester implements Quester {
         
         final int newFishCaught = fishCaught + 1;
         if (fishCaught < fishToCatch) {
-            questData.setFishCaught(newFishCaught);
+            questProgress.setFishCaught(newFishCaught);
             
             if (newFishCaught >= fishToCatch) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
@@ -2705,7 +2716,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            q.getQuestDataOrDefault(quest).setFishCaught(newFishCaught);
+                            q.getQuestProgressOrDefault(quest).setFishCaught(newFishCaught);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2727,7 +2738,7 @@ public class BukkitQuester implements Quester {
      * @param entityType The mob to be killed
      */
     public void killMob(final Quest quest, final Location killedLocation, final EntityType entityType) {
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         if (entityType == null) {
             return;
         }
@@ -2739,7 +2750,7 @@ public class BukkitQuester implements Quester {
         if (index == -1) {
             return;
         }
-        final int mobsKilled = bukkitQuestData.mobNumKilled.get(index);
+        final int mobsKilled = bukkitQuestProgress.mobNumKilled.get(index);
         final int mobsToKill = currentStage.getMobNumToKill().get(index);
         if (!currentStage.getLocationsToKillWithin().isEmpty()) {
             final Location locationToKillWithin = currentStage.getLocationsToKillWithin().get(index);
@@ -2771,7 +2782,7 @@ public class BukkitQuester implements Quester {
         
         final int newMobsKilled = mobsKilled + 1;
         if (mobsKilled < mobsToKill) {
-            bukkitQuestData.mobNumKilled.set(index, newMobsKilled);
+            bukkitQuestProgress.mobNumKilled.set(index, newMobsKilled);
             if (newMobsKilled >= mobsToKill) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
@@ -2784,8 +2795,8 @@ public class BukkitQuester implements Quester {
                             if (i == -1) {
                                 return null;
                             }
-                            final int kills = q.getQuestDataOrDefault(quest).getMobNumKilled().get(i);
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).mobNumKilled.set(index, kills + 1);
+                            final int kills = q.getQuestProgressOrDefault(quest).getMobNumKilled().get(i);
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).mobNumKilled.set(index, kills + 1);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2806,8 +2817,8 @@ public class BukkitQuester implements Quester {
      * @param player The player to be killed
      */
     public void killPlayer(final Quest quest, final Player player) {
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        if (bukkitQuestData == null) {
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        if (bukkitQuestProgress == null) {
             return;
         }
         final Stage currentStage = getCurrentStage(quest);
@@ -2818,7 +2829,7 @@ public class BukkitQuester implements Quester {
             return;
         }
         
-        final int playersKilled = bukkitQuestData.getPlayersKilled();
+        final int playersKilled = bukkitQuestProgress.getPlayersKilled();
         final int playersToKill = currentStage.getPlayersToKill();
         
         final ObjectiveType type = ObjectiveType.KILL_PLAYER;
@@ -2829,7 +2840,7 @@ public class BukkitQuester implements Quester {
         
         final int newPlayersKilled = playersKilled + 1;
         if (playersKilled < playersToKill) {
-            bukkitQuestData.setPlayersKilled(newPlayersKilled);
+            bukkitQuestProgress.setPlayersKilled(newPlayersKilled);
             if (newPlayersKilled >= playersToKill) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
@@ -2838,8 +2849,8 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            final int kills = q.getQuestDataOrDefault(quest).getPlayersKilled();
-                            q.getQuestDataOrDefault(quest).setPlayersKilled(kills + 1);
+                            final int kills = q.getQuestProgressOrDefault(quest).getPlayersKilled();
+                            q.getQuestProgressOrDefault(quest).setPlayersKilled(kills + 1);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2860,8 +2871,8 @@ public class BukkitQuester implements Quester {
      * @param location The location being reached
      */
     public void reachLocation(final Quest quest, final Location location) {
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-        if (bukkitQuestData == null || bukkitQuestData.locationsReached == null || getCurrentStage(quest) == null
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        if (bukkitQuestProgress == null || bukkitQuestProgress.locationsReached == null || getCurrentStage(quest) == null
                 || getCurrentStage(quest).getLocationsToReach() == null) {
             return;
         }
@@ -2876,9 +2887,9 @@ public class BukkitQuester implements Quester {
             }
             final double radius = getCurrentStage(quest).getRadiiToReachWithin().get(i);
             if (toReach.distanceSquared(location) <= radius * radius) {
-                if (!bukkitQuestData.locationsReached.get(i)) {
+                if (!bukkitQuestProgress.locationsReached.get(i)) {
                     int progress = 0;
-                    for (final Boolean b : bukkitQuestData.locationsReached) {
+                    for (final Boolean b : bukkitQuestProgress.locationsReached) {
                         if (b) {
                             progress++;
                         }
@@ -2890,7 +2901,7 @@ public class BukkitQuester implements Quester {
                             new BukkitObjective(type, null, progress, goal));
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
-                    bukkitQuestData.locationsReached.set(i, true);
+                    bukkitQuestProgress.locationsReached.set(i, true);
                     finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                             new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null, null);
 
@@ -2898,7 +2909,7 @@ public class BukkitQuester implements Quester {
                     dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                             (final Quester q, final Quest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).locationsReached
+                                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).locationsReached
                                             .set(finalIndex, true);
                                     if (q.testComplete(quest)) {
                                         quest.nextStage(q, false);
@@ -2925,7 +2936,7 @@ public class BukkitQuester implements Quester {
      * @param entityType The type of mob being tamed
      */
     public void tameMob(final Quest quest, final EntityType entityType) {
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         if (entityType == null) {
             return;
         }
@@ -2940,7 +2951,7 @@ public class BukkitQuester implements Quester {
         }
 
         final int mobsToTame = currentStage.getMobNumToTame().get(index);
-        final int mobsTamed = bukkitQuestData.mobsTamed.get(index);
+        final int mobsTamed = bukkitQuestProgress.mobsTamed.get(index);
         
         final ObjectiveType type = ObjectiveType.TAME_MOB;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -2950,7 +2961,7 @@ public class BukkitQuester implements Quester {
         
         final int newMobsToTame = mobsTamed + 1;
         if (mobsTamed < mobsToTame) {
-            bukkitQuestData.mobsTamed.set(index, newMobsToTame);
+            bukkitQuestProgress.mobsTamed.set(index, newMobsToTame);
             if (newMobsToTame >= mobsToTame) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
@@ -2959,7 +2970,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).mobsTamed.set(index, newMobsToTame);
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).mobsTamed.set(index, newMobsToTame);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -2980,7 +2991,7 @@ public class BukkitQuester implements Quester {
      * @param color The wool color of the sheep being sheared
      */
     public void shearSheep(final Quest quest, final DyeColor color) {
-        final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+        final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         if (color == null) {
             return;
         }
@@ -2995,7 +3006,7 @@ public class BukkitQuester implements Quester {
         }
 
         final int sheepToShear = getCurrentStage(quest).getSheepNumToShear().get(index);
-        final int sheepSheared = bukkitQuestData.sheepSheared.get(index);
+        final int sheepSheared = bukkitQuestProgress.sheepSheared.get(index);
         
         final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -3005,7 +3016,7 @@ public class BukkitQuester implements Quester {
         
         final int newSheepSheared = sheepSheared + 1;
         if (sheepSheared < sheepToShear) {
-            bukkitQuestData.sheepSheared.set(index, newSheepSheared);
+            bukkitQuestProgress.sheepSheared.set(index, newSheepSheared);
             if (newSheepSheared >= sheepToShear) {
                 finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                         new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
@@ -3014,7 +3025,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).sheepSheared
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).sheepSheared
                                     .set(index, newSheepSheared);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
@@ -3044,11 +3055,11 @@ public class BukkitQuester implements Quester {
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
             int index = 0;
-            final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
+            final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
             for (final String pass : getCurrentStage(quest).getPasswordPhrases()) {
                 if (pass.equalsIgnoreCase(evt.getMessage())) {
                     final String display = getCurrentStage(quest).getPasswordDisplays().get(index);
-                    bukkitQuestData.passwordsSaid.set(index, true);
+                    bukkitQuestProgress.passwordsSaid.set(index, true);
 
                     plugin.getServer().getScheduler().runTask(plugin, () -> finishObjective(quest,
                             new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
@@ -3058,7 +3069,7 @@ public class BukkitQuester implements Quester {
                     dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                             (final Quester q, final Quest cq) -> {
                                 if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                    ((BukkitQuestProgress) q.getQuestDataOrDefault(quest)).passwordsSaid
+                                    ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).passwordsSaid
                                             .set(finalIndex, true);
                                     if (q.testComplete(quest)) {
                                         quest.nextStage(q, false);
@@ -3575,16 +3586,13 @@ public class BukkitQuester implements Quester {
 
     public FileConfiguration getBaseData() {
         final FileConfiguration data = new YamlConfiguration();
+        final ArrayList<String> currentQuestIds = new ArrayList<>();
+        final ArrayList<Integer> currentQuestStages = new ArrayList<>();
         if (!currentQuests.isEmpty()) {
-            final ArrayList<String> questIds = new ArrayList<>();
-            final ArrayList<Integer> questStages = new ArrayList<>();
             for (final Quest quest : currentQuests.keySet()) {
-                questIds.add(quest.getId());
-                questStages.add(currentQuests.get(quest));
+                currentQuestIds.add(quest.getId());
+                currentQuestStages.add(currentQuests.get(quest));
             }
-            data.set("currentQuests", questIds);
-            data.set("currentStages", questStages);
-            data.set("quest-points", questPoints);
             final ConfigurationSection dataSec = data.createSection("questData");
             for (final Quest quest : currentQuests.keySet()) {
                 if (quest.getName() == null || quest.getName().isEmpty()) {
@@ -3592,91 +3600,88 @@ public class BukkitQuester implements Quester {
                     return null;
                 }
                 final ConfigurationSection questSec = dataSec.createSection(quest.getId());
-                final BukkitQuestProgress questData = (BukkitQuestProgress) getQuestDataOrDefault(quest);
-                if (questData == null) {
+                final BukkitQuestProgress questProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+                if (questProgress == null) {
                     continue;
                 }
-                if (!questData.blocksBroken.isEmpty()) {
-                    questSec.set("blocks-broken-amounts", questData.blocksBroken);
+                if (!questProgress.blocksBroken.isEmpty()) {
+                    questSec.set("blocks-broken-amounts", questProgress.blocksBroken);
                 }
-                if (!questData.blocksDamaged.isEmpty()) {
-                    questSec.set("blocks-damaged-amounts", questData.blocksDamaged);
+                if (!questProgress.blocksDamaged.isEmpty()) {
+                    questSec.set("blocks-damaged-amounts", questProgress.blocksDamaged);
                 }
-                if (!questData.blocksPlaced.isEmpty()) {
-                    questSec.set("blocks-placed-amounts", questData.blocksPlaced);
+                if (!questProgress.blocksPlaced.isEmpty()) {
+                    questSec.set("blocks-placed-amounts", questProgress.blocksPlaced);
                 }
-                if (!questData.blocksUsed.isEmpty()) {
-                    questSec.set("blocks-used-amounts", questData.blocksUsed);
+                if (!questProgress.blocksUsed.isEmpty()) {
+                    questSec.set("blocks-used-amounts", questProgress.blocksUsed);
                 }
-                if (!questData.blocksCut.isEmpty()) {
-                    questSec.set("blocks-cut-amounts", questData.blocksCut);
+                if (!questProgress.blocksCut.isEmpty()) {
+                    questSec.set("blocks-cut-amounts", questProgress.blocksCut);
                 }
-                if (!questData.itemsCrafted.isEmpty()) {
-                    questSec.set("item-craft-amounts", questData.itemsCrafted);
+                if (!questProgress.itemsCrafted.isEmpty()) {
+                    questSec.set("item-craft-amounts", questProgress.itemsCrafted);
                 }
-                if (!questData.itemsSmelted.isEmpty()) {
-                    questSec.set("item-smelt-amounts", questData.itemsSmelted);
+                if (!questProgress.itemsSmelted.isEmpty()) {
+                    questSec.set("item-smelt-amounts", questProgress.itemsSmelted);
                 }
-                if (!questData.itemsEnchanted.isEmpty()) {
-                    questSec.set("item-enchant-amounts", questData.itemsEnchanted);
+                if (!questProgress.itemsEnchanted.isEmpty()) {
+                    questSec.set("item-enchant-amounts", questProgress.itemsEnchanted);
                 }
-                if (!questData.itemsBrewed.isEmpty()) {
-                    questSec.set("item-brew-amounts", questData.itemsBrewed);
+                if (!questProgress.itemsBrewed.isEmpty()) {
+                    questSec.set("item-brew-amounts", questProgress.itemsBrewed);
                 }
-                if (!questData.itemsConsumed.isEmpty()) {
-                    questSec.set("item-consume-amounts", questData.itemsConsumed);
+                if (!questProgress.itemsConsumed.isEmpty()) {
+                    questSec.set("item-consume-amounts", questProgress.itemsConsumed);
                 }
-                if (!questData.itemsDelivered.isEmpty()) {
-                    questSec.set("item-delivery-amounts", questData.itemsDelivered);
+                if (!questProgress.itemsDelivered.isEmpty()) {
+                    questSec.set("item-delivery-amounts", questProgress.itemsDelivered);
                 }
-                if (!questData.npcsInteracted.isEmpty()) {
-                    questSec.set("has-talked-to", questData.npcsInteracted);
+                if (!questProgress.npcsInteracted.isEmpty()) {
+                    questSec.set("has-talked-to", questProgress.npcsInteracted);
                 }
-                if (!questData.npcsNumKilled.isEmpty()) {
-                    questSec.set("npc-killed-amounts", questData.npcsNumKilled);
+                if (!questProgress.npcsNumKilled.isEmpty()) {
+                    questSec.set("npc-killed-amounts", questProgress.npcsNumKilled);
                 }
-                if (!questData.mobNumKilled.isEmpty()) {
-                    questSec.set("mobs-killed-amounts", questData.mobNumKilled);
+                if (!questProgress.mobNumKilled.isEmpty()) {
+                    questSec.set("mobs-killed-amounts", questProgress.mobNumKilled);
                 }
-                if (!questData.mobsTamed.isEmpty()) {
-                    questSec.set("mob-tame-amounts", questData.mobsTamed);
+                if (!questProgress.mobsTamed.isEmpty()) {
+                    questSec.set("mob-tame-amounts", questProgress.mobsTamed);
                 }
                 final Stage stage = getCurrentStage(quest);
                 if (stage != null) {
                     if (stage.getFishToCatch() != null) {
-                        questSec.set("fish-caught", questData.getFishCaught());
+                        questSec.set("fish-caught", questProgress.getFishCaught());
                     }
                     if (stage.getCowsToMilk() != null) {
-                        questSec.set("cows-milked", questData.getCowsMilked());
+                        questSec.set("cows-milked", questProgress.getCowsMilked());
                     }
                     if (stage.getPlayersToKill() != null) {
-                        questSec.set("players-killed", questData.getPlayersKilled());
+                        questSec.set("players-killed", questProgress.getPlayersKilled());
                     }
                 }
-                if (!questData.sheepSheared.isEmpty()) {
-                    questSec.set("sheep-sheared", questData.sheepSheared);
+                if (!questProgress.sheepSheared.isEmpty()) {
+                    questSec.set("sheep-sheared", questProgress.sheepSheared);
                 }
-                if (!questData.locationsReached.isEmpty()) {
-                    questSec.set("has-reached-location", questData.locationsReached);
+                if (!questProgress.locationsReached.isEmpty()) {
+                    questSec.set("has-reached-location", questProgress.locationsReached);
                 }
-                if (!questData.passwordsSaid.isEmpty()) {
-                    questSec.set("passwords-said", questData.passwordsSaid);
+                if (!questProgress.passwordsSaid.isEmpty()) {
+                    questSec.set("passwords-said", questProgress.passwordsSaid);
                 }
-                if (!questData.customObjectiveCounts.isEmpty()) {
-                    questSec.set("custom-objective-counts", questData.customObjectiveCounts);
+                if (!questProgress.customObjectiveCounts.isEmpty()) {
+                    questSec.set("custom-objective-counts", questProgress.customObjectiveCounts);
                 }
-                if (questData.getDelayTimeLeft() > 0) {
-                    questSec.set("stage-delay", questData.getDelayTimeLeft());
+                if (questProgress.getDelayTimeLeft() > 0) {
+                    questSec.set("stage-delay", questProgress.getDelayTimeLeft());
                 }
             }
-        } else {
-            data.set("currentQuests", "none");
-            data.set("currentStages", "none");
-            data.set("quest-points", questPoints);
         }
-        if (completedQuests.isEmpty()) {
-            data.set("completed-Quests", "none");
-        } else {
+        data.set("currentQuests", currentQuestIds);
+        data.set("currentStages", currentQuestStages);
+        data.set("quest-points", questPoints);
+        if (!completedQuests.isEmpty()) {
             final List<String> questIds = new LinkedList<>();
             for (final Quest quest : completedQuests) {
                 questIds.add(quest.getId());
@@ -3746,9 +3751,9 @@ public class BukkitQuester implements Quester {
      * @param quest The quest of which the timer is for
      */
     public void startStageTimer(final Quest quest) {
-        if (getQuestDataOrDefault(quest).getDelayTimeLeft() > -1) {
+        if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BukkitStageTimer(plugin, this, quest),
-                    (long) (getQuestDataOrDefault(quest).getDelayTimeLeft() * 0.02));
+                    (long) (getQuestProgressOrDefault(quest).getDelayTimeLeft() * 0.02));
         } else {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BukkitStageTimer(plugin, this, quest),
                     (long) (getCurrentStage(quest).getDelay() * 0.02));
@@ -3760,7 +3765,7 @@ public class BukkitQuester implements Quester {
                 }
             }
         }
-        getQuestDataOrDefault(quest).setDelayStartTime(System.currentTimeMillis());
+        getQuestProgressOrDefault(quest).setDelayStartTime(System.currentTimeMillis());
     }
     
     /**
@@ -3768,12 +3773,12 @@ public class BukkitQuester implements Quester {
      * @param quest The quest of which the timer is for
      */
     public void stopStageTimer(final Quest quest) {
-        if (getQuestDataOrDefault(quest).getDelayTimeLeft() > -1) {
-            getQuestDataOrDefault(quest).setDelayTimeLeft(getQuestDataOrDefault(quest).getDelayTimeLeft()
-                    - (System.currentTimeMillis() - getQuestDataOrDefault(quest).getDelayStartTime()));
+        if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
+            getQuestProgressOrDefault(quest).setDelayTimeLeft(getQuestProgressOrDefault(quest).getDelayTimeLeft()
+                    - (System.currentTimeMillis() - getQuestProgressOrDefault(quest).getDelayStartTime()));
         } else {
-            getQuestDataOrDefault(quest).setDelayTimeLeft(getCurrentStage(quest).getDelay() - (System.currentTimeMillis()
-                    - getQuestDataOrDefault(quest).getDelayStartTime()));
+            getQuestProgressOrDefault(quest).setDelayTimeLeft(getCurrentStage(quest).getDelay() - (System.currentTimeMillis()
+                    - getQuestProgressOrDefault(quest).getDelayStartTime()));
         }
     }
     
@@ -3783,12 +3788,12 @@ public class BukkitQuester implements Quester {
      * @return Remaining time in milliseconds
      */
     public long getStageTime(final Quest quest) {
-        if (getQuestDataOrDefault(quest).getDelayTimeLeft() > -1) {
-            return getQuestDataOrDefault(quest).getDelayTimeLeft() - (System.currentTimeMillis()
-                    - getQuestDataOrDefault(quest).getDelayStartTime());
+        if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
+            return getQuestProgressOrDefault(quest).getDelayTimeLeft() - (System.currentTimeMillis()
+                    - getQuestProgressOrDefault(quest).getDelayStartTime());
         } else {
             return getCurrentStage(quest).getDelay() - (System.currentTimeMillis()
-                    - getQuestDataOrDefault(quest).getDelayStartTime());
+                    - getQuestProgressOrDefault(quest).getDelayStartTime());
         }
     }
     

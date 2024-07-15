@@ -47,7 +47,7 @@ public class BukkitQuestCommandHandler {
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
-                            if (plugin.getQuester(player.getUniqueId()).getQuestDataOrDefault(q).getDelayStartTime() == 0
+                            if (plugin.getQuester(player.getUniqueId()).getQuestProgressOrDefault(q).getDelayStartTime() == 0
                                     || plugin.getQuester(player.getUniqueId()).getStageTime(q) < 0L) {
                                 final String msg = BukkitLang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());

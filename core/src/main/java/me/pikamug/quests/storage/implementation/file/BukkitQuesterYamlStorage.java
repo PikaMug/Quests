@@ -152,7 +152,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
             quester.setCurrentQuests(currentQuests);
             final ConfigurationSection dataSec = data.getConfigurationSection("questData");
             if (dataSec == null || dataSec.getKeys(false).isEmpty()) {
-                return null;
+                return quester;
             }
             final ConcurrentHashMap<Quest, BukkitQuestProgress> questProgress = new ConcurrentHashMap<>();
             for (final String key : dataSec.getKeys(false)) {
@@ -172,100 +172,100 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
                 if (questSec == null) {
                     continue;
                 }
-                final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(quest);
+                final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) quester.getQuestProgressOrDefault(quest);
                 if (questSec.contains("blocks-broken-amounts")) {
                     final List<Integer> brokenAmounts = questSec.getIntegerList("blocks-broken-amounts");
-                    bukkitQuestData.setBlocksBroken(new LinkedList<>(brokenAmounts));
+                    bukkitQuestProgress.setBlocksBroken(new LinkedList<>(brokenAmounts));
                 }
                 if (questSec.contains("blocks-damaged-amounts")) {
                     final List<Integer> damagedAmounts = questSec.getIntegerList("blocks-damaged-amounts");
-                    bukkitQuestData.setBlocksDamaged(new LinkedList<>(damagedAmounts));
+                    bukkitQuestProgress.setBlocksDamaged(new LinkedList<>(damagedAmounts));
                 }
                 if (questSec.contains("blocks-placed-amounts")) {
                     final List<Integer> placedAmounts = questSec.getIntegerList("blocks-placed-amounts");
-                    bukkitQuestData.setBlocksPlaced(new LinkedList<>(placedAmounts));
+                    bukkitQuestProgress.setBlocksPlaced(new LinkedList<>(placedAmounts));
                 }
                 if (questSec.contains("blocks-used-amounts")) {
                     final List<Integer> usedAmounts = questSec.getIntegerList("blocks-used-amounts");
-                    bukkitQuestData.setBlocksUsed(new LinkedList<>(usedAmounts));
+                    bukkitQuestProgress.setBlocksUsed(new LinkedList<>(usedAmounts));
                 }
                 if (questSec.contains("blocks-cut-amounts")) {
                     final List<Integer> cutAmounts = questSec.getIntegerList("blocks-cut-amounts");
-                    bukkitQuestData.setBlocksCut(new LinkedList<>(cutAmounts));
+                    bukkitQuestProgress.setBlocksCut(new LinkedList<>(cutAmounts));
                 }
                 if (questSec.contains("item-craft-amounts")) {
                     final List<Integer> craftAmounts = questSec.getIntegerList("item-craft-amounts");
-                    bukkitQuestData.setItemsCrafted(new LinkedList<>(craftAmounts));
+                    bukkitQuestProgress.setItemsCrafted(new LinkedList<>(craftAmounts));
                 }
                 if (questSec.contains("item-smelt-amounts")) {
                     final List<Integer> smeltAmounts = questSec.getIntegerList("item-smelt-amounts");
-                    bukkitQuestData.setItemsSmelted(new LinkedList<>(smeltAmounts));
+                    bukkitQuestProgress.setItemsSmelted(new LinkedList<>(smeltAmounts));
                 }
                 if (questSec.contains("item-enchant-amounts")) {
                     final List<Integer> enchantAmounts = questSec.getIntegerList("item-enchant-amounts");
-                    bukkitQuestData.setItemsEnchanted(new LinkedList<>(enchantAmounts));
+                    bukkitQuestProgress.setItemsEnchanted(new LinkedList<>(enchantAmounts));
                 }
                 if (questSec.contains("item-brew-amounts")) {
                     final List<Integer> brewAmounts = questSec.getIntegerList("item-brew-amounts");
-                    bukkitQuestData.setItemsBrewed(new LinkedList<>(brewAmounts));
+                    bukkitQuestProgress.setItemsBrewed(new LinkedList<>(brewAmounts));
                 }
                 if (questSec.contains("item-consume-amounts")) {
                     final List<Integer> consumeAmounts = questSec.getIntegerList("item-consume-amounts");
-                    bukkitQuestData.setItemsConsumed(new LinkedList<>(consumeAmounts));
+                    bukkitQuestProgress.setItemsConsumed(new LinkedList<>(consumeAmounts));
                 }
                 if (questSec.contains("item-delivery-amounts")) {
                     final List<Integer> deliveryAmounts = questSec.getIntegerList("item-delivery-amounts");
-                    bukkitQuestData.setItemsDelivered(new LinkedList<>(deliveryAmounts));
+                    bukkitQuestProgress.setItemsDelivered(new LinkedList<>(deliveryAmounts));
                 }
                 if (questSec.contains("has-talked-to")) {
                     final List<Boolean> talkAmount = questSec.getBooleanList("has-talked-to");
-                    bukkitQuestData.setNpcsInteracted(new LinkedList<>(talkAmount));
+                    bukkitQuestProgress.setNpcsInteracted(new LinkedList<>(talkAmount));
                 }
                 if (questSec.contains("npc-killed-amounts")) {
                     final List<Integer> npcAmounts = questSec.getIntegerList("npc-killed-amounts");
-                    bukkitQuestData.setNpcsNumKilled(new LinkedList<>(npcAmounts));
+                    bukkitQuestProgress.setNpcsNumKilled(new LinkedList<>(npcAmounts));
                 } else if (questSec.contains("citizen-amounts-killed")) {
                     // Legacy
                     final List<Integer> npcAmounts = questSec.getIntegerList("citizen-amounts-killed");
-                    bukkitQuestData.setNpcsNumKilled(new LinkedList<>(npcAmounts));
+                    bukkitQuestProgress.setNpcsNumKilled(new LinkedList<>(npcAmounts));
                 }
                 if (questSec.contains("cows-milked")) {
-                    bukkitQuestData.setCowsMilked(questSec.getInt("cows-milked"));
+                    bukkitQuestProgress.setCowsMilked(questSec.getInt("cows-milked"));
                 }
                 if (questSec.contains("fish-caught")) {
-                    bukkitQuestData.setFishCaught(questSec.getInt("fish-caught"));
+                    bukkitQuestProgress.setFishCaught(questSec.getInt("fish-caught"));
                 }
                 if (questSec.contains("players-killed")) {
-                    bukkitQuestData.setPlayersKilled(questSec.getInt("players-killed"));
+                    bukkitQuestProgress.setPlayersKilled(questSec.getInt("players-killed"));
                 }
                 if (questSec.contains("mobs-killed-amounts")) {
                     final List<Integer> mobAmounts = questSec.getIntegerList("mobs-killed-amounts");
-                    bukkitQuestData.setMobNumKilled(new LinkedList<>(mobAmounts));
+                    bukkitQuestProgress.setMobNumKilled(new LinkedList<>(mobAmounts));
                 }
                 if (questSec.contains("has-reached-location")) {
                     final List<Boolean> hasReached = questSec.getBooleanList("has-reached-location");
-                    bukkitQuestData.setLocationsReached(new LinkedList<>(hasReached));
+                    bukkitQuestProgress.setLocationsReached(new LinkedList<>(hasReached));
                 }
                 if (questSec.contains("mob-tame-amounts")) {
                     final List<Integer> tameAmounts = questSec.getIntegerList("mob-tame-amounts");
-                    bukkitQuestData.setMobsTamed(new LinkedList<>(tameAmounts));
+                    bukkitQuestProgress.setMobsTamed(new LinkedList<>(tameAmounts));
                 }
                 if (questSec.contains("sheep-sheared")) {
                     final List<Integer> sheepAmounts = questSec.getIntegerList("sheep-sheared");
-                    bukkitQuestData.setSheepSheared(new LinkedList<>(sheepAmounts));
+                    bukkitQuestProgress.setSheepSheared(new LinkedList<>(sheepAmounts));
                 }
                 if (questSec.contains("passwords-said")) {
                     final List<Boolean> passAmounts = questSec.getBooleanList("passwords-said");
-                    bukkitQuestData.setPasswordsSaid(new LinkedList<>(passAmounts));
+                    bukkitQuestProgress.setPasswordsSaid(new LinkedList<>(passAmounts));
                 }
                 if (questSec.contains("custom-objective-counts")) {
                     final List<Integer> customObjCounts = questSec.getIntegerList("custom-objective-counts");
-                    bukkitQuestData.setCustomObjectiveCounts(new LinkedList<>(customObjCounts));
+                    bukkitQuestProgress.setCustomObjectiveCounts(new LinkedList<>(customObjCounts));
                 }
                 if (questSec.contains("stage-delay")) {
-                    bukkitQuestData.setDelayTimeLeft(questSec.getLong("stage-delay"));
+                    bukkitQuestProgress.setDelayTimeLeft(questSec.getLong("stage-delay"));
                 }
-                questProgress.put(quest, bukkitQuestData);
+                questProgress.put(quest, bukkitQuestProgress);
             }
             quester.setQuestProgress(questProgress);
         }

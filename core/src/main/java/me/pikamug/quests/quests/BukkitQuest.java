@@ -306,9 +306,9 @@ public class BukkitQuest implements Quest {
         } else {
             setStage(quester, quester.getCurrentQuests().get(this) + 1);
         }
-        if (quester.getQuestDataOrDefault(this) != null) {
-            quester.getQuestDataOrDefault(this).setDelayStartTime(0);
-            quester.getQuestDataOrDefault(this).setDelayTimeLeft(-1);
+        if (quester.getQuestProgressOrDefault(this) != null) {
+            quester.getQuestProgressOrDefault(this).setDelayStartTime(0);
+            quester.getQuestProgressOrDefault(this).setDelayTimeLeft(-1);
         }
 
         // Multiplayer
@@ -1082,7 +1082,7 @@ public class BukkitQuest implements Quest {
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
             final List<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
-                if (qq.getQuestDataOrDefault(this) != null) {
+                if (qq.getQuestProgressOrDefault(this) != null) {
                     completeQuest(qq, false);
                 }
             }

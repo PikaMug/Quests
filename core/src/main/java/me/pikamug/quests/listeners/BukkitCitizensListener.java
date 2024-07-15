@@ -199,9 +199,9 @@ public class BukkitCitizensListener implements Listener {
                     if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNPC().getUniqueId())) {
                         final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNPC()
                                 .getUniqueId());
-                        if (quester.getQuestDataOrDefault(quest) != null && npcIndex > -1) {
+                        if (quester.getQuestProgressOrDefault(quest) != null && npcIndex > -1) {
                             final LinkedList<Boolean> interacted
-                                    = ((BukkitQuestProgress) quester.getQuestDataOrDefault(quest)).npcsInteracted;
+                                    = ((BukkitQuestProgress) quester.getQuestProgressOrDefault(quest)).npcsInteracted;
                             if (interacted.size() > npcIndex && !interacted.get(npcIndex)) {
                                 hasObjective = true;
                             }

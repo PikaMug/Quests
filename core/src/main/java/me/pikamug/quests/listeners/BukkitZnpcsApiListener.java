@@ -195,8 +195,8 @@ public class BukkitZnpcsApiListener implements Listener {
                             if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNpc().getUuid())) {
                                 final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNpc()
                                         .getUuid());
-                                if (quester.getQuestDataOrDefault(quest) != null && npcIndex > -1
-                                        && !((BukkitQuestProgress) quester.getQuestDataOrDefault(quest)).npcsInteracted.get(npcIndex)) {
+                                if (quester.getQuestProgressOrDefault(quest) != null && npcIndex > -1
+                                        && !((BukkitQuestProgress) quester.getQuestProgressOrDefault(quest)).npcsInteracted.get(npcIndex)) {
                                     hasObjective = true;
                                 }
                                 quester.interactWithNPC(quest, event.getNpc().getUuid());

@@ -222,8 +222,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                     return;
                 }
                 int index = -1;
-                final BukkitQuestProgress bukkitQuestData = (BukkitQuestProgress) quester.getQuestDataOrDefault(bukkitQuest);
-                final LinkedList<Integer> customObjCounts = bukkitQuestData.customObjectiveCounts;
+                final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) quester.getQuestProgressOrDefault(bukkitQuest);
+                final LinkedList<Integer> customObjCounts = bukkitQuestProgress.customObjectiveCounts;
                 for (final CustomObjective co : quester.getCurrentStage(bukkitQuest).getCustomObjectives()) {
                     index++;
                     if (co.getName().equals(this.getName())) {
@@ -233,7 +233,7 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                             continue;
                         }
                         final int old = customObjCounts.get(index);
-                        bukkitQuestData.customObjectiveCounts.set(index, old + count);
+                        bukkitQuestProgress.customObjectiveCounts.set(index, old + count);
                         break;
                     }
                 }
@@ -253,9 +253,9 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                         // Multiplayer
                         final int finalIndex = index;
                         quester.dispatchMultiplayerObjectives(bukkitQuest, quester.getCurrentStage(bukkitQuest), (final Quester q) -> {
-                            final BukkitQuestProgress qBukkitQuestData = (BukkitQuestProgress) q.getQuestDataOrDefault(bukkitQuest);
-                            final int old = qBukkitQuestData.customObjectiveCounts.get(finalIndex);
-                            qBukkitQuestData.customObjectiveCounts.set(finalIndex, old + count);
+                            final BukkitQuestProgress qBukkitQuestProgress = (BukkitQuestProgress) q.getQuestProgressOrDefault(bukkitQuest);
+                            final int old = qBukkitQuestProgress.customObjectiveCounts.get(finalIndex);
+                            qBukkitQuestProgress.customObjectiveCounts.set(finalIndex, old + count);
                             q.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
                                     new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
                             return null;

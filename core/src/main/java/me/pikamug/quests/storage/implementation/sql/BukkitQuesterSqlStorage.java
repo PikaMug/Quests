@@ -261,9 +261,9 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         final Set<String> redoableQuests = bukkitQuester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldRedoableQuests.removeAll(redoableQuests);
-        final Set<String> questData = bukkitQuester.getQuestProgress().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> questProgress = bukkitQuester.getQuestProgress().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldQuestData = getQuesterQuestProgress(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
-        oldQuestData.removeAll(questData);
+        oldQuestData.removeAll(questProgress);
         
         try (final Connection c = connectionFactory.getConnection()) {
             if (oldLastKnownName != null && lastKnownName != null && !lastKnownName.equals(oldLastKnownName)) {

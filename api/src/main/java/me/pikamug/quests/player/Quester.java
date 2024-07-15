@@ -100,7 +100,12 @@ public interface Quester extends Comparable<Quester> {
 
     Stage getCurrentStage(final Quest quest);
 
+    /**
+     * @deprecated Use {@link #getQuestProgressOrDefault(Quest)} instead
+     */
     QuestProgress getQuestDataOrDefault(final Quest quest);
+
+    QuestProgress getQuestProgressOrDefault(final Quest quest);
 
     boolean hasJournal();
 
