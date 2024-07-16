@@ -66,7 +66,7 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if (args.length == 1) {
+        if (args.length < 3) {
             // Shows command usage
             return;
         }

@@ -788,8 +788,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
     @SuppressWarnings({ "unchecked", "unused"})
     private void loadQuestStages(final Quest quest, final FileConfiguration config, final String questKey)
             throws StageFormatException, ActionFormatException, ConditionFormatException {
-        final ConfigurationSection ordered = config.getConfigurationSection("quests." + questKey
-                + ".stages.ordered");
+        final ConfigurationSection ordered = config.getConfigurationSection("quests." + questKey + ".stages.ordered");
         if (ordered == null) {
             plugin.getLogger().severe(ChatColor.RED + questKey + " must have at least one stage!");
             return;

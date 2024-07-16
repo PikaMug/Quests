@@ -3191,7 +3191,6 @@ public class BukkitQuester implements Quester {
             String message = formatCompletedObjectiveMessage("craftItem", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
-                plugin.getLogger().info(goal.getType().name());
                 // Bukkit version is 1.9+
                 if (goal.getType().name().equals("TIPPED_ARROW")) {
                     final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
@@ -3324,8 +3323,8 @@ public class BukkitQuester implements Quester {
             final String message = formatCompletedObjectiveMessage("killPlayer", goal.getAmount());
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            final String message = ChatColor.GREEN + "(" + BukkitLang.get(p, "completed") + ") "
-                    + BukkitLang.get(p, "talkTo").replace("<npc>", plugin.getDependencies().getNpcName(npc));
+            final String message = formatCompletedObjectiveMessage("talkTo", goal.getAmount())
+                    .replace("<npc>", plugin.getDependencies().getNpcName(npc));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
             final String message = formatCompletedObjectiveMessage("kill", goal.getAmount());
@@ -3396,7 +3395,7 @@ public class BukkitQuester implements Quester {
      * @return Formatted message
      */
     private String formatCompletedObjectiveMessage(final String langKey, final int goal) {
-        String message = ChatColor.GREEN + "(" + BukkitLang.get("completed") + ") " + BukkitLang.get(langKey);
+        String message = ChatColor.GREEN + "(" + BukkitLang.get(getPlayer(), "completed") + ") " + BukkitLang.get(langKey);
         if (message.contains("<count>")) {
             message = message.replace("<count>", goal + "/" + goal);
         }

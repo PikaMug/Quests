@@ -46,7 +46,7 @@ public class BukkitLang {
     private static Quests plugin;
     private static final LinkedHashMap<String, String> defaultLang = new LinkedHashMap<>();
     private static final LinkedHashMap<String, LinkedHashMap<String, String>> otherLang = new LinkedHashMap<>();
-    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9a-fA-F]{6})%");
 
     public static Collection<String> values() {
         return defaultLang.values();
@@ -393,8 +393,8 @@ public class BukkitLang {
                 final StringBuilder hex = new StringBuilder();
                 hex.append(ChatColor.COLOR_CHAR + "x");
                 final char[] chars = matcher.group(1).toCharArray();
-                for (final char aChar : chars) {
-                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
+                for (final char c : chars) {
+                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(c));
                 }
                 s = s.replace(matcher.group(), hex.toString());
             }
