@@ -68,7 +68,6 @@ public class BukkitQuestadminNextstageCommand extends BukkitQuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (args.length < 3) {
-            System.out.println(args.length);
             // Shows command usage
             return;
         }

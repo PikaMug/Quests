@@ -64,11 +64,10 @@ public class BukkitItemListener implements Listener {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
-                    
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
-                        if (BukkitInventoryUtil.getEmptySlots(player)
-                                < craftedItem.getAmount() / craftedItem.getMaxStackSize()) {
+                        if (craftedItem.getMaxStackSize() == 0 || (BukkitInventoryUtil.getEmptySlots(player)
+                                < craftedItem.getAmount() / craftedItem.getMaxStackSize())) {
                             BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang.get(player,
                                     "inventoryFull"));
                             event.setCancelled(true);

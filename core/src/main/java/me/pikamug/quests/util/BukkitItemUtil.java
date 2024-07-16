@@ -77,7 +77,7 @@ public class BukkitItemUtil {
      * -6 if stack stored enchants are unequal<br>
      * -7 if stack item flags are unequal<br>
      * -8 if stack Written Book data is unequal<br>
-     * -9 if stack Potion type is unequal<br>
+     * -9 if stack Potion or Tipped Arrow type are unequal<br>
      * -10 if stack Tropical Fish variant is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, 
@@ -178,6 +178,14 @@ public class BukkitItemUtil {
             if (one.getType().equals(Material.POTION)) {
                 // Bukkit version is below 1.9
                 if (one.getDurability() != two.getDurability()) {
+                    return -9;
+                }
+            }
+        } else {
+            if (one.getType().name().equals("TIPPED_ARROW") && two.getType().name().equals("TIPPED_ARROW")) {
+                final String levelA = BukkitItemUtil.getPrettyPotionLevel(one.getItemMeta());
+                final String levelB = BukkitItemUtil.getPrettyPotionLevel(two.getItemMeta());
+                if (!levelA.equals(levelB)) {
                     return -9;
                 }
             }
