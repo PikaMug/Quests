@@ -12,6 +12,7 @@ package me.pikamug.quests.quests;
 
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
+import com.gmail.nossr50.config.Config;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
@@ -835,7 +836,14 @@ public class BukkitQuest implements Quest {
         }
         for (final String s : rewards.getMcmmoSkills()) {
             final int levels = rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s));
-            UserManager.getOfflinePlayer(player).getProfile().addLevels(plugin.getDependencies().getMcMMOSkill(s), levels);
+            final SkillType type = plugin.getDependencies().getMcMMOSkill(s);
+            final int current = UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(type);
+            final int max = Config.getInstance().getLevelCap(type);
+            if (current + levels > max) {
+                UserManager.getOfflinePlayer(player).getProfile().modifySkill(type, max);
+            } else {
+                UserManager.getOfflinePlayer(player).getProfile().addLevels(type, levels);
+            }
             if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
             }
