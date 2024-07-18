@@ -955,6 +955,7 @@ public class BukkitPlayerListener implements Listener {
             }
             final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
+            temp.add(quester);
             plugin.setOfflineQuesters(temp);
         }
     }
