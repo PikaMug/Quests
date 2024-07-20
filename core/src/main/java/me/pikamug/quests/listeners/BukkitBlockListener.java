@@ -107,7 +107,7 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
-                                final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                final ItemStack is = currentStage.getBlocksToPlace().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                     ItemStack goal = new ItemStack(is.getType(), 64);
                                     for (final ItemStack stack : currentStage.getBlocksToPlace()) {
@@ -140,7 +140,7 @@ public class BukkitBlockListener implements Listener {
                                     if (progress < 0) {
                                         break;
                                     }
-                                    final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                    final ItemStack is = currentStage.getBlocksToPlace().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                         ItemStack goal = new ItemStack(is.getType(), 64);
                                         for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
