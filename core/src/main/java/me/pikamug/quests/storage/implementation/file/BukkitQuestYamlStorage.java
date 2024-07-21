@@ -884,7 +884,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, breakAmounts.get(i), (short) 0);
                 }
-                if (Material.matchMaterial(name) != null) {
+                if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToBreak(is);
                 } else {
                     throw new StageFormatException("'break-block-names' has invalid item name " + name, quest, stageNum);
@@ -926,7 +926,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i), (short) 0);
                 }
-                if (Material.matchMaterial(name) != null) {
+                if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToDamage(is);
                 } else {
                     throw new StageFormatException("'damage-block-names' has invalid item name " + name, quest, stageNum);
@@ -967,7 +967,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, placeAmounts.get(i), (short) 0);
                 }
-                if (Material.matchMaterial(name) != null) {
+                if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToPlace(is);
                 } else {
                     throw new StageFormatException("'place-block-names' has invalid item name " + name, quest, stageNum);
@@ -1008,7 +1008,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, useAmounts.get(i), (short) 0);
                 }
-                if (Material.matchMaterial(name) != null) {
+                if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToUse(is);
                 } else {
                     throw new StageFormatException("'use-block-names' has invalid item name " + name, quest, stageNum);
@@ -1049,7 +1049,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     // Legacy
                     is = BukkitItemUtil.processItemStack(name, cutAmounts.get(i), (short) 0);
                 }
-                if (Material.matchMaterial(name) != null) {
+                if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToCut(is);
                 } else {
                     throw new StageFormatException("'cut-block-names' has invalid item name " + name, quest, stageNum);
