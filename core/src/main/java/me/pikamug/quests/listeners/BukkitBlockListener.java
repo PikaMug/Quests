@@ -402,6 +402,11 @@ public class BukkitBlockListener implements Listener {
         } catch (final IllegalArgumentException e) {
             // https://github.com/PikaMug/Quests/issues/2243
         }
+        try {
+            return new ItemStack(block.getBlockData().getPlacementMaterial(), 1, durability);
+        } catch (Exception e) {
+            // https://github.com/PikaMug/Quests/issues/2256
+        }
         return null;
     }
 }

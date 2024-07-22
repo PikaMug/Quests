@@ -223,9 +223,13 @@ public class BukkitItemUtil {
             return null;
         }
         try {
-            final Material mat = Material.getMaterial(material.toUpperCase());
+            Material mat = Material.getMaterial(material.toUpperCase());
             if (mat == null) {
                 return null;
+            }
+            if (mat.isBlock() && Material.getMaterial("CRAFTER") != null) {
+                // Paper 1.21+ does not allow ItemStack from unobtainable blocks (i.e. CARROTS block)
+                mat = mat.createBlockData().getPlacementMaterial();
             }
             return new ItemStack(mat, amount, durability);
         } catch (final Exception e) {

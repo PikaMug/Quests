@@ -76,7 +76,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
-            <version>3.9</version>
+            <version>60b38e1fbe</version>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
@@ -281,6 +281,12 @@
                         </filter>
                         <filter>
                             <artifact>com.github.PikaMug:LocaleLib</artifact>
+                            <excludes>
+                                <exclude>plugin.yml</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>de.tr7zw:item-nbt-api-plugin</artifact>
                             <excludes>
                                 <exclude>plugin.yml</exclude>
                             </excludes>
