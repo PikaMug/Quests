@@ -1205,6 +1205,7 @@ public class BukkitQuester implements Quester {
         final LinkedList<Objective> objectives = new LinkedList<>();
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {
             final int progress = data.getBlocksBroken().get(i);
+            if (i >= stage.getBlocksToBreak().size()) { break; }
             final ItemStack goal = stage.getBlocksToBreak().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "break"),
@@ -1216,6 +1217,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getBlocksDamaged().size(); i++) {
             final int progress = data.getBlocksDamaged().get(i);
+            if (i >= stage.getBlocksToDamage().size()) { break; }
             final ItemStack goal = stage.getBlocksToDamage().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "damage"),
@@ -1227,6 +1229,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getBlocksPlaced().size(); i++) {
             final int progress = data.getBlocksPlaced().get(i);
+            if (i >= stage.getBlocksToPlace().size()) { break; }
             final ItemStack goal = stage.getBlocksToPlace().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "place"),
@@ -1238,6 +1241,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getBlocksUsed().size(); i++) {
             final int progress = data.getBlocksUsed().get(i);
+            if (i >= stage.getBlocksToUse().size()) { break; }
             final ItemStack goal = stage.getBlocksToUse().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "use"),
@@ -1249,6 +1253,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getBlocksCut().size(); i++) {
             final int progress = data.getBlocksCut().get(i);
+            if (i >= stage.getBlocksToCut().size()) { break; }
             final ItemStack goal = stage.getBlocksToCut().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "cut"),
@@ -1260,6 +1265,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsCrafted().size(); i++) {
             final int progress = data.getItemsCrafted().get(i);
+            if (i >= stage.getItemsToCraft().size()) { break; }
             final ItemStack goal = stage.getItemsToCraft().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "craftItem"),
@@ -1277,6 +1283,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsSmelted().size(); i++) {
             final int progress = data.getItemsSmelted().get(i);
+            if (i >= stage.getItemsToSmelt().size()) { break; }
             final ItemStack goal = stage.getItemsToSmelt().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "smeltItem"),
@@ -1288,6 +1295,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsEnchanted().size(); i++) {
             final int progress = data.getItemsEnchanted().get(i);
+            if (i >= stage.getItemsToEnchant().size()) { break; }
             final ItemStack goal = stage.getItemsToEnchant().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "enchItem"),
@@ -1310,6 +1318,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsBrewed().size(); i++) {
             final int progress = data.getItemsBrewed().get(i);
+            if (i >= stage.getItemsToBrew().size()) { break; }
             final ItemStack goal = stage.getItemsToBrew().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "brewItem"),
@@ -1327,6 +1336,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsConsumed().size(); i++) {
             final int progress = data.getItemsConsumed().get(i);
+            if (i >= stage.getItemsToConsume().size()) { break; }
             final ItemStack goal = stage.getItemsToConsume().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "consumeItem"),
@@ -1338,6 +1348,7 @@ public class BukkitQuester implements Quester {
         }
         for (int i = 0; i < data.getItemsDelivered().size(); i++) {
             final int progress = data.getItemsDelivered().get(i);
+            if (i >= stage.getItemsToDeliver().size()) { break; }
             final ItemStack goal = stage.getItemsToDeliver().get(i);
             final UUID npc = stage.getItemDeliveryTargets().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
