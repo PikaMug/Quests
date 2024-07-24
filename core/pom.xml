@@ -170,8 +170,8 @@
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.12.4</version>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.13.1</version>
         </dependency>
         <dependency>
             <groupId>xyz.upperlevel.spigot.book</groupId>
@@ -265,7 +265,7 @@
                         <includes>
                             <include>me.*</include>
                             <include>com.github.PikaMug:LocaleLib</include>
-                            <include>de.tr7zw:item-nbt-api-plugin</include>
+                            <include>de.tr7zw:item-nbt-api</include>
                             <include>org.slf4j:slf4j-simple</include>
                             <include>org.slf4j:slf4j-api</include>
                             <include>xyz.upperlevel.spigot.book:spigot-book-api</include>
@@ -285,12 +285,6 @@
                                 <exclude>plugin.yml</exclude>
                             </excludes>
                         </filter>
-                        <filter>
-                            <artifact>de.tr7zw:item-nbt-api-plugin</artifact>
-                            <excludes>
-                                <exclude>plugin.yml</exclude>
-                            </excludes>
-                        </filter>
                     </filters>
                     <relocations>
                         <relocation>
@@ -298,7 +292,7 @@
                             <shadedPattern>me.pikamug.quests.libs.localelib</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>de.tr7zw</pattern>
+                            <pattern>de.tr7zw.changeme.nbtapi</pattern>
                             <shadedPattern>me.pikamug.quests.libs.nbtapi</shadedPattern>
                         </relocation>
                         <relocation>

@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.listeners;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quester.BukkitQuesterPostUpdateObjectiveEvent;
@@ -26,6 +27,7 @@ import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -403,7 +405,14 @@ public class BukkitBlockListener implements Listener {
             // https://github.com/PikaMug/Quests/issues/2243
         }
         try {
-            return new ItemStack(block.getBlockData().getPlacementMaterial(), 1, durability);
+            // Should only happen on Paper 1.21+
+            final ItemStack item = new ItemStack(block.getBlockData().getPlacementMaterial());
+            if (block.getBlockData() instanceof Ageable) {
+                NBT.modify(item, nbt -> {
+                    nbt.setShort("quests_age", (short) ((Ageable)block.getBlockData()).getAge());
+                });
+            }
+            return item;
         } catch (Exception e) {
             // https://github.com/PikaMug/Quests/issues/2256
         }

@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.util;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -227,11 +228,17 @@ public class BukkitItemUtil {
             if (mat == null) {
                 return null;
             }
+            ItemStack item;
             if (mat.isBlock() && Material.getMaterial("CRAFTER") != null) {
                 // Paper 1.21+ does not allow ItemStack from unobtainable blocks (i.e. CARROTS block)
-                mat = mat.createBlockData().getPlacementMaterial();
+                item = new ItemStack(mat.createBlockData().getPlacementMaterial(), amount);
+                NBT.modify(item, nbt -> {
+                    nbt.setShort("quests_age", durability);
+                });
+            } else {
+                item = new ItemStack(mat, amount, durability);
             }
-            return new ItemStack(mat, amount, durability);
+            return item;
         } catch (final Exception e) {
             try {
                 Bukkit.getLogger().warning(material + " x " + amount

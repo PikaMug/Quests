@@ -14,6 +14,7 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
+import de.tr7zw.changeme.nbtapi.NBT;
 import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -1821,6 +1822,19 @@ public class BukkitQuester implements Quester {
                     if (toBreak.getDurability() > 0) {
                         // Age toBreak specified so check for durability
                         if (broken.getDurability() == toBreak.getDurability()) {
+                            goal = toBreak;
+                        }
+                    } else {
+                        // Age toBreak unspecified so ignore durability
+                        goal = toBreak;
+                    }
+                } else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
+                    // Paper 1.21+ is special case
+                    final short toBreakAge = NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age"));
+                    final short brokenAge = NBT.get(broken, nbt -> (short) nbt.getShort("quests_age"));
+                    if (toBreakAge > 0) {
+                        // Age toBreak specified so check for durability
+                        if (brokenAge == toBreakAge) {
                             goal = toBreak;
                         }
                     } else {
@@ -3820,7 +3834,7 @@ public class BukkitQuester implements Quester {
                     final Stage stage = getCurrentStage(quest);
                     if (stage != null) {
                         quest.updateCompass(this, stage);
-                        // TODO - decide whether or not to handle this
+                        // TODO - decide whether to handle this
                         /*if (q.equals(quest) == false) {
                             if (getPlayer() != null && getPlayer().isOnline()) {
                                 quitQuest(quest, ChatColor.GOLD + Lang.get("questModified")
