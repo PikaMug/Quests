@@ -1,6 +1,7 @@
 package me.pikamug.quests.util;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
@@ -31,6 +32,10 @@ public class BlockItemStack {
 
     public static BlockItemStack of(BlockData data, int amount) {
         return new BlockItemStack(data, amount, getDurability(data));
+    }
+
+    public static BlockItemStack of(Block block) {
+        return of(block.getBlockData(), 1);
     }
 
     private static short getDurability(BlockData data) {

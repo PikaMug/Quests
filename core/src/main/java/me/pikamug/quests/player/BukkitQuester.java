@@ -1895,7 +1895,12 @@ public class BukkitQuester implements Quester {
                 new BukkitObjective(type, null, progress, goal.getAmount()));
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
-    
+
+    @Override
+    public void damageBlock(Quest quest, ItemStack itemStack) {
+        damageBlock(quest, BlockItemStack.of(itemStack));
+    }
+
     /**
      * Marks block as damaged if Quester has such an objective
      * 
@@ -1903,7 +1908,7 @@ public class BukkitQuester implements Quester {
      * @param damaged The block being damaged
      */
     @SuppressWarnings("deprecation")
-    public void damageBlock(final Quest quest, final ItemStack damaged) {
+    public void damageBlock(final Quest quest, final BlockItemStack damaged) {
         ItemStack goal = null;
         for (final ItemStack toDamage : ((BukkitStage) getCurrentStage(quest)).getBlocksToDamage()) {
             if (goal != null) {
@@ -1966,6 +1971,11 @@ public class BukkitQuester implements Quester {
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
+    @Override
+    public void placeBlock(Quest quest, ItemStack itemStack) {
+        placeBlock(quest, BlockItemStack.of(itemStack));
+    }
+
     /**
      * Marks block as placed if Quester has such an objective
      * 
@@ -1973,7 +1983,7 @@ public class BukkitQuester implements Quester {
      * @param placed The block being placed
      */
     @SuppressWarnings("deprecation")
-    public void placeBlock(final Quest quest, final ItemStack placed) {
+    public void placeBlock(final Quest quest, final BlockItemStack placed) {
         ItemStack goal = null;
         for (final ItemStack toPlace : ((BukkitStage) getCurrentStage(quest)).getBlocksToPlace()) {
             if (goal != null) {
@@ -2036,6 +2046,11 @@ public class BukkitQuester implements Quester {
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
+    @Override
+    public void useBlock(Quest quest, ItemStack itemStack) {
+        useBlock(quest, BlockItemStack.of(itemStack));
+    }
+
     /**
      * Marks block as used if Quester has such an objective
      * 
@@ -2043,7 +2058,7 @@ public class BukkitQuester implements Quester {
      * @param used The block being used
      */
     @SuppressWarnings("deprecation")
-    public void useBlock(final Quest quest, final ItemStack used) {
+    public void useBlock(final Quest quest, final BlockItemStack used) {
         ItemStack goal = null;
         for (final ItemStack toUse : ((BukkitStage) getCurrentStage(quest)).getBlocksToUse()) {
             if (goal != null) {
@@ -2106,6 +2121,11 @@ public class BukkitQuester implements Quester {
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
+    @Override
+    public void cutBlock(Quest quest, ItemStack itemStack) {
+        cutBlock(quest, BlockItemStack.of(itemStack));
+    }
+
     /**
      * Marks block as cut if Quester has such an objective
      * 
@@ -2113,7 +2133,7 @@ public class BukkitQuester implements Quester {
      * @param cut The block being cut
      */
     @SuppressWarnings("deprecation")
-    public void cutBlock(final Quest quest, final ItemStack cut) {
+    public void cutBlock(final Quest quest, final BlockItemStack cut) {
         ItemStack goal = null;
         for (final ItemStack toCut : ((BukkitStage) getCurrentStage(quest)).getBlocksToCut()) {
             if (goal != null) {

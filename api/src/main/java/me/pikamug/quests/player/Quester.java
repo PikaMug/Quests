@@ -151,13 +151,25 @@ public interface Quester extends Comparable<Quester> {
 
     void breakBlock(final Quest quest, final BlockItemStack blockItemStack);
 
+    @Deprecated
     void damageBlock(final Quest quest, final ItemStack itemStack);
 
+    void damageBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void placeBlock(final Quest quest, final ItemStack itemStack);
 
+    void placeBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void useBlock(final Quest quest, final ItemStack itemStack);
 
+    void useBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void cutBlock(final Quest quest, final ItemStack itemStack);
+
+    void cutBlock(final Quest quest, final BlockItemStack blockItemStack);
 
     void craftItem(final Quest quest, final ItemStack itemStack);
 
