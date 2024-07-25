@@ -15,6 +15,7 @@ import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.util.BlockItemStack;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -145,7 +146,10 @@ public interface Quester extends Comparable<Quester> {
 
     void showCurrentConditions(final Quest quest, final Quester quester);
 
+    @Deprecated
     void breakBlock(final Quest quest, final ItemStack itemStack);
+
+    void breakBlock(final Quest quest, final BlockItemStack blockItemStack);
 
     void damageBlock(final Quest quest, final ItemStack itemStack);
 

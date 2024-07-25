@@ -48,6 +48,7 @@ import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.BukkitStageTimer;
+import me.pikamug.quests.util.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -62,6 +63,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1795,7 +1797,12 @@ public class BukkitQuester implements Quester {
             }
         }
     }
-    
+
+    @Override
+    public void breakBlock(Quest quest, ItemStack itemStack) {
+        breakBlock(quest, BlockItemStack.of(itemStack));
+    }
+
     /**
      * Marks block as broken if Quester has such an objective
      * 
@@ -1803,7 +1810,7 @@ public class BukkitQuester implements Quester {
      * @param broken The block being broken
      */
     @SuppressWarnings("deprecation")
-    public void breakBlock(final Quest quest, final ItemStack broken) {
+    public void breakBlock(final Quest quest, final BlockItemStack broken) {
         ItemStack goal = null;
         for (final ItemStack toBreak : ((BukkitStage) getCurrentStage(quest)).getBlocksToBreak()) {
             if (goal != null) {
@@ -1818,7 +1825,7 @@ public class BukkitQuester implements Quester {
                         // Ignore durability for 1.13+
                         goal = toBreak;
                     }
-                } else if (broken.getData() instanceof Crops && toBreak.getData() instanceof Crops) {
+                } else if (broken.getBlockData() instanceof Ageable && toBreak.getData() instanceof Ageable) {
                     if (toBreak.getDurability() > 0) {
                         // Age toBreak specified so check for durability
                         if (broken.getDurability() == toBreak.getDurability()) {
@@ -1831,7 +1838,7 @@ public class BukkitQuester implements Quester {
                 } else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
                     // Paper 1.21+ is special case
                     final short toBreakAge = NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age"));
-                    final short brokenAge = NBT.get(broken, nbt -> (short) nbt.getShort("quests_age"));
+                    final short brokenAge = broken.getDurability();
                     if (toBreakAge > 0) {
                         // Age toBreak specified so check for durability
                         if (brokenAge == toBreakAge) {

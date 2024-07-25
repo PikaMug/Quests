@@ -22,6 +22,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.BukkitStage;
+import me.pikamug.quests.util.BlockItemStack;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
@@ -62,6 +63,8 @@ public class BukkitBlockListener implements Listener {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
+            final BlockItemStack blockItem = BlockItemStack.of(event.getBlock().getBlockData(), 1);
+
             if (blockItemStack == null) {
                 return;
             }
@@ -89,12 +92,12 @@ public class BukkitBlockListener implements Listener {
                             BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang
                                     .get(player, "optionSilkTouchFail").replace("<quest>", quest.getName()));
                         } else {
-                            quester.breakBlock(quest, blockItemStack);
+                            quester.breakBlock(quest, blockItem);
 
                             dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
                                     (final Quester q, final Quest cq) -> {
                                 if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
-                                    q.breakBlock(cq, blockItemStack);
+                                    q.breakBlock(cq, blockItem);
                                 }
                                 return null;
                             }));
