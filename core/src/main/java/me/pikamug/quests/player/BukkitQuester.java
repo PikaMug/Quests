@@ -1209,7 +1209,7 @@ public class BukkitQuester implements Quester {
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {
             final int progress = data.getBlocksBroken().get(i);
             if (i >= stage.getBlocksToBreak().size()) { break; }
-            final ItemStack goal = stage.getBlocksToBreak().get(i);
+            final BlockItemStack goal = stage.getBlocksToBreak().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "break"),
                     progress, goal.getAmount());
@@ -1221,7 +1221,7 @@ public class BukkitQuester implements Quester {
         for (int i = 0; i < data.getBlocksDamaged().size(); i++) {
             final int progress = data.getBlocksDamaged().get(i);
             if (i >= stage.getBlocksToDamage().size()) { break; }
-            final ItemStack goal = stage.getBlocksToDamage().get(i);
+            final BlockItemStack goal = stage.getBlocksToDamage().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "damage"),
                     progress, goal.getAmount());
@@ -1233,7 +1233,7 @@ public class BukkitQuester implements Quester {
         for (int i = 0; i < data.getBlocksPlaced().size(); i++) {
             final int progress = data.getBlocksPlaced().get(i);
             if (i >= stage.getBlocksToPlace().size()) { break; }
-            final ItemStack goal = stage.getBlocksToPlace().get(i);
+            final BlockItemStack goal = stage.getBlocksToPlace().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "place"),
                     progress, goal.getAmount());
@@ -1245,7 +1245,7 @@ public class BukkitQuester implements Quester {
         for (int i = 0; i < data.getBlocksUsed().size(); i++) {
             final int progress = data.getBlocksUsed().get(i);
             if (i >= stage.getBlocksToUse().size()) { break; }
-            final ItemStack goal = stage.getBlocksToUse().get(i);
+            final BlockItemStack goal = stage.getBlocksToUse().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "use"),
                     progress, goal.getAmount());
@@ -1257,7 +1257,7 @@ public class BukkitQuester implements Quester {
         for (int i = 0; i < data.getBlocksCut().size(); i++) {
             final int progress = data.getBlocksCut().get(i);
             if (i >= stage.getBlocksToCut().size()) { break; }
-            final ItemStack goal = stage.getBlocksToCut().get(i);
+            final BlockItemStack goal = stage.getBlocksToCut().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "cut"),
                     progress, goal.getAmount());
@@ -1811,11 +1811,18 @@ public class BukkitQuester implements Quester {
      */
     @SuppressWarnings("deprecation")
     public void breakBlock(final Quest quest, final BlockItemStack broken) {
-        ItemStack goal = null;
-        for (final ItemStack toBreak : ((BukkitStage) getCurrentStage(quest)).getBlocksToBreak()) {
+        BlockItemStack goal = null;
+        for (final BlockItemStack toBreak : ((BukkitStage) getCurrentStage(quest)).getBlocksToBreak()) {
             if (goal != null) {
                 break;
             }
+
+            if (broken.matches(toBreak)) {
+                goal = toBreak;
+            } else {
+                continue; // TODO
+            }
+
             if (broken.getType() == toBreak.getType()) {
                 if (broken.getType().isSolid() && toBreak.getType().isSolid()) {
                     // Blocks are solid so check for durability
@@ -1825,7 +1832,7 @@ public class BukkitQuester implements Quester {
                         // Ignore durability for 1.13+
                         goal = toBreak;
                     }
-                } else if (broken.getBlockData() instanceof Ageable && toBreak.getData() instanceof Ageable) {
+                } else if (broken.getBlockData() instanceof Ageable && toBreak.getBlockData() instanceof Ageable) {
                     if (toBreak.getDurability() > 0) {
                         // Age toBreak specified so check for durability
                         if (broken.getDurability() == toBreak.getDurability()) {
@@ -1837,7 +1844,7 @@ public class BukkitQuester implements Quester {
                     }
                 } else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
                     // Paper 1.21+ is special case
-                    final short toBreakAge = NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age"));
+                    final short toBreakAge = /* NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age")); */ 0;
                     final short brokenAge = broken.getDurability();
                     if (toBreakAge > 0) {
                         // Age toBreak specified so check for durability
@@ -1882,7 +1889,7 @@ public class BukkitQuester implements Quester {
                     null, null, null, null);
 
             // Multiplayer
-            final ItemStack finalGoal = goal;
+            final BlockItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksBroken.set(breakIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
@@ -1909,8 +1916,8 @@ public class BukkitQuester implements Quester {
      */
     @SuppressWarnings("deprecation")
     public void damageBlock(final Quest quest, final BlockItemStack damaged) {
-        ItemStack goal = null;
-        for (final ItemStack toDamage : ((BukkitStage) getCurrentStage(quest)).getBlocksToDamage()) {
+        BlockItemStack goal = null;
+        for (final BlockItemStack toDamage : ((BukkitStage) getCurrentStage(quest)).getBlocksToDamage()) {
             if (goal != null) {
                 break;
             }
@@ -1957,7 +1964,7 @@ public class BukkitQuester implements Quester {
                     null, null, null, null);
 
             // Multiplayer
-            final ItemStack finalGoal = goal;
+            final BlockItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksDamaged.set(damageIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
@@ -1984,8 +1991,8 @@ public class BukkitQuester implements Quester {
      */
     @SuppressWarnings("deprecation")
     public void placeBlock(final Quest quest, final BlockItemStack placed) {
-        ItemStack goal = null;
-        for (final ItemStack toPlace : ((BukkitStage) getCurrentStage(quest)).getBlocksToPlace()) {
+        BlockItemStack goal = null;
+        for (final BlockItemStack toPlace : ((BukkitStage) getCurrentStage(quest)).getBlocksToPlace()) {
             if (goal != null) {
                 break;
             }
@@ -2032,7 +2039,7 @@ public class BukkitQuester implements Quester {
                     null, null, null, null);
 
             // Multiplayer
-            final ItemStack finalGoal = goal;
+            final BlockItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksPlaced.set(placeIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
@@ -2059,8 +2066,8 @@ public class BukkitQuester implements Quester {
      */
     @SuppressWarnings("deprecation")
     public void useBlock(final Quest quest, final BlockItemStack used) {
-        ItemStack goal = null;
-        for (final ItemStack toUse : ((BukkitStage) getCurrentStage(quest)).getBlocksToUse()) {
+        BlockItemStack goal = null;
+        for (final BlockItemStack toUse : ((BukkitStage) getCurrentStage(quest)).getBlocksToUse()) {
             if (goal != null) {
                 break;
             }
@@ -2107,7 +2114,7 @@ public class BukkitQuester implements Quester {
                     null, null, null, null);
 
             // Multiplayer
-            final ItemStack finalGoal = goal;
+            final BlockItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksUsed.set(useIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
@@ -2134,8 +2141,8 @@ public class BukkitQuester implements Quester {
      */
     @SuppressWarnings("deprecation")
     public void cutBlock(final Quest quest, final BlockItemStack cut) {
-        ItemStack goal = null;
-        for (final ItemStack toCut : ((BukkitStage) getCurrentStage(quest)).getBlocksToCut()) {
+        BlockItemStack goal = null;
+        for (final BlockItemStack toCut : ((BukkitStage) getCurrentStage(quest)).getBlocksToCut()) {
             if (goal != null) {
                 break;
             }
@@ -2182,7 +2189,7 @@ public class BukkitQuester implements Quester {
                     null, null, null, null);
 
             // Multiplayer
-            final ItemStack finalGoal = goal;
+            final BlockItemStack finalGoal = goal;
             dispatchMultiplayerObjectives(quest, getCurrentStage(quest), (final Quester q) -> {
                 ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).blocksCut.set(cutIndex, progress);
                 q.finishObjective(quest, new BukkitObjective(type, null, progress, finalGoal), null, null, null,
@@ -3491,27 +3498,27 @@ public class BukkitQuester implements Quester {
         }
         final BukkitStage bukkitStage = (BukkitStage) quest.getStage(stage);
         if (!bukkitStage.getBlocksToBreak().isEmpty()) {
-            for (final ItemStack ignored : bukkitStage.getBlocksToBreak()) {
+            for (final BlockItemStack ignored : bukkitStage.getBlocksToBreak()) {
                 data.blocksBroken.add(0);
             }
         }
         if (!bukkitStage.getBlocksToDamage().isEmpty()) {
-            for (final ItemStack ignored : bukkitStage.getBlocksToDamage()) {
+            for (final BlockItemStack ignored : bukkitStage.getBlocksToDamage()) {
                 data.blocksDamaged.add(0);
             }
         }
         if (!bukkitStage.getBlocksToPlace().isEmpty()) {
-            for (final ItemStack ignored : bukkitStage.getBlocksToPlace()) {
+            for (final BlockItemStack ignored : bukkitStage.getBlocksToPlace()) {
                 data.blocksPlaced.add(0);
             }
         }
         if (!bukkitStage.getBlocksToUse().isEmpty()) {
-            for (final ItemStack ignored : bukkitStage.getBlocksToUse()) {
+            for (final BlockItemStack ignored : bukkitStage.getBlocksToUse()) {
                 data.blocksUsed.add(0);
             }
         }
         if (!bukkitStage.getBlocksToCut().isEmpty()) {
-            for (final ItemStack ignored : bukkitStage.getBlocksToCut()) {
+            for (final BlockItemStack ignored : bukkitStage.getBlocksToCut()) {
                 data.blocksCut.add(0);
             }
         }

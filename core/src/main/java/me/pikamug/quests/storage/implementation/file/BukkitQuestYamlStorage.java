@@ -16,6 +16,7 @@ import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.components.Options;
 import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.storage.implementation.QuestStorageImpl;
+import me.pikamug.quests.util.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -877,12 +878,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
             for (int i = 0; i < breakNames.size(); i++) {
                 final String name = breakNames.get(i);
-                final ItemStack is;
+                final BlockItemStack is;
                 if (i < breakDurability.size() && breakDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, breakAmounts.get(i), breakDurability.get(i));
+                    is = BukkitItemUtil.processBlockItemStack(name, breakAmounts.get(i), breakDurability.get(i));
                 } else {
                     // Legacy
-                    is = BukkitItemUtil.processItemStack(name, breakAmounts.get(i), (short) 0);
+                    is = BukkitItemUtil.processBlockItemStack(name, breakAmounts.get(i), (short) 0);
                 }
                 if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToBreak(is);
@@ -919,12 +920,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
             for (int i = 0; i < damageNames.size(); i++) {
                 final String name = damageNames.get(i);
-                final ItemStack is;
+                final BlockItemStack is;
                 if (i < damageDurability.size() && damageDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i), damageDurability.get(i));
+                    is = BukkitItemUtil.processBlockItemStack(name, damageAmounts.get(i), damageDurability.get(i));
                 } else {
                     // Legacy
-                    is = BukkitItemUtil.processItemStack(name, damageAmounts.get(i), (short) 0);
+                    is = BukkitItemUtil.processBlockItemStack(name, damageAmounts.get(i), (short) 0);
                 }
                 if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToDamage(is);
@@ -960,12 +961,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
             for (int i = 0; i < placeNames.size(); i++) {
                 final String name = placeNames.get(i);
-                final ItemStack is;
+                final BlockItemStack is;
                 if (i < placeDurability.size() && placeDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, placeAmounts.get(i), placeDurability.get(i));
+                    is = BukkitItemUtil.processBlockItemStack(name, placeAmounts.get(i), placeDurability.get(i));
                 } else {
                     // Legacy
-                    is = BukkitItemUtil.processItemStack(name, placeAmounts.get(i), (short) 0);
+                    is = BukkitItemUtil.processBlockItemStack(name, placeAmounts.get(i), (short) 0);
                 }
                 if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToPlace(is);
@@ -1001,12 +1002,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
             for (int i = 0; i < useNames.size(); i++) {
                 final String name = useNames.get(i);
-                final ItemStack is;
+                final BlockItemStack is;
                 if (i < useDurability.size() && useDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, useAmounts.get(i), useDurability.get(i));
+                    is = BukkitItemUtil.processBlockItemStack(name, useAmounts.get(i), useDurability.get(i));
                 } else {
                     // Legacy
-                    is = BukkitItemUtil.processItemStack(name, useAmounts.get(i), (short) 0);
+                    is = BukkitItemUtil.processBlockItemStack(name, useAmounts.get(i), (short) 0);
                 }
                 if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToUse(is);
@@ -1042,12 +1043,12 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             }
             for (int i = 0; i < cutNames.size(); i++) {
                 final String name = cutNames.get(i);
-                final ItemStack is;
+                final BlockItemStack is;
                 if (i < cutDurability.size() && cutDurability.get(i) != -1) {
-                    is = BukkitItemUtil.processItemStack(name, cutAmounts.get(i), cutDurability.get(i));
+                    is = BukkitItemUtil.processBlockItemStack(name, cutAmounts.get(i), cutDurability.get(i));
                 } else {
                     // Legacy
-                    is = BukkitItemUtil.processItemStack(name, cutAmounts.get(i), (short) 0);
+                    is = BukkitItemUtil.processBlockItemStack(name, cutAmounts.get(i), (short) 0);
                 }
                 if (is != null && Material.matchMaterial(name) != null) {
                     bukkitStage.addBlockToCut(is);

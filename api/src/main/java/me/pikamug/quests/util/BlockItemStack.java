@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public class BlockItemStack {
 
     private final BlockData blockData;
-    private final int amount;
+    private int amount;
     private final short durability;
 
     private BlockItemStack(BlockData blockData, int amount, short durability) {
@@ -36,6 +36,10 @@ public class BlockItemStack {
 
     public static BlockItemStack of(Block block) {
         return of(block.getBlockData(), 1);
+    }
+
+    public static BlockItemStack of(BlockData data, int amount, short durability) {
+        return new BlockItemStack(data, amount, durability);
     }
 
     private static short getDurability(BlockData data) {
@@ -66,4 +70,11 @@ public class BlockItemStack {
         return blockData.getMaterial();
     }
 
+    public boolean matches(BlockItemStack other) {
+        return blockData.matches(other.getBlockData()) && durability == other.getDurability();
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 }
