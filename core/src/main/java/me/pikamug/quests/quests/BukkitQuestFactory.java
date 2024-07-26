@@ -22,6 +22,7 @@ import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
 import me.pikamug.quests.util.BukkitLang;
@@ -303,7 +304,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : bukkitStage.getBlocksToBreak()) {
+                    for (final BlockItemStack e : bukkitStage.getBlocksToBreak()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -316,7 +317,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : bukkitStage.getBlocksToDamage()) {
+                    for (final BlockItemStack e : bukkitStage.getBlocksToDamage()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -329,7 +330,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : bukkitStage.getBlocksToPlace()) {
+                    for (final BlockItemStack e : bukkitStage.getBlocksToPlace()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -342,7 +343,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : bukkitStage.getBlocksToUse()) {
+                    for (final BlockItemStack e : bukkitStage.getBlocksToUse()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());
@@ -355,7 +356,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     final LinkedList<String> names = new LinkedList<>();
                     final LinkedList<Integer> amounts = new LinkedList<>();
                     final LinkedList<Short> durability = new LinkedList<>();
-                    for (final ItemStack e : bukkitStage.getBlocksToCut()) {
+                    for (final BlockItemStack e : bukkitStage.getBlocksToCut()) {
                         names.add(e.getType().name());
                         amounts.add(e.getAmount());
                         durability.add(e.getDurability());

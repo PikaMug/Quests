@@ -108,11 +108,11 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
-                                final ItemStack is = currentStage.getBlocksToPlace().get(i);
+                                final BlockItemStack is = currentStage.getBlocksToPlace().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack goal = new ItemStack(is.getType(), 64);
-                                    for (final ItemStack stack : currentStage.getBlocksToPlace()) {
-                                        if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                    BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                    for (final BlockItemStack stack : currentStage.getBlocksToPlace()) {
+                                        if (stack.matches(goal)) {
                                             goal = stack;
                                         }
                                     }
@@ -141,11 +141,11 @@ public class BukkitBlockListener implements Listener {
                                     if (progress < 0) {
                                         break;
                                     }
-                                    final ItemStack is = currentStage.getBlocksToPlace().get(i);
+                                    final BlockItemStack is = currentStage.getBlocksToPlace().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack goal = new ItemStack(is.getType(), 64);
-                                        for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
-                                            if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                        BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                        for (final BlockItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
+                                            if (stack.matches(goal)) {
                                                 goal = stack;
                                             }
                                         }
@@ -256,11 +256,11 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
-                                final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                final BlockItemStack is = currentStage.getBlocksToBreak().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack goal = new ItemStack(is.getType(), 64);
-                                    for (final ItemStack stack : currentStage.getBlocksToBreak()) {
-                                        if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                    BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                    for (final BlockItemStack stack : currentStage.getBlocksToBreak()) {
+                                        if (stack.matches(goal)) {
                                             goal = stack;
                                         }
                                     }
@@ -289,11 +289,11 @@ public class BukkitBlockListener implements Listener {
                                     if (progress < 0) {
                                         break;
                                     }
-                                    final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                    final BlockItemStack is = currentStage.getBlocksToBreak().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack goal = new ItemStack(is.getType(), 64);
-                                        for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToBreak()) {
-                                            if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                        BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                        for (final BlockItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToBreak()) {
+                                            if (stack.matches(goal)) {
                                                 goal = stack;
                                             }
                                         }

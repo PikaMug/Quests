@@ -42,6 +42,14 @@ public class BlockItemStack {
         return new BlockItemStack(data, amount, durability);
     }
 
+    public static BlockItemStack clone(BlockItemStack original, int amount) {
+        return new BlockItemStack(original.getBlockData(), amount, (short) 0);
+    }
+
+    public static BlockItemStack clone(BlockItemStack original, int amount, short durability) {
+        return new BlockItemStack(original.getBlockData(), amount, durability);
+    }
+
     private static short getDurability(BlockData data) {
         if (data instanceof Ageable) {
             return (short) ((Ageable)data).getAge();
