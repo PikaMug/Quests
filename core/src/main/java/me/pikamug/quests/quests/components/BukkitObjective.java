@@ -12,7 +12,7 @@ package me.pikamug.quests.quests.components;
 
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.util.BlockItemStack;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

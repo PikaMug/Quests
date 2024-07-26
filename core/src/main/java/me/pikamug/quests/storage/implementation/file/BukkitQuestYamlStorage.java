@@ -16,7 +16,7 @@ import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.components.Options;
 import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.storage.implementation.QuestStorageImpl;
-import me.pikamug.quests.util.BlockItemStack;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;

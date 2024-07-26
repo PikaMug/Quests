@@ -14,7 +14,6 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
-import de.tr7zw.changeme.nbtapi.NBT;
 import io.github.znetworkw.znpcservers.npc.NPC;
 import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -48,7 +47,7 @@ import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.BukkitStageTimer;
-import me.pikamug.quests.util.BlockItemStack;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -77,7 +76,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.material.Crops;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -1832,7 +1830,7 @@ public class BukkitQuester implements Quester {
                         // Ignore durability for 1.13+
                         goal = toBreak;
                     }
-                } else if (broken.getBlockData() instanceof Ageable && toBreak.getBlockData() instanceof Ageable) {
+                } /*else if (broken.getBlockData() instanceof Ageable && toBreak.getBlockData() instanceof Ageable) {
                     if (toBreak.getDurability() > 0) {
                         // Age toBreak specified so check for durability
                         if (broken.getDurability() == toBreak.getDurability()) {
@@ -1842,7 +1840,7 @@ public class BukkitQuester implements Quester {
                         // Age toBreak unspecified so ignore durability
                         goal = toBreak;
                     }
-                } else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
+                } */ else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
                     // Paper 1.21+ is special case
                     final short toBreakAge = /* NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age")); */ 0;
                     final short brokenAge = broken.getDurability();

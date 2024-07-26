@@ -11,6 +11,7 @@
 package me.pikamug.quests.util;
 
 import de.tr7zw.changeme.nbtapi.NBT;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -267,8 +268,7 @@ public class BukkitItemUtil {
             if (mat == null) {
                 return null;
             }
-            BlockData data = mat.createBlockData();
-            return BlockItemStack.of(data, amount, durability);
+            return BlockItemStack.of(mat, amount, durability);
         } catch (final Exception e) {
             try {
                 Bukkit.getLogger().warning(material + " x " + amount
@@ -278,7 +278,7 @@ public class BukkitItemUtil {
                 if (mat == null) {
                     return null;
                 }
-                return BlockItemStack.of(mat.createBlockData(), amount, durability);
+                return BlockItemStack.of(mat, amount, durability);
             } catch (final Exception e2) {
                 Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
                 e2.printStackTrace();
@@ -657,13 +657,7 @@ public class BukkitItemUtil {
         if (itemStack == null) {
             return null;
         }
-        final String text;
-        if (itemStack.getBlockData() != null) {
-            text = "" + ChatColor.AQUA + getPrettyItemName(itemStack.getBlockData().getMaterial().name());
-        } else {
-            text = ChatColor.AQUA + "invalid";
-        }
-        return text;
+        return ChatColor.AQUA + getPrettyItemName(itemStack.getType().name());
     }
 
     /**

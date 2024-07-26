@@ -22,7 +22,7 @@ import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.BlockItemStack;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitFakeConversable;
 import me.pikamug.quests.util.BukkitLang;
