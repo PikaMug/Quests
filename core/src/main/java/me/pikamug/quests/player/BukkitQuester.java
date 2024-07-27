@@ -3197,10 +3197,8 @@ public class BukkitQuester implements Quester {
             }
         } else if (type.equals(ObjectiveType.BREAK_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("break", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
-                    && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
-                        null)) {
+            if (plugin.getConfigSettings().canTranslateNames()) {
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
@@ -3208,10 +3206,8 @@ public class BukkitQuester implements Quester {
             }
         } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("damage", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
-                    && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
-                        null)) {
+            if (plugin.getConfigSettings().canTranslateNames()) {
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
@@ -3219,10 +3215,8 @@ public class BukkitQuester implements Quester {
             }
         } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("place", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
-                    && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
-                        null)) {
+            if (plugin.getConfigSettings().canTranslateNames()) {
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
@@ -3230,10 +3224,8 @@ public class BukkitQuester implements Quester {
             }
         } else if (type.equals(ObjectiveType.USE_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("use", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
-                    && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
-                        null)) {
+            if (plugin.getConfigSettings().canTranslateNames()) {
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
@@ -3241,10 +3233,8 @@ public class BukkitQuester implements Quester {
             }
         } else if (type.equals(ObjectiveType.CUT_BLOCK)) {
             final String message = formatCompletedObjectiveMessage("cut", goal.getAmount());
-            if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
-                    && !goal.getItemMeta().hasDisplayName()) {
-                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(),
-                        null)) {
+            if (plugin.getConfigSettings().canTranslateNames()) {
+                if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(goal)));
                 }
             } else {
