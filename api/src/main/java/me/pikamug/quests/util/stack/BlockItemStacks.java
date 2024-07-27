@@ -14,7 +14,7 @@ public final class BlockItemStacks {
         return factory;
     }
 
-    private static void setFactory(BlockItemStackFactory factory) {
+    private static void setFactory(final BlockItemStackFactory factory) {
         if (BlockItemStacks.factory != null) {
             throw new IllegalStateException("Factory is already set");
         }
@@ -22,7 +22,7 @@ public final class BlockItemStacks {
         BlockItemStacks.factory = factory;
     }
 
-    public static void init(boolean modern) {
+    public static void init(final boolean modern) {
         if (modern) {
             setFactory(ModernBlockItemStack.FACTORY);
         } else {

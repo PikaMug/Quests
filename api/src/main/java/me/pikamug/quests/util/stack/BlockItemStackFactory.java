@@ -5,8 +5,8 @@ import org.bukkit.block.Block;
 
 public interface BlockItemStackFactory {
 
-    BlockItemStack of(Block block);
-    BlockItemStack of(Material type, int amount, short durability);
-    BlockItemStack clone(BlockItemStack original, int amount);
-    BlockItemStack clone(BlockItemStack original, int amount, short durability);
+    BlockItemStack of(final Block block);
+    BlockItemStack of(final Material type, final int amount, final short durability);
+    BlockItemStack clone(final BlockItemStack original, final int amount);
+    BlockItemStack clone(final BlockItemStack original, final int amount, final short durability);
 }

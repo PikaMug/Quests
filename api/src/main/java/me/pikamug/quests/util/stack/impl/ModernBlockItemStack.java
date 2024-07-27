@@ -16,7 +16,7 @@ public class ModernBlockItemStack implements BlockItemStack {
     private int amount;
     private final short durability;
 
-    private ModernBlockItemStack(BlockData blockData, int amount, short durability) {
+    private ModernBlockItemStack(final BlockData blockData, final int amount, final short durability) {
         this.blockData = blockData;
         this.amount = amount;
         this.durability = durability;
@@ -60,7 +60,7 @@ public class ModernBlockItemStack implements BlockItemStack {
             return false;
         }
 
-        BlockData blockData = Factory.getBlockData(other);
+        final BlockData blockData = Factory.getBlockData(other);
         return this.blockData.matches(blockData) && (durability == 0 || durability == other.getDurability());
     }
 
@@ -71,28 +71,28 @@ public class ModernBlockItemStack implements BlockItemStack {
     public static class Factory implements BlockItemStackFactory {
 
         @Override
-        public BlockItemStack of(Block block) {
+        public BlockItemStack of(final Block block) {
             return new ModernBlockItemStack(block.getBlockData(), 1, getDurability(block.getBlockData()));
         }
 
         @Override
-        public BlockItemStack of(Material type, int amount, short durability) {
+        public BlockItemStack of(final Material type, final int amount, final short durability) {
             return new ModernBlockItemStack(type.createBlockData(), amount, durability);
         }
 
         @Override
-        public BlockItemStack clone(BlockItemStack original, int amount) {
-            BlockData data = getBlockData(original);
+        public BlockItemStack clone(final BlockItemStack original, final int amount) {
+            final BlockData data = getBlockData(original);
             return new ModernBlockItemStack(data, amount, original.getDurability());
         }
 
         @Override
-        public BlockItemStack clone(BlockItemStack original, int amount, short durability) {
-            BlockData data = getBlockData(original);
+        public BlockItemStack clone(final BlockItemStack original, final int amount, final short durability) {
+            final BlockData data = getBlockData(original);
             return new ModernBlockItemStack(data, amount, durability);
         }
 
-        private static BlockData getBlockData(BlockItemStack stack) {
+        private static BlockData getBlockData(final BlockItemStack stack) {
             if (stack instanceof ModernBlockItemStack) {
                 return ((ModernBlockItemStack)stack).getBlockData();
             }

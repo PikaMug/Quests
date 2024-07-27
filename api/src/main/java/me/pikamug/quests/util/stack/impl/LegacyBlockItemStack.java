@@ -4,13 +4,9 @@ import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.stack.BlockItemStackFactory;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.material.Crops;
 import org.bukkit.material.MaterialData;
-import org.bukkit.material.Redstone;
 
+@SuppressWarnings("deprecation")
 public class LegacyBlockItemStack implements BlockItemStack {
 
     public static final BlockItemStackFactory FACTORY = new Factory();
@@ -18,7 +14,7 @@ public class LegacyBlockItemStack implements BlockItemStack {
     private final MaterialData materialData;
     private int amount;
 
-    private LegacyBlockItemStack(MaterialData materialData, int amount) {
+    private LegacyBlockItemStack(final MaterialData materialData, final int amount) {
         this.materialData = materialData;
         this.amount = amount;
     }
@@ -48,7 +44,7 @@ public class LegacyBlockItemStack implements BlockItemStack {
             return false;
         }
 
-        MaterialData blockData = Factory.getBlockData(other);
+        final MaterialData blockData = Factory.getBlockData(other);
         return this.materialData.equals(blockData) && (getDurability() == 0 || getDurability() == other.getDurability());
     }
 
@@ -59,31 +55,31 @@ public class LegacyBlockItemStack implements BlockItemStack {
     public static class Factory implements BlockItemStackFactory {
 
         @Override
-        public BlockItemStack of(Block block) {
-            MaterialData data = block.getState().getData();
+        public BlockItemStack of(final Block block) {
+            final MaterialData data = block.getState().getData();
             return new LegacyBlockItemStack(data, 1);
         }
 
         @Override
-        public BlockItemStack of(Material type, int amount, short durability) {
-            MaterialData data = type.getNewData((byte) durability);
+        public BlockItemStack of(final Material type, final int amount, final short durability) {
+            final MaterialData data = type.getNewData((byte) durability);
             return new LegacyBlockItemStack(data, amount);
         }
 
         @Override
-        public BlockItemStack clone(BlockItemStack original, int amount) {
-            MaterialData data = getBlockData(original);
+        public BlockItemStack clone(final BlockItemStack original, final int amount) {
+            final MaterialData data = getBlockData(original);
             return new LegacyBlockItemStack(data, amount);
         }
 
         @Override
-        public BlockItemStack clone(BlockItemStack original, int amount, short durability) {
-            MaterialData data = getBlockData(original);
+        public BlockItemStack clone(final BlockItemStack original, final int amount, final short durability) {
+            final MaterialData data = getBlockData(original);
             data.setData((byte) durability);
             return new LegacyBlockItemStack(data, amount);
         }
 
-        private static MaterialData getBlockData(BlockItemStack stack) {
+        private static MaterialData getBlockData(final BlockItemStack stack) {
             if (stack instanceof LegacyBlockItemStack) {
                 return ((LegacyBlockItemStack)stack).materialData;
             }
