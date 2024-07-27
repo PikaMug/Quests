@@ -62,7 +62,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.data.Ageable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1601,7 +1600,16 @@ public class BukkitQuester implements Quester {
             final BukkitObjective objective = (BukkitObjective) obj;
             String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
                     objective.getMessage());
-            if (objective.getGoalAsItem() != null) {
+            if (objective.getGoalAsBlockItem() != null) {
+                final int progress = objective.getProgress();
+                final BlockItemStack goal = objective.getGoalAsBlockItem();
+                if (!settings.canShowCompletedObjs() && progress >= goal.getAmount()) {
+                    continue;
+                }
+                if (localeManager != null && settings.canTranslateNames()) {
+                    localeManager.sendMessage(quester.getPlayer(), message, goal.getType(), goal.getDurability(), null);
+                }
+            } else if (objective.getGoalAsItem() != null) {
                 final int progress = objective.getProgress();
                 final ItemStack goal = objective.getGoalAsItem();
                 if (!settings.canShowCompletedObjs() && progress >= goal.getAmount()) {

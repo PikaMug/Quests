@@ -95,6 +95,10 @@ public class BukkitObjective implements Objective {
         return goalObj;
     }
 
+    public @Nullable BlockItemStack getGoalAsBlockItem() {
+        return goalObj instanceof BlockItemStack ? (BlockItemStack) goalObj : null;
+    }
+
     /**
      * @deprecated Paper 1.21 builds do not allow ItemStack with 0 amount
      */

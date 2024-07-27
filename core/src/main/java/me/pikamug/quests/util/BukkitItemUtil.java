@@ -16,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
@@ -653,6 +652,12 @@ public class BukkitItemUtil {
         return text;
     }
 
+    /**
+     * Returns a formatted display name. If none exists, returns item name.
+     *
+     * @param itemStack BlockItemStack to check
+     * @return true display or item name, if stack is not null
+     */
     public static String getName(final BlockItemStack itemStack) {
         if (itemStack == null) {
             return null;
