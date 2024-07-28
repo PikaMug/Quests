@@ -3188,7 +3188,7 @@ public class BukkitQuester implements Quester {
         final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getGoalObject()
                 : new ItemStack(Material.AIR, objective.getGoal());
 
-        final String goalItem = objective.getGoalObject() instanceof BlockItemStack ? BukkitItemUtil.getName((BlockItemStack) objective)
+        final String goalItem = objective.getGoalObject() instanceof BlockItemStack ? BukkitItemUtil.getName((BlockItemStack) objective.getGoalObject())
             : BukkitItemUtil.getName(goal);
 
         if (!getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
