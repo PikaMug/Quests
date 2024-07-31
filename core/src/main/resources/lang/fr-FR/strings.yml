@@ -791,6 +791,7 @@ noPermission: "Vous n'avez pas les droits nécessaires pour effectuer cette acti
 trialMode: "Mode D'essai"
 modeDeny: "Vous ne pouvez pas le faire en <mode>."
 duplicateEditor: "Vous utiliser déjà l'éditeur !"
+inventoryFull: "Pas assez d'espace d'inventaire."
 difference: "La différence est '<data> '."
 notInstalled: "Pas installé"
 confirmDelete: "Êtes-vous sur ?"
