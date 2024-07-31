@@ -359,9 +359,15 @@ public class BukkitAction implements Action {
             }
         }
         if (!commands.isEmpty()) {
-            for (final String s : commands) {
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), 
-                        s.replace("<player>", quester.getPlayer().getName()));
+            for (String s : commands) {
+                if (s.contains("<player>")) {
+                    if (player.isOnline()) {
+                        s = s.replace("<player>", player.getName());
+                    } else {
+                        continue;
+                    }
+                }
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
             }
         }
         if (!potionEffects.isEmpty()) {
