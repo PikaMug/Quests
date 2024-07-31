@@ -11,6 +11,7 @@
 package me.pikamug.quests.util;
 
 import de.tr7zw.changeme.nbtapi.NBT;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -249,6 +250,34 @@ public class BukkitItemUtil {
                     return null;
                 }
                 return new ItemStack(mat, amount, durability);
+            } catch (final Exception e2) {
+                Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
+                e2.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    public static BlockItemStack processBlockItemStack(final String material, final int amount, final short durability) {
+        if (material == null) {
+            return null;
+        }
+        try {
+            Material mat = Material.getMaterial(material.toUpperCase());
+            if (mat == null) {
+                return null;
+            }
+            return BlockItemStack.of(mat, amount, durability);
+        } catch (final Exception e) {
+            try {
+                Bukkit.getLogger().warning(material + " x " + amount
+                        + " is invalid! You may need to update your quests.yml or actions.yml "
+                        + "in accordance with https://bit.ly/2BkBNNN");
+                final Material mat = Material.matchMaterial(material, true);
+                if (mat == null) {
+                    return null;
+                }
+                return BlockItemStack.of(mat, amount, durability);
             } catch (final Exception e2) {
                 Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
                 e2.printStackTrace();
@@ -621,6 +650,19 @@ public class BukkitItemUtil {
             text = ChatColor.AQUA + getPrettyItemName(is.getType().name());
         }
         return text;
+    }
+
+    /**
+     * Returns a formatted display name. If none exists, returns item name.
+     *
+     * @param itemStack BlockItemStack to check
+     * @return true display or item name, if stack is not null
+     */
+    public static String getName(final BlockItemStack itemStack) {
+        if (itemStack == null) {
+            return null;
+        }
+        return ChatColor.AQUA + getPrettyItemName(itemStack.getType().name());
     }
 
     /**

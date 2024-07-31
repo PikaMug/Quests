@@ -12,6 +12,7 @@ package me.pikamug.quests.quests.components;
 
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,8 @@ public class BukkitObjective implements Objective {
             this.progress = ((BukkitCountableMob) progressObj).getCount();
         } else if (progressObj instanceof Integer) {
             this.progress = (int) progress;
+        } else if (progressObj instanceof BlockItemStack) {
+            this.progress = ((BlockItemStack) progressObj).getAmount();
         } else {
             this.progress = 0;
         }
@@ -55,6 +58,8 @@ public class BukkitObjective implements Objective {
             this.goal = ((BukkitCountableMob) goalObj).getCount();
         } else if (goalObj instanceof Integer) {
             this.goal = (int) goalObj;
+        } else if (progressObj instanceof BlockItemStack) {
+            this.goal = ((BlockItemStack) progressObj).getAmount();
         } else {
             this.goal = 0;
         }
@@ -88,6 +93,10 @@ public class BukkitObjective implements Objective {
     @Override
     public @NotNull Object getGoalObject() {
         return goalObj;
+    }
+
+    public @Nullable BlockItemStack getGoalAsBlockItem() {
+        return goalObj instanceof BlockItemStack ? (BlockItemStack) goalObj : null;
     }
 
     /**

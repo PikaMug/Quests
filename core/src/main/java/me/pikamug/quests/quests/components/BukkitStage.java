@@ -14,7 +14,7 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
-import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,11 +30,11 @@ import java.util.UUID;
 
 public class BukkitStage implements Stage {
 
-    private LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
-    private LinkedList<ItemStack> blocksToDamage = new LinkedList<>();
-    private LinkedList<ItemStack> blocksToPlace = new LinkedList<>();
-    private LinkedList<ItemStack> blocksToUse = new LinkedList<>();
-    private LinkedList<ItemStack> blocksToCut = new LinkedList<>();
+    private LinkedList<BlockItemStack> blocksToBreak = new LinkedList<>();
+    private LinkedList<BlockItemStack> blocksToDamage = new LinkedList<>();
+    private LinkedList<BlockItemStack> blocksToPlace = new LinkedList<>();
+    private LinkedList<BlockItemStack> blocksToUse = new LinkedList<>();
+    private LinkedList<BlockItemStack> blocksToCut = new LinkedList<>();
     private LinkedList<ItemStack> itemsToCraft = new LinkedList<>();
     private LinkedList<ItemStack> itemsToSmelt = new LinkedList<>();
     private LinkedList<ItemStack> itemsToEnchant = new LinkedList<>();
@@ -137,63 +137,63 @@ public class BukkitStage implements Stage {
     private final LinkedList<String> customObjectiveDisplays = new LinkedList<>();
     private final LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
     
-    public LinkedList<ItemStack> getBlocksToBreak() {
+    public LinkedList<BlockItemStack> getBlocksToBreak() {
         return blocksToBreak;
     }
 
-    public boolean addBlockToBreak(@NotNull ItemStack blockToBreak) {
+    public boolean addBlockToBreak(@NotNull BlockItemStack blockToBreak) {
         return blocksToBreak.add(blockToBreak);
     }
 
-    public void setBlocksToBreak(final LinkedList<ItemStack> blocksToBreak) {
+    public void setBlocksToBreak(final LinkedList<BlockItemStack> blocksToBreak) {
         this.blocksToBreak = blocksToBreak;
     }
 
-    public LinkedList<ItemStack> getBlocksToDamage() {
+    public LinkedList<BlockItemStack> getBlocksToDamage() {
         return blocksToDamage;
     }
 
-    public boolean addBlockToDamage(@NotNull ItemStack blockToDamage) {
+    public boolean addBlockToDamage(@NotNull BlockItemStack blockToDamage) {
         return blocksToDamage.add(blockToDamage);
     }
 
-    public void setBlocksToDamage(final LinkedList<ItemStack> blocksToDamage) {
+    public void setBlocksToDamage(final LinkedList<BlockItemStack> blocksToDamage) {
         this.blocksToDamage = blocksToDamage;
     }
 
-    public LinkedList<ItemStack> getBlocksToPlace() {
+    public LinkedList<BlockItemStack> getBlocksToPlace() {
         return blocksToPlace;
     }
 
-    public boolean addBlockToPlace(@NotNull ItemStack blockToPlace) {
+    public boolean addBlockToPlace(@NotNull BlockItemStack blockToPlace) {
         return blocksToPlace.add(blockToPlace);
     }
 
-    public void setBlocksToPlace(final LinkedList<ItemStack> blocksToPlace) {
+    public void setBlocksToPlace(final LinkedList<BlockItemStack> blocksToPlace) {
         this.blocksToPlace = blocksToPlace;
     }
 
-    public LinkedList<ItemStack> getBlocksToUse() {
+    public LinkedList<BlockItemStack> getBlocksToUse() {
         return blocksToUse;
     }
 
-    public boolean addBlockToUse(@NotNull ItemStack blockToUse) {
+    public boolean addBlockToUse(@NotNull BlockItemStack blockToUse) {
         return blocksToUse.add(blockToUse);
     }
 
-    public void setBlocksToUse(final LinkedList<ItemStack> blocksToUse) {
+    public void setBlocksToUse(final LinkedList<BlockItemStack> blocksToUse) {
         this.blocksToUse = blocksToUse;
     }
 
-    public LinkedList<ItemStack> getBlocksToCut() {
+    public LinkedList<BlockItemStack> getBlocksToCut() {
         return blocksToCut;
     }
 
-    public boolean addBlockToCut(@NotNull ItemStack blockToCut) {
+    public boolean addBlockToCut(@NotNull BlockItemStack blockToCut) {
         return blocksToCut.add(blockToCut);
     }
 
-    public void setBlocksToCut(final LinkedList<ItemStack> blocksToCut) {
+    public void setBlocksToCut(final LinkedList<BlockItemStack> blocksToCut) {
         this.blocksToCut = blocksToCut;
     }
     

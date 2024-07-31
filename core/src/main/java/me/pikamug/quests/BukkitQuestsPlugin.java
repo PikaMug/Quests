@@ -53,6 +53,7 @@ import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitUpdateChecker;
+import me.pikamug.quests.util.stack.BlockItemStacks;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -143,9 +144,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         try {
             Class.forName("me.pikamug.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
+            BlockItemStacks.init(!localeManager.isBelow113());
         } catch (final Exception ignored) {
             getLogger().warning("LocaleLib not present! Is this a debug environment?");
         }
+
         convoListener = new BukkitConvoListener();
         blockListener = new BukkitBlockListener(this);
         itemListener = new BukkitItemListener(this);

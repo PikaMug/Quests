@@ -22,7 +22,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.BukkitStage;
-import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,10 +61,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
-            if (blockItemStack == null) {
-                return;
-            }
+            final BlockItemStack blockItem = BlockItemStack.of(event.getBlock());
+
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
@@ -89,12 +87,12 @@ public class BukkitBlockListener implements Listener {
                             BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang
                                     .get(player, "optionSilkTouchFail").replace("<quest>", quest.getName()));
                         } else {
-                            quester.breakBlock(quest, blockItemStack);
+                            quester.breakBlock(quest, blockItem);
 
                             dispatchedBreakQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, breakType,
                                     (final Quester q, final Quest cq) -> {
                                 if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
-                                    q.breakBlock(cq, blockItemStack);
+                                    q.breakBlock(cq, blockItem);
                                 }
                                 return null;
                             }));
@@ -109,11 +107,11 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
-                                final ItemStack is = currentStage.getBlocksToPlace().get(i);
+                                final BlockItemStack is = currentStage.getBlocksToPlace().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack goal = new ItemStack(is.getType(), 64);
-                                    for (final ItemStack stack : currentStage.getBlocksToPlace()) {
-                                        if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                    BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                    for (final BlockItemStack stack : currentStage.getBlocksToPlace()) {
+                                        if (stack.matches(goal)) {
                                             goal = stack;
                                         }
                                     }
@@ -142,11 +140,11 @@ public class BukkitBlockListener implements Listener {
                                     if (progress < 0) {
                                         break;
                                     }
-                                    final ItemStack is = currentStage.getBlocksToPlace().get(i);
+                                    final BlockItemStack is = currentStage.getBlocksToPlace().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack goal = new ItemStack(is.getType(), 64);
-                                        for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
-                                            if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                        BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                        for (final BlockItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToPlace()) {
+                                            if (stack.matches(goal)) {
                                                 goal = stack;
                                             }
                                         }
@@ -170,14 +168,14 @@ public class BukkitBlockListener implements Listener {
                     }
                     if (currentStage.containsObjective(cutType)) {
                         if (player.getItemInHand().getType().equals(Material.SHEARS)) {
-                            quester.cutBlock(quest, blockItemStack);
+                            quester.cutBlock(quest, blockItem);
                         }
                     }
                     dispatchedCutQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, cutType,
                             (final Quester q, final Quest cq) -> {
                         if (!dispatchedCutQuestIDs.contains(cq.getId())) {
                             if (player.getItemInHand().getType().equals(Material.SHEARS)) {
-                                q.cutBlock(cq, blockItemStack);
+                                q.cutBlock(cq, blockItem);
                             }
                         }
                         return null;
@@ -195,10 +193,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
-            if (blockItemStack == null) {
-                return;
-            }
+            final BlockItemStack blockItemStack = BlockItemStack.of(event.getBlock());
+
             final Quester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType type = ObjectiveType.DAMAGE_BLOCK;
             final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -231,10 +227,8 @@ public class BukkitBlockListener implements Listener {
         }
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
-            final ItemStack blockItemStack = getItemEquivalent(event.getBlock());
-            if (blockItemStack == null) {
-                return;
-            }
+            final BlockItemStack blockItemStack = BlockItemStack.of(event.getBlock());
+
             final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
             final ObjectiveType placeType = ObjectiveType.PLACE_BLOCK;
             final ObjectiveType breakType = ObjectiveType.BREAK_BLOCK;
@@ -261,11 +255,11 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
-                                final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                final BlockItemStack is = currentStage.getBlocksToBreak().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                    ItemStack goal = new ItemStack(is.getType(), 64);
-                                    for (final ItemStack stack : currentStage.getBlocksToBreak()) {
-                                        if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                    BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                    for (final BlockItemStack stack : currentStage.getBlocksToBreak()) {
+                                        if (stack.matches(goal)) {
                                             goal = stack;
                                         }
                                     }
@@ -294,11 +288,11 @@ public class BukkitBlockListener implements Listener {
                                     if (progress < 0) {
                                         break;
                                     }
-                                    final ItemStack is = currentStage.getBlocksToBreak().get(i);
+                                    final BlockItemStack is = currentStage.getBlocksToBreak().get(i);
                                     if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
-                                        ItemStack goal = new ItemStack(is.getType(), 64);
-                                        for (final ItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToBreak()) {
-                                            if (BukkitItemUtil.compareItems(is, stack, true) == 0) {
+                                        BlockItemStack goal = BlockItemStack.clone(is, 64);
+                                        for (final BlockItemStack stack : ((BukkitStage) quester.getCurrentStage(cq)).getBlocksToBreak()) {
+                                            if (stack.matches(goal)) {
                                                 goal = stack;
                                             }
                                         }
@@ -354,10 +348,8 @@ public class BukkitBlockListener implements Listener {
                 }
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!event.isCancelled() && event.getClickedBlock() != null) {
-                        final ItemStack blockItemStack = getItemEquivalent(event.getClickedBlock());
-                        if (blockItemStack == null) {
-                            return;
-                        }
+                        final BlockItemStack blockItemStack = BlockItemStack.of(event.getClickedBlock());
+
                         final ObjectiveType type = ObjectiveType.USE_BLOCK;
                         final Set<String> dispatchedQuestIDs = new HashSet<>();
                         for (final Quest quest : plugin.getLoadedQuests()) {
