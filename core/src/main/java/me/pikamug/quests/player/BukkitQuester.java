@@ -206,7 +206,8 @@ public class BukkitQuester implements Quester {
             updateJournal();
         }
     };
-    protected ConcurrentHashMap<Quest, BukkitQuestProgress> questProgress = new ConcurrentHashMap<Quest, BukkitQuestProgress>() {
+    protected ConcurrentHashMap<Quest, BukkitQuestProgress> questProgress
+            = new ConcurrentHashMap<Quest, BukkitQuestProgress>() {
 
         private static final long serialVersionUID = -4607112433003926066L;
 
@@ -1439,7 +1440,8 @@ public class BukkitQuester implements Quester {
                 message += " <mob>";
             }
             if (formatNames) {
-                message = message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(stage.getMobsToTame().get(tameIndex).name()));
+                message = message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(stage.getMobsToTame()
+                        .get(tameIndex).name()));
             }
             objectives.add(new BukkitObjective(ObjectiveType.TAME_MOB, message,
                     new BukkitCountableMob(e, progress), new BukkitCountableMob(e, goal)));
@@ -3840,8 +3842,8 @@ public class BukkitQuester implements Quester {
             getQuestProgressOrDefault(quest).setDelayTimeLeft(getQuestProgressOrDefault(quest).getDelayTimeLeft()
                     - (System.currentTimeMillis() - getQuestProgressOrDefault(quest).getDelayStartTime()));
         } else {
-            getQuestProgressOrDefault(quest).setDelayTimeLeft(getCurrentStage(quest).getDelay() - (System.currentTimeMillis()
-                    - getQuestProgressOrDefault(quest).getDelayStartTime()));
+            getQuestProgressOrDefault(quest).setDelayTimeLeft(getCurrentStage(quest).getDelay()
+                    - (System.currentTimeMillis() - getQuestProgressOrDefault(quest).getDelayStartTime()));
         }
     }
 
