@@ -71,7 +71,7 @@ public class ModernBlockItemStack implements BlockItemStack {
         }
 
         final BlockData blockData = Factory.getBlockData(other);
-        return this.blockData.matches(blockData) && (durability == 0 || durability == other.getDurability());
+        return this.blockData.matches(blockData) && (durability == other.getDurability());
     }
 
     public void setAmount(int amount) {

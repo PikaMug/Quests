@@ -55,7 +55,7 @@ public class LegacyBlockItemStack implements BlockItemStack {
         }
 
         final MaterialData blockData = Factory.getBlockData(other);
-        return this.materialData.equals(blockData) && (getDurability() == 0 || getDurability() == other.getDurability());
+        return this.materialData.equals(blockData) && (getDurability() == other.getDurability());
     }
 
     public void setAmount(int amount) {
