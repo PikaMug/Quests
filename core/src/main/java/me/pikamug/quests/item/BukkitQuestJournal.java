@@ -12,12 +12,13 @@ package me.pikamug.quests.item;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
@@ -84,21 +85,33 @@ public class BukkitQuestJournal {
                         continue;
                     }
                     String[] split = null;
-                    if (message.contains("<item>") && objective.getGoalAsItem() != null) {
+                    if (message.contains("<item>")) {
                         split = message.split("<item>");
                         builder.add(split[0]);
-                        final ItemStack goal = objective.getGoalAsItem();
-                        if (goal.getItemMeta() != null && goal.getItemMeta().hasDisplayName()) {
-                            builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
-                                    + goal.getItemMeta().getDisplayName());
-                        } else {
+                        if (objective.getGoalAsBlockItem() != null) {
+                            final BlockItemStack goal = objective.getGoalAsBlockItem();
                             if (plugin.getConfigSettings().canTranslateNames()) {
                                 final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
-                                        .queryItemStack(goal));
+                                        .queryMaterial(goal.getType(), goal.getDurability(), null));
                                 tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
                                 builder.add(tc);
                             } else {
                                 builder.add(ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
+                            }
+                        } else if (objective.getGoalAsItem() != null) {
+                            final ItemStack goal = objective.getGoalAsItem();
+                            if (goal.getItemMeta() != null && goal.getItemMeta().hasDisplayName()) {
+                                builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
+                                        + goal.getItemMeta().getDisplayName());
+                            } else {
+                                if (plugin.getConfigSettings().canTranslateNames()) {
+                                    final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                            .queryItemStack(goal));
+                                    tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                                    builder.add(tc);
+                                } else {
+                                    builder.add(ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
+                                }
                             }
                         }
                         if (split.length > 1) {
