@@ -58,8 +58,8 @@ public class BukkitObjective implements Objective {
             this.goal = ((BukkitCountableMob) goalObj).getCount();
         } else if (goalObj instanceof Integer) {
             this.goal = (int) goalObj;
-        } else if (progressObj instanceof BlockItemStack) {
-            this.goal = ((BlockItemStack) progressObj).getAmount();
+        } else if (goalObj instanceof BlockItemStack) {
+            this.goal = ((BlockItemStack) goalObj).getAmount();
         } else {
             this.goal = 0;
         }
