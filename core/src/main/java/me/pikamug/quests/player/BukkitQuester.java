@@ -1345,6 +1345,12 @@ public class BukkitQuester implements Quester {
             if (formatNames) {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
+            final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+            if (level.isEmpty()) {
+                message = message.replace(" <level>", level);
+            } else {
+                message = message.replace("<level>", level);
+            }
             objectives.add(new BukkitObjective(ObjectiveType.CONSUME_ITEM, message, progress, goal));
         }
         for (int i = 0; i < data.getItemsDelivered().size(); i++) {
@@ -3347,9 +3353,18 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.CONSUME_ITEM)) {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToConsume().get(getCurrentStage(quest)
                     .getItemsToConsume().indexOf(goal));
-            final String message = formatCompletedObjectiveMessage("consumeItem", goal.getAmount());
+            String message = formatCompletedObjectiveMessage("consumeItem", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
+                // Bukkit version is 1.9+
+                if (goal.getType().name().contains("POTION") && plugin.getLocaleManager().hasBasePotionData()) {
+                    final String level = BukkitItemUtil.getPrettyPotionLevel(goal.getItemMeta());
+                    if (level.isEmpty()) {
+                        message = message.replace(" <level>", level);
+                    } else {
+                        message = message.replace("<level>", level);
+                    }
+                }
                 if (!plugin.getLocaleManager().sendMessage(p, message, goal.getType(), goal.getDurability(), null)) {
                     sendMessage(message.replace("<item>", BukkitItemUtil.getName(is)));
                 }

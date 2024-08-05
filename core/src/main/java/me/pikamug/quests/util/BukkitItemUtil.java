@@ -780,11 +780,14 @@ public class BukkitItemUtil {
         if (Material.getMaterial("LINGERING_POTION") == null) {
             return prettyString;
         }
+        if (!(itemMeta instanceof PotionMeta)) {
+            return prettyString;
+        }
         final PotionMeta meta = (PotionMeta) itemMeta;
-        if (meta != null && meta.getBasePotionData().isUpgraded()) {
+        if (meta.getBasePotionData().isUpgraded()) {
             final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
             prettyString = ChatColor.GREEN + RomanNumeral.getNumeral(level) + ChatColor.RESET;
-        } else if (meta != null && meta.getBasePotionData().isExtended()) {
+        } else if (meta.getBasePotionData().isExtended()) {
             prettyString = ChatColor.GREEN + "+" + ChatColor.RESET;
         }
         return prettyString;
