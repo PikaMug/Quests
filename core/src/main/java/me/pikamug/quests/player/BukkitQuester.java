@@ -1858,7 +1858,7 @@ public class BukkitQuester implements Quester {
                     }
                 } */ else if (Material.getMaterial("CRAFTER") != null && broken.getType().isEdible()) {
                     // Paper 1.21+ is special case
-                    final short toBreakAge = /* NBT.get(toBreak, nbt -> (short) nbt.getShort("quests_age")); */ 0;
+                    final short toBreakAge = 0;
                     final short brokenAge = broken.getDurability();
                     if (toBreakAge > 0) {
                         // Age toBreak specified so check for durability

@@ -10,7 +10,6 @@
 
 package me.pikamug.quests.listeners;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quester.BukkitQuesterPostUpdateObjectiveEvent;
@@ -22,12 +21,10 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.BukkitStage;
-import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +36,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -374,40 +370,5 @@ public class BukkitBlockListener implements Listener {
                 }
             }
         }
-    }
-
-    /**
-     * Gets item equivalent of Block, unless server is on certain builds of Paper
-     * server software, in which case may return null
-     *
-     * @param block Block to convert
-     * @return item or null
-     */
-    @SuppressWarnings("deprecation")
-    private ItemStack getItemEquivalent(final Block block) {
-        short durability = 0;
-        try {
-            durability = block.getState().getData().toItemStack().getDurability();
-        } catch (final IllegalArgumentException e) {
-            // https://github.com/PikaMug/Quests/issues/2236
-        }
-        try {
-            return new ItemStack(block.getType(), 1, durability);
-        } catch (final IllegalArgumentException e) {
-            // https://github.com/PikaMug/Quests/issues/2243
-        }
-        try {
-            // Should only happen on Paper 1.21+
-            final ItemStack item = new ItemStack(block.getBlockData().getPlacementMaterial());
-            if (block.getBlockData() instanceof Ageable) {
-                NBT.modify(item, nbt -> {
-                    nbt.setShort("quests_age", (short) ((Ageable)block.getBlockData()).getAge());
-                });
-            }
-            return item;
-        } catch (Exception e) {
-            // https://github.com/PikaMug/Quests/issues/2256
-        }
-        return null;
     }
 }

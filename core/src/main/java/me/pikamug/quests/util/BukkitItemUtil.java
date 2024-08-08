@@ -10,7 +10,6 @@
 
 package me.pikamug.quests.util;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -233,9 +232,6 @@ public class BukkitItemUtil {
             if (mat.isBlock() && Material.getMaterial("CRAFTER") != null) {
                 // Paper 1.21+ does not allow ItemStack from unobtainable blocks (i.e. CARROTS block)
                 item = new ItemStack(mat.createBlockData().getPlacementMaterial(), amount);
-                NBT.modify(item, nbt -> {
-                    nbt.setShort("quests_age", durability);
-                });
             } else {
                 item = new ItemStack(mat, amount, durability);
             }
