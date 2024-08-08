@@ -1893,12 +1893,12 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int breakIndex = getCurrentStage(quest).getBlocksToBreak().indexOf(goal);
-        if (bukkitQuestProgress.blocksBroken.get(breakIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksBroken.get(breakIndex) >= goal.getAmount()) {
             return;
         }
         final int progress = bukkitQuestProgress.blocksBroken.get(breakIndex) + 1;
         bukkitQuestProgress.blocksBroken.set(breakIndex, progress);
-        if (progress >= goal.getAmount()) {
+        if (progress == goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
 
@@ -1968,12 +1968,12 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int damageIndex = getCurrentStage(quest).getBlocksToDamage().indexOf(goal);
-        if (bukkitQuestProgress.blocksDamaged.get(damageIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksDamaged.get(damageIndex) >= goal.getAmount()) {
             return;
         }
         final int progress = bukkitQuestProgress.blocksDamaged.get(damageIndex) + 1;
         bukkitQuestProgress.blocksDamaged.set(damageIndex, progress);
-        if (progress >= goal.getAmount()) {
+        if (progress == goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
 
@@ -2043,12 +2043,12 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int placeIndex = getCurrentStage(quest).getBlocksToPlace().indexOf(goal);
-        if (bukkitQuestProgress.blocksPlaced.get(placeIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksPlaced.get(placeIndex) >= goal.getAmount()) {
             return;
         }
         final int progress = bukkitQuestProgress.blocksPlaced.get(placeIndex) + 1;
         bukkitQuestProgress.blocksPlaced.set(placeIndex, progress);
-        if (progress >= goal.getAmount()) {
+        if (progress == goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
 
@@ -2118,12 +2118,12 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int useIndex = getCurrentStage(quest).getBlocksToUse().indexOf(goal);
-        if (bukkitQuestProgress.blocksUsed.get(useIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksUsed.get(useIndex) >= goal.getAmount()) {
             return;
         }
         final int progress = bukkitQuestProgress.blocksUsed.get(useIndex) + 1;
         bukkitQuestProgress.blocksUsed.set(useIndex, progress);
-        if (progress >= goal.getAmount()) {
+        if (progress == goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
 
@@ -2193,12 +2193,12 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int cutIndex = getCurrentStage(quest).getBlocksToCut().indexOf(goal);
-        if (bukkitQuestProgress.blocksCut.get(cutIndex) > goal.getAmount()) {
+        if (bukkitQuestProgress.blocksCut.get(cutIndex) >= goal.getAmount()) {
             return;
         }
         final int progress = bukkitQuestProgress.blocksCut.get(cutIndex) + 1;
         bukkitQuestProgress.blocksCut.set(cutIndex, progress);
-        if (progress >= goal.getAmount()) {
+        if (progress == goal.getAmount()) {
             finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null,
                     null, null, null, null);
 
