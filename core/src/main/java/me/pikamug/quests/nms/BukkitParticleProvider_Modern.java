@@ -23,18 +23,18 @@ class BukkitParticleProvider_Modern extends BukkitParticleProvider {
     private static final Map<BukkitPreBuiltParticle, Object> PARTICLES = new HashMap<>();
 
     static {
-        PARTICLES.put(BukkitPreBuiltParticle.ENCHANT, Particle.ENCHANTMENT_TABLE);
+        PARTICLES.put(BukkitPreBuiltParticle.ENCHANT, Particle.ENCHANT);
         PARTICLES.put(BukkitPreBuiltParticle.CRIT, Particle.CRIT);
-        PARTICLES.put(BukkitPreBuiltParticle.SPELL, Particle.SPELL_INSTANT);
-        PARTICLES.put(BukkitPreBuiltParticle.MAGIC_CRIT, Particle.CRIT_MAGIC);
-        PARTICLES.put(BukkitPreBuiltParticle.MOB_SPELL, Particle.SPELL_MOB);
+        PARTICLES.put(BukkitPreBuiltParticle.SPELL, Particle.INSTANT_EFFECT);
+        PARTICLES.put(BukkitPreBuiltParticle.MAGIC_CRIT, Particle.ENCHANTED_HIT);
+        PARTICLES.put(BukkitPreBuiltParticle.MOB_SPELL, Particle.ENTITY_EFFECT);
         PARTICLES.put(BukkitPreBuiltParticle.NOTE, Particle.NOTE);
         PARTICLES.put(BukkitPreBuiltParticle.PORTAL, Particle.PORTAL);
-        PARTICLES.put(BukkitPreBuiltParticle.DUST, Particle.REDSTONE);
-        PARTICLES.put(BukkitPreBuiltParticle.WITCH, Particle.SPELL_WITCH);
-        PARTICLES.put(BukkitPreBuiltParticle.SNOWBALL, Particle.SNOWBALL);
-        PARTICLES.put(BukkitPreBuiltParticle.SPLASH, Particle.WATER_SPLASH);
-        PARTICLES.put(BukkitPreBuiltParticle.SMOKE, Particle.TOWN_AURA);
+        PARTICLES.put(BukkitPreBuiltParticle.DUST, Particle.DUST);
+        PARTICLES.put(BukkitPreBuiltParticle.WITCH, Particle.WITCH);
+        PARTICLES.put(BukkitPreBuiltParticle.SNOWBALL, Particle.ITEM_SNOWBALL);
+        PARTICLES.put(BukkitPreBuiltParticle.SPLASH, Particle.SPLASH);
+        PARTICLES.put(BukkitPreBuiltParticle.SMOKE, Particle.TRIAL_OMEN);
     }
 
     @Override

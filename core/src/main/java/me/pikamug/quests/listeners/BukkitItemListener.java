@@ -216,19 +216,12 @@ public class BukkitItemListener implements Listener {
     }
 
     public boolean isWaterBottle(final ItemStack item) {
-        if (item == null) {
-            return false;
-        }
-        if (item.getType().equals(Material.POTION)) {
-            final PotionMeta meta = (PotionMeta) item.getItemMeta();
-            if (meta == null) {
-                return false;
-            }
-            if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
-                return true;
-            }
-        }
-        return false;
+        if (item == null || item.getType().equals(Material.POTION)) return false;
+
+        final PotionMeta meta = (PotionMeta) item.getItemMeta();
+        if (meta == null || meta.getBasePotionType()==null) return false;
+
+        return meta.getBasePotionType().equals(PotionType.WATER);
     }
     
     @EventHandler
