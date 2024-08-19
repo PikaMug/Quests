@@ -35,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -637,10 +638,12 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder potions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final PotionEffectType[] potionArr = PotionEffectType.values();
-            for (int i = 0; i < potionArr.length; i++) {
-                potions.append(ChatColor.AQUA).append(potionArr[i].getName());
-                if (i < (potionArr.length - 1)) {
+            final List<PotionEffectType> effArr = new LinkedList<>(Arrays.asList(PotionEffectType.values()));
+            effArr.sort(Comparator.comparing(PotionEffectType::getName));
+            for (int i = 0; i < effArr.size(); i++) {
+                final String name = effArr.get(i).getName().replaceFirst("minecraft:", "").toUpperCase();
+                potions.append(ChatColor.AQUA).append(name);
+                if (i < (effArr.size() - 1)) {
                     potions.append(ChatColor.GRAY).append(", ");
                 }
             }

@@ -42,6 +42,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -842,14 +844,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder mobs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final EntityType[] mobArr = EntityType.values();
-            for (int i = 0; i < mobArr.length; i++) {
-                final EntityType type = mobArr[i];
-                if (!type.isAlive()) {
-                    continue;
+            final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
+            final List<EntityType> toRemove = new LinkedList<>();
+            for (final EntityType type : mobArr) {
+                if (!type.isAlive() || type.name().equals("PLAYER")) {
+                    toRemove.add(type);
                 }
-                mobs.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()));
-                if (i < (mobArr.length - 1)) {
+            }
+            mobArr.removeAll(toRemove);
+            mobArr.sort(Comparator.comparing(EntityType::name));
+            for (int i = 0; i < mobArr.size(); i++) {
+                mobs.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()));
+                if (i < (mobArr.size() - 1)) {
                     mobs.append(ChatColor.GRAY).append(", ");
                 }
             }

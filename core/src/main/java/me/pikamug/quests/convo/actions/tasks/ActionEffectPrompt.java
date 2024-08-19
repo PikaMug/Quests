@@ -30,6 +30,8 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -340,10 +342,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final Effect[] worldArr = Effect.values();
-            for (int i = 0; i < worldArr.length; i++) {
-                effects.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(worldArr[i].name()));
-                if (i < (worldArr.length - 1)) {
+            final List<Effect> effArr = new LinkedList<>(Arrays.asList(Effect.values()));
+            effArr.sort(Comparator.comparing(Effect::name));
+            for (int i = 0; i < effArr.size(); i++) {
+                effects.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(effArr.get(i).name()));
+                if (i < (effArr.size() - 1)) {
                     effects.append(ChatColor.GRAY).append(", ");
                 }
             }
