@@ -2245,7 +2245,7 @@ public class BukkitQuester implements Quester {
                     new BukkitObjective(type, null, amount, goal));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int progress = Math.min(crafted.getAmount() + amount, 64);
+            final int progress = Math.min(crafted.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsCrafted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
@@ -2294,7 +2294,7 @@ public class BukkitQuester implements Quester {
                     new BukkitObjective(type, null, amount, goal));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int progress = Math.min(smelted.getAmount() + amount, 64);
+            final int progress = Math.min(smelted.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsSmelted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
@@ -2346,7 +2346,7 @@ public class BukkitQuester implements Quester {
                     new BukkitObjective(type, null, amount, goal));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int progress = Math.min(enchantedBook.getAmount() + amount, 64);
+            final int progress = Math.min(enchantedBook.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsEnchanted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
@@ -2403,7 +2403,7 @@ public class BukkitQuester implements Quester {
                     new BukkitObjective(type, null, amount, goal));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int progress = Math.min(enchanted.getAmount() + amount, 64);
+            final int progress = Math.min(enchanted.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsEnchanted.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
@@ -2452,7 +2452,7 @@ public class BukkitQuester implements Quester {
                     new BukkitObjective(type, null, amount, goal));
             plugin.getServer().getPluginManager().callEvent(preEvent);
 
-            final int progress = Math.min(brewed.getAmount() + amount, 64);
+            final int progress = Math.min(brewed.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsBrewed.set(match, progress);
             if (progress >= goal.getAmount()) {
                 finishObjective(quest, new BukkitObjective(type, null, progress, goal), null, null, null, null,
@@ -2566,7 +2566,7 @@ public class BukkitQuester implements Quester {
                 return;
             }
 
-            final int progress = Math.min(delivered.getAmount() + amount, 64);
+            final int progress = Math.min(delivered.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsDelivered.set(match, progress);
             if (progress >= goal.getAmount()) {
                 // Take away remaining amount to be delivered
