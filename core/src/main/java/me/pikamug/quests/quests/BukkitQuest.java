@@ -890,12 +890,24 @@ public class BukkitQuest implements Quest {
             }
             issuedReward = true;
         }
-        if (!rewards.getCustomRewards().isEmpty()) {
-            issuedReward = true;
-            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
-                for (final String s : rewards.getCustomRewards().keySet()) {
+        for (final String s : rewards.getCustomRewards().keySet()) {
+            CustomReward found = null;
+            for (final CustomReward cr : plugin.getCustomRewards()) {
+                if (cr.getName().equalsIgnoreCase(s)) {
+                    found = cr;
+                    break;
+                }
+            }
+            if (found != null) {
+                found.giveReward(player.getUniqueId(), rewards.getCustomRewards().get(s));
+                issuedReward = true;
+                if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
                 }
+            } else {
+                plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
+                        + name + "\", but the Custom Reward \"" + s
+                        + "\" could not be found. Does it still exist?");
             }
         }
         
@@ -1064,11 +1076,6 @@ public class BukkitQuest implements Quest {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
-                        found.giveReward(p.getUniqueId(), rewards.getCustomRewards().get(s));
-                    } else {
-                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
-                                + name + "\", but the Custom Reward \"" + s
-                                + "\" could not be found. Does it still exist?");
                     }
                 }
             }
