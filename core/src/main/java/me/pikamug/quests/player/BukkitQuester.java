@@ -4354,8 +4354,7 @@ public class BukkitQuester implements Quester {
                         .replace("<quest>", quest.getName()));
                 }
                 if (stage.getFailAction() != null) {
-                    plugin.getServer().getScheduler().runTask(plugin, () ->
-                            getCurrentStage(quest).getFailAction().fire(this, quest));
+                    plugin.getServer().getScheduler().runTask(plugin, () -> stage.getFailAction().fire(this, quest));
                 }
                 hardQuit(quest);
             } else if (giveReason) {
