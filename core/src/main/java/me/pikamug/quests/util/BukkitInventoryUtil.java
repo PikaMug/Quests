@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -21,7 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BukkitInventoryUtil {
-    
+    public static final boolean AFTER_v1_9 = !isV1_8();
+
     /**
      * Adds item to player's inventory. If full, item is dropped at player's location.
      * 
@@ -167,12 +169,40 @@ public class BukkitInventoryUtil {
      * @return number of empty slots
      */
     public static int getEmptySlots(final Player player) {
-        final ItemStack[] contents = player.getInventory().getContents();
+        final ItemStack[] contents = getOnlyItems(player);
         int i = 0;
         for (final ItemStack item : contents)
             if (item != null && item.getType() != Material.AIR) {
                 i++;
             }
         return 36 - i;
+    }
+    /**
+     * Get items from storage section of inventory, 36 slots
+     * @implNote
+     * For MC Versions<code><=1.8.x</code>:
+     * <br>{@link Inventory#getContents()} returns Storage slots (36 max)</br>
+     *
+     * For MC Versions<code>>1.8.x</code>:
+     * <br>{@link Inventory#getContents()} returns Storage + Armor + Offhand[If applicable] slots
+     * (40 or 41 max)</br>
+     *
+     * @param player Player to get items from
+     * @return {@link ItemStack}s in storage section of inventory.
+     * */
+    private static ItemStack[] getOnlyItems(final Player player){
+        return (AFTER_v1_9 ? player.getInventory().getStorageContents() : player.getInventory().getContents());
+    }
+
+    /**
+     * Checks if server is <code>Minecraft v1.8.x</code>
+     *
+     * @return <code>true</code> if <code>1.8.x</code>
+     * <br><code>false</code><br> if any other version
+     * @see BukkitInventoryUtil#getOnlyItems(Player)
+     * */
+    private static boolean isV1_8(){
+        String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        return bukkitVersion.startsWith("1.8.") || bukkitVersion.equals("1.8");
     }
 }
