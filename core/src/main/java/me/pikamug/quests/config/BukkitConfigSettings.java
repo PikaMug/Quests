@@ -40,6 +40,7 @@ public class BukkitConfigSettings implements ConfigSettings {
     private boolean npcEffects = true;
     private String effect = "note";
     private String redoEffect = "angry_villager";
+    private boolean preventExploit;
     private boolean showCompletedObjs = true;
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
@@ -174,6 +175,12 @@ public class BukkitConfigSettings implements ConfigSettings {
     public void setRedoEffect(final String redoEffect) {
         this.redoEffect = redoEffect;
     }
+    public boolean canPreventExploit() {
+        return preventExploit;
+    }
+    public void setPreventExploit(final boolean preventExploit) {
+        this.preventExploit = preventExploit;
+    }
     public boolean canShowCompletedObjs() {
         return showCompletedObjs;
     }
@@ -264,6 +271,7 @@ public class BukkitConfigSettings implements ConfigSettings {
         npcEffects = config.getBoolean("npc-effects.enabled", true);
         effect = config.getString("npc-effects.new-quest", "note");
         redoEffect = config.getString("npc-effects.redo-quest", "angry_villager");
+        preventExploit = config.getBoolean("prevent-exploit", true);
         showCompletedObjs = config.getBoolean("show-completed-objectives", true);
         showQuestReqs = config.getBoolean("show-requirements", true);
         showQuestTitles = config.getBoolean("show-titles", true);

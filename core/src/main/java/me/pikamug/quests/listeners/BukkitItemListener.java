@@ -66,12 +66,14 @@ public class BukkitItemListener implements Listener {
                     }
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
-                        if (craftedItem.getMaxStackSize() == 0 || (BukkitInventoryUtil.getEmptySlots(player)
-                                < craftedItem.getAmount() / craftedItem.getMaxStackSize())) {
-                            BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang.get(player,
-                                    "inventoryFull"));
-                            event.setCancelled(true);
-                            return;
+                        if (plugin.getConfigSettings().canPreventExploit()) {
+                            if (craftedItem.getMaxStackSize() == 0 || (BukkitInventoryUtil.getEmptySlots(player)
+                                    < craftedItem.getAmount() / craftedItem.getMaxStackSize())) {
+                                BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang.get(player,
+                                        "inventoryFull"));
+                                event.setCancelled(true);
+                                return;
+                            }
                         }
                         quester.craftItem(quest, craftedItem);
                     }
@@ -178,6 +180,9 @@ public class BukkitItemListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
+        if (!plugin.getConfigSettings().canPreventExploit()) {
+            return;
+        }
         if (event.getWhoClicked() instanceof Player) {
             if (event.getInventory().getType() == InventoryType.BREWING) {
                 final Quester quester = plugin.getQuester(event.getWhoClicked().getUniqueId());
@@ -193,6 +198,9 @@ public class BukkitItemListener implements Listener {
     }
 
     public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
+        if (!plugin.getConfigSettings().canPreventExploit()) {
+            return true;
+        }
         final int slot = event.getRawSlot();
         final InventoryAction action = event.getAction();
         // Prevent shift-click into Brewing Stand

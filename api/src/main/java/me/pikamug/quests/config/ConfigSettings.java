@@ -51,6 +51,8 @@ public interface ConfigSettings {
     void setEffect(final String effect);
     String getRedoEffect();
     void setRedoEffect(final String redoEffect);
+    boolean canPreventExploit();
+    void setPreventExploit(final boolean preventExploit);
     boolean canShowCompletedObjs();
     void setShowCompletedObjs(final boolean showCompletedObjs);
     boolean canShowQuestReqs();
