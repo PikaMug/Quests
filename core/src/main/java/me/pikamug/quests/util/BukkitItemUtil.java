@@ -149,14 +149,17 @@ public class BukkitItemUtil {
                             || one.getType().equals(Material.SPLASH_POTION)) {
                         final PotionMeta pMeta1 = (PotionMeta) one.getItemMeta();
                         final PotionMeta pMeta2 = (PotionMeta) two.getItemMeta();
-                        if (!pMeta1.getBasePotionData().getType().equals(pMeta2.getBasePotionData().getType())) {
-                            return -9;
-                        }
-                        if (pMeta1.getBasePotionData().isExtended() != pMeta2.getBasePotionData().isExtended()) {
-                            return -9;
-                        }
-                        if (pMeta1.getBasePotionData().isUpgraded() != pMeta2.getBasePotionData().isUpgraded()) {
-                            return -9;
+                        // Base potion data can return null on newer versions (likely 1.20.6+)
+                        if (pMeta1.getBasePotionData() != null && pMeta2.getBasePotionData() != null) {
+                            if (!pMeta1.getBasePotionData().getType().equals(pMeta2.getBasePotionData().getType())) {
+                                return -9;
+                            }
+                            if (pMeta1.getBasePotionData().isExtended() != pMeta2.getBasePotionData().isExtended()) {
+                                return -9;
+                            }
+                            if (pMeta1.getBasePotionData().isUpgraded() != pMeta2.getBasePotionData().isUpgraded()) {
+                                return -9;
+                            }
                         }
                     }
                 }
