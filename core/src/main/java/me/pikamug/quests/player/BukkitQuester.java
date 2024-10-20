@@ -1893,6 +1893,9 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int breakIndex = getCurrentStage(quest).getBlocksToBreak().indexOf(goal);
+        if (breakIndex >= bukkitQuestProgress.blocksBroken.size()) {
+            return;
+        }
         if (bukkitQuestProgress.blocksBroken.get(breakIndex) >= goal.getAmount()) {
             return;
         }
@@ -1968,6 +1971,9 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int damageIndex = getCurrentStage(quest).getBlocksToDamage().indexOf(goal);
+        if (damageIndex >= bukkitQuestProgress.blocksDamaged.size()) {
+            return;
+        }
         if (bukkitQuestProgress.blocksDamaged.get(damageIndex) >= goal.getAmount()) {
             return;
         }
@@ -2043,6 +2049,9 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int placeIndex = getCurrentStage(quest).getBlocksToPlace().indexOf(goal);
+        if (placeIndex >= bukkitQuestProgress.blocksPlaced.size()) {
+            return;
+        }
         if (bukkitQuestProgress.blocksPlaced.get(placeIndex) >= goal.getAmount()) {
             return;
         }
@@ -2118,6 +2127,9 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int useIndex = getCurrentStage(quest).getBlocksToUse().indexOf(goal);
+        if (useIndex >= bukkitQuestProgress.blocksUsed.size()) {
+            return;
+        }
         if (bukkitQuestProgress.blocksUsed.get(useIndex) >= goal.getAmount()) {
             return;
         }
@@ -2193,6 +2205,9 @@ public class BukkitQuester implements Quester {
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final int cutIndex = getCurrentStage(quest).getBlocksToCut().indexOf(goal);
+        if (cutIndex >= bukkitQuestProgress.blocksCut.size()) {
+            return;
+        }
         if (bukkitQuestProgress.blocksCut.get(cutIndex) >= goal.getAmount()) {
             return;
         }
