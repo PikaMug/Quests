@@ -6,19 +6,19 @@ COMMAND_TAKE_HELP: "%gold%<command> %yellow%[quest] - قبول مهمة عن ط�
 COMMAND_QUIT: "خروج"
 COMMAND_QUIT_HELP: "%gold%<command> %yellow%[quest] - إنهاء المهمة الحالية"
 COMMAND_JOURNAL: "دفتراليومية"
-COMMAND_JOURNAL_HELP: "%gold%<command> %yellow%- عرض أو إخفاء <journal>"
+COMMAND_JOURNAL_HELP: "%gold%<command> %yellow% - عرض أو إخفاء <journal>"
 COMMAND_EDITOR: "المحرر"
-COMMAND_EDITOR_HELP: "%gold%<command> %yellow%- إنشاء أو تحرير أو حذف المهام"
+COMMAND_EDITOR_HELP: "%gold%<command> %yellow% - إنشاء أو تحرير أو حذف المهام"
 COMMAND_EVENTS_EDITOR: "الأحداث"
-COMMAND_EVENTS_EDITOR_HELP: "%gold%<command> %yellow%- إنشاء أو تحرير أو حذف الإجراءات"
+COMMAND_EVENTS_EDITOR_HELP: "%gold%<command> %yellow% - إنشاء أو تحرير أو حذف الإجراءات"
 COMMAND_CONDITIONS_EDITOR: "الشروط"
-COMMAND_CONDITIONS_EDITOR_HELP: "%gold%<command> %yellow%- إنشاء أو تحرير أو حذف الشروط"
+COMMAND_CONDITIONS_EDITOR_HELP: "%gold%<command> %yellow% - إنشاء أو تحرير أو حذف الشروط"
 COMMAND_STATS: "الإحصائيات"
-COMMAND_STATS_HELP: "%gold%<command> %yellow%- عرض إحصائيات المهمة"
+COMMAND_STATS_HELP: "%gold%<command> %yellow% - عرض إحصائيات المهمة"
 COMMAND_TOP: "أعلى"
 COMMAND_TOP_HELP: "%gold%<command> %yellow%[number] - عرض المتصدرين الإضافيين"
 COMMAND_INFO: "معلومات"
-COMMAND_INFO_HELP: "%gold%<command> %yellow%- عرض معلومات البرنامج المساعد"
+COMMAND_INFO_HELP: "%gold%<command> %yellow% - عرض معلومات البرنامج المساعد"
 COMMAND_CHOICE: "إختيار"
 COMMAND_CHOICE_HELP: "%gold%<command> %yellow%[choice] - قم باختيار القائمة"
 COMMAND_QUEST_HELP: "- عرض أهداف المهمة الحالية"
@@ -102,7 +102,7 @@ stageEditorStages: "مراحل"
 stageEditorStage: "مرحلة"
 stageEditorBlocks: "بلوكات"
 stageEditorBreakBlocks: "تحطيم الكتل"
-stageEditorDamageBlocks: "إلحاق ضرر للبلوكات"
+stageEditorDamageBlocks: "ضرر البلوكات"
 stageEditorPlaceBlocks: "وضع بلوكات"
 stageEditorUseBlocks: "استخدم الكتل"
 stageEditorCutBlocks: "حلق البلوكات"
@@ -112,7 +112,7 @@ stageEditorSmeltItems: "صهر العناصر"
 stageEditorEnchantItems: "وضع ميزات في العناصر"
 stageEditorBrewPotions: "صناعة جرعة"
 stageEditorConsumeItems: "استهلاك العناصر"
-stageEditorNPCs: "الشخصيات"
+stageEditorNPCs: "NPC"
 stageEditorDeliverItems: "توصيل العناصر"
 stageEditorTalkToNPCs: "التحدث إلى NPC"
 stageEditorKillNPCs: "أقتل الشخصيات"
@@ -178,7 +178,6 @@ stageEditorModulePrompt: "أدخل اسم الوحدة، <clear>، <cancel>"
 stageEditorCustomPrompt: "أدخل اسم هدف مخصص لإضافته، <clear>، <cancel>"
 stageEditorCustomAlreadyAdded: "تم بالفعل إضافة هذا الهدف المخصص!"
 stageEditorCustomCleared: "تم مسح الأهداف المخصصة."
-stageEditorCustomDataPrompt: "قم بإدخال قيمة ل <data>:"
 stageEditorEnterBlockNames: "أدخل أسماء البلوكات، <space>، <cancel>"
 stageEditorEnterBlockAmounts: "أدخل أعداد البلوكات، <space>، <cancel>"
 stageEditorEnterBlockDurability: "أدخل رقم الصمود (الأرقام)، <space>، <cancel>"
@@ -199,7 +198,7 @@ stageEditorReachLocationPrompt: "انقر بالزر الأيمن على بلو�
 stageEditorReachLocationRadiiPrompt: "أدخل محيط موقع الوصول (عدد البلوك)، <space>، <cancel>"
 stageEditorReachLocationNamesPrompt: "أدخل أسماء الموقع، <semicolon>، <cancel>"
 stageEditorTameAmountsPrompt: "أدخل أعداد الترويض، <space>، <cancel>"
-stageEditorShearColorsPrompt: "أدخل ألوان الأغنام <space>، <cancel>"
+stageEditorShearColorsPrompt: "أدخل ألوان الأغنام، <space>، <cancel>"
 stageEditorShearAmountsPrompt: "أدخل أعداد الصوف، <space>، <cancel>"
 stageEditorEventsPrompt: "أدخل اسم الإجراء، <clear>، <cancel>"
 stageEditorChatEventsPrompt: "أدخل اسم إجراء لإضافته، <clear>، <cancel>"
@@ -238,8 +237,6 @@ questEditTitle: "--تحرير المغامرة-"
 questDeleteTitle: "-حذف المغامرة-"
 questsUnknownCommand: "أمر المسعى غير معروف. اكتب/quests للحصول على مساعدة."
 pageNotExist: "الصفحة غير موجودة."
-questForceNextStage: "<player>متقدمة إلى المرحلة التالية في السعي إلى <quest>."
-questForcedNextStage: "<player>متقدم عليك إلى المرحلة التالية في السعي إلى <quest>."
 noCurrentQuest: "<player>ليس لديه حاليا أي مسعى نشط."
 playerNotFound: "لم يتم العثور على اللاعب."
 questSaveError: "حدث خطأ أثناء الحفظ."
