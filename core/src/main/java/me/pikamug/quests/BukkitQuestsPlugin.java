@@ -51,6 +51,7 @@ import me.pikamug.quests.storage.implementation.file.BukkitQuestYamlStorage;
 import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import me.pikamug.quests.util.stack.BlockItemStacks;
@@ -144,11 +145,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         try {
             Class.forName("me.pikamug.quests.libs.localelib.LocaleManager");
             localeManager = new LocaleManager();
-            BlockItemStacks.init(!localeManager.isBelow113());
         } catch (final Exception ignored) {
             getLogger().warning("LocaleLib not present! Is this a debug environment?");
         }
-
+        BlockItemStacks.init(!BukkitMiscUtil.isBelow113());
         convoListener = new BukkitConvoListener();
         blockListener = new BukkitBlockListener(this);
         itemListener = new BukkitItemListener(this);

@@ -1978,7 +1978,7 @@ public class BukkitQuester implements Quester {
                     // Blocks are solid so check for durability
                     if (broken.getDurability() == toBreak.getDurability()) {
                         goal = toBreak;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
+                    } else if (!BukkitMiscUtil.isBelow113()) {
                         // Ignore durability for 1.13+
                         goal = toBreak;
                     }
@@ -2079,7 +2079,7 @@ public class BukkitQuester implements Quester {
                     // Blocks are solid so check for durability
                     if (damaged.getDurability() == toDamage.getDurability()) {
                         goal = toDamage;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
+                    } else if (!BukkitMiscUtil.isBelow113()) {
                         // Ignore durability for 1.13+
                         goal = toDamage;
                     }
@@ -2157,7 +2157,7 @@ public class BukkitQuester implements Quester {
                     // Blocks are solid so check for durability
                     if (placed.getDurability() == toPlace.getDurability()) {
                         goal = toPlace;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
+                    } else if (!BukkitMiscUtil.isBelow113()) {
                         // Ignore durability for 1.13+
                         goal = toPlace;
                     }
@@ -2235,7 +2235,7 @@ public class BukkitQuester implements Quester {
                     // Blocks are solid so check for durability
                     if (used.getDurability() == toUse.getDurability()) {
                         goal = toUse;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
+                    } else if (!BukkitMiscUtil.isBelow113()) {
                         // Ignore durability for 1.13+
                         goal = toUse;
                     }
@@ -2313,7 +2313,7 @@ public class BukkitQuester implements Quester {
                     // Blocks are solid so check for durability
                     if (cut.getDurability() == toCut.getDurability()) {
                         goal = toCut;
-                    } else if (!plugin.getLocaleManager().isBelow113()) {
+                    } else if (!BukkitMiscUtil.isBelow113()) {
                         // Ignore durability for 1.13+
                         goal = toCut;
                     }

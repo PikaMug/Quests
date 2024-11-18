@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -304,5 +305,49 @@ public class BukkitMiscUtil {
                 + input.substring(index + 2);
         input = input.replaceFirst(" ", "");
         return input;
+    }
+
+    public static boolean isBelow113() {
+        return _isBelow113(Bukkit.getServer().getBukkitVersion().split("-")[0]);
+    }
+
+    private static boolean _isBelow113(String bukkitVersion) {
+        if (bukkitVersion.matches("^[0-9.]+$")) {
+            switch (bukkitVersion) {
+                case "1.12.2":
+                case "1.12.1":
+                case "1.12":
+                case "1.11.2":
+                case "1.11.1":
+                case "1.11":
+                case "1.10.2":
+                case "1.10.1":
+                case "1.10":
+                case "1.9.4":
+                case "1.9.3":
+                case "1.9.2":
+                case "1.9.1":
+                case "1.9":
+                case "1.8.9":
+                case "1.8.8":
+                case "1.8.7":
+                case "1.8.6":
+                case "1.8.5":
+                case "1.8.4":
+                case "1.8.3":
+                case "1.8.2":
+                case "1.8.1":
+                case "1.8":
+                case "1.7.10":
+                case "1.7.9":
+                case "1.7.2":
+                    return true;
+                default:
+                    return false;
+            }
+        } else {
+            Bukkit.getLogger().severe("[Quests] Received invalid Bukkit version " + bukkitVersion);
+            return false;
+        }
     }
 }
