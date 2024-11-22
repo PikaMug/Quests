@@ -183,7 +183,7 @@ stageEditorEnterBlockNames: "Введите названия блоков, <spac
 stageEditorEnterBlockAmounts: "Введите количество блоков, <space>, <cancel>"
 stageEditorEnterBlockDurability: "Введите прочности блоков (числа), <space>, <cancel>"
 stageEditorCatchFishPrompt: "Введите, сколько нужно поймать рыбы, <clear>, <cancel>"
-stageEditorMilkCowsPrompt: "Введите количество коров в молоке, <clear>, <cancel>"
+stageEditorMilkCowsPrompt: "Введите количество нужно подоить коров, <clear>, <cancel>"
 stageEditorKillPlayerPrompt: "Введите, сколько игроков нужно убить, <clear>, <cancel>"
 stageEditorEnchantTypePrompt: "Введите названия зачарований, <space>, <cancel>"
 stageEditorEnchantAmountsPrompt: "Введите количество зачарований (числа), <space>, <cancel>"
