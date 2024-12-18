@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface EntityNpcDependency {
-    boolean hasNpc(final Entity entity);
+    boolean isNpc(final Entity entity);
 
     @Nullable Entity getEntity(final UUID uuid);
 

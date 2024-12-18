@@ -36,7 +36,7 @@ public abstract class NpcListener implements Listener {
     protected void onNpcInteract(Player player, UUID npcId, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
             if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
-                if (npcId == null || !npcDependency.hasNpc(npcId)) {
+                if (npcId == null || !npcDependency.isNpc(npcId)) {
                     plugin.getLogger().severe("NPC was null while selecting by left-click");
                     return;
                 }
@@ -44,7 +44,7 @@ public abstract class NpcListener implements Listener {
             }
         } else if (clickType == ClickType.RIGHT) {
             if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
-                if (npcId == null || !npcDependency.hasNpc(npcId)) {
+                if (npcId == null || !npcDependency.isNpc(npcId)) {
                     plugin.getLogger().severe("NPC was null while selecting by right-click");
                     return;
                 }

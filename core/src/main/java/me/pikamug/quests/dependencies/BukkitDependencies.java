@@ -308,9 +308,9 @@ public class BukkitDependencies implements Dependencies {
         return null;
     }
 
-    public boolean hasNpc(final UUID uuid) {
+    public boolean isNpc(final UUID uuid) {
         for (final NpcDependency npcDependency : npcDependencies) {
-            if (npcDependency.hasNpc(uuid)) {
+            if (npcDependency.isNpc(uuid)) {
                 return true;
             }
         }

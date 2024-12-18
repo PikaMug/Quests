@@ -453,7 +453,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 for (final String s : input.split(" ")) {
                     try {
                         final UUID uuid = UUID.fromString(s);
-                        if (npcs != null && plugin.getDependencies().hasNpc(uuid)) {
+                        if (npcs != null && plugin.getDependencies().isNpc(uuid)) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
@@ -572,7 +572,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 for (final String s : args) {
                     try {
                         final UUID uuid = UUID.fromString(s);
-                        if (npcs != null && plugin.getDependencies().hasNpc(uuid)) {
+                        if (npcs != null && plugin.getDependencies().isNpc(uuid)) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
@@ -794,7 +794,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 for (final String s : args) {
                     try {
                         final UUID uuid = UUID.fromString(s);
-                        if (npcs != null && plugin.getDependencies().hasNpc(uuid)) {
+                        if (npcs != null && plugin.getDependencies().isNpc(uuid)) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")

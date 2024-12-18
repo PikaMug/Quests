@@ -395,7 +395,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         final BukkitQuester quester = new BukkitQuester(this, id);
         if (depends.getNpcDependency("Citizens") != null) {
-            if (depends.getNpcDependency("Citizens").hasNpc(id)) {
+            if (depends.getNpcDependency("Citizens").isNpc(id)) {
                 return quester;
             }
         }

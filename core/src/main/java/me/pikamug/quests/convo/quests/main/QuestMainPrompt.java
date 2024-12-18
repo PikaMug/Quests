@@ -499,7 +499,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final UUID uuid = UUID.fromString(input);
-                    if (!plugin.getDependencies().hasNpc(uuid)) {
+                    if (!plugin.getDependencies().isNpc(uuid)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
                         return new QuestNPCStartPrompt(context);

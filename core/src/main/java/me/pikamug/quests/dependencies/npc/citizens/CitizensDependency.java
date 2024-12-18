@@ -28,7 +28,7 @@ public class CitizensDependency implements NpcDependency, EntityNpcDependency {
     }
 
     @Override
-    public boolean hasNpc(UUID uuid) {
+    public boolean isNpc(UUID uuid) {
         return citizens.getNPCRegistry().getByUniqueId(uuid) != null;
     }
 
@@ -74,7 +74,7 @@ public class CitizensDependency implements NpcDependency, EntityNpcDependency {
     }
 
     @Override
-    public boolean hasNpc(Entity entity) {
+    public boolean isNpc(Entity entity) {
         return citizens.getNPCRegistry().isNPC(entity);
     }
 

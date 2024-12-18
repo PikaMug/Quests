@@ -29,7 +29,7 @@ public class ZnpcsPlusDependency implements NpcDependency {
     }
 
     @Override
-    public boolean hasNpc(UUID uuid) {
+    public boolean isNpc(UUID uuid) {
         return api.getNpcRegistry().getByUuid(uuid) != null;
     }
 

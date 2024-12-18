@@ -13,7 +13,7 @@ import java.util.function.BiPredicate;
 public interface NpcDependency {
     @NotNull String getDependencyName();
 
-    boolean hasNpc(final UUID uuid);
+    boolean isNpc(final UUID uuid);
 
     @Nullable String getName(final UUID uuid);
 
