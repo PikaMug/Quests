@@ -1,18 +1,20 @@
 package me.pikamug.quests.dependencies.npc.citizens;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.EntityNpcDependency;
 import me.pikamug.quests.dependencies.npc.NpcDependency;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiPredicate;
 
-public class CitizensDependency implements NpcDependency {
+public class CitizensDependency implements NpcDependency, EntityNpcDependency {
     private final CitizensPlugin citizens;
 
     public CitizensDependency(BukkitQuestsPlugin plugin) {
@@ -69,5 +71,22 @@ public class CitizensDependency implements NpcDependency {
 
     public CitizensPlugin getCitizens() {
         return citizens;
+    }
+
+    @Override
+    public boolean hasNpc(Entity entity) {
+        return citizens.getNPCRegistry().isNPC(entity);
+    }
+
+    @Override
+    public @Nullable Entity getEntity(UUID uuid) {
+        NPC npc = citizens.getNPCRegistry().getByUniqueId(uuid);
+        return npc != null ? npc.getEntity() : null;
+    }
+
+    @Override
+    public @Nullable UUID getId(Entity entity) {
+        NPC npc = citizens.getNPCRegistry().getNPC(entity);
+        return npc != null ? npc.getUniqueId() : null;
     }
 }

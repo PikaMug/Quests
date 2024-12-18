@@ -21,6 +21,7 @@ import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.EntityNpcDependency;
 import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
 import me.pikamug.quests.dependencies.npc.znpcsplus.ZnpcsPlusDependency;
@@ -31,6 +32,7 @@ import me.pikamug.unite.api.objects.PartyProvider;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -268,6 +270,19 @@ public class BukkitDependencies implements Dependencies {
         return location;
     }
 
+    public @Nullable Entity getNpcEntity(final UUID uuid) {
+        for (final NpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof EntityNpcDependency)) {
+                continue;
+            }
+            final Entity entity = ((EntityNpcDependency) npcDependency).getEntity(uuid);
+            if (entity != null) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
     public @NotNull String getNpcName(final UUID uuid) {
         String name = "NPC";
         for (final NpcDependency npcDependency : npcDependencies) {
@@ -278,6 +293,19 @@ public class BukkitDependencies implements Dependencies {
             }
         }
         return name;
+    }
+
+    public @Nullable UUID getUuidFromNpc(final Entity entity) {
+        for (final NpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof EntityNpcDependency)) {
+                continue;
+            }
+            final UUID uuid = ((EntityNpcDependency) npcDependency).getId(entity);
+            if (uuid != null) {
+                return uuid;
+            }
+        }
+        return null;
     }
 
     public boolean hasNpc(final UUID uuid) {
