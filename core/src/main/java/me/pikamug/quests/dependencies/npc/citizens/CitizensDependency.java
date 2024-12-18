@@ -9,9 +9,8 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.BiPredicate;
 
 public class CitizensDependency implements NpcDependency {
     private final CitizensPlugin citizens;
@@ -32,9 +31,9 @@ public class CitizensDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull String getName(UUID uuid) {
+    public @Nullable String getName(UUID uuid) {
         NPC npc = citizens.getNPCRegistry().getByUniqueId(uuid);
-        return npc != null ? npc.getName() : "NPC";
+        return npc != null ? npc.getName() : null;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class CitizensDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull List<UUID> getNpcIds() {
+    public @NotNull List<UUID> getAllNpcIds() {
         List<UUID> ids = new ArrayList<>();
         for (NPC npc : citizens.getNPCRegistry()) {
             ids.add(npc.getUniqueId());
@@ -53,18 +52,22 @@ public class CitizensDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull List<UUID> getNearbyNpcIds(Location location, double distance) {
-        List<UUID> ids = new ArrayList<>();
+    public @NotNull Map<UUID, Location> getNpcsByLocationPredicate(BiPredicate<UUID, Location> predicate) {
+        Map<UUID, Location> npcs = new HashMap<>();
         for (NPC npc : citizens.getNPCRegistry()) {
-            if (npc.getStoredLocation().getWorld() == null || location.getWorld() == null) {
+            UUID uuid = npc.getUniqueId();
+            Location location = npc.getStoredLocation();
+            if (location.getWorld() == null) {
                 continue;
             }
-            if (npc.getStoredLocation().getWorld().getName().equals(location.getWorld().getName())) {
-                if (npc.getStoredLocation().distanceSquared(location) < distance) {
-                    ids.add(npc.getUniqueId());
-                }
+            if (predicate.test(uuid, location)) {
+                npcs.put(uuid, location);
             }
         }
-        return ids;
+        return npcs;
+    }
+
+    public CitizensPlugin getCitizens() {
+        return citizens;
     }
 }

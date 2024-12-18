@@ -27,11 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
@@ -101,7 +97,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 if (context.getSessionData(Key.C_WHILE_RIDING_NPC) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
@@ -275,10 +271,7 @@ public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
                 for (final String s : input.split(" ")) {
                     try {
                         final UUID uuid = UUID.fromString(s);
-                        if (plugin.getDependencies().getNpcEntity(uuid) != null && npcs != null) {
-                            npcs.add(uuid.toString());
-                        } else if (plugin.getDependencies().getZnpcsPlusApi() != null && npcs!= null
-                                && plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
+                        if (npcs != null && plugin.getDependencies().hasNpc(uuid)) {
                             npcs.add(uuid.toString());
                         } else {
                             context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")

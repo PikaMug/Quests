@@ -12,9 +12,8 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.BiPredicate;
 
 public class ZnpcsPlusDependency implements NpcDependency {
     private final NpcApi api;
@@ -35,13 +34,14 @@ public class ZnpcsPlusDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull String getName(UUID uuid) {
+    public @Nullable String getName(UUID uuid) {
         Npc npc = api.getNpcRegistry().getByUuid(uuid).getNpc();
+        if (npc == null) return null;
         EntityProperty<String> displayNameProperty = api.getPropertyRegistry().getByName("display_name", String.class);
         if (displayNameProperty != null && npc.hasProperty(displayNameProperty)) {
             return npc.getProperty(displayNameProperty);
         }
-        return "NPC";
+        return null;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ZnpcsPlusDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull List<UUID> getNpcIds() {
+    public @NotNull List<UUID> getAllNpcIds() {
         List<UUID> ids = new ArrayList<>();
         for (NpcEntry npcEntry : api.getNpcRegistry().getAllPlayerMade()) {
             ids.add(npcEntry.getNpc().getUuid());
@@ -63,19 +63,19 @@ public class ZnpcsPlusDependency implements NpcDependency {
     }
 
     @Override
-    public @NotNull List<UUID> getNearbyNpcIds(Location location, double distance) {
-        List<UUID> ids = new ArrayList<>();
+    public @NotNull Map<UUID, Location> getNpcsByLocationPredicate(BiPredicate<UUID, Location> predicate) {
+        Map<UUID, Location> npcs = new HashMap<>();
         for (NpcEntry npcEntry : api.getNpcRegistry().getAllPlayerMade()) {
             Npc npc = npcEntry.getNpc();
-            if (npc.getWorld() == null || location.getWorld() == null) {
+            World world = npc.getWorld();
+            if (world == null) {
                 continue;
             }
-            if (npc.getWorld().getName().equals(location.getWorld().getName())) {
-                if (npc.getLocation().toBukkitLocation(npc.getWorld()).distanceSquared(location) < distance) {
-                    ids.add(npc.getUuid());
-                }
+            Location location = npc.getLocation().toBukkitLocation(world);
+            if (predicate.test(npc.getUuid(), location)) {
+                npcs.put(npc.getUuid(), location);
             }
         }
-        return ids;
+        return npcs;
     }
 }
