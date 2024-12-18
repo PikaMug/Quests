@@ -12,7 +12,6 @@ package me.pikamug.quests.conditions;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
@@ -215,17 +214,14 @@ public class BukkitCondition implements Condition {
         } else if (!npcsWhileRiding.isEmpty()) {
             boolean atLeastOne = false;
             for (final UUID n : npcsWhileRiding) {
-                if (plugin.getDependencies().getNpcDependency("Citizens") == null) {
-                    plugin.getLogger().warning("Citizens must be installed for condition ride NPC UUID " + n);
+                if (!plugin.getDependencies().hasAnyEntityNpcDependencies()) {
+                    plugin.getLogger().warning("An Entity NPC plugin must be installed for condition ride NPC UUID " + n);
                     return false;
                 }
                 if (player.getVehicle() == null) {
                     return false;
                 }
-                if (player.getVehicle().equals(
-                        ((CitizensDependency) plugin.getDependencies().getNpcDependency("Citizens"))
-                                .getCitizens().getNPCRegistry().getByUniqueId(n).getEntity()
-                )) {
+                if (player.getVehicle().equals(plugin.getDependencies().getNpcEntity(n))) {
                     atLeastOne = true;
                     break;
                 }

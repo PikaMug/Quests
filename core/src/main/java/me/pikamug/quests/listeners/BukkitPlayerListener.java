@@ -680,7 +680,7 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player) {
-            if (plugin.getDependencies().getNpcDependency("Citizens") != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
+            if (!plugin.getDependencies().isNpc(target)) {
                 return;
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
@@ -774,10 +774,8 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player && target instanceof Player) {
-            if (plugin.getDependencies().getNpcDependency("Citizens") != null) {
-                if (CitizensAPI.getNPCRegistry().isNPC(damager) && CitizensAPI.getNPCRegistry().isNPC(target)) {
-                    return;
-                }
+            if (plugin.getDependencies().isNpc(damager) && plugin.getDependencies().isNpc(target)) {
+                return;
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
@@ -950,10 +948,8 @@ public class BukkitPlayerListener implements Listener {
         if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
             return;
         }
-        if (plugin.getDependencies().getNpcDependency("Citizens") != null) {
-            if (CitizensAPI.getNPCRegistry().isNPC(event.getPlayer())) {
-                return;
-            }
+        if (plugin.getDependencies().isNpc(event.getPlayer())) {
+            return;
         }
         playerMove(event.getPlayer().getUniqueId(), event.getTo());
     }

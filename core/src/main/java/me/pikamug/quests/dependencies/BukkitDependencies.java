@@ -140,6 +140,15 @@ public class BukkitDependencies implements Dependencies {
         return !npcDependencies.isEmpty();
     }
 
+    public boolean hasAnyEntityNpcDependencies() {
+        for (final NpcDependency npcDependency : npcDependencies) {
+            if (npcDependency instanceof EntityNpcDependency) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public NpcDependency getNpcDependency(final String dependencyName) {
         for (final NpcDependency npcDependency : npcDependencies) {
             if (npcDependency.getDependencyName().equalsIgnoreCase(dependencyName)) {
@@ -311,6 +320,18 @@ public class BukkitDependencies implements Dependencies {
     public boolean isNpc(final UUID uuid) {
         for (final NpcDependency npcDependency : npcDependencies) {
             if (npcDependency.isNpc(uuid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isNpc(final Entity entity) {
+        for (final NpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof EntityNpcDependency)) {
+                continue;
+            }
+            if (((EntityNpcDependency) npcDependency).isNpc(entity)) {
                 return true;
             }
         }
