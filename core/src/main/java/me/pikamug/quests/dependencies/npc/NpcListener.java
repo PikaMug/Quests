@@ -38,22 +38,14 @@ public abstract class NpcListener implements Listener {
     }
 
     protected void onNpcInteract(Player player, UUID npcId, ClickType clickType) {
-        if (clickType == ClickType.LEFT) {
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
-                if (npcId == null || !npcDependency.isNpc(npcId)) {
-                    plugin.getLogger().severe("NPC was null while selecting by left-click");
-                    return;
-                }
-                player.acceptConversationInput(String.valueOf(npcId));
+        if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
+            if (npcId == null || !npcDependency.isNpc(npcId)) {
+                plugin.getLogger().severe("NPC was null while selecting");
+                return;
             }
-        } else if (clickType == ClickType.RIGHT) {
-            if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
-                if (npcId == null || !npcDependency.isNpc(npcId)) {
-                    plugin.getLogger().severe("NPC was null while selecting by right-click");
-                    return;
-                }
-                player.acceptConversationInput(String.valueOf(npcId));
-            }
+            player.acceptConversationInput(String.valueOf(npcId));
+        }
+        if (clickType == ClickType.RIGHT) {
             if (!player.isConversing()) {
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
