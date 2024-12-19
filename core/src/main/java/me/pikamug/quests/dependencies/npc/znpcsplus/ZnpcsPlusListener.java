@@ -19,6 +19,7 @@ public class ZnpcsPlusListener extends NpcListener {
         Player player = event.getPlayer();
         UUID npcUUID = event.getNpc() != null ? event.getNpc().getUuid() : null;
 
+        // Needed because the NpcInteractEvent is fired async
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             if (event.getClickType().equals(InteractionType.LEFT_CLICK)) {
                 onNpcInteract(player, npcUUID, ClickType.LEFT);
