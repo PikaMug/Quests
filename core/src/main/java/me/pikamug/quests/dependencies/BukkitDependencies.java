@@ -24,6 +24,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.dependencies.npc.EntityNpcDependency;
 import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
+import me.pikamug.quests.dependencies.npc.fancynpcs.FancyNpcsDependency;
 import me.pikamug.quests.dependencies.npc.znpcsplus.ZnpcsPlusDependency;
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
@@ -40,12 +41,17 @@ import org.jetbrains.annotations.Nullable;
 import ro.niconeko.astralbooks.api.AstralBooks;
 import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 public class BukkitDependencies implements Dependencies {
 
     private static final Set<PartyProvider> partyProviders = new HashSet<>();
-    private final List<NpcDependency> npcDependencies = new ArrayList<>();
+    private static final List<NpcDependency> npcDependencies = new ArrayList<>();
     public static PlaceholderAPIPlugin placeholder = null;
     private static Economy economy = null;
     private static Permission permission = null;
@@ -171,10 +177,17 @@ public class BukkitDependencies implements Dependencies {
             } catch (final Exception e) {
                 plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
-        } else if (isPluginAvailable("ZNPCsPlus")) {
+        }
+        if (isPluginAvailable("ZNPCsPlus")) {
             try {
-                Class.forName("lol.pyr.znpcsplus.ZNpcsPlus");
+                Class.forName("lol.pyr.znpcsplus.ZNpcsPlus"); // Check for 2.x classes
                 addNpcDependency(new ZnpcsPlusDependency(plugin));
+            } catch (final Exception ignored) {
+            }
+        }
+        if (isPluginAvailable("FancyNpcs")) {
+            try {
+                addNpcDependency(new FancyNpcsDependency(plugin));
             } catch (final Exception ignored) {
             }
         }
