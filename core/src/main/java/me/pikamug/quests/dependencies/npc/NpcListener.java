@@ -13,15 +13,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class NpcListener implements Listener {
@@ -246,6 +250,41 @@ public abstract class NpcListener implements Listener {
                 } else {
                     BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "noMoreQuest"));
                 }
+            }
+        }
+    }
+
+    protected void onNpcKill(Entity damager, UUID npcId) {
+        if (plugin.getDependencies().isNpc(damager)) {
+            return;
+        }
+        final ObjectiveType type = ObjectiveType.KILL_NPC;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
+        Player player = null;
+        if (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player) {
+            player = (Player) ((Projectile) damager).getShooter();
+        } else if (damager instanceof Player) {
+            player = (Player) damager;
+        }
+        if (player != null) {
+            final Quester quester = plugin.getQuester(player.getUniqueId());
+            for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                if (!quester.meetsCondition(quest, true)) {
+                    continue;
+                }
+
+                if (quester.getCurrentQuests().containsKey(quest)
+                        && quester.getCurrentStage(quest).containsObjective(type)) {
+                    quester.killNPC(quest, npcId);
+                }
+
+                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
+                        (final Quester q, final Quest cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                q.killNPC(cq, npcId);
+                            }
+                            return null;
+                        }));
             }
         }
     }
