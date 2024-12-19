@@ -16,18 +16,9 @@ import me.pikamug.quests.convo.quests.menu.QuestMenuPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.module.CustomObjective;
-import me.pikamug.quests.quests.components.BukkitStage;
-import me.pikamug.quests.quests.components.Options;
-import me.pikamug.quests.quests.components.Planner;
-import me.pikamug.quests.quests.components.Requirements;
-import me.pikamug.quests.quests.components.Rewards;
-import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.quests.components.*;
+import me.pikamug.quests.util.*;
 import me.pikamug.quests.util.stack.BlockItemStack;
-import me.pikamug.quests.util.BukkitConfigUtil;
-import me.pikamug.quests.util.BukkitFakeConversable;
-import me.pikamug.quests.util.BukkitLang;
-import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.Key;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -36,12 +27,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.ConversationPrefix;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,13 +36,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -159,9 +140,7 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(Key.Q_NAME, bukkitQuest.getName());
             context.setSessionData(Key.Q_ASK_MESSAGE, bukkitQuest.getDescription());
             context.setSessionData(Key.Q_FINISH_MESSAGE, bukkitQuest.getFinished());
-            if (plugin.getDependencies().getCitizens() != null
-                    || plugin.getDependencies().getZnpcsPlus() != null
-                    || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 if (bukkitQuest.getNpcStart() != null) {
                     context.setSessionData(Key.Q_START_NPC, bukkitQuest.getNpcStart().toString());
                 }
