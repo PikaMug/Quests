@@ -19,10 +19,12 @@ public class ZnpcsPlusListener extends NpcListener {
         Player player = event.getPlayer();
         UUID npcUUID = event.getNpc() != null ? event.getNpc().getUuid() : null;
 
-        if (event.getClickType().equals(InteractionType.LEFT_CLICK)) {
-            onNpcInteract(player, npcUUID, ClickType.LEFT);
-        } else if (event.getClickType().equals(InteractionType.RIGHT_CLICK)) {
-            onNpcInteract(player, npcUUID, ClickType.RIGHT);
-        }
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (event.getClickType().equals(InteractionType.LEFT_CLICK)) {
+                onNpcInteract(player, npcUUID, ClickType.LEFT);
+            } else if (event.getClickType().equals(InteractionType.RIGHT_CLICK)) {
+                onNpcInteract(player, npcUUID, ClickType.RIGHT);
+            }
+        });
     }
 }

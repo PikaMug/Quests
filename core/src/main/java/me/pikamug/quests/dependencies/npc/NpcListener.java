@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class NpcListener implements Listener {
-    private final BukkitQuestsPlugin plugin;
-    private final NpcDependency npcDependency;
+    protected final BukkitQuestsPlugin plugin;
+    protected final NpcDependency npcDependency;
 
     public NpcListener(final BukkitQuestsPlugin plugin, final NpcDependency npcDependency) {
         this.plugin = plugin;
