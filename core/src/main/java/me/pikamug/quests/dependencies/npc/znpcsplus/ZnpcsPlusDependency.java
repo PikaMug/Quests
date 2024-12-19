@@ -28,14 +28,19 @@ public class ZnpcsPlusDependency implements NpcDependency {
         return "ZNPCsPlus";
     }
 
+    private @Nullable Npc getNpc(UUID uuid) {
+        NpcEntry npcEntry = api.getNpcRegistry().getByUuid(uuid);
+        return npcEntry != null ? npcEntry.getNpc() : null;
+    }
+
     @Override
     public boolean isNpc(UUID uuid) {
-        return api.getNpcRegistry().getByUuid(uuid) != null;
+        return getNpc(uuid) != null;
     }
 
     @Override
     public @Nullable String getName(UUID uuid) {
-        Npc npc = api.getNpcRegistry().getByUuid(uuid).getNpc();
+        Npc npc = getNpc(uuid);
         if (npc == null) return null;
         EntityProperty<String> displayNameProperty = api.getPropertyRegistry().getByName("display_name", String.class);
         if (displayNameProperty != null && npc.hasProperty(displayNameProperty)) {
@@ -46,7 +51,7 @@ public class ZnpcsPlusDependency implements NpcDependency {
 
     @Override
     public @Nullable Location getLocation(UUID uuid) {
-        Npc npc = api.getNpcRegistry().getByUuid(uuid).getNpc();
+        Npc npc = getNpc(uuid);
         if (npc == null) return null;
         World world = npc.getWorld();
         if (world == null) return null;
