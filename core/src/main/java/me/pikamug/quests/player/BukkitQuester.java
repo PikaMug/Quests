@@ -2778,8 +2778,8 @@ public class BukkitQuester implements Quester {
 
         if (!npcsInteracted) {
             bukkitQuestProgress.npcsInteracted.set(index, true);
-            finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, 1)), null, null, npc, null, null, null, null);
+            finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                    BlockItemStack.of(Material.AIR, 1, (short) 0)), null, null, npc, null, null, null, null);
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
@@ -2824,8 +2824,8 @@ public class BukkitQuester implements Quester {
         if (npcsKilled < npcsToKill) {
             bukkitQuestProgress.npcsNumKilled.set(index, newNpcsKilled);
             if (newNpcsKilled >= npcsToKill) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, npcsToKill)), null, null, npc, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, npcsToKill, (short) 0)), null, null, npc, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -2878,8 +2878,8 @@ public class BukkitQuester implements Quester {
             questProgress.setCowsMilked(newCowsMilked);
 
             if (newCowsMilked >= cowsToMilk) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, cowsToMilk)), null, null, null, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, cowsToMilk, (short) 0)), null, null, null, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -2931,8 +2931,8 @@ public class BukkitQuester implements Quester {
             questProgress.setFishCaught(newFishCaught);
 
             if (newFishCaught >= fishToCatch) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, fishToCatch)), null, null, null, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, fishToCatch, (short) 0)), null, null, null, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3006,8 +3006,8 @@ public class BukkitQuester implements Quester {
         if (mobsKilled < mobsToKill) {
             bukkitQuestProgress.mobNumKilled.set(index, newMobsKilled);
             if (newMobsKilled >= mobsToKill) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, mobsToKill)), entityType, null, null, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, mobsToKill, (short) 0)), entityType, null, null, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3064,8 +3064,8 @@ public class BukkitQuester implements Quester {
         if (playersKilled < playersToKill) {
             bukkitQuestProgress.setPlayersKilled(newPlayersKilled);
             if (newPlayersKilled >= playersToKill) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, playersToKill)), null, null, null, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, playersToKill, (short) 0)), null, null, null, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3124,8 +3124,8 @@ public class BukkitQuester implements Quester {
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     bukkitQuestProgress.locationsReached.set(i, true);
-                    finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, 1)), null, null, null, toReach, null, null, null);
+                    finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                            BlockItemStack.of(Material.AIR, 1, (short) 0)), null, null, null, toReach, null, null, null);
 
                     int finalIndex = i;
                     dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3185,8 +3185,8 @@ public class BukkitQuester implements Quester {
         if (mobsTamed < mobsToTame) {
             bukkitQuestProgress.mobsTamed.set(index, newMobsToTame);
             if (newMobsToTame >= mobsToTame) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, mobsToTame)), entityType, null, null, null, null, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, mobsToTame, (short) 0)), entityType, null, null, null, null, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3240,8 +3240,8 @@ public class BukkitQuester implements Quester {
         if (sheepSheared < sheepToShear) {
             bukkitQuestProgress.sheepSheared.set(index, newSheepSheared);
             if (newSheepSheared >= sheepToShear) {
-                finishObjective(quest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                        new ItemStack(Material.AIR, sheepToShear)), null, null, null, null, color, null, null);
+                finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                        BlockItemStack.of(Material.AIR, sheepToShear, (short) 0)), null, null, null, null, color, null, null);
             }
 
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3284,8 +3284,8 @@ public class BukkitQuester implements Quester {
                     bukkitQuestProgress.passwordsSaid.set(index, true);
 
                     plugin.getServer().getScheduler().runTask(plugin, () -> finishObjective(quest,
-                            new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                            new ItemStack(Material.AIR, 1)), null, null, null, null, null, display, null));
+                            new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                            BlockItemStack.of(Material.AIR, 1, (short) 0)), null, null, null, null, null, display, null));
 
                     final int finalIndex = index;
                     dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
@@ -3606,7 +3606,7 @@ public class BukkitQuester implements Quester {
             }
 
             if (co.canShowCount()) {
-                message = message.replace("%count%", goal.getAmount() + "/" + goal.getAmount());
+                message = message.replace("%count%", objective.getGoal() + "/" + objective.getGoal());
             }
             sendMessage(BukkitConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', message)));
         }

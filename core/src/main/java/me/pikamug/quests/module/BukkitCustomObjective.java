@@ -17,13 +17,13 @@ import me.pikamug.quests.events.quester.BukkitQuesterPreUpdateObjectiveEvent;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.AbstractMap;
@@ -247,8 +247,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     if (progress >= goal) {
-                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                                new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
+                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                                BlockItemStack.of(Material.AIR, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
 
                         // Multiplayer
                         final int finalIndex = index;
@@ -256,8 +256,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                             final BukkitQuestProgress qBukkitQuestProgress = (BukkitQuestProgress) q.getQuestProgressOrDefault(bukkitQuest);
                             final int old = qBukkitQuestProgress.customObjectiveCounts.get(finalIndex);
                             qBukkitQuestProgress.customObjectiveCounts.set(finalIndex, old + count);
-                            q.finishObjective(bukkitQuest, new BukkitObjective(type, null, new ItemStack(Material.AIR, 1),
-                                    new ItemStack(Material.AIR, goal)), null, null, null, null, null, null, bukkitCustomObj);
+                            q.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
+                                    BlockItemStack.of(Material.AIR, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
                             return null;
                         });
                     }
