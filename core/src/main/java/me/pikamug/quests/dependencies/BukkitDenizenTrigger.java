@@ -11,6 +11,7 @@
 package me.pikamug.quests.dependencies;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
 import me.pikamug.quests.player.Quester;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -28,12 +29,12 @@ public class BukkitDenizenTrigger {
             return false;
         }
         if (plugin.getDependencies().getDenizenApi().containsScript(scriptName)) {
-            if (plugin.getDependencies().getCitizens() != null) {
+            if (plugin.getDependencies().getNpcDependency("Citizens") != null) {
                 if (uuid == null) {
                     plugin.getLogger().severe("NPC UUID was null for Denizen script named " + scriptName);
                     return false;
                 }
-                final NPC npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid);
+                final NPC npc = ((CitizensDependency) plugin.getDependencies().getNpcDependency("Citizens")).getCitizens().getNPCRegistry().getByUniqueId(uuid);
                 plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), npc);
             } else {
                 plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), null);

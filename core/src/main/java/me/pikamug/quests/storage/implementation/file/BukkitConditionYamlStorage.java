@@ -20,11 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class BukkitConditionYamlStorage implements ConditionStorageImpl {
@@ -140,7 +136,7 @@ public class BukkitConditionYamlStorage implements ConditionStorageImpl {
             // Legacy
             if (BukkitConfigUtil.checkList(data.getList(conditionKey + "ride-npc"), Integer.class)) {
                 final LinkedList<UUID> npcList = new LinkedList<>();
-                if (plugin.getDependencies().getCitizens() != null) {
+                if (plugin.getDependencies().getNpcDependency("Citizens") != null) {
                     for (final int i : data.getIntegerList(conditionKey + "ride-npc")) {
                         final NPC npc = CitizensAPI.getNPCRegistry().getById(i);
                         if (npc != null) {
