@@ -1,12 +1,24 @@
-package me.pikamug.quests.dependencies.npc;
+/*
+ * Copyright (c) PikaMug and contributors
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
+package me.pikamug.quests.listeners;
+
+import io.github.znetworkw.znpcservers.npc.NPC;
+import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.BukkitQuest;
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitStage;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
@@ -15,38 +27,51 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
-public abstract class NpcListener implements Listener {
-    protected final BukkitQuestsPlugin plugin;
-    protected final NpcDependency npcDependency;
+/**
+ * Listener for legacy ZNPCsPlus 1.x
+ */
+public class BukkitZnpcsListener implements Listener {
 
-    public NpcListener(final BukkitQuestsPlugin plugin, final NpcDependency npcDependency) {
+    private final BukkitQuestsPlugin plugin;
+
+    public BukkitZnpcsListener(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
-        this.npcDependency = npcDependency;
     }
 
-    protected void onNpcInteract(Player player, UUID npcId, ClickType clickType) {
-        if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
-            if (npcId == null || !npcDependency.isNpc(npcId)) {
-                plugin.getLogger().severe("NPC was null while selecting");
-                return;
-            }
-            player.acceptConversationInput(String.valueOf(npcId));
+    @EventHandler
+    public void onNPCInteract(final NPCInteractEvent event) {
+        if (plugin.getDependencies().getZnpcsPlus() == null) {
+            return;
         }
-        if (clickType == ClickType.RIGHT) {
-            if (!player.isConversing()) {
+        if (event.isLeftClick()) {
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
+                if (event.getNpc() == null) {
+                    plugin.getLogger().severe("ZNPC was null while selecting by left-click");
+                    return;
+                }
+                event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
+            }
+        } else if (event.isRightClick()) {
+            if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
+                if (event.getNpc() == null) {
+                    plugin.getLogger().severe("ZNPC was null while selecting by right-click");
+                    return;
+                }
+                event.getPlayer().acceptConversationInput(String.valueOf(event.getNpc().getUUID()));
+            }
+            if (!event.getPlayer().isConversing()) {
+                final Player player = event.getPlayer();
                 final Quester quester = plugin.getQuester(player.getUniqueId());
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);
@@ -62,17 +87,18 @@ public abstract class NpcListener implements Listener {
                                 matches.add(currentIndex);
                             }
                         }
+                        final NPC clicked = event.getNpc();
                         if (!matches.isEmpty()) {
                             for (final Integer match : matches) {
                                 final UUID uuid = currentStage.getItemDeliveryTargets().get(match);
-                                if (uuid.equals(npcId)) {
+                                if (uuid.equals(clicked.getUUID())) {
                                     quester.deliverToNPC(quest, uuid, hand);
                                     return;
                                 }
                             }
                         } else if (!hand.getType().equals(Material.AIR)) {
                             for (final UUID uuid : currentStage.getItemDeliveryTargets()) {
-                                if (uuid.equals(npcId)) {
+                                if (uuid.equals(clicked.getUUID())) {
                                     String text = "";
                                     final boolean hasMeta = hand.getItemMeta() != null;
                                     if (hasMeta) {
@@ -174,17 +200,18 @@ public abstract class NpcListener implements Listener {
                         continue;
                     }
                     if (quester.getCurrentStage(quest).containsObjective(ObjectiveType.TALK_TO_NPC)) {
-                        if (quester.getCurrentStage(quest).getNpcsToInteract().contains(npcId)) {
-                            final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(npcId);
+                        if (quester.getCurrentStage(quest).getNpcsToInteract().contains(event.getNpc().getUUID())) {
+                            final int npcIndex = quester.getCurrentStage(quest).getNpcsToInteract().indexOf(event.getNpc()
+                                    .getUUID());
                             if (quester.getQuestProgressOrDefault(quest) != null && npcIndex > -1
                                     && !((BukkitQuestProgress) quester.getQuestProgressOrDefault(quest)).npcsInteracted.get(npcIndex)) {
                                 hasObjective = true;
                             }
-                            quester.interactWithNPC(quest, npcId);
+                            quester.interactWithNPC(quest, event.getNpc().getUUID());
                         }
                     }
                 }
-                if (hasObjective || !plugin.getQuestNpcUuids().contains(npcId)) {
+                if (hasObjective || !plugin.getQuestNpcUuids().contains(event.getNpc().getUUID())) {
                     return;
                 }
                 boolean hasAtLeastOneGUI = false;
@@ -194,7 +221,7 @@ public abstract class NpcListener implements Listener {
                     if (quester.getCurrentQuests().containsKey(bukkitQuest)) {
                         continue;
                     }
-                    if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(npcId)) {
+                    if (bukkitQuest.getNpcStart() != null && bukkitQuest.getNpcStart().equals(event.getNpc().getUUID())) {
                         if (plugin.getConfigSettings().canIgnoreLockedQuests()
                                 && (!quester.getCompletedQuests().contains(bukkitQuest)
                                 || bukkitQuest.getPlanner().getCooldown() > -1)) {
@@ -220,7 +247,7 @@ public abstract class NpcListener implements Listener {
                             quester.takeQuest(quest, false);
                         } else {
                             if (quest.getGUIDisplay() != null) {
-                                quester.showGUIDisplay(npcId, npcQuests);
+                                quester.showGUIDisplay(event.getNpc().getUUID(), npcQuests);
                             } else {
                                 for (final String msg : extracted(quester).split("<br>")) {
                                     player.sendMessage(msg);
@@ -231,12 +258,12 @@ public abstract class NpcListener implements Listener {
                     }
                 } else if (npcQuests.size() > 1) {
                     if (hasAtLeastOneGUI) {
-                        quester.showGUIDisplay(npcId, npcQuests);
+                        quester.showGUIDisplay(event.getNpc().getUUID(), npcQuests);
                     } else {
                         final Conversation c = plugin.getNpcConversationFactory().buildConversation(player);
                         c.getContext().setSessionData("npcQuests", npcQuests);
                         //c.getContext().setSessionData("npc", event.getNpc().getGameProfile().getName());
-                        c.getContext().setSessionData("npc", npcDependency.getName(npcId));
+                        c.getContext().setSessionData("npc", ((Entity)event.getNpc().getBukkitEntity()).getCustomName());
                         c.begin();
                     }
                 } else {
@@ -246,48 +273,9 @@ public abstract class NpcListener implements Listener {
         }
     }
 
-    protected void onNpcKill(Entity damager, UUID npcId) {
-        if (plugin.getDependencies().isNpc(damager)) {
-            return;
-        }
-        final ObjectiveType type = ObjectiveType.KILL_NPC;
-        final Set<String> dispatchedQuestIDs = new HashSet<>();
-        Player player = null;
-        if (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player) {
-            player = (Player) ((Projectile) damager).getShooter();
-        } else if (damager instanceof Player) {
-            player = (Player) damager;
-        }
-        if (player != null) {
-            final Quester quester = plugin.getQuester(player.getUniqueId());
-            for (final Quest quest : quester.getCurrentQuests().keySet()) {
-                if (!quester.meetsCondition(quest, true)) {
-                    continue;
-                }
-
-                if (quester.getCurrentQuests().containsKey(quest)
-                        && quester.getCurrentStage(quest).containsObjective(type)) {
-                    quester.killNPC(quest, npcId);
-                }
-
-                dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
-                        (final Quester q, final Quest cq) -> {
-                            if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                q.killNPC(cq, npcId);
-                            }
-                            return null;
-                        }));
-            }
-        }
-    }
-
     private String extracted(final Quester quester) {
         final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE,
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
-    }
-
-    public enum ClickType {
-        LEFT, RIGHT
     }
 }

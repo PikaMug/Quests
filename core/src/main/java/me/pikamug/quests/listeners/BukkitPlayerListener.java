@@ -27,7 +27,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -40,8 +46,20 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -680,7 +698,7 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player) {
-            if (!plugin.getDependencies().isNpc(target)) {
+            if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
                 return;
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
@@ -774,8 +792,10 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player && target instanceof Player) {
-            if (plugin.getDependencies().isNpc(damager) && plugin.getDependencies().isNpc(target)) {
-                return;
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (CitizensAPI.getNPCRegistry().isNPC(damager) && CitizensAPI.getNPCRegistry().isNPC(target)) {
+                    return;
+                }
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
@@ -948,8 +968,10 @@ public class BukkitPlayerListener implements Listener {
         if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
             return;
         }
-        if (plugin.getDependencies().isNpc(event.getPlayer())) {
-            return;
+        if (plugin.getDependencies().getCitizens() != null) {
+            if (CitizensAPI.getNPCRegistry().isNPC(event.getPlayer())) {
+                return;
+            }
         }
         playerMove(event.getPlayer().getUniqueId(), event.getTo());
     }

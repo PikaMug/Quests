@@ -16,22 +16,45 @@ import com.gmail.nossr50.config.Config;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
+import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
-import me.pikamug.quests.events.quester.*;
+import me.pikamug.quests.events.quester.BukkitQuesterPostChangeStageEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostCompleteQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostFailQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreChangeStageEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreCompleteQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreFailQuestEvent;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.*;
-import me.pikamug.quests.util.*;
-import org.bukkit.*;
+import me.pikamug.quests.quests.components.BukkitOptions;
+import me.pikamug.quests.quests.components.BukkitPlanner;
+import me.pikamug.quests.quests.components.BukkitRequirements;
+import me.pikamug.quests.quests.components.BukkitRewards;
+import me.pikamug.quests.quests.components.Options;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.Rewards;
+import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.BukkitConfigUtil;
+import me.pikamug.quests.util.BukkitInventoryUtil;
+import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.RomanNumeral;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -43,8 +66,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
@@ -391,12 +419,22 @@ public class BukkitQuest implements Quest {
                 targetLocation = (Location) stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
                 final UUID uuid = stage.getItemDeliveryTargets().getFirst();
-                for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                    Location npcLocation = npcDependency.getLocation(uuid);
-                    if (npcLocation != null) {
-                        targetLocation = npcLocation;
-                        break;
+                if (plugin.getDependencies().getCitizens() != null
+                        && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
+                    targetLocation = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid)
+                            .getStoredLocation();
+                }
+                if (plugin.getDependencies().getZnpcsPlus() != null
+                        && plugin.getDependencies().getZnpcsPlusUuids().contains(uuid)) {
+                    final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
+                    if (opt.isPresent()) {
+                        targetLocation = opt.get().getLocation();
                     }
+                }
+                if (plugin.getDependencies().getZnpcsPlusApi() != null
+                        && plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
+                    Npc znpc = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
+                    targetLocation = znpc.getLocation().toBukkitLocation(znpc.getWorld());
                 }
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
                 if (quester.getPlayer() == null) {
@@ -531,9 +569,9 @@ public class BukkitQuest implements Quest {
             final Player player = quester.getPlayer();
             if (quester.getCompletedQuests().contains(this)) {
                 meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName()
-                        + " " + ChatColor.GREEN + BukkitLang.get(player, "redoCompleted"), getNpcStart(), plugin));
+                        + " " + ChatColor.GREEN + BukkitLang.get(player, "redoCompleted"), getNpcStart()));
             } else {
-                meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName(), getNpcStart(), plugin));
+                meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName(), getNpcStart()));
             }
             if (!meta.hasLore()) {
                 final LinkedList<String> lines;
