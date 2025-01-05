@@ -47,7 +47,7 @@
         <repository>
             <!-- PlaceholderAPI -->
             <id>papi-repo</id>
-            <url>https://repo.extendedclip.com/releases/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <!-- Heroes, Vault -->
@@ -69,12 +69,6 @@
             <id>pyr-snapshots</id>
             <name>Pyr's Repo</name>
             <url>https://repo.pyr.lol/snapshots</url>
-        </repository>
-        <repository>
-            <!-- FancyNpcs -->
-            <id>fancyplugins-releases</id>
-            <name>FancyPlugins Repository</name>
-            <url>https://repo.fancyplugins.de/releases</url>
         </repository>
     </repositories>
 
@@ -130,7 +124,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.6</version>
+            <version>2.11.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -161,12 +155,6 @@
             <groupId>lol.pyr</groupId>
             <artifactId>znpcsplus-api</artifactId>
             <version>2.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.oliver</groupId>
-            <artifactId>FancyNpcs</artifactId>
-            <version>2.4.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

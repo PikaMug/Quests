@@ -10,18 +10,22 @@
 
 package me.pikamug.quests.util;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.pikamug.quests.BukkitQuestsPlugin;
+import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.api.entity.EntityProperty;
+import lol.pyr.znpcsplus.api.npc.Npc;
+import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.quests.Quest;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,8 +135,8 @@ public class BukkitConfigUtil {
         return parsed.split("\n");
     }
 
-    public static String[] parseStringWithPossibleLineBreaks(final String s, final UUID npc, int amount, final BukkitQuestsPlugin plugin) {
-        String parsed = parseString(s, npc, plugin);
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final UUID npc, int amount) {
+        String parsed = parseString(s, npc);
         if (parsed.contains("<amount>")) {
             parsed = parsed.replace("<amount>", String.valueOf(amount));
         }
@@ -162,18 +166,38 @@ public class BukkitConfigUtil {
         return parsed;
     }
 
-    public static String parseString(final String s, final UUID npc, final BukkitQuestsPlugin plugin) {
+    public static String parseString(final String s, final UUID npc) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
-            String name = "null";
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                String npcName = npcDependency.getName(npc);
-                if (npcName != null) {
-                    name = npcName;
-                    break;
-                }
+            if (BukkitDependencies.citizens != null) {
+                parsed = parsed.replace("<npc>", BukkitDependencies.citizens.getNPCRegistry().getByUniqueId(npc).getName());
             }
-            parsed = parsed.replace("<npc>", name);
+            if (BukkitDependencies.znpcsPlusLegacy != null) {
+                String name = "null";
+                final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(npc)).findAny();
+                if (opt.isPresent()) {
+                    final Entity znpc = (Entity) opt.get().getBukkitEntity();
+                    if (znpc.getCustomName() != null) {
+                        name = znpc.getCustomName();
+                    } else {
+                        name = opt.get().getNpcPojo().getHologramLines().get(0);
+                    }
+                }
+                parsed = parsed.replace("<npc>", name);
+            } else if (BukkitDependencies.znpcsPlusApi != null) {
+                String name = "null";
+                NpcEntry entry = BukkitDependencies.znpcsPlusApi.getNpcRegistry().getByUuid(npc);
+                if (entry != null) {
+                    Npc znpc = entry.getNpc();
+                    EntityProperty<String> displayNameProperty = BukkitDependencies.znpcsPlusApi.getPropertyRegistry().getByName("display_name", String.class);
+                    if (displayNameProperty != null) {
+                        if (znpc.hasProperty(displayNameProperty)) {
+                            name = znpc.getProperty(displayNameProperty);
+                        }
+                    }
+                }
+                parsed = parsed.replace("<npc>", name);
+            }
         }
         return parsed;
     }

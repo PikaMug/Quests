@@ -10,16 +10,18 @@
 
 package me.pikamug.quests.tasks;
 
+import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.enums.BukkitPreBuiltParticle;
 import me.pikamug.quests.events.quester.BukkitQuesterPostViewEffectEvent;
 import me.pikamug.quests.nms.BukkitParticleProvider;
 import me.pikamug.quests.player.BukkitQuester;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class BukkitNpcEffectThread implements Runnable {
@@ -33,10 +35,47 @@ public class BukkitNpcEffectThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                Map<UUID, Location> npcLocations = npcDependency.getNpcsByNearbyLocationSquared(player.getLocation(), 24);
-                for (Map.Entry<UUID, Location> entry : npcLocations.entrySet()) {
-                    showConfigEffect(plugin.getQuester(player.getUniqueId()), entry.getKey(), entry.getValue());
+            if (plugin.getDependencies().getCitizens() != null) {
+                final List<Entity> nearby = player.getNearbyEntities(32.0, 16.0, 32.0);
+                if (!nearby.isEmpty()) {
+                    for (final Entity entity : nearby) {
+                        final UUID uuid = plugin.getDependencies().getUuidFromNpc(entity);
+                        if (uuid != null) {
+                            showConfigEffect(plugin.getQuester(player.getUniqueId()), uuid, entity.getLocation());
+                        }
+                    }
+                }
+            }
+            if (plugin.getDependencies().getZnpcsPlus() != null) {
+                for (io.github.znetworkw.znpcservers.npc.NPC npc : io.github.znetworkw.znpcservers.npc.NPC.all()) {
+                    final Location location = npc.getLocation();
+                    if (location.getWorld() == null || player.getLocation().getWorld() == null) {
+                        return;
+                    }
+                    if (location.getWorld().getName().equals(player.getLocation().getWorld().getName())) {
+                        if (location.distanceSquared(player.getLocation()) < 24) {
+                            final UUID uuid = plugin.getDependencies().getUuidFromNpc((Entity) npc.getBukkitEntity());
+                            if (uuid != null) {
+                                showConfigEffect(plugin.getQuester(player.getUniqueId()), uuid, location);
+                            }
+                        }
+                    }
+                }
+            }
+            if (plugin.getDependencies().getZnpcsPlusApi() != null) {
+                Collection<? extends NpcEntry> znpcs = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry()
+                        .getAllPlayerMade();
+                for (NpcEntry npc : znpcs) {
+                    if (npc.getNpc().getWorld() == null || player.getLocation().getWorld() == null) {
+                        return;
+                    }
+                    if (npc.getNpc().getWorld().equals(player.getLocation().getWorld())) {
+                        if (npc.getNpc().getLocation().toBukkitLocation(npc.getNpc().getWorld())
+                                .distanceSquared(player.getLocation()) < 24) {
+                            showConfigEffect(plugin.getQuester(player.getUniqueId()), npc.getNpc().getUuid(),
+                                    npc.getNpc().getLocation().toBukkitLocation(npc.getNpc().getWorld()).add(0, 2, 0));
+                        }
+                    }
                 }
             }
         }

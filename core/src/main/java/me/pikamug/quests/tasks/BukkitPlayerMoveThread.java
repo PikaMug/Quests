@@ -10,9 +10,10 @@
 
 package me.pikamug.quests.tasks;
 
-import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
 import org.bukkit.entity.Player;
+
+import me.pikamug.quests.BukkitQuestsPlugin;
+import net.citizensnpcs.api.CitizensAPI;
 
 public class BukkitPlayerMoveThread implements Runnable {
 
@@ -25,8 +26,8 @@ public class BukkitPlayerMoveThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                if (npcDependency.isNpc(player.getUniqueId())) {
+            if (plugin.getDependencies().getCitizens() != null) {
+                if (CitizensAPI.getNPCRegistry().isNPC(player)) {
                     return;
                 }
             }
