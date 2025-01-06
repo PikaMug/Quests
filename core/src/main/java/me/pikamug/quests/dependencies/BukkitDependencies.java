@@ -24,7 +24,6 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.dependencies.npc.EntityNpcDependency;
 import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
-import me.pikamug.quests.dependencies.npc.fancynpcs.FancyNpcsDependency;
 import me.pikamug.quests.dependencies.npc.znpcsplus.ZnpcsPlusDependency;
 import me.pikamug.quests.dependencies.npc.znpcsplus.legacy.LegacyZnpcsPlusDependency;
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
@@ -188,12 +187,6 @@ public class BukkitDependencies implements Dependencies {
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNpcsPlus"); // Check for 2.x classes
                 addNpcDependency(new ZnpcsPlusDependency(plugin));
-            } catch (final Exception ignored) {
-            }
-        }
-        if (isPluginAvailable("FancyNpcs")) {
-            try {
-                addNpcDependency(new FancyNpcsDependency(plugin));
             } catch (final Exception ignored) {
             }
         }
