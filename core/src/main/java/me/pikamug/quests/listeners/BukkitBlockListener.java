@@ -38,7 +38,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 public class BukkitBlockListener implements Listener {
@@ -279,7 +278,7 @@ public class BukkitBlockListener implements Listener {
                                 (final Quester q, final Quest cq) -> {
                             if (!dispatchedBreakQuestIDs.contains(cq.getId())) {
                                 final BukkitQuestProgress qQuestProgress = (BukkitQuestProgress) q.getQuestProgressOrDefault(cq);
-                                for (final int i : new LinkedList<>(qQuestProgress.blocksBroken)) {
+                                for (int i = 0; i < qQuestProgress.blocksBroken.size(); i++) {
                                     final int progress = qQuestProgress.blocksBroken.get(i) - 1;
                                     if (progress < 0) {
                                         break;

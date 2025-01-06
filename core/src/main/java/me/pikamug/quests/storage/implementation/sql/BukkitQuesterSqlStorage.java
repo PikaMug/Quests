@@ -14,7 +14,6 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
@@ -461,7 +460,6 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         final Quest quest = plugin.getQuestById(rs.getString("quest_id"));
                         final BukkitQuestProgress data = new BukkitQuestProgress(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
-                            final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
                             data.blocksBroken.addAll(deserializeIntProgress(rs.getString("blocks_broken")));
                             data.blocksDamaged.addAll(deserializeIntProgress(rs.getString("blocks_damaged")));
                             data.blocksPlaced.addAll(deserializeIntProgress(rs.getString("blocks_placed")));
