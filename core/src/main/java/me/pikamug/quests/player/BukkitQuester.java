@@ -3525,9 +3525,9 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.DELIVER_ITEM)) {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToDeliver().get(getCurrentStage(quest)
                     .getItemsToDeliver().indexOf(goal));
-            final String message = formatCompletedObjectiveMessage("deliver", goal.getAmount())
-                    .replace("<npc>", plugin.getDependencies().getNpcName(getCurrentStage(quest)
-                    .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal))));
+            final String message = BukkitConfigUtil.parseString(formatCompletedObjectiveMessage("deliver",
+                    goal.getAmount()).replace("<npc>", plugin.getDependencies().getNpcName(getCurrentStage(quest)
+                    .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal)))));
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message, is.getType(), is.getDurability(), null)) {
