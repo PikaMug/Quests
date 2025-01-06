@@ -1731,8 +1731,8 @@ public class BukkitQuester implements Quester {
                 quester.sendMessage(message);
                 continue;
             }
-            String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
-                    objective.getMessage());
+            String message = "- " + BukkitConfigUtil.parseString(BukkitLang.BukkitFormatToken.convertString(
+                    quester.getPlayer(), objective.getMessage()));
             if (objective.getGoalAsBlockItem() != null) {
                 final int progress = objective.getProgress();
                 final BlockItemStack goal = objective.getGoalAsBlockItem();
