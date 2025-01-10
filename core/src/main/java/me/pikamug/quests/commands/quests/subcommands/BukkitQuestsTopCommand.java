@@ -12,19 +12,15 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
+import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BukkitQuestsTopCommand extends BukkitQuestsSubCommand {
 
@@ -84,23 +80,8 @@ public class BukkitQuestsTopCommand extends BukkitQuestsSubCommand {
                 return;
             }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                final File folder = new File(plugin.getDataFolder(), "data");
-                final File[] playerFiles = folder.listFiles();
-                final Map<String, Integer> questPoints = new HashMap<>();
-                if (playerFiles != null) {
-                    for (final File f : playerFiles) {
-                        if (!f.isDirectory()) {
-                            final FileConfiguration data = new YamlConfiguration();
-                            try {
-                                data.load(f);
-                            } catch (final IOException | InvalidConfigurationException e) {
-                                e.printStackTrace();
-                            }
-                            questPoints.put(data.getString("lastKnownName", "Unknown"),
-                                    data.getInt("quest-points", 0));
-                        }
-                    }
-                }
+                final Map<String, Integer> questPoints = plugin.getOfflineQuesters().stream()
+                        .collect(Collectors.toMap(Quester::getLastKnownName, Quester::getQuestPoints));
                 final LinkedHashMap<String, Integer> sortedMap = (LinkedHashMap<String, Integer>) sort(questPoints);
                 int numPrinted = 0;
                 String msg = BukkitLang.get(cs, "topQuestersTitle");

@@ -51,8 +51,8 @@ import me.pikamug.quests.storage.implementation.file.BukkitQuestYamlStorage;
 import me.pikamug.quests.storage.implementation.jar.BukkitModuleJarStorage;
 import me.pikamug.quests.tasks.BukkitNpcEffectThread;
 import me.pikamug.quests.tasks.BukkitPlayerMoveThread;
-import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import me.pikamug.quests.util.stack.BlockItemStacks;
 import org.apache.logging.log4j.LogManager;
@@ -203,6 +203,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         saveConfig();
         final BukkitStorageFactory storageFactory = new BukkitStorageFactory(this);
         storage = storageFactory.getInstance();
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                questers = storage.loadOfflineQuesters().get();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        });
         
         // 9 - Setup commands
         if (getCommand("quests") != null) {

@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class QuesterStorage {
     private final Quests plugin;
@@ -97,10 +98,22 @@ public class QuesterStorage {
         });
     }
 
+    public CompletableFuture<Collection<Quester>> loadOfflineQuesters() {
+        final Collection<Quester> questers = new ConcurrentSkipListSet<>();
+        try {
+            for (final UUID uniqueId : implementation.getSavedUniqueIds()) {
+                questers.add(implementation.loadQuester(uniqueId));
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return makeFuture(() -> questers);
+    }
+
     public CompletableFuture<Void> saveOfflineQuesters() {
         return makeFuture(() -> {
             try {
-                for (Quester quester : plugin.getOfflineQuesters()) {
+                for (final Quester quester : plugin.getOfflineQuesters()) {
                     implementation.saveQuester(quester);
                 }
             } catch (final Exception e) {

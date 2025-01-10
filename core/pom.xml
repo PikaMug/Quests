@@ -280,7 +280,7 @@
                             </excludes>
                         </filter>
                         <filter>
-                            <artifact>com.github.PikaMug:LocaleLib</artifact>
+                            <artifact>me.pikamug.localelib:LocaleLib</artifact>
                             <excludes>
                                 <exclude>plugin.yml</exclude>
                             </excludes>
