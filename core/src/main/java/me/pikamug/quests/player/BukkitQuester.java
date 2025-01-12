@@ -3567,11 +3567,12 @@ public class BukkitQuester implements Quester {
             final String message = formatCompletedObjectiveMessage("killPlayer", goal.getAmount());
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            final String message = formatCompletedObjectiveMessage("talkTo", goal.getAmount())
-                    .replace("<npc>", plugin.getDependencies().getNpcName(npc));
+            final String message = BukkitConfigUtil.parseString(formatCompletedObjectiveMessage("talkTo",
+                    goal.getAmount()).replace("<npc>", plugin.getDependencies().getNpcName(npc)));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
-            final String message = formatCompletedObjectiveMessage("kill", goal.getAmount());
+            final String message = BukkitConfigUtil.parseString(formatCompletedObjectiveMessage("kill",
+                    goal.getAmount()));
             sendMessage(message.replace("<mob>", plugin.getDependencies().getNpcName(npc)));
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
             final String message = formatCompletedObjectiveMessage("tame", goal.getAmount());
