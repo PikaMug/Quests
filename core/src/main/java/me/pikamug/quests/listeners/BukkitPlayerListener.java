@@ -389,7 +389,7 @@ public class BukkitPlayerListener implements Listener {
                                         } else {
                                             if (quester.getCompletedQuests().contains(bukkitQuest)) {
                                                 if (bukkitQuest.getPlanner().getCooldown() > -1
-                                                        && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
+                                                        && quester.getRemainingCooldown(bukkitQuest) > 0) {
                                                     String early = BukkitLang.get(player, "questTooEarly");
                                                     early = early.replace("<quest>", bukkitQuest.getName());
                                                     early = early.replace("<time>", BukkitMiscUtil.getTime(
