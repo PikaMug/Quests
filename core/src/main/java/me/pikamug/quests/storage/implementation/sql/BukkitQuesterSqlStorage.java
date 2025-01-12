@@ -600,6 +600,10 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         return list;
     }
 
+    /**
+     * @deprecated Legacy code, do not use. Will be removed in a later version.
+     */
+    @SuppressWarnings("deprecation")
     public String serializeItemStackProgress(final LinkedList<ItemStack> list) {
         if (list.isEmpty()) {
             return null;

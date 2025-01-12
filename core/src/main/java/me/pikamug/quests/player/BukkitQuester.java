@@ -588,7 +588,7 @@ public class BukkitQuester implements Quester {
     }
 
     /**
-     * Check if Quester is too early or late for a planned quest<p>
+     * Check if Quester is not too early or late for a planned quest<p>
      *
      * For player cooldown, use {@link #canAcceptOffer(Quest, boolean)} instead
      *
@@ -626,8 +626,20 @@ public class BukkitQuester implements Quester {
             }
         }
         if (repeat != -1 && start != -1 && end != -1) {
-            // Ensure that we're past the initial duration
-            if (currentTime > end) {
+            // Repeatable quest
+            if (currentTime <= end) {
+                // Initial period where quest may be active
+                if (completedTimes.containsKey(quest) && quest.getPlanner().getCooldown() > -1
+                        && getRemainingCooldown(quest) > 0) {
+                    if (giveReason) {
+                        final String early = BukkitLang.get("plnTooEarly").replace("<quest>", quest.getName())
+                                .replace("<time>", BukkitMiscUtil.getTime(end - currentTime));
+                        sendMessage(ChatColor.YELLOW + early);
+                        return false;
+                    }
+                }
+            } else {
+                // Subsequent period where quest may be active
                 final int maxSize = 2;
                 final LinkedHashMap<Long, Long> mostRecent = new LinkedHashMap<Long, Long>() {
                     private static final long serialVersionUID = 3046838061019897713L;

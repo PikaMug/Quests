@@ -179,6 +179,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         saveConfig();
         final BukkitStorageFactory storageFactory = new BukkitStorageFactory(this);
         storage = storageFactory.getInstance();
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                questers = storage.loadOfflineQuesters().get();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        });
         
         // 9 - Setup commands
         if (getCommand("quests") != null) {
