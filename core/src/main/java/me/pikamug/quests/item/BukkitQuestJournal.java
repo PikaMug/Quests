@@ -15,6 +15,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.Objective;
+import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -79,7 +80,7 @@ public class BukkitQuestJournal {
                         continue;
                     }
                     final String message = "- " + BukkitLang.BukkitFormatToken.convertString(player,
-                            objective.getMessage().trim().replaceAll("\\s{2,}", ""));
+                            BukkitConfigUtil.parseString(objective.getMessage().trim().replaceAll("\\s{2,}", "")));
                     if (!plugin.getConfigSettings().canShowCompletedObjs()
                             && message.startsWith(ChatColor.GRAY.toString())) {
                         continue;
