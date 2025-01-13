@@ -32,6 +32,7 @@ import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.listeners.BukkitCitizensListener;
 import me.pikamug.quests.listeners.BukkitZnpcsApiListener;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.milkbowl.vault.economy.Economy;
@@ -47,7 +48,12 @@ import org.jetbrains.annotations.Nullable;
 import ro.niconeko.astralbooks.api.AstralBooks;
 import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class BukkitDependencies implements Dependencies {
@@ -346,26 +352,27 @@ public class BukkitDependencies implements Dependencies {
 
     public @NotNull String getNpcName(final UUID uuid) {
         final Entity npc;
+        String name = "NPC";
         if (citizens != null && citizens.getNPCRegistry().getByUniqueId(uuid) != null) {
-            return citizens.getNPCRegistry().getByUniqueId(uuid).getName();
+            name = citizens.getNPCRegistry().getByUniqueId(uuid).getName();
         } else if (znpcsPlusLegacy != null && getZnpcsPlusUuids().contains(uuid)) {
             final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
             if (opt.isPresent()) {
                 npc = (Entity) opt.get().getBukkitEntity();
                 if (npc.getCustomName() != null) {
-                    return npc.getCustomName();
+                    name = npc.getCustomName();
                 } else {
-                    return opt.get().getNpcPojo().getHologramLines().get(0);
+                    name = opt.get().getNpcPojo().getHologramLines().get(0);
                 }
             }
         } else if (znpcsPlusApi != null && getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
             Npc znpc = getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
             EntityProperty<String> displayNameProperty = getZnpcsPlusApi().getPropertyRegistry().getByName("display_name", String.class);
             if (displayNameProperty != null && znpc.hasProperty(displayNameProperty)) {
-                return znpc.getProperty(displayNameProperty);
+                name = znpc.getProperty(displayNameProperty);
             }
         }
-        return "NPC";
+        return BukkitConfigUtil.parseString(name);
     }
 
     public @Nullable UUID getUuidFromNpc(final Entity entity) {
