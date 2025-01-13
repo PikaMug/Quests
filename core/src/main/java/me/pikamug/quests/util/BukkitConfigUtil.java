@@ -224,7 +224,7 @@ public class BukkitConfigUtil {
         parsed = parsed.replace("<white>", ChatColor.WHITE.toString());
         parsed = parsed.replace("<random>", ChatColor.MAGIC.toString());
         parsed = parsed.replace("<italic>", ChatColor.ITALIC.toString());
-        parsed = parsed.replace("<i>", ChatColor.BOLD.toString());
+        parsed = parsed.replace("<i>", ChatColor.ITALIC.toString());
         parsed = parsed.replace("<bold>", ChatColor.BOLD.toString());
         parsed = parsed.replace("<b>", ChatColor.BOLD.toString());
         parsed = parsed.replace("<underline>", ChatColor.UNDERLINE.toString());
