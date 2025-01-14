@@ -474,7 +474,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                     messages = (LinkedList<String>) context.getSessionData(pref + Key.S_DELIVERY_MESSAGES);
                 }
                 if (messages != null && messages.isEmpty()) {
-                    messages.add(BukkitLang.get("thankYouMore"));
+                    messages.add(ChatColor.RESET + BukkitLang.get("thankYouMore"));
                 }
                 context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, messages);
             }

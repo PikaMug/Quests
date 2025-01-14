@@ -29,6 +29,7 @@ import me.pikamug.quests.dependencies.npc.znpcsplus.legacy.LegacyZnpcsPlusDepend
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.unite.api.objects.PartyProvider;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -42,11 +43,14 @@ import ro.niconeko.astralbooks.api.AstralBooks;
 import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BukkitDependencies implements Dependencies {
 
@@ -313,7 +317,7 @@ public class BukkitDependencies implements Dependencies {
                 break;
             }
         }
-        return name;
+        return BukkitConfigUtil.parseString(name);
     }
 
     public @Nullable UUID getUuidFromNpc(final Entity entity) {

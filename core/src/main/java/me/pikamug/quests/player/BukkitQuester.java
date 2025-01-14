@@ -1691,8 +1691,8 @@ public class BukkitQuester implements Quester {
                 quester.sendMessage(message);
                 continue;
             }
-            String message = "- " + BukkitConfigUtil.parseString(BukkitLang.BukkitFormatToken.convertString(
-                    quester.getPlayer(), objective.getMessage()));
+            String message = "- " + BukkitLang.BukkitFormatToken.convertString(quester.getPlayer(),
+                    objective.getMessage());
             if (objective.getGoalAsBlockItem() != null) {
                 final int progress = objective.getProgress();
                 final BlockItemStack goal = objective.getGoalAsBlockItem();
@@ -3489,9 +3489,9 @@ public class BukkitQuester implements Quester {
         } else if (type.equals(ObjectiveType.DELIVER_ITEM)) {
             final ItemStack is = ((BukkitStage) getCurrentStage(quest)).getItemsToDeliver().get(getCurrentStage(quest)
                     .getItemsToDeliver().indexOf(goal));
-            final String message = BukkitConfigUtil.parseString(formatCompletedObjectiveMessage("deliver",
-                    goal.getAmount()).replace("<npc>", plugin.getDependencies().getNpcName(getCurrentStage(quest)
-                    .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal)))));
+            final String message = formatCompletedObjectiveMessage("deliver", goal.getAmount())
+                    .replace("<npc>", plugin.getDependencies().getNpcName(getCurrentStage(quest)
+                    .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal))));
             if (plugin.getConfigSettings().canTranslateNames() && !goal.hasItemMeta()
                     && !goal.getItemMeta().hasDisplayName()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message, is.getType(), is.getDurability(), null)) {
@@ -3519,8 +3519,8 @@ public class BukkitQuester implements Quester {
             final String message = formatCompletedObjectiveMessage("killPlayer", goal.getAmount());
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            final String message = formatCompletedObjectiveMessage("talkTo", goal.getAmount())
-                    .replace("<npc>", plugin.getDependencies().getNpcName(npc));
+            final String message = formatCompletedObjectiveMessage("talkTo", goal.getAmount()).replace("<npc>",
+                    plugin.getDependencies().getNpcName(npc));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
             final String message = formatCompletedObjectiveMessage("kill", goal.getAmount());
