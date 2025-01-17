@@ -14,8 +14,6 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
-import io.github.znetworkw.znpcservers.npc.NPC;
-import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
@@ -24,15 +22,12 @@ import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.QuestAbandonPrompt;
 import me.pikamug.quests.dependencies.BukkitDependencies;
+import me.pikamug.quests.dependencies.npc.NpcDependency;
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quest.QuestQuitEvent;
 import me.pikamug.quests.events.quest.QuestTakeEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPostStartQuestEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPostUpdateObjectiveEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreOpenGUIEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreStartQuestEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreUpdateObjectiveEvent;
+import me.pikamug.quests.events.quester.*;
 import me.pikamug.quests.item.BukkitQuestJournal;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -40,34 +35,17 @@ import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.components.BukkitObjective;
-import me.pikamug.quests.quests.components.BukkitRequirements;
-import me.pikamug.quests.quests.components.BukkitStage;
-import me.pikamug.quests.quests.components.Objective;
-import me.pikamug.quests.quests.components.Planner;
-import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.quests.components.*;
 import me.pikamug.quests.tasks.BukkitStageTimer;
+import me.pikamug.quests.util.*;
 import me.pikamug.quests.util.stack.BlockItemStack;
-import me.pikamug.quests.util.BukkitConfigUtil;
-import me.pikamug.quests.util.BukkitInventoryUtil;
-import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitLang;
-import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.unite.api.objects.PartyProvider;
-import net.citizensnpcs.api.CitizensAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -77,19 +55,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
@@ -555,34 +522,15 @@ public class BukkitQuester implements Quester {
         if (!plugin.getConfigSettings().canAllowCommandsForNpcQuests() && bukkitQuest.getNpcStart() != null
                 && getPlayer().getLocation().getWorld() != null) {
             final UUID uuid = bukkitQuest.getNpcStart();
-            Entity npc = null;
-            if (plugin.getDependencies().getCitizens() != null
-                    && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
-                npc = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid).getEntity();
-            } else if (plugin.getDependencies().getZnpcsPlus() != null
-                    && plugin.getDependencies().getZnpcsPlusUuids().contains(uuid)) {
-                final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
-                if (opt.isPresent()) {
-                    npc = (Entity) opt.get().getBukkitEntity();
-                }
-            }
-            if (npc != null && npc.getLocation().getWorld() != null && npc.getLocation().getWorld().getName()
-                    .equals(getPlayer().getLocation().getWorld().getName())
-                    && npc.getLocation().distance(getPlayer().getLocation()) > 6.0) {
-                if (giveReason) {
-                    final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo").replace("<npc>", npc.getName());
-                    sendMessage(ChatColor.YELLOW + msg);
-                }
-                return false;
-            }
-            if (plugin.getDependencies().getZnpcsPlusApi() != null &&
-                    plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
-                Npc znpc = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
-                if (znpc.getWorld() != null && znpc.getWorld().equals(getPlayer().getWorld()) &&
-                        znpc.getLocation().toBukkitLocation(znpc.getWorld()).distance(getPlayer().getLocation()) > 6.0) {
+            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                Location npcLocation = npcDependency.getLocation(uuid);
+                if (npcLocation == null) continue;
+
+                if (npcLocation.getWorld() != null
+                        && npcLocation.getWorld().getName().equals(getPlayer().getLocation().getWorld().getName())
+                        && npcLocation.distance(getPlayer().getLocation()) > 6.0) {
                     if (giveReason) {
-                        final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo")
-                                .replace("<npc>", plugin.getDependencies().getNpcName(znpc.getUuid()));
+                        final String msg = BukkitLang.get(getPlayer(), "mustSpeakTo").replace("<npc>", plugin.getDependencies().getNpcName(uuid));
                         sendMessage(ChatColor.YELLOW + msg);
                     }
                     return false;
@@ -1892,12 +1840,16 @@ public class BukkitQuester implements Quester {
             } else if (!c.getNpcsWhileRiding().isEmpty()) {
                 msg.append(BukkitLang.get("conditionEditorRideNPC"));
                 for (final UUID u : c.getNpcsWhileRiding()) {
-                    if (plugin.getDependencies().getCitizens() != null) {
-                        msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(CitizensAPI.getNPCRegistry()
-                                .getByUniqueId(u).getName());
-                    } else {
-                        msg.append(ChatColor.AQUA).append("\n   \u2515 ").append(u);
+                    msg.append(ChatColor.AQUA).append("\n   \u2515 ");
+                    String name = u.toString();
+                    for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                        String npcName = npcDependency.getName(u);
+                        if (npcName != null) {
+                            name = npcName;
+                            break;
+                        }
                     }
+                    msg.append(name);
                 }
                 quester.sendMessage(msg.toString());
             } else if (!c.getPermissions().isEmpty()) {
@@ -2746,7 +2698,7 @@ public class BukkitQuester implements Quester {
                 final String[] message = BukkitConfigUtil.parseStringWithPossibleLineBreaks(getCurrentStage(quest)
                                 .getDeliverMessages().get(new Random().nextInt(getCurrentStage(quest)
                                 .getDeliverMessages().size())), getCurrentStage(quest).getItemDeliveryTargets()
-                                .get(match), goal.getAmount() - progress);
+                        .get(match), goal.getAmount() - progress, plugin);
                 player.sendMessage(message);
             }
 
@@ -4079,9 +4031,6 @@ public class BukkitQuester implements Quester {
      */
     public void showGUIDisplay(final UUID npc, final LinkedList<Quest> quests) {
         if (npc == null || quests == null) {
-            return;
-        }
-        if (plugin.getDependencies().getCitizens() == null) {
             return;
         }
         final String name = plugin.getDependencies().getNpcName(npc);

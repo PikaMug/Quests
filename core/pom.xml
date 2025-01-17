@@ -47,7 +47,7 @@
         <repository>
             <!-- PlaceholderAPI -->
             <id>papi-repo</id>
-            <url>https://repo.extendedclip.com/releases</url>
+            <url>https://repo.extendedclip.com/releases/</url>
         </repository>
         <repository>
             <!-- Heroes, Vault -->
