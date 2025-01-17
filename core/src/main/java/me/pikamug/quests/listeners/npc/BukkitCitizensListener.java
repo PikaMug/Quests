@@ -1,7 +1,8 @@
-package me.pikamug.quests.dependencies.npc.citizens;
+package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcListener;
+import me.pikamug.quests.listeners.BukkitNpcListener;
+import me.pikamug.quests.dependencies.npc.citizens.BukkitCitizensDependency;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -12,8 +13,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.UUID;
 
-public class CitizensListener extends NpcListener {
-    public CitizensListener(BukkitQuestsPlugin plugin, CitizensDependency npcDependency) {
+public class BukkitCitizensListener extends BukkitNpcListener {
+    public BukkitCitizensListener(BukkitQuestsPlugin plugin, BukkitCitizensDependency npcDependency) {
         super(plugin, npcDependency);
     }
 

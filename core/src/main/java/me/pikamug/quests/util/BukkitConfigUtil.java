@@ -13,7 +13,7 @@ package me.pikamug.quests.util;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -166,8 +166,8 @@ public class BukkitConfigUtil {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             String name = "null";
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                String npcName = npcDependency.getName(npc);
+            for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                final String npcName = npcDependency.getName(npc);
                 if (npcName != null) {
                     name = npcName;
                     break;

@@ -11,7 +11,7 @@
 package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import org.bukkit.entity.Player;
 
 public class BukkitPlayerMoveThread implements Runnable {
@@ -25,7 +25,7 @@ public class BukkitPlayerMoveThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+            for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
                 if (npcDependency.isNpc(player.getUniqueId())) {
                     return;
                 }

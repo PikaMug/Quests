@@ -11,7 +11,7 @@
 package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.enums.BukkitPreBuiltParticle;
 import me.pikamug.quests.events.quester.BukkitQuesterPostViewEffectEvent;
 import me.pikamug.quests.nms.BukkitParticleProvider;
@@ -33,8 +33,8 @@ public class BukkitNpcEffectThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                Map<UUID, Location> npcLocations = npcDependency.getNpcsByNearbyLocationSquared(player.getLocation(), 24);
+            for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                final Map<UUID, Location> npcLocations = npcDependency.getNpcsByNearbyLocationSquared(player.getLocation(), 24);
                 for (Map.Entry<UUID, Location> entry : npcLocations.entrySet()) {
                     showConfigEffect(plugin.getQuester(player.getUniqueId()), entry.getKey(), entry.getValue());
                 }

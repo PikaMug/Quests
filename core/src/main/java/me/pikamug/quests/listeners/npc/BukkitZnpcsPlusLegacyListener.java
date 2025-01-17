@@ -1,15 +1,16 @@
-package me.pikamug.quests.dependencies.npc.znpcsplus.legacy;
+package me.pikamug.quests.listeners.npc;
 
 import io.github.znetworkw.znpcservers.npc.interaction.NPCInteractEvent;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.NpcListener;
+import me.pikamug.quests.listeners.BukkitNpcListener;
+import me.pikamug.quests.dependencies.npc.znpcsplus.legacy.BukkitZnpcsPlusLegacyDependency;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 import java.util.UUID;
 
-public class LegacyZnpcsPlusListener extends NpcListener {
-    public LegacyZnpcsPlusListener(BukkitQuestsPlugin plugin, LegacyZnpcsPlusDependency npcDependency) {
+public class BukkitZnpcsPlusLegacyListener extends BukkitNpcListener {
+    public BukkitZnpcsPlusLegacyListener(BukkitQuestsPlugin plugin, BukkitZnpcsPlusLegacyDependency npcDependency) {
         super(plugin, npcDependency);
     }
 

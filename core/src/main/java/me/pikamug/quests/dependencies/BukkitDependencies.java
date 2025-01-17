@@ -21,11 +21,11 @@ import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.dependencies.npc.EntityNpcDependency;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
-import me.pikamug.quests.dependencies.npc.citizens.CitizensDependency;
-import me.pikamug.quests.dependencies.npc.znpcsplus.ZnpcsPlusDependency;
-import me.pikamug.quests.dependencies.npc.znpcsplus.legacy.LegacyZnpcsPlusDependency;
+import me.pikamug.quests.dependencies.npc.BukkitEntityNpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
+import me.pikamug.quests.dependencies.npc.citizens.BukkitCitizensDependency;
+import me.pikamug.quests.dependencies.npc.znpcsplus.BukkitZnpcsPlusDependency;
+import me.pikamug.quests.dependencies.npc.znpcsplus.legacy.BukkitZnpcsPlusLegacyDependency;
 import me.pikamug.quests.dependencies.reflect.denizen.DenizenAPI;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.player.Quester;
@@ -42,20 +42,15 @@ import org.jetbrains.annotations.Nullable;
 import ro.niconeko.astralbooks.api.AstralBooks;
 import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class BukkitDependencies implements Dependencies {
 
     private static final Set<PartyProvider> partyProviders = new HashSet<>();
-    private static final List<NpcDependency> npcDependencies = new ArrayList<>();
+    private static final Set<BukkitNpcDependency> npcDependencies = new HashSet<>();
     public static PlaceholderAPIPlugin placeholder = null;
     private static Economy economy = null;
     private static Permission permission = null;
@@ -142,7 +137,7 @@ public class BukkitDependencies implements Dependencies {
         return placeholder;
     }
 
-    public List<NpcDependency> getNpcDependencies() {
+    public Set<BukkitNpcDependency> getNpcDependencies() {
         return npcDependencies;
     }
 
@@ -151,33 +146,33 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public boolean hasAnyEntityNpcDependencies() {
-        for (final NpcDependency npcDependency : npcDependencies) {
-            if (npcDependency instanceof EntityNpcDependency) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
+            if (npcDependency instanceof BukkitEntityNpcDependency) {
                 return true;
             }
         }
         return false;
     }
 
-    public NpcDependency getNpcDependency(final String dependencyName) {
-        for (final NpcDependency npcDependency : npcDependencies) {
-            if (npcDependency.getDependencyName().equalsIgnoreCase(dependencyName)) {
+    public BukkitNpcDependency getNpcDependency(final String dependencyName) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
+            if (npcDependency.getLabel().equalsIgnoreCase(dependencyName)) {
                 return npcDependency;
             }
         }
         return null;
     }
 
-    public void addNpcDependency(final NpcDependency npcDependency) {
+    public void addNpcDependency(final BukkitNpcDependency npcDependency) {
         npcDependencies.add(npcDependency);
-        plugin.getLogger().info("Successfully linked Quests with " + npcDependency.getDependencyName());
+        plugin.getLogger().info("Successfully linked Quests with " + npcDependency.getLabel());
         startNpcEffectThread();
     }
 
     private void initNpcDependency() {
         if (isPluginAvailable("Citizens")) {
             try {
-                addNpcDependency(new CitizensDependency(plugin));
+                addNpcDependency(new BukkitCitizensDependency(plugin));
             } catch (final Exception e) {
                 plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
             }
@@ -185,12 +180,12 @@ public class BukkitDependencies implements Dependencies {
         if (isPluginAvailable("ZNPCsPlus")) {
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNPCsPlus"); // Check for 1.x classes
-                addNpcDependency(new LegacyZnpcsPlusDependency(plugin));
+                addNpcDependency(new BukkitZnpcsPlusLegacyDependency(plugin));
             } catch (final Exception ignored) {
             }
             try {
                 Class.forName("lol.pyr.znpcsplus.ZNpcsPlus"); // Check for 2.x classes
-                addNpcDependency(new ZnpcsPlusDependency(plugin));
+                addNpcDependency(new BukkitZnpcsPlusDependency(plugin));
             } catch (final Exception ignored) {
             }
         }
@@ -286,7 +281,7 @@ public class BukkitDependencies implements Dependencies {
 
     public @Nullable Location getNpcLocation(final UUID uuid) {
         Location location = null;
-        for (final NpcDependency npcDependency : npcDependencies) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
             location = npcDependency.getLocation(uuid);
             if (location != null) {
                 break;
@@ -296,11 +291,11 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public @Nullable Entity getNpcEntity(final UUID uuid) {
-        for (final NpcDependency npcDependency : npcDependencies) {
-            if (!(npcDependency instanceof EntityNpcDependency)) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof BukkitEntityNpcDependency)) {
                 continue;
             }
-            final Entity entity = ((EntityNpcDependency) npcDependency).getEntity(uuid);
+            final Entity entity = ((BukkitEntityNpcDependency) npcDependency).getEntity(uuid);
             if (entity != null) {
                 return entity;
             }
@@ -310,7 +305,7 @@ public class BukkitDependencies implements Dependencies {
 
     public @NotNull String getNpcName(final UUID uuid) {
         String name = "NPC";
-        for (final NpcDependency npcDependency : npcDependencies) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
             final String npcName = npcDependency.getName(uuid);
             if (npcName != null) {
                 name = npcName;
@@ -321,11 +316,11 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public @Nullable UUID getUuidFromNpc(final Entity entity) {
-        for (final NpcDependency npcDependency : npcDependencies) {
-            if (!(npcDependency instanceof EntityNpcDependency)) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof BukkitEntityNpcDependency)) {
                 continue;
             }
-            final UUID uuid = ((EntityNpcDependency) npcDependency).getId(entity);
+            final UUID uuid = ((BukkitEntityNpcDependency) npcDependency).getUniqueId(entity);
             if (uuid != null) {
                 return uuid;
             }
@@ -334,7 +329,7 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public boolean isNpc(final UUID uuid) {
-        for (final NpcDependency npcDependency : npcDependencies) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
             if (npcDependency.isNpc(uuid)) {
                 return true;
             }
@@ -343,11 +338,11 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public boolean isNpc(final Entity entity) {
-        for (final NpcDependency npcDependency : npcDependencies) {
-            if (!(npcDependency instanceof EntityNpcDependency)) {
+        for (final BukkitNpcDependency npcDependency : npcDependencies) {
+            if (!(npcDependency instanceof BukkitEntityNpcDependency)) {
                 continue;
             }
-            if (((EntityNpcDependency) npcDependency).isNpc(entity)) {
+            if (((BukkitEntityNpcDependency) npcDependency).isNpc(entity)) {
                 return true;
             }
         }

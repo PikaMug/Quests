@@ -5,10 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public interface EntityNpcDependency {
+public interface BukkitEntityNpcDependency extends NpcDependency {
     boolean isNpc(final Entity entity);
 
     @Nullable Entity getEntity(final UUID uuid);
 
-    @Nullable UUID getId(final Entity entity);
+    @Nullable UUID getUniqueId(final Entity entity);
 }

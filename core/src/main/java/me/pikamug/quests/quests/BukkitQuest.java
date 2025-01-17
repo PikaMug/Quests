@@ -21,7 +21,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
 import me.pikamug.quests.events.quester.*;
 import me.pikamug.quests.module.CustomRequirement;
@@ -391,8 +391,8 @@ public class BukkitQuest implements Quest {
                 targetLocation = (Location) stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
                 final UUID uuid = stage.getItemDeliveryTargets().getFirst();
-                for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                    Location npcLocation = npcDependency.getLocation(uuid);
+                for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                    final Location npcLocation = npcDependency.getLocation(uuid);
                     if (npcLocation != null) {
                         targetLocation = npcLocation;
                         break;

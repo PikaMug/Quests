@@ -22,7 +22,7 @@ import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.QuestAbandonPrompt;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.dependencies.npc.NpcDependency;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quest.QuestQuitEvent;
@@ -522,8 +522,8 @@ public class BukkitQuester implements Quester {
         if (!plugin.getConfigSettings().canAllowCommandsForNpcQuests() && bukkitQuest.getNpcStart() != null
                 && getPlayer().getLocation().getWorld() != null) {
             final UUID uuid = bukkitQuest.getNpcStart();
-            for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                Location npcLocation = npcDependency.getLocation(uuid);
+            for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                final Location npcLocation = npcDependency.getLocation(uuid);
                 if (npcLocation == null) continue;
 
                 if (npcLocation.getWorld() != null
@@ -1842,8 +1842,8 @@ public class BukkitQuester implements Quester {
                 for (final UUID u : c.getNpcsWhileRiding()) {
                     msg.append(ChatColor.AQUA).append("\n   \u2515 ");
                     String name = u.toString();
-                    for (NpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
-                        String npcName = npcDependency.getName(u);
+                    for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                        final String npcName = npcDependency.getName(u);
                         if (npcName != null) {
                             name = npcName;
                             break;

@@ -1,6 +1,7 @@
-package me.pikamug.quests.dependencies.npc;
+package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.Quester;
@@ -28,11 +29,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class NpcListener implements Listener {
+public abstract class BukkitNpcListener implements Listener {
     protected final BukkitQuestsPlugin plugin;
-    protected final NpcDependency npcDependency;
+    protected final BukkitNpcDependency npcDependency;
 
-    public NpcListener(final BukkitQuestsPlugin plugin, final NpcDependency npcDependency) {
+    public BukkitNpcListener(final BukkitQuestsPlugin plugin, final BukkitNpcDependency npcDependency) {
         this.plugin = plugin;
         this.npcDependency = npcDependency;
     }
