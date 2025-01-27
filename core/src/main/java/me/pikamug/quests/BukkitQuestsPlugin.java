@@ -179,13 +179,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         saveConfig();
         final BukkitStorageFactory storageFactory = new BukkitStorageFactory(this);
         storage = storageFactory.getInstance();
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try {
-                questers = storage.loadOfflineQuesters().get();
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-        });
         
         // 9 - Setup commands
         if (getCommand("quests") != null) {
@@ -243,7 +236,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         for (final Player p : getServer().getOnlinePlayers()) {
             getQuester(p.getUniqueId()).saveData();
         }
-        Bukkit.getScheduler().cancelTasks(this);
+        getServer().getScheduler().cancelTasks(this);
         getLogger().info("Closing storage...");
         if (storage != null) {
             storage.close();
@@ -625,22 +618,31 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             questLoader.init();
             getLogger().log(Level.INFO, "Loaded " + quests.size() + " Quest(s), " + actions.size() + " Action(s), "
                     + conditions.size() + " Condition(s) and " + BukkitLang.size() + " Phrase(s)");
-            for (final Player p : getServer().getOnlinePlayers()) {
-                final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
-                if (!quester.hasData()) {
-                    quester.saveData();
-                }
-                // Workaround for issues with the compass on fast join
-                quester.findCompassTarget();
-                questers.add(quester);
-            }
             customLoader.init();
             questLoader.importQuests();
             if (getConfigSettings().canDisableCommandFeedback()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
             }
-            loading = false;
+            getServer().getScheduler().runTaskAsynchronously(this, () -> {
+                try {
+                    questers = storage.loadOfflineQuesters().get();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }, 5L);
+        getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+            // Workaround for issues with the Compass on fast join
+            for (final Player p : getServer().getOnlinePlayers()) {
+                final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
+                if (!quester.hasData()) {
+                    quester.saveData();
+                }
+                quester.findCompassTarget();
+                questers.add(quester);
+            }
+            loading = false;
+        }, 60L);
     }
 
     /**
@@ -653,7 +655,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         loading = true;
         reloadConfig();
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 getStorage().saveOfflineQuesters().get();
                 BukkitLang.clear();
@@ -697,7 +699,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             exception.printStackTrace();
         }
         if (callback != null) {
-            Bukkit.getScheduler().runTask(BukkitQuestsPlugin.this, () -> {
+            getServer().getScheduler().runTask(BukkitQuestsPlugin.this, () -> {
                 loading = false;
                 callback.execute(result);
             });
