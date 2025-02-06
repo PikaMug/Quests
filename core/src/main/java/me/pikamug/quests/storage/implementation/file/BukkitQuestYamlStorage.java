@@ -824,7 +824,13 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             final List<Integer> npcAmountsToKill;
             final ConfigurationSection obj = config.getConfigurationSection(ordered.getCurrentPath() + "." + stageNum);
             if (obj == null || obj.getKeys(false).isEmpty()) {
-                throw new StageFormatException("Stage cannot be empty", quest, stageNum);
+                // TODO - Determine how some users are able to create empty stages
+                bukkitStage.addPasswordDisplay("2 + 2 = ?");
+                bukkitStage.addPasswordPhrase("4");
+                plugin.getLogger().severe("Stage cannot be empty, see quest " + quest.getName() + " stage " + stageNum);
+                plugin.getLogger().severe("A generic objective has been added for you to prevent future error.");
+                continue;
+                //throw new StageFormatException("Stage cannot be empty", quest, stageNum);
             }
             final String path = obj.getCurrentPath();
             // Legacy Denizen script load
