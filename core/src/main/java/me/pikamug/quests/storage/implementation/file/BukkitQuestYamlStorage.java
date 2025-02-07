@@ -784,7 +784,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
             try {
                 stageNum = Integer.parseInt(stageKey);
             } catch (final NumberFormatException e) {
-                plugin.getLogger().severe("Stage key " + stageKey + "must be a number!");
+                plugin.getLogger().severe("Stage key " + stageKey + " must be a number!");
                 continue;
             }
             final BukkitStage bukkitStage = new BukkitStage();
@@ -1244,8 +1244,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                                 for (final ItemStack stack : itemsToDeliver) {
                                     if (stack != null) {
                                         final UUID npcUuid = UUID.fromString(itemDeliveryTargetUuids.get(index));
-                                        final String msg = deliveryMessages.size() > index
-                                                ? deliveryMessages.get(index)
+                                        final String msg = deliveryMessages.size() > index ? deliveryMessages.get(index)
                                                 : deliveryMessages.get(deliveryMessages.size() - 1);
                                         index++;
                                         bukkitStage.addItemToDeliver(stack);
