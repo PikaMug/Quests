@@ -34,7 +34,7 @@ public class BukkitDenizenTrigger {
                     plugin.getLogger().severe("NPC UUID was null for Denizen script named " + scriptName);
                     return false;
                 }
-                final NPC npc = ((BukkitCitizensDependency) plugin.getDependencies().getNpcDependency("Citizens")).getCitizens().getNPCRegistry().getByUniqueId(uuid);
+                final NPC npc = ((BukkitCitizensDependency) plugin.getDependencies().getNpcDependency("Citizens")).getApi().getNPCRegistry().getByUniqueId(uuid);
                 plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), npc);
             } else {
                 plugin.getDependencies().getDenizenApi().runTaskScript(scriptName, quester.getPlayer(), null);

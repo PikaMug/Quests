@@ -70,10 +70,6 @@ public class BukkitCitizensDependency implements BukkitNpcDependency, BukkitEnti
         return npcs;
     }
 
-    public CitizensPlugin getCitizens() {
-        return citizens;
-    }
-
     @Override
     public boolean isNpc(final Entity entity) {
         return citizens.getNPCRegistry().isNPC(entity);
@@ -89,5 +85,9 @@ public class BukkitCitizensDependency implements BukkitNpcDependency, BukkitEnti
     public @Nullable UUID getUniqueId(final Entity entity) {
         final NPC npc = citizens.getNPCRegistry().getNPC(entity);
         return npc != null ? npc.getUniqueId() : null;
+    }
+
+    public CitizensPlugin getApi() {
+        return citizens;
     }
 }

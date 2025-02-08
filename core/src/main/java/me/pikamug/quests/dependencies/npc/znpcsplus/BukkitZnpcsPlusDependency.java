@@ -84,4 +84,8 @@ public class BukkitZnpcsPlusDependency implements BukkitNpcDependency {
         }
         return npcs;
     }
+
+    public NpcApi getApi() {
+        return api;
+    }
 }

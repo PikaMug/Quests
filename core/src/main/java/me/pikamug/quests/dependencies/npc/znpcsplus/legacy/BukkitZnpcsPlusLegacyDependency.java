@@ -1,6 +1,7 @@
 package me.pikamug.quests.dependencies.npc.znpcsplus.legacy;
 
 import io.github.znetworkw.znpcservers.npc.NPC;
+import lol.pyr.znpcsplus.ZNPCsPlus;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.dependencies.npc.BukkitEntityNpcDependency;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
@@ -17,8 +18,10 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public class BukkitZnpcsPlusLegacyDependency implements BukkitNpcDependency, BukkitEntityNpcDependency {
+    private final ZNPCsPlus znpcsPlusLegacy;
 
     public BukkitZnpcsPlusLegacyDependency(final BukkitQuestsPlugin plugin) {
+        znpcsPlusLegacy = (ZNPCsPlus) plugin.getServer().getPluginManager().getPlugin("ZNPCsPlus");
         plugin.getServer().getPluginManager().registerEvents(new BukkitZnpcsPlusLegacyListener(plugin, this), plugin);
     }
 
@@ -87,5 +90,9 @@ public class BukkitZnpcsPlusLegacyDependency implements BukkitNpcDependency, Buk
     public @Nullable UUID getUniqueId(final Entity entity) {
         final NPC npc = getNpc(entity);
         return npc != null ? npc.getUUID() : null;
+    }
+
+    public ZNPCsPlus getApi() {
+        return znpcsPlusLegacy;
     }
 }
