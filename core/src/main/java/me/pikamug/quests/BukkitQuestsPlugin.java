@@ -657,7 +657,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         reloadConfig();
         getServer().getScheduler().runTaskAsynchronously(this, () -> {
             try {
-                getStorage().saveOfflineQuesters().get();
+                final long startTime = System.currentTimeMillis();
+                if (getConfigSettings().getConsoleLogging() > 3) {
+                    getLogger().info("Starting save of all questers (may take a while)");
+                }
+                getStorage().saveOfflineQuesters().get(); // TODO improve SQL performance
+                if (getConfigSettings().getConsoleLogging() > 3) {
+                    final long finishTime = System.currentTimeMillis() - startTime;
+                    getLogger().info("Finished saving all questers (took " + finishTime + " ms)");
+                }
                 BukkitLang.clear();
                 configSettings.init();
                 BukkitLang.load(BukkitQuestsPlugin.this, configSettings.getLanguage());
