@@ -916,6 +916,16 @@ public class BukkitPlayerListener implements Listener {
                         }
                         for (final Quest quest : plugin.getLoadedQuests()) {
                             if (quest.getOptions().canGiveGloballyAtLogin()) {
+                                if (quester.getCurrentQuests().containsKey(quest)) {
+                                    continue;
+                                }
+                                if (quester.getCompletedQuests().contains(quest) && quest.getPlanner().getCooldown() < 0) {
+                                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                                        plugin.getLogger().info(quester.getUUID() + " ignored global quest ID "
+                                                + quest.getId() + " because it was already completed");
+                                    }
+                                    continue;
+                                }
                                 if (!quest.getOptions().canAllowStackingGlobal() && alreadyHasAtLeastOneGlobalQuest) {
                                     if (plugin.getConfigSettings().getConsoleLogging() > 3) {
                                         plugin.getLogger().info(quester.getUUID() + " denied global quest ID "
