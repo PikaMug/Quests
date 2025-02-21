@@ -60,7 +60,7 @@ public class BukkitCitizensDependency implements BukkitNpcDependency, BukkitEnti
         for (final NPC npc : citizens.getNPCRegistry()) {
             final UUID uuid = npc.getUniqueId();
             final Location location = npc.getStoredLocation();
-            if (location.getWorld() == null) {
+            if (location == null || location.getWorld() == null) {
                 continue;
             }
             if (predicate.test(uuid, location)) {
