@@ -272,6 +272,9 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             context.setSessionData(Key.OPT_SHARE_DISTANCE, opt.getShareDistance());
             context.setSessionData(Key.OPT_HANDLE_OFFLINE_PLAYERS, opt.canHandleOfflinePlayers());
             context.setSessionData(Key.OPT_IGNORE_BLOCK_REPLACE, opt.canIgnoreBlockReplace());
+            context.setSessionData(Key.OPT_GIVE_GLOBALLY_AT_LOGIN, opt.canGiveGloballyAtLogin());
+            context.setSessionData(Key.OPT_ALLOW_STACKING_GLOBAL, opt.canAllowStackingGlobal());
+            context.setSessionData(Key.OPT_INFORM_QUEST_START, opt.canInformOnStart());
             // Stages (Objectives)
             int index = 1;
             for (final Stage stage : bukkitQuest.getStages()) {
@@ -917,6 +920,12 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(Key.OPT_HANDLE_OFFLINE_PLAYERS) : null);
         opts.set("ignore-block-replace", context.getSessionData(Key.OPT_IGNORE_BLOCK_REPLACE) != null
                 ? context.getSessionData(Key.OPT_IGNORE_BLOCK_REPLACE) : null);
+        opts.set("give-at-login", context.getSessionData(Key.OPT_GIVE_GLOBALLY_AT_LOGIN) != null
+                ? context.getSessionData(Key.OPT_GIVE_GLOBALLY_AT_LOGIN) : null);
+        opts.set("allow-stacking-global", context.getSessionData(Key.OPT_ALLOW_STACKING_GLOBAL) != null
+                ? context.getSessionData(Key.OPT_ALLOW_STACKING_GLOBAL) : null);
+        opts.set("inform-on-start", context.getSessionData(Key.OPT_INFORM_QUEST_START) != null
+                ? context.getSessionData(Key.OPT_INFORM_QUEST_START) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }

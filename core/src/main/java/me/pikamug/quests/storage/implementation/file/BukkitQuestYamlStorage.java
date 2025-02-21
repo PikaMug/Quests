@@ -296,8 +296,6 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                     if (config.contains("quests." + questId + ".options")) {
                         loadQuestOptions(config, quest, questId);
                     }
-                    // TODO was this necessary?
-                    //quest.setPlugin(this);
                     loadQuestStages(quest, config, questId);
                     loadQuestRewards(config, quest, questId);
                     final Collection<Quest> loadedQuests = plugin.getLoadedQuests();
@@ -768,6 +766,15 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
         }
         if (config.contains("quests." + questKey + ".options.ignore-block-replace")) {
             opts.setIgnoreBlockReplace(config.getBoolean("quests." + questKey + ".options.ignore-block-replace"));
+        }
+        if (config.contains("quests." + questKey + ".options.give-at-login")) {
+            opts.setGiveGloballyAtLogin(config.getBoolean("quests." + questKey + ".options.give-at-login"));
+        }
+        if (config.contains("quests." + questKey + ".options.allow-stacking-global")) {
+            opts.setAllowStackingGlobal(config.getBoolean("quests." + questKey + ".options.allow-stacking-global"));
+        }
+        if (config.contains("quests." + questKey + ".options.inform-on-start")) {
+            opts.setInformOnStart(config.getBoolean("quests." + questKey + ".options.inform-on-start"));
         }
     }
 

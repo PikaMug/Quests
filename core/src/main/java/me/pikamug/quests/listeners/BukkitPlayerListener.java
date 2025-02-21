@@ -907,6 +907,28 @@ public class BukkitPlayerListener implements Listener {
                         }
                     }
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                        boolean alreadyHasAtLeastOneGlobalQuest = false;
+                        for (final Quest cq : quester.getCurrentQuests().keySet()) {
+                            if (cq.getOptions().canGiveGloballyAtLogin()) {
+                                alreadyHasAtLeastOneGlobalQuest = true;
+                                break;
+                            }
+                        }
+                        for (final Quest quest : plugin.getLoadedQuests()) {
+                            if (quest.getOptions().canGiveGloballyAtLogin()) {
+                                if (!quest.getOptions().canAllowStackingGlobal() && alreadyHasAtLeastOneGlobalQuest) {
+                                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                                        plugin.getLogger().info(quester.getUUID() + " denied global quest ID "
+                                                + quest.getId() + " because it was not stackable");
+                                    }
+                                    continue;
+                                }
+                                if (quester.canAcceptOffer(quest, quest.getOptions().canInformOnStart())) {
+                                    alreadyHasAtLeastOneGlobalQuest = true;
+                                    quester.takeQuest(quest, false);
+                                }
+                            }
+                        }
                         if (quester.hasJournal()) {
                             quester.updateJournal();
                         }

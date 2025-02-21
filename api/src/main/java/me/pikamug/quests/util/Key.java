@@ -148,9 +148,12 @@ public class Key {
     public static final String OPT_USE_PARTIES_PLUGIN = "usePartiesPluginOpt";
     public static final String OPT_SHARE_PROGRESS_LEVEL = "shareProgressLevelOpt";
     public static final String OPT_SHARE_SAME_QUEST_ONLY = "shareSameQuestOnlyOpt";
-    public static final String OPT_SHARE_DISTANCE = "shareDistance";
-    public static final String OPT_HANDLE_OFFLINE_PLAYERS = "handleOfflinePlayers";
-    public static final String OPT_IGNORE_BLOCK_REPLACE = "ignoreBlockReplace";
+    public static final String OPT_SHARE_DISTANCE = "shareDistanceOpt";
+    public static final String OPT_HANDLE_OFFLINE_PLAYERS = "handleOfflinePlayersOpt";
+    public static final String OPT_IGNORE_BLOCK_REPLACE = "ignoreBlockReplaceOpt";
+    public static final String OPT_GIVE_GLOBALLY_AT_LOGIN = "giveGloballyAtLoginOpt";
+    public static final String OPT_ALLOW_STACKING_GLOBAL = "allowStackingGlobalOpt";
+    public static final String OPT_INFORM_QUEST_START = "informQuestStartOpt";
     // Actions
     public static final String A_OLD_ACTION = "oldAction";
     public static final String A_NAME = "actName";

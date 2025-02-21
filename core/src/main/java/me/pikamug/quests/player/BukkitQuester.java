@@ -714,12 +714,17 @@ public class BukkitQuester implements Quester {
                 return;
             }
         }
+        final boolean isGlobalQuest = quest.getOptions().canGiveGloballyAtLogin();
         if (bukkitQuest.testRequirements(offlinePlayer) || ignoreRequirements) {
             addEmptiesFor(bukkitQuest, 0);
             try {
                 currentQuests.put(bukkitQuest, 0);
                 if (plugin.getConfigSettings().getConsoleLogging() > 1) {
-                    plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + bukkitQuest.getName());
+                    if (isGlobalQuest) {
+                        plugin.getLogger().info(getPlayer().getUniqueId() + " started global quest " + bukkitQuest.getName());
+                    } else {
+                        plugin.getLogger().info(getPlayer().getUniqueId() + " started quest " + bukkitQuest.getName());
+                    }
                 }
             } catch (final NullPointerException npe) {
                 plugin.getLogger().severe("Unable to add quest" + bukkitQuest.getName() + " for player "
@@ -752,15 +757,17 @@ public class BukkitQuester implements Quester {
                                 }
                             }
                         }
-                        String accepted = BukkitLang.get(p, "questAccepted");
-                        accepted = accepted.replace("<quest>", bukkitQuest.getName());
-                        sendMessage(ChatColor.GREEN + accepted);
-                        p.sendMessage("");
-                        if (plugin.getConfigSettings().canShowQuestTitles()) {
-                            final String title = ChatColor.GOLD + BukkitLang.get(p, "quest") + " "
-                                    + BukkitLang.get(p, "accepted");
-                            final String subtitle = ChatColor.YELLOW + bukkitQuest.getName();
-                            BukkitTitleProvider.sendTitle(p, title, subtitle);
+                        if (!isGlobalQuest || quest.getOptions().canInformOnStart()) {
+                            String accepted = BukkitLang.get(p, "questAccepted");
+                            accepted = accepted.replace("<quest>", bukkitQuest.getName());
+                            sendMessage(ChatColor.GREEN + accepted);
+                            p.sendMessage("");
+                            if (plugin.getConfigSettings().canShowQuestTitles()) {
+                                final String title = ChatColor.GOLD + BukkitLang.get(p, "quest") + " "
+                                        + BukkitLang.get(p, "accepted");
+                                final String subtitle = ChatColor.YELLOW + bukkitQuest.getName();
+                                BukkitTitleProvider.sendTitle(p, title, subtitle);
+                            }
                         }
                     }
                 }
@@ -787,10 +794,16 @@ public class BukkitQuester implements Quester {
             setCompassTarget(bukkitQuest);
             bukkitQuest.updateCompass(this, stage);
         } else {
-            if (offlinePlayer.isOnline()) {
-                sendMessage(ChatColor.DARK_AQUA + BukkitLang.get("requirements"));
-                for (final String s : getCurrentRequirements(bukkitQuest, false)) {
-                    sendMessage("- " + ChatColor.GRAY + s);
+            if (!isGlobalQuest || quest.getOptions().canInformOnStart()) {
+                if (offlinePlayer.isOnline()) {
+                    if (isGlobalQuest) {
+                        sendMessage(ChatColor.RED + BukkitConfigUtil.parseString(BukkitLang.get("questObjectivesTitle"))
+                                .replace("<quest>", quest.getName()));
+                    }
+                    sendMessage(ChatColor.DARK_AQUA + BukkitLang.get("requirements"));
+                    for (final String s : getCurrentRequirements(bukkitQuest, false)) {
+                        sendMessage("- " + ChatColor.GRAY + s);
+                    }
                 }
             }
         }
@@ -804,7 +817,7 @@ public class BukkitQuester implements Quester {
      * End a quest for this Quester, but ask permission first if possible<p>
      *
      * @param quest The quest to check and then offer
-     * @param message Messages to send Quester upon quit, can be left null or empty
+     * @param message Message to send Quester upon quit, can be left null or empty
      * @return true if successful
      */
     public boolean abandonQuest(final Quest quest, final String message) {
@@ -4283,7 +4296,23 @@ public class BukkitQuester implements Quester {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
             try {
-                if (quest.getOptions().getShareProgressLevel() == 1) {
+                if (quest.getOptions().canGiveGloballyAtLogin()) {
+                    final List<Quester> mq = getGlobalQuesters(quest);
+                    if (mq == null) {
+                        return appliedQuestIDs;
+                    }
+                    for (final Quester q : mq) {
+                        if (q == null) {
+                            continue;
+                        }
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                            if (otherQuest.getStage(i).containsObjective(type)) {
+                                fun.apply(q, otherQuest);
+                                appliedQuestIDs.add(otherQuest.getId());
+                            }
+                        });
+                    }
+                } else if (quest.getOptions().getShareProgressLevel() == 1) {
                     final List<Quester> mq = getMultiplayerQuesters(quest);
                     if (mq == null) {
                         return appliedQuestIDs;
@@ -4448,6 +4477,34 @@ public class BukkitQuester implements Quester {
                         return mq;
                     }
                 }
+            }
+        }
+        return mq;
+    }
+
+    /**
+     * Get a list of fellow Questers participating in a global quest
+     *
+     * @param quest The server-wide, global quest
+     * @return Potentially empty list of Questers or null for invalid quest
+     */
+    public List<Quester> getGlobalQuesters(final Quest quest) {
+        if (quest == null) {
+            return null;
+        }
+        final List<Quester> mq = new LinkedList<>();
+        if (quest.getOptions().canGiveGloballyAtLogin()) {
+            for (final Quester oq : plugin.getOnlineQuesters()) {
+                if (oq.getUUID().equals(getUUID())) {
+                    continue;
+                }
+                if (oq.getCurrentQuests().containsKey(quest)) {
+                    mq.add(oq);
+                }
+            }
+            if (mq.size() > 0 && plugin.getConfigSettings().getConsoleLogging() > 3) {
+                plugin.getLogger().info("Found " + mq.size() + " global members for quest ID "
+                        + quest.getId());
             }
         }
         return mq;

@@ -50,4 +50,16 @@ public interface Options {
     boolean canIgnoreBlockReplace();
 
     void setIgnoreBlockReplace(final boolean ignoreBlockReplace);
+
+    boolean canGiveGloballyAtLogin();
+
+    void setGiveGloballyAtLogin(final boolean giveGloballyAtLogin);
+
+    boolean canAllowStackingGlobal();
+
+    void setAllowStackingGlobal(final boolean allowStackingGlobal);
+
+    boolean canInformOnStart();
+
+    void setInformOnStart(final boolean informOnStart);
 }
