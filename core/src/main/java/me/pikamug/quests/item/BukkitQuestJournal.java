@@ -81,7 +81,7 @@ public class BukkitQuestJournal {
                     final String message = "- " + BukkitLang.BukkitFormatToken.convertString(player,
                             objective.getMessage().trim().replaceAll("\\s{2,}", ""));
                     if (!plugin.getConfigSettings().canShowCompletedObjs()
-                            && message.startsWith(ChatColor.GRAY.toString())) {
+                            && objective.getProgress() >= objective.getGoal()) {
                         continue;
                     }
                     String[] split = null;

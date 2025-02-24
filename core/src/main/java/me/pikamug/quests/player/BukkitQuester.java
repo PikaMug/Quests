@@ -1166,15 +1166,16 @@ public class BukkitQuester implements Quester {
         final BukkitQuestProgress data = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
         final LinkedList<Objective> objectives = new LinkedList<>();
         final LinkedList<String> overrides = stage.getObjectiveOverrides();
-        int objIndex = 0;
+        int objIndex = -1;
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {
+            objIndex++;
             final int progress = data.getBlocksBroken().get(i);
             if (i >= stage.getBlocksToBreak().size()) { break; }
             final BlockItemStack goal = stage.getBlocksToBreak().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "break"),
                         progress, goal.getAmount());
@@ -1183,16 +1184,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getBlocksDamaged().size(); i++) {
+            objIndex++;
             final int progress = data.getBlocksDamaged().get(i);
             if (i >= stage.getBlocksToDamage().size()) { break; }
             final BlockItemStack goal = stage.getBlocksToDamage().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "damage"),
                         progress, goal.getAmount());
@@ -1201,16 +1202,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.DAMAGE_BLOCK, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getBlocksPlaced().size(); i++) {
+            objIndex++;
             final int progress = data.getBlocksPlaced().get(i);
             if (i >= stage.getBlocksToPlace().size()) { break; }
             final BlockItemStack goal = stage.getBlocksToPlace().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "place"),
                         progress, goal.getAmount());
@@ -1219,16 +1220,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.PLACE_BLOCK, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getBlocksUsed().size(); i++) {
+            objIndex++;
             final int progress = data.getBlocksUsed().get(i);
             if (i >= stage.getBlocksToUse().size()) { break; }
             final BlockItemStack goal = stage.getBlocksToUse().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "use"),
                         progress, goal.getAmount());
@@ -1237,16 +1238,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.USE_BLOCK, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getBlocksCut().size(); i++) {
+            objIndex++;
             final int progress = data.getBlocksCut().get(i);
             if (i >= stage.getBlocksToCut().size()) { break; }
             final BlockItemStack goal = stage.getBlocksToCut().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "cut"),
                         progress, goal.getAmount());
@@ -1255,16 +1256,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.CUT_BLOCK, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsCrafted().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsCrafted().get(i);
             if (i >= stage.getItemsToCraft().size()) { break; }
             final ItemStack goal = stage.getItemsToCraft().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "craftItem"),
                         progress, goal.getAmount());
@@ -1279,16 +1280,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.CRAFT_ITEM, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsSmelted().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsSmelted().get(i);
             if (i >= stage.getItemsToSmelt().size()) { break; }
             final ItemStack goal = stage.getItemsToSmelt().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "smeltItem"),
                         progress, goal.getAmount());
@@ -1297,16 +1298,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.SMELT_ITEM, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsEnchanted().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsEnchanted().get(i);
             if (i >= stage.getItemsToEnchant().size()) { break; }
             final ItemStack goal = stage.getItemsToEnchant().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "enchItem"),
                         progress, goal.getAmount());
@@ -1326,16 +1327,16 @@ public class BukkitQuester implements Quester {
                                     .replace("<level>", RomanNumeral.getNumeral(e.getValue())), progress, goal));
                 }
             }
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsBrewed().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsBrewed().get(i);
             if (i >= stage.getItemsToBrew().size()) { break; }
             final ItemStack goal = stage.getItemsToBrew().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "brewItem"),
                         progress, goal.getAmount());
@@ -1350,16 +1351,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<level>", level);
             }
             objectives.add(new BukkitObjective(ObjectiveType.BREW_ITEM, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsConsumed().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsConsumed().get(i);
             if (i >= stage.getItemsToConsume().size()) { break; }
             final ItemStack goal = stage.getItemsToConsume().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "consumeItem"),
                         progress, goal.getAmount());
@@ -1374,17 +1375,17 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<level>", level);
             }
             objectives.add(new BukkitObjective(ObjectiveType.CONSUME_ITEM, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0; i < data.getItemsDelivered().size(); i++) {
+            objIndex++;
             final int progress = data.getItemsDelivered().get(i);
             if (i >= stage.getItemsToDeliver().size()) { break; }
             final ItemStack goal = stage.getItemsToDeliver().get(i);
             final UUID npc = stage.getItemDeliveryTargets().get(i);
             final ChatColor color = progress < goal.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && i < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(i), progress, goal.getAmount());
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getAmount());
             } else {
                 message = formatCurrentObjectiveMessage(color,
                         BukkitLang.get(getPlayer(), "deliver").replace("<npc>", depends.getNpcName(npc)),
@@ -1394,16 +1395,16 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<item>", BukkitItemUtil.getName(goal));
             }
             objectives.add(new BukkitObjective(ObjectiveType.DELIVER_ITEM, message, progress, goal));
-            objIndex++;
         }
         int interactIndex = 0;
         for (final UUID n : stage.getNpcsToInteract()) {
+            objIndex++;
             if (data.getNpcsInteracted().size() > interactIndex) {
                 final boolean progress = data.getNpcsInteracted().get(interactIndex);
                 final ChatColor color = !progress ? ChatColor.GREEN : ChatColor.GRAY;
                 String message;
-                if (!ignoreOverrides && interactIndex < overrides.size()) {
-                    message = formatCurrentObjectiveMessage(color, overrides.get(interactIndex), progress ? 1 : 0, 1);
+                if (!ignoreOverrides && objIndex < overrides.size()) {
+                    message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress ? 1 : 0, 1);
                 } else {
                     message = color + BukkitLang.get(getPlayer(), "talkTo")
                             .replace("<npc>", depends.getNpcName(n));
@@ -1414,10 +1415,10 @@ public class BukkitQuester implements Quester {
                 objectives.add(new BukkitObjective(ObjectiveType.TALK_TO_NPC, message, progress ? 1 : 0, 1));
             }
             interactIndex++;
-            objIndex++;
         }
         int npcKillIndex = 0;
         for (final UUID n : stage.getNpcsToKill()) {
+            objIndex++;
             int progress = 0;
             if (data.getNpcsNumKilled().size() > npcKillIndex) {
                 progress = data.getNpcsNumKilled().get(npcKillIndex);
@@ -1425,8 +1426,8 @@ public class BukkitQuester implements Quester {
             final int goal = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && npcKillIndex < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(npcKillIndex), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "kill"),
                         progress, goal);
@@ -1438,10 +1439,10 @@ public class BukkitQuester implements Quester {
             }
             objectives.add(new BukkitObjective(ObjectiveType.KILL_NPC, message, progress, goal));
             npcKillIndex++;
-            objIndex++;
         }
         int mobKillIndex = 0;
         for (final EntityType e : stage.getMobsToKill()) {
+            objIndex++;
             int progress = 0;
             if (data.getMobNumKilled().size() > mobKillIndex) {
                 progress = data.getMobNumKilled().get(mobKillIndex);
@@ -1449,8 +1450,8 @@ public class BukkitQuester implements Quester {
             final int goal = stage.getMobNumToKill().get(mobKillIndex);
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message = color + "";
-            if (!ignoreOverrides && mobKillIndex < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(mobKillIndex), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 if (stage.getLocationsToKillWithin().isEmpty()) {
                     message += BukkitLang.get(getPlayer(), "kill");
@@ -1476,10 +1477,10 @@ public class BukkitQuester implements Quester {
             objectives.add(new BukkitObjective(ObjectiveType.KILL_MOB, message,
                     new BukkitCountableMob(e, progress), new BukkitCountableMob(e, goal)));
             mobKillIndex++;
-            objIndex++;
         }
         int tameIndex = 0;
         for (final EntityType e : stage.getMobsToTame()) {
+            objIndex++;
             int progress = 0;
             if (data.getMobsTamed().size() > tameIndex) {
                 progress = data.getMobsTamed().get(tameIndex);
@@ -1487,8 +1488,8 @@ public class BukkitQuester implements Quester {
             final int goal = stage.getMobNumToTame().get(tameIndex);
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && tameIndex < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(tameIndex), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "tame"),
                         progress, goal);
@@ -1503,46 +1504,46 @@ public class BukkitQuester implements Quester {
             objectives.add(new BukkitObjective(ObjectiveType.TAME_MOB, message,
                     new BukkitCountableMob(e, progress), new BukkitCountableMob(e, goal)));
             tameIndex++;
-            objIndex++;
         }
         if (stage.getFishToCatch() != null) {
+            objIndex++;
             final int progress = data.getFishCaught();
             final int goal = stage.getFishToCatch();
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && !overrides.isEmpty()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(0), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "catchFish"),
                         progress, goal);
             }
             objectives.add(new BukkitObjective(ObjectiveType.CATCH_FISH, message, progress, goal));
-            objIndex++;
         }
         if (stage.getCowsToMilk() != null) {
+            objIndex++;
             final int progress = data.getCowsMilked();
             final int goal = stage.getCowsToMilk();
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && !overrides.isEmpty()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(0), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "milkCow"),
                         progress, goal);
             }
             objectives.add(new BukkitObjective(ObjectiveType.MILK_COW, message, progress, goal));
-            objIndex++;
         }
         int shearIndex = 0;
         for (final int goal : stage.getSheepNumToShear()) {
+            objIndex++;
             int progress = 0;
             if (data.getSheepSheared().size() > shearIndex) {
                 progress = data.getSheepSheared().get(shearIndex);
             }
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && shearIndex < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(shearIndex), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "shearSheep"),
                         progress, goal);
@@ -1551,30 +1552,30 @@ public class BukkitQuester implements Quester {
                     .get(shearIndex)));
             objectives.add(new BukkitObjective(ObjectiveType.SHEAR_SHEEP, message, progress, goal));
             shearIndex++;
-            objIndex++;
         }
         if (stage.getPlayersToKill() != null) {
+            objIndex++;
             final int progress = data.getPlayersKilled();
             final int goal = stage.getPlayersToKill();
             final ChatColor color = data.getPlayersKilled() < stage.getPlayersToKill() ? ChatColor.GREEN
                     : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && !overrides.isEmpty()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(0), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "killPlayer"),
                         progress, goal);
             }
             objectives.add(new BukkitObjective(ObjectiveType.KILL_PLAYER, message, progress, goal));
-            objIndex++;
         }
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
+            objIndex++;
             if (i < data.getLocationsReached().size()) {
                 final boolean progress = data.getLocationsReached().get(i);
                 final ChatColor color = !progress ? ChatColor.GREEN : ChatColor.GRAY;
                 String message;
-                if (!ignoreOverrides && i < overrides.size()) {
-                    message = formatCurrentObjectiveMessage(color, overrides.get(i), progress ? 1 : 0, 1);
+                if (!ignoreOverrides && objIndex < overrides.size()) {
+                    message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress ? 1 : 0, 1);
                 } else {
                     message = formatCurrentObjectiveMessage(color, BukkitLang.get(getPlayer(), "goTo"),
                             progress ? 1 : 0, 1);
@@ -1582,27 +1583,27 @@ public class BukkitQuester implements Quester {
                 message = message.replace("<location>", stage.getLocationNames().get(i));
                 objectives.add(new BukkitObjective(ObjectiveType.REACH_LOCATION, message, progress ? 1 : 0, 1));
             }
-            objIndex++;
         }
         int passIndex = 0;
         for (final String s : stage.getPasswordDisplays()) {
+            objIndex++;
             boolean progress = false;
             if (data.getPasswordsSaid().size() > passIndex) {
                 progress = data.getPasswordsSaid().get(passIndex);
             }
             final ChatColor color = !progress ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && !overrides.isEmpty()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(0), progress ? 1 : 0, 1);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress ? 1 : 0, 1);
             } else {
                 message = formatCurrentObjectiveMessage(color, s, progress ? 1 : 0, 1);
             }
             objectives.add(new BukkitObjective(ObjectiveType.PASSWORD, message, progress ? 1 : 0, 1));
             passIndex++;
-            objIndex++;
         }
         int customIndex = 0;
         for (final CustomObjective co : stage.getCustomObjectives()) {
+            objIndex++;
             int progress = 0;
             if (data.getCustomObjectiveCounts().size() > customIndex) {
                 progress = data.getCustomObjectiveCounts().get(customIndex);
@@ -1610,8 +1611,8 @@ public class BukkitQuester implements Quester {
             final int goal = stage.getCustomObjectiveCounts().get(customIndex);
             final ChatColor color = progress < goal ? ChatColor.GREEN : ChatColor.GRAY;
             String message;
-            if (!ignoreOverrides && customIndex < overrides.size()) {
-                message = formatCurrentObjectiveMessage(color, overrides.get(customIndex), progress, goal);
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 message = formatCurrentObjectiveMessage(color, co.getDisplay(), progress, goal);
             }
@@ -1637,7 +1638,6 @@ public class BukkitQuester implements Quester {
             message = BukkitConfigUtil.parseString(message.trim().replaceAll("\\s{2,}", ""));
             objectives.add(new BukkitObjective(ObjectiveType.CUSTOM, message, progress, goal));
             customIndex++;
-            objIndex++;
         }
         return objectives;
     }
