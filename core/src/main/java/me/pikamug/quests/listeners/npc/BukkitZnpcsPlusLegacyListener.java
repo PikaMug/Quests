@@ -20,9 +20,9 @@ public class BukkitZnpcsPlusLegacyListener extends BukkitNpcListener {
         UUID npcUUID = event.getNpc() != null ? event.getNpc().getUUID() : null;
 
         if (event.isLeftClick()) {
-            onNpcInteract(player, npcUUID, ClickType.LEFT);
+            interactNPC(player, npcUUID, ClickType.LEFT);
         } else if (event.isRightClick()) {
-            onNpcInteract(player, npcUUID, ClickType.RIGHT);
+            interactNPC(player, npcUUID, ClickType.RIGHT);
         }
     }
 }

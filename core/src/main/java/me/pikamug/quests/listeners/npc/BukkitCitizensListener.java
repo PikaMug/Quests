@@ -20,12 +20,12 @@ public class BukkitCitizensListener extends BukkitNpcListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNPCRightClick(final NPCRightClickEvent event) {
-        onNpcInteract(event.getClicker(), event.getNPC() != null ? event.getNPC().getUniqueId() : null, ClickType.RIGHT);
+        interactNPC(event.getClicker(), event.getNPC() != null ? event.getNPC().getUniqueId() : null, ClickType.RIGHT);
     }
 
     @EventHandler
     public void onNPCLeftClick(final NPCLeftClickEvent event) {
-        onNpcInteract(event.getClicker(), event.getNPC() != null ? event.getNPC().getUniqueId() : null, ClickType.LEFT);
+        interactNPC(event.getClicker(), event.getNPC() != null ? event.getNPC().getUniqueId() : null, ClickType.LEFT);
     }
 
     @EventHandler
@@ -39,7 +39,7 @@ public class BukkitCitizensListener extends BukkitNpcListener {
                     = (EntityDamageByEntityEvent) event.getNPC().getEntity().getLastDamageCause();
             final Entity damager = damageEvent.getDamager();
             final UUID npcId = event.getNPC().getUniqueId();
-            onNpcKill(damager, npcId);
+            preKillNPC(damager, npcId);
         }
     }
 }

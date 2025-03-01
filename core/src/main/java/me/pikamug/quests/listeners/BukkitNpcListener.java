@@ -38,7 +38,7 @@ public abstract class BukkitNpcListener implements Listener {
         this.npcDependency = npcDependency;
     }
 
-    protected void onNpcInteract(Player player, UUID npcId, ClickType clickType) {
+    public void interactNPC(Player player, UUID npcId, ClickType clickType) {
         if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
             if (npcId == null || !npcDependency.isNpc(npcId)) {
                 plugin.getLogger().severe("NPC was null while selecting");
@@ -247,7 +247,7 @@ public abstract class BukkitNpcListener implements Listener {
         }
     }
 
-    protected void onNpcKill(Entity damager, UUID npcId) {
+    protected void preKillNPC(Entity damager, UUID npcId) {
         if (plugin.getDependencies().isNpc(damager)) {
             return;
         }

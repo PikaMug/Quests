@@ -23,9 +23,9 @@ public class BukkitZnpcsPlusListener extends BukkitNpcListener {
         // Needed because the NpcInteractEvent is fired async
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             if (event.getClickType().equals(InteractionType.LEFT_CLICK)) {
-                onNpcInteract(player, npcUUID, ClickType.LEFT);
+                interactNPC(player, npcUUID, ClickType.LEFT);
             } else if (event.getClickType().equals(InteractionType.RIGHT_CLICK)) {
-                onNpcInteract(player, npcUUID, ClickType.RIGHT);
+                interactNPC(player, npcUUID, ClickType.RIGHT);
             }
         });
     }
