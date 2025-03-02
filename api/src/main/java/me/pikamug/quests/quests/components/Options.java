@@ -62,4 +62,8 @@ public interface Options {
     boolean canInformOnStart();
 
     void setInformOnStart(final boolean informOnStart);
+
+    boolean canOverrideMaxQuests();
+
+    void setOverrideMaxQuests(final boolean overrideMaxQuests);
 }

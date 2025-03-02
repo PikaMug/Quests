@@ -24,6 +24,7 @@ public class BukkitOptions implements Options {
     private boolean giveGloballyAtLogin = false;
     private boolean allowStackingGlobal = true;
     private boolean informOnStart = true;
+    private boolean overrideMaxQuests = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -127,5 +128,13 @@ public class BukkitOptions implements Options {
 
     public void setInformOnStart(final boolean informOnStart) {
         this.informOnStart = informOnStart;
+    }
+
+    public boolean canOverrideMaxQuests() {
+        return overrideMaxQuests;
+    }
+
+    public void setOverrideMaxQuests(final boolean overrideMaxQuests) {
+        this.overrideMaxQuests = overrideMaxQuests;
     }
 }

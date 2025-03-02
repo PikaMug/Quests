@@ -748,7 +748,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             super(context);
         }
 
-        private final int size = 4;
+        private final int size = 5;
 
         @Override
         public int getSize() {
@@ -766,8 +766,9 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 case 1:
                 case 2:
                 case 3:
-                    return ChatColor.BLUE;
                 case 4:
+                    return ChatColor.BLUE;
+                case 5:
                     return ChatColor.GREEN;
                 default:
                     return null;
@@ -784,6 +785,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 case 3:
                     return ChatColor.YELLOW + "Inform players on quest start";
                 case 4:
+                    return ChatColor.YELLOW + "Override max-quests setting";
+                case 5:
                     return ChatColor.YELLOW + BukkitLang.get("done");
                 default:
                     return null;
@@ -830,6 +833,18 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                                 + BukkitLang.get(String.valueOf(informOpt))) + ChatColor.GRAY + ")";
                     }
                 case 4:
+                    final Boolean overrideOpt = (Boolean) context.getSessionData(Key.OPT_OVERRIDE_MAX_QUESTS);
+                    if (overrideOpt == null) {
+                        final boolean defaultOpt = new BukkitOptions().canInformOnStart();
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + (overrideOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(overrideOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(overrideOpt))) + ChatColor.GRAY + ")";
+                    }
+                case 5:
                     return "";
                 default:
                     return null;
@@ -867,6 +882,10 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     tempPrompt = new QuestOptionsGlobalPrompt(context);
                     return new QuestOptionsTrueFalsePrompt(context);
                 case 4:
+                    tempKey = Key.OPT_OVERRIDE_MAX_QUESTS;
+                    tempPrompt = new QuestOptionsGlobalPrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
+                case 5:
                     tempKey = null;
                     tempPrompt = null;
                     try {

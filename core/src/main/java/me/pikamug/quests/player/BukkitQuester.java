@@ -537,8 +537,16 @@ public class BukkitQuester implements Quester {
                 }
             }
         }
-        if (getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()
-                && plugin.getConfigSettings().getMaxQuests() > 0) {
+        if (quest.getOptions().canGiveGloballyAtLogin() && !quest.getOptions().canOverrideMaxQuests()
+                && getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
+            if (giveReason) {
+                final String msg = BukkitLang.get(getPlayer(), "questMaxAllowed").replace("<number>",
+                        String.valueOf(plugin.getConfigSettings().getMaxQuests()));
+                sendMessage(ChatColor.RED + msg);
+            }
+            return false;
+        } else if (!quest.getOptions().canGiveGloballyAtLogin() && plugin.getConfigSettings().getMaxQuests() > 0
+                && getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
             if (giveReason) {
                 final String msg = BukkitLang.get(getPlayer(), "questMaxAllowed").replace("<number>",
                         String.valueOf(plugin.getConfigSettings().getMaxQuests()));
@@ -551,7 +559,7 @@ public class BukkitQuester implements Quester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(bukkitQuest) && bukkitQuest.getPlanner().getCooldown() < 0) {
+        } else if (bukkitQuest.getPlanner().getCooldown() < 0 && getCompletedQuests().contains(bukkitQuest)) {
             if (giveReason) {
                 final String msg = BukkitLang.get(getPlayer(), "questAlreadyCompleted")
                         .replace("<quest>", bukkitQuest.getName());
@@ -565,7 +573,7 @@ public class BukkitQuester implements Quester {
                 sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
-        } else if (getCompletedQuests().contains(bukkitQuest) && getRemainingCooldown(bukkitQuest) > 0
+        } else if (getRemainingCooldown(bukkitQuest) > 0 && getCompletedQuests().contains(bukkitQuest)
                 && !bukkitQuest.getPlanner().getOverride()) {
             if (giveReason) {
                 final String msg = BukkitLang.get(getPlayer(), "questTooEarly").replace("<quest>",
@@ -4502,7 +4510,7 @@ public class BukkitQuester implements Quester {
                     mq.add(oq);
                 }
             }
-            if (mq.size() > 0 && plugin.getConfigSettings().getConsoleLogging() > 3) {
+            if (!mq.isEmpty() && plugin.getConfigSettings().getConsoleLogging() > 3) {
                 plugin.getLogger().info("Found " + mq.size() + " global members for quest ID "
                         + quest.getId());
             }

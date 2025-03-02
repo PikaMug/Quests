@@ -776,6 +776,9 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
         if (config.contains("quests." + questKey + ".options.inform-on-start")) {
             opts.setInformOnStart(config.getBoolean("quests." + questKey + ".options.inform-on-start"));
         }
+        if (config.contains("quests." + questKey + ".options.override-max-quests")) {
+            opts.setOverrideMaxQuests(config.getBoolean("quests." + questKey + ".options.override-max-quests"));
+        }
     }
 
     @SuppressWarnings({ "unchecked", "unused"})

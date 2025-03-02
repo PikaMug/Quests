@@ -926,6 +926,8 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                 ? context.getSessionData(Key.OPT_ALLOW_STACKING_GLOBAL) : null);
         opts.set("inform-on-start", context.getSessionData(Key.OPT_INFORM_QUEST_START) != null
                 ? context.getSessionData(Key.OPT_INFORM_QUEST_START) : null);
+        opts.set("override-max-quests", context.getSessionData(Key.OPT_OVERRIDE_MAX_QUESTS) != null
+                ? context.getSessionData(Key.OPT_OVERRIDE_MAX_QUESTS) : null);
         if (opts.getKeys(false).isEmpty()) {
             section.set("options", null);
         }

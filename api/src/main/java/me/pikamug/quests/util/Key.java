@@ -154,6 +154,7 @@ public class Key {
     public static final String OPT_GIVE_GLOBALLY_AT_LOGIN = "giveGloballyAtLoginOpt";
     public static final String OPT_ALLOW_STACKING_GLOBAL = "allowStackingGlobalOpt";
     public static final String OPT_INFORM_QUEST_START = "informQuestStartOpt";
+    public static final String OPT_OVERRIDE_MAX_QUESTS = "overrideMaxQuestsOpt";
     // Actions
     public static final String A_OLD_ACTION = "oldAction";
     public static final String A_NAME = "actName";
