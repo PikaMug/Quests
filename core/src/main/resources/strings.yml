@@ -485,10 +485,10 @@ optShareProgressLevel: "Level of progress sharing"
 optShareOnlySameQuest: "Share with the same quest only"
 optShareDistance: "Maximum radial distance"
 optHandleOfflinePlayer: "Include offline players"
-optGiveLoginGlobal: "Give quest globally at login";
-optAllowStackingGlobal: "Allow stacking with global quests";
-optInformStartGlobal: "Inform players on quest start";
-optOverrideSettingGlobal: "Override max-quests setting";
+optGiveLoginGlobal: "Give quest globally at login"
+optAllowStackingGlobal: "Allow stacking with global quests"
+optInformStartGlobal: "Inform players on quest start"
+optOverrideSettingGlobal: "Override max-quests setting"
 rewSetMoney: "Set money reward"
 rewSetQuestPoints: "Set <points> reward"
 rewSetItems: "Set item rewards"
