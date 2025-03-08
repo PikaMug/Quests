@@ -757,7 +757,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return ChatColor.DARK_GREEN + "Server (Global)";
+            return ChatColor.DARK_GREEN + BukkitLang.get("optServer");
         }
 
         @Override
@@ -779,13 +779,13 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         public String getSelectionText(final ConversationContext context, final int number) {
             switch (number) {
                 case 1:
-                    return ChatColor.YELLOW + "Give quest globally at login";
+                    return ChatColor.YELLOW + BukkitLang.get("optGiveLoginGlobal");
                 case 2:
-                    return ChatColor.YELLOW + "Allow stacking with global quests";
+                    return ChatColor.YELLOW + BukkitLang.get("optAllowStackingGlobal");
                 case 3:
-                    return ChatColor.YELLOW + "Inform players on quest start";
+                    return ChatColor.YELLOW + BukkitLang.get("optInformStartGlobal");
                 case 4:
-                    return ChatColor.YELLOW + "Override max-quests setting";
+                    return ChatColor.YELLOW + BukkitLang.get("optOverrideSettingGlobal");
                 case 5:
                     return ChatColor.YELLOW + BukkitLang.get("done");
                 default:
