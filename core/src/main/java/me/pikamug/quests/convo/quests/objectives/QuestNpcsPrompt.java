@@ -473,8 +473,12 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
                 if (context.getSessionData(pref + Key.S_DELIVERY_MESSAGES) != null) {
                     messages = (LinkedList<String>) context.getSessionData(pref + Key.S_DELIVERY_MESSAGES);
                 }
-                if (messages != null && messages.isEmpty()) {
-                    messages.add(ChatColor.RESET + BukkitLang.get("thankYouMore"));
+                if (messages != null && npcs != null) {
+                    for (int i = 0; i < npcs.size(); i++) {
+                        if (i >= messages.size()) {
+                            messages.add(ChatColor.RESET + BukkitLang.get("thankYouMore"));
+                        }
+                    }
                 }
                 context.setSessionData(pref + Key.S_DELIVERY_MESSAGES, messages);
             }
