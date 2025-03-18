@@ -58,6 +58,7 @@ public class BukkitQuestadminReloadCommand extends BukkitQuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
+            cs.sendMessage(ChatColor.GOLD + BukkitLang.get("questsReloading"));
             final ReloadCallback<Boolean> callback = response -> {
                 if (response) {
                     cs.sendMessage(ChatColor.GOLD + BukkitLang.get("questsReloaded"));
