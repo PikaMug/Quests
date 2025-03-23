@@ -686,6 +686,7 @@ questQuitDisabled: "クエストを終了することは無効になっていま
 questsUnknownCommand: "不明なコマンドです。/questsと入力してヘルプを表示します。"
 pageNotExist: "ページ は存在しません。"
 pageFooter: "- ページ <current> / <all>-"
+questsReloading: "再読み込み中です。お待​​ちください..."
 questsReloaded: "クエストデータを再読み込みしました。"
 numQuestsLoaded: "<number> クエストはロードされました。"
 questForceTake: "<player> がクエスト <quest> を強制的に開始しました。"
