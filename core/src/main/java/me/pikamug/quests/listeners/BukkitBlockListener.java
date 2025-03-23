@@ -102,6 +102,11 @@ public class BukkitBlockListener implements Listener {
                                 if (progress < 0) {
                                     break;
                                 }
+                                if (i >= currentStage.getBlocksToPlace().size()) {
+                                    plugin.getLogger().info("Quest " + quest.getId() + " had abnormally large amount " +
+                                            "of blocks to place. You can probably ignore this.");
+                                    break;
+                                }
                                 final BlockItemStack is = currentStage.getBlocksToPlace().get(i);
                                 if (event.getBlock().getType().equals(is.getType()) && is.getAmount() > 0) {
                                     BlockItemStack goal = BlockItemStack.clone(is, 64);
@@ -248,6 +253,11 @@ public class BukkitBlockListener implements Listener {
                             for (int i = 0; i < questProgress.blocksBroken.size(); i++) {
                                 final int progress = questProgress.blocksBroken.get(i) - 1;
                                 if (progress < 0) {
+                                    break;
+                                }
+                                if (i >= currentStage.getBlocksToBreak().size()) {
+                                    plugin.getLogger().info("Quest " + quest.getId() + " had abnormally large amount " +
+                                            "of blocks to break. You can probably ignore this.");
                                     break;
                                 }
                                 final BlockItemStack is = currentStage.getBlocksToBreak().get(i);
