@@ -686,6 +686,7 @@ questQuitDisabled: "การออกจากภารกิจนี้ถู
 questsUnknownCommand: "คำสั่งที่ไม่รู้จัก พิมพ์ /quests เพื่อขอความช่วยเหลือ"
 pageNotExist: "ไม่มีเพจนี้"
 pageFooter: "- หน้า<current>จาก<all> -"
+questsReloading: "กำลังโหลด กรุณารอสักครู่..."
 questsReloaded: "โหลดข้อมูลเควส"
 numQuestsLoaded: "โหลด<number>เควสแล้ว"
 questForceTake: "<player>บังคับให้เริ่มเควส<quest>"
