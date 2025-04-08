@@ -603,7 +603,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
     /**
      * @deprecated Legacy code, do not use. Will be removed in a later version.
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public String serializeItemStackProgress(final LinkedList<ItemStack> list) {
         if (list.isEmpty()) {
             return null;
@@ -617,7 +617,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
     /**
      * @deprecated Legacy code, do not use. Will be removed in a later version.
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public LinkedList<ItemStack> deserializeItemStackProgress(String string, final LinkedList<ItemStack> objective) {
         final LinkedList<ItemStack> list = new LinkedList<>();
         if (string != null) {

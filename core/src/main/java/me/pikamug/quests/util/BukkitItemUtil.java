@@ -296,6 +296,7 @@ public class BukkitItemUtil {
      * @param data formatted string
      * @return ItemStack, or null if invalid format
      */
+    @Deprecated
     public static ItemStack readItemStack(final String data) {
         if (data == null) {
             return null;
@@ -520,6 +521,7 @@ public class BukkitItemUtil {
      * @param is ItemStack
      * @return formatted string, or null if invalid stack
      */
+    @Deprecated
     public static String serializeItemStack(final ItemStack is) {
         final StringBuilder serial;
         if (is == null) {
