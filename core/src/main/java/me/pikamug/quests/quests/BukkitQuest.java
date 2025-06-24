@@ -626,7 +626,13 @@ public class BukkitQuest implements Quest {
                 return false;
             }
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
-            fakeInv.setContents(p.getInventory().getContents().clone());
+            try {
+                fakeInv.setContents(p.getInventory().getContents().clone());
+            } catch (final IllegalArgumentException e) {
+                plugin.getLogger().severe("Most likely outdated server build, see SPIGOT-8070");
+                p.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                return false;
+            }
             for (final ItemStack is : requirements.getItems()) {
                 if (BukkitInventoryUtil.canRemoveItem(fakeInv, is)) {
                     BukkitInventoryUtil.removeItem(fakeInv, is);
