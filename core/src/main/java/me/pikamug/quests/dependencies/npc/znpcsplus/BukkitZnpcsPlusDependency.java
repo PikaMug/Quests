@@ -17,10 +17,9 @@ import java.util.*;
 import java.util.function.BiPredicate;
 
 public class BukkitZnpcsPlusDependency implements BukkitNpcDependency {
-    private final NpcApi api;
+    private static final NpcApi api = NpcApiProvider.get();
 
     public BukkitZnpcsPlusDependency(final BukkitQuestsPlugin plugin) {
-        this.api = NpcApiProvider.get();
         plugin.getServer().getPluginManager().registerEvents(new BukkitZnpcsPlusListener(plugin, this), plugin);
     }
 
