@@ -16,11 +16,11 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.UUID;
 
 public class BukkitCondition implements Condition {
@@ -238,7 +238,7 @@ public class BukkitCondition implements Condition {
                 }
                 if (!plugin.getDependencies().getVaultPermission().has(player, p)) {
                     failed = true;
-                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
                         plugin.getLogger().info("DEBUG: Condition permission mismatch for " + player.getName() + ": "
                                 + p);
                     }
@@ -282,21 +282,26 @@ public class BukkitCondition implements Condition {
                 failed = true;
             }
         } else if (tickStartWhileStayingWithin > -1 && tickEndWhileStayingWithin > -1) {
-            long t = player.getWorld().getTime();
+            final long t = player.getWorld().getTime();
             if (t < tickStartWhileStayingWithin || t > tickEndWhileStayingWithin) {
                 failed = true;
             }
         } else if (!biomesWhileStayingWithin.isEmpty()) {
             boolean atLeastOne = false;
             for (final String b : biomesWhileStayingWithin) {
-                if (BukkitMiscUtil.getProperBiome(b) == null) {
+                final Biome properBiome = BukkitMiscUtil.getProperBiome(b);
+                if (properBiome == null) {
                     plugin.getLogger().warning("Invalid entry for condition biome checks: " + b);
-                    return false;
+                    continue;
                 }
-                if (player.getWorld().getBiome(player.getLocation().getBlockX(), player.getLocation().getBlockZ())
-                        .name().equalsIgnoreCase(Objects.requireNonNull(BukkitMiscUtil.getProperBiome(b)).name())) {
+                final String playerBiome = player.getWorld().getBiome(player.getLocation().getBlockX(),
+                                player.getLocation().getBlockZ()).name();
+                if (playerBiome.equalsIgnoreCase(properBiome.name())) {
                     atLeastOne = true;
                     break;
+                }
+                if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                    plugin.getLogger().info("DEBUG: Failed biome match " + playerBiome + " to " + properBiome.name());
                 }
             }
             if (!atLeastOne) {
@@ -307,7 +312,7 @@ public class BukkitCondition implements Condition {
             for (final String r : regionsWhileStayingWithin) {
                 if (!quester.isInRegion(r)) {
                     failed = true;
-                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
                         plugin.getLogger().info("DEBUG: Condition region mismatch for " + player.getName() + ": " + r);
                     }
                     break;
@@ -327,7 +332,7 @@ public class BukkitCondition implements Condition {
                 }
                 if (!placeholdersCheckValue.get(index).equals(PlaceholderAPI.setPlaceholders(player, i))) {
                     failed = true;
-                    if (plugin.getConfigSettings().getConsoleLogging() > 2) {
+                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
                         plugin.getLogger().info("DEBUG: Condition placeholder mismatch for " + player.getName() + ": "
                                 + i);
                     }
