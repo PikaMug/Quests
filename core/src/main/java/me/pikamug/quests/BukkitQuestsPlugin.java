@@ -411,8 +411,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         final Collection<Quester> questers = new ConcurrentSkipListSet<>();
         for (final Quester q : getOfflineQuesters()) {
             if (q.getOfflinePlayer().isOnline()) {
-                // Workaround for issues with the compass on fast join
-                q.findCompassTarget();
                 questers.add(q);
             }
         }
