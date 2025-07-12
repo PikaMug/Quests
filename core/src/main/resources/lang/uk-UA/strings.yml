@@ -487,7 +487,7 @@ optShareOnlySameQuest: "Поділитись лише з однаковим кв
 optShareDistance: "Максимальна радіальна відстань"
 optHandleOfflinePlayer: "Включаючи гравців не в мережі"
 optGiveLoginGlobal: "Дайте квест глобально під час входу"
-optAllowStackingGlobal: "Дозволити стекувати з глобальними квестами"
+optAllowStackingGlobal: "Дозволити з`єднання з глобальними квестами"
 optInformStartGlobal: "Повідомити гравців про початок квесту"
 optOverrideSettingGlobal: "Перевизначити налаштування «максимальних квестів»"
 rewSetMoney: "Встановити грошову винагороду"
