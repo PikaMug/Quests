@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-    	<revision>5.2.4</revision>
+    	<revision>5.2.5</revision>
         <updatePomFile>true</updatePomFile>
         <flattenMode>resolveCiFriendliesOnly</flattenMode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
