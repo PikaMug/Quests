@@ -10,7 +10,6 @@
 
 package me.pikamug.quests;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitActionFactory;
@@ -141,9 +140,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         conditionFactory = new BukkitConditionFactory(this);
         depends = new BukkitDependencies(this);
         trigger = new BukkitDenizenTrigger(this);
-        if (!NBT.preloadApi()) {
-            getLogger().warning("NBT-API wasn't initialized properly");
-        }
 
         // 3 - Load main config
         configSettings.init();
