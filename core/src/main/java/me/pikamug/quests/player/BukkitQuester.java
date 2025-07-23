@@ -1092,7 +1092,12 @@ public class BukkitQuester implements Quester {
         }
         if (player.isOnline()) {
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
-            fakeInv.setContents(getPlayer().getInventory().getContents().clone());
+            try {
+                fakeInv.setContents(getPlayer().getInventory().getContents().clone());
+            } catch (final IllegalArgumentException e) {
+                plugin.getLogger().severe("Most likely outdated server build, see SPIGOT-8070");
+                getPlayer().sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+            }
 
             int num = 0;
             for (final ItemStack is : requirements.getItems()) {
