@@ -166,7 +166,7 @@
         <dependency>
             <groupId>me.pikamug.localelib</groupId>
             <artifactId>LocaleLib</artifactId>
-            <version>4.1.2</version>
+            <version>4.1.3</version>
         </dependency>
         <dependency>
             <groupId>xyz.upperlevel.spigot.book</groupId>
