@@ -104,9 +104,8 @@ public class BukkitQuestsCommandHandler {
             if (cmd.getName().equals("choice")) {
                 continue;
             }
-            cs.sendMessage(ChatColor.YELLOW + "/quests " + cmd.getDescription().replace("<command>", ChatColor.GOLD
-                    + (plugin.getConfigSettings().canTranslateSubCommands() ? cmd.getNameI18N() : cmd.getName())
-                    + ChatColor.YELLOW));
+            cs.sendMessage(ChatColor.YELLOW + "/quests " + cmd.getDescription().replace("<command>",
+                    plugin.getConfigSettings().canTranslateSubCommands() ? cmd.getNameI18N() : cmd.getName()));
         }
         if (cs instanceof Player) {
             cs.sendMessage(ChatColor.DARK_AQUA + "/quest " + ChatColor.YELLOW + BukkitLang.get(cs, "COMMAND_QUEST_HELP"));

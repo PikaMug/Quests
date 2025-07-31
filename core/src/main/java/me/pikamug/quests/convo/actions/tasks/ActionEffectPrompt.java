@@ -16,10 +16,11 @@ import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -29,11 +30,14 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     
@@ -146,8 +150,10 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             return new ActionEffectSoundListPrompt(context);
         case 2:
             if (context.getForWhom() instanceof Player) {
-                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
-                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
+                        = plugin.getActionFactory().getSelectedExplosionLocations();
+                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionEffectExplosionPrompt(context);
             } else {
@@ -270,8 +276,10 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     return new ActionEffectSoundListPrompt(context);
                 } else {
                     if (context.getForWhom() instanceof Player) {
-                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                        final ConcurrentHashMap<UUID, Block> selectedEffectLocations
+                                = plugin.getActionFactory().getSelectedEffectLocations();
+                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                                Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                         return new ActionEffectSoundLocationPrompt(context);
                     } else {
@@ -334,10 +342,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final Effect[] worldArr = Effect.values();
-            for (int i = 0; i < worldArr.length; i++) {
-                effects.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(worldArr[i].name()));
-                if (i < (worldArr.length - 1)) {
+            final List<Effect> effArr = new LinkedList<>(Arrays.asList(Effect.values()));
+            effArr.sort(Comparator.comparing(Effect::name));
+            for (int i = 0; i < effArr.size(); i++) {
+                effects.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(effArr.get(i).name()));
+                if (i < (effArr.size() - 1)) {
                     effects.append(ChatColor.GRAY).append(", ");
                 }
             }
@@ -364,7 +373,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     }
                     context.setSessionData(Key.A_EFFECTS, effects);
                     if (context.getForWhom() instanceof Player) {
-                        final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
+                        final ConcurrentHashMap<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
                                 .getSelectedEffectLocations();
                         selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
@@ -377,8 +386,8 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 }
             } else {
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
-                            .getSelectedEffectLocations();
+                    final ConcurrentHashMap<UUID, Block> selectedEffectLocations
+                            = plugin.getActionFactory().getSelectedEffectLocations();
                     selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 }
@@ -441,7 +450,8 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 }
                 return new ActionEffectSoundListPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
+                final ConcurrentHashMap<UUID, Block> selectedEffectLocations
+                        = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 return new ActionEffectSoundListPrompt(context);
@@ -484,7 +494,8 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
-                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
+                        = plugin.getActionFactory().getSelectedExplosionLocations();
                 final Block block = selectedExplosionLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
@@ -507,12 +518,14 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(Key.A_EXPLOSIONS, null);
-                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
+                        = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedExplosionLocations = plugin.getActionFactory().getSelectedExplosionLocations();
+                final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
+                        = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 return new ActionMainPrompt(context);

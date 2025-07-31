@@ -12,6 +12,7 @@ package me.pikamug.quests.quests.components;
 
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,13 +45,21 @@ public class BukkitObjective implements Objective {
             this.progress = ((ItemStack) progressObj).getAmount();
         } else if (progressObj instanceof BukkitCountableMob) {
             this.progress = ((BukkitCountableMob) progressObj).getCount();
+        } else if (progressObj instanceof Integer) {
+            this.progress = (int) progress;
+        } else if (progressObj instanceof BlockItemStack) {
+            this.progress = ((BlockItemStack) progressObj).getAmount();
         } else {
             this.progress = 0;
         }
         if (goalObj instanceof ItemStack) {
             this.goal = ((ItemStack) goalObj).getAmount();
-        }  else if (goalObj instanceof BukkitCountableMob) {
+        } else if (goalObj instanceof BukkitCountableMob) {
             this.goal = ((BukkitCountableMob) goalObj).getCount();
+        } else if (goalObj instanceof Integer) {
+            this.goal = (int) goalObj;
+        } else if (goalObj instanceof BlockItemStack) {
+            this.goal = ((BlockItemStack) goalObj).getAmount();
         } else {
             this.goal = 0;
         }
@@ -85,7 +94,14 @@ public class BukkitObjective implements Objective {
     public @NotNull Object getGoalObject() {
         return goalObj;
     }
-    
+
+    public @Nullable BlockItemStack getGoalAsBlockItem() {
+        return goalObj instanceof BlockItemStack ? (BlockItemStack) goalObj : null;
+    }
+
+    /**
+     * @deprecated Paper 1.21 builds do not allow ItemStack with 0 amount
+     */
     public @Nullable ItemStack getProgressAsItem() {
         return progressObj instanceof ItemStack ? (ItemStack) progressObj : null;
     }

@@ -31,10 +31,13 @@ public class BukkitStageTimer implements Runnable {
         if (quester == null) {
             return;
         }
-        if (quester.getQuestDataOrDefault(quest) == null) {
+        if (quester.getQuestProgressOrDefault(quest) == null) {
             return;
         }
         if (quester.getCurrentStage(quest) == null) {
+            return;
+        }
+        if (!quester.testComplete(quest)) {
             return;
         }
         if (quester.getCurrentStage(quest).getFinishAction() != null) {
@@ -45,10 +48,10 @@ public class BukkitStageTimer implements Runnable {
                 plugin.getDependencies().runDenizenScript(quester.getCurrentStage(quest).getScript(), quester, null);
             }
             quest.completeQuest(quester);
-        } else if (quester.testComplete(quest)) {
+        } else {
             final int stageNum = quester.getCurrentQuests().get(quest) + 1;
-            quester.getQuestDataOrDefault(quest).setDelayStartTime(0);
-            quester.getQuestDataOrDefault(quest).setDelayTimeLeft(-1);
+            quester.getQuestProgressOrDefault(quest).setDelayStartTime(0);
+            quester.getQuestProgressOrDefault(quest).setDelayTimeLeft(-1);
             try {
                 quest.setStage(quester, stageNum);
             } catch (final IndexOutOfBoundsException e) {

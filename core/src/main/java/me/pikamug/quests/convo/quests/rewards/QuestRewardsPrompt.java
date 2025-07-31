@@ -490,8 +490,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             
             String text = getQueryText(context);
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                text = text.replace("<money>", ChatColor.AQUA
-                        + plugin.getDependencies().getVaultEconomy().currencyNamePlural() + ChatColor.YELLOW);
+                text = text.replace("<money>", plugin.getDependencies().getVaultEconomy().currencyNamePlural());
             }
             return ChatColor.YELLOW + text;
         }
@@ -1239,13 +1238,17 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             final QuestsEditorPostOpenStringPromptEvent event
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder skillList = new StringBuilder(ChatColor.DARK_GREEN + getTitle(context) + "\n");
+
+            final StringBuilder skillList = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final SkillType[] skills = SkillType.values();
-            for (final SkillType skill : skills) {
-                skillList.append(ChatColor.GREEN).append(skill.getName()).append("\n");
+            for (int i = 0; i < skills.length; i++) {
+                skillList.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(skills[i].getName()));
+                if (i < (skills.length - 1)) {
+                    skillList.append(ChatColor.GRAY).append(", ");
+                }
             }
-            return skillList.toString() + ChatColor.YELLOW + getQueryText(context);
+            skillList.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            return skillList.toString();
         }
 
         @Override
@@ -1266,7 +1269,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         }
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestMcMMOSkillsPrompt(context);
                     }
@@ -1315,7 +1318,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         amounts.add(Integer.parseInt(s));
                     } catch (final NumberFormatException e) {
                         String text = BukkitLang.get("reqNotANumber");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestMcMMOAmountsPrompt(context);
                     }
@@ -1495,7 +1498,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     = new QuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder text = new StringBuilder(ChatColor.DARK_PURPLE + getTitle(context) + "\n");
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
             final List<String> list = new LinkedList<>();
             for (final HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
                 list.add(hc.getName());
@@ -1504,12 +1507,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 text.append(ChatColor.GRAY).append("(").append(BukkitLang.get("none")).append(")\n");
             } else {
                 Collections.sort(list);
-                for (final String s : list) {
-                    text.append(ChatColor.LIGHT_PURPLE).append(s).append(", ");
+                for (int i = 0; i < list.size(); i++) {
+                    text.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(list.get(i)));
+                    if (i < (list.size() - 1)) {
+                        text.append(ChatColor.GRAY).append(", ");
+                    }
                 }
-                text = new StringBuilder(text.substring(0, text.length() - 2) + "\n");
             }
-            text.append(ChatColor.YELLOW).append(getQueryText(context));
+            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
             return text.toString();
         }
 
@@ -1525,7 +1530,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(s);
                     if (hc == null) {
                         String text = BukkitLang.get("rewHeroesInvalidClass");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesClassesPrompt(context);
                     } else {
@@ -1579,7 +1584,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         amounts.add(d);
                     } catch (final NumberFormatException nfe) {
                         String text = BukkitLang.get("reqNotANumber");
-                        text = text.replace("<input>", ChatColor.LIGHT_PURPLE + s + ChatColor.RED);
+                        text = text.replace("<input>", s);
                         context.getForWhom().sendRawMessage(ChatColor.RED + text);
                         return new QuestHeroesExperiencePrompt(context);
                     }
@@ -1953,10 +1958,10 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     = (Map<String, String>) context.getSessionData(Key.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (temp != null && descriptions != null) {
                 if (descriptions.get(temp) != null) {
-                    text += ChatColor.GOLD + descriptions.get(temp) + "\n";
+                    text += descriptions.get(temp) + "\n";
                 }
                 String lang = BukkitLang.get("stageEditorCustomDataPrompt");
-                lang = lang.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
+                lang = lang.replace("<data>", temp);
                 text += ChatColor.YELLOW + lang;
             }
             return text;

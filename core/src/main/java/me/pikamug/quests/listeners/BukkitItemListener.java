@@ -12,8 +12,12 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.util.BukkitInventoryUtil;
+import me.pikamug.quests.util.BukkitLang;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,6 +26,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -59,9 +64,17 @@ public class BukkitItemListener implements Listener {
                     if (!quester.meetsCondition(quest, true)) {
                         continue;
                     }
-                    
                     if (quester.getCurrentQuests().containsKey(quest)
                             && quester.getCurrentStage(quest).containsObjective(type)) {
+                        if (plugin.getConfigSettings().canPreventExploit()) {
+                            if (craftedItem.getMaxStackSize() == 0 || (BukkitInventoryUtil.getEmptySlots(player)
+                                    < craftedItem.getAmount() / craftedItem.getMaxStackSize())) {
+                                BukkitActionBarProvider.sendActionBar(player, ChatColor.RED + BukkitLang.get(player,
+                                        "inventoryFull"));
+                                event.setCancelled(true);
+                                return;
+                            }
+                        }
                         quester.craftItem(quest, craftedItem);
                     }
                     
@@ -162,8 +175,30 @@ public class BukkitItemListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onInventoryDrag(final InventoryDragEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (!plugin.getConfigSettings().canPreventExploit()) {
+            return;
+        }
+        if (event.getWhoClicked() instanceof Player) {
+            if (event.getInventory().getType() == InventoryType.BREWING) {
+                final Quester quester = plugin.getQuester(event.getWhoClicked().getUniqueId());
+                for (final Quest quest : plugin.getLoadedQuests()) {
+                    if (quester.getCurrentQuests().containsKey(quest)
+                            && quester.getCurrentStage(quest).containsObjective(ObjectiveType.BREW_ITEM)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     public boolean isAllowedBrewingAction(final InventoryClickEvent event) {
-        if (event.getCursor() != null && isWaterBottle(event.getCursor())) {
+        if (!plugin.getConfigSettings().canPreventExploit()) {
             return true;
         }
         final int slot = event.getRawSlot();
@@ -173,7 +208,11 @@ public class BukkitItemListener implements Listener {
             event.setCancelled(true);
             return false;
         }
-        // Prevent placing into Brewing Stand
+        // Allow placing Water Bottle into Brewing Stand
+        if (event.getCursor() != null && isWaterBottle(event.getCursor())) {
+            return true;
+        }
+        // Prevent placing other items into Brewing Stand
         if (slot == 0 || slot == 1 || slot == 2) {
             if (action.equals(InventoryAction.PLACE_ONE) || action.equals(InventoryAction.PLACE_SOME)
                     || action.equals(InventoryAction.PLACE_ALL)) {

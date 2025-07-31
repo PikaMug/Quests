@@ -37,10 +37,37 @@ public class BukkitUpdateChecker {
                     if (scanner.hasNext()) {
                         consumer.accept(scanner.next());
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     this.plugin.getLogger().info("Update check failed: " + e.getMessage());
                 }
             });
         }
+    }
+
+    /**
+     * Compares two valid semantic versions, i.e. 5.0.3
+     *
+     * @param currentVersion Current resource version
+     * @param compareVersion Resource version to compare against
+     * @return true if compared version is higher
+     */
+    public static boolean compareVersions(final String currentVersion, final String compareVersion) {
+        if (currentVersion == null || compareVersion == null) {
+            return false;
+        }
+        final String[] currentParts = currentVersion.split("\\.");
+        final String[] compareParts = compareVersion.split("\\.");
+        final int length = Math.max(currentParts.length, compareParts.length);
+        if (length > 3) {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            final int currentPart = Integer.parseInt(currentParts[i]);
+            final int comparePart = Integer.parseInt(compareParts[i]);
+            if (comparePart > currentPart) {
+                return true;
+            }
+        }
+        return false;
     }
 }

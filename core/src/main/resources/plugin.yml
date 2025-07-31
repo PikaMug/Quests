@@ -5,7 +5,8 @@ api-version: 1.13
 description: An extensive questing system.
 website: https://github.com/PikaMug/Quests
 author: PikaMug
-softdepend: [AstralBooks, Citizens, Denizen, DungeonsXL, GPS, Heroes, mcMMO, Parties, PlaceholderAPI, Unite, Vault, WorldGuard, ZNPCsPlus]
+loadbefore: [MMOCore]
+softdepend: [AstralBooks, Citizens, Denizen, GPS, Heroes, mcMMO, Parties, PlaceholderAPI, Unite, Vault, WorldGuard, ZNPCsPlus]
 permissions:
   quests.*:
     description: Access ALL Quests functionality
@@ -75,7 +76,6 @@ permissions:
       quests.admin.points: true
       quests.admin.takepoints: true
       quests.admin.givepoints: true
-      quests.admin.pointsall: true
       quests.admin.finish: true
       quests.admin.nextstage: true
       quests.admin.setstage: true
@@ -104,9 +104,6 @@ permissions:
     default: op
   quests.admin.givepoints:
     description: Add to a player's Quest Points
-    default: op
-  quests.admin.pointsall:
-    description: Set ALL players' Quest Points
     default: op
   quests.admin.finish:
     description: Force a player to complete a quest
@@ -154,26 +151,6 @@ permissions:
     default: op
   quests.editor.delete:
     description: Ability to delete existing quests
-    default: op
-  quests.events.*:
-    description: LEGACY - Access all Actions Editor functionality
-    default: op
-    children:
-      quests.events.editor: true
-      quests.events.create: true
-      quests.events.edit: true
-      quests.events.delete: true
-  quests.events.editor:
-    description: LEGACY - Ability to open Actions Editor
-    default: op
-  quests.events.create:
-    description: LEGACY - Ability to create new actions
-    default: op
-  quests.events.edit:
-    description: LEGACY - Ability to edit existing actions
-    default: op
-  quests.events.delete:
-    description: LEGACY - Ability to delete existing actions
     default: op
   quests.actions.*:
     description: Access all Actions Editor functionality

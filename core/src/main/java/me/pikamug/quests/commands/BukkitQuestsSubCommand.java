@@ -127,7 +127,7 @@ public abstract class BukkitQuestsSubCommand {
             s.append(args[i]).append(delimiter);
         }
         s = new StringBuilder(s.substring(0, s.length()));
-        return s.toString().trim().equals("") ? null : s.toString().trim();
+        return s.toString().trim().isEmpty() ? null : s.toString().trim();
     }
 
     public static Map<String, Integer> sort(final Map<String, Integer> unsortedMap) {

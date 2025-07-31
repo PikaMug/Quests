@@ -34,9 +34,9 @@
             <version>24.0.1</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.28</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.protobuf</groupId>
@@ -101,7 +101,7 @@
                         <includes>
                             <include>me.*</include>
                             <include>com.zaxxer:HikariCP</include>
-                            <include>mysql</include>
+                            <include>com.mysql</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -109,6 +109,8 @@
                             <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/*.MF</exclude>
+                                <excluce>INFO_SRC</excluce>
+                                <excluce>INFO_BIN</excluce>
                             </excludes>
                         </filter>
                     </filters>

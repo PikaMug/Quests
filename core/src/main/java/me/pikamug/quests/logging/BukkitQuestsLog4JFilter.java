@@ -45,9 +45,7 @@ public class BukkitQuestsLog4JFilter extends AbstractFilter {
         if (message.contains("quests choice")) {
             return Result.DENY;
         }
-        // Paper outputs errors when dependencies for module events are missing
-        return (message.contains("Plugin Quests") && message.contains("failed to register events"))
-                ? Result.DENY : Result.NEUTRAL;
+        return Result.NEUTRAL;
     }
 
     @Override

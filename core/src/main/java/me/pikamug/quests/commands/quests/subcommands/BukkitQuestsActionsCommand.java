@@ -57,8 +57,7 @@ public class BukkitQuestsActionsCommand extends BukkitQuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if (cs.hasPermission("quests.events.*") || cs.hasPermission("quests.actions.*")
-                || cs.hasPermission("quests.actions.editor") || cs.hasPermission("quests.events.editor")
+        if (cs.hasPermission("quests.actions.*") || cs.hasPermission("quests.actions.editor")
                 || cs.hasPermission("quests.mode.trial")) {
             final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {

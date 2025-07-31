@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.util;
 
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -23,7 +24,6 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,8 +52,8 @@ public class BukkitItemUtil {
      * -4 if stack display name/lore is unequal<br>
      * -5 if stack enchantments are unequal<br>
      * -6 if stack stored enchants are unequal<br>
-     * -7 if stack item flags are unequal
-     * -8 if stack Written Book data is unequal
+     * -7 if stack item flags are unequal<br>
+     * -8 if stack Written Book data is unequal<br>
      * -9 if stack Potion type is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount) {
@@ -76,9 +76,9 @@ public class BukkitItemUtil {
      * -4 if stack display name/lore is unequal<br>
      * -5 if stack enchantments are unequal<br>
      * -6 if stack stored enchants are unequal<br>
-     * -7 if stack item flags are unequal
-     * -8 if stack Written Book data is unequal
-     * -9 if stack Potion type is unequal
+     * -7 if stack item flags are unequal<br>
+     * -8 if stack Written Book data is unequal<br>
+     * -9 if stack Potion or Tipped Arrow type are unequal<br>
      * -10 if stack Tropical Fish variant is unequal
      */
     public static int compareItems(final ItemStack one, final ItemStack two, final boolean ignoreAmount, 
@@ -149,14 +149,17 @@ public class BukkitItemUtil {
                             || one.getType().equals(Material.SPLASH_POTION)) {
                         final PotionMeta pMeta1 = (PotionMeta) one.getItemMeta();
                         final PotionMeta pMeta2 = (PotionMeta) two.getItemMeta();
-                        if (!pMeta1.getBasePotionData().getType().equals(pMeta2.getBasePotionData().getType())) {
-                            return -9;
-                        }
-                        if (pMeta1.getBasePotionData().isExtended() != pMeta2.getBasePotionData().isExtended()) {
-                            return -9;
-                        }
-                        if (pMeta1.getBasePotionData().isUpgraded() != pMeta2.getBasePotionData().isUpgraded()) {
-                            return -9;
+                        // Base potion data can return null on newer versions (likely 1.20.6+)
+                        if (pMeta1.getBasePotionData() != null && pMeta2.getBasePotionData() != null) {
+                            if (!pMeta1.getBasePotionData().getType().equals(pMeta2.getBasePotionData().getType())) {
+                                return -9;
+                            }
+                            if (pMeta1.getBasePotionData().isExtended() != pMeta2.getBasePotionData().isExtended()) {
+                                return -9;
+                            }
+                            if (pMeta1.getBasePotionData().isUpgraded() != pMeta2.getBasePotionData().isUpgraded()) {
+                                return -9;
+                            }
                         }
                     }
                 }
@@ -178,9 +181,15 @@ public class BukkitItemUtil {
         if (Material.getMaterial("LINGERING_POTION") == null) {
             if (one.getType().equals(Material.POTION)) {
                 // Bukkit version is below 1.9
-                final Potion pot1 = new Potion(one.getDurability());
-                final Potion pot2 = new Potion(two.getDurability());
-                if (!pot1.getType().equals(pot2.getType())) {
+                if (one.getDurability() != two.getDurability()) {
+                    return -9;
+                }
+            }
+        } else {
+            if (one.getType().name().equals("TIPPED_ARROW") && two.getType().name().equals("TIPPED_ARROW")) {
+                final String levelA = BukkitItemUtil.getPrettyPotionLevel(one.getItemMeta());
+                final String levelB = BukkitItemUtil.getPrettyPotionLevel(two.getItemMeta());
+                if (!levelA.equals(levelB)) {
                     return -9;
                 }
             }
@@ -218,11 +227,18 @@ public class BukkitItemUtil {
             return null;
         }
         try {
-            final Material mat = Material.getMaterial(material.toUpperCase());
+            Material mat = Material.getMaterial(material.toUpperCase());
             if (mat == null) {
                 return null;
             }
-            return new ItemStack(mat, amount, durability);
+            ItemStack item;
+            if (mat.isBlock() && Material.getMaterial("CRAFTER") != null) {
+                // Paper 1.21+ does not allow ItemStack from unobtainable blocks (i.e. CARROTS block)
+                item = new ItemStack(mat.createBlockData().getPlacementMaterial(), amount);
+            } else {
+                item = new ItemStack(mat, amount, durability);
+            }
+            return item;
         } catch (final Exception e) {
             try {
                 Bukkit.getLogger().warning(material + " x " + amount
@@ -233,6 +249,34 @@ public class BukkitItemUtil {
                     return null;
                 }
                 return new ItemStack(mat, amount, durability);
+            } catch (final Exception e2) {
+                Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
+                e2.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    public static BlockItemStack processBlockItemStack(final String material, final int amount, final short durability) {
+        if (material == null) {
+            return null;
+        }
+        try {
+            Material mat = Material.getMaterial(material.toUpperCase());
+            if (mat == null) {
+                return null;
+            }
+            return BlockItemStack.of(mat, amount, durability);
+        } catch (final Exception e) {
+            try {
+                Bukkit.getLogger().warning(material + " x " + amount
+                        + " is invalid! You may need to update your quests.yml or actions.yml "
+                        + "in accordance with https://bit.ly/2BkBNNN");
+                final Material mat = Material.matchMaterial(material, true);
+                if (mat == null) {
+                    return null;
+                }
+                return BlockItemStack.of(mat, amount, durability);
             } catch (final Exception e2) {
                 Bukkit.getLogger().severe("Unable to use LEGACY_" + material + " as item name");
                 e2.printStackTrace();
@@ -252,6 +296,7 @@ public class BukkitItemUtil {
      * @param data formatted string
      * @return ItemStack, or null if invalid format
      */
+    @Deprecated
     public static ItemStack readItemStack(final String data) {
         if (data == null) {
             return null;
@@ -273,7 +318,7 @@ public class BukkitItemUtil {
         final EnchantmentStorageMeta esMeta;
         for (final String targ : args) {
             final String arg = targ.replace("minecraft|", "minecraft:");
-            if (arg.equals("")) {
+            if (arg.isEmpty()) {
                 continue;
             }
             if (arg.startsWith("name-")) {
@@ -429,7 +474,7 @@ public class BukkitItemUtil {
                 meta.setLore(lore);
             }
             for (final String flag : flags) {
-                if (flag != null && !flag.equals("")) {
+                if (flag != null && !flag.isEmpty()) {
                     try {
                         meta.addItemFlags(ItemFlag.valueOf(flag));
                     } catch (final NullPointerException npe) {
@@ -476,6 +521,7 @@ public class BukkitItemUtil {
      * @param is ItemStack
      * @return formatted string, or null if invalid stack
      */
+    @Deprecated
     public static String serializeItemStack(final ItemStack is) {
         final StringBuilder serial;
         if (is == null) {
@@ -608,6 +654,19 @@ public class BukkitItemUtil {
     }
 
     /**
+     * Returns a formatted display name. If none exists, returns item name.
+     *
+     * @param itemStack BlockItemStack to check
+     * @return true display or item name, if stack is not null
+     */
+    public static String getName(final BlockItemStack itemStack) {
+        if (itemStack == null) {
+            return null;
+        }
+        return ChatColor.AQUA + getPrettyItemName(itemStack.getType().name());
+    }
+
+    /**
      * Ensures that an ItemStack is a valid, non-AIR material
      * 
      * @param is ItemStack to check
@@ -668,11 +727,11 @@ public class BukkitItemUtil {
     /**
      * Gets player-friendly name from enchantment. 'FIRE_ASPECT' becomes 'Fire Aspect'
      * 
-     * @param e Enchantment to get pretty localized name of
+     * @param enchant Enchantment to get pretty localized name of
      * @return pretty localized name
      */
-    public static String getPrettyEnchantmentName(final Enchantment e) {
-        final String baseString = e.getName();
+    public static String getPrettyEnchantmentName(final Enchantment enchant) {
+        final String baseString = enchant.getName();
         final String[] substrings = baseString.split("_");
         String prettyString = "";
         int size = 1;
@@ -698,73 +757,8 @@ public class BukkitItemUtil {
             if (e.getName().replace("_", "").equalsIgnoreCase(properName.replace("_", ""))) {
                 return e;
             }
-            if (getEnchantmentFromProperLegacyName(properName) != null) {
-                return e;
-            }
         }
         return null;
-    }
-
-    /**
-     * Gets Enchantment from name as it appears in lang file
-     * 
-     * @deprecated Use {@link #getEnchantmentFromProperName(String)}
-     * @param enchant Name to match lang value to
-     * @return Enchantment or null if invalid
-     */
-    @Deprecated
-    public static Enchantment getEnchantmentFromProperLegacyName(final String enchant) {
-        if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_DAMAGE"))) {
-            return Enchantment.ARROW_DAMAGE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_FIRE"))) {
-            return Enchantment.ARROW_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_INFINITE"))) {
-            return Enchantment.ARROW_INFINITE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_ARROW_KNOCKBACK"))) {
-            return Enchantment.ARROW_KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ALL"))) {
-            return Enchantment.DAMAGE_ALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_ARTHROPODS"))) {
-            return Enchantment.DAMAGE_ARTHROPODS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DAMAGE_UNDEAD"))) {
-            return Enchantment.DAMAGE_UNDEAD;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DIG_SPEED"))) {
-            return Enchantment.DIG_SPEED;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_DURABILITY"))) {
-            return Enchantment.DURABILITY;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_FIRE_ASPECT"))) {
-            return Enchantment.FIRE_ASPECT;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_KNOCKBACK"))) {
-            return Enchantment.KNOCKBACK;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_BLOCKS"))) {
-            return Enchantment.LOOT_BONUS_BLOCKS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LOOT_BONUS_MOBS"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LUCK"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_LURE"))) {
-            return Enchantment.LOOT_BONUS_MOBS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_OXYGEN"))) {
-            return Enchantment.OXYGEN;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_ENVIRONMENTAL"))) {
-            return Enchantment.PROTECTION_ENVIRONMENTAL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_EXPLOSIONS"))) {
-            return Enchantment.PROTECTION_EXPLOSIONS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FALL"))) {
-            return Enchantment.PROTECTION_FALL;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_FIRE"))) {
-            return Enchantment.PROTECTION_FIRE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_PROTECTION_PROJECTILE"))) {
-            return Enchantment.PROTECTION_PROJECTILE;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_SILK_TOUCH"))) {
-            return Enchantment.SILK_TOUCH;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_THORNS"))) {
-            return Enchantment.THORNS;
-        } else if (enchant.equalsIgnoreCase(BukkitLang.get("ENCHANTMENT_WATER_WORKER"))) {
-            return Enchantment.WATER_WORKER;
-        } else {
-            return null;
-        }
     }
 
     public static Enchantment getEnchantmentFromPrettyName(String enchant) {
@@ -774,5 +768,29 @@ public class BukkitItemUtil {
             }
         }
         return getEnchantmentFromProperName(enchant);
+    }
+
+    /**
+     * Gets player-friendly level from 1.9+ Potion meta. Upgrade returns numeral, extended returns '+'
+     *
+     * @param itemMeta Potion meta to get pretty localized level of
+     * @return pretty localized level or empty
+     */
+    public static String getPrettyPotionLevel(final ItemMeta itemMeta) {
+        String prettyString = "";
+        if (Material.getMaterial("LINGERING_POTION") == null) {
+            return prettyString;
+        }
+        if (!(itemMeta instanceof PotionMeta)) {
+            return prettyString;
+        }
+        final PotionMeta meta = (PotionMeta) itemMeta;
+        if (meta.getBasePotionData().isUpgraded()) {
+            final int level = meta.getBasePotionData().getType().name().contains("SLOWNESS") ? 4 : 2;
+            prettyString = ChatColor.GREEN + RomanNumeral.getNumeral(level) + ChatColor.RESET;
+        } else if (meta.getBasePotionData().isExtended()) {
+            prettyString = ChatColor.GREEN + "+" + ChatColor.RESET;
+        }
+        return prettyString;
     }
 }

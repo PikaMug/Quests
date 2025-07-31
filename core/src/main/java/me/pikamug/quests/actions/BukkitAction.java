@@ -359,9 +359,15 @@ public class BukkitAction implements Action {
             }
         }
         if (!commands.isEmpty()) {
-            for (final String s : commands) {
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), 
-                        s.replace("<player>", quester.getPlayer().getName()));
+            for (String s : commands) {
+                if (s.contains("<player>")) {
+                    if (player.isOnline()) {
+                        s = s.replace("<player>", player.getName());
+                    } else {
+                        continue;
+                    }
+                }
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
             }
         }
         if (!potionEffects.isEmpty()) {
@@ -401,8 +407,7 @@ public class BukkitAction implements Action {
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + BukkitLang.get(player, "timerStart")
-                    .replace("<time>", ChatColor.RED + BukkitMiscUtil.getTime(timer * 1000L) + ChatColor.GREEN)
-                    .replace("<quest>", ChatColor.GOLD + quest.getName() + ChatColor.GREEN));
+                    .replace("<time>", BukkitMiscUtil.getTime(timer * 1000L)).replace("<quest>", quest.getName()));
             final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
             for (final int seconds : toNotify) {
                 if (timer > seconds) {

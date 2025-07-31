@@ -12,48 +12,26 @@ package me.pikamug.quests.quests;
 
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
+import com.gmail.nossr50.config.Config;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.herocraftonline.heroes.characters.Hero;
-import io.github.znetworkw.znpcservers.npc.NPC;
-import lol.pyr.znpcsplus.api.npc.Npc;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.dependencies.BukkitDependencies;
+import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPostChangeStageEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPostCompleteQuestEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPostFailQuestEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreChangeStageEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreCompleteQuestEvent;
-import me.pikamug.quests.events.quester.BukkitQuesterPreFailQuestEvent;
+import me.pikamug.quests.events.quester.*;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitOptions;
-import me.pikamug.quests.quests.components.BukkitPlanner;
-import me.pikamug.quests.quests.components.BukkitRequirements;
-import me.pikamug.quests.quests.components.BukkitRewards;
-import me.pikamug.quests.quests.components.Options;
-import me.pikamug.quests.quests.components.Planner;
-import me.pikamug.quests.quests.components.Requirements;
-import me.pikamug.quests.quests.components.Rewards;
-import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.BukkitConfigUtil;
-import me.pikamug.quests.util.BukkitInventoryUtil;
-import me.pikamug.quests.util.BukkitItemUtil;
-import me.pikamug.quests.util.BukkitMiscUtil;
-import me.pikamug.quests.util.BukkitLang;
-import me.pikamug.quests.util.RomanNumeral;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import me.pikamug.quests.quests.components.*;
+import me.pikamug.quests.util.*;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -65,13 +43,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
@@ -263,7 +236,7 @@ public class BukkitQuest implements Quest {
     /**
      * Force player to proceed to the next ordered stage
      * 
-     * @param quester Player to force
+     * @param quester Player to force progression
      * @param allowSharedProgress Whether to distribute progress to fellow questers
      */
     public void nextStage(final Quester quester, final boolean allowSharedProgress) {
@@ -279,46 +252,53 @@ public class BukkitQuest implements Quest {
                         this, quester.getPlayer()));
             }
         }
-        if (quester.getPlayer().hasPermission("quests.compass")) {
-            quester.resetCompass();
-            quester.findCompassTarget();
-        }
         if (currentStage.getDelay() < 0) {
-            if (currentStage.getFinishAction() != null) {
-                currentStage.getFinishAction().fire(quester, this);
-            }
-            if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
-                if (currentStage.getScript() != null) {
-                    plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
-                }
-                completeQuest(quester);
-            } else {
-                setStage(quester, quester.getCurrentQuests().get(this) + 1);
-            }
-            if (quester.getQuestDataOrDefault(this) != null) {
-                quester.getQuestDataOrDefault(this).setDelayStartTime(0);
-                quester.getQuestDataOrDefault(this).setDelayTimeLeft(-1);
-            }
-            
-            // Multiplayer
-            if (allowSharedProgress && options.getShareProgressLevel() == 3) {
-                final List<Quester> mq = quester.getMultiplayerQuesters(this);
-                for (final Quester qq : mq) {
-                    if (currentStage.equals(qq.getCurrentStage(this))) {
-                        nextStage(qq, true);
-                    }
-                }
-            }
+            doNextStage(quester, allowSharedProgress);
         } else {
-            quester.startStageTimer(this);
+            // Here we avoid BukkitStageTimer as the stage objectives are incomplete
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                doNextStage(quester, allowSharedProgress);
+            }, (long) (currentStage.getDelay() * 0.02));
         }
         quester.updateJournal();
+    }
+
+    private void doNextStage(final Quester quester, final boolean allowSharedProgress) {
+        final Stage currentStage = quester.getCurrentStage(this);
+        if (currentStage == null) {
+            return;
+        }
+        if (currentStage.getFinishAction() != null) {
+            currentStage.getFinishAction().fire(quester, this);
+        }
+        if (quester.getCurrentQuests().get(this) == (orderedStages.size() - 1)) {
+            if (currentStage.getScript() != null) {
+                plugin.getDenizenTrigger().runDenizenScript(currentStage.getScript(), quester, null);
+            }
+            completeQuest(quester);
+        } else {
+            setStage(quester, quester.getCurrentQuests().get(this) + 1);
+        }
+        if (quester.getQuestProgressOrDefault(this) != null) {
+            quester.getQuestProgressOrDefault(this).setDelayStartTime(0);
+            quester.getQuestProgressOrDefault(this).setDelayTimeLeft(-1);
+        }
+
+        // Multiplayer
+        if (allowSharedProgress && options.getShareProgressLevel() == 3) {
+            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            for (final Quester qq : mq) {
+                if (currentStage.equals(qq.getCurrentStage(this))) {
+                    nextStage(qq, true);
+                }
+            }
+        }
     }
 
     /**
      * Force player to proceed to the specified stage
      * 
-     * @param quester Player to force
+     * @param quester Player to force progression
      * @param stage Stage number to specify
      * @throws IndexOutOfBoundsException if stage does not exist
      */
@@ -355,7 +335,7 @@ public class BukkitQuest implements Quest {
         if (player.isOnline()) {
             final Player p = quester.getPlayer();
             final String title = BukkitLang.get(p, "objectives").replace("<quest>", name);
-            quester.sendMessage(ChatColor.GOLD + title);
+            BukkitLang.send(p, ChatColor.GOLD + title);
             quester.showCurrentObjectives(this, quester, false);
             if (quester.getCurrentStage(this) == null) {
                 quester.sendMessage(ChatColor.RED + "itemCreateCriticalError");
@@ -411,22 +391,12 @@ public class BukkitQuest implements Quest {
                 targetLocation = (Location) stage.getLocationsToReach().getFirst();
             } else if (stage.getItemDeliveryTargets() != null && stage.getItemDeliveryTargets().size() > 0) {
                 final UUID uuid = stage.getItemDeliveryTargets().getFirst();
-                if (plugin.getDependencies().getCitizens() != null
-                        && plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid) != null) {
-                    targetLocation = plugin.getDependencies().getCitizens().getNPCRegistry().getByUniqueId(uuid)
-                            .getStoredLocation();
-                }
-                if (plugin.getDependencies().getZnpcsPlus() != null
-                        && plugin.getDependencies().getZnpcsPlusUuids().contains(uuid)) {
-                    final Optional<NPC> opt = NPC.all().stream().filter(npc1 -> npc1.getUUID().equals(uuid)).findAny();
-                    if (opt.isPresent()) {
-                        targetLocation = opt.get().getLocation();
+                for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                    final Location npcLocation = npcDependency.getLocation(uuid);
+                    if (npcLocation != null) {
+                        targetLocation = npcLocation;
+                        break;
                     }
-                }
-                if (plugin.getDependencies().getZnpcsPlusApi() != null
-                        && plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) != null) {
-                    Npc znpc = plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid).getNpc();
-                    targetLocation = znpc.getLocation().toBukkitLocation(znpc.getWorld());
                 }
             } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
                 if (quester.getPlayer() == null) {
@@ -561,9 +531,9 @@ public class BukkitQuest implements Quest {
             final Player player = quester.getPlayer();
             if (quester.getCompletedQuests().contains(this)) {
                 meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName()
-                        + " " + ChatColor.GREEN + BukkitLang.get(player, "redoCompleted"), getNpcStart()));
+                        + " " + ChatColor.GREEN + BukkitLang.get(player, "redoCompleted"), getNpcStart(), plugin));
             } else {
-                meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName(), getNpcStart()));
+                meta.setDisplayName(ChatColor.DARK_PURPLE + BukkitConfigUtil.parseString(getName(), getNpcStart(), plugin));
             }
             if (!meta.hasLore()) {
                 final LinkedList<String> lines;
@@ -656,7 +626,13 @@ public class BukkitQuest implements Quest {
                 return false;
             }
             final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
-            fakeInv.setContents(p.getInventory().getContents().clone());
+            try {
+                fakeInv.setContents(p.getInventory().getContents().clone());
+            } catch (final IllegalArgumentException e) {
+                plugin.getLogger().severe("Most likely outdated server build, see SPIGOT-8070");
+                p.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                return false;
+            }
             for (final ItemStack is : requirements.getItems()) {
                 if (BukkitInventoryUtil.canRemoveItem(fakeInv, is)) {
                     BukkitInventoryUtil.removeItem(fakeInv, is);
@@ -828,7 +804,14 @@ public class BukkitQuest implements Quest {
         }
         for (final String s : rewards.getMcmmoSkills()) {
             final int levels = rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s));
-            UserManager.getOfflinePlayer(player).getProfile().addLevels(plugin.getDependencies().getMcMMOSkill(s), levels);
+            final SkillType type = plugin.getDependencies().getMcMMOSkill(s);
+            final int current = UserManager.getOfflinePlayer(player).getProfile().getSkillLevel(type);
+            final int max = Config.getInstance().getLevelCap(type);
+            if (current + levels > max) {
+                UserManager.getOfflinePlayer(player).getProfile().modifySkill(type, max);
+            } else {
+                UserManager.getOfflinePlayer(player).getProfile().addLevels(type, levels);
+            }
             if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + s + " x " + levels);
             }
@@ -875,20 +858,31 @@ public class BukkitQuest implements Quest {
             }
             issuedReward = true;
         }
-        if (!rewards.getCustomRewards().isEmpty()) {
-            issuedReward = true;
-            if (plugin.getConfigSettings().getConsoleLogging() > 2) {
-                for (final String s : rewards.getCustomRewards().keySet()) {
+        for (final String s : rewards.getCustomRewards().keySet()) {
+            CustomReward found = null;
+            for (final CustomReward cr : plugin.getCustomRewards()) {
+                if (cr.getName().equalsIgnoreCase(s)) {
+                    found = cr;
+                    break;
+                }
+            }
+            if (found != null) {
+                found.giveReward(player.getUniqueId(), rewards.getCustomRewards().get(s));
+                issuedReward = true;
+                if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                     plugin.getLogger().info(player.getUniqueId() + " was custom rewarded " + s);
                 }
+            } else {
+                plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
+                        + name + "\", but the Custom Reward \"" + s
+                        + "\" could not be found. Does it still exist?");
             }
         }
         
         // Inform player
         if (player.isOnline()) {
             final Player p = (Player)player;
-            BukkitLang.send(p, ChatColor.GOLD + BukkitLang.get(p, "questCompleteTitle").replace("<quest>",
-                    ChatColor.YELLOW + name + ChatColor.GOLD));
+            BukkitLang.send(p, ChatColor.GOLD + BukkitLang.get(p, "questCompleteTitle").replace("<quest>", name));
             if (plugin.getConfigSettings().canShowQuestTitles()) {
                 final String title = ChatColor.GOLD + BukkitLang.get(p, "quest") + " " + BukkitLang.get(p, "complete");
                 final String subtitle = ChatColor.YELLOW + name;
@@ -907,6 +901,10 @@ public class BukkitQuest implements Quest {
                     quester.sendMessage("- " + message);
                 }
             } else {
+                if (rewards.getExp() > 0) {
+                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getExp() + " "
+                            + BukkitLang.get(p, "experience"));
+                }
                 if (rewards.getQuestPoints() > 0) {
                     quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
                             + BukkitLang.get(p, "questPoints"));
@@ -985,7 +983,7 @@ public class BukkitQuest implements Quest {
                     for (final String s : rewards.getCommands()) {
                         if (!rewards.getCommandsOverrideDisplay().isEmpty()
                                 && rewards.getCommandsOverrideDisplay().size() > index) {
-                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().equals("")) {
+                            if (!rewards.getCommandsOverrideDisplay().get(index).trim().isEmpty()) {
                                 quester.sendMessage("- " + ChatColor.DARK_GREEN
                                         + rewards.getCommandsOverrideDisplay().get(index));
                             }
@@ -1046,11 +1044,6 @@ public class BukkitQuest implements Quest {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
                         }
-                        found.giveReward(p.getUniqueId(), rewards.getCustomRewards().get(s));
-                    } else {
-                        plugin.getLogger().warning("Quester \"" + player.getName() + "\" completed the Quest \""
-                                + name + "\", but the Custom Reward \"" + s
-                                + "\" could not be found. Does it still exist?");
                     }
                 }
             }
@@ -1072,7 +1065,7 @@ public class BukkitQuest implements Quest {
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
             final List<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
-                if (qq.getQuestDataOrDefault(this) != null) {
+                if (qq.getQuestProgressOrDefault(this) != null) {
                     completeQuest(qq, false);
                 }
             }
@@ -1106,7 +1099,7 @@ public class BukkitQuest implements Quest {
                 quester.getTimers().remove(entry.getKey());
             }
         }
-        final Player player = quester.getPlayer();
+        final OfflinePlayer player = quester.getOfflinePlayer();
         if (!ignoreFailAction) {
             final Stage stage = quester.getCurrentStage(this);
             if (stage != null && stage.getFailAction() != null) {
@@ -1114,11 +1107,12 @@ public class BukkitQuest implements Quest {
             }
         }
         final String[] messages = {
-                ChatColor.RED + BukkitLang.get(player, "questFailed").replace("<quest>", name)
+                ChatColor.RED + BukkitLang.get(player.isOnline() ? (Player)player : null, "questFailed")
+                        .replace("<quest>", name)
         };
         quester.quitQuest(this, messages);
         if (player.isOnline()) {
-            player.updateInventory();
+            ((Player)player).updateInventory();
         }
         final BukkitQuesterPostFailQuestEvent postEvent = new BukkitQuesterPostFailQuestEvent((BukkitQuester) quester, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);

@@ -44,22 +44,28 @@ public class BukkitQuestCommandHandler {
                     final Player player = (Player) cs;
                     final Quester quester = plugin.getQuester(player.getUniqueId());
                     if (!quester.getCurrentQuests().isEmpty()) {
+                        final int[] ticks = {1};
                         for (final Quest q : quester.getCurrentQuests().keySet()) {
                             final Stage stage = quester.getCurrentStage(q);
                             q.updateCompass(quester, stage);
-                            if (plugin.getQuester(player.getUniqueId()).getQuestDataOrDefault(q).getDelayStartTime() == 0
-                                    || plugin.getQuester(player.getUniqueId()).getStageTime(q) < 0L) {
+                            if (quester.getQuestProgressOrDefault(q).getDelayStartTime() == 0
+                                    || quester.getStageTime(q) < 0L) {
                                 final String msg = BukkitLang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
-                                BukkitLang.send(player, ChatColor.GOLD + msg);
-                                quester.showCurrentObjectives(q, quester, false);
+                                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                                    BukkitLang.send(player, ChatColor.GOLD + msg);
+                                    quester.showCurrentObjectives(q, quester, false);
+                                    ticks[0]++;
+                                }, ticks[0]);
                             } else {
-                                final long time = plugin.getQuester(player.getUniqueId()).getStageTime(q);
-                                String msg = ChatColor.YELLOW + "(" + BukkitLang.get(player, "delay") + ") " + ChatColor.RED
-                                        +  BukkitLang.get(player, "plnTooEarly");
-                                msg = msg.replace("<quest>", q.getName());
-                                msg = msg.replace("<time>", BukkitMiscUtil.getTime(time));
-                                BukkitLang.send(player, msg);
+                                final long time = quester.getStageTime(q);
+                                final String msg = ChatColor.YELLOW + "(" + BukkitLang.get(player, "delay") + ") "
+                                        + ChatColor.RED + BukkitLang.get(player, "plnTooEarly")
+                                        .replace("<quest>", q.getName().replace("<time>", BukkitMiscUtil.getTime(time)));
+                                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                                    BukkitLang.send(player, msg);
+                                    ticks[0]++;
+                                }, ticks[0]);
                             }
                         }
                     } else {
@@ -210,20 +216,18 @@ public class BukkitQuestCommandHandler {
                         for (final String questId : reqs.getBlockQuestIds()) {
                             if (completed.containsKey(questId)) {
                                 String msg = BukkitLang.get("haveCompleted");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + completed.get(questId) + ChatColor.RED);
+                                msg = msg.replace("<quest>", completed.get(questId));
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + msg);
                             } else {
                                 String msg = BukkitLang.get("cannotComplete");
-                                msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                        + plugin.getQuestById(questId).getName() + ChatColor.GREEN);
+                                msg = msg.replace("<quest>", plugin.getQuestById(questId).getName());
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + msg);
                             }
                         }
                     }
                 }
             } else {
-                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound").replace("<input>", name.toString()));
             }
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));

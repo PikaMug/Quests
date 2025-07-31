@@ -19,13 +19,15 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * For use when creating a new ConversationContext
  */
-public class BukkitFakeConversable implements Conversable {
+public abstract class BukkitFakeConversable implements Conversable {
     public String lastSentMessage;
     public Conversation begunConversation;
     public Conversation abandonedConverstion;
@@ -115,5 +117,7 @@ public class BukkitFakeConversable implements Conversable {
 
     public void setOp(final boolean value) {
     }
+
+    public abstract void sendRawMessage(@Nullable UUID uuid, @NotNull String s);
 }
 

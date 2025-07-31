@@ -58,12 +58,12 @@ public class BukkitQuestadminReloadCommand extends BukkitQuestsSubCommand {
     @Override
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
+            cs.sendMessage(ChatColor.GOLD + BukkitLang.get("questsReloading"));
             final ReloadCallback<Boolean> callback = response -> {
                 if (response) {
                     cs.sendMessage(ChatColor.GOLD + BukkitLang.get("questsReloaded"));
                     String msg = BukkitLang.get("numQuestsLoaded");
-                    msg = msg.replace("<number>", ChatColor.DARK_PURPLE + String.valueOf(plugin.getLoadedQuests().size())
-                            + ChatColor.GOLD);
+                    msg = msg.replace("<number>", String.valueOf(plugin.getLoadedQuests().size()));
                     cs.sendMessage(ChatColor.GOLD + msg);
                 } else {
                     cs.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));

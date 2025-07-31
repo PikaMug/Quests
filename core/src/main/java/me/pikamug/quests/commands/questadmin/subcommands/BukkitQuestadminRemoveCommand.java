@@ -67,7 +67,7 @@ public class BukkitQuestadminRemoveCommand extends BukkitQuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if (args.length == 1) {
+        if (args.length < 3) {
             // Shows command usage
             return;
         }
@@ -77,23 +77,28 @@ public class BukkitQuestadminRemoveCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
             }
-            final Quest toRemove = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
+            }
+            final String questName = concatArgArray(args, 2, args.length - 1, ' ');
+            final Quest toRemove = plugin.getQuest(questName);
             if (toRemove == null) {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                        .replace("<input>", questName != null ? questName : ""));
                 return;
             }
             final Quester quester = plugin.getQuester(target.getUniqueId());
             String msg = BukkitLang.get("questRemoved");
             if (target.getName() != null) {
-                msg = msg.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
+                msg = msg.replace("<player>", target.getName());
             } else {
-                msg = msg.replace("<player>", ChatColor.GREEN + args[1] + ChatColor.GOLD);
+                msg = msg.replace("<player>", args[1]);
             }
-            msg = msg.replace("<quest>", ChatColor.DARK_PURPLE + toRemove.getName() + ChatColor.GOLD);
+            msg = msg.replace("<quest>", toRemove.getName());
             cs.sendMessage(ChatColor.GOLD + msg);
             cs.sendMessage(ChatColor.DARK_PURPLE + " UUID: " + ChatColor.DARK_AQUA + quester.getUUID().toString());
             quester.hardRemove(toRemove);

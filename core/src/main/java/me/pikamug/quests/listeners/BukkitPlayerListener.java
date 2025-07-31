@@ -10,19 +10,17 @@
 
 package me.pikamug.quests.listeners;
 
-import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
-import me.pikamug.quests.quests.BukkitQuest;
-import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -66,10 +64,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitPlayerListener implements Listener {
@@ -129,7 +127,8 @@ public class BukkitPlayerListener implements Listener {
                 for (final Quest quest : plugin.getLoadedQuests()) {
                     final BukkitQuest bukkitQuest = (BukkitQuest)quest;
                     if (bukkitQuest.getGUIDisplay() != null) {
-                        if (BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false) == 0) {
+                        final int i = BukkitItemUtil.compareItems(clicked, bukkitQuest.prepareDisplay(quester), false);
+                        if (i == 0 || i == -7) {
                             if (quester.canAcceptOffer(quest, true)) {
                                 try { 
                                     quester.takeQuest(quest, false);
@@ -238,7 +237,8 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedBlockStarts();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getQuestFactory().getSelectedBlockStarts();
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedBlockStarts(temp);
                             if (loc.getWorld() != null) {
@@ -255,12 +255,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getActionFactory().getSelectedExplosionLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getActionFactory().getSelectedExplosionLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedExplosionLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -272,12 +273,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getActionFactory().getSelectedEffectLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getActionFactory().getSelectedEffectLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedEffectLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -289,12 +291,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getActionFactory().getSelectedMobLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getActionFactory().getSelectedMobLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedMobLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -306,12 +309,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getActionFactory().getSelectedLightningLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getActionFactory().getSelectedLightningLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedLightningLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -323,12 +327,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getActionFactory().getSelectedTeleportLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getActionFactory().getSelectedTeleportLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getActionFactory().setSelectedTeleportLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -340,12 +345,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getQuestFactory().getSelectedKillLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedKillLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -357,12 +363,13 @@ public class BukkitPlayerListener implements Listener {
                                 return;
                             }
                             final Location loc = block.getLocation();
-                            final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                            final ConcurrentHashMap<UUID, Block> temp
+                                    = plugin.getQuestFactory().getSelectedReachLocations();
                             temp.put(player.getUniqueId(), block);
                             plugin.getQuestFactory().setSelectedReachLocations(temp);
                             if (loc.getWorld() != null) {
-                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation") + " "
-                                        + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
+                                BukkitLang.send(player, ChatColor.GOLD + BukkitLang.get(player, "questSelectedLocation")
+                                        + " " + ChatColor.AQUA + loc.getWorld().getName() + ": " + loc.getX() + ", "
                                         + loc.getY() + ", " + loc.getZ() + ChatColor.GOLD + " (" + ChatColor.GREEN
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
@@ -381,27 +388,25 @@ public class BukkitPlayerListener implements Listener {
                                         } else {
                                             if (quester.getCompletedQuests().contains(bukkitQuest)) {
                                                 if (bukkitQuest.getPlanner().getCooldown() > -1
-                                                        && (quester.getRemainingCooldown(bukkitQuest)) > 0) {
+                                                        && quester.getRemainingCooldown(bukkitQuest) > 0) {
                                                     String early = BukkitLang.get(player, "questTooEarly");
-                                                    early = early.replace("<quest>", ChatColor.AQUA + bukkitQuest.getName()
-                                                            + ChatColor.YELLOW);
-                                                    early = early.replace("<time>", ChatColor.DARK_PURPLE 
-                                                            + BukkitMiscUtil.getTime(quester.getRemainingCooldown(bukkitQuest))
-                                                            + ChatColor.YELLOW);
+                                                    early = early.replace("<quest>", bukkitQuest.getName());
+                                                    early = early.replace("<time>", BukkitMiscUtil.getTime(
+                                                            quester.getRemainingCooldown(bukkitQuest)));
                                                     BukkitLang.send(player, ChatColor.YELLOW + early);
                                                     continue;
                                                 } else if (quester.getCompletedQuests().contains(bukkitQuest)
                                                         && bukkitQuest.getPlanner().getCooldown() < 0) {
                                                     String completed = BukkitLang.get(player, "questAlreadyCompleted");
-                                                    completed = completed.replace("<quest>", ChatColor.AQUA 
-                                                            + bukkitQuest.getName() + ChatColor.YELLOW);
+                                                    completed = completed.replace("<quest>", bukkitQuest.getName());
                                                     BukkitLang.send(player, ChatColor.YELLOW + completed);
                                                     continue;
                                                 }
                                             }
                                             for (final Quest currentQuest : quester.getCurrentQuests().keySet()) {
                                                 if (currentQuest.getId().equals(bukkitQuest.getId())) {
-                                                    BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "questAlreadyOn"));
+                                                    BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player,
+                                                            "questAlreadyOn"));
                                                     return;
                                                 }
                                             }
@@ -416,7 +421,7 @@ public class BukkitPlayerListener implements Listener {
                                                 for (final String msg : s.split("<br>")) {
                                                     BukkitLang.send(player, msg);
                                                 }
-                                                new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
+                                                plugin.getConversationFactory().buildConversation(player).begin();
                                             }
                                             break;
                                         }
@@ -554,7 +559,7 @@ public class BukkitPlayerListener implements Listener {
                         if (!event.getMessage().startsWith("/quest")) {
                             final Player player = event.getPlayer();
                             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "optCommandsDenied")
-                                    .replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.RED));
+                                    .replace("<quest>", quest.getName()));
                             event.setCancelled(true);
                             plugin.getLogger().info("Player " + player.getName() + " tried to use command "
                                     + event.getMessage() + " but was denied because they are currently on quest "
@@ -692,7 +697,7 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player) {
-            if (plugin.getDependencies().getCitizens() != null && CitizensAPI.getNPCRegistry().isNPC(target)) {
+            if (plugin.getDependencies().isNpc(target)) {
                 return;
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
@@ -786,10 +791,8 @@ public class BukkitPlayerListener implements Listener {
             return;
         }
         if (damager instanceof Player && target instanceof Player) {
-            if (plugin.getDependencies().getCitizens() != null) {
-                if (CitizensAPI.getNPCRegistry().isNPC(damager) && CitizensAPI.getNPCRegistry().isNPC(target)) {
-                    return;
-                }
+            if (plugin.getDependencies().isNpc(damager) && plugin.getDependencies().isNpc(target)) {
+                return;
             }
             final Quester quester = plugin.getQuester(damager.getUniqueId());
             final ObjectiveType type = ObjectiveType.KILL_PLAYER;
@@ -867,7 +870,7 @@ public class BukkitPlayerListener implements Listener {
         final Player player = event.getPlayer();
         if (player.hasPermission("quests.admin.update")) {
             new BukkitUpdateChecker(plugin, 3711).getVersion(version -> {
-                if (!plugin.getDescription().getVersion().split("-")[0].equalsIgnoreCase(version)) {
+                if (BukkitUpdateChecker.compareVersions(plugin.getDescription().getVersion().split("-")[0], version)) {
                     event.getPlayer().sendMessage(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Quests" + ChatColor.GRAY
                             + "] " + ChatColor.GREEN + BukkitLang.get(player, "updateTo").replace("<version>",
                             version).replace("<url>", ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE
@@ -904,12 +907,42 @@ public class BukkitPlayerListener implements Listener {
                         }
                     }
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                        boolean alreadyHasAtLeastOneGlobalQuest = false;
+                        for (final Quest cq : quester.getCurrentQuests().keySet()) {
+                            if (cq.getOptions().canGiveGloballyAtLogin()) {
+                                alreadyHasAtLeastOneGlobalQuest = true;
+                                break;
+                            }
+                        }
+                        for (final Quest quest : plugin.getLoadedQuests()) {
+                            if (quest.getOptions().canGiveGloballyAtLogin()) {
+                                if (quester.getCurrentQuests().containsKey(quest)) {
+                                    continue;
+                                }
+                                if (quester.getCompletedQuests().contains(quest) && quest.getPlanner().getCooldown() < 0) {
+                                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                                        plugin.getLogger().info(quester.getUUID() + " ignored global quest ID "
+                                                + quest.getId() + " because it was already completed");
+                                    }
+                                    continue;
+                                }
+                                if (!quest.getOptions().canAllowStackingGlobal() && alreadyHasAtLeastOneGlobalQuest) {
+                                    if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                                        plugin.getLogger().info(quester.getUUID() + " denied global quest ID "
+                                                + quest.getId() + " because it was not stackable");
+                                    }
+                                    continue;
+                                }
+                                if (quester.canAcceptOffer(quest, quest.getOptions().canInformOnStart())) {
+                                    alreadyHasAtLeastOneGlobalQuest = true;
+                                    quester.takeQuest(quest, false);
+                                }
+                            }
+                        }
                         if (quester.hasJournal()) {
                             quester.updateJournal();
                         }
-                        if (quester.canUseCompass()) {
-                            quester.findCompassTarget();
-                        }
+                        quester.findCompassTarget();
                     }, 40L);
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -945,12 +978,13 @@ public class BukkitPlayerListener implements Listener {
             }
             
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
-                final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
             final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
             temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
+            temp.add(quester);
             plugin.setOfflineQuesters(temp);
         }
     }
@@ -963,10 +997,8 @@ public class BukkitPlayerListener implements Listener {
         if (event.getFrom().getBlock().equals(event.getTo().getBlock())) {
             return;
         }
-        if (plugin.getDependencies().getCitizens() != null) {
-            if (CitizensAPI.getNPCRegistry().isNPC(event.getPlayer())) {
-                return;
-            }
+        if (plugin.getDependencies().isNpc(event.getPlayer())) {
+            return;
         }
         playerMove(event.getPlayer().getUniqueId(), event.getTo());
     }

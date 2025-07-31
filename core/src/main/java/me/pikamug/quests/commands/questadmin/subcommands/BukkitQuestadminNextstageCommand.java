@@ -67,7 +67,7 @@ public class BukkitQuestadminNextstageCommand extends BukkitQuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if (args.length == 1) {
+        if (args.length < 3) {
             // Shows command usage
             return;
         }
@@ -77,31 +77,36 @@ public class BukkitQuestadminNextstageCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
             }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
+            }
             final Quester quester = plugin.getQuester(target.getUniqueId());
-            if (quester.getCurrentQuests().isEmpty() && target.getName() != null) {
+            if (quester.getCurrentQuests().isEmpty()) {
                 String msg = BukkitLang.get("noCurrentQuest");
                 msg = msg.replace("<player>", target.getName());
                 cs.sendMessage(ChatColor.YELLOW + msg);
             } else {
-                final Quest quest = plugin.getQuest(concatArgArray(args, 2, args.length - 1, ' '));
+                final String questName = concatArgArray(args, 2, args.length - 1, ' ');
+                final Quest quest = plugin.getQuest(questName);
                 if (quest == null) {
-                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound"));
+                    cs.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                            .replace("<input>", questName != null ? questName : ""));
                     return;
                 }
                 String msg1 = BukkitLang.get("questForceNextStage");
-                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<player>", target.getName());
+                msg1 = msg1.replace("<quest>", quest.getName());
                 cs.sendMessage(ChatColor.GOLD + msg1);
                 if (target.isOnline()) {
                     final Player p = (Player)target;
                     String msg2 = BukkitLang.get(p, "questForcedNextStage");
-                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                    msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + quest.getName() + ChatColor.GOLD);
-                    p.sendMessage(ChatColor.GREEN + msg2);
+                    msg2 = msg2.replace("<player>", cs.getName());
+                    msg2 = msg2.replace("<quest>", quest.getName());
+                    BukkitLang.send(p, ChatColor.GREEN + msg2);
                 }
                 quest.nextStage(quester, false);
                 quester.saveData();

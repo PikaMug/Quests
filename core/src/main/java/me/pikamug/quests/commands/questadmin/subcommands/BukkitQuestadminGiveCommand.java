@@ -66,7 +66,7 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
 
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if (args.length == 1) {
+        if (args.length < 3) {
             // Shows command usage
             return;
         }
@@ -76,9 +76,12 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
                 try {
                     target = Bukkit.getOfflinePlayer(UUID.fromString(args[1]));
                 } catch (final IllegalArgumentException e) {
-                    cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
-                    return;
+                    // Do nothing
                 }
+            }
+            if (target == null || target.getName() == null) {
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("playerNotFound"));
+                return;
             }
             final Quest questToGive;
             StringBuilder name = new StringBuilder();
@@ -96,31 +99,29 @@ public class BukkitQuestadminGiveCommand extends BukkitQuestsSubCommand {
             }
             questToGive = plugin.getQuest(name.toString());
             if (questToGive == null) {
-                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound"));
+                cs.sendMessage(ChatColor.YELLOW + BukkitLang.get("questNotFound").replace("<input>", name.toString()));
             } else {
                 final Quester quester = plugin.getQuester(target.getUniqueId());
                 for (final Quest q : quester.getCurrentQuests().keySet()) {
                     if (q.getName().equalsIgnoreCase(questToGive.getName())) {
                         String msg = BukkitLang.get("questsPlayerHasQuestAlready");
-                        msg = msg.replace("<player>", ChatColor.ITALIC + "" + ChatColor.GREEN + target.getName()
-                                + ChatColor.RESET + ChatColor.YELLOW);
-                        msg = msg.replace("<quest>", ChatColor.ITALIC + "" + ChatColor.DARK_PURPLE
-                                + questToGive.getName() + ChatColor.RESET + ChatColor.YELLOW);
+                        msg = msg.replace("<player>", target.getName());
+                        msg = msg.replace("<quest>", questToGive.getName());
                         cs.sendMessage(ChatColor.YELLOW + msg);
                         return;
                     }
                 }
                 quester.hardQuit(questToGive);
                 String msg1 = BukkitLang.get("questForceTake");
-                msg1 = msg1.replace("<player>", ChatColor.GREEN + target.getName() + ChatColor.GOLD);
-                msg1 = msg1.replace("<quest>", ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.GOLD);
+                msg1 = msg1.replace("<player>", target.getName());
+                msg1 = msg1.replace("<quest>", questToGive.getName());
                 cs.sendMessage(ChatColor.GOLD + msg1);
                 if (target.isOnline()) {
                     final Player p = (Player)target;
                     String msg2 = BukkitLang.get(p, "questForcedTake");
-                    msg2 = msg2.replace("<player>", ChatColor.GREEN + cs.getName() + ChatColor.GOLD);
-                    msg2 = msg2.replace("<quest>", ChatColor.DARK_PURPLE + questToGive.getName() + ChatColor.GOLD);
-                    p.sendMessage(ChatColor.GREEN + msg2);
+                    msg2 = msg2.replace("<player>", cs.getName());
+                    msg2 = msg2.replace("<quest>", questToGive.getName());
+                    BukkitLang.send(p, ChatColor.GREEN + msg2);
                 }
                 quester.takeQuest(questToGive, true);
             }

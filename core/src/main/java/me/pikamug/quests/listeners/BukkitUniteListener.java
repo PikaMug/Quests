@@ -28,7 +28,7 @@ public class BukkitUniteListener implements Listener {
         if (event.getCreator() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getCreator());
             if (p != null) {
-                if (BukkitLang.get("questPartiesCreate").length() > 0) {
+                if (!BukkitLang.get("questPartiesCreate").isEmpty()) {
                     BukkitLang.send(p, ChatColor.YELLOW + BukkitLang.get("questPartiesCreate"));
                 }
             }
@@ -40,8 +40,8 @@ public class BukkitUniteListener implements Listener {
         if (event.getDisbander() != null) {
             final Player p = Bukkit.getServer().getPlayer(event.getDisbander());
             if (p != null) {
-                if (BukkitLang.get("questDungeonsDisband").length() > 0) {
-                    BukkitLang.send(p, ChatColor.RED + BukkitLang.get("questDungeonsDisband"));
+                if (!BukkitLang.get("questPartiesDelete").isEmpty()) {
+                    BukkitLang.send(p, ChatColor.RED + BukkitLang.get("questPartiesDelete"));
                 }
             }
         }
@@ -50,15 +50,16 @@ public class BukkitUniteListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(final PartyJoinEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPlayer());
-        if (p != null && BukkitLang.get("questPartiesLeave").length() > 0) {
+        if (p != null && !BukkitLang.get("questPartiesLeave").isEmpty()) {
             BukkitLang.send(p, ChatColor.GREEN + BukkitLang.get(p, "questPartiesJoin"));
-            if (BukkitLang.get("questPartiesJoinBroadcast").length() > 0) {
+            if (!BukkitLang.get("questPartiesJoinBroadcast").isEmpty()) {
                 for (final Player online : Bukkit.getOnlinePlayers()) {
                     if (event.getPlayer().equals(online.getUniqueId())) {
                         continue;
                     }
                     if (event.getPartyProvider().areInSameParty(p, online)) {
-                        online.sendMessage(ChatColor.GREEN + BukkitLang.get("questPartiesJoinBroadcast").replace("<player>", p.getName()));
+                        online.sendMessage(ChatColor.GREEN + BukkitLang.get("questPartiesJoinBroadcast")
+                                .replace("<player>", p.getName()));
                     }
                 }
             }
@@ -68,15 +69,16 @@ public class BukkitUniteListener implements Listener {
     @EventHandler
     public void onPlayerLeaveEvent(final PartyLeaveEvent event) {
         final Player p = Bukkit.getServer().getPlayer(event.getPlayer());
-        if (p != null && BukkitLang.get("questPartiesLeave").length() > 0) {
+        if (p != null && !BukkitLang.get("questPartiesLeave").isEmpty()) {
             BukkitLang.send(p, ChatColor.RED + BukkitLang.get(p, "questPartiesLeave"));
-            if (BukkitLang.get("questPartiesLeaveBroadcast").length() > 0) {
+            if (!BukkitLang.get("questPartiesLeaveBroadcast").isEmpty()) {
                 for (final Player online : Bukkit.getOnlinePlayers()) {
                     if (event.getPlayer().equals(online.getUniqueId())) {
                         continue;
                     }
                     if (event.getPartyProvider().areInSameParty(p, online)) {
-                        online.sendMessage(ChatColor.RED + BukkitLang.get("questPartiesLeaveBroadcast").replace("<player>", p.getName()));
+                        online.sendMessage(ChatColor.RED + BukkitLang.get("questPartiesLeaveBroadcast")
+                                .replace("<player>", p.getName()));
                     }
                 }
             }

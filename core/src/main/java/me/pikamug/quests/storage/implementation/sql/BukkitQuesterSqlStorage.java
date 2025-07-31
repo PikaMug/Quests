@@ -14,7 +14,6 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.BukkitQuestProgress;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
@@ -261,9 +260,9 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         final Set<String> redoableQuests = bukkitQuester.getCompletedTimes().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldRedoableQuests = getQuesterCompletedTimes(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         oldRedoableQuests.removeAll(redoableQuests);
-        final Set<String> questData = bukkitQuester.getQuestProgress().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
+        final Set<String> questProgress = bukkitQuester.getQuestProgress().keySet().stream().map(Quest::getId).collect(Collectors.toSet());
         final Set<String> oldQuestData = getQuesterQuestProgress(uniqueId).keySet().stream().map(Quest::getId).collect(Collectors.toSet());
-        oldQuestData.removeAll(questData);
+        oldQuestData.removeAll(questProgress);
         
         try (final Connection c = connectionFactory.getConnection()) {
             if (oldLastKnownName != null && lastKnownName != null && !lastKnownName.equals(oldLastKnownName)) {
@@ -360,17 +359,17 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_PROGRESS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());
-                        ps.setString(3, serializeItemStackProgress(entry.getValue().getBlocksBroken()));
-                        ps.setString(4, serializeItemStackProgress(entry.getValue().getBlocksDamaged()));
-                        ps.setString(5, serializeItemStackProgress(entry.getValue().getBlocksPlaced()));
-                        ps.setString(6, serializeItemStackProgress(entry.getValue().getBlocksUsed()));
-                        ps.setString(7, serializeItemStackProgress(entry.getValue().getBlocksCut()));
-                        ps.setString(8, serializeItemStackProgress(entry.getValue().getItemsCrafted()));
-                        ps.setString(9, serializeItemStackProgress(entry.getValue().getItemsSmelted()));
-                        ps.setString(10, serializeItemStackProgress(entry.getValue().getItemsEnchanted()));
-                        ps.setString(11, serializeItemStackProgress(entry.getValue().getItemsBrewed()));
-                        ps.setString(12, serializeItemStackProgress(entry.getValue().getItemsConsumed()));
-                        ps.setString(13, serializeItemStackProgress(entry.getValue().getItemsDelivered()));
+                        ps.setString(3, serializeProgress(entry.getValue().getBlocksBroken()));
+                        ps.setString(4, serializeProgress(entry.getValue().getBlocksDamaged()));
+                        ps.setString(5, serializeProgress(entry.getValue().getBlocksPlaced()));
+                        ps.setString(6, serializeProgress(entry.getValue().getBlocksUsed()));
+                        ps.setString(7, serializeProgress(entry.getValue().getBlocksCut()));
+                        ps.setString(8, serializeProgress(entry.getValue().getItemsCrafted()));
+                        ps.setString(9, serializeProgress(entry.getValue().getItemsSmelted()));
+                        ps.setString(10, serializeProgress(entry.getValue().getItemsEnchanted()));
+                        ps.setString(11, serializeProgress(entry.getValue().getItemsBrewed()));
+                        ps.setString(12, serializeProgress(entry.getValue().getItemsConsumed()));
+                        ps.setString(13, serializeProgress(entry.getValue().getItemsDelivered()));
                         ps.setString(14, serializeProgress(entry.getValue().getNpcsInteracted()));
                         ps.setString(15, serializeProgress(entry.getValue().getNpcsNumKilled()));
                         ps.setString(16, serializeProgress(entry.getValue().getMobNumKilled()));
@@ -461,29 +460,17 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         final Quest quest = plugin.getQuestById(rs.getString("quest_id"));
                         final BukkitQuestProgress data = new BukkitQuestProgress(quester);
                         if (quest != null && quester.getCurrentStage(quest) != null) {
-                            final BukkitStage stage = (BukkitStage) quester.getCurrentStage(quest);
-                            data.blocksBroken.addAll(deserializeItemStackProgress(rs.getString("blocks_broken"),
-                                    stage.getBlocksToBreak()));
-                            data.blocksDamaged.addAll(deserializeItemStackProgress(rs.getString("blocks_damaged"),
-                                    stage.getBlocksToDamage()));
-                            data.blocksPlaced.addAll(deserializeItemStackProgress(rs.getString("blocks_placed"),
-                                    stage.getBlocksToPlace()));
-                            data.blocksUsed.addAll(deserializeItemStackProgress(rs.getString("blocks_used"),
-                                    stage.getBlocksToUse()));
-                            data.blocksCut.addAll(deserializeItemStackProgress(rs.getString("blocks_cut"),
-                                    stage.getBlocksToCut()));
-                            data.itemsCrafted.addAll(deserializeItemStackProgress(rs.getString("items_crafted"),
-                                    stage.getItemsToCraft()));
-                            data.itemsSmelted.addAll(deserializeItemStackProgress(rs.getString("items_smelted"),
-                                    stage.getItemsToSmelt()));
-                            data.itemsEnchanted.addAll(deserializeItemStackProgress(rs.getString("items_enchanted"),
-                                    stage.getItemsToEnchant()));
-                            data.itemsBrewed.addAll(deserializeItemStackProgress(rs.getString("items_brewed"),
-                                    stage.getItemsToBrew()));
-                            data.itemsConsumed.addAll(deserializeItemStackProgress(rs.getString("items_consumed"),
-                                    stage.getItemsToConsume()));
-                            data.itemsDelivered.addAll(deserializeItemStackProgress(rs.getString("items_delivered"),
-                                    stage.getItemsToDeliver()));
+                            data.blocksBroken.addAll(deserializeIntProgress(rs.getString("blocks_broken")));
+                            data.blocksDamaged.addAll(deserializeIntProgress(rs.getString("blocks_damaged")));
+                            data.blocksPlaced.addAll(deserializeIntProgress(rs.getString("blocks_placed")));
+                            data.blocksUsed.addAll(deserializeIntProgress(rs.getString("blocks_used")));
+                            data.blocksCut.addAll(deserializeIntProgress(rs.getString("blocks_cut")));
+                            data.itemsCrafted.addAll(deserializeIntProgress(rs.getString("items_crafted")));
+                            data.itemsSmelted.addAll(deserializeIntProgress(rs.getString("items_smelted")));
+                            data.itemsEnchanted.addAll(deserializeIntProgress(rs.getString("items_enchanted")));
+                            data.itemsBrewed.addAll(deserializeIntProgress(rs.getString("items_brewed")));
+                            data.itemsConsumed.addAll(deserializeIntProgress(rs.getString("items_consumed")));
+                            data.itemsDelivered.addAll(deserializeIntProgress(rs.getString("items_delivered")));
                             data.npcsInteracted.addAll(deserializeBooleanProgress(rs.getString("npcs_interacted")));
                             data.npcsNumKilled.addAll(deserializeIntProgress(rs.getString("npcs_killed")));
                             data.mobNumKilled.addAll(deserializeIntProgress(rs.getString("mobs_killed")));
@@ -613,6 +600,10 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         return list;
     }
 
+    /**
+     * @deprecated Legacy code, do not use. Will be removed in a later version.
+     */
+    @Deprecated
     public String serializeItemStackProgress(final LinkedList<ItemStack> list) {
         if (list.isEmpty()) {
             return null;
@@ -623,7 +614,10 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * @deprecated Legacy code, do not use. Will be removed in a later version.
+     */
+    @Deprecated
     public LinkedList<ItemStack> deserializeItemStackProgress(String string, final LinkedList<ItemStack> objective) {
         final LinkedList<ItemStack> list = new LinkedList<>();
         if (string != null) {

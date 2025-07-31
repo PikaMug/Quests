@@ -12,12 +12,13 @@ package me.pikamug.quests.item;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.BukkitObjective;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
@@ -57,8 +58,8 @@ public class BukkitQuestJournal {
     }
 
     public List<BaseComponent[]> getPages() {
+        final Player player = owner.getPlayer();
         if (owner.getCurrentQuests().isEmpty()) {
-            final Player player = owner.getPlayer();
             final String title = BukkitLang.get(player, "journalTitle");
             return Collections.singletonList(new BookUtil.PageBuilder().add(new TextComponent(ChatColor.DARK_RED
                     + BukkitLang.get(player, "journalNoQuests").replace("<journal>", title))).build());
@@ -74,15 +75,36 @@ public class BukkitQuestJournal {
                 final BookUtil.PageBuilder builder = new BookUtil.PageBuilder().add(title).newLine();
                 for (final Objective obj : owner.getCurrentObjectives(quest, false, false)) {
                     final BukkitObjective objective = (BukkitObjective) obj;
-                    if (!plugin.getConfigSettings().canShowCompletedObjs()
-                            && objective.getMessage().startsWith(ChatColor.GRAY.toString())) {
+                    if (objective.getMessage() == null) {
                         continue;
                     }
-                    if (objective.getMessage() != null) {
-                        String[] split = null;
-                        if (objective.getMessage().contains("<item>") && objective.getGoalAsItem() != null) {
-                            split = objective.getMessage().split("<item>");
-                            builder.add(split[0]);
+                    final String message = "- " + BukkitLang.BukkitFormatToken.convertString(player,
+                            objective.getMessage().trim().replaceAll("\\s{2,}", ""));
+                    if (!plugin.getConfigSettings().canShowCompletedObjs()
+                            && objective.getProgress() >= objective.getGoal()) {
+                        continue;
+                    }
+                    String[] split = null;
+                    if (message.contains("<item>")) {
+                        split = message.split("<item>");
+                        builder.add(split[0]);
+                        if (objective.getGoalAsBlockItem() != null) {
+                            final BlockItemStack goal = objective.getGoalAsBlockItem();
+                            if (plugin.getConfigSettings().canTranslateNames()) {
+                                try {
+                                    final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                            .queryMaterial(goal.getType(), goal.getDurability(), null));
+                                    tc.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+                                    builder.add(tc);
+                                } catch (final Exception e) {
+                                    builder.add(ChatColor.RED + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
+                                    plugin.getLogger().severe(e.getMessage());
+                                    plugin.getLogger().info("for Quest " + quest.getId() + " " + message);
+                                }
+                            } else {
+                                builder.add(ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
+                            }
+                        } else if (objective.getGoalAsItem() != null) {
                             final ItemStack goal = objective.getGoalAsItem();
                             if (goal.getItemMeta() != null && goal.getItemMeta().hasDisplayName()) {
                                 builder.add("" + ChatColor.DARK_AQUA + ChatColor.ITALIC
@@ -97,24 +119,28 @@ public class BukkitQuestJournal {
                                     builder.add(ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(goal.getType().name()));
                                 }
                             }
+                        }
+                        if (split.length > 1) {
                             builder.add(split[1]).newLine();
                         }
-                        if (objective.getMessage().contains("<mob>") && objective.getGoalAsMob() != null) {
-                            split = objective.getMessage().split("<mob>");
-                            builder.add(split[0]);
-                            if (plugin.getConfigSettings().canTranslateNames()) {
-                                final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
-                                        .queryEntityType(objective.getGoalAsMob().getEntityType(), null)); // TODO extra data
-                                tc.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
-                                builder.add(tc);
-                            } else {
-                                builder.add(BukkitMiscUtil.snakeCaseToUpperCamelCase(objective.getGoalAsMob().getEntityType().name()));
-                            }
+                    }
+                    if (message.contains("<mob>") && objective.getGoalAsMob() != null) {
+                        split = message.split("<mob>");
+                        builder.add(split[0]);
+                        if (plugin.getConfigSettings().canTranslateNames()) {
+                            final TranslatableComponent tc = new TranslatableComponent(plugin.getLocaleManager()
+                                    .queryEntityType(objective.getGoalAsMob().getEntityType(), null)); // TODO extra data
+                            tc.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
+                            builder.add(tc);
+                        } else {
+                            builder.add(BukkitMiscUtil.snakeCaseToUpperCamelCase(objective.getGoalAsMob().getEntityType().name()));
+                        }
+                        if (split.length > 1) {
                             builder.add(split[1]).newLine();
                         }
-                        if (split == null) {
-                            builder.add(objective.getMessage()).newLine();
-                        }
+                    }
+                    if (split == null) {
+                        builder.add(message).newLine();
                     }
                 }
                 pages.add(builder.build());

@@ -257,6 +257,10 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                 if (source != null) {
                     if (source.equals("start")) {
                         context.setSessionData(Key.PLN_START_DATE, date);
+                        if (context.getSessionData(Key.PLN_END_DATE) == null) {
+                            final String endDate = "31:11:2999:23:59:59:" + zone;
+                            context.setSessionData(Key.PLN_END_DATE, endDate);
+                        }
                     } else if (source.equals("end")) {
                         context.setSessionData(Key.PLN_END_DATE, date);
                     }

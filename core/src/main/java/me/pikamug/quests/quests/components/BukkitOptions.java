@@ -10,8 +10,6 @@
 
 package me.pikamug.quests.quests.components;
 
-import me.pikamug.quests.quests.components.Options;
-
 public class BukkitOptions implements Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
@@ -23,6 +21,10 @@ public class BukkitOptions implements Options {
     private int shareProgressLevel = 1;
     private boolean shareSameQuestOnly = true;
     private boolean ignoreBlockReplace = true;
+    private boolean giveGloballyAtLogin = false;
+    private boolean allowStackingGlobal = true;
+    private boolean informOnStart = true;
+    private boolean overrideMaxQuests = true;
     
     public boolean canAllowCommands() {
         return allowCommands;
@@ -102,5 +104,37 @@ public class BukkitOptions implements Options {
 
     public void setIgnoreBlockReplace(final boolean ignoreBlockReplace) {
         this.ignoreBlockReplace = ignoreBlockReplace;
+    }
+
+    public boolean canGiveGloballyAtLogin() {
+        return giveGloballyAtLogin;
+    }
+
+    public void setGiveGloballyAtLogin(final boolean giveGloballyAtLogin) {
+        this.giveGloballyAtLogin = giveGloballyAtLogin;
+    }
+
+    public boolean canAllowStackingGlobal() {
+        return allowStackingGlobal;
+    }
+
+    public void setAllowStackingGlobal(final boolean allowStackingGlobal) {
+        this.allowStackingGlobal = allowStackingGlobal;
+    }
+
+    public boolean canInformOnStart() {
+        return informOnStart;
+    }
+
+    public void setInformOnStart(final boolean informOnStart) {
+        this.informOnStart = informOnStart;
+    }
+
+    public boolean canOverrideMaxQuests() {
+        return overrideMaxQuests;
+    }
+
+    public void setOverrideMaxQuests(final boolean overrideMaxQuests) {
+        this.overrideMaxQuests = overrideMaxQuests;
     }
 }

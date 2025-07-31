@@ -37,7 +37,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         this.plugin = (BukkitQuestsPlugin)context.getPlugin();
     }
     
-    private final int size = 3;
+    private final int size = 4;
     
     @Override
     public int getSize() {
@@ -55,8 +55,9 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         switch (number) {
         case 1:
         case 2:
-            return ChatColor.BLUE;
         case 3:
+            return ChatColor.BLUE;
+        case 4:
             return ChatColor.GREEN;
         default:
             return null;
@@ -71,6 +72,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return ChatColor.GOLD + BukkitLang.get("optMultiplayer");
         case 3:
+            return ChatColor.GOLD + "Server (Global)";
+        case 4:
             return ChatColor.YELLOW + BukkitLang.get("done");
         default:
             return null;
@@ -106,6 +109,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         case 2:
             return new QuestOptionsMultiplayerPrompt(context);
         case 3:
+            return new QuestOptionsGlobalPrompt(context);
+        case 4:
             return plugin.getQuestFactory().returnToMenu(context);
         default:
             return new QuestOptionsPrompt(context);
@@ -733,6 +738,164 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             default:
                 return null;
+            }
+        }
+    }
+
+    public class QuestOptionsGlobalPrompt extends QuestsEditorNumericPrompt {
+
+        public QuestOptionsGlobalPrompt(final ConversationContext context) {
+            super(context);
+        }
+
+        private final int size = 5;
+
+        @Override
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle(final ConversationContext context) {
+            return ChatColor.DARK_GREEN + BukkitLang.get("optServer");
+        }
+
+        @Override
+        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    return ChatColor.BLUE;
+                case 5:
+                    return ChatColor.GREEN;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getSelectionText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    return ChatColor.YELLOW + BukkitLang.get("optGiveLoginGlobal");
+                case 2:
+                    return ChatColor.YELLOW + BukkitLang.get("optAllowStackingGlobal");
+                case 3:
+                    return ChatColor.YELLOW + BukkitLang.get("optInformStartGlobal");
+                case 4:
+                    return ChatColor.YELLOW + BukkitLang.get("optOverrideSettingGlobal");
+                case 5:
+                    return ChatColor.YELLOW + BukkitLang.get("done");
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public String getAdditionalText(final ConversationContext context, final int number) {
+            switch (number) {
+                case 1:
+                    final Boolean globalOpt = (Boolean) context.getSessionData(Key.OPT_GIVE_GLOBALLY_AT_LOGIN);
+                    if (globalOpt == null) {
+                        final boolean defaultOpt = new BukkitOptions().canGiveGloballyAtLogin();
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + (globalOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(globalOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(globalOpt))) + ChatColor.GRAY + ")";
+                    }
+                case 2:
+                    final Boolean stackOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_STACKING_GLOBAL);
+                    if (stackOpt == null) {
+                        final boolean defaultOpt = new BukkitOptions().canAllowStackingGlobal();
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + (stackOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(stackOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(stackOpt))) + ChatColor.GRAY + ")";
+                    }
+                case 3:
+                    final Boolean informOpt = (Boolean) context.getSessionData(Key.OPT_INFORM_QUEST_START);
+                    if (informOpt == null) {
+                        final boolean defaultOpt = new BukkitOptions().canInformOnStart();
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + (informOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(informOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(informOpt))) + ChatColor.GRAY + ")";
+                    }
+                case 4:
+                    final Boolean overrideOpt = (Boolean) context.getSessionData(Key.OPT_OVERRIDE_MAX_QUESTS);
+                    if (overrideOpt == null) {
+                        final boolean defaultOpt = new BukkitOptions().canInformOnStart();
+                        return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(defaultOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(defaultOpt))) + ChatColor.GRAY + ")";
+                    } else {
+                        return ChatColor.GRAY + "(" + (overrideOpt ? ChatColor.GREEN
+                                + BukkitLang.get(String.valueOf(overrideOpt)) : ChatColor.RED
+                                + BukkitLang.get(String.valueOf(overrideOpt))) + ChatColor.GRAY + ")";
+                    }
+                case 5:
+                    return "";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+            final QuestsEditorPostOpenNumericPromptEvent event
+                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+
+            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle(context) + " -");
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
+                        .append(getAdditionalText(context, i));
+            }
+            return text.toString();
+        }
+
+        @Override
+        public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+            switch (input.intValue()) {
+                case 1:
+                    tempKey = Key.OPT_GIVE_GLOBALLY_AT_LOGIN;
+                    tempPrompt = new QuestOptionsGlobalPrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
+                case 2:
+                    tempKey = Key.OPT_ALLOW_STACKING_GLOBAL;
+                    tempPrompt = new QuestOptionsGlobalPrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
+                case 3:
+                    tempKey = Key.OPT_INFORM_QUEST_START;
+                    tempPrompt = new QuestOptionsGlobalPrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
+                case 4:
+                    tempKey = Key.OPT_OVERRIDE_MAX_QUESTS;
+                    tempPrompt = new QuestOptionsGlobalPrompt(context);
+                    return new QuestOptionsTrueFalsePrompt(context);
+                case 5:
+                    tempKey = null;
+                    tempPrompt = null;
+                    try {
+                        return new QuestOptionsPrompt(context);
+                    } catch (final Exception e) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                        return Prompt.END_OF_CONVERSATION;
+                    }
+                default:
+                    return null;
             }
         }
     }

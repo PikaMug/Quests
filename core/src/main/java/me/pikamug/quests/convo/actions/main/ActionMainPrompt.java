@@ -28,9 +28,10 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.BukkitLang;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -41,10 +42,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
@@ -528,8 +531,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobAmountPrompt(context, questMob);
             case 4:
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
-                    selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    final ConcurrentHashMap<UUID, Block> selectedMobLocations
+                            = plugin.getActionFactory().getSelectedMobLocations();
+                    selectedMobLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                     return new ActionMobLocationPrompt(context, questMob);
                 } else {
@@ -542,13 +547,16 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMobListPrompt(context);
             case 7:
                 if (questMob.getType() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobTypesFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + BukkitLang.get("eventEditorMustSetMobTypesFirst"));
                     return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnLocation() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobLocationFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + BukkitLang.get("eventEditorMustSetMobLocationFirst"));
                     return new ActionMobPrompt(context, questMob);
                 } else if (questMob.getSpawnAmounts() == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetMobAmountsFirst"));
+                    context.getForWhom().sendRawMessage(ChatColor.RED
+                            + BukkitLang.get("eventEditorMustSetMobAmountsFirst"));
                     return new ActionMobPrompt(context, questMob);
                 }
                 final LinkedList<QuestMob> list = context.getSessionData(Key.A_MOBS) == null ? new LinkedList<>()
@@ -836,14 +844,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder mobs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
-            final EntityType[] mobArr = EntityType.values();
-            for (int i = 0; i < mobArr.length; i++) {
-                final EntityType type = mobArr[i];
-                if (!type.isAlive()) {
-                    continue;
+            final List<EntityType> mobArr = new LinkedList<>(Arrays.asList(EntityType.values()));
+            final List<EntityType> toRemove = new LinkedList<>();
+            for (final EntityType type : mobArr) {
+                if (!type.isAlive() || type.name().equals("PLAYER")) {
+                    toRemove.add(type);
                 }
-                mobs.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(mobArr[i].name()));
-                if (i < (mobArr.length - 1)) {
+            }
+            mobArr.removeAll(toRemove);
+            mobArr.sort(Comparator.comparing(EntityType::name));
+            for (int i = 0; i < mobArr.size(); i++) {
+                mobs.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(mobArr.get(i).name()));
+                if (i < (mobArr.size() - 1)) {
                     mobs.append(ChatColor.GRAY).append(", ");
                 }
             }
@@ -957,7 +969,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
-                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                final ConcurrentHashMap<UUID, Block> selectedMobLocations
+                        = plugin.getActionFactory().getSelectedMobLocations();
                 final Block block = selectedMobLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
@@ -970,7 +983,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 }
                 return new ActionMobPrompt(context, questMob);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedMobLocations = plugin.getActionFactory().getSelectedMobLocations();
+                final ConcurrentHashMap<UUID, Block> selectedMobLocations
+                        = plugin.getActionFactory().getSelectedMobLocations();
                 selectedMobLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedMobLocations(selectedMobLocations);
                 return new ActionMobPrompt(context, questMob);

@@ -10,8 +10,8 @@
 
 package me.pikamug.quests.util;
 
-import me.pikamug.quests.Quests;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.quests.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -46,7 +47,7 @@ public class BukkitLang {
     private static Quests plugin;
     private static final LinkedHashMap<String, String> defaultLang = new LinkedHashMap<>();
     private static final LinkedHashMap<String, LinkedHashMap<String, String>> otherLang = new LinkedHashMap<>();
-    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
+    private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9a-fA-F]{6})%");
 
     public static Collection<String> values() {
         return defaultLang.values();
@@ -59,7 +60,6 @@ public class BukkitLang {
      * @param key label as it appears in lang file, such as "journalNoQuests"
      * @return formatted string, plus processing through PlaceholderAPI by clip
      */
-    @SuppressWarnings("deprecation")
     public static String get(final Player player, final String key) {
         if (key == null) {
             return null;
@@ -70,8 +70,16 @@ public class BukkitLang {
         String locale;
         try {
             locale = player.getLocale();
-        } catch (NoSuchMethodError e) {
-            locale = player.spigot().getLocale();
+        } catch (final NoSuchMethodError e) {
+            try {
+                final Method m = player.spigot().getClass().getDeclaredMethod("getLocale");
+                m.setAccessible(true);
+                locale = (String) m.invoke(player.spigot());
+            } catch (final Exception e2) {
+                plugin.getPluginLogger().severe("Legacy player locale reflection failed, defaulting to en_US");
+                e2.printStackTrace();
+                locale = "en_US";
+            }
         }
         final int separator = locale.indexOf("_");
         if (separator == -1) {
@@ -86,7 +94,7 @@ public class BukkitLang {
         if (!otherLang.containsKey(locale)) {
             try {
                 load(plugin, locale);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 return defaultLang.containsKey(key) ? BukkitFormatToken.convertString(player, defaultLang.get(key)) : "NULL";
             }
         }
@@ -159,6 +167,7 @@ public class BukkitLang {
 
     public static void clear() {
         defaultLang.clear();
+        otherLang.clear();
     }
 
     public static int size() {
@@ -180,7 +189,7 @@ public class BukkitLang {
      * @param message The message to be sent
      */
     public static void send(final Player player, final String message) {
-        if (message != null && !ChatColor.stripColor(message).equals("")) {
+        if (message != null && !ChatColor.stripColor(message).isEmpty()) {
             player.sendMessage(message);
         }
     }
@@ -392,8 +401,8 @@ public class BukkitLang {
                 final StringBuilder hex = new StringBuilder();
                 hex.append(ChatColor.COLOR_CHAR + "x");
                 final char[] chars = matcher.group(1).toCharArray();
-                for (final char aChar : chars) {
-                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(aChar));
+                for (final char c : chars) {
+                    hex.append(ChatColor.COLOR_CHAR).append(Character.toLowerCase(c));
                 }
                 s = s.replace(matcher.group(), hex.toString());
             }

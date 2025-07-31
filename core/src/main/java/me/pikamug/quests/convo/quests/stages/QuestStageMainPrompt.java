@@ -10,10 +10,9 @@
 
 package me.pikamug.quests.convo.quests.stages;
 
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.module.CustomObjective;
-import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -24,12 +23,14 @@ import me.pikamug.quests.convo.quests.objectives.QuestMobsPrompt;
 import me.pikamug.quests.convo.quests.objectives.QuestNpcsPrompt;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
+import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
@@ -750,8 +752,9 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             switch(input.intValue()) {
             case 1:
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
-                    temp.put(((Player) context.getForWhom()).getUniqueId(), null);
+                    final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                    temp.put(((Player) context.getForWhom()).getUniqueId(),
+                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedReachLocations(temp);
                     return new QuestReachLocationPrompt(context);
                 } else {
@@ -882,12 +885,12 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlockSelected"));
                     return new QuestReachLocationPrompt(context);
                 }
-                final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
                 temp.remove(player.getUniqueId());
                 plugin.getQuestFactory().setSelectedReachLocations(temp);
                 return new QuestReachListPrompt(context);
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
                 temp.remove(player.getUniqueId());
                 plugin.getQuestFactory().setSelectedReachLocations(temp);
                 return new QuestReachListPrompt(context);
@@ -2440,7 +2443,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public String getTitle(final ConversationContext context) {
-            return BukkitLang.get("stageEditorCustom");
+            return BukkitLang.get("customObjectivesTitle");
         }
 
         @Override
@@ -2751,7 +2754,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 text += ChatColor.GOLD + descriptions.get(temp) + "\n";
             }
             String msg = BukkitLang.get("stageEditorCustomDataPrompt");
-            msg = msg.replace("<data>", ChatColor.GOLD + temp + ChatColor.YELLOW);
+            msg = msg.replace("<data>", temp);
             text += ChatColor.YELLOW + msg;
             return text;
         }

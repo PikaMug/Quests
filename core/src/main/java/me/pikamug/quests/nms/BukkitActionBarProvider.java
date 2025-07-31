@@ -18,19 +18,20 @@ public abstract class BukkitActionBarProvider {
     private static BukkitActionBarProvider loaded;
 
     static {
-        final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         try {
-            final String packageName = BukkitActionBarProvider.class.getPackage().getName();
-            if (internalsName.startsWith("v1_8_R")) {
+            final String packageName = BukkitParticleProvider.class.getPackage().getName();
+            if (bukkitVersion.startsWith("1.8.") || bukkitVersion.equals("1.8")) {
+                final String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 loaded = (BukkitActionBarProvider) Class.forName(packageName + ".BukkitActionBarProvider_" + internalsName)
                         .newInstance();
             } else {
-                // Should not be an issue because single thread, alternatives welcome!
+                // Referencing subclass should not be an issue because single thread, alternatives welcome!
                 loaded = new BukkitActionBarProvider_Modern();
             }
         } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException
                 | ClassCastException exception) {
-            Bukkit.getLogger().severe("[Quests] No valid action bar implementation for version " + internalsName);
+            Bukkit.getLogger().severe("[Quests] No valid action bar implementation for version " + bukkitVersion);
         }
     }
 

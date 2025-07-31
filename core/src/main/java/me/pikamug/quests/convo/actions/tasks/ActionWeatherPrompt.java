@@ -16,10 +16,11 @@ import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -31,9 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
     
@@ -156,9 +157,10 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             return new ActionThunderPrompt(context);
         case 3:
             if (context.getForWhom() instanceof Player) {
-                final Map<UUID, Block> selectedLightningLocations 
+                final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
-                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(), null);
+                selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionLightningPrompt(context);
             } else {
@@ -642,7 +644,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             }
             final Player player = (Player) context.getForWhom();
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
-                final Map<UUID, Block> selectedLightningLocations 
+                final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
                 final Block block = selectedLightningLocations.get(player.getUniqueId());
                 if (block != null) {
@@ -666,13 +668,13 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 context.setSessionData(Key.A_LIGHTNING, null);
-                final Map<UUID, Block> selectedLightningLocations 
+                final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 return new ActionMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                final Map<UUID, Block> selectedLightningLocations 
+                final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
                 selectedLightningLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);

@@ -15,6 +15,7 @@ import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -100,7 +101,12 @@ public interface Quester extends Comparable<Quester> {
 
     Stage getCurrentStage(final Quest quest);
 
+    /**
+     * @deprecated Use {@link #getQuestProgressOrDefault(Quest)} instead
+     */
     QuestProgress getQuestDataOrDefault(final Quest quest);
+
+    QuestProgress getQuestProgressOrDefault(final Quest quest);
 
     boolean hasJournal();
 
@@ -140,15 +146,30 @@ public interface Quester extends Comparable<Quester> {
 
     void showCurrentConditions(final Quest quest, final Quester quester);
 
+    @Deprecated
     void breakBlock(final Quest quest, final ItemStack itemStack);
 
+    void breakBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void damageBlock(final Quest quest, final ItemStack itemStack);
 
+    void damageBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void placeBlock(final Quest quest, final ItemStack itemStack);
 
+    void placeBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void useBlock(final Quest quest, final ItemStack itemStack);
 
+    void useBlock(final Quest quest, final BlockItemStack blockItemStack);
+
+    @Deprecated
     void cutBlock(final Quest quest, final ItemStack itemStack);
+
+    void cutBlock(final Quest quest, final BlockItemStack blockItemStack);
 
     void craftItem(final Quest quest, final ItemStack itemStack);
 

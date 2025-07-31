@@ -21,13 +21,14 @@ import me.pikamug.quests.convo.quests.planner.QuestPlannerPrompt;
 import me.pikamug.quests.convo.quests.requirements.QuestRequirementsPrompt;
 import me.pikamug.quests.convo.quests.rewards.QuestRewardsPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
+import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -44,12 +45,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class QuestMainPrompt extends QuestsEditorNumericPrompt {
     
@@ -106,7 +104,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -130,8 +128,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return ChatColor.YELLOW + BukkitLang.get("questEditorFinishMessage");
         case 4:
-            if (context.getSessionData(Key.Q_START_NPC) == null || plugin.getDependencies().getCitizens() != null
-                    || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (context.getSessionData(Key.Q_START_NPC) == null || plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorNPCStart");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorNPCStart");
@@ -149,7 +146,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + BukkitLang.get("questWGSetRegion");
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorSetGUI");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorSetGUI");
@@ -192,10 +189,9 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.Q_FINISH_MESSAGE)
                     + ChatColor.RESET + ChatColor.GRAY + ")";
         case 4:
-            if (context.getSessionData(Key.Q_START_NPC) == null && (plugin.getDependencies().getCitizens() != null
-                    || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null)) {
+            if (context.getSessionData(Key.Q_START_NPC) == null && plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
-            } else if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            } else if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 final UUID uuid = UUID.fromString((String) Objects.requireNonNull(context
                         .getSessionData(Key.Q_START_NPC)));
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + plugin.getDependencies().getNpcName(uuid)
@@ -225,7 +221,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 if (context.getSessionData(Key.Q_GUIDISPLAY) == null) {
                     return ChatColor.GRAY +  "(" + BukkitLang.get("noneSet") + ")";
                 } else {
@@ -269,15 +265,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 3:
             return new QuestFinishMessagePrompt(context);
         case 4:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return new QuestNPCStartPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
             }
         case 5:
             if (context.getForWhom() instanceof Player) {
-                final Map<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
-                blockStarts.put(((Player) context.getForWhom()).getUniqueId(), null);
+                final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                blockStarts.put(((Player) context.getForWhom()).getUniqueId(),
+                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getQuestFactory().setSelectedBlockStarts(blockStarts);
                 return new QuestBlockStartPrompt(context);
             } else {
@@ -291,7 +288,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 return new QuestMainPrompt(context);
             }
         case 7:
-            if (plugin.getDependencies().getCitizens() != null || plugin.getDependencies().getZnpcsPlus() != null || plugin.getDependencies().getZnpcsPlusApi() != null) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return new QuestGuiDisplayPrompt(context);
             } else {
                 return new QuestMainPrompt(context);
@@ -485,7 +482,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -502,15 +499,14 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final UUID uuid = UUID.fromString(input);
-                    if (plugin.getDependencies().getNpcEntity(uuid) == null && (plugin.getDependencies().getZnpcsPlusApi() == null
-                            || plugin.getDependencies().getZnpcsPlusApi().getNpcRegistry().getByUuid(uuid) == null)) {
+                    if (!plugin.getDependencies().isNpc(uuid)) {
                         context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
                         return new QuestNPCStartPrompt(context);
                     }
                     context.setSessionData(Key.Q_START_NPC, uuid.toString());
                     if (context.getForWhom() instanceof Player) {
-                        final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                        final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                         selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                     }
@@ -524,7 +520,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 context.setSessionData(Key.Q_START_NPC, null);
             }
             if (context.getForWhom() instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) context.getForWhom()).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
@@ -576,14 +572,16 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                         return new QuestBlockStartPrompt(context);
                     }
                 } else {
-                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final ConcurrentHashMap<UUID, Block> selectedBlockStarts
+                            = plugin.getQuestFactory().getSelectedBlockStarts();
                     selectedBlockStarts.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
                 return new QuestMainPrompt(context);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (context.getForWhom() instanceof Player) {
-                    final Map<UUID, Block> selectedBlockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                    final ConcurrentHashMap<UUID, Block> selectedBlockStarts
+                            = plugin.getQuestFactory().getSelectedBlockStarts();
                     selectedBlockStarts.remove(player.getUniqueId());
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
