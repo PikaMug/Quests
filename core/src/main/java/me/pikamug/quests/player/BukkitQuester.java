@@ -213,6 +213,9 @@ public class BukkitQuester implements Quester {
         } else {
             this.lastKnownName = getOfflinePlayer().getName();
         }
+        if (lastKnownName == null) {
+            lastKnownName = String.valueOf(System.currentTimeMillis());
+        }
     }
 
     @Override
