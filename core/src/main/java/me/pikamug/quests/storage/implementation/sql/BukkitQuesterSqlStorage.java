@@ -19,6 +19,7 @@ import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import me.pikamug.quests.storage.implementation.sql.connection.ConnectionFactory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -416,7 +417,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         }
     }
 
-    @Override
+    @Override @Nullable
     public String getQuesterLastKnownName(final UUID uniqueId) throws SQLException {
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT_USERNAME))) {

@@ -2709,6 +2709,11 @@ public class BukkitQuester implements Quester {
                 // Already delivered in previous loop
                 return;
             }
+            if (index >= bukkitQuestProgress.itemsDelivered.size()) {
+                plugin.getLogger().severe(getPlayer().getName() + " presented invalid index for quest " + quest.getName());
+                getPlayer().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                return;
+            }
 
             final int progress = Math.min(delivered.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsDelivered.set(match, progress);
@@ -2965,6 +2970,12 @@ public class BukkitQuester implements Quester {
         if (index == -1) {
             return;
         }
+        if (index >= bukkitQuestProgress.mobNumKilled.size()) {
+            plugin.getLogger().severe(getPlayer().getName() + " presented invalid index for quest " + quest.getName());
+            getPlayer().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+            return;
+        }
+
         final int mobsKilled = bukkitQuestProgress.mobNumKilled.get(index);
         final int mobsToKill = currentStage.getMobNumToKill().get(index);
         if (!currentStage.getLocationsToKillWithin().isEmpty()) {
@@ -3164,20 +3175,25 @@ public class BukkitQuester implements Quester {
         if (index == -1) {
             return;
         }
+        if (index >= bukkitQuestProgress.mobsTamed.size()) {
+            plugin.getLogger().severe(getPlayer().getName() + " presented invalid index for quest " + quest.getName());
+            getPlayer().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+            return;
+        }
 
-        final int mobsToTame = currentStage.getMobNumToTame().get(index);
         final int mobsTamed = bukkitQuestProgress.mobsTamed.get(index);
+        final int mobsToTame = currentStage.getMobNumToTame().get(index);
 
         final ObjectiveType type = ObjectiveType.TAME_MOB;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
         final BukkitQuesterPreUpdateObjectiveEvent preEvent = new BukkitQuesterPreUpdateObjectiveEvent(this, quest,
-                new BukkitObjective(type, null, mobsToTame, mobsTamed));
+                new BukkitObjective(type, null, mobsTamed, mobsToTame));
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
-        final int newMobsToTame = mobsTamed + 1;
+        final int newMobsTamed = mobsTamed + 1;
         if (mobsTamed < mobsToTame) {
-            bukkitQuestProgress.mobsTamed.set(index, newMobsToTame);
-            if (newMobsToTame >= mobsToTame) {
+            bukkitQuestProgress.mobsTamed.set(index, newMobsTamed);
+            if (newMobsTamed >= mobsToTame) {
                 finishObjective(quest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
                         BlockItemStack.of(Material.AIR, mobsToTame, (short) 0)), entityType, null, null, null, null, null, null);
             }
@@ -3185,7 +3201,7 @@ public class BukkitQuester implements Quester {
             dispatchedQuestIDs.addAll(dispatchMultiplayerEverything(quest, type,
                     (final Quester q, final Quest cq) -> {
                         if (!dispatchedQuestIDs.contains(cq.getId())) {
-                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).mobsTamed.set(index, newMobsToTame);
+                            ((BukkitQuestProgress) q.getQuestProgressOrDefault(quest)).mobsTamed.set(index, newMobsTamed);
                             if (q.testComplete(quest)) {
                                 quest.nextStage(q, false);
                             }
@@ -3195,7 +3211,7 @@ public class BukkitQuester implements Quester {
         }
 
         final BukkitQuesterPostUpdateObjectiveEvent postEvent = new BukkitQuesterPostUpdateObjectiveEvent(this, quest,
-                new BukkitObjective(type, null, newMobsToTame, mobsTamed));
+                new BukkitObjective(type, null, newMobsTamed, mobsTamed));
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
 
@@ -3219,9 +3235,14 @@ public class BukkitQuester implements Quester {
         if (index == -1) {
             return;
         }
+        if (index >= bukkitQuestProgress.sheepSheared.size()) {
+            plugin.getLogger().severe(getPlayer().getName() + " presented invalid index for quest " + quest.getName());
+            getPlayer().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+            return;
+        }
 
-        final int sheepToShear = getCurrentStage(quest).getSheepNumToShear().get(index);
         final int sheepSheared = bukkitQuestProgress.sheepSheared.get(index);
+        final int sheepToShear = getCurrentStage(quest).getSheepNumToShear().get(index);
 
         final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
