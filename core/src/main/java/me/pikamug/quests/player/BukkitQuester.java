@@ -2709,11 +2709,6 @@ public class BukkitQuester implements Quester {
                 // Already delivered in previous loop
                 return;
             }
-            if (index >= bukkitQuestProgress.itemsDelivered.size()) {
-                plugin.getLogger().severe(getPlayer().getName() + " presented invalid index for quest " + quest.getName());
-                getPlayer().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
-                return;
-            }
 
             final int progress = Math.min(delivered.getAmount() + amount, goal.getAmount());
             bukkitQuestProgress.itemsDelivered.set(match, progress);
