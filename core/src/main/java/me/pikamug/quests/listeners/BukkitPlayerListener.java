@@ -190,7 +190,8 @@ public class BukkitPlayerListener implements Listener {
                         return;
                     }
                     if (event.getClickedBlock().getType().name().equals("LECTERN")
-                            || event.getClickedBlock().getType().name().equals("CHISELED_BOOKSHELF")) {
+                            || event.getClickedBlock().getType().name().equals("CHISELED_BOOKSHELF")
+                            || event.getClickedBlock().getType().name().endsWith("_SHELF")) {
                         event.setCancelled(true);
                         BukkitLang.send(player, ChatColor.RED + BukkitLang.get(event.getPlayer(), "journalDenied")
                                 .replace("<journal>", BukkitLang.get(event.getPlayer(), "journalTitle")));
