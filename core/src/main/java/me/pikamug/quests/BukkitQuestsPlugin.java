@@ -803,7 +803,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         for (final Quest q : quests) {
             // For tab completion
-            if (ChatColor.stripColor(q.getName()).equals(ChatColor.stripColor(ChatColor
+            if (ChatColor.stripColor(q.getName()).equalsIgnoreCase(ChatColor.stripColor(ChatColor
                     .translateAlternateColorCodes('&', name)))) {
                 return q;
             }
@@ -838,7 +838,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         for (final Action a : actions) {
             // For tab completion
-            if (ChatColor.stripColor(a.getName()).equals(ChatColor.stripColor(ChatColor.
+            if (ChatColor.stripColor(a.getName()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.
                     translateAlternateColorCodes('&', name)))) {
                 return a;
             }
@@ -873,7 +873,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         for (final Condition c : conditions) {
             // For tab completion
-            if (ChatColor.stripColor(c.getName()).equals(ChatColor.stripColor(ChatColor
+            if (ChatColor.stripColor(c.getName()).equalsIgnoreCase(ChatColor.stripColor(ChatColor
                     .translateAlternateColorCodes('&', name)))) {
                 return c;
             }

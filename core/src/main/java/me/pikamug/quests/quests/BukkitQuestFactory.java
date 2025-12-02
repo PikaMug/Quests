@@ -535,17 +535,28 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
                     .replace("<quest>", questsFile.getName()));
             return;
         }
-        final String quest = (String) context.getSessionData(Key.ED_QUEST_DELETE);
-        final ConfigurationSection sec = data.getConfigurationSection("quests");
-        if (sec != null) {
-            for (final String key : sec.getKeys(false)) {
-                if (sec.getString(key + ".name") != null
-                        && Objects.requireNonNull(sec.getString(key + ".name")).equalsIgnoreCase(quest)) {
-                    sec.set(key, null);
-                    break;
+        final String delete = (String) context.getSessionData(Key.ED_QUEST_DELETE);
+        if (delete != null && plugin.getQuest(delete) != null) {
+            final ConfigurationSection sec = data.getConfigurationSection("quests");
+            if (sec != null) {
+                for (final String key : sec.getKeys(false)) {
+                    final String name = sec.getString(key + ".name");
+                    if (name != null && plugin.getQuest(name) != null) {
+                        if (plugin.getQuest(name).getId().equals(plugin.getQuest(delete).getId())) {
+                            sec.set(key, null);
+                            context.getForWhom().sendRawMessage(ChatColor.GREEN + BukkitLang.get("questDeleted"));
+                            if (plugin.getConfigSettings().getConsoleLogging() > 0) {
+                                final String identifier = context.getForWhom() instanceof Player ?
+                                        "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
+                                plugin.getLogger().info(identifier + " deleted quest " + delete);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }
+
         try {
             data.save(questsFile);
         } catch (final IOException e) {
@@ -558,26 +569,17 @@ public class BukkitQuestFactory implements QuestFactory, ConversationAbandonedLi
             }
         };
         plugin.reload(callback);
-        context.getForWhom().sendRawMessage(ChatColor.GREEN + BukkitLang.get("questDeleted"));
-        if (plugin.getConfigSettings().getConsoleLogging() > 0) {
-            final String identifier = context.getForWhom() instanceof Player ?
-                    "Player " + ((Player)context.getForWhom()).getUniqueId() : "CONSOLE";
-            plugin.getLogger().info(identifier + " deleted quest " + quest);
-        }
     }
 
     public void saveQuest(final ConversationContext context, final ConfigurationSection section) {
-        String edit = null;
-        if (context.getSessionData(Key.ED_QUEST_EDIT) != null) {
-            edit = (String) context.getSessionData(Key.ED_QUEST_EDIT);
-        }
-        if (edit != null) {
+        final String edit = (String) context.getSessionData(Key.ED_QUEST_EDIT);
+        if (edit != null && plugin.getQuest(edit) != null) {
             final ConfigurationSection questList = section.getParent();
             if (questList != null) {
                 for (final String key : questList.getKeys(false)) {
                     final String name = questList.getString(key + ".name");
-                    if (name != null) {
-                        if (name.equalsIgnoreCase(edit)) {
+                    if (name != null && plugin.getQuest(name) != null) {
+                        if (plugin.getQuest(name).getId().equals(plugin.getQuest(edit).getId())) {
                             questList.set(key, null);
                             break;
                         }
