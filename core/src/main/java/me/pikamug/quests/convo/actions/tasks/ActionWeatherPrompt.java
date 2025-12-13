@@ -159,6 +159,10 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
+                if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                    return new ActionWeatherPrompt(context);
+                }
                 selectedLightningLocations.put(((Player) context.getForWhom()).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);

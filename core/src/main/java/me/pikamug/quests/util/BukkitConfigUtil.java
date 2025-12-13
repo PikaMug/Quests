@@ -92,6 +92,9 @@ public class BukkitConfigUtil {
                     + world + " " + info[xIndex] + " " + info[yIndex] + " " + info[zIndex] + " ");
             return null;
         }
+        if (BukkitMiscUtil.getWorlds().isEmpty()) {
+            return null;
+        }
         if (Bukkit.getServer().getWorld(world) == null) {
             Bukkit.getLogger().severe("Quests could not locate world " + world + ", is it loaded?");
             return null;

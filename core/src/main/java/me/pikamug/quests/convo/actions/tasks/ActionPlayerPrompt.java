@@ -248,6 +248,10 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
+                if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                    return new ActionPlayerPrompt(context);
+                }
                 selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);

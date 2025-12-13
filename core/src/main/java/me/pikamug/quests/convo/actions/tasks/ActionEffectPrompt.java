@@ -152,6 +152,10 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
+                if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("unknownError"));
+                    return new ActionEffectPrompt(context);
+                }
                 selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
@@ -278,6 +282,10 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     if (context.getForWhom() instanceof Player) {
                         final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                                 = plugin.getActionFactory().getSelectedEffectLocations();
+                        if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                            return new ActionEffectSoundListPrompt(context);
+                        }
                         selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(),
                                 Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);

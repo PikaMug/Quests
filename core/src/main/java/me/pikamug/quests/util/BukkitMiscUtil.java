@@ -14,10 +14,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class BukkitMiscUtil {
     
@@ -76,6 +78,21 @@ public class BukkitMiscUtil {
             message = "-1 " + BukkitLang.get("timeSeconds");
         }
         return message;
+    }
+
+    /**
+     * Gets a list of all worlds on this server and logs error if there are none
+     *
+     * @return List of all worlds on this server
+     */
+    public static List<World> getWorlds() {
+        if (Bukkit.getWorlds().isEmpty()) {
+            Bukkit.getLogger().severe(ChatColor.RED + "[Quests] Server responds with no worlds. You are likely using a"
+                    + " rudimentary server implementation such as Arclight. Location objectives will be unavailable"
+                    + " until the implementation developers (not Quests) fix this issue. Version: "
+                    + Bukkit.getServer().getVersion());
+        }
+        return Bukkit.getWorlds();
     }
     
     /**
