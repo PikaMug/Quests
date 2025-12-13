@@ -11,13 +11,10 @@
 package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.convo.QuestsStringPrompt;
-import org.bukkit.conversations.ConversationContext;
 
 public abstract class MiscStringPrompt extends QuestsStringPrompt {
-    private final ConversationContext context;
 
-    public MiscStringPrompt(final ConversationContext context) {
-        this.context = context;
+    public MiscStringPrompt() {
     }
 
     @Override
@@ -25,13 +22,9 @@ public abstract class MiscStringPrompt extends QuestsStringPrompt {
         return getClass().getSimpleName();
     }
 
-    public ConversationContext getConversationContext() {
-        return context;
-    }
-
     public abstract int getSize();
 
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
 
-    public abstract String getQueryText(ConversationContext context);
+    public abstract String getQueryText();
 }

@@ -8,38 +8,41 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.misc;
+package me.pikamug.quests.events.editor.conditions;
 
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class MiscPostQuestAcceptEvent extends MiscEditorEvent {
-    private static final HandlerList HANDLERS = new HandlerList();
-    private final Prompt prompt;
+import java.util.UUID;
 
-    public MiscPostQuestAcceptEvent(final ConversationContext context, final Prompt prompt) {
-        super(context, prompt);
-        this.context = context;
+public class BukkitConditionsEditorPostOpenNumericPromptEvent extends BukkitConditionsEditorEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final UUID uuid;
+    private final ConditionsEditorNumericPrompt prompt;
+    
+    public BukkitConditionsEditorPostOpenNumericPromptEvent(final UUID uuid, final ConditionsEditorNumericPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
     }
 
     /**
-     * Returns the context involved in this event
+     * Returns the UUID involved in this event
      *
-     * @return ConversationContext which is involved in this event
+     * @return UUID which is involved in this event
      */
-    public ConversationContext getConversationContext() {
-        return context;
+    public UUID getUniqueId() {
+        return uuid;
     }
-
+    
     /**
-     * Returns the prompt involved in this event
-     *
+     * Returns the numeric prompt involved in this event
+     * 
      * @return Prompt which is involved in this event
      */
-    public Prompt getPrompt() {
+    @Override
+    public ConditionsEditorNumericPrompt getPrompt() {
         return prompt;
     }
 
@@ -47,7 +50,7 @@ public class MiscPostQuestAcceptEvent extends MiscEditorEvent {
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
-
+    
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

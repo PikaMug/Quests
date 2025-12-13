@@ -22,8 +22,8 @@ import me.pikamug.quests.convo.actions.tasks.ActionWeatherPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitConfigUtil;
@@ -31,6 +31,7 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,12 +51,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionMainPrompt extends ActionsEditorNumericPrompt {
-    
+
+    private final UUID uuid;
     private final BukkitQuestsPlugin plugin;
     
-    public ActionMainPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public ActionMainPrompt(final UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
 
     private final int size = 10;
@@ -64,14 +67,14 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     public int getSize() {
         return size;
     }
-    
+
     @Override
-    public String getTitle(final ConversationContext context) {
-        return BukkitLang.get("event") + ": " + context.getSessionData(Key.A_NAME);
+    public String getTitle() {
+        return BukkitLang.get("event") + ": " + SessionData.get(uuid, Key.A_NAME);
     }
-    
+
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -97,7 +100,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + BukkitLang.get("eventEditorSetName");
@@ -130,7 +133,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -141,10 +144,10 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         case 10:
             return "";
         case 6:
-            if (context.getSessionData(Key.A_MOBS) == null) {
+            if (SessionData.get(uuid, Key.A_MOBS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                final LinkedList<QuestMob> mobs = (LinkedList<QuestMob>) context.getSessionData(Key.A_MOBS);
+                final LinkedList<QuestMob> mobs = (LinkedList<QuestMob>) SessionData.get(uuid, Key.A_MOBS);
                 final StringBuilder text = new StringBuilder();
                 if (mobs != null) {
                     for (final QuestMob mob : mobs) {
@@ -163,18 +166,18 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
             if (plugin.getDependencies().getDenizenApi() == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             } else {
-                if (context.getSessionData(Key.A_DENIZEN) == null) {
+                if (SessionData.get(uuid, Key.A_DENIZEN) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
-                    return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_DENIZEN)
+                    return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_DENIZEN)
                             + ChatColor.GRAY + ")";
                 }
             }
         case 8:
-            if (context.getSessionData(Key.A_FAIL_QUEST) == null) {
+            if (SessionData.get(uuid, Key.A_FAIL_QUEST) == null) {
                 return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLang.get("false") + ChatColor.GRAY + ")";
             } else {
-                final Boolean failOpt = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
+                final Boolean failOpt = (Boolean) SessionData.get(uuid, Key.A_FAIL_QUEST);
                 return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(failOpt) ? ChatColor.GREEN + BukkitLang.get("true")
                         : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
             }
@@ -183,97 +186,93 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final ActionsEditorPostOpenNumericPromptEvent event
-                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+    public @NotNull String getBasicPromptText() {
+        final BukkitActionsEditorPostOpenNumericPromptEvent event
+                = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": "
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle().replaceFirst(": ", ": "
                 + ChatColor.AQUA) + ChatColor.GOLD + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
 
-    @Override
-    public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptValidatedInput(final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new ActionNamePrompt(context);
+            return new ActionNamePrompt(uuid);
         case 2:
-            return new ActionPlayerPrompt(context);
+            return new ActionPlayerPrompt(uuid);
         case 3:
-            return new ActionTimerPrompt(context);
+            return new ActionTimerPrompt(uuid);
         case 4:
-            return new ActionEffectPrompt(context);
+            return new ActionEffectPrompt(uuid);
         case 5:
-            return new ActionWeatherPrompt(context);
+            return new ActionWeatherPrompt(uuid);
         case 6:
-            return new ActionMobListPrompt(context);
+            return new ActionMobListPrompt(uuid);
         case 7:
             if (plugin.getDependencies().getDenizenApi() != null) {
-                if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                    return new ActionDenizenPrompt(context);
+                if (!plugin.hasLimitedAccess(uuid)) {
+                    return new ActionDenizenPrompt(uuid);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("modeDeny")
+                    Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + BukkitLang.get("modeDeny")
                             .replace("<mode>", BukkitLang.get("trialMode")));
-                    return new ActionMainPrompt(context);
+                    return new ActionMainPrompt(uuid);
                 }
             } else {
-                return new ActionMainPrompt(context);
+                return new ActionMainPrompt(uuid);
             }
         case 8:
-            final Boolean b = (Boolean) context.getSessionData(Key.A_FAIL_QUEST);
+            final Boolean b = (Boolean) SessionData.get(uuid, Key.A_FAIL_QUEST);
             if (Boolean.TRUE.equals(b)) {
-                context.setSessionData(Key.A_FAIL_QUEST, false);
+                SessionData.set(uuid, Key.A_FAIL_QUEST, false);
             } else {
-                context.setSessionData(Key.A_FAIL_QUEST, true);
+                SessionData.set(uuid, Key.A_FAIL_QUEST, true);
             }
-            return new ActionMainPrompt(context);
+            return new ActionMainPrompt(uuid);
         case 9:
-            if (context.getSessionData(Key.A_OLD_ACTION) != null) {
-                return new ActionSavePrompt(context, (String) context.getSessionData(Key.A_OLD_ACTION));
+            if (SessionData.get(uuid, Key.A_OLD_ACTION) != null) {
+                return new ActionSavePrompt(uuid, (String) SessionData.get(uuid, Key.A_OLD_ACTION));
             } else {
-                return new ActionSavePrompt(context, null);
+                return new ActionSavePrompt(uuid, null);
             }
         case 10:
-            return new ActionExitPrompt(context);
+            return new ActionExitPrompt(uuid);
         default:
-            return new ActionMainPrompt(context);
+            return new ActionMainPrompt(uuid);
         }
     }
     
     public class ActionNamePrompt extends ActionsEditorStringPrompt {
 
-        public ActionNamePrompt(final ConversationContext context) {
-            super(context);
+        public ActionNamePrompt(final UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorEnterEventName");
         }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event 
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+
+        public @NotNull String getPromptText() {
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
-        @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
                 return null;
             }
@@ -380,8 +379,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -506,8 +505,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 questMob = new BukkitQuestMob();
             }
             
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -723,8 +722,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -793,8 +792,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -839,8 +838,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder mobs = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
@@ -902,8 +901,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -955,8 +954,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -1017,8 +1016,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -1070,8 +1069,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.DARK_AQUA + "- " + getTitle(context) + " -");
@@ -1172,8 +1171,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
@@ -1260,8 +1259,8 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));

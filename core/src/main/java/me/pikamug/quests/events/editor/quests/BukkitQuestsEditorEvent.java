@@ -10,54 +10,44 @@
 
 package me.pikamug.quests.events.editor.quests;
 
-import me.pikamug.quests.quests.QuestFactory;
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.convo.QuestsPrompt;
 import me.pikamug.quests.events.QuestsEvent;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import me.pikamug.quests.quests.QuestFactory;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Represents a Quests Editor-related event
  */
-public abstract class QuestsEditorEvent extends QuestsEvent {
+public abstract class BukkitQuestsEditorEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    protected ConversationContext context;
+    private final UUID uuid;
+    private final QuestsPrompt prompt;
     private final QuestFactory factory;
-    private final Prompt prompt;
     
-    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt) {
-        this.context = context;
-        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getQuestFactory();
+    public BukkitQuestsEditorEvent(final UUID uuid, final QuestsPrompt prompt) {
+        this.uuid = uuid;
         this.prompt = prompt;
+        this.factory = BukkitQuestsPlugin.getInstance().getQuestFactory();
     }
     
-    public QuestsEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
+    public BukkitQuestsEditorEvent(final UUID uuid, final QuestsPrompt prompt, final boolean async) {
         super(async);
-        this.context = context;
-        this.factory = ((Quests) Objects.requireNonNull(context.getPlugin())).getQuestFactory();
+        this.uuid = uuid;
         this.prompt = prompt;
+        this.factory = BukkitQuestsPlugin.getInstance().getQuestFactory();
     }
     
     /**
-     * Returns the context involved in this event
+     * Returns the UUID involved in this event
      * 
-     * @return ConversationContext which is involved in this event
+     * @return UUID which is involved in this event
      */
-    public ConversationContext getConversationContext() {
-        return context;
-    }
-    
-    /**
-     * Returns the factory involved in this event
-     * 
-     * @return QuestFactory which is involved in this event
-     */
-    public QuestFactory getQuestFactory() {
-        return factory;
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     /**
@@ -65,8 +55,17 @@ public abstract class QuestsEditorEvent extends QuestsEvent {
      * 
      * @return Prompt which is involved in this event
      */
-    public Prompt getPrompt() {
+    public QuestsPrompt getPrompt() {
         return prompt;
+    }
+
+    /**
+     * Returns the factory involved in this event
+     *
+     * @return QuestFactory which is involved in this event
+     */
+    public QuestFactory getQuestFactory() {
+        return factory;
     }
     
     @Override

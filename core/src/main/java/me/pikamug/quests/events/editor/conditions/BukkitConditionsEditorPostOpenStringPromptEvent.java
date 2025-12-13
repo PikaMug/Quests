@@ -8,21 +8,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.editor.quests;
+package me.pikamug.quests.events.editor.conditions;
 
-import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class QuestsEditorPostOpenStringPromptEvent extends QuestsEditorEvent {
+import java.util.UUID;
+
+public class BukkitConditionsEditorPostOpenStringPromptEvent extends BukkitConditionsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final QuestsEditorStringPrompt prompt;
-    
-    public QuestsEditorPostOpenStringPromptEvent(final ConversationContext context, final QuestsEditorStringPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
+    private final UUID uuid;
+    private final ConditionsEditorStringPrompt prompt;
+
+    public BukkitConditionsEditorPostOpenStringPromptEvent(final UUID uuid, final ConditionsEditorStringPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
+    }
+
+    /**
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     /**
@@ -31,7 +42,7 @@ public class QuestsEditorPostOpenStringPromptEvent extends QuestsEditorEvent {
      * @return Prompt which is involved in this event
      */
     @Override
-    public QuestsEditorStringPrompt getPrompt() {
+    public ConditionsEditorStringPrompt getPrompt() {
         return prompt;
     }
 

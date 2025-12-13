@@ -13,7 +13,7 @@ package me.pikamug.quests.convo.generic;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
@@ -222,7 +222,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitQuestsEditorPostOpenNumericPromptEvent event = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));

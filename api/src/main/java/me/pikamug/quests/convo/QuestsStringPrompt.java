@@ -10,18 +10,15 @@
 
 package me.pikamug.quests.convo;
 
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.player.Quester;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.StringPrompt;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import java.util.List;
 
-public abstract class QuestsStringPrompt extends StringPrompt {
+public abstract class QuestsStringPrompt implements QuestsPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
     
     public QuestsStringPrompt() {
@@ -42,21 +39,21 @@ public abstract class QuestsStringPrompt extends StringPrompt {
     /**
      * Takes a header, footer, and a list of names, formats them in Quests
      * style, and decides how to deliver the result. Players are sent
-     * clickable text, all others (i.e. console) are sent plain text,
-     * which is returned to be delivered through the Conversations API.
+     * clickable text which is returned in a format to be delivered
+     * through the Conversations API.
      * 
      * @param header  the menu header
      * @param list    a list of strings to display
      * @param footer  the menu footer
-     * @param context the conversation context
+     * @param quester the quest player
      * @return        plain text to deliver
      */
     protected String sendClickableMenu(final String header, final List<String> list, final String footer,
-                                       final ConversationContext context) {
-        if (context.getPlugin() == null) {
+                                       final Quester quester) {
+        if (quester == null || quester.getPlugin() == null) {
             return "ERROR";
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getConfigSettings().canClickablePrompts()) {
+        if (!quester.getPlugin().getConfigSettings().canClickablePrompts()) {
             return ChatColor.GOLD + header + "\n" + ChatColor.AQUA + String.join(ChatColor.GRAY + ", " + ChatColor.AQUA, list) + "\n" + ChatColor.YELLOW + footer;
         }
         final TextComponent component = new TextComponent(header + "\n");
@@ -75,7 +72,7 @@ public abstract class QuestsStringPrompt extends StringPrompt {
             }
         }
         component.addExtra(footerComponent);
-        ((Player)context.getForWhom()).spigot().sendMessage(component);
+        quester.getPlayer().spigot().sendMessage(component);
         return "";
     }
 }

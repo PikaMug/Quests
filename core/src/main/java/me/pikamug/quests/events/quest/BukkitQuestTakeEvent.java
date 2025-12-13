@@ -12,25 +12,22 @@ package me.pikamug.quests.events.quest;
 
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
-import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a quest has its compass target updated for a quester
+ * Called when a quest is taken by a quester
  */
-public class QuestUpdateCompassEvent extends QuestEvent implements Cancellable {
+public class BukkitQuestTakeEvent extends BukkitQuestEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Quester quester;
-    private final Location target;
     private boolean cancel = false;
 
-    public QuestUpdateCompassEvent(final Quest quest, final Quester who, final Location target) {
+    public BukkitQuestTakeEvent(final Quest quest, final Quester who) {
         super(quest);
         this.quester = who;
-        this.target = target;
     }
     
     /**
@@ -42,15 +39,6 @@ public class QuestUpdateCompassEvent extends QuestEvent implements Cancellable {
         return quester;
     }
     
-    /**
-     * Returns the new compass target in this event
-     * 
-     * @return Location which shall be the new target
-     */
-    public Location getNewCompassTarget() {
-        return target;
-    }
-
     @Override
     public boolean isCancelled() {
         return cancel;

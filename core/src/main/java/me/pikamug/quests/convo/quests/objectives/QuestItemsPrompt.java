@@ -14,7 +14,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
@@ -199,8 +199,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
             ItemStackPrompt.clearSessionData(context);
         }
 
-        final QuestsEditorPostOpenNumericPromptEvent event
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
@@ -329,8 +329,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -449,8 +449,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -569,8 +569,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -688,8 +688,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -808,8 +808,8 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");

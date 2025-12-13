@@ -17,20 +17,16 @@ import me.pikamug.quests.conditions.BukkitConditionFactory;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
-import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.listeners.BukkitBlockListener;
-import me.pikamug.quests.listeners.BukkitCitizensListener;
 import me.pikamug.quests.listeners.BukkitCommandManager;
 import me.pikamug.quests.listeners.BukkitConvoListener;
 import me.pikamug.quests.listeners.BukkitItemListener;
 import me.pikamug.quests.listeners.BukkitPartiesListener;
 import me.pikamug.quests.listeners.BukkitPlayerListener;
 import me.pikamug.quests.listeners.BukkitUniteListener;
-import me.pikamug.quests.listeners.BukkitZnpcsApiListener;
-import me.pikamug.quests.listeners.BukkitZnpcsListener;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -62,16 +58,23 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +82,7 @@ import java.util.logging.Logger;
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private boolean loading = true;
+    private static BukkitQuestsPlugin instance;
     private String bukkitVersion = "0";
     private BukkitDependencies depends;
     private BukkitActionYamlStorage actionLoader;
@@ -95,8 +99,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
     private Collection<UUID> questNpcUuids = new ConcurrentSkipListSet<>();
     private TabExecutor cmdExecutor;
-    private ConversationFactory conversationFactory;
-    private ConversationFactory npcConversationFactory;
+    //private ConversationFactory conversationFactory;
+    //private ConversationFactory npcConversationFactory;
     private BukkitQuestFactory questFactory;
     private BukkitActionFactory actionFactory;
     private BukkitConditionFactory conditionFactory;
@@ -115,6 +119,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
+        instance = this;
         BukkitConversations.init(this);
         new BukkitConversationsForwarder().register(this);
 
@@ -209,9 +214,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 .withFirstPrompt(new QuestAcceptPrompt(this)).withTimeout(configSettings.getAcceptTimeout())
                 .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                 .addConversationAbandonedListener(convoListener);*/
-        this.npcConversationFactory = new ConversationFactory(this).withModality(false)
+        /*this.npcConversationFactory = new ConversationFactory(this).withModality(false)
                 .withFirstPrompt(new NpcOfferQuestPrompt(this)).withTimeout(configSettings.getAcceptTimeout())
-                .withLocalEcho(false).addConversationAbandonedListener(convoListener);
+                .withLocalEcho(false).addConversationAbandonedListener(convoListener);*/
 
         // 11 - Register listeners
         getServer().getPluginManager().registerEvents(getBlockListener(), this);
@@ -259,6 +264,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public boolean isLoading() {
         return loading;
+    }
+
+    public static BukkitQuestsPlugin getInstance() {
+        return instance;
     }
 
     public File getPluginDataFolder() {
@@ -473,13 +482,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return cmdExecutor;
     }
 
-    public ConversationFactory getConversationFactory() {
+    /*public ConversationFactory getConversationFactory() {
         return conversationFactory;
     }
 
     public ConversationFactory getNpcConversationFactory() {
         return npcConversationFactory;
-    }
+    }*/
 
     public BukkitQuestFactory getQuestFactory() {
         return questFactory;
@@ -655,6 +664,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     /**
      * Reload quests, actions, conditions, config settings, lang, modules, and player data
+     *
+     * @param callback Callback, or null
      */
     public void reload(final ReloadCallback<Boolean> callback) {
         if (loading) {
@@ -706,7 +717,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Execute finishing task and print provided exception
      *
-     * @param callback Callback to execute
+     * @param callback Callback to execute, or null
      * @param result Result to pass through callback
      * @param exception Exception to print, or null
      */
@@ -741,16 +752,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Checks if conversable is non-op, non-* player in Trial Mode
+     * Checks if user is non-op, non-* player in Trial Mode
      *
-     * @param conversable the editor user to be checked
+     * @param uuid the editor user to be checked
      * @return {@code true} if user is a Player with quests.mode.trial permission
      */
-    public boolean hasLimitedAccess(final Conversable conversable) {
-        if (!(conversable instanceof Player)) {
+    public boolean hasLimitedAccess(final UUID uuid) {
+        if (Bukkit.getPlayer(uuid) == null) {
             return false;
         }
-        final Player player = ((Player)conversable);
+        final Player player = Bukkit.getPlayer(uuid);
         if (player.isOp() || player.hasPermission("*")) {
             return false;
         }

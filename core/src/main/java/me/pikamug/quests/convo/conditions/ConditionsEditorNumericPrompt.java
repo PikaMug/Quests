@@ -10,30 +10,29 @@
 
 package me.pikamug.quests.convo.conditions;
 
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.conditions.ConditionFactory;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+
+import java.util.UUID;
 
 public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt {
-    private final ConversationContext context;
-    private ConditionFactory factory;
+    private final UUID uuid;
+    private final ConditionFactory factory;
     
-    public ConditionsEditorNumericPrompt(final ConversationContext context) {
-        this.context = context;
-        if (context != null && context.getPlugin() != null) {
-            this.factory = ((Quests)context.getPlugin()).getConditionFactory();
-        }
+    public ConditionsEditorNumericPrompt(final UUID uuid) {
+        this.uuid = uuid;
+        this.factory = BukkitQuestsPlugin.getInstance().getConditionFactory();
     }
     
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
-    
-    public ConversationContext getConversationContext() {
-        return context;
+
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     public ConditionFactory getConditionFactory() {
@@ -42,11 +41,11 @@ public abstract class ConditionsEditorNumericPrompt extends QuestsNumericPrompt 
     
     public abstract int getSize();
     
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
     
-    public abstract ChatColor getNumberColor(ConversationContext context, int number);
+    public abstract ChatColor getNumberColor(int number);
     
-    public abstract String getSelectionText(ConversationContext context, int number);
+    public abstract String getSelectionText(int number);
     
-    public abstract String getAdditionalText(ConversationContext context, int number);
+    public abstract String getAdditionalText(int number);
 }

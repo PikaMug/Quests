@@ -10,36 +10,35 @@
 
 package me.pikamug.quests.convo.conditions;
 
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.conditions.ConditionFactory;
 import me.pikamug.quests.convo.QuestsStringPrompt;
-import org.bukkit.conversations.ConversationContext;
+
+import java.util.UUID;
 
 public abstract class ConditionsEditorStringPrompt extends QuestsStringPrompt {
-    private final ConversationContext context;
-    private ConditionFactory factory;
+    private final UUID uuid;
+    private final ConditionFactory factory;
     
-    public ConditionsEditorStringPrompt(final ConversationContext context) {
-        this.context = context;
-        if (context != null && context.getPlugin() != null) {
-            this.factory = ((Quests)context.getPlugin()).getConditionFactory();
-        }
+    public ConditionsEditorStringPrompt(final UUID uuid) {
+        this.uuid = uuid;
+        this.factory = BukkitQuestsPlugin.getInstance().getConditionFactory();
     }
     
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
-    
-    public ConversationContext getConversationContext() {
-        return context;
+
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     public ConditionFactory getConditionFactory() {
         return factory;
     }
     
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
     
-    public abstract String getQueryText(ConversationContext context);
+    public abstract String getQueryText();
 }

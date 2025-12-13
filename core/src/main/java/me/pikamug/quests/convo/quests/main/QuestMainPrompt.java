@@ -22,8 +22,8 @@ import me.pikamug.quests.convo.quests.requirements.QuestRequirementsPrompt;
 import me.pikamug.quests.convo.quests.rewards.QuestRewardsPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
@@ -238,7 +238,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitQuestsEditorPostOpenNumericPromptEvent event = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": "
@@ -330,7 +330,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -390,7 +390,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -433,8 +433,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -477,8 +477,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (context.getForWhom() instanceof Player) {
@@ -546,8 +546,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -610,8 +610,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context) + "\n");
@@ -739,8 +739,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
 
-            final QuestsEditorPostOpenNumericPromptEvent event
-                    = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context) + "\n");
@@ -822,8 +822,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
@@ -949,8 +949,8 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));

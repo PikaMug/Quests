@@ -14,8 +14,8 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
@@ -135,8 +135,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final ActionsEditorPostOpenNumericPromptEvent event
-                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitActionsEditorPostOpenNumericPromptEvent event
+                = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -253,8 +253,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -312,8 +312,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
@@ -365,8 +365,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -470,8 +470,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -532,8 +532,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder worlds = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
@@ -585,8 +585,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -629,8 +629,8 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);

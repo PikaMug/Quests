@@ -20,8 +20,8 @@ import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.tasks.ConditionEntityPrompt;
 import me.pikamug.quests.convo.conditions.tasks.ConditionPlayerPrompt;
 import me.pikamug.quests.convo.conditions.tasks.ConditionWorldPrompt;
-import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.conditions.ConditionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
@@ -124,8 +124,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final ConditionsEditorPostOpenNumericPromptEvent event
-                = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitConditionsEditorPostOpenNumericPromptEvent event
+                = new BukkitConditionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context).replaceFirst(": ", ": "
@@ -190,8 +190,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event
-                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -326,8 +326,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenNumericPromptEvent event
-                    = new ConditionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitConditionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context));
@@ -397,8 +397,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event
-                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -445,8 +445,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event
-                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -530,8 +530,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event 
-                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));
@@ -618,8 +618,8 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ConditionsEditorPostOpenStringPromptEvent event
-                    = new ConditionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.YELLOW + getQueryText(context));

@@ -8,52 +8,49 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.quest;
+package me.pikamug.quests.events.editor.actions;
 
-import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.Quest;
-import org.bukkit.event.Cancellable;
+import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import org.bukkit.event.HandlerList;
-
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Called when a quest is taken by a quester
- */
-public class QuestTakeEvent extends QuestEvent implements Cancellable {
-    private static final HandlerList HANDLERS = new HandlerList();
-    private final Quester quester;
-    private boolean cancel = false;
+import java.util.UUID;
 
-    public QuestTakeEvent(final Quest quest, final Quester who) {
-        super(quest);
-        this.quester = who;
+public class BukkitActionsEditorPostOpenStringPromptEvent extends BukkitActionsEditorEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final UUID uuid;
+    private final ActionsEditorStringPrompt prompt;
+
+    public BukkitActionsEditorPostOpenStringPromptEvent(final UUID uuid, final ActionsEditorStringPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
+        this.prompt = prompt;
+    }
+
+    /**
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     /**
-     * Returns the quester involved in this event
+     * Returns the string prompt involved in this event
      * 
-     * @return Quester who is involved in this event
+     * @return Prompt which is involved in this event
      */
-    public Quester getQuester() {
-        return quester;
-    }
-    
     @Override
-    public boolean isCancelled() {
-        return cancel;
-    }
-
-    @Override
-    public void setCancelled(final boolean cancel) {
-        this.cancel = cancel;
+    public ActionsEditorStringPrompt getPrompt() {
+        return prompt;
     }
 
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
-     
+    
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

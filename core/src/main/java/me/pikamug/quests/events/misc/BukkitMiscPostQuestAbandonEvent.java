@@ -8,30 +8,40 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.editor.quests;
+package me.pikamug.quests.events.misc;
 
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.convo.QuestsPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class QuestsEditorPostOpenNumericPromptEvent extends QuestsEditorEvent {
+import java.util.UUID;
+
+public class BukkitMiscPostQuestAbandonEvent extends BukkitMiscEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final QuestsEditorNumericPrompt prompt;
-    
-    public QuestsEditorPostOpenNumericPromptEvent(final ConversationContext context, final QuestsEditorNumericPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
+    private final UUID uuid;
+    private final QuestsPrompt prompt;
+
+    public BukkitMiscPostQuestAbandonEvent(final UUID uuid, final QuestsPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
     }
-    
+
     /**
-     * Returns the numeric prompt involved in this event
-     * 
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
+    }
+
+    /**
+     * Returns the prompt involved in this event
+     *
      * @return Prompt which is involved in this event
      */
-    @Override
-    public QuestsEditorNumericPrompt getPrompt() {
+    public QuestsPrompt getPrompt() {
         return prompt;
     }
 
@@ -39,7 +49,7 @@ public class QuestsEditorPostOpenNumericPromptEvent extends QuestsEditorEvent {
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
-    
+
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

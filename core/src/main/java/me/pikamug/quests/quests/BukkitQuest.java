@@ -22,7 +22,7 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
-import me.pikamug.quests.events.quest.QuestUpdateCompassEvent;
+import me.pikamug.quests.events.quest.BukkitQuestUpdateCompassEvent;
 import me.pikamug.quests.events.quester.*;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
@@ -505,7 +505,7 @@ public class BukkitQuest implements Quest {
                 if (targetLocation.getWorld().getName().equals(quester.getPlayer().getWorld().getName())) {
                     final Location lockedTarget = new Location(targetLocation.getWorld(), targetLocation.getX(),
                             targetLocation.getY(), targetLocation.getZ());
-                    final QuestUpdateCompassEvent event = new QuestUpdateCompassEvent(quest, quester, lockedTarget);
+                    final BukkitQuestUpdateCompassEvent event = new BukkitQuestUpdateCompassEvent(quest, quester, lockedTarget);
                     plugin.getServer().getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
                         return;

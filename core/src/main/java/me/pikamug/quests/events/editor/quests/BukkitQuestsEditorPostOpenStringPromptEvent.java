@@ -8,31 +8,41 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.editor.conditions;
+package me.pikamug.quests.events.editor.quests;
 
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import org.bukkit.event.HandlerList;
-
 import org.jetbrains.annotations.NotNull;
 
-public class ConditionsEditorPostOpenNumericPromptEvent extends ConditionsEditorEvent {
+import java.util.UUID;
+
+public class BukkitQuestsEditorPostOpenStringPromptEvent extends BukkitQuestsEditorEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ConditionsEditorNumericPrompt prompt;
+    private final UUID uuid;
+    private final QuestsEditorStringPrompt prompt;
     
-    public ConditionsEditorPostOpenNumericPromptEvent(final ConversationContext context, final ConditionsEditorNumericPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
+    public BukkitQuestsEditorPostOpenStringPromptEvent(final UUID uuid, final QuestsEditorStringPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
+    }
+
+    /**
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     /**
-     * Returns the numeric prompt involved in this event
+     * Returns the string prompt involved in this event
      * 
      * @return Prompt which is involved in this event
      */
     @Override
-    public ConditionsEditorNumericPrompt getPrompt() {
+    public QuestsEditorStringPrompt getPrompt() {
         return prompt;
     }
 

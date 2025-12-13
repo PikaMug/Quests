@@ -74,29 +74,5 @@ public interface Quests {
 
     ConditionFactory getConditionFactory();
 
-    /*ConvoListener getConvoListener();
-
-    BlockListener getBlockListener();
-
-    ItemListener getItemListener();
-
-    NpcListener getNpcListener();
-
-    PlayerListener getPlayerListener();
-
-    UniteListener getUniteListener();
-
-    NpcEffectThread getNpcEffectThread();
-
-    PlayerMoveThread getPlayerMoveThread();
-
-    PartiesListener getPartiesListener();
-
-    DenizenTrigger getDenizenTrigger();
-
-    LocaleManager getLocaleManager();
-
-    QuesterStorage getStorage();*/
-
     void saveResourceAs(String resourcePath, final String outputPath, final boolean replace);
 }

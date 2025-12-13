@@ -10,28 +10,30 @@
 
 package me.pikamug.quests.events.misc;
 
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import me.pikamug.quests.convo.QuestsPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class MiscPostNpcOfferQuestEvent extends MiscEditorEvent {
-    private static final HandlerList HANDLERS = new HandlerList();
-    private final Prompt prompt;
+import java.util.UUID;
 
-    public MiscPostNpcOfferQuestEvent(final ConversationContext context, final Prompt prompt) {
-        super(context, prompt);
-        this.context = context;
+public class BukkitMiscPostNpcOfferQuestEvent extends BukkitMiscEditorEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final UUID uuid;
+    private final QuestsPrompt prompt;
+
+    public BukkitMiscPostNpcOfferQuestEvent(final UUID uuid, final QuestsPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
     }
 
     /**
-     * Returns the context involved in this event
+     * Returns the UUID involved in this event
      *
-     * @return ConversationContext which is involved in this event
+     * @return UUID which is involved in this event
      */
-    public ConversationContext getConversationContext() {
-        return context;
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     /**
@@ -39,7 +41,7 @@ public class MiscPostNpcOfferQuestEvent extends MiscEditorEvent {
      *
      * @return Prompt which is involved in this event
      */
-    public Prompt getPrompt() {
+    public QuestsPrompt getPrompt() {
         return prompt;
     }
 

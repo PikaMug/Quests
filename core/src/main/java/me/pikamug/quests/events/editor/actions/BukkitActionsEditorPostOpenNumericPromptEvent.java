@@ -10,28 +10,39 @@
 
 package me.pikamug.quests.events.editor.actions;
 
-import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionsEditorPostOpenStringPromptEvent extends ActionsEditorEvent {
-    private static final HandlerList HANDLERS = new HandlerList();
-    private final ActionsEditorStringPrompt prompt;
+import java.util.UUID;
 
-    public ActionsEditorPostOpenStringPromptEvent(final ConversationContext context, final ActionsEditorStringPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
+public class BukkitActionsEditorPostOpenNumericPromptEvent extends BukkitActionsEditorEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final UUID uuid;
+    private final ActionsEditorNumericPrompt prompt;
+    
+    public BukkitActionsEditorPostOpenNumericPromptEvent(final UUID uuid, final ActionsEditorNumericPrompt prompt) {
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
+    }
+
+    /**
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     /**
-     * Returns the string prompt involved in this event
+     * Returns the numeric prompt involved in this event
      * 
      * @return Prompt which is involved in this event
      */
     @Override
-    public ActionsEditorStringPrompt getPrompt() {
+    public ActionsEditorNumericPrompt getPrompt() {
         return prompt;
     }
 

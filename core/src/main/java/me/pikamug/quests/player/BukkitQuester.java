@@ -17,6 +17,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.Quests;
 import me.pikamug.quests.conditions.BukkitCondition;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
@@ -26,9 +27,13 @@ import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.entity.BukkitCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.events.quest.QuestQuitEvent;
-import me.pikamug.quests.events.quest.QuestTakeEvent;
-import me.pikamug.quests.events.quester.*;
+import me.pikamug.quests.events.quest.BukkitQuestQuitEvent;
+import me.pikamug.quests.events.quest.BukkitQuestTakeEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostStartQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostUpdateObjectiveEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreOpenGUIEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreStartQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreUpdateObjectiveEvent;
 import me.pikamug.quests.item.BukkitQuestJournal;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -36,16 +41,30 @@ import me.pikamug.quests.nms.BukkitActionBarProvider;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.components.*;
+import me.pikamug.quests.quests.components.BukkitObjective;
+import me.pikamug.quests.quests.components.BukkitRequirements;
+import me.pikamug.quests.quests.components.BukkitStage;
+import me.pikamug.quests.quests.components.Objective;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.BukkitStageTimer;
-import me.pikamug.quests.util.*;
+import me.pikamug.quests.util.BukkitConfigUtil;
+import me.pikamug.quests.util.BukkitInventoryUtil;
+import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.unite.api.objects.PartyProvider;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -56,8 +75,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
@@ -222,6 +251,11 @@ public class BukkitQuester implements Quester {
     @Override
     public int compareTo(final Quester quester) {
         return id.compareTo(quester.getUUID());
+    }
+
+    @Override
+    public Quests getPlugin() {
+        return plugin;
     }
 
     @Override
@@ -483,7 +517,7 @@ public class BukkitQuester implements Quester {
         if (quest == null) {
             return false;
         }
-        final QuestTakeEvent event = new QuestTakeEvent(quest, this);
+        final BukkitQuestTakeEvent event = new BukkitQuestTakeEvent(quest, this);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -847,7 +881,7 @@ public class BukkitQuester implements Quester {
         if (quest == null) {
             return false;
         }
-        final QuestQuitEvent event = new QuestQuitEvent(quest, this);
+        final BukkitQuestQuitEvent event = new BukkitQuestQuitEvent(quest, this);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
@@ -856,12 +890,13 @@ public class BukkitQuester implements Quester {
         if (getPlayer() != null) {
             setQuestIdToQuit(quest.getId());
             if (settings.canConfirmAbandon()) {
-                final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
+                /*final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
                         .withPrefix(context -> ChatColor.GRAY.toString())
                         .withFirstPrompt(new QuestAbandonPrompt(plugin)).withTimeout(settings.getAcceptTimeout())
                         .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                         .addConversationAbandonedListener(plugin.getConvoListener());
-                cf.buildConversation(getPlayer()).begin();
+                cf.buildConversation(getPlayer()).begin();*/
+                new QuestAbandonPrompt(getUUID(), plugin).start();
             } else {
                 quitQuest(quest, messages);
             }

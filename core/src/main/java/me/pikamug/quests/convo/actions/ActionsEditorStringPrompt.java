@@ -10,36 +10,35 @@
 
 package me.pikamug.quests.convo.actions;
 
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.convo.QuestsStringPrompt;
-import org.bukkit.conversations.ConversationContext;
+
+import java.util.UUID;
 
 public abstract class ActionsEditorStringPrompt extends QuestsStringPrompt {
-    private final ConversationContext context;
-    private ActionFactory factory;
+    private final UUID uuid;
+    private final ActionFactory factory;
     
-    public ActionsEditorStringPrompt(final ConversationContext context) {
-        this.context = context;
-        if (context != null && context.getPlugin() != null) {
-            this.factory = ((Quests)context.getPlugin()).getActionFactory();
-        }
+    public ActionsEditorStringPrompt(final UUID uuid) {
+        this.uuid = uuid;
+        this.factory = BukkitQuestsPlugin.getInstance().getActionFactory();
     }
     
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
-    
-    public ConversationContext getConversationContext() {
-        return context;
+
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     public ActionFactory getActionFactory() {
         return factory;
     }
     
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
     
-    public abstract String getQueryText(ConversationContext context);
+    public abstract String getQueryText();
 }

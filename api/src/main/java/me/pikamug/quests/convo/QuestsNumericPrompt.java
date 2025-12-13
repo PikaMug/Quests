@@ -15,7 +15,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class QuestsNumericPrompt extends NumericPrompt {
+public abstract class QuestsNumericPrompt implements QuestsPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\d+) - ");
 
@@ -41,8 +40,7 @@ public abstract class QuestsNumericPrompt extends NumericPrompt {
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
-    
-    @Override
+
     public @NotNull String getPromptText(@NotNull final ConversationContext cc) {
         return sendClickableSelection(getBasicPromptText(cc), cc);
     }

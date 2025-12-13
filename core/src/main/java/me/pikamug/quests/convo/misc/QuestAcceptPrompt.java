@@ -1,6 +1,7 @@
 package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.events.misc.BukkitMiscPostQuestAcceptEvent;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -13,21 +14,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class QuestAcceptPrompt {
+public class QuestAcceptPrompt extends MiscStringPrompt {
 
-    private final UUID uuid;
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
 
-    public QuestAcceptPrompt(final UUID uuid, BukkitQuestsPlugin plugin) {
+    public QuestAcceptPrompt(final @NotNull UUID uuid, BukkitQuestsPlugin plugin) {
         super();
         this.uuid = uuid;
         this.plugin = plugin;
     }
 
+    @Override
     public int getSize() {
         return 2;
     }
 
+    @Override
     public String getTitle() {
         return null;
     }
@@ -56,18 +59,18 @@ public class QuestAcceptPrompt {
         }
     }
 
+    @Override
     public String getQueryText() {
         return BukkitLang.get("acceptQuest");
     }
 
-    public @NotNull String getPromptText(final @NotNull UUID uuid) {
+    public @NotNull String getPromptText() {
         if (plugin == null) {
             return ChatColor.YELLOW + BukkitLang.get("itemCreateCriticalError");
         }
 
-        // TODO resolve
-        /*final MiscPostQuestAcceptEvent event = new MiscPostQuestAcceptEvent(this);
-        plugin.getServer().getPluginManager().callEvent(event);*/
+        final BukkitMiscPostQuestAcceptEvent event = new BukkitMiscPostQuestAcceptEvent(uuid, this);
+        plugin.getServer().getPluginManager().callEvent(event);
 
         if (!plugin.getConfigSettings().canClickablePrompts()) {
             return ChatColor.YELLOW + getQueryText() + "  " + ChatColor.GREEN
@@ -88,7 +91,7 @@ public class QuestAcceptPrompt {
         return "";
     }
 
-    public void acceptInput(final @NotNull UUID uuid, final String input) {
+    public void acceptInput(final String input) {
         if (plugin == null || input == null) {
             return;
         }
@@ -124,9 +127,12 @@ public class QuestAcceptPrompt {
 
     public void start() {
         Conversations.create(uuid)
-                .prompt(getPromptText(uuid), String.class, prompt -> prompt
+                .prompt(getPromptText(), String.class, prompt -> prompt
                 .converter(String::valueOf)
-                .fetch((input, sender) -> acceptInput(uuid, input)))
+                .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
+                .fetch((input, sender) -> acceptInput(input)))
+                //.endWhen(new TimeClause(plugin.getConfigSettings().getAcceptTimeout() * 20L,
+                // ChatColor.YELLOW + BukkitLang.get("questTimeout")))                              needs String support
                 .start();
     }
 }

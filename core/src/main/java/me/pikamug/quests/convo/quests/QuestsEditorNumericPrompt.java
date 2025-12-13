@@ -10,30 +10,29 @@
 
 package me.pikamug.quests.convo.quests;
 
-import me.pikamug.quests.quests.QuestFactory;
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
+import me.pikamug.quests.quests.QuestFactory;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+
+import java.util.UUID;
 
 public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
-    private final ConversationContext context;
+    private final UUID uuid;
     private QuestFactory factory;
     
-    public QuestsEditorNumericPrompt(final ConversationContext context) {
-        this.context = context;
-        if (context != null && context.getPlugin() != null) {
-            factory = ((Quests)context.getPlugin()).getQuestFactory();
-        }
+    public QuestsEditorNumericPrompt(final UUID uuid) {
+        this.uuid = uuid;
+        this.factory = BukkitQuestsPlugin.getInstance().getQuestFactory();
     }
     
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
-    
-    public ConversationContext getConversationContext() {
-        return context;
+
+    public UUID getUniqueId() {
+        return uuid;
     }
     
     public QuestFactory getQuestFactory() {
@@ -42,11 +41,11 @@ public abstract class QuestsEditorNumericPrompt extends QuestsNumericPrompt {
     
     public abstract int getSize();
     
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
     
-    public abstract ChatColor getNumberColor(ConversationContext context, int number);
+    public abstract ChatColor getNumberColor(int number);
     
-    public abstract String getSelectionText(ConversationContext context, int number);
+    public abstract String getSelectionText(int number);
     
-    public abstract String getAdditionalText(ConversationContext context, int number);
+    public abstract String getAdditionalText(int number);
 }

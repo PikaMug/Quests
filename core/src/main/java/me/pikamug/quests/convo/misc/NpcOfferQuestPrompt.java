@@ -11,63 +11,58 @@
 package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.events.misc.MiscPostNpcOfferQuestEvent;
+import me.pikamug.quests.events.misc.BukkitMiscPostNpcOfferQuestEvent;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.BukkitQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.browsit.conversations.api.Conversations;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.UUID;
 
 public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
-    private ConversationContext context;
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
+    private final LinkedList<Quest> npcQuests;
+    private final String npcName;
 
-    public NpcOfferQuestPrompt(final BukkitQuestsPlugin plugin) {
-        super(null);
+    public NpcOfferQuestPrompt(final @NotNull UUID uuid, final BukkitQuestsPlugin plugin,
+                               LinkedList<Quest> npcQuests, String npcName) {
+        super();
+        this.uuid = uuid;
         this.plugin = plugin;
-    }
-
-    public NpcOfferQuestPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
-    }
-
-    @Override
-    public ConversationContext getConversationContext() {
-        return context;
+        this.npcQuests = npcQuests;
+        this.npcName = npcName;
     }
 
     private int size = 3;
 
     @Override
     public int getSize() {
-        return size;
+        return 3;
     }
 
     @Override
-    public String getTitle(final ConversationContext context) {
-        final String npc = (String) context.getSessionData("npc");
-        return BukkitLang.get("questNPCListTitle").replace("<npc>", npc != null ? npc : "NPC");
+    public String getTitle() {
+        return BukkitLang.get("questNPCListTitle").replace("<npc>", npcName != null ? npcName : "NPC");
     }
 
-    @SuppressWarnings("unchecked")
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+    public ChatColor getNumberColor(final int number) {
+        final LinkedList<Quest> quests = npcQuests;
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(uuid);
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
@@ -84,11 +79,10 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public String getSelectionText(final ConversationContext context, final int number) {
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+    public String getSelectionText(final int number) {
+        final LinkedList<Quest> quests = npcQuests;
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(uuid);
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
@@ -105,11 +99,10 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+    public String getAdditionalText(final int number) {
+        final LinkedList<Quest> quests = npcQuests;
         if (plugin != null) {
-            final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+            final Quester quester = plugin.getQuester(uuid);
             if (quests != null && number > 0) {
                 if (number < (quests.size() + 1)) {
                     final Quest quest = quests.get(number - 1);
@@ -122,64 +115,61 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         return "";
     }
 
-    public String getQueryText(final ConversationContext context) {
+    @Override
+    public String getQueryText() {
         return BukkitLang.get("enterAnOption");
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public @NotNull String getPromptText(final ConversationContext context) {
-        this.context = context;
-        final LinkedList<BukkitQuest> quests = (LinkedList<BukkitQuest>) context.getSessionData("npcQuests");
-        final String npc = (String) context.getSessionData("npc");
-        if (plugin == null || quests == null || npc == null) {
+    public @NotNull String getPromptText() {
+        final LinkedList<Quest> quests = npcQuests;
+        if (plugin == null || quests == null || npcName == null) {
             return ChatColor.YELLOW + BukkitLang.get("itemCreateCriticalError");
         }
-        quests.sort(Comparator.comparing(BukkitQuest::getName));
+        quests.sort(Comparator.comparing(Quest::getName));
 
-        final MiscPostNpcOfferQuestEvent event = new MiscPostNpcOfferQuestEvent(context, this);
+
+        final BukkitMiscPostNpcOfferQuestEvent event = new BukkitMiscPostNpcOfferQuestEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
-            final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle(context));
+        if (Bukkit.getPlayer(uuid) == null || !plugin.getConfigSettings().canClickablePrompts()) {
+            final StringBuilder text = new StringBuilder(ChatColor.WHITE + getTitle());
             size = quests.size();
             for (int i = 1; i <= size + 1; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i).append(". ")
-                        .append(ChatColor.RESET).append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i).append(". ")
+                        .append(ChatColor.RESET).append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
-            text.append("\n").append(ChatColor.WHITE).append(getQueryText(context));
+            text.append("\n").append(ChatColor.WHITE).append(getQueryText());
             return text.toString();
         }
-        final TextComponent component = new TextComponent(getTitle(context));
+        final TextComponent component = new TextComponent(getTitle());
         component.setColor(net.md_5.bungee.api.ChatColor.WHITE);
         size = quests.size();
         final TextComponent line = new TextComponent("");
         for (int i = 1; i <= size + 1; i++) {
-            final TextComponent choice = new TextComponent("\n" + getNumberColor(context, i) + ChatColor.BOLD + i + ". "
-                    + ChatColor.RESET + getSelectionText(context, i));
+            final TextComponent choice = new TextComponent("\n" + getNumberColor(i) + ChatColor.BOLD + i + ". "
+                    + ChatColor.RESET + getSelectionText(i));
             choice.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + i));
             if (plugin.getConfigSettings().canShowQuestReqs() && i <= size) {
                 choice.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new ComponentBuilder(quests.get(i - 1).getDescription()).create()));
             }
             line.addExtra(choice);
-            line.addExtra(getAdditionalText(context, i));
+            line.addExtra(getAdditionalText(i));
         }
         component.addExtra(line);
-        component.addExtra("\n" + ChatColor.WHITE + getQueryText(context));
-        ((Player)context.getForWhom()).spigot().sendMessage(component);
+        component.addExtra("\n" + ChatColor.WHITE + getQueryText());
+        Bukkit.getPlayer(uuid).spigot().sendMessage(component);
         return "";
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Prompt acceptInput(final ConversationContext context, final String input) {
-        final LinkedList<Quest> quests = (LinkedList<Quest>) context.getSessionData("npcQuests");
+    public void acceptInput(final String input) {
+        final LinkedList<Quest> quests = npcQuests;
         if (plugin == null || quests == null) {
-            return Prompt.END_OF_CONVERSATION;
+            return;
         }
-        final Quester quester = plugin.getQuester(((Player) context.getForWhom()).getUniqueId());
+        final CommandSender sender = Bukkit.getEntity(uuid);
+        final Quester quester = plugin.getQuester(uuid);
         int numInput = -1;
         try {
             numInput = Integer.parseInt(input);
@@ -187,8 +177,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
             // Continue
         }
         if (input.equalsIgnoreCase(BukkitLang.get("cancel")) || numInput == (quests.size() + 1)) {
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("cancelled"));
-            return Prompt.END_OF_CONVERSATION;
+            sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("cancelled"));
+            return;
         } else {
             Quest q = null;
             for (final Quest quest : quests) {
@@ -214,8 +204,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                 }
             }
             if (q == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
-                return new NpcOfferQuestPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
+                new NpcOfferQuestPrompt(uuid, plugin, npcQuests, npcName).start();
             } else {
                 final Player player = quester.getPlayer();
                 if (quester.canAcceptOffer(q, true)) {
@@ -229,7 +219,6 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                         new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
                     }
                 }
-                return Prompt.END_OF_CONVERSATION;
             }
         }
     }
@@ -238,5 +227,16 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         final Quest quest = plugin.getQuestById(quester.getQuestIdToTake());
         return MessageFormat.format("{0}- {1}{2}{3} -\n\n{4}{5}\n", ChatColor.GOLD, ChatColor.DARK_PURPLE, 
                 quest.getName(), ChatColor.GOLD, ChatColor.RESET, quest.getDescription());
+    }
+
+    public void start() {
+        Conversations.create(uuid)
+                .prompt(getPromptText(), String.class, prompt -> prompt
+                        .converter(String::valueOf)
+                        .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
+                        .fetch((input, sender) -> acceptInput(input)))
+                //.endWhen(new TimeClause(plugin.getConfigSettings().getAcceptTimeout() * 20L,
+                // ChatColor.YELLOW + BukkitLang.get("questTimeout")))                              needs String support
+                .start();
     }
 }

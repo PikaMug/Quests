@@ -8,32 +8,45 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.editor.conditions;
+package me.pikamug.quests.events.quest;
 
-import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.quests.Quest;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ConditionsEditorPostOpenStringPromptEvent extends ConditionsEditorEvent {
+/**
+ * Called when a quest is quit by a quester
+ */
+public class BukkitQuestQuitEvent extends BukkitQuestEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ConditionsEditorStringPrompt prompt;
+    private final Quester quester;
+    private boolean cancel = false;
 
-    public ConditionsEditorPostOpenStringPromptEvent(final ConversationContext context, final ConditionsEditorStringPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
-        this.prompt = prompt;
+    public BukkitQuestQuitEvent(final Quest quest, final Quester who) {
+        super(quest);
+        this.quester = who;
     }
     
     /**
-     * Returns the string prompt involved in this event
+     * Returns the quester involved in this event
      * 
-     * @return Prompt which is involved in this event
+     * @return Quester who is involved in this event
      */
+    public Quester getQuester() {
+        return quester;
+    }
+    
     @Override
-    public ConditionsEditorStringPrompt getPrompt() {
-        return prompt;
+    public boolean isCancelled() {
+        return cancel;
+    }
+
+    @Override
+    public void setCancelled(final boolean cancel) {
+        this.cancel = cancel;
     }
 
     @Override

@@ -8,39 +8,44 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.events.editor.actions;
+package me.pikamug.quests.events.quest;
 
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
-import org.bukkit.conversations.ConversationContext;
+import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.quests.Quest;
 import org.bukkit.event.HandlerList;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ActionsEditorPostOpenNumericPromptEvent extends ActionsEditorEvent {
+/**
+ * Represents a quest-related event
+ */
+public abstract class BukkitQuestEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ActionsEditorNumericPrompt prompt;
+    private final Quest quest;
     
-    public ActionsEditorPostOpenNumericPromptEvent(final ConversationContext context, final ActionsEditorNumericPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
-        this.prompt = prompt;
+    public BukkitQuestEvent(final Quest quest) {
+        this.quest = quest;
+    }
+    
+    public BukkitQuestEvent(final Quest quest, final boolean async) {
+        super(async);
+        this.quest = quest;
     }
     
     /**
-     * Returns the numeric prompt involved in this event
+     * Returns the quest involved in this event
      * 
-     * @return Prompt which is involved in this event
+     * @return Quest which is involved in this event
      */
-    @Override
-    public ActionsEditorNumericPrompt getPrompt() {
-        return prompt;
+    public final Quest getQuest() {
+        return quest;
     }
-
+    
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
-    
+     
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

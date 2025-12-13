@@ -15,8 +15,8 @@ import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.actions.ActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
@@ -216,8 +216,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             context.setSessionData(Key.A_CLEAR_INVENTORY, false);
         }
         
-        final ActionsEditorPostOpenNumericPromptEvent event
-                = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitActionsEditorPostOpenNumericPromptEvent event
+                = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
@@ -296,8 +296,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -405,8 +405,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                 ItemStackPrompt.clearSessionData(context);
             }
             
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             
@@ -537,8 +537,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenNumericPromptEvent event
-                    = new ActionsEditorPostOpenNumericPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenNumericPromptEvent event
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
@@ -633,8 +633,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             final StringBuilder potions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
@@ -691,8 +691,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -745,8 +745,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -798,8 +798,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -850,8 +850,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -902,8 +902,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -954,8 +954,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);
@@ -1018,8 +1018,8 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final ActionsEditorPostOpenStringPromptEvent event
-                    = new ActionsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + getQueryText(context);

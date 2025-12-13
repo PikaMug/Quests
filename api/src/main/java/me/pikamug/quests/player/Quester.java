@@ -10,11 +10,12 @@
 
 package me.pikamug.quests.player;
 
-import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.quests.components.Objective;
+import me.pikamug.quests.Quests;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.Objective;
+import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -37,6 +38,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public interface Quester extends Comparable<Quester> {
+    Quests getPlugin();
+
     UUID getUUID();
 
     void setUUID(final UUID id);

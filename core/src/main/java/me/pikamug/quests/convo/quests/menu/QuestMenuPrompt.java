@@ -16,8 +16,8 @@ import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenNumericPromptEvent;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
@@ -90,8 +90,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
     @Override
     public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final QuestsEditorPostOpenNumericPromptEvent event 
-                = new QuestsEditorPostOpenNumericPromptEvent(context, this);
+        final BukkitQuestsEditorPostOpenNumericPromptEvent event
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
         plugin.getServer().getPluginManager().callEvent(event);
         final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
         for (int i = 1; i <= size; i++) {
@@ -152,8 +152,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
             return ChatColor.GOLD + getTitle(context)+ "\n" + ChatColor.YELLOW + getQueryText(context);
@@ -216,8 +216,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
 
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
@@ -262,8 +262,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
@@ -358,8 +358,8 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final QuestsEditorPostOpenStringPromptEvent event 
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             final StringBuilder text = new StringBuilder(ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW

@@ -11,7 +11,6 @@
 package me.pikamug.quests.events.command;
 
 import me.pikamug.quests.player.BukkitQuester;
-import org.bukkit.conversations.ConversationContext;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +21,9 @@ import org.jetbrains.annotations.NotNull;
 public class BukkitQuestsCommandPreEditorEvent extends BukkitQuestsCommandEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private final ConversationContext context;
     
-    public BukkitQuestsCommandPreEditorEvent(final BukkitQuester quester, final ConversationContext context) {
+    public BukkitQuestsCommandPreEditorEvent(final BukkitQuester quester) {
         super(quester);
-        this.context = context;
     }
     
     @Override
@@ -46,9 +43,5 @@ public class BukkitQuestsCommandPreEditorEvent extends BukkitQuestsCommandEvent 
     
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-    
-    public ConversationContext getConversationContext() {
-        return context;
     }
 }

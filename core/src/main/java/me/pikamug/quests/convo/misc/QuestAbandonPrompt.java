@@ -1,50 +1,45 @@
 package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.events.misc.MiscPostQuestAbandonEvent;
+import me.pikamug.quests.events.misc.BukkitMiscPostQuestAbandonEvent;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.browsit.conversations.api.Conversations;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class QuestAbandonPrompt extends MiscStringPrompt {
 
-    private ConversationContext context;
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
 
-    public QuestAbandonPrompt(BukkitQuestsPlugin plugin) {
-        super(null);
+    public QuestAbandonPrompt(final @NotNull UUID uuid, BukkitQuestsPlugin plugin) {
+        super();
+        this.uuid = uuid;
         this.plugin = plugin;
-    }
-
-    public QuestAbandonPrompt(final ConversationContext context) {
-        super(context);
-        plugin = (BukkitQuestsPlugin)context.getPlugin();
-    }
-
-    @Override
-    public ConversationContext getConversationContext() {
-        return context;
     }
 
     private final int size = 2;
 
+    @Override
     public int getSize() {
         return size;
     }
 
-    public String getTitle(final ConversationContext context) {
+    @Override
+    public String getTitle() {
         return null;
     }
 
     @SuppressWarnings("unused")
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
             case 1:
                 return ChatColor.GREEN;
@@ -56,7 +51,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
     }
 
     @SuppressWarnings("unused")
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
             case 1:
                 return ChatColor.GREEN + BukkitLang.get("yesWord");
@@ -67,52 +62,48 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
         }
     }
 
-    public String getQueryText(final ConversationContext context) {
+    public String getQueryText() {
         return BukkitLang.get("abandonQuest");
     }
 
-    @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-        this.context = context;
+    public @NotNull String getPromptText() {
         if (plugin == null) {
             return ChatColor.YELLOW + BukkitLang.get("itemCreateCriticalError");
         }
 
-        final MiscPostQuestAbandonEvent event = new MiscPostQuestAbandonEvent(context, this);
+        final BukkitMiscPostQuestAbandonEvent event = new BukkitMiscPostQuestAbandonEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
         if (!plugin.getConfigSettings().canClickablePrompts()) {
-            return ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN
-                    + getSelectionText(context, 1) + ChatColor.RESET + " / " + getSelectionText(context, 2);
+            return ChatColor.YELLOW + getQueryText() + "  " + ChatColor.GREEN
+                    + getSelectionText(1) + ChatColor.RESET + " / " + getSelectionText(2);
         }
 
         final TextComponent component = new TextComponent("");
-        component.addExtra(ChatColor.YELLOW + getQueryText(context) + "  " + ChatColor.GREEN);
-        final TextComponent yes = new TextComponent(getSelectionText(context, 1));
+        component.addExtra(ChatColor.YELLOW + getQueryText() + "  " + ChatColor.GREEN);
+        final TextComponent yes = new TextComponent(getSelectionText(1));
         yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + BukkitLang.get("yesWord")));
         component.addExtra(yes);
         component.addExtra(ChatColor.RESET + " / ");
-        final TextComponent no = new TextComponent(getSelectionText(context, 2));
+        final TextComponent no = new TextComponent(getSelectionText(2));
         no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quests choice " + BukkitLang.get("noWord")));
         component.addExtra(no);
 
-        ((Player)context.getForWhom()).spigot().sendMessage(component);
+        Bukkit.getPlayer(uuid).spigot().sendMessage(component);
         return "";
     }
 
-    @Override
-    public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-        final BukkitQuestsPlugin plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public void acceptInput(final String input) {
         if (plugin == null || input == null) {
-            return Prompt.END_OF_CONVERSATION;
+            return;
         }
-        final Player player = (Player) context.getForWhom();
+        final Player player = Bukkit.getPlayer(uuid);
         if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("y")
                 || input.equalsIgnoreCase(BukkitLang.get("yesWord")) || input.equalsIgnoreCase(BukkitLang.get(player, "yesWord"))) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
             if (quester == null) {
                 plugin.getLogger().info("Ended conversation because quester for " + getName() + "was null");
-                return Prompt.END_OF_CONVERSATION;
+                return;
             }
             final String questIdToQuit = quester.getQuestIdToQuit();
             try {
@@ -130,17 +121,26 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
             } catch (final Exception e) {
                 e.printStackTrace();
             }
-            return Prompt.END_OF_CONVERSATION;
         } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase("n")
                 || input.equalsIgnoreCase(BukkitLang.get("noWord")) || input.equalsIgnoreCase(BukkitLang.get(player, "noWord"))) {
             BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get("cancelled"));
-            return Prompt.END_OF_CONVERSATION;
         } else {
             final String msg = BukkitLang.get(player, "questInvalidChoice")
                     .replace("<yes>", BukkitLang.get(player, "yesWord"))
                     .replace("<no>", BukkitLang.get(player, "noWord"));
             BukkitLang.send(player, ChatColor.RED + msg);
-            return new QuestAbandonPrompt(context);
+            new QuestAbandonPrompt(player.getUniqueId(), plugin).start();
         }
+    }
+
+    public void start() {
+        Conversations.create(uuid)
+                .prompt(getPromptText(), String.class, prompt -> prompt
+                        .converter(String::valueOf)
+                        .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
+                        .fetch((input, sender) -> acceptInput(input)))
+                //.endWhen(new TimeClause(plugin.getConfigSettings().getAcceptTimeout() * 20L,
+                // ChatColor.YELLOW + BukkitLang.get("questTimeout")))                              needs String support
+                .start();
     }
 }

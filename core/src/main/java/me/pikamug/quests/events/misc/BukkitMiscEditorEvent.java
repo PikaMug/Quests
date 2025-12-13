@@ -10,38 +10,39 @@
 
 package me.pikamug.quests.events.misc;
 
+import me.pikamug.quests.convo.QuestsPrompt;
 import me.pikamug.quests.events.QuestsEvent;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * Represents a miscellaneous editor-related event
  */
-public class MiscEditorEvent extends QuestsEvent {
+public class BukkitMiscEditorEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
-    protected ConversationContext context;
-    private final Prompt prompt;
+    private final UUID uuid;
+    private final QuestsPrompt prompt;
 
-    public MiscEditorEvent(final ConversationContext context, final Prompt prompt) {
-        this.context = context;
+    public BukkitMiscEditorEvent(final UUID uuid, final QuestsPrompt prompt) {
+        this.uuid = uuid;
         this.prompt = prompt;
     }
 
-    public MiscEditorEvent(final ConversationContext context, final Prompt prompt, final boolean async) {
+    public BukkitMiscEditorEvent(final UUID uuid, final QuestsPrompt prompt, final boolean async) {
         super(async);
-        this.context = context;
+        this.uuid = uuid;
         this.prompt = prompt;
     }
 
     /**
-     * Returns the context involved in this event
+     * Returns the UUID involved in this event
      *
-     * @return ConversationContext which is involved in this event
+     * @return UUID which is involved in this event
      */
-    public ConversationContext getConversationContext() {
-        return context;
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     /**
@@ -49,7 +50,7 @@ public class MiscEditorEvent extends QuestsEvent {
      *
      * @return Prompt which is involved in this event
      */
-    public Prompt getPrompt() {
+    public QuestsPrompt getPrompt() {
         return prompt;
     }
 

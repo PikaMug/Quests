@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.generic;
 
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
-import me.pikamug.quests.events.editor.quests.QuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitLang;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -49,8 +49,8 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     @Override
     public @NotNull String getPromptText(final @NotNull ConversationContext context) {
         if (context.getPlugin() != null) {
-            final QuestsEditorPostOpenStringPromptEvent event
-                    = new QuestsEditorPostOpenStringPromptEvent(context, this);
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
             context.getPlugin().getServer().getPluginManager().callEvent(event);
         }
 
