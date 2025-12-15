@@ -27,6 +27,7 @@ import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPr
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +46,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -273,6 +278,10 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         case 5:
             if (context.getForWhom() instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
+                if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                    return new QuestBlockStartPrompt(context);
+                }
                 blockStarts.put(((Player) context.getForWhom()).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getQuestFactory().setSelectedBlockStarts(blockStarts);

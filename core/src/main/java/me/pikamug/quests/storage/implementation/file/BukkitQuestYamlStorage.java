@@ -1461,7 +1461,7 @@ public class BukkitQuestYamlStorage implements QuestStorageImpl {
                         if (BukkitConfigUtil.getLocation(loc) != null) {
                             bukkitStage.addLocationToReach(BukkitConfigUtil.getLocation(loc));
                         } else {
-                            throw new StageFormatException("'locations-to-reach' has invalid formatting" + loc, quest,
+                            throw new StageFormatException("'locations-to-reach' has invalid formatting " + loc, quest,
                                     stageNum);
                         }
                     }

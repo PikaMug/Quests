@@ -753,6 +753,10 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             case 1:
                 if (context.getForWhom() instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
+                    if (BukkitMiscUtil.getWorlds().isEmpty()) {
+                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                        return new QuestReachListPrompt(context);
+                    }
                     temp.put(((Player) context.getForWhom()).getUniqueId(),
                             Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedReachLocations(temp);
