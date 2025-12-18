@@ -15,8 +15,17 @@ import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.module.CustomObjective;
-import me.pikamug.quests.quests.components.*;
-import me.pikamug.quests.util.*;
+import me.pikamug.quests.quests.components.BukkitStage;
+import me.pikamug.quests.quests.components.Options;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.Rewards;
+import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.BukkitConfigUtil;
+import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,23 +37,25 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandonedListener*/ {
 
     private final BukkitQuestsPlugin plugin;
-   //private final ConversationFactory conversationFactory;
+    //private final ConversationFactory conversationFactory;
     private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
@@ -63,12 +74,12 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
                 .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);*/
     }
 
-    public static class LineBreakPrefix implements ConversationPrefix {
+    /*public static class LineBreakPrefix implements ConversationPrefix {
         @Override
         public @NotNull String getPrefix(final @NotNull ConversationContext context) {
             return "\n";
         }
-    }
+    }*/
 
     public ConcurrentHashMap<UUID, Block> getSelectedBlockStarts() {
         return selectedBlockStarts;
@@ -666,7 +677,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
         final ConfigurationSection stages = section.createSection("stages");
         final ConfigurationSection ordered = stages.createSection("ordered");
         String pref;
-        for (int i = 1; i <= new QuestStageMenuPrompt(uuid).getStages(uuid); i++) {
+        for (int i = 1; i <= new QuestStageMenuPrompt(uuid).getStages(); i++) {
             pref = "stage" + i;
             final ConfigurationSection stage = ordered.createSection("" + i);
             stage.set("break-block-names", SessionData.get(uuid, pref + Key.S_BREAK_NAMES) != null

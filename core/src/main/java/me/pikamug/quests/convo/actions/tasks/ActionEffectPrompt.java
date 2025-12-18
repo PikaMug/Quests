@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.actions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
@@ -39,7 +39,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
+public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -174,7 +174,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class ActionEffectSoundListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionEffectSoundListPrompt extends ActionsEditorIntegerPrompt {
 
         public ActionEffectSoundListPrompt(final @NotNull UUID uuid) {
             super(uuid);

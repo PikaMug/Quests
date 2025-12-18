@@ -12,10 +12,14 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
+import me.pikamug.quests.convo.conditions.menu.ConditionMenuPrompt;
 import me.pikamug.quests.util.BukkitLang;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversable;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class BukkitQuestsConditionsCommand extends BukkitQuestsSubCommand {
 
@@ -59,12 +63,23 @@ public class BukkitQuestsConditionsCommand extends BukkitQuestsSubCommand {
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.conditions.*") || cs.hasPermission("quests.conditions.editor")
                 || cs.hasPermission("quests.mode.trial")) {
-            final Conversable c = (Conversable) cs;
+            if (cs instanceof Player) {
+                final UUID uuid = ((Player)cs).getUniqueId();
+                if (Conversations.getConversationOf(uuid).isPresent()) {
+                    cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "duplicateEditor"));
+                    return;
+                }
+                new ConditionMenuPrompt(uuid).start();
+            }
+            // TODO - determine how to run from console
+
+
+            /*final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 plugin.getConditionFactory().getConversationFactory().buildConversation(c).begin();
             } else {
                 cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "duplicateEditor"));
-            }
+            }*/
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "noPermission"));
         }

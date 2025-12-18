@@ -11,7 +11,8 @@
 package me.pikamug.quests.convo.quests.planner;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
@@ -21,7 +22,6 @@ import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
@@ -31,14 +31,14 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
-public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
+public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
-    private final Prompt oldPrompt;
+    private final QuestsIntegerPrompt oldPrompt;
     private final String source;
 
-    public QuestDateTimePrompt(final @NotNull UUID uuid, final Prompt old, final String origin) {
+    public QuestDateTimePrompt(final @NotNull UUID uuid, final QuestsIntegerPrompt old, final String origin) {
         super(uuid);
         this.uuid = uuid;
         this.plugin = BukkitQuestsPlugin.getInstance();
@@ -244,7 +244,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
             SessionData.set(uuid, "tempMinute", null);
             SessionData.set(uuid, "tempSecond", null);
             SessionData.set(uuid, "tempZone", null);
-            return oldPrompt;
+            oldPrompt.start();
         case 9:
             if (SessionData.get(uuid, "tempYear") != null && SessionData.get(uuid, "tempMonth") != null
                     && SessionData.get(uuid, "tempDay") != null && SessionData.get(uuid, "tempHour") != null
@@ -277,7 +277,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                 SessionData.set(uuid, "tempMinute", null);
                 SessionData.set(uuid, "tempSecond", null);
                 SessionData.set(uuid, "tempZone", null);
-                return oldPrompt;
+                oldPrompt.start();
             } else if (SessionData.get(uuid, "tempYear") != null || SessionData.get(uuid, "tempMonth") != null
                     || SessionData.get(uuid, "tempDay") != null || SessionData.get(uuid, "tempHour") != null
                     || SessionData.get(uuid, "tempMinute") != null || SessionData.get(uuid, "tempSecond") != null
@@ -285,7 +285,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
                 Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                 new QuestDateTimePrompt(uuid, oldPrompt, source);
             } else {
-                return oldPrompt;
+                oldPrompt.start();
             }
         default:
             new QuestDateTimePrompt(uuid, oldPrompt, source);
@@ -667,7 +667,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
         
         String[] zones;
         
-        public QuestZonePrompt(final UUID uuid, final String[] timezones) {
+        public QuestZonePrompt(final @NotNull UUID uuid, final String[] timezones) {
             super(uuid);
             zones = timezones;
         }

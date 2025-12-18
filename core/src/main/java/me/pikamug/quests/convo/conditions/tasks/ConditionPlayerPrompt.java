@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.conditions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
@@ -21,11 +21,9 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -235,7 +233,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
     }
     
-    public class ConditionItemsInMainHandListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionItemsInMainHandListPrompt extends ConditionsEditorIntegerPrompt {
         
         public ConditionItemsInMainHandListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -359,7 +357,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
     }
 
-    public class ConditionItemsWearListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionItemsWearListPrompt extends ConditionsEditorIntegerPrompt {
 
         public ConditionItemsWearListPrompt(final @NotNull UUID uuid) {
             super(uuid);

@@ -12,8 +12,8 @@ package me.pikamug.quests.convo.conditions.menu;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenNumericPromptEvent;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -391,7 +391,7 @@ public class ConditionMenuPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

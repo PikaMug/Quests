@@ -10,25 +10,11 @@
 
 package me.pikamug.quests.util;
 
-import org.bukkit.Server;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
-import java.util.UUID;
-
 /**
  * For use when creating a new ConversationContext
  */
-public abstract class BukkitFakeConversable implements Conversable {
-    public String lastSentMessage;
+public abstract class BukkitFakeConversable /*implements Conversable*/ {
+    /*public String lastSentMessage;
     public Conversation begunConversation;
     public Conversation abandonedConverstion;
     public ConversationAbandonedEvent abandonedConversationEvent;
@@ -118,6 +104,6 @@ public abstract class BukkitFakeConversable implements Conversable {
     public void setOp(final boolean value) {
     }
 
-    public abstract void sendRawMessage(@Nullable UUID uuid, @NotNull String s);
+    public abstract void sendRawMessage(@Nullable UUID uuid, @NotNull String s);*/
 }
 

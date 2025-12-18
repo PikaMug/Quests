@@ -11,6 +11,7 @@
 package me.pikamug.quests.convo.generic;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitLang;
@@ -18,7 +19,6 @@ import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -26,11 +26,11 @@ import java.util.UUID;
 public class OverridePrompt extends QuestsEditorStringPrompt {
 
     private final @NotNull UUID uuid;
-    private final Prompt oldPrompt;
+    private final QuestsIntegerPrompt oldPrompt;
     private final String promptText;
     private final String classPrefix;
     
-    public OverridePrompt(final UUID uuid, final Prompt old, final String promptText) {
+    public OverridePrompt(final @NotNull UUID uuid, final QuestsIntegerPrompt old, final String promptText) {
         super(uuid);
         this.uuid = uuid;
         oldPrompt = old;
@@ -75,12 +75,12 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         } else if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
             SessionData.set(uuid, classPrefix + "-override", input);
         }
-        return oldPrompt;
+        oldPrompt.start();
     }
     
     public static class Builder {
         private @NotNull UUID uuid;
-        private Prompt oldPrompt;
+        private QuestsIntegerPrompt oldPrompt;
         private String promptText = "Enter input";
         
         public Builder sender(final UUID uuid) {
@@ -88,7 +88,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
             return this;
         }
         
-        public Builder source(final Prompt prompt) {
+        public Builder source(final QuestsIntegerPrompt prompt) {
             this.oldPrompt = prompt;
             return this;
         }

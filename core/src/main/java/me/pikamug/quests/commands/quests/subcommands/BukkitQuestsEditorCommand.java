@@ -10,16 +10,18 @@
 
 package me.pikamug.quests.commands.quests.subcommands;
 
-import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
+import me.pikamug.quests.convo.quests.menu.QuestMenuPrompt;
 import me.pikamug.quests.events.command.BukkitQuestsCommandPreEditorEvent;
+import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.util.BukkitLang;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
 
@@ -63,7 +65,24 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
     public void execute(CommandSender cs, String[] args) {
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
                 || cs.hasPermission("quests.mode.trial")) {
-            final Conversable c = (Conversable) cs;
+            if (cs instanceof Player) {
+                final UUID uuid = ((Player)cs).getUniqueId();
+                if (Conversations.getConversationOf(uuid).isPresent()) {
+                    cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "duplicateEditor"));
+                    return;
+                }
+                final BukkitQuester quester = plugin.getQuester(uuid);
+                final BukkitQuestsCommandPreEditorEvent event = new BukkitQuestsCommandPreEditorEvent(quester);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
+                new QuestMenuPrompt(uuid).start();
+            }
+            // TODO - determine how to run from console
+
+
+            /*final Conversable c = (Conversable) cs;
             if (!c.isConversing()) {
                 final Conversation cn = plugin.getQuestFactory().getConversationFactory().buildConversation(c);
                 if (cs instanceof Player) {
@@ -78,7 +97,7 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
                 cn.begin();
             } else {
                 cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "duplicateEditor"));
-            }
+            }*/
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "noPermission"));
         }

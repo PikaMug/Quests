@@ -11,7 +11,8 @@
 package me.pikamug.quests.convo.generic;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitConfigUtil;
@@ -20,13 +21,10 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,21 +43,21 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Stores ItemStack in "tempStack" context data<p>
- * Stores name in "tempName" context data<p>
- * Stores amount in "tempAmount" context data<p>
- * Stores durability in "tempData" context data<p>
- * Stores enchantments in "tempEnchantments" context data<p>
- * Stores display name in "tempDisplay" context data<p>
- * Stores lore in "tempLore" context data<p>
- * Stores metadata in "tempMeta" context data
+ * Stores ItemStack in "tempStack" session data<p>
+ * Stores name in "tempName" session data<p>
+ * Stores amount in "tempAmount" session data<p>
+ * Stores durability in "tempData" session data<p>
+ * Stores enchantments in "tempEnchantments" session data<p>
+ * Stores display name in "tempDisplay" session data<p>
+ * Stores lore in "tempLore" session data<p>
+ * Stores metadata in "tempMeta" session data
  */
-public class ItemStackPrompt extends QuestsEditorNumericPrompt {
+public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
-    private final Prompt oldPrompt;
+    private final QuestsIntegerPrompt oldPrompt;
 
-    public ItemStackPrompt(final UUID uuid, final Prompt old) {
+    public ItemStackPrompt(final @NotNull UUID uuid, final QuestsIntegerPrompt old) {
         super(uuid);
         this.uuid = uuid;
         oldPrompt = old;
@@ -367,7 +365,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             new ItemStackPrompt(uuid, oldPrompt).start();
         case 8:
             clearSessionData(uuid);
-            return oldPrompt;
+            oldPrompt.start();
         case 9:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 final String name = (String) SessionData.get(uuid, "tempName");
@@ -422,7 +420,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                         stack.setItemMeta(meta);
                     }
                     SessionData.set(uuid, "tempStack", stack);
-                    return oldPrompt;
+                    oldPrompt.start();
                 }
             } else {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
@@ -433,7 +431,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 new ItemStackPrompt(uuid, oldPrompt).start();
             } catch (final Exception e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                //return Prompt.END_OF_CONVERSATION;
+                return;
             }
         }
     }
@@ -642,7 +640,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         final String enchantment;
 
-        protected ItemEnchantmentLevelPrompt(final UUID uuid, final String ench) {
+        protected ItemEnchantmentLevelPrompt(final @NotNull UUID uuid, final String ench) {
             super(uuid);
             enchantment = ench;
         }
@@ -755,7 +753,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         @Override
         public void acceptInput(final String input) {
             if (input == null) {
-                null;
+                return;
             }
             String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {

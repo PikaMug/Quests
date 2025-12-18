@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.quests.objectives;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
+public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -249,7 +249,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestMobsKillListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestMobsKillListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestMobsKillListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -796,7 +796,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestMobsTameListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestMobsTameListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestMobsTameListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1187,7 +1187,7 @@ public class QuestMobsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestMobsShearListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestMobsShearListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestMobsShearListPrompt(final @NotNull UUID uuid) {
             super(uuid);

@@ -11,8 +11,8 @@
 package me.pikamug.quests.convo.quests.menu;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
+public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -374,7 +374,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

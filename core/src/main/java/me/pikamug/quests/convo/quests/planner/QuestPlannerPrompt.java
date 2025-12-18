@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.quests.planner;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
@@ -33,7 +33,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 
-public class QuestPlannerPrompt extends QuestsEditorNumericPrompt {
+public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;

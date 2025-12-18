@@ -11,7 +11,8 @@
 package me.pikamug.quests.convo.quests.options;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
@@ -23,18 +24,17 @@ import me.pikamug.unite.api.objects.PartyProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
+public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     private String tempKey;
-    private Prompt tempPrompt;
+    private QuestsIntegerPrompt tempPrompt;
 
     public QuestOptionsPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -188,9 +188,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 SessionData.set(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, tempKey, null);
-                return tempPrompt;
             }
-            return tempPrompt;
+            tempPrompt.start();
         }
     }
     
@@ -262,9 +261,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, tempKey, null);
-                return tempPrompt;
             }
-            return tempPrompt;
+            tempPrompt.start();
         }
     }
     
@@ -363,9 +361,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, tempKey, null);
-                return tempPrompt;
             }
-            return tempPrompt;
+            tempPrompt.start();
         }
     }
     
@@ -410,13 +407,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, tempKey, null);
-                return tempPrompt;
             }
-            return tempPrompt;
+            tempPrompt.start();
         }
     }
     
-    public class QuestOptionsGeneralPrompt extends QuestsEditorNumericPrompt {
+    public class QuestOptionsGeneralPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestOptionsGeneralPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -538,19 +534,19 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_ALLOW_COMMANDS;
-                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 2:
                 tempKey = Key.OPT_ALLOW_QUITTING;
-                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 3:
                 tempKey = Key.OPT_IGNORE_SILK_TOUCH;
-                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 4:
                 tempKey = Key.OPT_IGNORE_BLOCK_REPLACE;
-                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 5:
                 tempKey = null;
@@ -567,7 +563,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestOptionsMultiplayerPrompt extends QuestsEditorNumericPrompt {
+    public class QuestOptionsMultiplayerPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestOptionsMultiplayerPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -715,27 +711,27 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_EXTERNAL_PARTY_PLUGIN;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsPluginPrompt(uuid).start();
             case 2:
                 tempKey = Key.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 3:
                 tempKey = Key.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsLevelPrompt(uuid).start();
             case 4:
                 tempKey = Key.OPT_SHARE_SAME_QUEST_ONLY;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 5:
                 tempKey = Key.OPT_SHARE_DISTANCE;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsDistancePrompt(uuid).start();
             case 6:
                 tempKey = Key.OPT_HANDLE_OFFLINE_PLAYERS;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
             case 7:
                 tempKey = null;
@@ -752,7 +748,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestOptionsGlobalPrompt extends QuestsEditorNumericPrompt {
+    public class QuestOptionsGlobalPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestOptionsGlobalPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -882,19 +878,19 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
             switch (input.intValue()) {
                 case 1:
                     tempKey = Key.OPT_GIVE_GLOBALLY_AT_LOGIN;
-                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 2:
                     tempKey = Key.OPT_ALLOW_STACKING_GLOBAL;
-                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 3:
                     tempKey = Key.OPT_INFORM_QUEST_START;
-                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 4:
                     tempKey = Key.OPT_OVERRIDE_MAX_QUESTS;
-                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 5:
                     tempKey = null;

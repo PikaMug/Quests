@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.events.editor.quests;
 
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,9 +19,9 @@ import java.util.UUID;
 public class BukkitQuestsEditorPostOpenNumericPromptEvent extends BukkitQuestsEditorEvent {
     private final UUID uuid;
     private static final HandlerList HANDLERS = new HandlerList();
-    private final QuestsEditorNumericPrompt prompt;
+    private final QuestsEditorIntegerPrompt prompt;
     
-    public BukkitQuestsEditorPostOpenNumericPromptEvent(final UUID uuid, final QuestsEditorNumericPrompt prompt) {
+    public BukkitQuestsEditorPostOpenNumericPromptEvent(final UUID uuid, final QuestsEditorIntegerPrompt prompt) {
         super(uuid, prompt);
         this.uuid = uuid;
         this.prompt = prompt;
@@ -33,7 +33,7 @@ public class BukkitQuestsEditorPostOpenNumericPromptEvent extends BukkitQuestsEd
      * @return Prompt which is involved in this event
      */
     @Override
-    public QuestsEditorNumericPrompt getPrompt() {
+    public QuestsEditorIntegerPrompt getPrompt() {
         return prompt;
     }
 

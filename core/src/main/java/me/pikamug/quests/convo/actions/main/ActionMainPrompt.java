@@ -12,8 +12,8 @@ package me.pikamug.quests.convo.actions.main;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.tasks.ActionEffectPrompt;
 import me.pikamug.quests.convo.actions.tasks.ActionPlayerPrompt;
@@ -32,7 +32,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,7 +49,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionMainPrompt extends ActionsEditorNumericPrompt {
+public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -306,7 +305,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class ActionMobListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionMobListPrompt extends ActionsEditorIntegerPrompt {
         
         public ActionMobListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -415,11 +414,11 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class ActionMobPrompt extends ActionsEditorNumericPrompt {
+    public class ActionMobPrompt extends ActionsEditorIntegerPrompt {
 
         private BukkitQuestMob questMob;
 
-        public ActionMobPrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobPrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -581,12 +580,12 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class ActionMobEquipmentPrompt extends ActionsEditorNumericPrompt {
+    public class ActionMobEquipmentPrompt extends ActionsEditorIntegerPrompt {
 
         private BukkitQuestMob questMob;
         private Integer itemIndex = -1;
 
-        public ActionMobEquipmentPrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobEquipmentPrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -774,9 +773,9 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 case 10:
                     new ActionMobDropPrompt(uuid, 4, questMob).start();
                 case 11:
-                    new ActionMobListPrompt(uuid).start().start();
+                    new ActionMobListPrompt(uuid).start();
                 default:
-                    new ActionMobPrompt(uuid, questMob).start().start();
+                    new ActionMobPrompt(uuid, questMob).start();
             }
         }
     }
@@ -785,7 +784,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         private final BukkitQuestMob questMob;
 
-        public ActionMobNamePrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobNamePrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -831,7 +830,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         private final BukkitQuestMob questMob;
 
-        public ActionMobTypePrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobTypePrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -895,7 +894,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         private final BukkitQuestMob questMob;
 
-        public ActionMobAmountPrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobAmountPrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -949,7 +948,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
 
         private final BukkitQuestMob questMob;
 
-        public ActionMobLocationPrompt(final UUID uuid, final BukkitQuestMob questMob) {
+        public ActionMobLocationPrompt(final @NotNull UUID uuid, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
         }
@@ -1010,7 +1009,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
         private final BukkitQuestMob questMob;
         private final Integer invIndex;
 
-        public ActionMobDropPrompt(final UUID uuid, final int invIndex, final BukkitQuestMob questMob) {
+        public ActionMobDropPrompt(final @NotNull UUID uuid, final int invIndex, final BukkitQuestMob questMob) {
             super(uuid);
             this.questMob = questMob;
             this.invIndex = invIndex;
@@ -1201,7 +1200,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1283,7 +1282,7 @@ public class ActionMainPrompt extends ActionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

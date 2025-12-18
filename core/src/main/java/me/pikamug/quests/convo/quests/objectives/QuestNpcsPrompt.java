@@ -12,7 +12,7 @@ package me.pikamug.quests.convo.quests.objectives;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
@@ -24,7 +24,6 @@ import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
+public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -222,7 +221,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestNpcsDeliveryListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestNpcsDeliveryListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestNpcsDeliveryListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -611,7 +610,7 @@ public class QuestNpcsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestNpcsKillListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestNpcsKillListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestNpcsKillListPrompt(final @NotNull UUID uuid) {
             super(uuid);

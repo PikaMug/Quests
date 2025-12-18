@@ -12,18 +12,16 @@ package me.pikamug.quests.convo.quests.objectives;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
+public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -244,7 +242,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestItemsCraftListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsCraftListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestItemsCraftListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -365,7 +363,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestItemsSmeltListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsSmeltListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestItemsSmeltListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -486,7 +484,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestItemsEnchantListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsEnchantListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestItemsEnchantListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -607,7 +605,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestItemsBrewListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsBrewListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestItemsBrewListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -727,7 +725,7 @@ public class QuestItemsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestItemsConsumeListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestItemsConsumeListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestItemsConsumeListPrompt(final @NotNull UUID uuid) {
             super(uuid);

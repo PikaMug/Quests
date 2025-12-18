@@ -12,7 +12,7 @@ package me.pikamug.quests.convo.conditions.tasks;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -258,7 +258,7 @@ public class ConditionWorldPrompt extends ConditionsEditorNumericPrompt {
         }
     }
 
-    public class ConditionTicksListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionTicksListPrompt extends ConditionsEditorIntegerPrompt {
 
         public ConditionTicksListPrompt(final @NotNull UUID uuid) {
             super(uuid);

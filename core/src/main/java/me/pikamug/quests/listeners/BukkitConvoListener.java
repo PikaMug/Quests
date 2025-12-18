@@ -10,16 +10,9 @@
 
 package me.pikamug.quests.listeners;
 
-import me.pikamug.quests.util.BukkitLang;
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+public class BukkitConvoListener /*implements ConversationAbandonedListener*/ {
 
-public class BukkitConvoListener implements ConversationAbandonedListener {
-
-    @Override
+    /*@Override
     public void conversationAbandoned(@NotNull final ConversationAbandonedEvent abandonedEvent) {
         if (!abandonedEvent.gracefulExit()) {
             try {
@@ -29,5 +22,5 @@ public class BukkitConvoListener implements ConversationAbandonedListener {
                 // Do nothing
             }
         }
-    }
+    }*/
 }

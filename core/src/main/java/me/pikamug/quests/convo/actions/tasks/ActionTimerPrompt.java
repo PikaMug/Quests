@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.actions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ActionTimerPrompt extends ActionsEditorNumericPrompt {
+public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;

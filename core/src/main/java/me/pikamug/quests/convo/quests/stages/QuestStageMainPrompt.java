@@ -13,9 +13,9 @@ package me.pikamug.quests.convo.quests.stages;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.objectives.QuestBlocksPrompt;
 import me.pikamug.quests.convo.quests.objectives.QuestItemsPrompt;
@@ -36,8 +36,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +51,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
+public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -533,7 +531,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
             }
         case 15:
             if (hasObjective) {
-                return new OverridePrompt.Builder()
+                new OverridePrompt.Builder()
                         .source(this)
                         .promptText(BukkitLang.get("overrideCreateEnter"))
                         .build()
@@ -630,7 +628,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestReachListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestReachListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestReachListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -998,7 +996,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestPasswordListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestPasswordListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestPasswordListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1242,7 +1240,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestActionListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestActionListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestActionListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -2337,7 +2335,7 @@ public class QuestStageMainPrompt extends QuestsEditorNumericPrompt {
                 text.append(getNumberColor(i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET)
                         .append(" - ").append(getSelectionText(i)).append("\n");
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.conditions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenNumericPromptEvent;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class ConditionEntityPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;

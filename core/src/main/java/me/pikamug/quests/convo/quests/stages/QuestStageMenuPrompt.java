@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.quests.stages;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.Key;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class QuestStageMenuPrompt extends QuestsEditorNumericPrompt {
+public class QuestStageMenuPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;

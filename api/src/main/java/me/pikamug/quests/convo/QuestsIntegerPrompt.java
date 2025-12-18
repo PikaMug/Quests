@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class QuestsNumericPrompt implements QuestsPrompt {
+public abstract class QuestsIntegerPrompt implements QuestsPrompt {
     private static final HandlerList HANDLERS = new HandlerList();
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(\\d+) - ");
 
-    public QuestsNumericPrompt() {
+    public QuestsIntegerPrompt() {
     }
     
     public String getName() {
@@ -44,6 +44,8 @@ public abstract class QuestsNumericPrompt implements QuestsPrompt {
     }
     
     public abstract String getPromptText();
+
+    public abstract void start();
     
     /**
      * Takes a Quests-styled conversation interface and decides how to send it

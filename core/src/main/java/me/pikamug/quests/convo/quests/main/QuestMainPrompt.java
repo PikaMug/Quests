@@ -12,9 +12,9 @@ package me.pikamug.quests.convo.quests.main;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.options.QuestOptionsPrompt;
 import me.pikamug.quests.convo.quests.planner.QuestPlannerPrompt;
@@ -30,7 +30,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,7 +40,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +54,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class QuestMainPrompt extends QuestsEditorNumericPrompt {
+public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -695,7 +693,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestGuiDisplayPrompt extends QuestsEditorNumericPrompt {
+    public class QuestGuiDisplayPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestGuiDisplayPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -850,7 +848,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -912,7 +910,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 } catch (final IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
-                //return Prompt.END_OF_CONVERSATION;
+                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new QuestMainPrompt(uuid).start();
             } else {
@@ -978,7 +976,7 @@ public class QuestMainPrompt extends QuestsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

@@ -15,7 +15,7 @@ import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
@@ -31,8 +31,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +46,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
+public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -408,7 +406,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             new QuestCustomRequirementModulePrompt(uuid).start();
         case 11:
             if (hasRequirement) {
-                return new OverridePrompt.Builder()
+                new OverridePrompt.Builder()
                         .sender(uuid)
                         .source(this)
                         .promptText(BukkitLang.get("overrideCreateEnter"))
@@ -552,7 +550,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRequirementsItemListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsItemListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestRequirementsItemListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -697,7 +695,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
             final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
-                return new ItemStackPrompt(uuid, QuestRequirementsItemListPrompt.this);
+                new ItemStackPrompt(uuid, QuestRequirementsItemListPrompt.this).start();
             case 2:
                 if (SessionData.get(uuid, Key.REQ_ITEMS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqMustAddItem"));
@@ -883,7 +881,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
 
         private final boolean isRequiredQuest;
 
-        public QuestRequirementsQuestListPrompt(final UUID uuid, final boolean isRequired) {
+        public QuestRequirementsQuestListPrompt(final @NotNull UUID uuid, final boolean isRequired) {
             super(uuid);
             this.isRequiredQuest = isRequired;
         }
@@ -948,7 +946,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRequirementsMcMMOListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsMcMMOListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRequirementsMcMMOListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1186,7 +1184,7 @@ public class QuestRequirementsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRequirementsHeroesListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRequirementsHeroesListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRequirementsHeroesListPrompt(final @NotNull UUID uuid) {
             super(uuid);

@@ -12,8 +12,8 @@ package me.pikamug.quests.convo.actions.menu;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
+public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -149,7 +149,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
         case 4:
             sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
-            //return Prompt.END_OF_CONVERSATION;
+            return;
         default:
             new ActionMenuPrompt(uuid).start();
         }
@@ -390,7 +390,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -400,7 +400,7 @@ public class ActionMenuPrompt extends ActionsEditorNumericPrompt {
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 plugin.getActionFactory().deleteAction(uuid);
-                //return Prompt.END_OF_CONVERSATION;
+                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ActionMenuPrompt(uuid).start();
             } else {

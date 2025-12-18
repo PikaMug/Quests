@@ -13,10 +13,9 @@ package me.pikamug.quests.convo.quests.rewards;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.QuestsStringPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
@@ -31,7 +30,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +45,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
+public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -439,7 +437,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             new QuestCustomRewardModulePrompt(uuid).start();
         case 11:
             if (hasReward) {
-                return new OverridePrompt.Builder()
+                new OverridePrompt.Builder()
                         .source(this)
                         .promptText(BukkitLang.get("overrideCreateEnter"))
                         .build()
@@ -583,7 +581,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRewardsItemListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRewardsItemListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRewardsItemListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -826,7 +824,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestRewardsPermissionsListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRewardsPermissionsListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRewardsPermissionsListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1085,7 +1083,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRewardsMcMMOListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRewardsMcMMOListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRewardsMcMMOListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1347,7 +1345,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestRewardsHeroesListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestRewardsHeroesListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestRewardsHeroesListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1886,7 +1884,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     // Send user to the custom data prompt if there is any needed
                     if (!found.getData().isEmpty()) {
                         SessionData.set(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
-                        new QuestRewardCustomDataListPrompt().start();
+                        new QuestRewardCustomDataListPrompt(uuid).start();
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));

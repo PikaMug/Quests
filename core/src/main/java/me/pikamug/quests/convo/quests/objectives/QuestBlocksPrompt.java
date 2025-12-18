@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.quests.objectives;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
+import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class QuestBlocksPrompt extends QuestsEditorNumericPrompt {
+public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -210,7 +210,7 @@ public class QuestBlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
     
-    public class QuestBlocksBreakListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestBlocksBreakListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestBlocksBreakListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -574,7 +574,7 @@ public class QuestBlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestBlocksDamageListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestBlocksDamageListPrompt extends QuestsEditorIntegerPrompt {
         
         public QuestBlocksDamageListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -938,7 +938,7 @@ public class QuestBlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestBlocksPlaceListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestBlocksPlaceListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestBlocksPlaceListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -1302,7 +1302,7 @@ public class QuestBlocksPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    public class QuestBlocksUseListPrompt extends QuestsEditorNumericPrompt {
+    public class QuestBlocksUseListPrompt extends QuestsEditorIntegerPrompt {
 
         public QuestBlocksUseListPrompt(final @NotNull UUID uuid) {
             super(uuid);

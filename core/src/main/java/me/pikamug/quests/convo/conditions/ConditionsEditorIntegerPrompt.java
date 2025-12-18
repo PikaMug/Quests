@@ -8,36 +8,36 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.pikamug.quests.convo.actions;
+package me.pikamug.quests.convo.conditions;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.actions.ActionFactory;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
+import me.pikamug.quests.conditions.ConditionFactory;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class ActionsEditorNumericPrompt extends QuestsNumericPrompt {
+public abstract class ConditionsEditorIntegerPrompt extends QuestsIntegerPrompt {
     private final UUID uuid;
-    private final ActionFactory factory;
+    private final ConditionFactory factory;
     
-    public ActionsEditorNumericPrompt(final UUID uuid) {
+    public ConditionsEditorIntegerPrompt(final UUID uuid) {
         this.uuid = uuid;
-        this.factory = BukkitQuestsPlugin.getInstance().getActionFactory();
+        this.factory = BukkitQuestsPlugin.getInstance().getConditionFactory();
     }
     
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
-    
+
     public UUID getUniqueId() {
         return uuid;
     }
     
-    public ActionFactory getActionFactory() {
+    public ConditionFactory getConditionFactory() {
         return factory;
     }
     
@@ -56,7 +56,7 @@ public abstract class ActionsEditorNumericPrompt extends QuestsNumericPrompt {
     public abstract void acceptInput(final Number input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), Number.class, prompt -> prompt
-                .converter(Number::intValue).fetch((input, sender) -> acceptInput(input))).start();
+        Conversations.create(uuid).prompt(getPromptText(), Integer.class, prompt -> prompt
+                .converter(Integer::parseInt).fetch((input, sender) -> acceptInput(input))).start();
     }
 }

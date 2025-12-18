@@ -10,15 +10,17 @@
 
 package me.pikamug.quests.convo.misc;
 
-import me.pikamug.quests.convo.QuestsNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class MiscNumericPrompt extends QuestsNumericPrompt {
-    private final ConversationContext context;
+import java.util.UUID;
 
-    public MiscNumericPrompt(final @NotNull UUID uuid) {
-        this.context = context;
+public abstract class MiscIntegerPrompt extends QuestsIntegerPrompt {
+    private final UUID uuid;
+
+    public MiscIntegerPrompt(final @NotNull UUID uuid) {
+        this.uuid = uuid;
     }
 
     @Override
@@ -26,17 +28,17 @@ public abstract class MiscNumericPrompt extends QuestsNumericPrompt {
         return getClass().getSimpleName();
     }
 
-    public ConversationContext getConversationContext() {
-        return context;
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     public abstract int getSize();
 
-    public abstract String getTitle(ConversationContext context);
+    public abstract String getTitle();
 
-    public abstract ChatColor getNumberColor(ConversationContext context, int number);
+    public abstract ChatColor getNumberColor(int number);
 
-    public abstract String getSelectionText(ConversationContext context, int number);
+    public abstract String getSelectionText(int number);
 
-    public abstract String getAdditionalText(ConversationContext context, int number);
+    public abstract String getAdditionalText(int number);
 }

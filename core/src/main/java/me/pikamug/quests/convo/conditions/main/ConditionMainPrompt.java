@@ -12,8 +12,8 @@ package me.pikamug.quests.convo.conditions.main;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.convo.QuestsNumericPrompt;
-import me.pikamug.quests.convo.conditions.ConditionsEditorNumericPrompt;
+import me.pikamug.quests.convo.QuestsIntegerPrompt;
+import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.tasks.ConditionEntityPrompt;
 import me.pikamug.quests.convo.conditions.tasks.ConditionPlayerPrompt;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
+public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -232,7 +232,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         }
     }
     
-    public class ConditionPlaceholderListPrompt extends ConditionsEditorNumericPrompt {
+    public class ConditionPlaceholderListPrompt extends ConditionsEditorIntegerPrompt {
 
         public ConditionPlaceholderListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -477,7 +477,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
         String modName = null;
         LinkedList<String> modified = new LinkedList<>();
 
-        public ConditionSavePrompt(final UUID uuid, final String modifiedName) {
+        public ConditionSavePrompt(final @NotNull UUID uuid, final String modifiedName) {
             super(uuid);
             if (modifiedName != null) {
                 modName = modifiedName;
@@ -552,7 +552,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -568,7 +568,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                     new ConditionMainPrompt(uuid).start();
                 }
                 plugin.getConditionFactory().saveCondition(uuid);
-                //return Prompt.END_OF_CONVERSATION;
+                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMainPrompt(uuid).start();
             } else {
@@ -634,7 +634,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -646,7 +646,7 @@ public class ConditionMainPrompt extends ConditionsEditorNumericPrompt {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
                 plugin.getConditionFactory().clearData(uuid);
-                //return Prompt.END_OF_CONVERSATION;
+                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMainPrompt(uuid).start();
             } else {

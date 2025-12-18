@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.actions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
@@ -24,14 +24,11 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.SessionData;
-import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -45,7 +42,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
+public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -327,7 +324,7 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class ActionPlayerItemListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionPlayerItemListPrompt extends ActionsEditorIntegerPrompt {
 
         public ActionPlayerItemListPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -447,7 +444,7 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class ActionPlayerPotionListPrompt extends ActionsEditorNumericPrompt {
+    public class ActionPlayerPotionListPrompt extends ActionsEditorIntegerPrompt {
 
         public ActionPlayerPotionListPrompt(final @NotNull UUID uuid) {
             super(uuid);

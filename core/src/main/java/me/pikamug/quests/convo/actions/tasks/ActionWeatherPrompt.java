@@ -11,7 +11,7 @@
 package me.pikamug.quests.convo.actions.tasks;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.actions.ActionsEditorNumericPrompt;
+import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
 import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenNumericPromptEvent;
@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
+public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
@@ -181,7 +181,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
         }
     }
     
-    public class ActionStormPrompt extends ActionsEditorNumericPrompt {
+    public class ActionStormPrompt extends ActionsEditorIntegerPrompt {
 
         public ActionStormPrompt(final @NotNull UUID uuid) {
             super(uuid);
@@ -401,7 +401,7 @@ public class ActionWeatherPrompt extends ActionsEditorNumericPrompt {
         }
     }
 
-    public class ActionThunderPrompt extends ActionsEditorNumericPrompt {
+    public class ActionThunderPrompt extends ActionsEditorIntegerPrompt {
 
         public ActionThunderPrompt(final @NotNull UUID uuid) {
             super(uuid);
