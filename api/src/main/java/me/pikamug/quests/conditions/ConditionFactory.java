@@ -10,26 +10,24 @@
 
 package me.pikamug.quests.conditions;
 
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-
 import java.util.List;
+import java.util.UUID;
 
 public interface ConditionFactory {
-    ConversationFactory getConversationFactory();
+
+    //ConversationFactory getConversationFactory();
 
     List<String> getNamesOfConditionsBeingEdited();
 
     void setNamesOfConditionsBeingEdited(final List<String> conditionNames);
 
-    Prompt returnToMenu(final ConversationContext context);
+    void returnToMenu(final UUID uuid);
 
-    void loadData(final ConversationContext context, final Condition condition);
+    void loadData(final UUID uuid, final Condition condition);
 
-    void clearData(final ConversationContext context);
+    void clearData(final UUID uuid);
 
-    void deleteCondition(final ConversationContext context);
+    void deleteCondition(final UUID uuid);
 
-    void saveCondition(final ConversationContext context);
+    void saveCondition(final UUID uuid);
 }

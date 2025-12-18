@@ -13,7 +13,9 @@ package me.pikamug.quests.convo.actions;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -48,4 +50,13 @@ public abstract class ActionsEditorNumericPrompt extends QuestsNumericPrompt {
     public abstract String getSelectionText(int number);
     
     public abstract String getAdditionalText(int number);
+
+    public abstract @NotNull String getPromptText();
+
+    public abstract void acceptInput(final Number input);
+
+    public void start() {
+        Conversations.create(uuid).prompt(getPromptText(), Number.class, prompt -> prompt
+                .converter(Number::intValue).fetch((input, sender) -> acceptInput(input))).start();
+    }
 }

@@ -15,10 +15,12 @@ import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,16 +29,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
 public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
 
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     private final Prompt oldPrompt;
     private final String source;
 
-    public QuestDateTimePrompt(final ConversationContext context, final Prompt old, final String origin) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public QuestDateTimePrompt(final @NotNull UUID uuid, final Prompt old, final String origin) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
         oldPrompt = old;
         source = origin;
     }
@@ -49,18 +54,18 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("dateTimeTitle");
     }
     
-    public String getDataText(final ConversationContext context) {
+    public String getDataText() {
         String dateData = "";
-        final Integer year = (Integer) context.getSessionData("tempYear");
-        final Integer month = (Integer) context.getSessionData("tempMonth");
-        final Integer day = (Integer) context.getSessionData("tempDay");
-        final Integer hour = (Integer) context.getSessionData("tempHour");
-        final Integer minute = (Integer) context.getSessionData("tempMinute");
-        final Integer second = (Integer) context.getSessionData("tempSecond");
+        final Integer year = (Integer) SessionData.get(uuid, "tempYear");
+        final Integer month = (Integer) SessionData.get(uuid, "tempMonth");
+        final Integer day = (Integer) SessionData.get(uuid, "tempDay");
+        final Integer hour = (Integer) SessionData.get(uuid, "tempHour");
+        final Integer minute = (Integer) SessionData.get(uuid, "tempMinute");
+        final Integer second = (Integer) SessionData.get(uuid, "tempSecond");
         if (year == null || month == null || day == null || hour == null || minute == null || second == null) {
             return dateData;
         }
@@ -72,7 +77,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
         dateData += ChatColor.DARK_AQUA + dateFormat.format(cal.getTime()) + " ";
         dateData += ChatColor.AQUA + timeFormat.format(cal.getTime()) + " ";
         
-        cal.setTimeZone(TimeZone.getTimeZone((String) context.getSessionData("tempZone")));
+        cal.setTimeZone(TimeZone.getTimeZone((String) SessionData.get(uuid, "tempZone")));
         final String[] iso = plugin.getConfigSettings().getLanguage().split("-");
         final Locale loc = new Locale(iso[0], iso[1]);
         final Double zonedHour = (double) (cal.getTimeZone().getRawOffset() / 60 / 60 / 1000);
@@ -85,7 +90,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 0:
             return ChatColor.YELLOW;
@@ -107,7 +112,7 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch(number) {
         case 0:
             return ChatColor.GOLD + BukkitLang.get("dateCreateLoadTime");
@@ -135,43 +140,43 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch(number) {
         case 0:
             return "";
         case 1:
-            if (context.getSessionData("tempYear") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempYear") 
+            if (SessionData.get(uuid, "tempYear") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempYear") 
                         + ChatColor.GRAY + ")";
             }
         case 2:
-            final Integer month = (Integer) context.getSessionData("tempMonth");
+            final Integer month = (Integer) SessionData.get(uuid, "tempMonth");
             if (month != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + (month + 1) + ChatColor.GRAY + ")";
             }
         case 3:
-            if (context.getSessionData("tempDay") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempDay") 
+            if (SessionData.get(uuid, "tempDay") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempDay") 
                         + ChatColor.GRAY + ")";
             }
         case 4:
-            if (context.getSessionData("tempHour") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempHour") 
+            if (SessionData.get(uuid, "tempHour") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempHour") 
                         + ChatColor.GRAY + ")";
             }
         case 5:
-            if (context.getSessionData("tempMinute") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempMinute") 
+            if (SessionData.get(uuid, "tempMinute") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempMinute") 
                         + ChatColor.GRAY + ")";
             }
         case 6:
-            if (context.getSessionData("tempSecond") != null) {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData("tempSecond") 
+            if (SessionData.get(uuid, "tempSecond") != null) {
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempSecond") 
                         + ChatColor.GRAY + ")";
             }
         case 7:
-            if (context.getSessionData("tempZone") != null) {
-                final TimeZone tz = TimeZone.getTimeZone((String) context.getSessionData("tempZone"));
+            if (SessionData.get(uuid, "tempZone") != null) {
+                final TimeZone tz = TimeZone.getTimeZone((String) SessionData.get(uuid, "tempZone"));
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + tz.getDisplayName(false, TimeZone.SHORT) 
                         + ChatColor.GRAY + ")";
             }
@@ -184,469 +189,476 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptText() {
         final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
     
-        final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context) + "\n");
-        if (context.getSessionData("tempYear") != null  && context.getSessionData("tempMonth") != null
-                && context.getSessionData("tempDay") != null && context.getSessionData("tempHour") != null
-                && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
-                && context.getSessionData("tempZone") != null) {
-            text.append(getDataText(context));
+        final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle() + "\n");
+        if (SessionData.get(uuid, "tempYear") != null  && SessionData.get(uuid, "tempMonth") != null
+                && SessionData.get(uuid, "tempDay") != null && SessionData.get(uuid, "tempHour") != null
+                && SessionData.get(uuid, "tempMinute") != null && SessionData.get(uuid, "tempSecond") != null
+                && SessionData.get(uuid, "tempZone") != null) {
+            text.append(getDataText());
         }
         for (int i = 0; i <= size - 1; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
         switch(input.intValue()) {
         case 0:
             final Calendar cal = Calendar.getInstance();
-            context.setSessionData("tempYear", cal.get(Calendar.YEAR));
-            context.setSessionData("tempMonth", cal.get(Calendar.MONTH));
-            context.setSessionData("tempDay", cal.get(Calendar.DAY_OF_MONTH));
-            context.setSessionData("tempHour", cal.get(Calendar.HOUR_OF_DAY));
-            context.setSessionData("tempMinute", cal.get(Calendar.MINUTE));
-            context.setSessionData("tempSecond", cal.get(Calendar.SECOND));
-            context.setSessionData("tempZone", cal.getTimeZone().getID());
-            return new QuestDateTimePrompt(context, oldPrompt, source);
+            SessionData.set(uuid, "tempYear", cal.get(Calendar.YEAR));
+            SessionData.set(uuid, "tempMonth", cal.get(Calendar.MONTH));
+            SessionData.set(uuid, "tempDay", cal.get(Calendar.DAY_OF_MONTH));
+            SessionData.set(uuid, "tempHour", cal.get(Calendar.HOUR_OF_DAY));
+            SessionData.set(uuid, "tempMinute", cal.get(Calendar.MINUTE));
+            SessionData.set(uuid, "tempSecond", cal.get(Calendar.SECOND));
+            SessionData.set(uuid, "tempZone", cal.getTimeZone().getID());
+            new QuestDateTimePrompt(uuid, oldPrompt, source);
         case 1:
-            return new QuestYearPrompt(context);
+            new QuestYearPrompt(uuid).start();
         case 2:
-            return new QuestMonthPrompt(context);
+            new QuestMonthPrompt(uuid).start();
         case 3:
-            return new QuestDayPrompt(context);
+            new QuestDayPrompt(uuid).start();
         case 4:
-            return new QuestHourPrompt(context);
+            new QuestHourPrompt(uuid).start();
         case 5:
-            return new QuestMinutePrompt(context);
+            new QuestMinutePrompt(uuid).start();
         case 6:
-            return new QuestSecondPrompt(context);
+            new QuestSecondPrompt(uuid).start();
         case 7:
-            return new QuestOffsetPrompt(context);
+            new QuestOffsetPrompt(uuid).start();
         case 8:
-            context.setSessionData("tempYear", null);
-            context.setSessionData("tempMonth", null);
-            context.setSessionData("tempDay", null);
-            context.setSessionData("tempHour", null);
-            context.setSessionData("tempMinute", null);
-            context.setSessionData("tempSecond", null);
-            context.setSessionData("tempZone", null);
+            SessionData.set(uuid, "tempYear", null);
+            SessionData.set(uuid, "tempMonth", null);
+            SessionData.set(uuid, "tempDay", null);
+            SessionData.set(uuid, "tempHour", null);
+            SessionData.set(uuid, "tempMinute", null);
+            SessionData.set(uuid, "tempSecond", null);
+            SessionData.set(uuid, "tempZone", null);
             return oldPrompt;
         case 9:
-            if (context.getSessionData("tempYear") != null && context.getSessionData("tempMonth") != null
-                    && context.getSessionData("tempDay") != null && context.getSessionData("tempHour") != null
-                    && context.getSessionData("tempMinute") != null && context.getSessionData("tempSecond") != null
-                    && context.getSessionData("tempZone") != null) {
-                final Integer year = (Integer) context.getSessionData("tempYear");
-                final Integer month = (Integer) context.getSessionData("tempMonth");
-                final Integer day = (Integer) context.getSessionData("tempDay");
-                final Integer hour = (Integer) context.getSessionData("tempHour");
-                final Integer minute = (Integer) context.getSessionData("tempMinute");
-                final Integer second = (Integer) context.getSessionData("tempSecond");
-                final String zone = (String) context.getSessionData("tempZone");
+            if (SessionData.get(uuid, "tempYear") != null && SessionData.get(uuid, "tempMonth") != null
+                    && SessionData.get(uuid, "tempDay") != null && SessionData.get(uuid, "tempHour") != null
+                    && SessionData.get(uuid, "tempMinute") != null && SessionData.get(uuid, "tempSecond") != null
+                    && SessionData.get(uuid, "tempZone") != null) {
+                final Integer year = (Integer) SessionData.get(uuid, "tempYear");
+                final Integer month = (Integer) SessionData.get(uuid, "tempMonth");
+                final Integer day = (Integer) SessionData.get(uuid, "tempDay");
+                final Integer hour = (Integer) SessionData.get(uuid, "tempHour");
+                final Integer minute = (Integer) SessionData.get(uuid, "tempMinute");
+                final Integer second = (Integer) SessionData.get(uuid, "tempSecond");
+                final String zone = (String) SessionData.get(uuid, "tempZone");
                 final String date = day + ":" + month + ":" + year + ":"
                         + hour + ":" + minute + ":" + second + ":" + zone;
                 if (source != null) {
                     if (source.equals("start")) {
-                        context.setSessionData(Key.PLN_START_DATE, date);
-                        if (context.getSessionData(Key.PLN_END_DATE) == null) {
+                        SessionData.set(uuid, Key.PLN_START_DATE, date);
+                        if (SessionData.get(uuid, Key.PLN_END_DATE) == null) {
                             final String endDate = "31:11:2999:23:59:59:" + zone;
-                            context.setSessionData(Key.PLN_END_DATE, endDate);
+                            SessionData.set(uuid, Key.PLN_END_DATE, endDate);
                         }
                     } else if (source.equals("end")) {
-                        context.setSessionData(Key.PLN_END_DATE, date);
+                        SessionData.set(uuid, Key.PLN_END_DATE, date);
                     }
                 }
-                context.setSessionData("tempYear", null);
-                context.setSessionData("tempMonth", null);
-                context.setSessionData("tempDay", null);
-                context.setSessionData("tempHour", null);
-                context.setSessionData("tempMinute", null);
-                context.setSessionData("tempSecond", null);
-                context.setSessionData("tempZone", null);
+                SessionData.set(uuid, "tempYear", null);
+                SessionData.set(uuid, "tempMonth", null);
+                SessionData.set(uuid, "tempDay", null);
+                SessionData.set(uuid, "tempHour", null);
+                SessionData.set(uuid, "tempMinute", null);
+                SessionData.set(uuid, "tempSecond", null);
+                SessionData.set(uuid, "tempZone", null);
                 return oldPrompt;
-            } else if (context.getSessionData("tempYear") != null || context.getSessionData("tempMonth") != null
-                    || context.getSessionData("tempDay") != null || context.getSessionData("tempHour") != null
-                    || context.getSessionData("tempMinute") != null || context.getSessionData("tempSecond") != null
-                    || context.getSessionData("tempZone") != null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+            } else if (SessionData.get(uuid, "tempYear") != null || SessionData.get(uuid, "tempMonth") != null
+                    || SessionData.get(uuid, "tempDay") != null || SessionData.get(uuid, "tempHour") != null
+                    || SessionData.get(uuid, "tempMinute") != null || SessionData.get(uuid, "tempSecond") != null
+                    || SessionData.get(uuid, "tempZone") != null) {
+                Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             } else {
                 return oldPrompt;
             }
         default:
-            return new QuestDateTimePrompt(context, oldPrompt, source);
+            new QuestDateTimePrompt(uuid, oldPrompt, source);
         }
     }
     
     public class QuestYearPrompt extends QuestsEditorStringPrompt {
         
-        public QuestYearPrompt(final ConversationContext context) {
-            super(context);
+        public QuestYearPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterYear");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1000 || amt > 9999) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "1000").replace("<greatest>", "9999"));
-                        return new QuestYearPrompt(context);
+                        new QuestYearPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempYear", Integer.parseInt(input));
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempYear", Integer.parseInt(input));
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestYearPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestYearPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestMonthPrompt extends QuestsEditorStringPrompt {
         
-        public QuestMonthPrompt(final ConversationContext context) {
-            super(context);
+        public QuestMonthPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterMonth");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 12) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "12"));
-                        return new QuestMonthPrompt(context);
+                        new QuestMonthPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempMonth", Integer.parseInt(input) - 1);
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempMonth", Integer.parseInt(input) - 1);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestMonthPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestMonthPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestDayPrompt extends QuestsEditorStringPrompt {
         
-        public QuestDayPrompt(final ConversationContext context) {
-            super(context);
+        public QuestDayPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterDay");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 31) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "31"));
-                        return new QuestDayPrompt(context);
+                        new QuestDayPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempDay", Integer.parseInt(input));
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempDay", Integer.parseInt(input));
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestDayPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestDayPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestHourPrompt extends QuestsEditorStringPrompt {
         
-        public QuestHourPrompt(final ConversationContext context) {
-            super(context);
+        public QuestHourPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterHour");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 23) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "23"));
-                        return new QuestHourPrompt(context);
+                        new QuestHourPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempHour", Integer.parseInt(input));
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempHour", Integer.parseInt(input));
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestHourPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestHourPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestMinutePrompt extends QuestsEditorStringPrompt {
         
-        public QuestMinutePrompt(final ConversationContext context) {
-            super(context);
+        public QuestMinutePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterMinute");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
-                        return new QuestMinutePrompt(context);
+                        new QuestMinutePrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempMinute", Integer.parseInt(input));
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempMinute", Integer.parseInt(input));
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestMinutePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestMinutePrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestSecondPrompt extends QuestsEditorStringPrompt {
         
-        public QuestSecondPrompt(final ConversationContext context) {
-            super(context);
+        public QuestSecondPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterSecond");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 0 || amt > 59) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "0").replace("<greatest>", "59"));
-                        return new QuestSecondPrompt(context);
+                        new QuestSecondPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempSecond", Integer.parseInt(input));
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempSecond", Integer.parseInt(input));
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestSecondPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestSecondPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
     
     public class QuestOffsetPrompt extends QuestsEditorStringPrompt {
         
-        public QuestOffsetPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOffsetPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterOffset");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final double amt = Double.parseDouble(input.replace("UTC", "").replace(":", "."));
                     if (amt < -12.0 || amt > 14.0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                             .replace("<least>", "-12:00").replace("<greatest>", "14:00"));
-                        return new QuestOffsetPrompt(context);
+                        new QuestOffsetPrompt(uuid).start();
                     } else {
                         final String[] t = TimeZone.getAvailableIDs((int) Math.round(amt * 60.0 * 60.0 * 1000.0));
                         if (t.length > 1) {
-                            return new QuestZonePrompt(context, t);
+                            new QuestZonePrompt(uuid, t);
                         } else if (t.length > 0) {
-                            context.setSessionData("tempZone", t[0]);
+                            SessionData.set(uuid, "tempZone", t[0]);
                         }  else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                         }    
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestOffsetPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestOffsetPrompt(uuid).start();
                 }
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }
@@ -655,51 +667,52 @@ public class QuestDateTimePrompt extends QuestsEditorNumericPrompt {
         
         String[] zones;
         
-        public QuestZonePrompt(final ConversationContext context, final String[] timezones) {
-            super(context);
+        public QuestZonePrompt(final UUID uuid, final String[] timezones) {
+            super(uuid);
             zones = timezones;
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("timeZoneTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("dateCreateEnterZone");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             for (final String z : zones) {
                 text.append(ChatColor.GREEN).append(z).append(", ");
             }
             text = new StringBuilder(text.substring(0, text.length() - 2));
-            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
+            return text + "\n" + ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
-                        context.setSessionData("tempZone", z);
-                        return new QuestDateTimePrompt(context, oldPrompt, source);
+                        SessionData.set(uuid, "tempZone", z);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source);
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                return new QuestZonePrompt(context, zones);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                new QuestZonePrompt(uuid, zones);
             } else {
-                return new QuestDateTimePrompt(context, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source);
             }
         }
     }

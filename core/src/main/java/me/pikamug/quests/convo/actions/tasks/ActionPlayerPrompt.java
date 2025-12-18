@@ -23,10 +23,13 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.RomanNumeral;
+import me.pikamug.quests.util.SessionData;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
@@ -43,12 +46,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
-    
+
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     
-    public ActionPlayerPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public ActionPlayerPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
     
     private final int size = 10;
@@ -59,12 +64,12 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("eventEditorPlayer");
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -84,7 +89,7 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + BukkitLang.get("eventEditorSetMessage");
@@ -113,20 +118,20 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(Key.A_MESSAGE) == null) {
+            if (SessionData.get(uuid, Key.A_MESSAGE) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_MESSAGE) + ChatColor.GRAY + ")";
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_MESSAGE) + ChatColor.GRAY + ")";
             }
         case 2:
-            if (context.getSessionData(Key.A_ITEMS) == null) {
+            if (SessionData.get(uuid, Key.A_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(Key.A_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) SessionData.get(uuid, Key.A_ITEMS);
                 if (items != null) {
                     for (final ItemStack is : items) {
                         if (is != null) {
@@ -137,13 +142,13 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                 }
             }
         case 3:
-            if (context.getSessionData(Key.A_POTION_TYPES) == null) {
+            if (SessionData.get(uuid, Key.A_POTION_TYPES) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> types = (LinkedList<String>) context.getSessionData(Key.A_POTION_TYPES);
-                final LinkedList<Long> durations = (LinkedList<Long>) context.getSessionData(Key.A_POTION_DURATIONS);
-                final LinkedList<Integer> mags = (LinkedList<Integer>) context.getSessionData(Key.A_POTION_STRENGTH);
+                final LinkedList<String> types = (LinkedList<String>) SessionData.get(uuid, Key.A_POTION_TYPES);
+                final LinkedList<Long> durations = (LinkedList<Long>) SessionData.get(uuid, Key.A_POTION_DURATIONS);
+                final LinkedList<Integer> mags = (LinkedList<Integer>) SessionData.get(uuid, Key.A_POTION_STRENGTH);
                 int index = -1;
                 if (types != null && durations != null && mags != null) {
                     for (final String type : types) {
@@ -157,49 +162,49 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                 return text.toString();
             }
         case 4:
-            if (context.getSessionData(Key.A_HUNGER) == null) {
+            if (SessionData.get(uuid, Key.A_HUNGER) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_HUNGER) + ChatColor.GRAY
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_HUNGER) + ChatColor.GRAY
                         + ")";
             }
         case 5:
-            if (context.getSessionData(Key.A_SATURATION) == null) {
+            if (SessionData.get(uuid, Key.A_SATURATION) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_SATURATION) + ChatColor.GRAY
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_SATURATION) + ChatColor.GRAY
                         + ")";
             }
         case 6:
-            if (context.getSessionData(Key.A_HEALTH) == null) {
+            if (SessionData.get(uuid, Key.A_HEALTH) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_HEALTH) + ChatColor.GRAY
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_HEALTH) + ChatColor.GRAY
                         + ")";
             }
         case 7:
-            if (context.getSessionData(Key.A_TELEPORT) == null) {
+            if (SessionData.get(uuid, Key.A_TELEPORT) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.A_TELEPORT) + ChatColor.GRAY
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.A_TELEPORT) + ChatColor.GRAY
                         + ")";
             }
         case 8:
-            if (context.getSessionData(Key.A_COMMANDS) == null) {
+            if (SessionData.get(uuid, Key.A_COMMANDS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                for (final String s : (LinkedList<String>) Objects.requireNonNull(context
-                        .getSessionData(Key.A_COMMANDS))) {
+                for (final String s : (LinkedList<String>) Objects.requireNonNull(SessionData
+                        .get(uuid, Key.A_COMMANDS))) {
                     text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                 }
                 return text.toString();
             }
         case 9:
-            if (context.getSessionData(Key.A_CLEAR_INVENTORY) == null) {
+            if (SessionData.get(uuid, Key.A_CLEAR_INVENTORY) == null) {
                 return ChatColor.GRAY + "(" + ChatColor.RED + BukkitLang.get("false") + ChatColor.GRAY + ")";
             } else {
-                final Boolean clearOpt = (Boolean) context.getSessionData(Key.A_CLEAR_INVENTORY);
+                final Boolean clearOpt = (Boolean) SessionData.get(uuid, Key.A_CLEAR_INVENTORY);
                 return ChatColor.GRAY + "(" + (Boolean.TRUE.equals(clearOpt) ? ChatColor.GREEN + BukkitLang.get("true")
                         : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
             }
@@ -211,120 +216,121 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getBasicPromptText(final ConversationContext context) {
-        if (context.getSessionData(Key.A_CLEAR_INVENTORY) == null) {
-            context.setSessionData(Key.A_CLEAR_INVENTORY, false);
+    public @NotNull String getPromptText() {
+        if (SessionData.get(uuid, Key.A_CLEAR_INVENTORY) == null) {
+            SessionData.set(uuid, Key.A_CLEAR_INVENTORY, false);
         }
         
         final BukkitActionsEditorPostOpenNumericPromptEvent event
-                = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
 
-        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle() + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
-            return new ActionPlayerMessagePrompt(context);
+            new ActionPlayerMessagePrompt(uuid).start();
         case 2:
-            return new ActionPlayerItemListPrompt(context);
+            new ActionPlayerItemListPrompt(uuid).start();
         case 3:
-            return new ActionPlayerPotionListPrompt(context);
+            new ActionPlayerPotionListPrompt(uuid).start();
         case 4:
-            return new ActionPlayerHungerPrompt(context);
+            new ActionPlayerHungerPrompt(uuid).start();
         case 5:
-            return new ActionPlayerSaturationPrompt(context);
+            new ActionPlayerSaturationPrompt(uuid).start();
         case 6:
-            return new ActionPlayerHealthPrompt(context);
+            new ActionPlayerHealthPrompt(uuid).start();
         case 7:
-            if (context.getForWhom() instanceof Player) {
+            if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
                 if (BukkitMiscUtil.getWorlds().isEmpty()) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
-                    return new ActionPlayerPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                    new ActionPlayerPrompt(uuid).start();
                 }
-                selectedTeleportLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                selectedTeleportLocations.put(((Player) sender).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-                return new ActionPlayerTeleportPrompt(context);
+                new ActionPlayerTeleportPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
-                return new ActionPlayerPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
+                new ActionPlayerPrompt(uuid).start();
             }
         case 8:
-            if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                return new ActionPlayerCommandsPrompt(context);
+            if (!plugin.hasLimitedAccess(uuid)) {
+                new ActionPlayerCommandsPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new ActionPlayerPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new ActionPlayerPrompt(uuid).start();
             }
         case 9:
-            final Boolean b = (Boolean) context.getSessionData(Key.A_CLEAR_INVENTORY);
+            final Boolean b = (Boolean) SessionData.get(uuid, Key.A_CLEAR_INVENTORY);
             if (Boolean.TRUE.equals(b)) {
-                context.setSessionData(Key.A_CLEAR_INVENTORY, false);
+                SessionData.set(uuid, Key.A_CLEAR_INVENTORY, false);
             } else {
-                context.setSessionData(Key.A_CLEAR_INVENTORY, true);
+                SessionData.set(uuid, Key.A_CLEAR_INVENTORY, true);
             }
-            return new ActionPlayerPrompt(context);
+            new ActionPlayerPrompt(uuid).start();
         case 10:
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         default:
-            return new ActionPlayerPrompt(context);
+            new ActionPlayerPrompt(uuid).start();
         }
     }
     
     public class ActionPlayerMessagePrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerMessagePrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerMessagePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetMessagePrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.A_MESSAGE, input);
+                SessionData.set(uuid, Key.A_MESSAGE, input);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.A_MESSAGE, null);
+                SessionData.set(uuid, Key.A_MESSAGE, null);
             }
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         }
     }
 
     public class ActionPlayerItemListPrompt extends ActionsEditorNumericPrompt {
 
-        public ActionPlayerItemListPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerItemListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 3;
@@ -335,12 +341,12 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("eventEditorGiveItemsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -353,7 +359,7 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
@@ -368,15 +374,15 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(Key.A_ITEMS) == null) {
+                if (SessionData.get(uuid, Key.A_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final ItemStack is : (List<ItemStack>) Objects.requireNonNull(context
-                            .getSessionData(Key.A_ITEMS))) {
+                    for (final ItemStack is : (List<ItemStack>) Objects.requireNonNull(SessionData
+                            .get(uuid, Key.A_ITEMS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ")
                                 .append(BukkitItemUtil.getDisplayString(is));
                     }
@@ -390,60 +396,61 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getBasicPromptText(final ConversationContext context) {
+        @SuppressWarnings("unchecked")
+        public @NotNull String getPromptText() {
             // Check/add newly made item
-            if (context.getSessionData("tempStack") != null) {
-                if (context.getSessionData(Key.A_ITEMS) != null) {
-                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(Key.A_ITEMS);
+            if (SessionData.get(uuid, "tempStack") != null) {
+                if (SessionData.get(uuid, Key.A_ITEMS) != null) {
+                    final List<ItemStack> items = (List<ItemStack>) SessionData.get(uuid, Key.A_ITEMS);
                     if (items != null) {
-                        items.add((ItemStack) context.getSessionData("tempStack"));
-                        context.setSessionData(Key.A_ITEMS, items);
+                        items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                        SessionData.set(uuid, Key.A_ITEMS, items);
                     }
                 } else {
                     final LinkedList<ItemStack> itemRewards = new LinkedList<>();
-                    itemRewards.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(Key.A_ITEMS, itemRewards);
+                    itemRewards.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                    SessionData.set(uuid, Key.A_ITEMS, itemRewards);
                 }
-                ItemStackPrompt.clearSessionData(context);
+                ItemStackPrompt.clearSessionData(uuid);
             }
             
             final BukkitActionsEditorPostOpenNumericPromptEvent event
-                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ActionPlayerItemListPrompt.this);
+                new ItemStackPrompt(uuid, ActionPlayerItemListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorItemsCleared"));
-                context.setSessionData(Key.A_ITEMS, null);
-                return new ActionPlayerItemListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorItemsCleared"));
+                SessionData.set(uuid, Key.A_ITEMS, null);
+                new ActionPlayerItemListPrompt(uuid).start();
             case 3:
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             default:
-                return new ActionPlayerItemListPrompt(context);
+                new ActionPlayerItemListPrompt(uuid).start();
             }
         }
     }
     
     public class ActionPlayerPotionListPrompt extends ActionsEditorNumericPrompt {
 
-        public ActionPlayerPotionListPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerPotionListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 5;
@@ -454,12 +461,12 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("eventEditorPotionEffectsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -475,7 +482,7 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("eventEditorSetPotionEffectTypes");
@@ -494,38 +501,38 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.A_POTION_TYPES) == null) {
+                if (SessionData.get(uuid, Key.A_POTION_TYPES) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final String s : (LinkedList<String>) Objects.requireNonNull(context
-                            .getSessionData(Key.A_POTION_TYPES))) {
+                    for (final String s : (LinkedList<String>) Objects.requireNonNull(SessionData
+                            .get(uuid, Key.A_POTION_TYPES))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.A_POTION_DURATIONS) == null) {
+                if (SessionData.get(uuid, Key.A_POTION_DURATIONS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final Long l : (LinkedList<Long>) Objects.requireNonNull(context
-                            .getSessionData(Key.A_POTION_DURATIONS))) {
+                    for (final Long l : (LinkedList<Long>) Objects.requireNonNull(SessionData.get(uuid, 
+                            Key.A_POTION_DURATIONS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_AQUA)
                                 .append(BukkitMiscUtil.getTime(l * 50L));
                     }
                     return text.toString();
                 }
             case 3:
-                if (context.getSessionData(Key.A_POTION_STRENGTH) == null) {
+                if (SessionData.get(uuid, Key.A_POTION_STRENGTH) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final int i : (LinkedList<Integer>) Objects.requireNonNull(context
-                            .getSessionData(Key.A_POTION_STRENGTH))) {
+                    for (final int i : (LinkedList<Integer>) Objects.requireNonNull(SessionData.get(uuid, 
+                            Key.A_POTION_STRENGTH))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.DARK_PURPLE)
                                 .append(i);
                     }
@@ -540,58 +547,59 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenNumericPromptEvent event
-                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
-                return new ActionPlayerPotionTypesPrompt(context);
+                new ActionPlayerPotionTypesPrompt(uuid).start();
             case 2:
-                if (context.getSessionData(Key.A_POTION_TYPES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetPotionTypesFirst"));
-                    return new ActionPlayerPotionListPrompt(context);
+                if (SessionData.get(uuid, Key.A_POTION_TYPES) == null) {
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorMustSetPotionTypesFirst"));
+                    new ActionPlayerPotionListPrompt(uuid).start();
                 } else {
-                    return new ActionPlayerPotionDurationsPrompt(context);
+                    new ActionPlayerPotionDurationsPrompt(uuid).start();
                 }
             case 3:
-                if (context.getSessionData(Key.A_POTION_TYPES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED
+                if (SessionData.get(uuid, Key.A_POTION_TYPES) == null) {
+                    sender.sendMessage(ChatColor.RED
                             + BukkitLang.get("eventEditorMustSetPotionTypesAndDurationsFirst"));
-                    return new ActionPlayerPotionListPrompt(context);
-                } else if (context.getSessionData(Key.A_POTION_DURATIONS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED
+                    new ActionPlayerPotionListPrompt(uuid).start();
+                } else if (SessionData.get(uuid, Key.A_POTION_DURATIONS) == null) {
+                    sender.sendMessage(ChatColor.RED
                             + BukkitLang.get("eventEditorMustSetPotionDurationsFirst"));
-                    return new ActionPlayerPotionListPrompt(context);
+                    new ActionPlayerPotionListPrompt(uuid).start();
                 } else {
-                    return new ActionPlayerPotionMagnitudesPrompt(context);
+                    new ActionPlayerPotionMagnitudesPrompt(uuid).start();
                 }
             case 4:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorPotionsCleared"));
-                context.setSessionData(Key.A_POTION_TYPES, null);
-                context.setSessionData(Key.A_POTION_DURATIONS, null);
-                context.setSessionData(Key.A_POTION_STRENGTH, null);
-                return new ActionPlayerPotionListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorPotionsCleared"));
+                SessionData.set(uuid, Key.A_POTION_TYPES, null);
+                SessionData.set(uuid, Key.A_POTION_DURATIONS, null);
+                SessionData.set(uuid, Key.A_POTION_STRENGTH, null);
+                new ActionPlayerPotionListPrompt(uuid).start();
             case 5:
                 final int one;
                 final int two;
                 final int three;
-                final List<String> types = (List<String>) context.getSessionData(Key.A_POTION_TYPES);
-                final List<Long> durations = (List<Long>) context.getSessionData(Key.A_POTION_DURATIONS);
-                final List<Integer> strength = (List<Integer>) context.getSessionData(Key.A_POTION_STRENGTH);
+                final List<String> types = (List<String>) SessionData.get(uuid, Key.A_POTION_TYPES);
+                final List<Long> durations = (List<Long>) SessionData.get(uuid, Key.A_POTION_DURATIONS);
+                final List<Integer> strength = (List<Integer>) SessionData.get(uuid, Key.A_POTION_STRENGTH);
                 if (types != null) {
                     one = types.size();
                 } else {
@@ -608,40 +616,40 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                     three = 0;
                 }
                 if (one == two && two == three) {
-                    return new ActionMainPrompt(context);
+                    new ActionMainPrompt(uuid).start();
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorListSizeMismatch"));
-                    return new ActionPlayerPotionListPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorListSizeMismatch"));
+                    new ActionPlayerPotionListPrompt(uuid).start();
                 }
             default:
-                return new ActionPlayerPotionListPrompt(context);
+                new ActionPlayerPotionListPrompt(uuid).start();
             }
         }
     }
 
     public class ActionPlayerPotionTypesPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerPotionTypesPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerPotionTypesPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("eventEditorPotionTypesTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetPotionEffectsPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder potions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final StringBuilder potions = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             final List<PotionEffectType> effArr = new LinkedList<>(Arrays.asList(PotionEffectType.values()));
             effArr.sort(Comparator.comparing(PotionEffectType::getName));
             for (int i = 0; i < effArr.size(); i++) {
@@ -651,62 +659,64 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                     potions.append(ChatColor.GRAY).append(", ");
                 }
             }
-            potions.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            potions.append("\n").append(ChatColor.YELLOW).append(getQueryText());
             return potions.toString();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> effTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     if (PotionEffectType.getByName(s.toUpperCase()) != null) {
                         effTypes.add(Objects.requireNonNull(PotionEffectType.getByName(s.toUpperCase())).getName());
-                        context.setSessionData(Key.A_POTION_TYPES, effTypes);
+                        SessionData.set(uuid, Key.A_POTION_TYPES, effTypes);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidPotionType")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidPotionType")
                                 .replace("<input>", s));
-                        return new ActionPlayerPotionTypesPrompt(context);
+                        new ActionPlayerPotionTypesPrompt(uuid).start();
                     }
                 }
             }
-            return new ActionPlayerPotionListPrompt(context);
+            new ActionPlayerPotionListPrompt(uuid).start();
         }
     }
 
     public class ActionPlayerPotionDurationsPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerPotionDurationsPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerPotionDurationsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetPotionDurationsPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Long> effDurations = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -714,334 +724,339 @@ public class ActionPlayerPrompt extends ActionsEditorNumericPrompt {
                         final int i = Integer.parseInt(s);
                         final long l = i * 1000L;
                         if (l < 1000) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new ActionPlayerPotionDurationsPrompt(context);
+                            new ActionPlayerPotionDurationsPrompt(uuid).start();
                         }
                         effDurations.add(l / 50L);
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", s));
-                        return new ActionPlayerPotionDurationsPrompt(context);
+                        new ActionPlayerPotionDurationsPrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.A_POTION_DURATIONS, effDurations);
+                SessionData.set(uuid, Key.A_POTION_DURATIONS, effDurations);
             }
-            return new ActionPlayerPotionListPrompt(context);
+            new ActionPlayerPotionListPrompt(uuid).start();
         }
     }
 
     public class ActionPlayerPotionMagnitudesPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerPotionMagnitudesPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerPotionMagnitudesPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetPotionMagnitudesPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> magAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     try {
                         final int i = Integer.parseInt(s);
                         if (i < 1) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
-                            return new ActionPlayerPotionMagnitudesPrompt(context);
+                            new ActionPlayerPotionMagnitudesPrompt(uuid).start();
                         }
                         magAmounts.add(i);
                     } catch (final NumberFormatException e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", s));
-                        return new ActionPlayerPotionMagnitudesPrompt(context);
+                        new ActionPlayerPotionMagnitudesPrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.A_POTION_STRENGTH, magAmounts);
+                SessionData.set(uuid, Key.A_POTION_STRENGTH, magAmounts);
             }
-            return new ActionPlayerPotionListPrompt(context);
+            new ActionPlayerPotionListPrompt(uuid).start();
         }
     }
     
     public class ActionPlayerHungerPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerHungerPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerHungerPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetHungerPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED
+                        sender.sendMessage(ChatColor.RED
                                 + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
-                        return new ActionPlayerHungerPrompt(context);
+                        new ActionPlayerHungerPrompt(uuid).start();
                     } else {
-                        context.setSessionData(Key.A_HUNGER, i);
+                        SessionData.set(uuid, Key.A_HUNGER, i);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED
+                    sender.sendMessage(ChatColor.RED
                             + BukkitLang.get("reqNotANumber").replace("<input>", input));
-                    return new ActionPlayerHungerPrompt(context);
+                    new ActionPlayerHungerPrompt(uuid).start();
                 }
             } else {
-                context.setSessionData(Key.A_HUNGER, null);
+                SessionData.set(uuid, Key.A_HUNGER, null);
             }
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         }
     }
 
     public class ActionPlayerSaturationPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerSaturationPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerSaturationPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetSaturationPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED
+                        sender.sendMessage(ChatColor.RED
                                 + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
-                        return new ActionPlayerSaturationPrompt(context);
+                        new ActionPlayerSaturationPrompt(uuid).start();
                     } else {
-                        context.setSessionData(Key.A_SATURATION, i);
+                        SessionData.set(uuid, Key.A_SATURATION, i);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED
+                    sender.sendMessage(ChatColor.RED
                             + BukkitLang.get("reqNotANumber").replace("<input>", input));
-                    return new ActionPlayerSaturationPrompt(context);
+                    new ActionPlayerSaturationPrompt(uuid).start();
                 }
             } else {
-                context.setSessionData(Key.A_SATURATION, null);
+                SessionData.set(uuid, Key.A_SATURATION, null);
             }
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         }
     }
 
     public class ActionPlayerHealthPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerHealthPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerHealthPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetHealthPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED
+                        sender.sendMessage(ChatColor.RED
                                 + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
-                        return new ActionPlayerHealthPrompt(context);
+                        new ActionPlayerHealthPrompt(uuid).start();
                     } else {
-                        context.setSessionData(Key.A_HEALTH, i);
+                        SessionData.set(uuid, Key.A_HEALTH, i);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED
+                    sender.sendMessage(ChatColor.RED
                             + BukkitLang.get("reqNotANumber").replace("<input>", input));
-                    return new ActionPlayerHealthPrompt(context);
+                    new ActionPlayerHealthPrompt(uuid).start();
                 }
             } else {
-                context.setSessionData(Key.A_HEALTH, null);
+                SessionData.set(uuid, Key.A_HEALTH, null);
             }
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         }
     }
     
     public class ActionPlayerTeleportPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerTeleportPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerTeleportPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetTeleportPrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public @NotNull String getPromptText() {
+            final BukkitActionsEditorPostOpenStringPromptEvent event
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText();
+        }
+
+        @Override
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
-            final Player player = (Player) context.getForWhom();
+            final CommandSender sender = Bukkit.getEntity(uuid);
+            final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdDone"))) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
                 final Block block = selectedTeleportLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
-                    context.setSessionData(Key.A_TELEPORT, BukkitConfigUtil.getLocationInfo(loc));
+                    SessionData.set(uuid, Key.A_TELEPORT, BukkitConfigUtil.getLocationInfo(loc));
                     selectedTeleportLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
-                    return new ActionPlayerTeleportPrompt(context);
+                    new ActionPlayerTeleportPrompt(uuid).start();
                 }
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.A_TELEPORT, null);
+                SessionData.set(uuid, Key.A_TELEPORT, null);
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
                 selectedTeleportLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else {
-                return new ActionPlayerTeleportPrompt(context);
+                new ActionPlayerTeleportPrompt(uuid).start();
             }
         }
     }
 
     public class ActionPlayerCommandsPrompt extends ActionsEditorStringPrompt {
 
-        public ActionPlayerCommandsPrompt(final ConversationContext context) {
-            super(context);
+        public ActionPlayerCommandsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorSetCommandsPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] commands = input.split(BukkitLang.get("charSemi"));
                 final LinkedList<String> cmdList = new LinkedList<>(Arrays.asList(commands));
-                context.setSessionData(Key.A_COMMANDS, cmdList);
+                SessionData.set(uuid, Key.A_COMMANDS, cmdList);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.A_COMMANDS, null);
+                SessionData.set(uuid, Key.A_COMMANDS, null);
             }
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         }
     }
 }

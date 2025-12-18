@@ -10,21 +10,29 @@
 
 package me.pikamug.quests.convo.generic;
 
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.SessionData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class OverridePrompt extends QuestsEditorStringPrompt {
+
+    private final @NotNull UUID uuid;
     private final Prompt oldPrompt;
     private final String promptText;
     private final String classPrefix;
     
-    public OverridePrompt(final ConversationContext context, final Prompt old, final String promptText) {
-        super(context);
+    public OverridePrompt(final UUID uuid, final Prompt old, final String promptText) {
+        super(uuid);
+        this.uuid = uuid;
         oldPrompt = old;
         classPrefix = old.getClass().getSimpleName();
         this.promptText = promptText;
@@ -37,46 +45,46 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return null;
     }
     
     @Override
-    public String getQueryText(final ConversationContext context) {
+    public String getQueryText() {
         return promptText;
     }
 
     @Override
-    public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-        if (context.getPlugin() != null) {
-            final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
-            context.getPlugin().getServer().getPluginManager().callEvent(event);
-        }
+    public @NotNull String getPromptText() {
+        final BukkitQuestsEditorPostOpenStringPromptEvent event
+                = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
+        BukkitQuestsPlugin.getInstance().getServer().getPluginManager().callEvent(event);
 
-        return ChatColor.YELLOW + getQueryText(context);
+        return ChatColor.YELLOW + getQueryText();
     }
 
     @Override
-    public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
-        if (input != null) {
-            if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorMessageCleared"));
-                context.setSessionData(classPrefix + "-override", BukkitLang.get("cmdClear"));
-            } else if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                context.setSessionData(classPrefix + "-override", input);
-            }
+    public void acceptInput(final String input) {
+        if (input == null) {
+            return;
+        }
+        final CommandSender sender = Bukkit.getEntity(uuid);
+        if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
+            sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorMessageCleared"));
+            SessionData.set(uuid, classPrefix + "-override", BukkitLang.get("cmdClear"));
+        } else if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
+            SessionData.set(uuid, classPrefix + "-override", input);
         }
         return oldPrompt;
     }
     
     public static class Builder {
-        private ConversationContext context;
+        private @NotNull UUID uuid;
         private Prompt oldPrompt;
         private String promptText = "Enter input";
         
-        public Builder context(final ConversationContext context) {
-            this.context = context;
+        public Builder sender(final UUID uuid) {
+            this.uuid = uuid;
             return this;
         }
         
@@ -91,7 +99,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         }
         
         public OverridePrompt build() {
-            return new OverridePrompt(context, oldPrompt, promptText);
+            return new OverridePrompt(uuid, oldPrompt, promptText);
         }
     }
 }

@@ -14,13 +14,16 @@ import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class BukkitQuestsEditorPostOpenNumericPromptEvent extends BukkitQuestsEditorEvent {
+    private final UUID uuid;
     private static final HandlerList HANDLERS = new HandlerList();
     private final QuestsEditorNumericPrompt prompt;
     
     public BukkitQuestsEditorPostOpenNumericPromptEvent(final UUID uuid, final QuestsEditorNumericPrompt prompt) {
-        super(context, prompt);
-        this.context = context;
+        super(uuid, prompt);
+        this.uuid = uuid;
         this.prompt = prompt;
     }
     

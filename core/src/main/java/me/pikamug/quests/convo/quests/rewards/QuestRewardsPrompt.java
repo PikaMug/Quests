@@ -13,6 +13,7 @@ package me.pikamug.quests.convo.quests.rewards;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.convo.QuestsStringPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.convo.generic.OverridePrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -20,15 +21,16 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.module.CustomReward;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,18 +44,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
 
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     private final String classPrefix;
     private boolean hasReward = false;
     private final int size = 12;
 
-    public QuestRewardsPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public QuestRewardsPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
         this.classPrefix = getClass().getSimpleName();
     }
     
@@ -63,13 +68,13 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("rewardsTitle").replace("<quest>", (String) Objects
-                .requireNonNull(context.getSessionData(Key.Q_NAME)));
+                .requireNonNull(SessionData.get(uuid, Key.Q_NAME)));
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -103,7 +108,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY;
             }
         case 11:
-            if (context.getSessionData(Key.REW_DETAILS_OVERRIDE) == null) {
+            if (SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY;
                 } else {
@@ -120,7 +125,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -173,11 +178,11 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
     
     @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch (number) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                final Integer moneyRew = (Integer) context.getSessionData(Key.REW_MONEY);
+                final Integer moneyRew = (Integer) SessionData.get(uuid, Key.REW_MONEY);
                 if (moneyRew == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
@@ -188,24 +193,24 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 2:
-            if (context.getSessionData(Key.REW_QUEST_POINTS) == null) {
+            if (SessionData.get(uuid, Key.REW_QUEST_POINTS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.REW_QUEST_POINTS) + " "
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.REW_QUEST_POINTS) + " "
                         + BukkitLang.get("questPoints") + ChatColor.GRAY + ")";
             }
         case 3:
-            if (context.getSessionData(Key.REW_ITEMS) == null) {
+            if (SessionData.get(uuid, Key.REW_ITEMS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) context.getSessionData(Key.REW_ITEMS);
+                final LinkedList<ItemStack> items = (LinkedList<ItemStack>) SessionData.get(uuid, Key.REW_ITEMS);
                 if (items != null) {
                     for (final ItemStack item : items) {
                         if (item == null) {
                             text.append(ChatColor.RED).append("     - null\n");
                             plugin.getLogger().severe(ChatColor.RED + "Item reward was null while editing quest ID "
-                                    + context.getSessionData(Key.Q_ID));
+                                    + SessionData.get(uuid, Key.Q_ID));
                         } else {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
                                     .append(BukkitItemUtil.getName(item)).append(ChatColor.GRAY).append(" x ")
@@ -216,19 +221,19 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 4:
-            if (context.getSessionData(Key.REW_EXP) == null) {
+            if (SessionData.get(uuid, Key.REW_EXP) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.REW_EXP) + " "
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.REW_EXP) + " "
                         + BukkitLang.get("points") + ChatColor.GRAY + ")";
             }
         case 5:
-            if (context.getSessionData(Key.REW_COMMAND) == null) {
+            if (SessionData.get(uuid, Key.REW_COMMAND) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final List<String> commands = (List<String>) context.getSessionData(Key.REW_COMMAND);
-                final List<String> overrides = (List<String>) context.getSessionData(Key.REW_COMMAND_OVERRIDE_DISPLAY);
+                final List<String> commands = (List<String>) SessionData.get(uuid, Key.REW_COMMAND);
+                final List<String> overrides = (List<String>) SessionData.get(uuid, Key.REW_COMMAND_OVERRIDE_DISPLAY);
                 int index = 0;
                 if (commands != null) {
                     for (final String cmd : commands) {
@@ -245,12 +250,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 6:
-            if (context.getSessionData(Key.REW_PERMISSION) == null) {
+            if (SessionData.get(uuid, Key.REW_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final List<String> permissions = (List<String>) context.getSessionData(Key.REW_PERMISSION);
-                final List<String> worlds = (List<String>) context.getSessionData(Key.REW_PERMISSION_WORLDS);
+                final List<String> permissions = (List<String>) SessionData.get(uuid, Key.REW_PERMISSION);
+                final List<String> worlds = (List<String>) SessionData.get(uuid, Key.REW_PERMISSION_WORLDS);
                 int index = 0;
                 if (permissions != null) {
                     for (final String perm : permissions) {
@@ -268,12 +273,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             }
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
-                if (context.getSessionData(Key.REW_MCMMO_SKILLS) == null) {
+                if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<String> skills = (List<String>) context.getSessionData(Key.REW_MCMMO_SKILLS);
-                    final List<Integer> amounts = (List<Integer>) context.getSessionData(Key.REW_MCMMO_AMOUNTS);
+                    final List<String> skills = (List<String>) SessionData.get(uuid, Key.REW_MCMMO_SKILLS);
+                    final List<Integer> amounts = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS);
                     if (skills != null && amounts != null) {
                         for (final String skill : skills) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
@@ -288,12 +293,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             }
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
-                if (context.getSessionData(Key.REW_HEROES_CLASSES) == null) {
+                if (SessionData.get(uuid, Key.REW_HEROES_CLASSES) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<String> heroClasses = (List<String>) context.getSessionData(Key.REW_HEROES_CLASSES);
-                    final List<Double> amounts = (List<Double>) context.getSessionData(Key.REW_HEROES_AMOUNTS);
+                    final List<String> heroClasses = (List<String>) SessionData.get(uuid, Key.REW_HEROES_CLASSES);
+                    final List<Double> amounts = (List<Double>) SessionData.get(uuid, Key.REW_HEROES_AMOUNTS);
                     if (heroClasses != null && amounts != null) {
                         for (final String heroClass : heroClasses) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
@@ -308,18 +313,18 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 9:
-            if (context.getSessionData(Key.REW_PARTIES_EXPERIENCE) == null) {
+            if (SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                return ChatColor.GRAY + "(" + ChatColor.AQUA + context.getSessionData(Key.REW_PARTIES_EXPERIENCE) + " "
+                return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) + " "
                         + BukkitLang.get("points") + ChatColor.GRAY + ")";
             }
         case 10:
-            if (context.getSessionData(Key.REW_CUSTOM) == null) {
+            if (SessionData.get(uuid, Key.REW_CUSTOM) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> customRew = (LinkedList<String>) context.getSessionData(Key.REW_CUSTOM);
+                final LinkedList<String> customRew = (LinkedList<String>) SessionData.get(uuid, Key.REW_CUSTOM);
                 if (customRew != null) {
                     for (final String s : customRew) {
                         text.append("\n").append(ChatColor.LIGHT_PURPLE).append("     - ").append(s);
@@ -328,7 +333,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 return text.toString();
             }
         case 11:
-            if (context.getSessionData(Key.REW_DETAILS_OVERRIDE) == null) {
+            if (SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("stageEditorOptional") + ")";
                 } else {
@@ -336,7 +341,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             } else {
                 final StringBuilder text = new StringBuilder();
-                final List<String> overrides = (List<String>) context.getSessionData(Key.REW_DETAILS_OVERRIDE);
+                final List<String> overrides = (List<String>) SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE);
                 if (overrides != null) {
                     for (final String override : overrides) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
@@ -352,114 +357,116 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getBasicPromptText(final ConversationContext context) {
-        final String input = (String) context.getSessionData(classPrefix + "-override");
+    @SuppressWarnings("unchecked")
+    public @NotNull String getPromptText() {
+        final String input = (String) SessionData.get(uuid, classPrefix + "-override");
         if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cancel"))) {
             if (input.equalsIgnoreCase(BukkitLang.get("clear"))) {
-                context.setSessionData(Key.REW_DETAILS_OVERRIDE, null);
+                SessionData.set(uuid, Key.REW_DETAILS_OVERRIDE, null);
             } else {
                 final LinkedList<String> overrides = new LinkedList<>();
-                if (context.getSessionData(Key.REW_DETAILS_OVERRIDE) != null) {
-                    overrides.addAll((List<String>) context.getSessionData(Key.REW_DETAILS_OVERRIDE));
+                if (SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE) != null) {
+                    overrides.addAll((List<String>) SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE));
                 }
                 overrides.add(input);
-                context.setSessionData(Key.REW_DETAILS_OVERRIDE, overrides);
-                context.setSessionData(classPrefix + "-override", null);
+                SessionData.set(uuid, Key.REW_DETAILS_OVERRIDE, overrides);
+                SessionData.set(uuid, classPrefix + "-override", null);
             }
         }
-        checkReward(context);
+        checkReward();
 
         final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle(context)
-                .replace((String) Objects.requireNonNull(context.getSessionData(Key.Q_NAME)), ChatColor.AQUA
-                + (String) context.getSessionData(Key.Q_NAME) + ChatColor.LIGHT_PURPLE) + " -");
+        final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle()
+                .replace((String) Objects.requireNonNull(SessionData.get(uuid, Key.Q_NAME)), ChatColor.AQUA
+                + (String) SessionData.get(uuid, Key.Q_NAME) + ChatColor.LIGHT_PURPLE) + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
-                return new QuestRewardsMoneyPrompt(context);
+                new QuestRewardsMoneyPrompt(uuid).start();
             } else {
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             }
         case 2:
-            return new QuestRewardsQuestPointsPrompt(context);
+            new QuestRewardsQuestPointsPrompt(uuid).start();
         case 3:
-            return new QuestRewardsItemListPrompt(context);
+            new QuestRewardsItemListPrompt(uuid).start();
         case 4:
-            return new QuestRewardsExperiencePrompt(context);
+            new QuestRewardsExperiencePrompt(uuid).start();
         case 5:
-            if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                return new QuestRewardsCommandsPrompt(context);
+            if (!plugin.hasLimitedAccess(uuid)) {
+                new QuestRewardsCommandsPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new QuestRewardsPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new QuestRewardsPrompt(uuid).start();
             }
         case 6:
-            if (!plugin.hasLimitedAccess(context.getForWhom())) {
-                return new QuestRewardsPermissionsListPrompt(context);
+            if (!plugin.hasLimitedAccess(uuid)) {
+                new QuestRewardsPermissionsListPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new QuestRewardsPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new QuestRewardsPrompt(uuid).start();
             }
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
-                return new QuestRewardsMcMMOListPrompt(context);
+                new QuestRewardsMcMMOListPrompt(uuid).start();
             } else {
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             }
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
-                return new QuestRewardsHeroesListPrompt(context);
+                new QuestRewardsHeroesListPrompt(uuid).start();
             } else {
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             }
         case 9:
-            return new QuestRewardsPartiesExperiencePrompt(context);
+            new QuestRewardsPartiesExperiencePrompt(uuid).start();
         case 10:
-            return new QuestCustomRewardModulePrompt(context);
+            new QuestCustomRewardModulePrompt(uuid).start();
         case 11:
             if (hasReward) {
                 return new OverridePrompt.Builder()
                         .source(this)
                         .promptText(BukkitLang.get("overrideCreateEnter"))
-                        .build();
+                        .build()
+                        .start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
-                return new QuestRewardsPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
+                new QuestRewardsPrompt(uuid).start();
             }
         case 12:
-            return plugin.getQuestFactory().returnToMenu(context);
+            plugin.getQuestFactory().returnToMenu(uuid);
         default:
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
     
-    public boolean checkReward(final ConversationContext context) {
-        if (context.getSessionData(Key.REW_MONEY) != null
-                || context.getSessionData(Key.REW_QUEST_POINTS) != null
-                || context.getSessionData(Key.REW_ITEMS) != null
-                || context.getSessionData(Key.REW_EXP) != null
-                || context.getSessionData(Key.REW_COMMAND) != null
-                || context.getSessionData(Key.REW_PERMISSION) != null
-                || context.getSessionData(Key.REW_MCMMO_SKILLS) != null
-                || context.getSessionData(Key.REW_HEROES_CLASSES) != null
-                || context.getSessionData(Key.REW_PARTIES_EXPERIENCE) != null
-                || context.getSessionData(Key.REW_PHAT_LOOTS) != null
-                || context.getSessionData(Key.REW_CUSTOM) != null) {
+    public boolean checkReward() {
+        if (SessionData.get(uuid, Key.REW_MONEY) != null
+                || SessionData.get(uuid, Key.REW_QUEST_POINTS) != null
+                || SessionData.get(uuid, Key.REW_ITEMS) != null
+                || SessionData.get(uuid, Key.REW_EXP) != null
+                || SessionData.get(uuid, Key.REW_COMMAND) != null
+                || SessionData.get(uuid, Key.REW_PERMISSION) != null
+                || SessionData.get(uuid, Key.REW_MCMMO_SKILLS) != null
+                || SessionData.get(uuid, Key.REW_HEROES_CLASSES) != null
+                || SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) != null
+                || SessionData.get(uuid, Key.REW_PHAT_LOOTS) != null
+                || SessionData.get(uuid, Key.REW_CUSTOM) != null) {
             hasReward = true;
             return true;
         }
@@ -468,27 +475,27 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
 
     public class QuestRewardsMoneyPrompt extends QuestsEditorStringPrompt {
         
-        public QuestRewardsMoneyPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsMoneyPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewMoneyPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getQueryText(context);
+            String text = getQueryText();
             if (plugin.getDependencies().getVaultEconomy() != null) {
                 text = text.replace("<money>", plugin.getDependencies().getVaultEconomy().currencyNamePlural());
             }
@@ -496,88 +503,90 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
-                        context.setSessionData(Key.REW_MONEY, i);
+                        SessionData.set(uuid, Key.REW_MONEY, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
-                        return new QuestRewardsMoneyPrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
+                        new QuestRewardsMoneyPrompt(uuid).start();
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new QuestRewardsMoneyPrompt(context);
+                    new QuestRewardsMoneyPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_MONEY, null);
-                return new QuestRewardsPrompt(context);
+                SessionData.set(uuid, Key.REW_MONEY, null);
+                new QuestRewardsPrompt(uuid).start();
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
 
     public class QuestRewardsQuestPointsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestRewardsQuestPointsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsQuestPointsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewQuestPointsPrompt").replace("<points>", BukkitLang.get("questPoints"));
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
         
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
-                        context.setSessionData(Key.REW_QUEST_POINTS, i);
+                        SessionData.set(uuid, Key.REW_QUEST_POINTS, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
-                        return new QuestRewardsQuestPointsPrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
+                        new QuestRewardsQuestPointsPrompt(uuid).start();
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new QuestRewardsQuestPointsPrompt(context);
+                    new QuestRewardsQuestPointsPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_QUEST_POINTS, null);
-                return new QuestRewardsPrompt(context);
+                SessionData.set(uuid, Key.REW_QUEST_POINTS, null);
+                new QuestRewardsPrompt(uuid).start();
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
 
     public class QuestRewardsItemListPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestRewardsItemListPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsItemListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 3;
@@ -588,12 +597,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("itemRewardsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -607,7 +616,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
@@ -622,14 +631,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(Key.REW_ITEMS) == null) {
+                if (SessionData.get(uuid, Key.REW_ITEMS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<ItemStack> items = (List<ItemStack>) context.getSessionData(Key.REW_ITEMS);
+                    final List<ItemStack> items = (List<ItemStack>) SessionData.get(uuid, Key.REW_ITEMS);
                     if (items != null) {
                         for (final ItemStack is : items) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ")
@@ -646,137 +655,140 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public @NotNull String getBasicPromptText(final ConversationContext context) {
+        @SuppressWarnings("unchecked")
+        public @NotNull String getPromptText() {
             // Check/add newly made item
-            if (context.getSessionData("tempStack") != null) {
-                if (context.getSessionData(Key.REW_ITEMS) != null) {
-                    final List<ItemStack> itemRew = (List<ItemStack>) context.getSessionData(Key.REW_ITEMS);
+            if (SessionData.get(uuid, "tempStack") != null) {
+                if (SessionData.get(uuid, Key.REW_ITEMS) != null) {
+                    final List<ItemStack> itemRew = (List<ItemStack>) SessionData.get(uuid, Key.REW_ITEMS);
                     if (itemRew != null) {
-                        itemRew.add((ItemStack) context.getSessionData("tempStack"));
-                        context.setSessionData(Key.REW_ITEMS, itemRew);
+                        itemRew.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                        SessionData.set(uuid, Key.REW_ITEMS, itemRew);
                     }
                 } else {
                     final List<ItemStack> itemRew = new LinkedList<>();
-                    itemRew.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(Key.REW_ITEMS, itemRew);
+                    itemRew.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                    SessionData.set(uuid, Key.REW_ITEMS, itemRew);
                 }
-                ItemStackPrompt.clearSessionData(context);
+                ItemStackPrompt.clearSessionData(uuid);
             }
 
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle(context));
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + getTitle());
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
         
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
-            switch(input.intValue()) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
+            switch (input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, QuestRewardsItemListPrompt.this);
+                new ItemStackPrompt(uuid, QuestRewardsItemListPrompt.this).start();
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewItemsCleared"));
-                context.setSessionData(Key.REW_ITEMS, null);
-                return new QuestRewardsItemListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewItemsCleared"));
+                SessionData.set(uuid, Key.REW_ITEMS, null);
+                new QuestRewardsItemListPrompt(uuid).start();
             case 3:
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             default:
-                return new QuestRewardsItemListPrompt(context);
+                new QuestRewardsItemListPrompt(uuid).start();
             }
         }
     }
 
     public class QuestRewardsExperiencePrompt extends QuestsEditorStringPrompt {
 
-        public QuestRewardsExperiencePrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsExperiencePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewExperiencePrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
-                        context.setSessionData(Key.REW_EXP, i);
+                        SessionData.set(uuid, Key.REW_EXP, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
-                        return new QuestRewardsExperiencePrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
+                        new QuestRewardsExperiencePrompt(uuid).start();
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new QuestRewardsExperiencePrompt(context);
+                    new QuestRewardsExperiencePrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_EXP, null);
-                return new QuestRewardsPrompt(context);
+                SessionData.set(uuid, Key.REW_EXP, null);
+                new QuestRewardsPrompt(uuid).start();
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
     
     public class QuestRewardsCommandsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestRewardsCommandsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsCommandsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewCommandPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(BukkitLang.get("charSemi"));
                 final List<String> commands = new LinkedList<>();
@@ -799,25 +811,25 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     case "we":
                     case "whitelist":
                     case "worldedit":
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidOption")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption")
                                 + ChatColor.DARK_RED + " (" + s.trim() + ")");
                         continue;
                     default:
                         commands.add(s.trim());
                     }
                 }
-                context.setSessionData(Key.REW_COMMAND, commands.isEmpty() ? null : commands);
+                SessionData.set(uuid, Key.REW_COMMAND, commands.isEmpty() ? null : commands);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_COMMAND, null);
+                SessionData.set(uuid, Key.REW_COMMAND, null);
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
     
     public class QuestRewardsPermissionsListPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestRewardsPermissionsListPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsPermissionsListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 4;
@@ -828,17 +840,17 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("permissionRewardsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.BLUE;
             case 2:
-                if (context.getSessionData(Key.REW_PERMISSION) == null) {
+                if (SessionData.get(uuid, Key.REW_PERMISSION) == null) {
                     return ChatColor.GRAY;
                 } else {
                     return ChatColor.BLUE;
@@ -853,12 +865,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("rewSetPermission");
             case 2:
-                if (context.getSessionData(Key.REW_PERMISSION) == null) {
+                if (SessionData.get(uuid, Key.REW_PERMISSION) == null) {
                     return ChatColor.GRAY + BukkitLang.get("rewSetPermissionWorlds");
                 } else {
                     return ChatColor.YELLOW + BukkitLang.get("rewSetPermissionWorlds");
@@ -874,14 +886,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.REW_PERMISSION) == null) {
+                if (SessionData.get(uuid, Key.REW_PERMISSION) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<String> permission = (List<String>) context.getSessionData(Key.REW_PERMISSION);
+                    final List<String> permission = (List<String>) SessionData.get(uuid, Key.REW_PERMISSION);
                     if (permission != null) {
                         for (final String s : permission) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
@@ -890,15 +902,15 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.REW_PERMISSION) == null) {
+                if (SessionData.get(uuid, Key.REW_PERMISSION) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
-                    if (context.getSessionData(Key.REW_PERMISSION_WORLDS) == null) {
+                    if (SessionData.get(uuid, Key.REW_PERMISSION_WORLDS) == null) {
                         return ChatColor.YELLOW + "(" + BukkitLang.get("stageEditorOptional") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
                         final List<String> permissionWorlds
-                                = (List<String>) context.getSessionData(Key.REW_PERMISSION_WORLDS);
+                                = (List<String>) SessionData.get(uuid, Key.REW_PERMISSION_WORLDS);
                         if (permissionWorlds != null) {
                             for (final String s : permissionWorlds) {
                                 text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA)
@@ -917,36 +929,37 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
-                return new QuestPermissionsPrompt(context);
+                new QuestPermissionsPrompt(uuid).start();
             case 2:
-                return new QuestPermissionsWorldsPrompt(context);
+                new QuestPermissionsWorldsPrompt(uuid).start();
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewPermissionsCleared"));
-                context.setSessionData(Key.REW_PERMISSION, null);
-                context.setSessionData(Key.REW_PERMISSION_WORLDS, null);
-                return new QuestRewardsPermissionsListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewPermissionsCleared"));
+                SessionData.set(uuid, Key.REW_PERMISSION, null);
+                SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, null);
+                new QuestRewardsPermissionsListPrompt(uuid).start();
             case 4:
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             default:
-                return null;
+                return;
             }
         }
         
@@ -954,34 +967,35 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
 
     public class QuestPermissionsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestPermissionsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestPermissionsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewPermissionsPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(" ");
                 final List<String> permissions = new LinkedList<>();
@@ -1008,72 +1022,73 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         }
                     } 
                     if (found) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidOption")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption")
                         + ChatColor.DARK_RED + " (" + s.trim() + ")");
                     } else {
                         permissions.add(s.trim());
                     }
                 }
-                context.setSessionData(Key.REW_PERMISSION, permissions);
+                SessionData.set(uuid, Key.REW_PERMISSION, permissions);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_PERMISSION, null);
+                SessionData.set(uuid, Key.REW_PERMISSION, null);
             }
-            return new QuestRewardsPermissionsListPrompt(context);
+            new QuestRewardsPermissionsListPrompt(uuid).start();
         }
     }
     
     public class QuestPermissionsWorldsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestPermissionsWorldsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestPermissionsWorldsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewPermissionsWorldPrompt");
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(BukkitLang.get("charSemi"));
                 final List<String> worlds = new LinkedList<>(Arrays.asList(args));
                 for (final String w : worlds) {
                     if (!w.equals("null") && plugin.getServer().getWorld(w) == null) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidWorld")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidWorld")
                                 .replace("<input>", w));
-                        return new QuestPermissionsWorldsPrompt(context);
+                        new QuestPermissionsWorldsPrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.REW_PERMISSION_WORLDS, worlds);
+                SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, worlds);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_PERMISSION_WORLDS, null);
+                SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, null);
             }
-            return new QuestRewardsPermissionsListPrompt(context);
+            new QuestRewardsPermissionsListPrompt(uuid).start();
         }
     }
 
     public class QuestRewardsMcMMOListPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestRewardsMcMMOListPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsMcMMOListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 4;
@@ -1084,12 +1099,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("mcMMORewardsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -1104,7 +1119,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("reqSetSkills");
@@ -1121,14 +1136,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(Key.REW_MCMMO_SKILLS) == null) {
+                if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<String> skills = (List<String>) context.getSessionData(Key.REW_MCMMO_SKILLS);
+                    final List<String> skills = (List<String>) SessionData.get(uuid, Key.REW_MCMMO_SKILLS);
                     if (skills != null) {
                         for (final String s : skills) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
@@ -1137,11 +1152,11 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.REW_MCMMO_AMOUNTS) == null) {
+                if (SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<Integer> amounts = (List<Integer>) context.getSessionData(Key.REW_MCMMO_AMOUNTS);
+                    final List<Integer> amounts = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS);
                     if (amounts != null) {
                         for (final Integer i : amounts) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(i);
@@ -1158,43 +1173,44 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
-        
-        @SuppressWarnings("unchecked")
+
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                return new QuestMcMMOSkillsPrompt(context);
+                new QuestMcMMOSkillsPrompt(uuid).start();
             case 2:
-                if (context.getSessionData(Key.REW_MCMMO_SKILLS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewSetMcMMOSkillsFirst"));
-                    return new QuestRewardsMcMMOListPrompt(context);
+                if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("rewSetMcMMOSkillsFirst"));
+                    new QuestRewardsMcMMOListPrompt(uuid).start();
                 } else {
-                    return new QuestMcMMOAmountsPrompt(context);
+                    new QuestMcMMOAmountsPrompt(uuid).start();
                 }
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewMcMMOCleared"));
-                context.setSessionData(Key.REW_MCMMO_SKILLS, null);
-                context.setSessionData(Key.REW_MCMMO_AMOUNTS, null);
-                return new QuestRewardsMcMMOListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewMcMMOCleared"));
+                SessionData.set(uuid, Key.REW_MCMMO_SKILLS, null);
+                SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, null);
+                new QuestRewardsMcMMOListPrompt(uuid).start();
             case 4:
                 final int one;
                 final int two;
-                final List<Integer> skills = (List<Integer>) context.getSessionData(Key.REW_MCMMO_SKILLS);
-                final List<Integer> amounts = (List<Integer>) context.getSessionData(Key.REW_MCMMO_AMOUNTS);
+                final List<Integer> skills = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_SKILLS);
+                final List<Integer> amounts = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS);
                 if (skills != null) {
                     one = skills.size();
                 } else {
@@ -1206,40 +1222,40 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new QuestRewardsPrompt(context);
+                    new QuestRewardsPrompt(uuid).start();
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
-                    return new QuestRewardsMcMMOListPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
+                    new QuestRewardsMcMMOListPrompt(uuid).start();
                 }
             default:
-                return new QuestRewardsMcMMOListPrompt(context);
+                new QuestRewardsMcMMOListPrompt(uuid).start();
             }
         }
     }
 
     public class QuestMcMMOSkillsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestMcMMOSkillsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestMcMMOSkillsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("skillListTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewMcMMOPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder skillList = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final StringBuilder skillList = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             final SkillType[] skills = SkillType.values();
             for (int i = 0; i < skills.length; i++) {
                 skillList.append(ChatColor.AQUA).append(BukkitMiscUtil.snakeCaseToUpperCamelCase(skills[i].getName()));
@@ -1247,15 +1263,16 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     skillList.append(ChatColor.GRAY).append(", ");
                 }
             }
-            skillList.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            skillList.append("\n").append(ChatColor.YELLOW).append(getQueryText());
             return skillList.toString();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final List<String> skills = new LinkedList<>();
@@ -1264,52 +1281,53 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         if (!skills.contains(s)) {
                             skills.add(BukkitMiscUtil.getCapitalized(s));
                         } else {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listDuplicate"));
-                            return new QuestMcMMOSkillsPrompt(context);
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("listDuplicate"));
+                            new QuestMcMMOSkillsPrompt(uuid).start();
                         }
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
                         text = text.replace("<input>", s);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new QuestMcMMOSkillsPrompt(context);
+                        sender.sendMessage(ChatColor.RED + text);
+                        new QuestMcMMOSkillsPrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.REW_MCMMO_SKILLS, skills);
+                SessionData.set(uuid, Key.REW_MCMMO_SKILLS, skills);
             }
-            return new QuestRewardsMcMMOListPrompt(context);
+            new QuestRewardsMcMMOListPrompt(uuid).start();
         }
     }
 
     public class QuestMcMMOAmountsPrompt extends QuestsEditorStringPrompt {
         
-        public QuestMcMMOAmountsPrompt(final ConversationContext context) {
-            super(context);
+        public QuestMcMMOAmountsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("reqMcMMOAmountsPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final List<Integer> amounts = new LinkedList<>();
@@ -1319,20 +1337,20 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     } catch (final NumberFormatException e) {
                         String text = BukkitLang.get("reqNotANumber");
                         text = text.replace("<input>", s);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new QuestMcMMOAmountsPrompt(context);
+                        sender.sendMessage(ChatColor.RED + text);
+                        new QuestMcMMOAmountsPrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.REW_MCMMO_AMOUNTS, amounts);
+                SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, amounts);
             }
-            return new QuestRewardsMcMMOListPrompt(context);
+            new QuestRewardsMcMMOListPrompt(uuid).start();
         }
     }
 
     public class QuestRewardsHeroesListPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestRewardsHeroesListPrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsHeroesListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 4;
@@ -1343,12 +1361,12 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("heroesRewardsTitle");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -1363,7 +1381,7 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("rewSetHeroesClasses");
@@ -1380,14 +1398,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(Key.REW_HEROES_CLASSES) == null) {
+                if (SessionData.get(uuid, Key.REW_HEROES_CLASSES) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<String> classes = (List<String>) context.getSessionData(Key.REW_HEROES_CLASSES);
+                    final List<String> classes = (List<String>) SessionData.get(uuid, Key.REW_HEROES_CLASSES);
                     if (classes != null) {
                         for (final String s : classes) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
@@ -1396,11 +1414,11 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.REW_HEROES_AMOUNTS) == null) {
+                if (SessionData.get(uuid, Key.REW_HEROES_AMOUNTS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final List<Double> amounts = (List<Double>) context.getSessionData(Key.REW_HEROES_AMOUNTS);
+                    final List<Double> amounts = (List<Double>) SessionData.get(uuid, Key.REW_HEROES_AMOUNTS);
                     if (amounts != null) {
                         for (final Double d : amounts) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(d);
@@ -1417,43 +1435,44 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
-        
-        @SuppressWarnings("unchecked")
+
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                return new QuestHeroesClassesPrompt(context);
+                new QuestHeroesClassesPrompt(uuid).start();
             case 2:
-                if (context.getSessionData(Key.REW_HEROES_CLASSES) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewSetHeroesClassesFirst"));
-                    return new QuestRewardsHeroesListPrompt(context);
+                if (SessionData.get(uuid, Key.REW_HEROES_CLASSES) == null) {
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("rewSetHeroesClassesFirst"));
+                    new QuestRewardsHeroesListPrompt(uuid).start();
                 } else {
-                    return new QuestHeroesExperiencePrompt(context);
+                    new QuestHeroesExperiencePrompt(uuid).start();
                 }
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewHeroesCleared"));
-                context.setSessionData(Key.REW_HEROES_CLASSES, null);
-                context.setSessionData(Key.REW_HEROES_AMOUNTS, null);
-                return new QuestRewardsHeroesListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewHeroesCleared"));
+                SessionData.set(uuid, Key.REW_HEROES_CLASSES, null);
+                SessionData.set(uuid, Key.REW_HEROES_AMOUNTS, null);
+                new QuestRewardsHeroesListPrompt(uuid).start();
             case 4:
                 final int one;
                 final int two;
-                final List<Integer> classes = (List<Integer>) context.getSessionData(Key.REW_HEROES_CLASSES);
-                final List<Double> amounts = (List<Double>) context.getSessionData(Key.REW_HEROES_AMOUNTS);
+                final List<Integer> classes = (List<Integer>) SessionData.get(uuid, Key.REW_HEROES_CLASSES);
+                final List<Double> amounts = (List<Double>) SessionData.get(uuid, Key.REW_HEROES_AMOUNTS);
                 if (classes != null) {
                     one = classes.size();
                 } else {
@@ -1465,40 +1484,40 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new QuestRewardsPrompt(context);
+                    new QuestRewardsPrompt(uuid).start();
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewHeroesListsNotSameSize"));
-                    return new QuestRewardsHeroesListPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("rewHeroesListsNotSameSize"));
+                    new QuestRewardsHeroesListPrompt(uuid).start();
                 }
             default:
-                return new QuestRewardsHeroesListPrompt(context);
+                new QuestRewardsHeroesListPrompt(uuid).start();
             }
         }
     }
 
     public class QuestHeroesClassesPrompt extends QuestsEditorStringPrompt {
         
-        public QuestHeroesClassesPrompt(final ConversationContext context) {
-            super(context);
+        public QuestHeroesClassesPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("heroesClassesTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewHeroesClassesPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             final List<String> list = new LinkedList<>();
             for (final HeroClass hc : plugin.getDependencies().getHeroes().getClassManager().getClasses()) {
                 list.add(hc.getName());
@@ -1514,15 +1533,16 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
             }
-            text.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            text.append("\n").append(ChatColor.YELLOW).append(getQueryText());
             return text.toString();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] arr = input.split(" ");
                 final List<String> classes = new LinkedList<>();
@@ -1531,50 +1551,51 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     if (hc == null) {
                         String text = BukkitLang.get("rewHeroesInvalidClass");
                         text = text.replace("<input>", s);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new QuestHeroesClassesPrompt(context);
+                        sender.sendMessage(ChatColor.RED + text);
+                        new QuestHeroesClassesPrompt(uuid).start();
                     } else {
                         classes.add(hc.getName());
                     }
                 }
-                context.setSessionData(Key.REW_HEROES_CLASSES, classes);
+                SessionData.set(uuid, Key.REW_HEROES_CLASSES, classes);
             }
-            return new QuestRewardsHeroesListPrompt(context);
+            new QuestRewardsHeroesListPrompt(uuid).start();
         }
     }
 
     public class QuestHeroesExperiencePrompt extends QuestsEditorStringPrompt {
         
-        public QuestHeroesExperiencePrompt(final ConversationContext context) {
-            super(context);
+        public QuestHeroesExperiencePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("heroesExperienceTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewHeroesExperiencePrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            String text = getTitle(context) + "\n";
-            text += ChatColor.YELLOW + getQueryText(context);
+            String text = getTitle() + "\n";
+            text += ChatColor.YELLOW + getQueryText();
             return text;
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] arr = input.split(" ");
                 final List<Double> amounts = new LinkedList<>();
@@ -1585,92 +1606,93 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     } catch (final NumberFormatException nfe) {
                         String text = BukkitLang.get("reqNotANumber");
                         text = text.replace("<input>", s);
-                        context.getForWhom().sendRawMessage(ChatColor.RED + text);
-                        return new QuestHeroesExperiencePrompt(context);
+                        sender.sendMessage(ChatColor.RED + text);
+                        new QuestHeroesExperiencePrompt(uuid).start();
                     }
                 }
-                context.setSessionData(Key.REW_HEROES_AMOUNTS, amounts);
+                SessionData.set(uuid, Key.REW_HEROES_AMOUNTS, amounts);
             }
-            return new QuestRewardsHeroesListPrompt(context);
+            new QuestRewardsHeroesListPrompt(uuid).start();
         }
     }
     
     public class QuestRewardsPartiesExperiencePrompt extends QuestsEditorStringPrompt {
         
-        public QuestRewardsPartiesExperiencePrompt(final ConversationContext context) {
-            super(context);
+        public QuestRewardsPartiesExperiencePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewPartiesExperiencePrompt");
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
         
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i > 0) {
-                        context.setSessionData(Key.REW_PARTIES_EXPERIENCE, i);
+                        SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, i);
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
-                        return new QuestRewardsPartiesExperiencePrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
+                        new QuestRewardsPartiesExperiencePrompt(uuid).start();
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
-                    return new QuestRewardsPartiesExperiencePrompt(context);
+                    new QuestRewardsPartiesExperiencePrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_PARTIES_EXPERIENCE, null);
-                return new QuestRewardsPrompt(context);
+                SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, null);
+                new QuestRewardsPrompt(uuid).start();
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
 
     public class QuestCustomRewardModulePrompt extends QuestsEditorStringPrompt {
 
-        public QuestCustomRewardModulePrompt(final ConversationContext context) {
-            super(context);
+        public QuestCustomRewardModulePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("stageEditorModules");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("stageEditorModulePrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(@NotNull final ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
-                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                             .append("https://pikamug.gitbook.io/quests/casual/modules").append(ChatColor.RESET)
@@ -1683,9 +1705,9 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         text.append(ChatColor.DARK_PURPLE).append("  - ").append(name).append("\n");
                     }
                 }
-                return text.toString() + ChatColor.YELLOW + getQueryText(context);
+                return text.toString() + ChatColor.YELLOW + getQueryText();
             }
-            final TextComponent component = new TextComponent(getTitle(context) + "\n");
+            final TextComponent component = new TextComponent(getTitle() + "\n");
             component.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
             final TextComponent line = new TextComponent("");
             if (plugin.getCustomRewards().isEmpty()) {
@@ -1703,13 +1725,14 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             component.addExtra(line);
-            component.addExtra(ChatColor.YELLOW + getQueryText(context));
-            ((Player)context.getForWhom()).spigot().sendMessage(component);
+            component.addExtra(ChatColor.YELLOW + getQueryText());
+            Bukkit.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
         @Override
-        public Prompt acceptInput(@NotNull final ConversationContext context, @Nullable final String input) {
+        public void acceptInput(@Nullable final String input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;
@@ -1730,19 +1753,19 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found != null) {
-                    return new QuestCustomRewardsPrompt(found, context);
+                    new QuestCustomRewardsPrompt(found, uuid).start();
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-                return new QuestRewardsPrompt(context);
+                new QuestRewardsPrompt(uuid).start();
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_CUSTOM, null);
-                context.setSessionData(Key.REW_CUSTOM_DATA, null);
-                context.setSessionData(Key.REW_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewCustomCleared"));
-                return new QuestRewardsPrompt(context);
+                SessionData.set(uuid, Key.REW_CUSTOM, null);
+                SessionData.set(uuid, Key.REW_CUSTOM_DATA, null);
+                SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, null);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewCustomCleared"));
+                new QuestRewardsPrompt(uuid).start();
             }
-            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
-            return new QuestCustomRewardModulePrompt(context);
+            sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
+            new QuestCustomRewardModulePrompt(uuid).start();
         }
     }
 
@@ -1750,8 +1773,8 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
 
         private final String moduleName;
         
-        public QuestCustomRewardsPrompt(final String moduleName, final ConversationContext context) {
-            super(context);
+        public QuestCustomRewardsPrompt(final String moduleName, final UUID uuid) {
+            super(uuid);
             this.moduleName = moduleName;
         }
 
@@ -1760,23 +1783,23 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("customRewardsTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("rewCustomRewardPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(context.getForWhom() instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
-                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+                final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
                             .append("https://pikamug.gitbook.io/quests/casual/modules\n");
@@ -1788,9 +1811,9 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         }
                     }
                 }
-                return text.toString() + ChatColor.YELLOW + getQueryText(context);
+                return text.toString() + ChatColor.YELLOW + getQueryText();
             }
-            final TextComponent component = new TextComponent(getTitle(context) + "\n");
+            final TextComponent component = new TextComponent(getTitle() + "\n");
             component.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
             final TextComponent line = new TextComponent("");
             if (plugin.getCustomRewards().isEmpty()) {
@@ -1811,18 +1834,20 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                 }
             }
             component.addExtra(line);
-            component.addExtra(ChatColor.YELLOW + getQueryText(context));
-            ((Player)context.getForWhom()).spigot().sendMessage(component);
+            component.addExtra(ChatColor.YELLOW + getQueryText());
+            Bukkit.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
-            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
+            if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 CustomReward found = null;
                 for (final CustomReward cr : plugin.getCustomRewards()) {
                     if (cr.getModuleName().equals(moduleName)) {
@@ -1833,21 +1858,21 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                     }
                 }
                 if (found != null) {
-                    if (context.getSessionData(Key.REW_CUSTOM) != null) {
+                    if (SessionData.get(uuid, Key.REW_CUSTOM) != null) {
                         // The custom reward may already have been added, so let's check that
-                        final LinkedList<String> list = (LinkedList<String>) context.getSessionData(Key.REW_CUSTOM);
+                        final LinkedList<String> list = (LinkedList<String>) SessionData.get(uuid, Key.REW_CUSTOM);
                         final LinkedList<Map<String, Object>> dataMapList
-                                = (LinkedList<Map<String, Object>>) context.getSessionData(Key.REW_CUSTOM_DATA);
+                                = (LinkedList<Map<String, Object>>) SessionData.get(uuid, Key.REW_CUSTOM_DATA);
                         if (list != null && dataMapList != null && !list.contains(found.getName())) {
                             // Hasn't been added yet, so let's do it
                             list.add(found.getName());
                             dataMapList.add(found.getData());
-                            context.setSessionData(Key.REW_CUSTOM, list);
-                            context.setSessionData(Key.REW_CUSTOM_DATA, dataMapList);
+                            SessionData.set(uuid, Key.REW_CUSTOM, list);
+                            SessionData.set(uuid, Key.REW_CUSTOM_DATA, dataMapList);
                         } else {
                             // Already added, so inform user
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewCustomAlreadyAdded"));
-                            return new QuestCustomRewardsPrompt(moduleName, context);
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomAlreadyAdded"));
+                            new QuestCustomRewardsPrompt(moduleName, uuid).start();
                         }
                     } else {
                         // The custom reward hasn't been added yet, so let's do it
@@ -1855,37 +1880,51 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
                         dataMapList.add(found.getData());
                         final LinkedList<String> list = new LinkedList<>();
                         list.add(found.getName());
-                        context.setSessionData(Key.REW_CUSTOM, list);
-                        context.setSessionData(Key.REW_CUSTOM_DATA, dataMapList);
+                        SessionData.set(uuid, Key.REW_CUSTOM, list);
+                        SessionData.set(uuid, Key.REW_CUSTOM_DATA, dataMapList);
                     }
                     // Send user to the custom data prompt if there is any needed
                     if (!found.getData().isEmpty()) {
-                        context.setSessionData(Key.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
-                        return new QuestRewardCustomDataListPrompt();
+                        SessionData.set(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
+                        new QuestRewardCustomDataListPrompt().start();
                     }
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
-                    return new QuestCustomRewardsPrompt(moduleName, context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
+                    new QuestCustomRewardsPrompt(moduleName, uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.REW_CUSTOM, null);
-                context.setSessionData(Key.REW_CUSTOM_DATA, null);
-                context.setSessionData(Key.REW_CUSTOM_DATA_TEMP, null);
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("rewCustomCleared"));
+                SessionData.set(uuid, Key.REW_CUSTOM, null);
+                SessionData.set(uuid, Key.REW_CUSTOM_DATA, null);
+                SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, null);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewCustomCleared"));
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
 
-    private class QuestRewardCustomDataListPrompt extends StringPrompt {
+    private class QuestRewardCustomDataListPrompt extends QuestsEditorStringPrompt {
 
-        @SuppressWarnings("unchecked")
+        public QuestRewardCustomDataListPrompt(final UUID uuid) {
+            super(uuid);
+        }
+
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public String getTitle() {
+            return null;
+        }
+
+        @Override
+        public String getQueryText() {
+            return null;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public @NotNull String getPromptText() {
             final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- ");
-            final LinkedList<String> list = (LinkedList<String>) context.getSessionData(Key.REW_CUSTOM);
+            final LinkedList<String> list = (LinkedList<String>) SessionData.get(uuid, Key.REW_CUSTOM);
             final LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(Key.REW_CUSTOM_DATA);
+                    = (LinkedList<Map<String, Object>>) SessionData.get(uuid, Key.REW_CUSTOM_DATA);
             if (list != null && dataMapList != null) {
                 final String rewName = list.getLast();
                 final Map<String, Object> dataMap = dataMapList.getLast();
@@ -1913,49 +1952,62 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             @SuppressWarnings("unchecked")
             final LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(Key.REW_CUSTOM_DATA);
+                    = (LinkedList<Map<String, Object>>) SessionData.get(uuid, Key.REW_CUSTOM_DATA);
             if (dataMapList != null) {
                 final Map<String, Object> dataMap = dataMapList.getLast();
-                final int numInput;
+                int numInput = 0;
                 try {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {
-                    return new QuestRewardCustomDataListPrompt();
+                    new QuestRewardCustomDataListPrompt(uuid).start();
                 }
                 if (numInput < 1 || numInput > dataMap.size() + 1) {
-                    return new QuestRewardCustomDataListPrompt();
+                    new QuestRewardCustomDataListPrompt(uuid).start();
                 }
                 if (numInput < dataMap.size() + 1) {
                     final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
                     Collections.sort(dataMapKeys);
                     final String selectedKey = dataMapKeys.get(numInput - 1);
-                    context.setSessionData(Key.REW_CUSTOM_DATA_TEMP, selectedKey);
-                    return new QuestRewardCustomDataPrompt();
+                    SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, selectedKey);
+                    new QuestRewardCustomDataPrompt(uuid).start();
                 } else {
                     if (dataMap.containsValue(null)) {
-                        return new QuestRewardCustomDataListPrompt();
+                        new QuestRewardCustomDataListPrompt(uuid).start();
                     } else {
-                        context.setSessionData(Key.REW_CUSTOM_DATA_DESCRIPTIONS, null);
+                        SessionData.set(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS, null);
                     }
                 }
             }
-            return new QuestRewardsPrompt(context);
+            new QuestRewardsPrompt(uuid).start();
         }
     }
 
-    private class QuestRewardCustomDataPrompt extends StringPrompt {
+    private class QuestRewardCustomDataPrompt extends QuestsEditorStringPrompt {
+
+        public QuestRewardCustomDataPrompt(final UUID uuid) {
+            super(uuid);
+        }
 
         @Override
-        public @NotNull String getPromptText(final ConversationContext context) {
+        public String getTitle() {
+            return null;
+        }
+
+        @Override
+        public String getQueryText() {
+            return null;
+        }
+
+        @Override
+        public @NotNull String getPromptText() {
             String text = "";
-            final String temp = (String) context.getSessionData(Key.REW_CUSTOM_DATA_TEMP);
+            final String temp = (String) SessionData.get(uuid, Key.REW_CUSTOM_DATA_TEMP);
             @SuppressWarnings("unchecked")
-            final
-            Map<String, String> descriptions 
-                    = (Map<String, String>) context.getSessionData(Key.REW_CUSTOM_DATA_DESCRIPTIONS);
+            final Map<String, String> descriptions
+                    = (Map<String, String>) SessionData.get(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS);
             if (temp != null && descriptions != null) {
                 if (descriptions.get(temp) != null) {
                     text += descriptions.get(temp) + "\n";
@@ -1968,17 +2020,16 @@ public class QuestRewardsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             @SuppressWarnings("unchecked")
-            final
-            LinkedList<Map<String, Object>> dataMapList
-                    = (LinkedList<Map<String, Object>>) context.getSessionData(Key.REW_CUSTOM_DATA);
+            final LinkedList<Map<String, Object>> dataMapList
+                    = (LinkedList<Map<String, Object>>) SessionData.get(uuid, Key.REW_CUSTOM_DATA);
             if (dataMapList != null) {
                 final Map<String, Object> dataMap = dataMapList.getLast();
-                dataMap.put((String) context.getSessionData(Key.REW_CUSTOM_DATA_TEMP), input);
-                context.setSessionData(Key.REW_CUSTOM_DATA_TEMP, null);
+                dataMap.put((String) SessionData.get(uuid, Key.REW_CUSTOM_DATA_TEMP), input);
+                SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, null);
             }
-            return new QuestRewardCustomDataListPrompt();
+            new QuestRewardCustomDataListPrompt(uuid).start();
         }
     }
 }

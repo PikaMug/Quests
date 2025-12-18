@@ -10,12 +10,10 @@
 
 package me.pikamug.quests.convo;
 
-import me.pikamug.quests.Quests;
+import me.pikamug.quests.player.Quester;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,11 +39,11 @@ public abstract class QuestsNumericPrompt implements QuestsPrompt {
         return HANDLERS;
     }
 
-    public @NotNull String getPromptText(@NotNull final ConversationContext cc) {
-        return sendClickableSelection(getBasicPromptText(cc), cc);
+    public @NotNull String getPromptText(@NotNull final Quester quester) {
+        return sendClickableSelection(getPromptText(), quester);
     }
     
-    public abstract String getBasicPromptText(ConversationContext cc);
+    public abstract String getPromptText();
     
     /**
      * Takes a Quests-styled conversation interface and decides how to send it
@@ -54,14 +52,14 @@ public abstract class QuestsNumericPrompt implements QuestsPrompt {
      * Conversations API.
      * 
      * @param input   the Quests-styled conversation interface
-     * @param context the conversation context
+     * @param quester the quest player
      * @return        plain text to deliver
      */
-    public static String sendClickableSelection(final String input, final ConversationContext context) {
-        if (context.getPlugin() == null) {
+    public static String sendClickableSelection(final String input, final Quester quester) {
+        if (quester == null || quester.getPlugin() == null) {
             return "ERROR";
         }
-        if (!(context.getForWhom() instanceof Player) || !((Quests)context.getPlugin()).getConfigSettings().canClickablePrompts()) {
+        if (!quester.getPlugin().getConfigSettings().canClickablePrompts()) {
             return input;
         }
         final String[] basicText = input.split("\n");
@@ -80,7 +78,7 @@ public abstract class QuestsNumericPrompt implements QuestsPrompt {
             }
             component.addExtra(lineComponent);
         }
-        ((Player)context.getForWhom()).spigot().sendMessage(component);
+        quester.getPlayer().spigot().sendMessage(component);
         return "";
     }
 }

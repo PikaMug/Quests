@@ -10,7 +10,6 @@
 
 package me.pikamug.quests.convo.quests.menu;
 
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.QuestsNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
@@ -18,25 +17,29 @@ import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
-    
+
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     
-    public QuestMenuPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public QuestMenuPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
 
     private final int size = 4;
@@ -47,14 +50,14 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         final String title = BukkitLang.get("questEditorTitle");
-        return title + (plugin.hasLimitedAccess(context.getForWhom()) ? ChatColor.RED + " (" + BukkitLang.get("trialMode")
+        return title + (plugin.hasLimitedAccess(uuid) ? ChatColor.RED + " (" + BukkitLang.get("trialMode")
                 + ")" : "");
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -68,7 +71,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + BukkitLang.get("questEditorCreate");
@@ -84,197 +87,200 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         return null;
     }
 
     @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptText() {
         final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
-        final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final ConversationContext context, final Number input) {
-        final CommandSender cs = (CommandSender) context.getForWhom();
+    public void acceptInput(final Number input) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
-            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.create")) {
-                return new QuestSelectCreatePrompt(context);
+            if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.create")) {
+                new QuestSelectCreatePrompt(uuid).start();
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new QuestMenuPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new QuestMenuPrompt(uuid).start();
             }
         case 2:
-            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.edit")) {
-                return new QuestSelectEditPrompt(context);
+            if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.edit")) {
+                new QuestSelectEditPrompt(uuid).start();
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new QuestMenuPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new QuestMenuPrompt(uuid).start();
             }
         case 3:
-            if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.delete")) {
-                return new QuestSelectDeletePrompt(context);
+            if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.delete")) {
+                new QuestSelectDeletePrompt(uuid).start();
             } else {
-                cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                return new QuestMenuPrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                new QuestMenuPrompt(uuid).start();
             }
         case 4:
-            context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
-            return Prompt.END_OF_CONVERSATION;
+            sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
+            return;
         default:
-            return new QuestMenuPrompt(context);
+            new QuestMenuPrompt(uuid).start();
         }
     }
     
     public class QuestSelectCreatePrompt extends QuestsEditorStringPrompt {
         
-        public QuestSelectCreatePrompt(final ConversationContext context) {
-            super(context);
+        public QuestSelectCreatePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("questCreateTitle");
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("questEditorEnterQuestName");
         }
-        
+
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            return ChatColor.GOLD + getTitle(context)+ "\n" + ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.GOLD + getTitle()+ "\n" + ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, String input) {
+        public void acceptInput(String input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (input == null) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                return new QuestSelectCreatePrompt(context);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                new QuestSelectCreatePrompt(uuid).start();
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorNameExists"));
-                        return new QuestSelectCreatePrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNameExists"));
+                        new QuestSelectCreatePrompt(uuid).start();
                     }
                 }
                 final List<String> questNames = plugin.getQuestFactory().getNamesOfQuestsBeingEdited();
                 if (questNames.contains(input)) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
-                    return new QuestSelectCreatePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
+                    new QuestSelectCreatePrompt(uuid).start();
                 }
                 if (input.contains(".") || input.contains(",")) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
-                    return new QuestSelectCreatePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
+                    new QuestSelectCreatePrompt(uuid).start();
                 }
                 if (input.isEmpty()) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestSelectCreatePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestSelectCreatePrompt(uuid).start();
                 }
-                context.setSessionData(Key.Q_NAME, input);
-                context.setSessionData(Key.Q_ASK_MESSAGE, BukkitLang.get("questEditorDefaultAskMessage"));
-                context.setSessionData(Key.Q_FINISH_MESSAGE, BukkitLang.get("questEditorDefaultFinishMessage"));
+                SessionData.set(uuid, Key.Q_NAME, input);
+                SessionData.set(uuid, Key.Q_ASK_MESSAGE, BukkitLang.get("questEditorDefaultAskMessage"));
+                SessionData.set(uuid, Key.Q_FINISH_MESSAGE, BukkitLang.get("questEditorDefaultFinishMessage"));
                 questNames.add(input);
                 plugin.getQuestFactory().setNamesOfQuestsBeingEdited(questNames);
-                return new QuestMainPrompt(context);
+                new QuestMainPrompt(uuid).start();
             } else {
-                return new QuestMenuPrompt(context);
+                new QuestMenuPrompt(uuid).start();
             }
         }
     }
     
     public class QuestSelectEditPrompt extends QuestsEditorStringPrompt {
         
-        public QuestSelectEditPrompt(final ConversationContext context) {
-            super(context);
+        public QuestSelectEditPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("questEditTitle");
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("questEditorEnterQuestName");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
+            return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Quest q = plugin.getQuest(input);
                 if (q != null) {
-                    plugin.getQuestFactory().loadQuest(context, q);
-                    return new QuestMainPrompt(context);
+                    plugin.getQuestFactory().loadQuest(uuid, q);
+                    new QuestMainPrompt(uuid).start();
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
                         .replace("<input>", input));
-                return new QuestSelectEditPrompt(context);
+                new QuestSelectEditPrompt(uuid).start();
             } else {
-                return new QuestMenuPrompt(context);
+                new QuestMenuPrompt(uuid).start();
             }
         }
     }
     
     public class QuestSelectDeletePrompt extends QuestsEditorStringPrompt {
 
-        public QuestSelectDeletePrompt(final ConversationContext context) {
-            super(context);
+        public QuestSelectDeletePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("questDeleteTitle");
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("questEditorEnterQuestName");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
-                    .collect(Collectors.toList());
-            return sendClickableMenu(getTitle(context), names, getQueryText(context), context);
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public @NotNull String getPromptText() {
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
+                    .collect(Collectors.toList());
+            return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
+        }
+
+        @Override
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Quest found = plugin.getQuest(input);
@@ -286,34 +292,34 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
                         }
                     }
                     if (used.isEmpty()) {
-                        context.setSessionData(Key.ED_QUEST_DELETE, found.getName());
-                        return new QuestConfirmDeletePrompt(context);
+                        SessionData.set(uuid, Key.ED_QUEST_DELETE, found.getName());
+                        new QuestConfirmDeletePrompt(uuid).start();
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.RED 
+                        sender.sendMessage(ChatColor.RED 
                                 + BukkitLang.get("questEditorQuestAsRequirement1") + " \"" + ChatColor.DARK_PURPLE
-                                + context.getSessionData(Key.ED_QUEST_DELETE) + ChatColor.RED + "\" "
+                                + SessionData.get(uuid, Key.ED_QUEST_DELETE) + ChatColor.RED + "\" "
                                 + BukkitLang.get("questEditorQuestAsRequirement2"));
                         for (final String s : used) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
+                            sender.sendMessage(ChatColor.RED + "- " + ChatColor.DARK_RED + s);
                         }
-                        context.getForWhom().sendRawMessage(ChatColor.RED 
+                        sender.sendMessage(ChatColor.RED 
                                 + BukkitLang.get("questEditorQuestAsRequirement3"));
-                        return new QuestSelectDeletePrompt(context);
+                        new QuestSelectDeletePrompt(uuid).start();
                     }
                 }
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("questNotFound")
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("questNotFound")
                         .replace("<input>", input));
-                return new QuestSelectDeletePrompt(context);
+                new QuestSelectDeletePrompt(uuid).start();
             } else {
-                return new QuestMenuPrompt(context);
+                new QuestMenuPrompt(uuid).start();
             }
         }
     }
     
     public class QuestConfirmDeletePrompt extends QuestsEditorStringPrompt {
         
-        public QuestConfirmDeletePrompt(final ConversationContext context) {
-            super(context);
+        public QuestConfirmDeletePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 2;
@@ -323,12 +329,12 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @SuppressWarnings("unused")
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN;
@@ -340,7 +346,7 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
 
         @SuppressWarnings("unused")
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GREEN + BukkitLang.get("yesWord");
@@ -352,37 +358,37 @@ public class QuestMenuPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("confirmDelete");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            final StringBuilder text = new StringBuilder(ChatColor.RED + getQueryText(context) + " (" + ChatColor.YELLOW
-                    + context.getSessionData(Key.ED_QUEST_DELETE) + ChatColor.RED + ")\n");
-            for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
-            }
-            return QuestsNumericPrompt.sendClickableSelection(text.toString(), context);
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public @NotNull String getPromptText() {
+            final BukkitQuestsEditorPostOpenStringPromptEvent event
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            final StringBuilder text = new StringBuilder(ChatColor.RED + getQueryText() + " (" + ChatColor.YELLOW
+                    + SessionData.get(uuid, Key.ED_QUEST_DELETE) + ChatColor.RED + ")\n");
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
+            }
+            return QuestsNumericPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+        }
+
+        @Override
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
-                plugin.getQuestFactory().deleteQuest(context);
-                return Prompt.END_OF_CONVERSATION;
+                plugin.getQuestFactory().deleteQuest(uuid);
+                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
-                return new QuestMenuPrompt(context);
+                new QuestMenuPrompt(uuid).start();
             } else {
-                return new QuestConfirmDeletePrompt(context);
+                new QuestConfirmDeletePrompt(uuid).start();
             }
         }
     }

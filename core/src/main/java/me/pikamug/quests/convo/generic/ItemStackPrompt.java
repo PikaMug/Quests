@@ -19,9 +19,12 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
+import me.pikamug.quests.util.SessionData;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.enchantments.Enchantment;
@@ -39,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Stores ItemStack in "tempStack" context data<p>
@@ -52,10 +56,12 @@ import java.util.Objects;
  */
 public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
+    private final @NotNull UUID uuid;
     private final Prompt oldPrompt;
 
-    public ItemStackPrompt(final ConversationContext context, final Prompt old) {
-        super(context);
+    public ItemStackPrompt(final UUID uuid, final Prompt old) {
+        super(uuid);
+        this.uuid = uuid;
         oldPrompt = old;
     }
     
@@ -67,12 +73,12 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("createItemTitle");
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 0:
         case 1:
@@ -83,7 +89,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         case 6:
             return ChatColor.BLUE;
         case 7:
-            if (context.getSessionData("tempMeta") != null) {
+            if (SessionData.get(uuid, "tempMeta") != null) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -98,7 +104,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 0:
             return ChatColor.YELLOW + BukkitLang.get("itemCreateLoadHand");
@@ -115,7 +121,7 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         case 6:
             return ChatColor.YELLOW + BukkitLang.get("itemCreateSetLore");
         case 7:
-            if (context.getSessionData("tempMeta") != null) {
+            if (SessionData.get(uuid, "tempMeta") != null) {
                 return ChatColor.DARK_GREEN + BukkitLang.get("itemCreateSetClearMeta");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("itemCreateSetClearMeta");
@@ -128,43 +134,43 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             return null;
         }
     }
-    
-    @SuppressWarnings("unchecked")
+
     @Override
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    @SuppressWarnings("unchecked")
+    public String getAdditionalText(final int number) {
         switch (number) {
         case 0:
         case 8:
         case 9:
             return "";
         case 1:
-            if (context.getSessionData("tempName") == null) {
+            if (SessionData.get(uuid, "tempName") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                final String text = (String) context.getSessionData("tempName");
+                final String text = (String) SessionData.get(uuid, "tempName");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitItemUtil.getPrettyItemName(text) + ChatColor.GRAY + ")";
             }
         case 2:
-            if (context.getSessionData("tempAmount") == null) {
+            if (SessionData.get(uuid, "tempAmount") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                final Integer text = (Integer) context.getSessionData("tempAmount");
+                final Integer text = (Integer) SessionData.get(uuid, "tempAmount");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 3:
-            if (context.getSessionData("tempData") == null) {
+            if (SessionData.get(uuid, "tempData") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                final Short text = (Short) context.getSessionData("tempData");
+                final Short text = (Short) SessionData.get(uuid, "tempData");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 4:
-            if (context.getSessionData("tempEnchantments") == null) {
+            if (SessionData.get(uuid, "tempEnchantments") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final Map<Enchantment, Integer> map 
-                        = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
+                        = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
                 if (map != null) {
                     for (final Entry<Enchantment, Integer> e : map.entrySet()) {
                         text.append("\n").append(BukkitItemUtil.getPrettyEnchantmentName(e.getKey())).append(" ")
@@ -174,18 +180,18 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 5:
-            if (context.getSessionData("tempDisplay") == null) {
+            if (SessionData.get(uuid, "tempDisplay") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
-                final String text = (String) context.getSessionData("tempDisplay");
+                final String text = (String) SessionData.get(uuid, "tempDisplay");
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 6:
-            if (context.getSessionData("tempLore") == null) {
+            if (SessionData.get(uuid, "tempLore") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final List<String> list = (List<String>) context.getSessionData("tempLore");
+                final List<String> list = (List<String>) SessionData.get(uuid, "tempLore");
                 if (list != null) {
                     for (final String s : list) {
                         text.append("\n").append(s);
@@ -194,12 +200,12 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + text + ChatColor.GRAY + ")";
             }
         case 7:
-            if (context.getSessionData("tempMeta") == null) {
+            if (SessionData.get(uuid, "tempMeta") == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedHashMap<String, Object> map 
-                        = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
+                        = (LinkedHashMap<String, Object>) SessionData.get(uuid, "tempMeta");
                 if (map != null && !map.isEmpty()) {
                     for (final String key : map.keySet()) {
                         if (key.equals("pages")) {
@@ -219,20 +225,20 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
-        final BukkitQuestsEditorPostOpenNumericPromptEvent event = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+    @SuppressWarnings("unchecked")
+    public @NotNull String getPromptText() {
+        final BukkitQuestsEditorPostOpenNumericPromptEvent event = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
-        if (context.getSessionData("tempName") != null) {
-            final String stackData = getItemData(context);
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
+        if (SessionData.get(uuid, "tempName") != null) {
+            final String stackData = getItemData(uuid);
             if (stackData != null) {
                 text.append("\n").append(stackData);
-                if (context.getSessionData("tempMeta") != null) {
+                if (SessionData.get(uuid, "tempMeta") != null) {
                     final LinkedHashMap<String, Object> map 
-                            = (LinkedHashMap<String, Object>) context.getSessionData("tempMeta");
+                            = (LinkedHashMap<String, Object>) SessionData.get(uuid, "tempMeta");
                     if (map != null && !map.isEmpty()) {
                         for (final String key : map.keySet()) {
                             if (key.equals("pages")) {
@@ -249,138 +255,140 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
             }
         }
         int start = 0;
-        if (!(context.getForWhom() instanceof Player)) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
+        if (!(sender instanceof Player)) {
             start = 1;
         }
         for (int i = start; i <= size-1; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final @NotNull Number input) {
-        return acceptValidatedInput(context, input, null);
+    public void acceptInput(final @NotNull Number input) {
+        acceptInput(uuid, input, null);
     }
     
     @SuppressWarnings({ "unchecked", "deprecation" })
-    public Prompt acceptValidatedInput(final ConversationContext context, final Number input, final ItemStack item) {
+    public void acceptInput(final UUID uuid, final Number input, final ItemStack item) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch (input.intValue()) {
         case 0:
-            if (context.getForWhom() instanceof Player) {
-                context.setSessionData("tempMeta", null);
+            if (sender instanceof Player) {
+                SessionData.set(uuid, "tempMeta", null);
                 
-                final Player player = (Player) context.getForWhom();
+                final Player player = (Player) sender;
                 final ItemStack is = item == null ? player.getItemInHand() : item;
                 if (is.getType().equals(Material.AIR)) {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoItem"));
                 } else {
-                    context.setSessionData("tempName", is.getType().name());
-                    context.setSessionData("tempAmount", is.getAmount());
-                    context.setSessionData("tempData", null);
-                    context.setSessionData("tempEnchantments", null);
-                    context.setSessionData("tempDisplay", null);
-                    context.setSessionData("tempLore", null);
+                    SessionData.set(uuid, "tempName", is.getType().name());
+                    SessionData.set(uuid, "tempAmount", is.getAmount());
+                    SessionData.set(uuid, "tempData", null);
+                    SessionData.set(uuid, "tempEnchantments", null);
+                    SessionData.set(uuid, "tempDisplay", null);
+                    SessionData.set(uuid, "tempLore", null);
                     if (is.getDurability() != 0) {
-                        context.setSessionData("tempData", is.getDurability());
+                        SessionData.set(uuid, "tempData", is.getDurability());
                     }
                     if (!is.getEnchantments().isEmpty()) {
-                        context.setSessionData("tempEnchantments", new HashMap<>(is.getEnchantments()));
+                        SessionData.set(uuid, "tempEnchantments", new HashMap<>(is.getEnchantments()));
                     }
                     if (is.hasItemMeta()) {
                         final ItemMeta meta = is.getItemMeta();
                         if (meta != null) {
                             if (meta.hasDisplayName()) {
                                 final String display = meta.getDisplayName().replace(ChatColor.COLOR_CHAR, '&');
-                                context.setSessionData("tempDisplay", display);
+                                SessionData.set(uuid, "tempDisplay", display);
                             }
                             if (meta.getLore() != null) {
                                 final LinkedList<String> lore = new LinkedList<>(meta.getLore());
-                                context.setSessionData("tempLore", lore);
+                                SessionData.set(uuid, "tempLore", lore);
                             }
                             final LinkedHashMap<String, Object> map = new LinkedHashMap<>(meta.serialize());
                             map.remove("lore");
                             map.remove("display-name");
                             if (!map.isEmpty()) {
-                                context.setSessionData("tempMeta", map);
+                                SessionData.set(uuid, "tempMeta", map);
                             }
                         }
                     }
                 }
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         case 1:
-            context.setSessionData("tempMeta", null);
-            return new ItemNamePrompt(context);
+            SessionData.set(uuid, "tempMeta", null);
+            new ItemNamePrompt(uuid).start();
         case 2:
-            if (context.getSessionData("tempName") != null) {
-                return new ItemAmountPrompt(context);
+            if (SessionData.get(uuid, "tempName") != null) {
+                new ItemAmountPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoName"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoName"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         case 3:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                return new ItemDataPrompt(context);
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                new ItemDataPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         case 4:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                return new ItemEnchantmentPrompt(context);
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                new ItemEnchantmentPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         case 5:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                return new ItemDisplayPrompt(context);
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                new ItemDisplayPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         case 6:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                return new ItemLorePrompt(context);
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                new ItemLorePrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         case 7:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                context.setSessionData("tempMeta", null);
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                SessionData.set(uuid, "tempMeta", null);
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         case 8:
-            clearSessionData(context);
+            clearSessionData(uuid);
             return oldPrompt;
         case 9:
-            if (context.getSessionData("tempName") != null && context.getSessionData("tempAmount") != null) {
-                final String name = (String) context.getSessionData("tempName");
-                final Integer amount = (Integer) context.getSessionData("tempAmount");
+            if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
+                final String name = (String) SessionData.get(uuid, "tempName");
+                final Integer amount = (Integer) SessionData.get(uuid, "tempAmount");
                 Short data = -1;
                 Map<Enchantment, Integer> enchs = null;
                 String display = null;
                 List<String> lore = null;
-                if (context.getSessionData("tempData") != null) {
-                    data = (Short) context.getSessionData("tempData");
+                if (SessionData.get(uuid, "tempData") != null) {
+                    data = (Short) SessionData.get(uuid, "tempData");
                 }
-                if (context.getSessionData("tempEnchantments") != null) {
-                    enchs = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
+                if (SessionData.get(uuid, "tempEnchantments") != null) {
+                    enchs = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
                 }
-                if (context.getSessionData("tempDisplay") != null) {
+                if (SessionData.get(uuid, "tempDisplay") != null) {
                     display = ChatColor.translateAlternateColorCodes('&',
-                            (String) Objects.requireNonNull(context.getSessionData("tempDisplay")));
+                            (String) Objects.requireNonNull(SessionData.get(uuid, "tempDisplay")));
                 }
-                if (context.getSessionData("tempLore") != null) {
+                if (SessionData.get(uuid, "tempLore") != null) {
                     lore = new ArrayList<>();
-                    final LinkedList<String> loadedLore = (LinkedList<String>) context.getSessionData("tempLore");
+                    final LinkedList<String> loadedLore = (LinkedList<String>) SessionData.get(uuid, "tempLore");
                     if (loadedLore != null) {
                         for (final String line : loadedLore) {
                             lore.add(ChatColor.translateAlternateColorCodes('&', line));
@@ -396,9 +404,9 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
                     ItemMeta meta = stack.getItemMeta();
                     if (meta != null) {
-                        if (context.getSessionData("tempMeta") != null) {
+                        if (SessionData.get(uuid, "tempMeta") != null) {
                             meta = BukkitItemUtil.deserializeItemMeta(meta.getClass(),
-                                    (Map<String, Object>) context.getSessionData("tempMeta"));
+                                    (Map<String, Object>) SessionData.get(uuid, "tempMeta"));
                         }
                         if (enchs != null) {
                             for (final Entry<Enchantment, Integer> e : enchs.entrySet()) {
@@ -413,218 +421,220 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                         }
                         stack.setItemMeta(meta);
                     }
-                    context.setSessionData("tempStack", stack);
+                    SessionData.set(uuid, "tempStack", stack);
                     return oldPrompt;
                 }
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
-                return new ItemStackPrompt(context, oldPrompt);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         default:
             try {
-                return new ItemStackPrompt(context, oldPrompt);
+                new ItemStackPrompt(uuid, oldPrompt).start();
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return Prompt.END_OF_CONVERSATION;
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                //return Prompt.END_OF_CONVERSATION;
             }
         }
     }
 
     public class ItemNamePrompt extends QuestsEditorStringPrompt {
 
-        public ItemNamePrompt(final ConversationContext context) {
-            super(context);
+        public ItemNamePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterName");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.YELLOW + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String s = input.replace(":", "");
                 final Material mat = Material.matchMaterial(s.toUpperCase().replace(" ", "_"));
                 if (mat == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidName"));
-                    return new ItemNamePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidName"));
+                    new ItemNamePrompt(uuid).start();
                 } else {
-                    if (context.getPlugin() instanceof BukkitQuestsPlugin) {
-                        final BukkitQuestsPlugin plugin = (BukkitQuestsPlugin)context.getPlugin();
-                        if (plugin.hasLimitedAccess(context.getForWhom())) {
-                            if (plugin.getServer().getRecipesFor(new ItemStack(mat)).isEmpty()) {
-                                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                                return new ItemStackPrompt(context, oldPrompt);
-                            }
+                    final BukkitQuestsPlugin plugin = BukkitQuestsPlugin.getInstance();
+                    if (plugin.hasLimitedAccess(uuid)) {
+                        if (plugin.getServer().getRecipesFor(new ItemStack(mat)).isEmpty()) {
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
+                            new ItemStackPrompt(uuid, oldPrompt);
                         }
                     }
-                    context.setSessionData("tempName", mat.name());
-                    context.setSessionData("tempAmount", 1);
-                    return new ItemStackPrompt(context, oldPrompt);
+                    SessionData.set(uuid, "tempName", mat.name());
+                    SessionData.set(uuid, "tempAmount", 1);
+                    new ItemStackPrompt(uuid, oldPrompt);
                 }
             } else {
-                return new ItemStackPrompt(context, oldPrompt);
+                new ItemStackPrompt(uuid, oldPrompt);
             }
         }
     }
 
     public class ItemAmountPrompt extends QuestsEditorStringPrompt {
 
-        public ItemAmountPrompt(final ConversationContext context) {
-            super(context);
+        public ItemAmountPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterAmount");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.YELLOW + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1 || amt > 64) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidRange")
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                                 .replace("<least>", "1").replace("<greatest>", "64"));
-                        return new ItemAmountPrompt(context);
+                        new ItemAmountPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempAmount", Integer.parseInt(input));
-                        return new ItemStackPrompt(context, oldPrompt);
+                        SessionData.set(uuid, "tempAmount", Integer.parseInt(input));
+                        new ItemStackPrompt(uuid, oldPrompt);
                     }
                 } catch (final NumberFormatException e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new ItemAmountPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new ItemAmountPrompt(uuid).start();
                 }
             } else {
-                return new ItemStackPrompt(context, oldPrompt);
+                new ItemStackPrompt(uuid, oldPrompt);
             }
         }
     }
 
     public class ItemDataPrompt extends QuestsEditorStringPrompt {
 
-        public ItemDataPrompt(final ConversationContext context) {
-            super(context);
+        public ItemDataPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterDurab");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.YELLOW + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int amt = Integer.parseInt(input);
                     if (amt < 1) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidDurab"));
-                        return new ItemDataPrompt(context);
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidDurab"));
+                        new ItemDataPrompt(uuid).start();
                     } else {
-                        context.setSessionData("tempData", Short.parseShort(input));
-                        return new ItemStackPrompt(context, oldPrompt);
+                        SessionData.set(uuid, "tempData", Short.parseShort(input));
+                        new ItemStackPrompt(uuid, oldPrompt);
                     }
                 } catch (final NumberFormatException e) {
                     if (input.equals("*")) {
-                        context.setSessionData("tempData", Short.parseShort("999")); // wildcard value
-                        return new ItemStackPrompt(context, oldPrompt);
+                        SessionData.set(uuid, "tempData", Short.parseShort("999")); // wildcard value
+                        new ItemStackPrompt(uuid, oldPrompt);
                     }
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new ItemDataPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new ItemDataPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData("tempData", null);
+                SessionData.set(uuid, "tempData", null);
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt);
         }
     }
 
     public class ItemEnchantmentPrompt extends QuestsEditorStringPrompt {
 
-        public ItemEnchantmentPrompt(final ConversationContext context) {
-            super(context);
+        public ItemEnchantmentPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("enchantmentsTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterEnch");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+        public @NotNull String getPromptText() {
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             for (final Enchantment e : Enchantment.values()) {
                 text.append(ChatColor.GREEN).append(BukkitItemUtil.getPrettyEnchantmentName(e)).append(", ");
             }
             text = new StringBuilder(text.substring(0, text.length() - 2));
-            return text + "\n" + ChatColor.YELLOW + getQueryText(context);
+            return text + "\n" + ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             final String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdClear")) && !s.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Enchantment e = BukkitItemUtil.getEnchantmentFromPrettyName(BukkitMiscUtil.getCapitalized(s));
                 if (e != null) {
-                    context.setSessionData("tempEnchant", e);
-                    return new ItemEnchantmentLevelPrompt(context, BukkitItemUtil.getPrettyEnchantmentName(e));
+                    SessionData.set(uuid, "tempEnchant", e);
+                    new ItemEnchantmentLevelPrompt(uuid, BukkitItemUtil.getPrettyEnchantmentName(e));
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidEnch"));
-                    return new ItemEnchantmentPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidEnch"));
+                    new ItemEnchantmentPrompt(uuid).start();
                 }
             } else if (s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData("tempEnchantments", null);
+                SessionData.set(uuid, "tempEnchantments", null);
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt);
         }
     }
     
@@ -632,157 +642,157 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
 
         final String enchantment;
 
-        protected ItemEnchantmentLevelPrompt(final ConversationContext context, final String ench) {
-            super(context);
+        protected ItemEnchantmentLevelPrompt(final UUID uuid, final String ench) {
+            super(uuid);
             enchantment = ench;
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterLevel").replace("<enchantment>", enchantment);
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.AQUA + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.AQUA + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             try {
                 final int num = Integer.parseInt(input);
                 if (num < 1) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                             .replace("<number>", "1"));
-                    return new ItemEnchantmentLevelPrompt(context, enchantment);
+                    new ItemEnchantmentLevelPrompt(uuid, enchantment);
                 } else {
-                    if (context.getSessionData("tempEnchantments") != null) {
+                    if (SessionData.get(uuid, "tempEnchantments") != null) {
                         @SuppressWarnings("unchecked")
-                        final
-                        Map<Enchantment, Integer> enchs 
-                                = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
+                        final Map<Enchantment, Integer> enchs
+                                = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
                         if (enchs != null) {
-                            enchs.put((Enchantment) context.getSessionData("tempEnchant"), num);
-                            context.setSessionData("tempEnchantments", enchs);
+                            enchs.put((Enchantment) SessionData.get(uuid, "tempEnchant"), num);
+                            SessionData.set(uuid, "tempEnchantments", enchs);
                         }
                     } else {
                         final Map<Enchantment, Integer> enchs = new HashMap<>();
-                        enchs.put((Enchantment) context.getSessionData("tempEnchant"), num);
-                        context.setSessionData("tempEnchantments", enchs);
+                        enchs.put((Enchantment) SessionData.get(uuid, "tempEnchant"), num);
+                        SessionData.set(uuid, "tempEnchantments", enchs);
                     }
-                    return new ItemStackPrompt(context, oldPrompt);
+                    new ItemStackPrompt(uuid, oldPrompt);
                 }
             } catch (final NumberFormatException e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber").replace("<input>", input));
-                return new ItemEnchantmentLevelPrompt(context, enchantment);
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber").replace("<input>", input));
+                new ItemEnchantmentLevelPrompt(uuid, enchantment);
             }
         }
     }
 
     public class ItemDisplayPrompt extends QuestsEditorStringPrompt {
 
-        public ItemDisplayPrompt(final ConversationContext context) {
-            super(context);
+        public ItemDisplayPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterDisplay");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.YELLOW + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
             String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 s = BukkitConfigUtil.parseString(s);
-                context.setSessionData("tempDisplay", s);
+                SessionData.set(uuid, "tempDisplay", s);
             } else if (s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData("tempDisplay", null);
+                SessionData.set(uuid, "tempDisplay", null);
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt);
         }
     }
 
     public class ItemLorePrompt extends QuestsEditorStringPrompt {
 
-        public ItemLorePrompt(final ConversationContext context) {
-            super(context);
+        public ItemLorePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("itemCreateEnterLore");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            return ChatColor.YELLOW + getQueryText(context);
+        public @NotNull String getPromptText() {
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                null;
             }
             String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 s = BukkitConfigUtil.parseString(s);
                 final LinkedList<String> lore = new LinkedList<>(Arrays.asList(s.split(BukkitLang.get("charSemi"))));
-                context.setSessionData("tempLore", lore);
+                SessionData.set(uuid, "tempLore", lore);
             } else if (s.equalsIgnoreCase("clear")) {
-                context.setSessionData("tempLore", null);
+                SessionData.set(uuid, "tempLore", null);
             }
-            return new ItemStackPrompt(context, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt);
         }
     }
 
-    public String getItemData(final ConversationContext context) {
+    public String getItemData(final UUID uuid) {
         final StringBuilder item = new StringBuilder();
-        if (context.getSessionData("tempDisplay") != null) {
+        if (SessionData.get(uuid, "tempDisplay") != null) {
             item.append(ChatColor.LIGHT_PURPLE).append(ChatColor.ITALIC)
-                    .append(context.getSessionData("tempDisplay")).append(ChatColor.RESET).append(" ");
+                    .append(SessionData.get(uuid, "tempDisplay")).append(ChatColor.RESET).append(" ");
         }
-        if (context.getSessionData("tempName") != null) {
-            final String name = (String) context.getSessionData("tempName");
+        if (SessionData.get(uuid, "tempName") != null) {
+            final String name = (String) SessionData.get(uuid, "tempName");
             item.append(ChatColor.GRAY).append("(").append(ChatColor.AQUA).append(BukkitItemUtil.getPrettyItemName(name));
-            if (context.getSessionData("tempData") != null) {
-                item.append(":").append(ChatColor.BLUE).append(context.getSessionData("tempData"));
+            if (SessionData.get(uuid, "tempData") != null) {
+                item.append(":").append(ChatColor.BLUE).append(SessionData.get(uuid, "tempData"));
             }
             item.append(ChatColor.GRAY).append(")");
         }
-        if (context.getSessionData("tempAmount") != null) {
+        if (SessionData.get(uuid, "tempAmount") != null) {
             item.append(ChatColor.GRAY).append(" x ").append(ChatColor.DARK_AQUA)
-                    .append(context.getSessionData("tempAmount"));
+                    .append(SessionData.get(uuid, "tempAmount"));
         } else {
             item.append(ChatColor.GRAY).append(" x ").append(ChatColor.DARK_AQUA).append("1");
         }
-        if (context.getSessionData("tempEnchantments") != null) {
+        if (SessionData.get(uuid, "tempEnchantments") != null) {
             @SuppressWarnings("unchecked")
             final Map<Enchantment, Integer> enchantments
-                    = (Map<Enchantment, Integer>) context.getSessionData("tempEnchantments");
+                    = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
             if (enchantments != null) {
                 for (final Entry<Enchantment, Integer> e : enchantments.entrySet()) {
                     item.append("\n").append(ChatColor.GRAY).append("  - ").append(ChatColor.RED)
@@ -791,9 +801,9 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
                 }
             }
         }
-        if (context.getSessionData("tempLore") != null) {
+        if (SessionData.get(uuid, "tempLore") != null) {
             @SuppressWarnings("unchecked")
-            final List<String> lore = (List<String>) context.getSessionData("tempLore");
+            final List<String> lore = (List<String>) SessionData.get(uuid, "tempLore");
             if (lore != null) {
                 for (final String s : lore) {
                     item.append("\n").append(ChatColor.DARK_PURPLE).append(ChatColor.ITALIC).append(s);
@@ -803,14 +813,14 @@ public class ItemStackPrompt extends QuestsEditorNumericPrompt {
         return item.toString();
     }
     
-    public static void clearSessionData(final ConversationContext context) {
-        context.setSessionData("tempStack", null);
-        context.setSessionData("tempName", null);
-        context.setSessionData("tempAmount", null);
-        context.setSessionData("tempData", null);
-        context.setSessionData("tempEnchantments", null);
-        context.setSessionData("tempDisplay", null);
-        context.setSessionData("tempLore", null);
-        context.setSessionData("tempMeta", null);
+    public static void clearSessionData(final UUID uuid) {
+        SessionData.set(uuid, "tempStack", null);
+        SessionData.set(uuid, "tempName", null);
+        SessionData.set(uuid, "tempAmount", null);
+        SessionData.set(uuid, "tempData", null);
+        SessionData.set(uuid, "tempEnchantments", null);
+        SessionData.set(uuid, "tempDisplay", null);
+        SessionData.set(uuid, "tempLore", null);
+        SessionData.set(uuid, "tempMeta", null);
     }
 }

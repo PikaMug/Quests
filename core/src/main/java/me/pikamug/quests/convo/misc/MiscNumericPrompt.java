@@ -17,7 +17,7 @@ import org.bukkit.conversations.ConversationContext;
 public abstract class MiscNumericPrompt extends QuestsNumericPrompt {
     private final ConversationContext context;
 
-    public MiscNumericPrompt(final ConversationContext context) {
+    public MiscNumericPrompt(final @NotNull UUID uuid) {
         this.context = context;
     }
 

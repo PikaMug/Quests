@@ -10,27 +10,24 @@
 
 package me.pikamug.quests.actions;
 
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-
 import java.util.List;
+import java.util.UUID;
 
 public interface ActionFactory {
 
-    ConversationFactory getConversationFactory();
+    //ConversationFactory getConversationFactory();
 
     List<String> getNamesOfActionsBeingEdited();
 
     void setNamesOfActionsBeingEdited(final List<String> actionNames);
 
-    Prompt returnToMenu(final ConversationContext context);
+    void returnToMenu(final UUID uuid);
 
-    void loadData(final ConversationContext context, final Action action);
+    void loadData(final UUID uuid, final Action action);
 
-    void clearData(final ConversationContext context);
+    void clearData(final UUID uuid);
 
-    void deleteAction(final ConversationContext context);
+    void deleteAction(final UUID uuid);
 
-    void saveAction(final ConversationContext context);
+    void saveAction(final UUID uuid);
 }

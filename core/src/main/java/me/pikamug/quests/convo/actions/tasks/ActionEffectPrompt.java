@@ -20,13 +20,13 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,12 +40,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
-    
+
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     
-    public ActionEffectPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public ActionEffectPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
     
     private final int size = 3;
@@ -56,12 +58,12 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("eventEditorEffect");
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -74,7 +76,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             return ChatColor.YELLOW + BukkitLang.get("eventEditorSetEffects");
@@ -89,16 +91,16 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     
     @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch (number) {
         case 1:
-            if (context.getSessionData(Key.A_EFFECTS) == null) {
+            if (SessionData.get(uuid, Key.A_EFFECTS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> effects = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS);
+                final LinkedList<String> effects = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS);
                 final LinkedList<String> locations
-                        = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
+                        = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS);
                 if (effects != null && locations != null) {
                     for (final String effect : effects) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(effect)
@@ -109,11 +111,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (context.getSessionData(Key.A_EXPLOSIONS) == null) {
+            if (SessionData.get(uuid, Key.A_EXPLOSIONS) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final LinkedList<String> locations = (LinkedList<String>) context.getSessionData(Key.A_EXPLOSIONS);
+                final LinkedList<String> locations = (LinkedList<String>) SessionData.get(uuid, Key.A_EXPLOSIONS);
                 if (locations != null) {
                     for (final String loc : locations) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(loc);
@@ -129,53 +131,53 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
     }
 
     @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptText() {
         final BukkitActionsEditorPostOpenNumericPromptEvent event
-                = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+        final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle() + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
-            return new ActionEffectSoundListPrompt(context);
+            new ActionEffectSoundListPrompt(uuid).start();
         case 2:
-            if (context.getForWhom() instanceof Player) {
+            if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
                 if (BukkitMiscUtil.getWorlds().isEmpty()) {
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("unknownError"));
-                    return new ActionEffectPrompt(context);
+                    sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("unknownError"));
+                    new ActionEffectPrompt(uuid).start();
                 }
-                selectedExplosionLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                selectedExplosionLocations.put(((Player) sender).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
-                return new ActionEffectExplosionPrompt(context);
+                new ActionEffectExplosionPrompt(uuid).start();
             } else {
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
-                return new ActionEffectPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
+                new ActionEffectPrompt(uuid).start();
             }
         case 3:
-            return new ActionMainPrompt(context);
+            new ActionMainPrompt(uuid).start();
         default:
-            return new ActionEffectPrompt(context);
+            new ActionEffectPrompt(uuid).start();
         }
     }
     
     public class ActionEffectSoundListPrompt extends ActionsEditorNumericPrompt {
 
-        public ActionEffectSoundListPrompt(final ConversationContext context) {
-            super(context);
-
+        public ActionEffectSoundListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         private final int size = 4;
@@ -186,11 +188,11 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("eventEditorEffectsTitle");
         }
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -205,7 +207,7 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("eventEditorAddEffect");
@@ -222,25 +224,25 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                if (context.getSessionData(Key.A_EFFECTS) == null) {
+                if (SessionData.get(uuid, Key.A_EFFECTS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final String s : (List<String>) Objects.requireNonNull(context.getSessionData(Key.A_EFFECTS))) {
+                    for (final String s : (List<String>) Objects.requireNonNull(SessionData.get(uuid, Key.A_EFFECTS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
                 }
             case 2:
-                if (context.getSessionData(Key.A_EFFECTS_LOCATIONS) == null) {
+                if (SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    for (final String s : (List<String>) Objects.requireNonNull(context
-                            .getSessionData(Key.A_EFFECTS_LOCATIONS))) {
+                    for (final String s : (List<String>) Objects.requireNonNull(SessionData
+                            .get(uuid, Key.A_EFFECTS_LOCATIONS))) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.AQUA).append(s);
                     }
                     return text.toString();
@@ -254,57 +256,58 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenNumericPromptEvent event
-                    = new BukkitActionsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
     
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle(context));
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
-        
-        @SuppressWarnings("unchecked")
+
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
-                return new ActionEffectSoundPrompt(context);
+                new ActionEffectSoundPrompt(uuid).start();
             case 2:
-                if (context.getSessionData(Key.A_EFFECTS) == null) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorMustAddEffects"));
-                    return new ActionEffectSoundListPrompt(context);
+                if (SessionData.get(uuid, Key.A_EFFECTS) == null) {
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorMustAddEffects"));
+                    new ActionEffectSoundListPrompt(uuid).start();
                 } else {
-                    if (context.getForWhom() instanceof Player) {
+                    if (sender instanceof Player) {
                         final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                                 = plugin.getActionFactory().getSelectedEffectLocations();
                         if (BukkitMiscUtil.getWorlds().isEmpty()) {
-                            context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("unknownError"));
-                            return new ActionEffectSoundListPrompt(context);
+                            sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
+                            new ActionEffectSoundListPrompt(uuid).start();
                         }
-                        selectedEffectLocations.put(((Player) context.getForWhom()).getUniqueId(),
+                        selectedEffectLocations.put(((Player) sender).getUniqueId(),
                                 Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                        return new ActionEffectSoundLocationPrompt(context);
+                        new ActionEffectSoundLocationPrompt(uuid).start();
                     } else {
-                        context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
-                        return new ActionEffectSoundListPrompt(context);
+                        sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
+                        new ActionEffectSoundListPrompt(uuid).start();
                     }
                 }
             case 3:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorEffectsCleared"));
-                context.setSessionData(Key.A_EFFECTS, null);
-                context.setSessionData(Key.A_EFFECTS_LOCATIONS, null);
-                return new ActionEffectSoundListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorEffectsCleared"));
+                SessionData.set(uuid, Key.A_EFFECTS, null);
+                SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, null);
+                new ActionEffectSoundListPrompt(uuid).start();
             case 4:
                 final int one;
                 final int two;
-                final List<String> effects = (List<String>) context.getSessionData(Key.A_EFFECTS);
-                final List<String> locations = (List<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
+                final List<String> effects = (List<String>) SessionData.get(uuid, Key.A_EFFECTS);
+                final List<String> locations = (List<String>) SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS);
                 if (effects != null) {
                     one = effects.size();
                 } else {
@@ -316,40 +319,40 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    return new ActionMainPrompt(context);
+                    new ActionMainPrompt(uuid).start();
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
-                    return new ActionEffectSoundListPrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
+                    new ActionEffectSoundListPrompt(uuid).start();
                 }
             default:
-                return new ActionEffectSoundListPrompt(context);
+                new ActionEffectSoundListPrompt(uuid).start();
             }
         }
     }
     
     public class ActionEffectSoundPrompt extends ActionsEditorStringPrompt {
 
-        public ActionEffectSoundPrompt(final ConversationContext context) {
-            super(context);
+        public ActionEffectSoundPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("eventEditorEffectsTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("effEnterName");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n");
+            final StringBuilder effects = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
             final List<Effect> effArr = new LinkedList<>(Arrays.asList(Effect.values()));
             effArr.sort(Comparator.comparing(Effect::name));
             for (int i = 0; i < effArr.size(); i++) {
@@ -358,149 +361,152 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                     effects.append(ChatColor.GRAY).append(", ");
                 }
             }
-            effects.append("\n").append(ChatColor.YELLOW).append(getQueryText(context));
+            effects.append("\n").append(ChatColor.YELLOW).append(getQueryText());
             return effects.toString();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperEffect(input) != null) {
                     final LinkedList<String> effects;
-                    if (context.getSessionData(Key.A_EFFECTS) != null) {
-                        effects = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS);
+                    if (SessionData.get(uuid, Key.A_EFFECTS) != null) {
+                        effects = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS);
                     } else {
                         effects = new LinkedList<>();
                     }
                     if (effects != null && BukkitMiscUtil.getProperEffect(input) != null) {
                         effects.add(Objects.requireNonNull(BukkitMiscUtil.getProperEffect(input)).name());
                     }
-                    context.setSessionData(Key.A_EFFECTS, effects);
-                    if (context.getForWhom() instanceof Player) {
+                    SessionData.set(uuid, Key.A_EFFECTS, effects);
+                    if (sender instanceof Player) {
                         final ConcurrentHashMap<UUID, Block> selectedEffectLocations = plugin.getActionFactory()
                                 .getSelectedEffectLocations();
-                        selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
+                        selectedEffectLocations.remove(uuid);
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                     }
-                    return new ActionEffectSoundListPrompt(context);
+                    new ActionEffectSoundListPrompt(uuid).start();
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidEffect")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidEffect")
                             .replace("<input>", input));
-                    return new ActionEffectSoundPrompt(context);
+                    new ActionEffectSoundPrompt(uuid).start();
                 }
             } else {
-                if (context.getForWhom() instanceof Player) {
+                if (sender instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                             = plugin.getActionFactory().getSelectedEffectLocations();
-                    selectedEffectLocations.remove(((Player)context.getForWhom()).getUniqueId());
+                    selectedEffectLocations.remove(uuid);
                     plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 }
-                return new ActionEffectSoundListPrompt(context);
+                new ActionEffectSoundListPrompt(uuid).start();
             }
         }
     }
     
     public class ActionEffectSoundLocationPrompt extends ActionsEditorStringPrompt {
 
-        public ActionEffectSoundLocationPrompt(final ConversationContext context) {
-            super(context);
+        public ActionEffectSoundLocationPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorEffectLocationPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
-            final Player player = (Player) context.getForWhom();
+            final CommandSender sender = Bukkit.getEntity(uuid);
+            final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
                 final Block block = selectedEffectLocations.get(player.getUniqueId());
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
-                    if (context.getSessionData(Key.A_EFFECTS_LOCATIONS) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(Key.A_EFFECTS_LOCATIONS);
+                    if (SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS) != null) {
+                        locations = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS);
                     } else {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
-                    context.setSessionData(Key.A_EFFECTS_LOCATIONS, locations);
+                    SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locations);
                     selectedEffectLocations.remove(player.getUniqueId());
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
-                    return new ActionEffectSoundLocationPrompt(context);
+                    new ActionEffectSoundLocationPrompt(uuid).start();
                 }
-                return new ActionEffectSoundListPrompt(context);
+                new ActionEffectSoundListPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                         = plugin.getActionFactory().getSelectedEffectLocations();
                 selectedEffectLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
-                return new ActionEffectSoundListPrompt(context);
+                new ActionEffectSoundListPrompt(uuid).start();
             } else {
-                return new ActionEffectSoundLocationPrompt(context);
+                new ActionEffectSoundLocationPrompt(uuid).start();
             }
         }
     }
     
     public class ActionEffectExplosionPrompt extends ActionsEditorStringPrompt {
 
-        public ActionEffectExplosionPrompt(final ConversationContext context) {
-            super(context);
+        public ActionEffectExplosionPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("eventEditorExplosionPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitActionsEditorPostOpenStringPromptEvent event
-                    = new BukkitActionsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitActionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        @SuppressWarnings("unchecked")
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
-            final Player player = (Player) context.getForWhom();
+            final CommandSender sender = Bukkit.getEntity(uuid);
+            final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
@@ -508,37 +514,37 @@ public class ActionEffectPrompt extends ActionsEditorNumericPrompt {
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
-                    if (context.getSessionData(Key.A_EXPLOSIONS) != null) {
-                        locations = (LinkedList<String>) context.getSessionData(Key.A_EXPLOSIONS);
+                    if (SessionData.get(uuid, Key.A_EXPLOSIONS) != null) {
+                        locations = (LinkedList<String>) SessionData.get(uuid, Key.A_EXPLOSIONS);
                     } else {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
-                    context.setSessionData(Key.A_EXPLOSIONS, locations);
+                    SessionData.set(uuid, Key.A_EXPLOSIONS, locations);
                     selectedExplosionLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
-                    return new ActionEffectExplosionPrompt(context);
+                    new ActionEffectExplosionPrompt(uuid).start();
                 }
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(Key.A_EXPLOSIONS, null);
+                SessionData.set(uuid, Key.A_EXPLOSIONS, null);
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
                 selectedExplosionLocations.remove(player.getUniqueId());
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
-                return new ActionMainPrompt(context);
+                new ActionMainPrompt(uuid).start();
             } else {
-                return new ActionEffectExplosionPrompt(context);
+                new ActionEffectExplosionPrompt(uuid).start();
             }
         }
     }

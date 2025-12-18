@@ -17,25 +17,31 @@ import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
+import org.browsit.conversations.api.Conversations;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
 
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     
-    public ConditionPlayerPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public ConditionPlayerPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
     
     private final int size = 4;
@@ -46,12 +52,12 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("eventEditorPlayer");
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
             case 1:
             case 2:
@@ -65,7 +71,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch(number) {
         case 1:
             return ChatColor.YELLOW + BukkitLang.get("conditionEditorPermissions");
@@ -82,14 +88,14 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
     
     @Override
     @SuppressWarnings("unchecked")
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         switch(number) {
         case 1:
-            if (context.getSessionData(Key.C_WHILE_PERMISSION) == null) {
+            if (SessionData.get(uuid, Key.C_WHILE_PERMISSION) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
-                final List<String> whilePermission = (List<String>) context.getSessionData(Key.C_WHILE_PERMISSION);
+                final List<String> whilePermission = (List<String>) SessionData.get(uuid, Key.C_WHILE_PERMISSION);
                 if (whilePermission != null) {
                     for (final String s: whilePermission) {
                         // Replace standard period characters to prevent clickable links
@@ -100,12 +106,12 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
                 return text.toString();
             }
         case 2:
-            if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
+            if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> whileHoldingMainHand
-                        = (LinkedList<ItemStack>) context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND);
+                        = (LinkedList<ItemStack>) SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND);
                 if (whileHoldingMainHand != null) {
                     for (final ItemStack item : whileHoldingMainHand) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
@@ -116,12 +122,12 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
                 return text.toString();
             }
         case 3:
-            if (context.getSessionData(Key.C_WHILE_WEARING) == null) {
+            if (SessionData.get(uuid, Key.C_WHILE_WEARING) == null) {
                 return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
             } else {
                 final StringBuilder text = new StringBuilder();
                 final LinkedList<ItemStack> whileWearing
-                        = (LinkedList<ItemStack>) context.getSessionData(Key.C_WHILE_WEARING);
+                        = (LinkedList<ItemStack>) SessionData.get(uuid, Key.C_WHILE_WEARING);
                 if (whileWearing != null) {
                     for (final ItemStack item : whileWearing) {
                         text.append("\n").append(ChatColor.GRAY).append("     - ").append(ChatColor.BLUE)
@@ -138,100 +144,101 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull String getBasicPromptText(final ConversationContext context) {
+    @SuppressWarnings("unchecked")
+    public @NotNull String getPromptText() {
         // Check/add newly made item
-        if (context.getSessionData("tempStack") != null) {
-            if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
-                final List<ItemStack> items = (List<ItemStack>) context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND);
+        if (SessionData.get(uuid, "tempStack") != null) {
+            if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
+                final List<ItemStack> items = (List<ItemStack>) SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND);
                 if (items != null) {
-                    items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, items);
+                    items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                    SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, items);
                 }
             }
-            ItemStackPrompt.clearSessionData(context);
+            ItemStackPrompt.clearSessionData(uuid);
         }
 
         final BukkitConditionsEditorPostOpenNumericPromptEvent event
-                = new BukkitConditionsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitConditionsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle(context) + " -");
+        final StringBuilder text = new StringBuilder(ChatColor.AQUA + "- " + getTitle() + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                    .append(getAdditionalText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                    .append(getAdditionalText(i));
         }
         return text.toString();
     }
-    
+
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
+        final CommandSender sender = Bukkit.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
-            return new ConditionPermissionsPrompt(context);
+            new ConditionPermissionsPrompt(uuid).start();
         case 2:
-            return new ConditionItemsInMainHandListPrompt(context);
+            new ConditionItemsInMainHandListPrompt(uuid).start();
         case 3:
-            return new ConditionItemsWearListPrompt(context);
+            new ConditionItemsWearListPrompt(uuid).start();
         case 4:
             try {
-                return new ConditionMainPrompt(context);
+                new ConditionMainPrompt(uuid).start();
             } catch (final Exception e) {
-                context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return Prompt.END_OF_CONVERSATION;
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                return;
             }
         default:
-            return new ConditionPlayerPrompt(context);
+            new ConditionPlayerPrompt(uuid).start();
         }
     }
     
     public class ConditionPermissionsPrompt extends ConditionsEditorStringPrompt {
         
-        public ConditionPermissionsPrompt(final ConversationContext context) {
-            super(context);
+        public ConditionPermissionsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("conditionEditorPermissionsPrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
-            final BukkitConditionsEditorPostOpenStringPromptEvent event
-                    = new BukkitConditionsEditorPostOpenStringPromptEvent(context, this);
-            plugin.getServer().getPluginManager().callEvent(event);
-            
-            return ChatColor.YELLOW + getQueryText(context);
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public @NotNull String getPromptText() {
+            final BukkitConditionsEditorPostOpenStringPromptEvent event
+                    = new BukkitConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            plugin.getServer().getPluginManager().callEvent(event);
+            
+            return ChatColor.YELLOW + getQueryText();
+        }
+
+        @Override
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> permissions = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     permissions.add(s.trim());
                 }
-                context.setSessionData(Key.C_WHILE_PERMISSION, permissions);
+                SessionData.set(uuid, Key.C_WHILE_PERMISSION, permissions);
             }
-            return new ConditionPlayerPrompt(context);
+            new ConditionPlayerPrompt(uuid).start();
         }
     }
     
     public class ConditionItemsInMainHandListPrompt extends ConditionsEditorNumericPrompt {
         
-        public ConditionItemsInMainHandListPrompt(final ConversationContext context) {
-            super(context);
+        public ConditionItemsInMainHandListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 3;
@@ -242,12 +249,12 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("conditionEditorItemsInMainHand");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -261,7 +268,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch(number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
@@ -276,15 +283,15 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
             case 1:
-                if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
+                if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
                     final List<ItemStack> whileHoldingMainHand
-                            = (List<ItemStack>) context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND);
+                            = (List<ItemStack>) SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND);
                     if (whileHoldingMainHand != null) {
                         for (final ItemStack is : whileHoldingMainHand) {
                             text.append("\n").append(ChatColor.GRAY).append("     - ")
@@ -301,60 +308,61 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public String getBasicPromptText(final ConversationContext context) {
+        @SuppressWarnings("unchecked")
+        public String getPromptText() {
             // Check/add newly made item
-            if (context.getSessionData("tempStack") != null) {
-                if (context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
+            if (SessionData.get(uuid, "tempStack") != null) {
+                if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
                     final List<ItemStack> items
-                            = (List<ItemStack>) context.getSessionData(Key.C_WHILE_HOLDING_MAIN_HAND);
+                            = (List<ItemStack>) SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND);
                     if (items != null) {
-                        items.add((ItemStack) context.getSessionData("tempStack"));
-                        context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, items);
+                        items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                        SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, items);
                     }
                 } else {
                     final LinkedList<ItemStack> items = new LinkedList<>();
-                    items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, items);
+                    items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                    SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, items);
                 }
-                ItemStackPrompt.clearSessionData(context);
+                ItemStackPrompt.clearSessionData(uuid);
             }
 
             final BukkitConditionsEditorPostOpenNumericPromptEvent event
-                    = new BukkitConditionsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitConditionsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
-        
+
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                return new ItemStackPrompt(context, ConditionItemsInMainHandListPrompt.this);
+                new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this);
             case 2:
-                context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
-                context.setSessionData(Key.C_WHILE_HOLDING_MAIN_HAND, null);
-                return new ConditionItemsInMainHandListPrompt(context);
+                sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
+                SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, null);
+                new ConditionItemsInMainHandListPrompt(uuid).start();
             case 3:
-                return new ConditionPlayerPrompt(context);
+                new ConditionPlayerPrompt(uuid).start();
             default:
-                return new ConditionItemsInMainHandListPrompt(context);
+                new ConditionItemsInMainHandListPrompt(uuid).start();
             }
         }
     }
 
     public class ConditionItemsWearListPrompt extends ConditionsEditorNumericPrompt {
 
-        public ConditionItemsWearListPrompt(final ConversationContext context) {
-            super(context);
+        public ConditionItemsWearListPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 3;
@@ -365,12 +373,12 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("conditionEditorItemsWear");
         }
 
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.BLUE;
@@ -384,7 +392,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
         }
 
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch(number) {
                 case 1:
                     return ChatColor.YELLOW + BukkitLang.get("stageEditorDeliveryAddItem");
@@ -399,15 +407,15 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
 
         @Override
         @SuppressWarnings("unchecked")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch(number) {
                 case 1:
-                    if (context.getSessionData(Key.C_WHILE_WEARING) == null) {
+                    if (SessionData.get(uuid, Key.C_WHILE_WEARING) == null) {
                         return ChatColor.GRAY + "(" + BukkitLang.get("noneSet") + ")";
                     } else {
                         final StringBuilder text = new StringBuilder();
                         final List<ItemStack> whileWearing
-                                = (List<ItemStack>) context.getSessionData(Key.C_WHILE_WEARING);
+                                = (List<ItemStack>) SessionData.get(uuid, Key.C_WHILE_WEARING);
                         if (whileWearing != null) {
                             for (final ItemStack is : whileWearing) {
                                 text.append("\n").append(ChatColor.GRAY).append("     - ")
@@ -424,52 +432,53 @@ public class ConditionPlayerPrompt extends ConditionsEditorNumericPrompt {
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public String getBasicPromptText(final ConversationContext context) {
+        @SuppressWarnings("unchecked")
+        public String getPromptText() {
             // Check/add newly made item
-            if (context.getSessionData("tempStack") != null) {
-                if (context.getSessionData(Key.C_WHILE_WEARING) != null) {
+            if (SessionData.get(uuid, "tempStack") != null) {
+                if (SessionData.get(uuid, Key.C_WHILE_WEARING) != null) {
                     final List<ItemStack> items
-                            = (List<ItemStack>) context.getSessionData(Key.C_WHILE_WEARING);
+                            = (List<ItemStack>) SessionData.get(uuid, Key.C_WHILE_WEARING);
                     if (items != null) {
-                        items.add((ItemStack) context.getSessionData("tempStack"));
-                        context.setSessionData(Key.C_WHILE_WEARING, items);
+                        items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                        SessionData.set(uuid, Key.C_WHILE_WEARING, items);
                     }
                 } else {
                     final LinkedList<ItemStack> items = new LinkedList<>();
-                    items.add((ItemStack) context.getSessionData("tempStack"));
-                    context.setSessionData(Key.C_WHILE_WEARING, items);
+                    items.add((ItemStack) SessionData.get(uuid, "tempStack"));
+                    SessionData.set(uuid, Key.C_WHILE_WEARING, items);
                 }
-                ItemStackPrompt.clearSessionData(context);
+                ItemStackPrompt.clearSessionData(uuid);
             }
 
             final BukkitConditionsEditorPostOpenNumericPromptEvent event
-                    = new BukkitConditionsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitConditionsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
         @Override
-        protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch(input.intValue()) {
                 case 1:
-                    return new ItemStackPrompt(context, ConditionItemsWearListPrompt.this);
+                    new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this);
                 case 2:
-                    context.getForWhom().sendRawMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
-                    context.setSessionData(Key.C_WHILE_WEARING, null);
-                    return new ConditionItemsWearListPrompt(context);
+                    sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
+                    SessionData.set(uuid, Key.C_WHILE_WEARING, null);
+                    new ConditionItemsWearListPrompt(uuid).start();
                 case 3:
-                    return new ConditionPlayerPrompt(context);
+                    new ConditionPlayerPrompt(uuid).start();
                 default:
-                    return new ConditionItemsWearListPrompt(context);
+                    new ConditionItemsWearListPrompt(uuid).start();
             }
         }
     }

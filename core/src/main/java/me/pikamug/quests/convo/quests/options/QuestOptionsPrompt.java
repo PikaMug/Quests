@@ -10,31 +10,36 @@
 
 package me.pikamug.quests.convo.quests.options;
 
-import me.pikamug.quests.quests.components.BukkitOptions;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.quests.QuestsEditorNumericPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
-import me.pikamug.quests.util.Key;
+import me.pikamug.quests.quests.components.BukkitOptions;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import me.pikamug.unite.api.objects.PartyProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationContext;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Prompt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
 
+    private final @NotNull UUID uuid;
     private final BukkitQuestsPlugin plugin;
     private String tempKey;
     private Prompt tempPrompt;
 
-    public QuestOptionsPrompt(final ConversationContext context) {
-        super(context);
-        this.plugin = (BukkitQuestsPlugin)context.getPlugin();
+    public QuestOptionsPrompt(final @NotNull UUID uuid) {
+        super(uuid);
+        this.uuid = uuid;
+        this.plugin = BukkitQuestsPlugin.getInstance();
     }
     
     private final int size = 4;
@@ -45,13 +50,13 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getTitle(final ConversationContext context) {
+    public String getTitle() {
         return BukkitLang.get("optionsTitle").replace("<quest>", (String) Objects
-                .requireNonNull(context.getSessionData(Key.Q_NAME)));
+                .requireNonNull(SessionData.get(uuid, Key.Q_NAME)));
     }
     
     @Override
-    public ChatColor getNumberColor(final ConversationContext context, final int number) {
+    public ChatColor getNumberColor(final int number) {
         switch (number) {
         case 1:
         case 2:
@@ -65,7 +70,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getSelectionText(final ConversationContext context, final int number) {
+    public String getSelectionText(final int number) {
         switch (number) {
         case 1:
             return ChatColor.GOLD + BukkitLang.get("optGeneral");
@@ -81,65 +86,65 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     }
     
     @Override
-    public String getAdditionalText(final ConversationContext context, final int number) {
+    public String getAdditionalText(final int number) {
         return null;
     }
 
     @Override
-    public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+    public @NotNull String getPromptText() {
         final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
         plugin.getServer().getPluginManager().callEvent(event);
         
-        final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- "  + getTitle(context)
-                .replace((String) Objects.requireNonNull(context.getSessionData(Key.Q_NAME)), ChatColor.AQUA
-                + (String) context.getSessionData(Key.Q_NAME) + ChatColor.DARK_GREEN) + " -");
+        final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- "  + getTitle()
+                .replace((String) Objects.requireNonNull(SessionData.get(uuid, Key.Q_NAME)), ChatColor.AQUA
+                + (String) SessionData.get(uuid, Key.Q_NAME) + ChatColor.DARK_GREEN) + " -");
         for (int i = 1; i <= size; i++) {
-            text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i));
+            text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                    .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
         return text.toString();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+    public void acceptInput(final Number input) {
         switch (input.intValue()) {
         case 1:
-            return new QuestOptionsGeneralPrompt(context);
+            new QuestOptionsGeneralPrompt(uuid).start();
         case 2:
-            return new QuestOptionsMultiplayerPrompt(context);
+            new QuestOptionsMultiplayerPrompt(uuid).start();
         case 3:
-            return new QuestOptionsGlobalPrompt(context);
+            new QuestOptionsGlobalPrompt(uuid).start();
         case 4:
-            return plugin.getQuestFactory().returnToMenu(context);
+            plugin.getQuestFactory().returnToMenu(uuid);
         default:
-            return new QuestOptionsPrompt(context);
+            new QuestOptionsPrompt(uuid).start();
         }
     }
 
     public class QuestOptionsPluginPrompt extends QuestsEditorStringPrompt {
 
-        public QuestOptionsPluginPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsPluginPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return BukkitLang.get("optPluginListTitle");
         }
 
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("optExternalPartyPluginPrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle(context) + "\n"
+            StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n"
                     + ChatColor.DARK_PURPLE);
             boolean none = true;
             for (final PartyProvider q : plugin.getDependencies().getPartyProviders()) {
@@ -152,20 +157,21 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 text = new StringBuilder(text.substring(0, (text.length() - 2)));
                 text.append("\n");
             }
-            text.append(ChatColor.YELLOW).append(getQueryText(context));
+            text.append(ChatColor.YELLOW).append(getQueryText());
             return text.toString();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (input.equalsIgnoreCase("Quests")) {
-                    context.getForWhom().sendRawMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
+                    sender.sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
                             + "https://www.youtube.com/watch?v=gvdf5n-zI14");
-                    return new QuestOptionsPluginPrompt(context);
+                    new QuestOptionsPluginPrompt(uuid).start();
                 }
                 String properCase = null;
                 for (final PartyProvider partyProvider : plugin.getDependencies().getPartyProviders()) {
@@ -176,12 +182,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                 if (properCase == null) {
                     String text = BukkitLang.get("optNotAPluginName");
                     text = text.replace("<plugin>", ChatColor.LIGHT_PURPLE + input + ChatColor.RED);
-                    context.getForWhom().sendRawMessage(text);
-                    return new QuestOptionsPluginPrompt(context);
+                    sender.sendMessage(text);
+                    new QuestOptionsPluginPrompt(uuid).start();
                 }
-                context.setSessionData(Key.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
+                SessionData.set(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(tempKey, null);
+                SessionData.set(uuid, tempKey, null);
                 return tempPrompt;
             }
             return tempPrompt;
@@ -190,8 +196,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestOptionsTrueFalsePrompt extends QuestsEditorStringPrompt {
 
-        public QuestOptionsTrueFalsePrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsTrueFalsePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 4;
@@ -201,18 +207,18 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("optBooleanQuery").replace("<true>", BukkitLang.get("true"))
                     .replace("<false>", BukkitLang.get("false"));
         }
 
         @SuppressWarnings("unused")
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("true");
@@ -228,9 +234,9 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             return ChatColor.YELLOW + BukkitLang.get("optBooleanPrompt").replace("<true>", BukkitLang.get("true"))
@@ -238,23 +244,24 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (input.startsWith("t") || input.equalsIgnoreCase(BukkitLang.get("true"))
                         || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
-                    context.setSessionData(tempKey, true);
+                    SessionData.set(uuid, tempKey, true);
                 } else if (input.startsWith("f") || input.equalsIgnoreCase(BukkitLang.get("false"))
                         || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
-                    context.setSessionData(tempKey, false);
+                    SessionData.set(uuid, tempKey, false);
                 } else {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                    return new QuestOptionsTrueFalsePrompt(context);
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
+                    new QuestOptionsTrueFalsePrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(tempKey, null);
+                SessionData.set(uuid, tempKey, null);
                 return tempPrompt;
             }
             return tempPrompt;
@@ -263,8 +270,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestOptionsLevelPrompt extends QuestsEditorStringPrompt {
 
-        public QuestOptionsLevelPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsLevelPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 6;
@@ -274,17 +281,17 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("optNumberQuery");
         }
 
         @SuppressWarnings("unused")
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GOLD + "1";
@@ -304,7 +311,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @SuppressWarnings("unused")
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.GRAY + BukkitLang.get("everything");
@@ -323,9 +330,9 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
             String text = BukkitLang.get("optNumberPrompt");
@@ -341,20 +348,21 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
-                    context.setSessionData(tempKey, i);
+                    SessionData.set(uuid, tempKey, i);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(tempKey, null);
+                SessionData.set(uuid, tempKey, null);
                 return tempPrompt;
             }
             return tempPrompt;
@@ -363,44 +371,45 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestOptionsDistancePrompt extends QuestsEditorStringPrompt {
 
-        public QuestOptionsDistancePrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsDistancePrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return null;
         }
         
         @Override
-        public String getQueryText(final ConversationContext context) {
+        public String getQueryText() {
             return BukkitLang.get("optDistancePrompt");
         }
 
         @Override
-        public @NotNull String getPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenStringPromptEvent event
-                    = new BukkitQuestsEditorPostOpenStringPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            return ChatColor.YELLOW + getQueryText(context);
+            return ChatColor.YELLOW + getQueryText();
         }
 
         @Override
-        public Prompt acceptInput(final @NotNull ConversationContext context, final String input) {
+        public void acceptInput(final String input) {
             if (input == null) {
-                return null;
+                return;
             }
+            final CommandSender sender = Bukkit.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final double d = Double.parseDouble(input);
-                    context.setSessionData(tempKey, d);
+                    SessionData.set(uuid, tempKey, d);
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
-                context.setSessionData(tempKey, null);
+                SessionData.set(uuid, tempKey, null);
                 return tempPrompt;
             }
             return tempPrompt;
@@ -409,8 +418,8 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
     
     public class QuestOptionsGeneralPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestOptionsGeneralPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsGeneralPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 5;
@@ -421,12 +430,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return ChatColor.DARK_GREEN + BukkitLang.get("optGeneral");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -441,7 +450,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("optAllowCommands");
@@ -459,10 +468,10 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                final Boolean commandsOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_COMMANDS);
+                final Boolean commandsOpt = (Boolean) SessionData.get(uuid, Key.OPT_ALLOW_COMMANDS);
                 if (commandsOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canAllowCommands();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLang.get("true")
@@ -472,7 +481,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                             : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
                 }
             case 2:
-                final Boolean quittingOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_QUITTING);
+                final Boolean quittingOpt = (Boolean) SessionData.get(uuid, Key.OPT_ALLOW_QUITTING);
                 if (quittingOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canAllowQuitting();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLang.get("true")
@@ -482,7 +491,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                             : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
                 }
             case 3:
-                final Boolean ignoreOpt = (Boolean) context.getSessionData(Key.OPT_IGNORE_SILK_TOUCH);
+                final Boolean ignoreOpt = (Boolean) SessionData.get(uuid, Key.OPT_IGNORE_SILK_TOUCH);
                 if (ignoreOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canIgnoreSilkTouch();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLang.get("true")
@@ -492,7 +501,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                             : ChatColor.RED + BukkitLang.get("false")) + ChatColor.GRAY + ")";
                 }
             case 4:
-                final Boolean ignoreBlockReplaceOpt = (Boolean) context.getSessionData(Key.OPT_IGNORE_BLOCK_REPLACE);
+                final Boolean ignoreBlockReplaceOpt = (Boolean) SessionData.get(uuid, Key.OPT_IGNORE_BLOCK_REPLACE);
                 if (ignoreBlockReplaceOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canIgnoreBlockReplace();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN + BukkitLang.get("true")
@@ -509,58 +518,59 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
         @Override
-        public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_ALLOW_COMMANDS;
-                tempPrompt = new QuestOptionsGeneralPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 2:
                 tempKey = Key.OPT_ALLOW_QUITTING;
-                tempPrompt = new QuestOptionsGeneralPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 3:
                 tempKey = Key.OPT_IGNORE_SILK_TOUCH;
-                tempPrompt = new QuestOptionsGeneralPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 4:
                 tempKey = Key.OPT_IGNORE_BLOCK_REPLACE;
-                tempPrompt = new QuestOptionsGeneralPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsGeneralPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 5:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new QuestOptionsPrompt(context);
+                    new QuestOptionsPrompt(uuid).start();
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                    return Prompt.END_OF_CONVERSATION;
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                    return;
                 }
             default:
-                return null;
+                return;
             }
         }
     }
     
     public class QuestOptionsMultiplayerPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestOptionsMultiplayerPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsMultiplayerPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 7;
@@ -571,12 +581,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return ChatColor.DARK_GREEN + BukkitLang.get("optMultiplayer");
         }
         
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
             case 1:
             case 2:
@@ -593,7 +603,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
             case 1:
                 return ChatColor.YELLOW + BukkitLang.get("optExternalPartyPlugin");
@@ -615,10 +625,10 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
         
         @Override
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                final String externalOpt = (String) context.getSessionData(Key.OPT_EXTERNAL_PARTY_PLUGIN);
+                final String externalOpt = (String) SessionData.get(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN);
                 if (plugin.getDependencies().getPartyProvider() == null) {
                     return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
                 } else if (externalOpt != null){
@@ -627,7 +637,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     return "";
                 }
             case 2:
-                final Boolean partiesOpt = (Boolean) context.getSessionData(Key.OPT_USE_PARTIES_PLUGIN);
+                final Boolean partiesOpt = (Boolean) SessionData.get(uuid, Key.OPT_USE_PARTIES_PLUGIN);
                 if (partiesOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canUsePartiesPlugin();
                     return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
@@ -639,7 +649,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                             + BukkitLang.get(String.valueOf(partiesOpt))) + ChatColor.GRAY +  ")";
                 }
             case 3:
-                final Integer shareOpt = (Integer) context.getSessionData(Key.OPT_SHARE_PROGRESS_LEVEL);
+                final Integer shareOpt = (Integer) SessionData.get(uuid, Key.OPT_SHARE_PROGRESS_LEVEL);
                 if (shareOpt == null) {
                     final int defaultOpt = new BukkitOptions().getShareProgressLevel();
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + defaultOpt + ChatColor.GRAY + ")";
@@ -647,7 +657,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + shareOpt + ChatColor.GRAY + ")";
                 }
             case 4:
-                final Boolean requireOpt = (Boolean) context.getSessionData(Key.OPT_SHARE_SAME_QUEST_ONLY);
+                final Boolean requireOpt = (Boolean) SessionData.get(uuid, Key.OPT_SHARE_SAME_QUEST_ONLY);
                 if (requireOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canShareSameQuestOnly();
                     return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN 
@@ -659,7 +669,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                             + BukkitLang.get(String.valueOf(requireOpt))) + ChatColor.GRAY +  ")";
                 }
             case 5:
-                final Double distanceOpt = (Double) context.getSessionData(Key.OPT_SHARE_DISTANCE);
+                final Double distanceOpt = (Double) SessionData.get(uuid, Key.OPT_SHARE_DISTANCE);
                 if (distanceOpt == null) {
                     final double defaultOpt = new BukkitOptions().getShareDistance();
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + defaultOpt + ChatColor.GRAY + ")";
@@ -667,7 +677,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + distanceOpt + ChatColor.GRAY + ")";
                 }
             case 6:
-                final Boolean handleOpt = (Boolean) context.getSessionData(Key.OPT_HANDLE_OFFLINE_PLAYERS);
+                final Boolean handleOpt = (Boolean) SessionData.get(uuid, Key.OPT_HANDLE_OFFLINE_PLAYERS);
                 if (handleOpt == null) {
                     final boolean defaultOpt = new BukkitOptions().canHandleOfflinePlayers();
                     return ChatColor.GRAY + "("+ (defaultOpt ? ChatColor.GREEN 
@@ -686,66 +696,66 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
-        @Override
-        public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_EXTERNAL_PARTY_PLUGIN;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsPluginPrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsPluginPrompt(uuid).start();
             case 2:
                 tempKey = Key.OPT_USE_PARTIES_PLUGIN;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 3:
                 tempKey = Key.OPT_SHARE_PROGRESS_LEVEL;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsLevelPrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsLevelPrompt(uuid).start();
             case 4:
                 tempKey = Key.OPT_SHARE_SAME_QUEST_ONLY;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 5:
                 tempKey = Key.OPT_SHARE_DISTANCE;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsDistancePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsDistancePrompt(uuid).start();
             case 6:
                 tempKey = Key.OPT_HANDLE_OFFLINE_PLAYERS;
-                tempPrompt = new QuestOptionsMultiplayerPrompt(context);
-                return new QuestOptionsTrueFalsePrompt(context);
+                tempPrompt = new QuestOptionsMultiplayerPrompt(uuid).start();
+                new QuestOptionsTrueFalsePrompt(uuid).start();
             case 7:
                 tempKey = null;
                 tempPrompt = null;
                 try {
-                    return new QuestOptionsPrompt(context);
+                    new QuestOptionsPrompt(uuid).start();
                 } catch (final Exception e) {
-                    context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                    return Prompt.END_OF_CONVERSATION;
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                    return;
                 }
             default:
-                return null;
+                return;
             }
         }
     }
 
     public class QuestOptionsGlobalPrompt extends QuestsEditorNumericPrompt {
 
-        public QuestOptionsGlobalPrompt(final ConversationContext context) {
-            super(context);
+        public QuestOptionsGlobalPrompt(final @NotNull UUID uuid) {
+            super(uuid);
         }
 
         private final int size = 5;
@@ -756,12 +766,12 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getTitle(final ConversationContext context) {
+        public String getTitle() {
             return ChatColor.DARK_GREEN + BukkitLang.get("optServer");
         }
 
         @Override
-        public ChatColor getNumberColor(final ConversationContext context, final int number) {
+        public ChatColor getNumberColor(final int number) {
             switch (number) {
                 case 1:
                 case 2:
@@ -776,7 +786,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getSelectionText(final ConversationContext context, final int number) {
+        public String getSelectionText(final int number) {
             switch (number) {
                 case 1:
                     return ChatColor.YELLOW + BukkitLang.get("optGiveLoginGlobal");
@@ -794,10 +804,10 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public String getAdditionalText(final ConversationContext context, final int number) {
+        public String getAdditionalText(final int number) {
             switch (number) {
                 case 1:
-                    final Boolean globalOpt = (Boolean) context.getSessionData(Key.OPT_GIVE_GLOBALLY_AT_LOGIN);
+                    final Boolean globalOpt = (Boolean) SessionData.get(uuid, Key.OPT_GIVE_GLOBALLY_AT_LOGIN);
                     if (globalOpt == null) {
                         final boolean defaultOpt = new BukkitOptions().canGiveGloballyAtLogin();
                         return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
@@ -809,7 +819,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                                 + BukkitLang.get(String.valueOf(globalOpt))) + ChatColor.GRAY + ")";
                     }
                 case 2:
-                    final Boolean stackOpt = (Boolean) context.getSessionData(Key.OPT_ALLOW_STACKING_GLOBAL);
+                    final Boolean stackOpt = (Boolean) SessionData.get(uuid, Key.OPT_ALLOW_STACKING_GLOBAL);
                     if (stackOpt == null) {
                         final boolean defaultOpt = new BukkitOptions().canAllowStackingGlobal();
                         return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
@@ -821,7 +831,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                                 + BukkitLang.get(String.valueOf(stackOpt))) + ChatColor.GRAY + ")";
                     }
                 case 3:
-                    final Boolean informOpt = (Boolean) context.getSessionData(Key.OPT_INFORM_QUEST_START);
+                    final Boolean informOpt = (Boolean) SessionData.get(uuid, Key.OPT_INFORM_QUEST_START);
                     if (informOpt == null) {
                         final boolean defaultOpt = new BukkitOptions().canInformOnStart();
                         return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
@@ -833,7 +843,7 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
                                 + BukkitLang.get(String.valueOf(informOpt))) + ChatColor.GRAY + ")";
                     }
                 case 4:
-                    final Boolean overrideOpt = (Boolean) context.getSessionData(Key.OPT_OVERRIDE_MAX_QUESTS);
+                    final Boolean overrideOpt = (Boolean) SessionData.get(uuid, Key.OPT_OVERRIDE_MAX_QUESTS);
                     if (overrideOpt == null) {
                         final boolean defaultOpt = new BukkitOptions().canInformOnStart();
                         return ChatColor.GRAY + "(" + (defaultOpt ? ChatColor.GREEN
@@ -852,50 +862,51 @@ public class QuestOptionsPrompt extends QuestsEditorNumericPrompt {
         }
 
         @Override
-        public @NotNull String getBasicPromptText(final @NotNull ConversationContext context) {
+        public @NotNull String getPromptText() {
             final BukkitQuestsEditorPostOpenNumericPromptEvent event
-                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(context, this);
+                    = new BukkitQuestsEditorPostOpenNumericPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle(context) + " -");
+            final StringBuilder text = new StringBuilder(ChatColor.DARK_GREEN + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(context, i)).append(ChatColor.BOLD).append(i)
-                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(context, i)).append(" ")
-                        .append(getAdditionalText(context, i));
+                text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
+                        .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
+                        .append(getAdditionalText(i));
             }
             return text.toString();
         }
 
         @Override
-        public Prompt acceptValidatedInput(final @NotNull ConversationContext context, final Number input) {
+        public void acceptInput(final Number input) {
+            final CommandSender sender = Bukkit.getEntity(uuid);
             switch (input.intValue()) {
                 case 1:
                     tempKey = Key.OPT_GIVE_GLOBALLY_AT_LOGIN;
-                    tempPrompt = new QuestOptionsGlobalPrompt(context);
-                    return new QuestOptionsTrueFalsePrompt(context);
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 2:
                     tempKey = Key.OPT_ALLOW_STACKING_GLOBAL;
-                    tempPrompt = new QuestOptionsGlobalPrompt(context);
-                    return new QuestOptionsTrueFalsePrompt(context);
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 3:
                     tempKey = Key.OPT_INFORM_QUEST_START;
-                    tempPrompt = new QuestOptionsGlobalPrompt(context);
-                    return new QuestOptionsTrueFalsePrompt(context);
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 4:
                     tempKey = Key.OPT_OVERRIDE_MAX_QUESTS;
-                    tempPrompt = new QuestOptionsGlobalPrompt(context);
-                    return new QuestOptionsTrueFalsePrompt(context);
+                    tempPrompt = new QuestOptionsGlobalPrompt(uuid).start();
+                    new QuestOptionsTrueFalsePrompt(uuid).start();
                 case 5:
                     tempKey = null;
                     tempPrompt = null;
                     try {
-                        return new QuestOptionsPrompt(context);
+                        new QuestOptionsPrompt(uuid).start();
                     } catch (final Exception e) {
-                        context.getForWhom().sendRawMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                        return Prompt.END_OF_CONVERSATION;
+                        sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
+                        return;
                     }
                 default:
-                    return null;
+                    return;
             }
         }
     }

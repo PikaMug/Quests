@@ -13,6 +13,8 @@ package me.pikamug.quests.convo.actions;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.convo.QuestsStringPrompt;
+import org.browsit.conversations.api.Conversations;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -41,4 +43,13 @@ public abstract class ActionsEditorStringPrompt extends QuestsStringPrompt {
     public abstract String getTitle();
     
     public abstract String getQueryText();
+
+    public abstract @NotNull String getPromptText();
+
+    public abstract void acceptInput(String input);
+
+    public void start() {
+        Conversations.create(uuid).prompt(getPromptText(), String.class, prompt -> prompt
+                .converter(String::valueOf).fetch((input, sender) -> acceptInput(input))).start();
+    }
 }
