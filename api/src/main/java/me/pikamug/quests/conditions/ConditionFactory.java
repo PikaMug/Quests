@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public interface ConditionFactory {
 
-    //ConversationFactory getConversationFactory();
-
     List<String> getNamesOfConditionsBeingEdited();
 
     void setNamesOfConditionsBeingEdited(final List<String> conditionNames);

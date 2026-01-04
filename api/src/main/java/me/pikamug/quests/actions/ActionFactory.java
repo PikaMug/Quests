@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public interface ActionFactory {
 
-    //ConversationFactory getConversationFactory();
-
     List<String> getNamesOfActionsBeingEdited();
 
     void setNamesOfActionsBeingEdited(final List<String> actionNames);

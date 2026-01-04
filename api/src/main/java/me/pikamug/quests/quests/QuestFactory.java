@@ -10,8 +10,6 @@
 
 package me.pikamug.quests.quests;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -26,23 +24,9 @@ public interface QuestFactory {
 
     void setNamesOfQuestsBeingEdited(final List<String> questNames);
 
-    //ConversationFactory getConversationFactory();
-
     void returnToMenu(final UUID uuid);
 
     void loadQuest(final UUID uuid, final Quest q);
 
     void deleteQuest(final UUID uuid);
-
-    void saveQuest(final UUID uuid, final ConfigurationSection section);
-
-    /*void saveRequirements(final ConversationContext context, final ConfigurationSection section);
-
-    void saveStages(final ConversationContext context, final ConfigurationSection section);
-
-    void saveRewards(final ConversationContext context, final ConfigurationSection section);
-
-    void savePlanner(final ConversationContext context, final ConfigurationSection section);
-
-    void saveOptions(final ConversationContext context, final ConfigurationSection section);*/
 }

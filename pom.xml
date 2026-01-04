@@ -16,12 +16,12 @@
         <module>v1_8_R1</module>
         <module>v1_8_R2</module>
         <module>v1_8_R3</module>
-        <module>core</module>
+        <module>bukkit</module>
         <module>dist</module>
     </modules>
 
     <properties>
-    	<revision>5.2.9</revision>
+    	<revision>5.3.0</revision>
         <updatePomFile>true</updatePomFile>
         <flattenMode>resolveCiFriendliesOnly</flattenMode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

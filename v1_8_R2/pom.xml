@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>me.pikamug.quests</groupId>
-            <artifactId>quests-core</artifactId>
+            <artifactId>quests-bukkit</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>

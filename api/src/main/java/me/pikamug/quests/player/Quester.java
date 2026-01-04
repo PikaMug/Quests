@@ -12,24 +12,12 @@ package me.pikamug.quests.player;
 
 import me.pikamug.quests.Quests;
 import me.pikamug.quests.enums.ObjectiveType;
-import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.stack.BlockItemStack;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,9 +84,9 @@ public interface Quester extends Comparable<Quester> {
 
     void setAmountsCompleted(final ConcurrentHashMap<Quest, Integer> amountsCompleted);
 
-    Player getPlayer();
+    /*Player getPlayer();
 
-    OfflinePlayer getOfflinePlayer();
+    OfflinePlayer getOfflinePlayer();*/
 
     void sendMessage(final String message);
 
@@ -113,7 +101,7 @@ public interface Quester extends Comparable<Quester> {
 
     boolean hasJournal();
 
-    ItemStack getJournal();
+    //ItemStack getJournal();
 
     int getJournalIndex();
 
@@ -149,69 +137,6 @@ public interface Quester extends Comparable<Quester> {
 
     void showCurrentConditions(final Quest quest, final Quester quester);
 
-    @Deprecated
-    void breakBlock(final Quest quest, final ItemStack itemStack);
-
-    void breakBlock(final Quest quest, final BlockItemStack blockItemStack);
-
-    @Deprecated
-    void damageBlock(final Quest quest, final ItemStack itemStack);
-
-    void damageBlock(final Quest quest, final BlockItemStack blockItemStack);
-
-    @Deprecated
-    void placeBlock(final Quest quest, final ItemStack itemStack);
-
-    void placeBlock(final Quest quest, final BlockItemStack blockItemStack);
-
-    @Deprecated
-    void useBlock(final Quest quest, final ItemStack itemStack);
-
-    void useBlock(final Quest quest, final BlockItemStack blockItemStack);
-
-    @Deprecated
-    void cutBlock(final Quest quest, final ItemStack itemStack);
-
-    void cutBlock(final Quest quest, final BlockItemStack blockItemStack);
-
-    void craftItem(final Quest quest, final ItemStack itemStack);
-
-    void smeltItem(final Quest quest, final ItemStack itemStack);
-
-    void enchantBook(final Quest quest, final ItemStack itemStack, final Map<Enchantment, Integer> enchantsToAdd);
-
-    void enchantItem(final Quest quest, final ItemStack itemStack);
-
-    void brewItem(final Quest quest, final ItemStack itemStack);
-
-    void consumeItem(final Quest quest, final ItemStack itemStack);
-
-    void deliverToNPC(final Quest quest, final UUID npc, final ItemStack itemStack);
-
-    void interactWithNPC(final Quest quest, final UUID npc);
-
-    void killNPC(final Quest quest, final UUID npc);
-
-    void milkCow(final Quest quest);
-
-    void catchFish(final Quest quest);
-
-    void killMob(final Quest quest, final Location killedLocation, final EntityType entityType);
-
-    void killPlayer(final Quest quest, final Player player);
-
-    void reachLocation(final Quest quest, final Location location);
-
-    void tameMob(final Quest quest, final EntityType entityType);
-
-    void shearSheep(final Quest quest, final DyeColor color);
-
-    void sayPassword(final Quest quest, final AsyncPlayerChatEvent evt);
-
-    void finishObjective(final Quest quest, final Objective objective, final EntityType mob,
-                         final String extra, final UUID npc, final Location location, final DyeColor color,
-                         final String pass, final CustomObjective co);
-
     boolean testComplete(final Quest quest);
 
     void addEmptiesFor(final Quest quest, final int stage);
@@ -221,8 +146,6 @@ public interface Quester extends Comparable<Quester> {
     long getCompletionDifference(final Quest quest);
 
     long getRemainingCooldown(final Quest quest);
-
-    FileConfiguration getBaseData();
 
     boolean hasData();
 
@@ -255,8 +178,6 @@ public interface Quester extends Comparable<Quester> {
     void findCompassTarget();
 
     void findNextCompassTarget(final boolean notify);
-
-    boolean hasItem(final ItemStack is);
 
     Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
                                               final BiFunction<Quester, Quest, Void> fun);
