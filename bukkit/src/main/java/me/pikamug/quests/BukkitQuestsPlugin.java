@@ -119,7 +119,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
         instance = this;
         BukkitConversations.init(this);
-        new BukkitConversationsForwarder().register(this);
 
         // 1 - Trigger server to initialize Legacy Material Support
         try {
