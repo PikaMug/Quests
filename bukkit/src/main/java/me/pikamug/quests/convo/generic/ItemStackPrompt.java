@@ -253,7 +253,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             }
         }
         int start = 0;
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         if (!(sender instanceof Player)) {
             start = 1;
         }
@@ -271,7 +271,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
     
     @SuppressWarnings({ "unchecked", "deprecation" })
     public void acceptInput(final UUID uuid, final Number input, final ItemStack item) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 0:
             if (sender instanceof Player) {
@@ -462,7 +462,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String s = input.replace(":", "");
                 final Material mat = Material.matchMaterial(s.toUpperCase().replace(" ", "_"));
@@ -513,7 +513,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
@@ -561,7 +561,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int amt = Integer.parseInt(input);
@@ -618,7 +618,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdClear")) && !s.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Enchantment e = BukkitItemUtil.getEnchantmentFromPrettyName(BukkitMiscUtil.getCapitalized(s));
@@ -662,7 +662,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             try {
                 final int num = Integer.parseInt(input);
                 if (num < 1) {

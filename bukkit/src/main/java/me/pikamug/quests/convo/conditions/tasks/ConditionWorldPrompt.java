@@ -175,7 +175,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new ConditionWorldsPrompt(uuid).start();
@@ -240,7 +240,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> worlds = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -348,7 +348,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
                 case 1:
                     new ConditionTickStartPrompt(uuid).start();
@@ -405,7 +405,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -456,7 +456,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -516,7 +516,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> biomes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -583,7 +583,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> regions = new LinkedList<>();
                 for (final String r : input.split(" ")) {

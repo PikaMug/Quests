@@ -19,6 +19,7 @@ import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericP
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -106,7 +107,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.create")) {
@@ -164,7 +165,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 new QuestSelectCreatePrompt(uuid).start();
@@ -233,7 +234,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Quest q = plugin.getQuest(input);
                 if (q != null) {
@@ -280,7 +281,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Quest found = plugin.getQuest(input);

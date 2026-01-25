@@ -21,6 +21,7 @@ import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpen
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -109,7 +110,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.conditions.create")) {
@@ -180,7 +181,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 new ConditionSelectCreatePrompt(uuid).start();
@@ -247,7 +248,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
@@ -296,7 +297,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Condition c = plugin.getCondition(input);

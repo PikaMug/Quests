@@ -15,6 +15,7 @@ import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -68,7 +69,7 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
         if (input == null) {
             return;
         }
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
             sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorMessageCleared"));
             SessionData.set(uuid, classPrefix + "-override", BukkitLang.get("cmdClear"));

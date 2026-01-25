@@ -19,6 +19,7 @@ import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpen
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -172,7 +173,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new ConditionPermissionsPrompt(uuid).start();
@@ -341,7 +342,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this);
@@ -465,7 +466,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
                 case 1:
                     new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this);

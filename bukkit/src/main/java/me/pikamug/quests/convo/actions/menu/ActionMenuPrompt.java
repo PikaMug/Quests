@@ -21,6 +21,7 @@ import me.pikamug.quests.events.editor.actions.BukkitActionsEditorPostOpenString
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -108,7 +109,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.editor.actions.create")
@@ -181,7 +182,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 new ActionSelectCreatePrompt(uuid).start();
@@ -244,7 +245,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -295,7 +296,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Action action = plugin.getAction(input);

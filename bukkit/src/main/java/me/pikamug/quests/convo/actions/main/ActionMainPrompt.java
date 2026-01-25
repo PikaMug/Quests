@@ -279,7 +279,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final Action a : plugin.getLoadedActions()) {
                     if (a.getName().equalsIgnoreCase(input)) {
@@ -398,7 +398,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ActionMobPrompt(uuid, null).start();
@@ -526,7 +526,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ActionMobNamePrompt(uuid, questMob).start();
@@ -873,7 +873,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -920,7 +920,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -974,7 +974,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -1036,7 +1036,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -1097,7 +1097,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -1205,7 +1205,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }
@@ -1287,7 +1287,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 return;
             }

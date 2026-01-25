@@ -171,7 +171,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {

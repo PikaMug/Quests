@@ -152,7 +152,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             new ActionStormPrompt(uuid).start();
@@ -275,7 +275,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ActionStormWorldPrompt(uuid).start();
@@ -341,7 +341,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
                     SessionData.set(uuid, Key.A_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
@@ -383,7 +383,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
@@ -495,7 +495,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ActionThunderWorldPrompt(uuid).start();
@@ -564,7 +564,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
                     SessionData.set(uuid, Key.A_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
@@ -606,7 +606,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
@@ -655,7 +655,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations

@@ -16,6 +16,7 @@ import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -169,7 +170,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         if (plugin == null || quests == null) {
             return;
         }
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         final BukkitQuester quester = plugin.getQuester(uuid);
         int numInput = -1;
         try {

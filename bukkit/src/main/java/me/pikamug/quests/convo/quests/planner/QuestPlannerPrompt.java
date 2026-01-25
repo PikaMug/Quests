@@ -177,7 +177,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start");
@@ -231,7 +231,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
             }
@@ -287,7 +287,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
             }
@@ -370,7 +370,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (input.startsWith("t") || input.equalsIgnoreCase(BukkitLang.get("true"))
                         || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {

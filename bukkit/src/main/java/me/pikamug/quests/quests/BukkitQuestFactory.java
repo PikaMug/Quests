@@ -538,7 +538,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
     public void deleteQuest(final UUID uuid) {
         final FileConfiguration data = new YamlConfiguration();
         final File questsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {
