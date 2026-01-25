@@ -380,6 +380,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         if (s != null && !s.equalsIgnoreCase(input)) {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNameExists"));
                             new QuestNamePrompt(uuid).start();
+                            return;
                         }
                     }
                 }
@@ -387,10 +388,12 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 if (questNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new QuestNamePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new QuestNamePrompt(uuid).start();
+                    return;
                 }
                 questNames.remove((String) SessionData.get(uuid, Key.Q_NAME));
                 SessionData.set(uuid, Key.Q_NAME, input);
@@ -436,6 +439,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         SessionData.set(uuid, Key.Q_ASK_MESSAGE, SessionData.get(uuid, Key.Q_ASK_MESSAGE) + " "
                                 + input.substring(2));
                         new QuestMainPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.Q_ASK_MESSAGE, input);
@@ -480,6 +484,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         SessionData.set(uuid, Key.Q_FINISH_MESSAGE, SessionData.get(uuid, Key.Q_FINISH_MESSAGE) + " "
                                 + input.substring(2));
                         new QuestMainPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.Q_FINISH_MESSAGE, input);
@@ -533,6 +538,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
                         new QuestNPCStartPrompt(uuid).start();
+                        return;
                     }
                     SessionData.set(uuid, Key.Q_START_NPC, uuid.toString());
                     if (sender instanceof Player) {
@@ -541,6 +547,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                     }
                     new QuestMainPrompt(uuid).start();
+                    return;
                 } catch (final IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED 
                             + BukkitLang.get("reqNotAUniqueId").replace("<input>", input));
@@ -601,6 +608,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         player.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNoStartBlockSelected"));
                         new QuestBlockStartPrompt(uuid).start();
+                        return;
                     }
                 } else {
                     final ConcurrentHashMap<UUID, Block> selectedBlockStarts
@@ -609,6 +617,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
                 new QuestMainPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (sender instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> selectedBlockStarts
@@ -618,6 +627,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 }
                 SessionData.set(uuid, Key.Q_START_BLOCK, null);
                 new QuestMainPrompt(uuid).start();
+                return;
             }
             new QuestBlockStartPrompt(uuid).start();
         }
@@ -695,17 +705,21 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     error = error.replace("<region>", ChatColor.RED + input + ChatColor.YELLOW);
                     sender.sendMessage(ChatColor.YELLOW + error);
                     new QuestRegionPrompt(uuid).start();
-                } else {
-                    SessionData.set(uuid, Key.Q_REGION, found);
-                    new QuestMainPrompt(uuid).start();
+                    return;
                 }
-            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
+
+                SessionData.set(uuid, Key.Q_REGION, found);
+                new QuestMainPrompt(uuid).start();
+                return;
+            }
+
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.Q_REGION, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("questWGRegionCleared"));
-                new QuestMainPrompt(uuid).start();
-            } else {
-                new QuestMainPrompt(uuid).start();
+                // fall through
             }
+
+            new QuestMainPrompt(uuid).start();
         }
     }
     
@@ -795,14 +809,18 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestGuiDisplayPrompt.this).start();
+                return;
             case 2:
                 SessionData.set(uuid, Key.Q_GUIDISPLAY, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("questGUICleared"));
                 new QuestGuiDisplayPrompt(uuid).start();
+                return;
             case 3:
                 plugin.getQuestFactory().returnToMenu(uuid);
+                return;
             default:
                 new QuestGuiDisplayPrompt(uuid).start();
+                return;
             }
         }
     }
