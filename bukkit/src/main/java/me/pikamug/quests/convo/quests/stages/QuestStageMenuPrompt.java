@@ -104,6 +104,8 @@ public class QuestStageMenuPrompt extends QuestsEditorIntegerPrompt {
             } else if (i == (stages + 2)) {
                 plugin.getQuestFactory().returnToMenu(uuid);
             }
+
+            return;
         }
         new QuestStageMenuPrompt(uuid).start();
     }

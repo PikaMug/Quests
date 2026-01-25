@@ -52,7 +52,6 @@ import me.pikamug.quests.util.stack.BlockItemStacks;
 import org.apache.logging.log4j.LogManager;
 import org.browsit.conversations.api.Conversations;
 import org.browsit.conversations.bukkit.BukkitConversations;
-import org.browsit.conversations.bukkit.BukkitConversationsForwarder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

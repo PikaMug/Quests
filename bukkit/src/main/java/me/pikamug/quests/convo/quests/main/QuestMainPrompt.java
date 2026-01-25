@@ -873,22 +873,33 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
+                // Accept
                 if (plugin.hasLimitedAccess(uuid) && !plugin.getConfigSettings().canTrialSave()) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("modeDeny")
                             .replace("<mode>", BukkitLang.get("trialMode")));
                     new QuestMainPrompt(uuid).start();
+                    return;
                 }
                 if (SessionData.get(uuid, Key.Q_ASK_MESSAGE) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedAskMessage"));
                     new QuestMainPrompt(uuid).start();
-                } else if (SessionData.get(uuid, Key.Q_FINISH_MESSAGE) == null) {
+                    return;
+                }
+
+                if (SessionData.get(uuid, Key.Q_FINISH_MESSAGE) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedFinishMessage"));
                     new QuestMainPrompt(uuid).start();
-                } else if (new QuestStageMenuPrompt(uuid).getStages() == 0) {
+                    return;
+                }
+
+                if (new QuestStageMenuPrompt(uuid).getStages() == 0) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedStages"));
                     new QuestMainPrompt(uuid).start();
+                    return;
                 }
+
                 final FileConfiguration data = new YamlConfiguration();
                 try {
                     data.load(new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml"));
