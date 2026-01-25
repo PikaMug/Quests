@@ -378,32 +378,42 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 2:
             new QuestRequirementsQuestPointsPrompt(uuid).start();
+            break;
         case 3:
             new QuestRequirementsItemListPrompt(uuid).start();
+            break;
         case 4:
             new QuestRequirementsExperiencePrompt(uuid).start();
+            break;
         case 5:
             new QuestRequirementsPermissionsPrompt(uuid).start();
+            break;
         case 6:
             new QuestRequirementsQuestListPrompt(uuid, true);
+            break;
         case 7:
             new QuestRequirementsQuestListPrompt(uuid, false);
+            break;
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 9:
             if (plugin.getDependencies().getHeroes() != null) {
                 new QuestRequirementsHeroesListPrompt(uuid).start();
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 10:
             new QuestCustomRequirementModulePrompt(uuid).start();
+            break;
         case 11:
             if (hasRequirement) {
                 new OverridePrompt.Builder()
@@ -412,13 +422,16 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                         .promptText(BukkitLang.get("overrideCreateEnter"))
                         .build();
             } else {
-                Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
+                BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 12:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestRequirementsPrompt(uuid).start();
+            break;
         }
     }
     
@@ -1456,7 +1469,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1491,7 +1504,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
@@ -1563,7 +1576,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1600,7 +1613,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 

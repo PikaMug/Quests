@@ -473,20 +473,28 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new QuestBlocksPrompt(stageNum, uuid).start();
+            break;
         case 2:
             new QuestItemsPrompt(stageNum, uuid).start();
+            break;
         case 3:
             new QuestNpcsPrompt(stageNum, uuid).start();
+            break;
         case 4:
             new QuestMobsPrompt(stageNum, uuid).start();
+            break;
         case 5:
             new QuestKillPlayerPrompt(uuid).start();
+            break;
         case 6:
             new QuestReachListPrompt(uuid).start();
+            break;
         case 7:
             new QuestPasswordListPrompt(uuid).start();
+            break;
         case 8:
             new QuestCustomObjectiveModulePrompt(uuid).start();
+            break;
         case 9:
             if (hasObjective) {
                 new QuestActionListPrompt(uuid).start();
@@ -494,6 +502,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 10:
             if (hasObjective) {
                 new QuestConditionListPrompt(uuid).start();
@@ -501,6 +510,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 11:
             if (hasObjective) {
                 new QuestDelayPrompt(uuid).start();
@@ -508,6 +518,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 12:
             if (SessionData.get(uuid, stagePrefix + Key.S_DELAY) == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoDelaySet"));
@@ -515,6 +526,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             } else {
                 new QuestDelayMessagePrompt(uuid).start();
             }
+            break;
         case 13:
             if (hasObjective) {
                 new QuestStartMessagePrompt(uuid).start();
@@ -522,6 +534,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 14:
             if (hasObjective) {
                 new QuestCompleteMessagePrompt(uuid).start();
@@ -529,6 +542,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 15:
             if (hasObjective) {
                 new OverridePrompt.Builder()
@@ -540,12 +554,16 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 16:
             new QuestStageDeletePrompt(uuid).start();
+            break;
         case 17:
             new QuestStageMenuPrompt(uuid).start();
+            break;
         default:
             new QuestStageMainPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -770,7 +788,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                     new QuestReachListPrompt(uuid).start();
                 }
-                
+                break;
             case 2:
                 if (SessionData.get(uuid, stagePrefix + Key.S_REACH_LOCATIONS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoLocations"));
@@ -778,6 +796,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestReachRadiiPrompt(uuid).start();
                 }
+                break;
             case 3:
                 if (SessionData.get(uuid, stagePrefix + Key.S_REACH_LOCATIONS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoLocations"));
@@ -785,12 +804,14 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestReachNamesPrompt(uuid).start();
                 }
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS, null);
                 SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS_RADIUS, null);
                 SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS_NAMES, null);
                 new QuestReachListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -822,8 +843,10 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestReachListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestStageMainPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -2376,7 +2399,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomObjectives().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -2411,7 +2434,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
@@ -2483,7 +2506,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + "- " + getTitle()
                         + " -\n");
                 if (plugin.getCustomObjectives().isEmpty()) {
@@ -2521,7 +2544,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
@@ -2665,7 +2688,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     }
                 }
             } catch (final NumberFormatException e) {
-                Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
+                BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
                 new QuestCustomObjectiveCountPrompt(uuid);
             }

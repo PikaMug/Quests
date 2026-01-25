@@ -621,7 +621,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
         savePlanner(uuid, section);
         saveOptions(uuid, section);
         if (plugin.getConfigSettings().getConsoleLogging() > 0) {
-            final String identifier =  Bukkit.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
+            final String identifier =  BukkitMiscUtil.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + SessionData.get(uuid, Key.Q_NAME));
         }
     }

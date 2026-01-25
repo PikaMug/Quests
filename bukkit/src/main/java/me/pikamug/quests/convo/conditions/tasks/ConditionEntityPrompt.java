@@ -258,7 +258,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                     = new BukkitConditionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);

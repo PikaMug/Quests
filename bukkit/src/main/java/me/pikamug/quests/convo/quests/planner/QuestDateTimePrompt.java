@@ -223,20 +223,28 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
             SessionData.set(uuid, "tempSecond", cal.get(Calendar.SECOND));
             SessionData.set(uuid, "tempZone", cal.getTimeZone().getID());
             new QuestDateTimePrompt(uuid, oldPrompt, source);
+            break;
         case 1:
             new QuestYearPrompt(uuid).start();
+            break;
         case 2:
             new QuestMonthPrompt(uuid).start();
+            break;
         case 3:
             new QuestDayPrompt(uuid).start();
+            break;
         case 4:
             new QuestHourPrompt(uuid).start();
+            break;
         case 5:
             new QuestMinutePrompt(uuid).start();
+            break;
         case 6:
             new QuestSecondPrompt(uuid).start();
+            break;
         case 7:
             new QuestOffsetPrompt(uuid).start();
+            break;
         case 8:
             SessionData.set(uuid, "tempYear", null);
             SessionData.set(uuid, "tempMonth", null);
@@ -246,6 +254,7 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
             SessionData.set(uuid, "tempSecond", null);
             SessionData.set(uuid, "tempZone", null);
             oldPrompt.start();
+            break;
         case 9:
             if (SessionData.get(uuid, "tempYear") != null && SessionData.get(uuid, "tempMonth") != null
                     && SessionData.get(uuid, "tempDay") != null && SessionData.get(uuid, "tempHour") != null
@@ -283,13 +292,15 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                     || SessionData.get(uuid, "tempDay") != null || SessionData.get(uuid, "tempHour") != null
                     || SessionData.get(uuid, "tempMinute") != null || SessionData.get(uuid, "tempSecond") != null
                     || SessionData.get(uuid, "tempZone") != null) {
-                Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
+                BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                 new QuestDateTimePrompt(uuid, oldPrompt, source);
             } else {
                 oldPrompt.start();
             }
+            break;
         default:
             new QuestDateTimePrompt(uuid, oldPrompt, source);
+            break;
         }
     }
     

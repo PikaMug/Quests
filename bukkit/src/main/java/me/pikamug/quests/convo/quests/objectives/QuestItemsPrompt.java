@@ -596,12 +596,15 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsEnchantListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_ENCHANT_ITEMS, null);
                 new QuestItemsEnchantListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

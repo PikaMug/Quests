@@ -193,12 +193,16 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new QuestBlocksBreakListPrompt(uuid).start();
+            break;
         case 2:
             new QuestBlocksDamageListPrompt(uuid).start();
+            break;
         case 3:
             new QuestBlocksPlaceListPrompt(uuid).start();
+            break;
         case 4:
             new QuestBlocksUseListPrompt(uuid).start();
+            break;
         case 5:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
@@ -206,8 +210,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new QuestBlocksPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -339,16 +345,20 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestBlockBreakNamesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestBlockBreakAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestBlockBreakDurabilityPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_BREAK_NAMES, null);
                 SessionData.set(uuid, pref + Key.S_BREAK_AMOUNTS, null);
                 SessionData.set(uuid, pref + Key.S_BREAK_DURABILITY, null);
                 new QuestBlocksBreakListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -383,8 +393,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestBlocksBreakListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestBlocksPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

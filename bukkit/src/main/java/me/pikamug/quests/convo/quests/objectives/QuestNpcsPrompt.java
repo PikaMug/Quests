@@ -196,6 +196,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 2:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestNpcsIdsToTalkToPrompt(uuid).start();
@@ -203,6 +204,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 3:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestNpcsKillListPrompt(uuid).start();
@@ -210,6 +212,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoCitizens"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
             }
+            break;
         case 4:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
@@ -217,8 +220,10 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new QuestNpcsPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -437,7 +442,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
@@ -560,7 +565,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
@@ -785,7 +790,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);

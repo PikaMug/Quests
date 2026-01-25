@@ -108,6 +108,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        System.out.println("Handling input on menu prompt " + input);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.create")) {
@@ -116,6 +117,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new QuestMenuPrompt(uuid).start();
             }
+            break;
         case 2:
             if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.edit")) {
                 new QuestSelectEditPrompt(uuid).start();
@@ -123,6 +125,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new QuestMenuPrompt(uuid).start();
             }
+            break;
         case 3:
             if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.delete")) {
                 new QuestSelectDeletePrompt(uuid).start();
@@ -130,11 +133,13 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new QuestMenuPrompt(uuid).start();
             }
+            break;
         case 4:
             sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
             return;
         default:
             new QuestMenuPrompt(uuid).start();
+            break;
         }
     }
     

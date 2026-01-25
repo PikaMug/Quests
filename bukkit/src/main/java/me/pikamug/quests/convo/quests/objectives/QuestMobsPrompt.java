@@ -229,14 +229,19 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new QuestMobsKillListPrompt(uuid).start();
+            break;
         case 2:
             new QuestMobsTameListPrompt(uuid).start();
+            break;
         case 3:
             new QuestMobsFishPrompt(uuid).start();
+            break;
         case 4:
             new QuestMobsCowsPrompt(uuid).start();
+            break;
         case 5:
             new QuestMobsShearListPrompt(uuid).start();
+            break;
         case 6:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
@@ -244,8 +249,10 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new QuestMobsPrompt(stageNum, uuid).start();
+            break;
         }
     }
 
@@ -276,7 +283,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 case 5:
                     return ChatColor.BLUE;
                 case 3:
-                    if (Bukkit.getEntity(uuid) instanceof Player) {
+                    if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                         return ChatColor.BLUE;
                     } else {
                         return ChatColor.GRAY;
@@ -298,7 +305,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             case 2:
                 return ChatColor.YELLOW + BukkitLang.get("stageEditorSetMobAmounts");
             case 3:
-                if (Bukkit.getEntity(uuid) instanceof Player) {
+                if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                     return ChatColor.YELLOW + BukkitLang.get("stageEditorSetKillLocations");
                 } else {
                     return ChatColor.GRAY + BukkitLang.get("stageEditorSetKillLocations");

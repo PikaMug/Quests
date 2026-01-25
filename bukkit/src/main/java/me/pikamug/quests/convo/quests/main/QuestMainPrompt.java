@@ -99,7 +99,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
         case 12:
             return ChatColor.BLUE;
         case 5:
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -141,7 +141,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 return ChatColor.GRAY + BukkitLang.get("questEditorNPCStart");
             }
         case 5:
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorBlockStart");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorBlockStart");
@@ -265,19 +265,24 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        System.out.println("Handling input " + input);
         switch (input.intValue()) {
         case 1:
             new QuestNamePrompt(uuid).start();
+            break;
         case 2:
             new QuestAskMessagePrompt(uuid).start();
+            break;
         case 3:
             new QuestFinishMessagePrompt(uuid).start();
+            break;
         case 4:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestNPCStartPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 5:
             if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
@@ -293,34 +298,45 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 new QuestRegionPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 7:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestGuiDisplayPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 8:
             new QuestRequirementsPrompt(uuid).start();
+            break;
         case 9:
             new QuestPlannerPrompt(uuid).start();
+            break;
         case 10:
             new QuestStageMenuPrompt(uuid).start();
+            break;
         case 11:
             new QuestRewardsPrompt(uuid).start();
+            break;
         case 12:
             new QuestOptionsPrompt(uuid).start();
+            break;
         case 13:
             new QuestSavePrompt(uuid).start();
+            break;
         case 14:
             new QuestExitPrompt(uuid).start();
+            break;
         default:
             new QuestMainPrompt(uuid).start();
+            break;
         }
     }
 
@@ -494,7 +510,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);

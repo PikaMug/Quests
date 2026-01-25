@@ -399,12 +399,16 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             } else {
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 2:
             new QuestRewardsQuestPointsPrompt(uuid).start();
+            break;
         case 3:
             new QuestRewardsItemListPrompt(uuid).start();
+            break;
         case 4:
             new QuestRewardsExperiencePrompt(uuid).start();
+            break;
         case 5:
             if (!plugin.hasLimitedAccess(uuid)) {
                 new QuestRewardsCommandsPrompt(uuid).start();
@@ -412,6 +416,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 6:
             if (!plugin.hasLimitedAccess(uuid)) {
                 new QuestRewardsPermissionsListPrompt(uuid).start();
@@ -419,22 +424,27 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 7:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 new QuestRewardsMcMMOListPrompt(uuid).start();
             } else {
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 8:
             if (plugin.getDependencies().getHeroes() != null) {
                 new QuestRewardsHeroesListPrompt(uuid).start();
             } else {
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 9:
             new QuestRewardsPartiesExperiencePrompt(uuid).start();
+            break;
         case 10:
             new QuestCustomRewardModulePrompt(uuid).start();
+            break;
         case 11:
             if (hasReward) {
                 new OverridePrompt.Builder()
@@ -446,10 +456,13 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestRewardsPrompt(uuid).start();
             }
+            break;
         case 12:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestRewardsPrompt(uuid).start();
+            break;
         }
     }
     
@@ -1689,7 +1702,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1724,7 +1737,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
@@ -1796,7 +1809,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRewards().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1833,7 +1846,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 

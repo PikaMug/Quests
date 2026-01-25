@@ -181,8 +181,10 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start");
+            break;
         case 2:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "end");
+            break;
         case 3:
             if (SessionData.get(uuid, Key.PLN_START_DATE) != null && SessionData.get(uuid, Key.PLN_END_DATE) != null) {
                 new QuestPlannerRepeatPrompt(uuid).start();
@@ -190,14 +192,19 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestPlannerPrompt(uuid).start();
             }
+            break;
         case 4:
             new QuestPlannerCooldownPrompt(uuid).start();
+            break;
         case 5:
             new QuestPlannerOverridePrompt(uuid).start();
+            break;
         case 6:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestPlannerPrompt(uuid).start();
+            break;
         }
     }
 
