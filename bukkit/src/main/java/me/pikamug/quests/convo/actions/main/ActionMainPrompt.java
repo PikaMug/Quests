@@ -206,16 +206,22 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new ActionNamePrompt(uuid).start();
+            break;
         case 2:
             new ActionPlayerPrompt(uuid).start();
+            break;
         case 3:
             new ActionTimerPrompt(uuid).start();
+            break;
         case 4:
             new ActionEffectPrompt(uuid).start();
+            break;
         case 5:
             new ActionWeatherPrompt(uuid).start();
+            break;
         case 6:
             new ActionMobListPrompt(uuid).start();
+            break;
         case 7:
             if (plugin.getDependencies().getDenizenApi() != null) {
                 if (!plugin.hasLimitedAccess(uuid)) {
@@ -228,6 +234,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             } else {
                 new ActionMainPrompt(uuid).start();
             }
+            break;
         case 8:
             final Boolean b = (Boolean) SessionData.get(uuid, Key.A_FAIL_QUEST);
             if (Boolean.TRUE.equals(b)) {
@@ -236,16 +243,20 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.A_FAIL_QUEST, true);
             }
             new ActionMainPrompt(uuid).start();
+            break;
         case 9:
             if (SessionData.get(uuid, Key.A_OLD_ACTION) != null) {
                 new ActionSavePrompt(uuid, (String) SessionData.get(uuid, Key.A_OLD_ACTION)).start();
             } else {
                 new ActionSavePrompt(uuid, null).start();
             }
+            break;
         case 10:
             new ActionExitPrompt(uuid).start();
+            break;
         default:
             new ActionMainPrompt(uuid).start();
+            break;
         }
     }
     
@@ -285,16 +296,19 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     if (a.getName().equalsIgnoreCase(input)) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorExists"));
                         new ActionNamePrompt(uuid).start();
+                        return;
                     }
                 }
                 final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new ActionNamePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new ActionNamePrompt(uuid).start();
+                    return;
                 }
                 actionNames.remove((String) SessionData.get(uuid, Key.A_NAME));
                 SessionData.set(uuid, Key.A_NAME, input);
@@ -402,14 +416,18 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ActionMobPrompt(uuid, null).start();
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorMobSpawnsCleared"));
                 SessionData.set(uuid, Key.A_MOBS, null);
                 new ActionMobListPrompt(uuid).start();
+                break;
             case 3:
                 new ActionMainPrompt(uuid).start();
+                break;
             default:
                 new ActionMobListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -530,10 +548,13 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ActionMobNamePrompt(uuid, questMob).start();
+                break;
             case 2:
                 new ActionMobTypePrompt(uuid, questMob).start();
+                break;
             case 3:
                 new ActionMobAmountPrompt(uuid, questMob).start();
+                break;
             case 4:
                 if (sender instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> selectedMobLocations
@@ -549,10 +570,13 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                     new ActionMainPrompt(uuid).start();
                 }
+                break;
             case 5:
                 new ActionMobEquipmentPrompt(uuid, questMob).start();
+                break;
             case 6:
                 new ActionMobListPrompt(uuid).start();
+                break;
             case 7:
                 if (questMob.getType() == null) {
                     sender.sendMessage(ChatColor.RED
@@ -574,8 +598,10 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     SessionData.set(uuid, Key.A_MOBS, list);
                 }
                 new ActionMobListPrompt(uuid).start();
+                break;
             default:
                 new ActionMobPrompt(uuid, questMob).start();
+                break;
             }
         }
     }
@@ -750,32 +776,44 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                 case 1:
                     itemIndex = 0;
                     new ItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                    break;
                 case 2:
                     new ActionMobDropPrompt(uuid, 0, questMob).start();
+                    break;
                 case 3:
                     itemIndex = 1;
                     new ItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                    break;
                 case 4:
                     new ActionMobDropPrompt(uuid, 1, questMob).start();
+                    break;
                 case 5:
                     itemIndex = 2;
                     new ItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                    break;
                 case 6:
                     new ActionMobDropPrompt(uuid, 2, questMob).start();
+                    break;
                 case 7:
                     itemIndex = 3;
                     new ItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                    break;
                 case 8:
                     new ActionMobDropPrompt(uuid, 3, questMob).start();
+                    break;
                 case 9:
                     itemIndex = 4;
                     new ItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                    break;
                 case 10:
                     new ActionMobDropPrompt(uuid, 4, questMob).start();
+                    break;
                 case 11:
                     new ActionMobListPrompt(uuid).start();
+                    break;
                 default:
                     new ActionMobPrompt(uuid, questMob).start();
+                    break;
             }
         }
     }
@@ -884,6 +922,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                             .replace("<input>", input));
                     new ActionMobTypePrompt(uuid, questMob).start();
+                    return;
                 }
             }
             new ActionMobPrompt(uuid, questMob).start();
@@ -931,13 +970,16 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                 .replace("<number>", "1"));
                         new ActionMobAmountPrompt(uuid, questMob).start();
+                        return;
                     }
                     questMob.setSpawnAmounts(i);
                     new ActionMobPrompt(uuid, questMob).start();
+                    return;
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new ActionMobAmountPrompt(uuid, questMob).start();
+                    return;
                 }
             }
             new ActionMobPrompt(uuid, questMob).start();
@@ -990,6 +1032,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionMobLocationPrompt(uuid, questMob).start();
+                    return;
                 }
                 new ActionMobPrompt(uuid, questMob).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
@@ -1042,6 +1085,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new ActionMobPrompt(uuid, questMob).start();
+                return;
             }
             float chance = 0.0f;
             try {
@@ -1049,12 +1093,14 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             } catch (final NumberFormatException e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
-                new ActionMobDropPrompt(uuid, invIndex, questMob);
+                new ActionMobDropPrompt(uuid, invIndex, questMob).start();
+                return;
             }
             if (chance > 1 || chance < 0) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidRange")
                         .replace("<least>", "0.0").replace("<greatest>", "1.0"));
-                new ActionMobDropPrompt(uuid, invIndex, questMob);
+                new ActionMobDropPrompt(uuid, invIndex, questMob).start();
+                return;
             }
             final Float[] temp = questMob.getDropChances();
             temp[invIndex] = chance;
@@ -1220,7 +1266,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ActionMainPrompt(uuid).start();
             } else {
-                new ActionSavePrompt(uuid, modName);
+                new ActionSavePrompt(uuid, modName).start();
             }
         }
     }
@@ -1294,7 +1340,6 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
                 plugin.getActionFactory().clearData(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ActionMainPrompt(uuid).start();
             } else {

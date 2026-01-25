@@ -527,15 +527,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRewardsMoneyPrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRewardsMoneyPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_MONEY, null);
                 new QuestRewardsPrompt(uuid).start();
+                return;
             }
             new QuestRewardsPrompt(uuid).start();
         }
@@ -580,15 +583,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRewardsQuestPointsPrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRewardsQuestPointsPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_QUEST_POINTS, null);
                 new QuestRewardsPrompt(uuid).start();
+                return;
             }
             new QuestRewardsPrompt(uuid).start();
         }
@@ -704,14 +710,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestRewardsItemListPrompt.this).start();
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewItemsCleared"));
                 SessionData.set(uuid, Key.REW_ITEMS, null);
                 new QuestRewardsItemListPrompt(uuid).start();
+                break;
             case 3:
                 new QuestRewardsPrompt(uuid).start();
+                break;
             default:
                 new QuestRewardsItemListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -755,15 +765,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRewardsExperiencePrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRewardsExperiencePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_EXP, null);
                 new QuestRewardsPrompt(uuid).start();
+                return;
             }
             new QuestRewardsPrompt(uuid).start();
         }
@@ -960,17 +973,22 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new QuestPermissionsPrompt(uuid).start();
+                break;
             case 2:
                 new QuestPermissionsWorldsPrompt(uuid).start();
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewPermissionsCleared"));
                 SessionData.set(uuid, Key.REW_PERMISSION, null);
                 SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, null);
                 new QuestRewardsPermissionsListPrompt(uuid).start();
+                break;
             case 4:
                 new QuestRewardsPrompt(uuid).start();
+                break;
             default:
-                return;
+                new QuestRewardsPrompt(uuid).start();
+                break;
             }
         }
         
@@ -1086,6 +1104,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidWorld")
                                 .replace("<input>", w));
                         new QuestPermissionsWorldsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, worlds);
@@ -1205,6 +1224,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestMcMMOSkillsPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("rewSetMcMMOSkillsFirst"));
@@ -1212,11 +1232,13 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestMcMMOAmountsPrompt(uuid).start();
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewMcMMOCleared"));
                 SessionData.set(uuid, Key.REW_MCMMO_SKILLS, null);
                 SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, null);
                 new QuestRewardsMcMMOListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -1238,8 +1260,10 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestRewardsMcMMOListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestRewardsMcMMOListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -1294,12 +1318,14 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         } else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("listDuplicate"));
                             new QuestMcMMOSkillsPrompt(uuid).start();
+                            break;
                         }
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.RED + text);
                         new QuestMcMMOSkillsPrompt(uuid).start();
+                        break;
                     }
                 }
                 SessionData.set(uuid, Key.REW_MCMMO_SKILLS, skills);
@@ -1350,6 +1376,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.RED + text);
                         new QuestMcMMOAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, amounts);
@@ -1467,6 +1494,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestHeroesClassesPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.REW_HEROES_CLASSES) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("rewSetHeroesClassesFirst"));
@@ -1474,11 +1502,13 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestHeroesExperiencePrompt(uuid).start();
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewHeroesCleared"));
                 SessionData.set(uuid, Key.REW_HEROES_CLASSES, null);
                 SessionData.set(uuid, Key.REW_HEROES_AMOUNTS, null);
                 new QuestRewardsHeroesListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -1500,8 +1530,10 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("rewHeroesListsNotSameSize"));
                     new QuestRewardsHeroesListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestRewardsHeroesListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -1564,6 +1596,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.RED + text);
                         new QuestHeroesClassesPrompt(uuid).start();
+                        return;
                     } else {
                         classes.add(hc.getName());
                     }
@@ -1619,6 +1652,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.RED + text);
                         new QuestHeroesExperiencePrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REW_HEROES_AMOUNTS, amounts);
@@ -1666,15 +1700,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRewardsPartiesExperiencePrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRewardsPartiesExperiencePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, null);
                 new QuestRewardsPrompt(uuid).start();
+                return;
             }
             new QuestRewardsPrompt(uuid).start();
         }
@@ -1765,15 +1802,18 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 }
                 if (found != null) {
                     new QuestCustomRewardsPrompt(found, uuid).start();
+                    return;
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestRewardsPrompt(uuid).start();
+                return;
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_CUSTOM, null);
                 SessionData.set(uuid, Key.REW_CUSTOM_DATA, null);
                 SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("rewCustomCleared"));
                 new QuestRewardsPrompt(uuid).start();
+                return;
             }
             sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
             new QuestCustomRewardModulePrompt(uuid).start();
@@ -1884,6 +1924,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                             // Already added, so inform user
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomAlreadyAdded"));
                             new QuestCustomRewardsPrompt(moduleName, uuid).start();
+                            return;
                         }
                     } else {
                         // The custom reward hasn't been added yet, so let's do it
@@ -1898,10 +1939,12 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     if (!found.getData().isEmpty()) {
                         SessionData.set(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
                         new QuestRewardCustomDataListPrompt(uuid).start();
+                        return;
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("rewCustomNotFound"));
                     new QuestCustomRewardsPrompt(moduleName, uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_CUSTOM, null);
@@ -1974,9 +2017,11 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {
                     new QuestRewardCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < 1 || numInput > dataMap.size() + 1) {
                     new QuestRewardCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < dataMap.size() + 1) {
                     final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
@@ -1984,9 +2029,11 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     final String selectedKey = dataMapKeys.get(numInput - 1);
                     SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, selectedKey);
                     new QuestRewardCustomDataPrompt(uuid).start();
+                    return;
                 } else {
                     if (dataMap.containsValue(null)) {
                         new QuestRewardCustomDataListPrompt(uuid).start();
+                        return;
                     } else {
                         SessionData.set(uuid, Key.REW_CUSTOM_DATA_DESCRIPTIONS, null);
                     }

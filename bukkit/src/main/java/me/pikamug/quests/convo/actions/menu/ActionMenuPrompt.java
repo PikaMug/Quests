@@ -120,6 +120,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ActionMenuPrompt(uuid).start();
             }
+            break;
         case 2:
             if (sender.hasPermission("quests.editor.actions.edit")
                     || sender.hasPermission("quests.editor.events.edit")) {
@@ -134,6 +135,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ActionMenuPrompt(uuid).start();
             }
+            break;
         case 3:
             if (sender.hasPermission("quests.editor.actions.delete")
                     || sender.hasPermission("quests.editor.events.delete")) {
@@ -148,11 +150,13 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ActionMenuPrompt(uuid).start();
             }
+            break;
         case 4:
             sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
             return;
         default:
             new ActionMenuPrompt(uuid).start();
+            break;
         }
     }
 
@@ -186,6 +190,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 new ActionSelectCreatePrompt(uuid).start();
+                return;
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
@@ -193,20 +198,24 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                     if (action.getName().equalsIgnoreCase(input)) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorExists"));
                         new ActionSelectCreatePrompt(uuid).start();
+                        return;
                     }
                 }
                 final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new ActionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(".") || input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new ActionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 if (input.isEmpty()) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new ActionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 SessionData.set(uuid, Key.A_NAME, input);
                 actionNames.add(input);
@@ -256,9 +265,9 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                     SessionData.set(uuid, Key.A_NAME, action.getName());
                     plugin.getActionFactory().loadData(uuid, action);
                     new ActionMainPrompt(uuid).start();
+                    return;
                 }
-                sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound")
-                        .replace("<input>", input));
+                sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound").replace("<input>", input));
                 new ActionSelectEditPrompt(uuid).start();
             } else {
                 new ActionMenuPrompt(uuid).start();
@@ -323,6 +332,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
                                 + BukkitLang.get("eventEditorMustModifyQuests"));
                         new ActionSelectDeletePrompt(uuid).start();
                     }
+                    return;
                 }
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorNotFound")
                         .replace("<input>", input));
@@ -401,7 +411,6 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 plugin.getActionFactory().deleteAction(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ActionMenuPrompt(uuid).start();
             } else {

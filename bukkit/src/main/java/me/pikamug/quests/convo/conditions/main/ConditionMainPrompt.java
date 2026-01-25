@@ -148,14 +148,19 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new ConditionNamePrompt(uuid).start();
+            break;
         case 2:
             new ConditionEntityPrompt(uuid).start();
+            break;
         case 3:
             new ConditionPlayerPrompt(uuid).start();
+            break;
         case 4:
             new ConditionWorldPrompt(uuid).start();
+            break;
         case 5:
             new ConditionPlaceholderListPrompt(uuid).start();
+            break;
         case 6:
             final Boolean b = (Boolean) SessionData.get(uuid, Key.C_FAIL_QUEST);
             if (Boolean.TRUE.equals(b)) {
@@ -164,16 +169,20 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.C_FAIL_QUEST, true);
             }
             new ConditionMainPrompt(uuid).start();
+            break;
         case 7:
             if (SessionData.get(uuid, Key.C_OLD_CONDITION) != null) {
                 new ConditionSavePrompt(uuid, (String) SessionData.get(uuid, Key.C_OLD_CONDITION));
             } else {
                 new ConditionSavePrompt(uuid, null).start();
             }
+            break;
         case 8:
             new ConditionExitPrompt(uuid).start();
+            break;
         default:
             new ConditionMainPrompt(uuid).start();
+            break;
         }
     }
     
@@ -213,16 +222,19 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
                     if (c.getName().equalsIgnoreCase(input)) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("conditionEditorExists"));
                         new ConditionNamePrompt(uuid).start();
+                        return;
                     }
                 }
                 final List<String> conditionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
                 if (conditionNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new ConditionNamePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new ConditionNamePrompt(uuid).start();
+                    return;
                 }
                 conditionNames.remove((String) SessionData.get(uuid, Key.C_NAME));
                 SessionData.set(uuid, Key.C_NAME, input);
@@ -352,13 +364,16 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ConditionPlaceholderIdentifierPrompt(uuid).start();
+                break;
             case 2:
                 new ConditionPlaceholderValuePrompt(uuid).start();
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorPlaceholderCleared"));
                 SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, null);
                 SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, null);
                 new ConditionPlaceholderListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -380,8 +395,10 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new ConditionPlaceholderListPrompt(uuid).start();
                 }
+                break;
             default:
                 new ConditionPlaceholderListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -567,9 +584,9 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("modeDeny")
                             .replace("<mode>", BukkitLang.get("trialMode")));
                     new ConditionMainPrompt(uuid).start();
+                    return;
                 }
                 plugin.getConditionFactory().saveCondition(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMainPrompt(uuid).start();
             } else {
@@ -647,7 +664,6 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
                 plugin.getConditionFactory().clearData(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMainPrompt(uuid).start();
             } else {

@@ -955,7 +955,6 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 } catch (final IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new QuestMainPrompt(uuid).start();
             } else {
@@ -1032,7 +1031,6 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new QuestMainPrompt(uuid).start();
             } else {

@@ -377,16 +377,20 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestNpcsDeliveryListPrompt.this);
+                break;
             case 2:
                 new QuestNpcDeliveryNpcsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestNpcDeliveryMessagesPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("cleared"));
                 SessionData.set(uuid, pref + Key.S_DELIVERY_ITEMS, null);
                 SessionData.set(uuid, pref + Key.S_DELIVERY_NPCS, null);
                 SessionData.set(uuid, pref + Key.S_DELIVERY_MESSAGES, null);
                 new QuestNpcsDeliveryListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -414,8 +418,10 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestNpcsDeliveryListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestNpcsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

@@ -223,23 +223,29 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new QuestItemsCraftListPrompt(uuid).start();
+            break;
         case 2:
             new QuestItemsSmeltListPrompt(uuid).start();
+            break;
         case 3:
             new QuestItemsEnchantListPrompt(uuid).start();
+            break;
         case 4:
             new QuestItemsBrewListPrompt(uuid).start();
+            break;
         case 5:
             new QuestItemsConsumeListPrompt(uuid).start();
+            break;
         case 6:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
             } catch (final Exception e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return;
             }
+            break;
         default:
             new QuestItemsPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -358,8 +364,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CRAFT_ITEMS, null);
                 new QuestItemsCraftListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -479,8 +487,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_SMELT_ITEMS, null);
                 new QuestItemsSmeltListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -723,8 +733,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_BREW_ITEMS, null);
                 new QuestItemsBrewListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -844,8 +856,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CONSUME_ITEMS, null);
                 new QuestItemsConsumeListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

@@ -129,6 +129,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new ActionTimerFailPrompt(uuid).start();
+            break;
         case 2:
             final Boolean b = (Boolean) SessionData.get(uuid, Key.A_CANCEL_TIMER);
             if (Boolean.TRUE.equals(b)) {
@@ -137,10 +138,13 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.A_CANCEL_TIMER, true);
             }
             new ActionTimerPrompt(uuid).start();
+            break;
         case 3:
             new ActionMainPrompt(uuid).start();
+            break;
         default:
             new ActionTimerPrompt(uuid).start();
+            break;
         }
     }
     
@@ -183,6 +187,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED
                         + BukkitLang.get("reqNotANumber").replace("<input>", input));
                 new ActionTimerFailPrompt(uuid).start();
+                return;
             }
             new ActionTimerPrompt(uuid).start();
         }

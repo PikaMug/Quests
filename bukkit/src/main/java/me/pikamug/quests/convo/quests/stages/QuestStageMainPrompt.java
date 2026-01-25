@@ -631,6 +631,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     if (i < 0) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorPositiveAmount"));
                         new QuestKillPlayerPrompt(uuid).start();
+                        return;
                     } else if (i > 0) {
                         SessionData.set(uuid, stagePrefix + Key.S_PLAYER_KILL, i);
                     }
@@ -638,6 +639,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestKillPlayerPrompt(uuid).start();
+                    return;
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_PLAYER_KILL, null);
@@ -917,6 +919,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlockSelected"));
                     new QuestReachLocationPrompt(uuid).start();
+                    return;
                 }
                 final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
                 temp.remove(player.getUniqueId());
@@ -970,12 +973,14 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             new QuestReachRadiiPrompt(uuid).start();
+                            return;
                         }
                         radii.add(i);
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", input));
                         new QuestReachRadiiPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS_RADIUS, radii);
@@ -1132,6 +1137,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestPasswordDisplayPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, stagePrefix + Key.S_PASSWORD_DISPLAYS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorMustSetPasswordDisplays"));
@@ -1139,11 +1145,13 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestPasswordPhrasePrompt(uuid).start();
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, stagePrefix + Key.S_PASSWORD_DISPLAYS, null);
                 SessionData.set(uuid, stagePrefix + Key.S_PASSWORD_PHRASES, null);
                 new QuestPasswordListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -1166,8 +1174,10 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestPasswordListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestStageMainPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -1427,22 +1437,31 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestStartActionPrompt(uuid).start();
+                break;
             case 2:
                 new QuestFinishActionPrompt(uuid).start();
+                break;
             case 3:
                 new QuestFailActionPrompt(uuid).start();
+                break;
             case 4:
                 new QuestDeathActionPrompt(uuid).start();
+                break;
             case 5:
                 new QuestDisconnectActionPrompt(uuid).start();
+                break;
             case 6:
                 new QuestChatActionPrompt(uuid).start();
+                break;
             case 7:
                 new QuestCommandActionPrompt(uuid).start();
+                break;
             case 8:
                 new QuestStageMainPrompt(stageNum, uuid).start();
+                break;
             default:
                 new QuestActionListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -1826,7 +1845,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     new QuestChatActionTriggerPrompt(uuid).start();
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
-               new QuestActionListPrompt(uuid).start();
+                new QuestActionListPrompt(uuid).start();
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_CHAT_EVENTS, null);
                 SessionData.set(uuid, stagePrefix + Key.S_CHAT_EVENT_TRIGGERS, null);
@@ -2144,11 +2163,13 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             if (input != null) {
                 if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                     new QuestStageMainPrompt(stageNum, uuid).start();
+                    return;
                 }
                 if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                     SessionData.set(uuid, stagePrefix + Key.S_DELAY, null);
                     sender.sendMessage(ChatColor.GREEN + BukkitLang.get("stageEditorDelayCleared"));
                     new QuestStageMainPrompt(stageNum, uuid).start();
+                    return;
                 }
                 long stageDelay = 1L;
                 try {
@@ -2158,14 +2179,17 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestDelayPrompt(uuid).start();
+                    return;
                 }
                 if (stageDelay < 1000) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                             .replace("<number>", "1"));
                     new QuestDelayPrompt(uuid).start();
+                    return;
                 } else {
                     SessionData.set(uuid, stagePrefix + Key.S_DELAY, stageDelay);
                     new QuestStageMainPrompt(stageNum, uuid).start();
+                    return;
                 }
             }
             new QuestStageMainPrompt(stageNum, uuid).start();
@@ -2462,15 +2486,18 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 }
                 if (found != null) {
                     new QuestCustomObjectivesPrompt(found, uuid).start();
+                    return;
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestStageMainPrompt(stageNum, uuid).start();
+                return;
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES, null);
                 SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES_DATA, null);
                 SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES_DATA_TEMP, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorCustomCleared"));
                 new QuestStageMainPrompt(stageNum, uuid).start();
+                return;
             }
             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorModuleNotFound"));
             new QuestCustomObjectiveModulePrompt(uuid).start();
@@ -2585,7 +2612,8 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                             // Already added, so inform user
                             sender.sendMessage(ChatColor.RED
                                     + BukkitLang.get("stageEditorCustomAlreadyAdded"));
-                            new QuestCustomObjectivesPrompt(moduleName, uuid);
+                            new QuestCustomObjectivesPrompt(moduleName, uuid).start();
+                            return;
                         }
                     } else {
                         // The custom objective hasn't been added yet, so let's do it
@@ -2601,15 +2629,18 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     // Send user to the count prompt / custom data prompt if there is any needed
                     if (found.canShowCount()) {
                         new QuestCustomObjectiveCountPrompt(uuid).start();
+                        return;
                     }
                     if (!found.getData().isEmpty()) {
                         SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, found
                                 .getDescriptions());
                         new QuestObjectiveCustomDataListPrompt(uuid).start();
+                        return;
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorModuleNotFound"));
                     new QuestCustomObjectivesPrompt(moduleName, uuid).start();
+                    return;
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES, null);
@@ -2686,11 +2717,13 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         new QuestStageMainPrompt(stageNum, uuid).start();
                     }
+                    return;
                 }
             } catch (final NumberFormatException e) {
                 BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
-                new QuestCustomObjectiveCountPrompt(uuid);
+                new QuestCustomObjectiveCountPrompt(uuid).start();
+                return;
             }
             new QuestStageMainPrompt(stageNum, uuid).start();
         }
@@ -2777,6 +2810,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 if (found == null) {
                     plugin.getLogger().severe("Could not find custom objective following input: " + input);
                     new QuestObjectiveCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 final LinkedList<Entry<String, Object>> dataMapList = found.getData();
 
@@ -2785,9 +2819,11 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {
                     new QuestObjectiveCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < 1 || numInput > dataMapList.size() + 1) {
                     new QuestObjectiveCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < dataMapList.size() + 1) {
                     final LinkedList<String> dataMapKeys = new LinkedList<>();
@@ -2812,6 +2848,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     SessionData.set(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS, null);
                     new QuestStageMainPrompt(stageNum, uuid).start();
                 }
+                return;
             }
             new QuestStageMainPrompt(stageNum, uuid).start();
         }

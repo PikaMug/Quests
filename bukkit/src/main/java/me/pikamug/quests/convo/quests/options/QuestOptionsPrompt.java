@@ -112,14 +112,19 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new QuestOptionsGeneralPrompt(uuid).start();
+            break;
         case 2:
             new QuestOptionsMultiplayerPrompt(uuid).start();
+            break;
         case 3:
             new QuestOptionsGlobalPrompt(uuid).start();
+            break;
         case 4:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestOptionsPrompt(uuid).start();
+            break;
         }
     }
 
@@ -173,6 +178,7 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(" " + ChatColor.AQUA + ChatColor.UNDERLINE
                             + "https://www.youtube.com/watch?v=gvdf5n-zI14");
                     new QuestOptionsPluginPrompt(uuid).start();
+                    return;
                 }
                 String properCase = null;
                 for (final PartyProvider partyProvider : plugin.getDependencies().getPartyProviders()) {
@@ -185,6 +191,7 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                     text = text.replace("<plugin>", ChatColor.LIGHT_PURPLE + input + ChatColor.RED);
                     sender.sendMessage(text);
                     new QuestOptionsPluginPrompt(uuid).start();
+                    return;
                 }
                 SessionData.set(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN, properCase);
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
@@ -259,6 +266,7 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestOptionsTrueFalsePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, tempKey, null);
@@ -537,18 +545,22 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                 tempKey = Key.OPT_ALLOW_COMMANDS;
                 tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 2:
                 tempKey = Key.OPT_ALLOW_QUITTING;
                 tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 3:
                 tempKey = Key.OPT_IGNORE_SILK_TOUCH;
                 tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 4:
                 tempKey = Key.OPT_IGNORE_BLOCK_REPLACE;
                 tempPrompt = new QuestOptionsGeneralPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 5:
                 tempKey = null;
                 tempPrompt = null;
@@ -556,10 +568,11 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                     new QuestOptionsPrompt(uuid).start();
                 } catch (final Exception e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                    return;
                 }
+                break;
             default:
-                return;
+                new QuestOptionsPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -714,26 +727,32 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                 tempKey = Key.OPT_EXTERNAL_PARTY_PLUGIN;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsPluginPrompt(uuid).start();
+                break;
             case 2:
                 tempKey = Key.OPT_USE_PARTIES_PLUGIN;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 3:
                 tempKey = Key.OPT_SHARE_PROGRESS_LEVEL;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsLevelPrompt(uuid).start();
+                break;
             case 4:
                 tempKey = Key.OPT_SHARE_SAME_QUEST_ONLY;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 5:
                 tempKey = Key.OPT_SHARE_DISTANCE;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsDistancePrompt(uuid).start();
+                break;
             case 6:
                 tempKey = Key.OPT_HANDLE_OFFLINE_PLAYERS;
                 tempPrompt = new QuestOptionsMultiplayerPrompt(uuid);
                 new QuestOptionsTrueFalsePrompt(uuid).start();
+                break;
             case 7:
                 tempKey = null;
                 tempPrompt = null;
@@ -743,8 +762,10 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                     return;
                 }
+                break;
             default:
-                return;
+                new QuestOptionsPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -881,18 +902,22 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                     tempKey = Key.OPT_GIVE_GLOBALLY_AT_LOGIN;
                     tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
+                    break;
                 case 2:
                     tempKey = Key.OPT_ALLOW_STACKING_GLOBAL;
                     tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
+                    break;
                 case 3:
                     tempKey = Key.OPT_INFORM_QUEST_START;
                     tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
+                    break;
                 case 4:
                     tempKey = Key.OPT_OVERRIDE_MAX_QUESTS;
                     tempPrompt = new QuestOptionsGlobalPrompt(uuid);
                     new QuestOptionsTrueFalsePrompt(uuid).start();
+                    break;
                 case 5:
                     tempKey = null;
                     tempPrompt = null;
@@ -902,8 +927,10 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                         return;
                     }
+                    break;
                 default:
-                    return;
+                    new QuestOptionsPrompt(uuid).start();
+                    break;
             }
         }
     }

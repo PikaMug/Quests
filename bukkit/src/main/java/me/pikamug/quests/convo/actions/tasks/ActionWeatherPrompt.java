@@ -156,8 +156,10 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         switch (input.intValue()) {
         case 1:
             new ActionStormPrompt(uuid).start();
+            break;
         case 2:
             new ActionThunderPrompt(uuid).start();
+            break;
         case 3:
             if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
@@ -165,6 +167,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 if (BukkitMiscUtil.getWorlds().isEmpty()) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
                     new ActionWeatherPrompt(uuid).start();
+                    break;
                 }
                 selectedLightningLocations.put(((Player) sender).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
@@ -174,10 +177,13 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                 new ActionWeatherPrompt(uuid).start();
             }
+            break;
         case 4:
             new ActionMainPrompt(uuid).start();
+            break;
         default:
             new ActionWeatherPrompt(uuid).start();
+            break;
         }
     }
     
@@ -279,6 +285,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ActionStormWorldPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.A_WORLD_STORM) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSetWorldFirst"));
@@ -286,6 +293,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     new ActionStormDurationPrompt(uuid).start();
                 }
+                break;
             case 3:
                 if (SessionData.get(uuid, Key.A_WORLD_STORM) != null
                         && SessionData.get(uuid, Key.A_WORLD_STORM_DURATION) == null) {
@@ -294,10 +302,13 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     new ActionMainPrompt(uuid).start();
                 }
+                break;
             case 4:
                 new ActionMainPrompt(uuid).start();
+                break;
             default:
                 new ActionStormPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -350,6 +361,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidWorld")
                             .replace("<input>", input));
                     new ActionStormWorldPrompt(uuid).start();
+                    return;
                 }
             }
             new ActionStormPrompt(uuid).start();
@@ -387,9 +399,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
-                    sender.sendMessage(ChatColor.RED 
-                            + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                     new ActionStormDurationPrompt(uuid).start();
+                    return;
                 } else {
                     SessionData.set(uuid, Key.A_WORLD_STORM_DURATION, i);
                 }
@@ -499,6 +511,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
             switch (input.intValue()) {
             case 1:
                 new ActionThunderWorldPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.A_WORLD_THUNDER) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSetWorldFirst"));
@@ -506,11 +519,13 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     new ActionThunderDurationPrompt(uuid).start();
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorThunderCleared"));
                 SessionData.set(uuid, Key.A_WORLD_THUNDER, null);
                 SessionData.set(uuid, Key.A_WORLD_THUNDER_DURATION, null);
                 new ActionThunderPrompt(uuid).start();
+                break;
             case 4:
                 if (SessionData.get(uuid, Key.A_WORLD_THUNDER) != null
                         && SessionData.get(uuid, Key.A_WORLD_THUNDER_DURATION) == null) {
@@ -519,8 +534,10 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     new ActionMainPrompt(uuid).start();
                 }
+                break;
             default:
                 new ActionThunderPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -573,6 +590,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorInvalidWorld")
                             .replace("<input>", input));
                     new ActionThunderWorldPrompt(uuid).start();
+                    return;
                 }
             }
             new ActionThunderPrompt(uuid).start();
@@ -613,6 +631,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED 
                             + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                     new ActionThunderDurationPrompt(uuid).start();
+                    return;
                 } else {
                     SessionData.set(uuid, Key.A_WORLD_THUNDER_DURATION, i);
                 }
@@ -678,6 +697,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionLightningPrompt(uuid).start();
+                    return;
                 }
                 new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {

@@ -179,16 +179,20 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new ConditionWorldsPrompt(uuid).start();
+            break;
         case 2:
             new ConditionTicksListPrompt(uuid).start();
+            break;
         case 3:
             new ConditionBiomesPrompt(uuid).start();
+            break;
         case 4:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 new ConditionRegionsPrompt(uuid).start();
             } else {
                 new ConditionWorldPrompt(uuid).start();
             }
+            break;
         case 5:
             try {
                 new ConditionMainPrompt(uuid).start();
@@ -196,8 +200,10 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new ConditionWorldPrompt(uuid).start();
+            break;
         }
     }
     
@@ -250,6 +256,7 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("conditionEditorInvalidWorld")
                                 .replace("<input>", s));
                         new ConditionWorldsPrompt(uuid).start();
+                        break;
                     }
                 }
                 SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, worlds);
@@ -352,13 +359,16 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
             switch (input.intValue()) {
                 case 1:
                     new ConditionTickStartPrompt(uuid).start();
+                    break;
                 case 2:
                     new ConditionTickEndPrompt(uuid).start();
+                    break;
                 case 3:
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
                     SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, null);
                     SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, null);
                     new ConditionWorldPrompt(uuid).start();
+                    break;
                 case 4:
                     if ((SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_START) != null
                             && SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_END) != null)
@@ -369,8 +379,10 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                         new ConditionTicksListPrompt(uuid).start();
                     }
+                    break;
                 default:
                     new ConditionTicksListPrompt(uuid).start();
+                    break;
             }
         }
     }

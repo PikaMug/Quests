@@ -177,19 +177,23 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new ConditionPermissionsPrompt(uuid).start();
+            break;
         case 2:
             new ConditionItemsInMainHandListPrompt(uuid).start();
+            break;
         case 3:
             new ConditionItemsWearListPrompt(uuid).start();
+            break;
         case 4:
             try {
                 new ConditionMainPrompt(uuid).start();
             } catch (final Exception e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return;
             }
+            break;
         default:
             new ConditionPlayerPrompt(uuid).start();
+            break;
         }
     }
     
@@ -346,14 +350,18 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
                 SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, null);
                 new ConditionItemsInMainHandListPrompt(uuid).start();
+                break;
             case 3:
                 new ConditionPlayerPrompt(uuid).start();
+                break;
             default:
                 new ConditionItemsInMainHandListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -469,15 +477,19 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
                 case 1:
-                    new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this);
+                    new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this).start();
+                    break;
                 case 2:
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
                     SessionData.set(uuid, Key.C_WHILE_WEARING, null);
                     new ConditionItemsWearListPrompt(uuid).start();
+                    break;
                 case 3:
                     new ConditionPlayerPrompt(uuid).start();
+                    break;
                 default:
                     new ConditionItemsWearListPrompt(uuid).start();
+                    break;
             }
         }
     }

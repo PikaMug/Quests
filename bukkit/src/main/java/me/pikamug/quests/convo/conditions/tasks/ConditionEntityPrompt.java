@@ -149,8 +149,10 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
         switch(input.intValue()) {
         case 1:
             new ConditionEntitiesPrompt(uuid).start();
+            break;
         case 2:
             new ConditionNpcsPrompt(uuid).start();
+            break;
         case 3:
             try {
                 new ConditionMainPrompt(uuid).start();
@@ -158,8 +160,10 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new ConditionEntityPrompt(uuid).start();
+            break;
         }
     }
     
@@ -224,11 +228,13 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                     .replace("<input>", s));
                             new ConditionEntitiesPrompt(uuid).start();
+                            break;
                         }
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
                         new ConditionEntitiesPrompt(uuid).start();
+                        break;
                     }
                 }
             }
@@ -287,11 +293,13 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             new ConditionNpcsPrompt(uuid).start();
+                            break;
                         }
                     } catch (final IllegalArgumentException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", input));
                         new ConditionNpcsPrompt(uuid).start();
+                        break;
                     }
                 }
                 SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, npcs);

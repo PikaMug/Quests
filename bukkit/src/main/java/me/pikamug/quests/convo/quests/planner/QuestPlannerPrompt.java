@@ -241,10 +241,12 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_REPEAT_CYCLE, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             final long delay;
             try {
@@ -259,6 +261,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
                 new QuestPlannerRepeatPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }
@@ -297,10 +300,12 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_COOLDOWN, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             final long delay;
             try {
@@ -315,6 +320,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
                 new QuestPlannerCooldownPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }
@@ -388,10 +394,12 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestPlannerOverridePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_OVERRIDE, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }
