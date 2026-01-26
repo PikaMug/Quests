@@ -17,6 +17,7 @@ import me.pikamug.quests.convo.quests.stages.QuestStageMainPrompt;
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericPromptEvent;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -218,27 +219,33 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new QuestItemsCraftListPrompt(uuid).start();
+            break;
         case 2:
             new QuestItemsSmeltListPrompt(uuid).start();
+            break;
         case 3:
             new QuestItemsEnchantListPrompt(uuid).start();
+            break;
         case 4:
             new QuestItemsBrewListPrompt(uuid).start();
+            break;
         case 5:
             new QuestItemsConsumeListPrompt(uuid).start();
+            break;
         case 6:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
             } catch (final Exception e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return;
             }
+            break;
         default:
             new QuestItemsPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -349,7 +356,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsCraftListPrompt.this);
@@ -357,8 +364,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CRAFT_ITEMS, null);
                 new QuestItemsCraftListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -470,7 +479,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsSmeltListPrompt.this);
@@ -478,8 +487,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_SMELT_ITEMS, null);
                 new QuestItemsSmeltListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -591,16 +602,19 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsEnchantListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_ENCHANT_ITEMS, null);
                 new QuestItemsEnchantListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -711,7 +725,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsBrewListPrompt.this);
@@ -719,8 +733,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_BREW_ITEMS, null);
                 new QuestItemsBrewListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -832,7 +848,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsConsumeListPrompt.this);
@@ -840,8 +856,10 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CONSUME_ITEMS, null);
                 new QuestItemsConsumeListPrompt(uuid).start();
+                break;
             default:
                 new QuestItemsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

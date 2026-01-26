@@ -18,6 +18,7 @@ import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenNumericP
 import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -188,16 +189,20 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new QuestBlocksBreakListPrompt(uuid).start();
+            break;
         case 2:
             new QuestBlocksDamageListPrompt(uuid).start();
+            break;
         case 3:
             new QuestBlocksPlaceListPrompt(uuid).start();
+            break;
         case 4:
             new QuestBlocksUseListPrompt(uuid).start();
+            break;
         case 5:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
@@ -205,8 +210,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new QuestBlocksPrompt(stageNum, uuid).start();
+            break;
         }
     }
     
@@ -334,20 +341,24 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestBlockBreakNamesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestBlockBreakAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestBlockBreakDurabilityPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_BREAK_NAMES, null);
                 SessionData.set(uuid, pref + Key.S_BREAK_AMOUNTS, null);
                 SessionData.set(uuid, pref + Key.S_BREAK_DURABILITY, null);
                 new QuestBlocksBreakListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -382,8 +393,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestBlocksBreakListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestBlocksPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -419,7 +432,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> names = new LinkedList<>();
@@ -433,16 +446,19 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotSolid")
                                         .replace("<input>", s));
                                 new QuestBlockBreakNamesPrompt(uuid).start();
+                                return;
                             }
                         } else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidBlockName")
                                     .replace("<input>", s));
                             new QuestBlockBreakNamesPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockBreakNamesPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_BREAK_NAMES, names);
@@ -494,7 +510,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();
@@ -506,11 +522,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                             new QuestBlockBreakAmountsPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockBreakAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_BREAK_AMOUNTS, amounts);
@@ -549,7 +567,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Short> durability = new LinkedList<>();
@@ -561,11 +579,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
                             new QuestBlockBreakDurabilityPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockBreakDurabilityPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_BREAK_DURABILITY, durability);
@@ -698,20 +718,24 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestBlockDamageNamesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestBlockDamageAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestBlockDamageDurabilityPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_DAMAGE_NAMES, null);
                 SessionData.set(uuid, pref + Key.S_DAMAGE_AMOUNTS, null);
                 SessionData.set(uuid, pref + Key.S_DAMAGE_DURABILITY, null);
                 new QuestBlocksDamageListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -746,8 +770,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestBlocksDamageListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestBlocksPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -783,7 +809,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> names = new LinkedList<>();
@@ -797,16 +823,19 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotSolid")
                                         .replace("<input>", s));
                                 new QuestBlockDamageNamesPrompt(uuid).start();
+                                return;
                             }
                         } else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidBlockName")
                                     .replace("<input>", s));
                             new QuestBlockDamageNamesPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockDamageNamesPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_DAMAGE_NAMES, names);
@@ -858,7 +887,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();
@@ -870,11 +899,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                             new QuestBlockDamageAmountsPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockDamageAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_DAMAGE_AMOUNTS, amounts);
@@ -913,7 +944,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Short> durability = new LinkedList<>();
@@ -925,11 +956,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
                             new QuestBlockDamageDurabilityPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockDamageDurabilityPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_DAMAGE_DURABILITY, durability);
@@ -1062,20 +1095,24 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestBlockPlaceNamesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestBlockPlaceAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestBlockPlaceDurabilityPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_PLACE_NAMES, null);
                 SessionData.set(uuid, pref + Key.S_PLACE_AMOUNTS, null);
                 SessionData.set(uuid, pref + Key.S_PLACE_DURABILITY, null);
                 new QuestBlocksPlaceListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -1110,8 +1147,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestBlocksPlaceListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestBlocksPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -1147,7 +1186,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> names = new LinkedList<>();
@@ -1161,16 +1200,19 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotSolid")
                                         .replace("<input>", s));
                                 new QuestBlockPlaceNamesPrompt(uuid).start();
+                                return;
                             }
                         } else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidBlockName")
                                     .replace("<input>", s));
                             new QuestBlockPlaceNamesPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockPlaceNamesPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_PLACE_NAMES, names);
@@ -1222,7 +1264,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();
@@ -1234,11 +1276,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                             new QuestBlockPlaceAmountsPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockPlaceAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_PLACE_AMOUNTS, amounts);
@@ -1277,7 +1321,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Short> durability = new LinkedList<>();
@@ -1289,11 +1333,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
                             new QuestBlockPlaceDurabilityPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockPlaceDurabilityPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_PLACE_DURABILITY, durability);
@@ -1424,20 +1470,24 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestBlockUseNamesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestBlockUseAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestBlockUseDurabilityPrompt(uuid).start();
+                break;
             case 4:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_USE_NAMES, null);
                 SessionData.set(uuid, pref + Key.S_USE_AMOUNTS, null);
                 SessionData.set(uuid, pref + Key.S_USE_DURABILITY, null);
                 new QuestBlocksUseListPrompt(uuid).start();
+                break;
             case 5:
                 final int one;
                 final int two;
@@ -1472,8 +1522,10 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestBlocksUseListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestBlocksPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -1509,7 +1561,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> names = new LinkedList<>();
@@ -1523,16 +1575,19 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotSolid")
                                         .replace("<input>", s));
                                 new QuestBlockUseNamesPrompt(uuid).start();
+                                return;
                             }
                         } else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidBlockName")
                                     .replace("<input>", s));
                             new QuestBlockUseNamesPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockUseNamesPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_USE_NAMES, names);
@@ -1584,7 +1639,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();
@@ -1596,11 +1651,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "1"));
                             new QuestBlockUseAmountsPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockUseAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_USE_AMOUNTS, amounts);
@@ -1639,7 +1696,7 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Short> durability = new LinkedList<>();
@@ -1651,11 +1708,13 @@ public class QuestBlocksPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED 
                                     + BukkitLang.get("invalidMinimum").replace("<number>", "0"));
                             new QuestBlockUseDurabilityPrompt(uuid).start();
+                            return;
                         }
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfNumbers")
                                 .replace("<data>", s));
                         new QuestBlockUseDurabilityPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_USE_DURABILITY, durability);

@@ -177,12 +177,14 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start");
+            break;
         case 2:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "end");
+            break;
         case 3:
             if (SessionData.get(uuid, Key.PLN_START_DATE) != null && SessionData.get(uuid, Key.PLN_END_DATE) != null) {
                 new QuestPlannerRepeatPrompt(uuid).start();
@@ -190,14 +192,19 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestPlannerPrompt(uuid).start();
             }
+            break;
         case 4:
             new QuestPlannerCooldownPrompt(uuid).start();
+            break;
         case 5:
             new QuestPlannerOverridePrompt(uuid).start();
+            break;
         case 6:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestPlannerPrompt(uuid).start();
+            break;
         }
     }
 
@@ -231,13 +238,15 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_REPEAT_CYCLE, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             final long delay;
             try {
@@ -252,6 +261,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
                 new QuestPlannerRepeatPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }
@@ -287,13 +297,15 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_COOLDOWN, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             final long delay;
             try {
@@ -308,6 +320,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                         .replace("<input>", input));
                 new QuestPlannerCooldownPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }
@@ -370,7 +383,7 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (input.startsWith("t") || input.equalsIgnoreCase(BukkitLang.get("true"))
                         || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
@@ -381,10 +394,12 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestPlannerOverridePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.PLN_OVERRIDE, null);
                 new QuestPlannerPrompt(uuid).start();
+                return;
             }
             new QuestPlannerPrompt(uuid).start();
         }

@@ -145,12 +145,14 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new ConditionEntitiesPrompt(uuid).start();
+            break;
         case 2:
             new ConditionNpcsPrompt(uuid).start();
+            break;
         case 3:
             try {
                 new ConditionMainPrompt(uuid).start();
@@ -158,8 +160,10 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new ConditionEntityPrompt(uuid).start();
+            break;
         }
     }
     
@@ -210,7 +214,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -224,11 +228,13 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                     .replace("<input>", s));
                             new ConditionEntitiesPrompt(uuid).start();
+                            break;
                         }
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
                         new ConditionEntitiesPrompt(uuid).start();
+                        break;
                     }
                 }
             }
@@ -258,7 +264,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                     = new BukkitConditionsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
@@ -274,7 +280,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> npcs = SessionData.get(uuid, Key.C_WHILE_RIDING_NPC) != null
                         ? (LinkedList<String>) SessionData.get(uuid, Key.C_WHILE_RIDING_NPC) : new LinkedList<>();
@@ -287,11 +293,13 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                     .replace("<input>", s));
                             new ConditionNpcsPrompt(uuid).start();
+                            break;
                         }
                     } catch (final IllegalArgumentException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNotListOfUniqueIds")
                                 .replace("<data>", input));
                         new ConditionNpcsPrompt(uuid).start();
+                        break;
                     }
                 }
                 SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, npcs);

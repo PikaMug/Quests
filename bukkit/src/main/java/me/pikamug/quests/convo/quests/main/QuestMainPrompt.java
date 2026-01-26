@@ -99,7 +99,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
         case 12:
             return ChatColor.BLUE;
         case 5:
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 return ChatColor.BLUE;
             } else {
                 return ChatColor.GRAY;
@@ -141,7 +141,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 return ChatColor.GRAY + BukkitLang.get("questEditorNPCStart");
             }
         case 5:
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorBlockStart");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorBlockStart");
@@ -264,20 +264,25 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        System.out.println("Handling input " + input);
         switch (input.intValue()) {
         case 1:
             new QuestNamePrompt(uuid).start();
+            break;
         case 2:
             new QuestAskMessagePrompt(uuid).start();
+            break;
         case 3:
             new QuestFinishMessagePrompt(uuid).start();
+            break;
         case 4:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestNPCStartPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 5:
             if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> blockStarts = plugin.getQuestFactory().getSelectedBlockStarts();
@@ -293,34 +298,45 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
                 new QuestRegionPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 7:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 new QuestGuiDisplayPrompt(uuid).start();
             } else {
                 new QuestMainPrompt(uuid).start();
             }
+            break;
         case 8:
             new QuestRequirementsPrompt(uuid).start();
+            break;
         case 9:
             new QuestPlannerPrompt(uuid).start();
+            break;
         case 10:
             new QuestStageMenuPrompt(uuid).start();
+            break;
         case 11:
             new QuestRewardsPrompt(uuid).start();
+            break;
         case 12:
             new QuestOptionsPrompt(uuid).start();
+            break;
         case 13:
             new QuestSavePrompt(uuid).start();
+            break;
         case 14:
             new QuestExitPrompt(uuid).start();
+            break;
         default:
             new QuestMainPrompt(uuid).start();
+            break;
         }
     }
 
@@ -353,7 +369,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 for (final Quest q : plugin.getLoadedQuests()) {
                     if (q.getName().equalsIgnoreCase(input)) {
@@ -364,6 +380,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         if (s != null && !s.equalsIgnoreCase(input)) {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNameExists"));
                             new QuestNamePrompt(uuid).start();
+                            return;
                         }
                     }
                 }
@@ -371,10 +388,12 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 if (questNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new QuestNamePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new QuestNamePrompt(uuid).start();
+                    return;
                 }
                 questNames.remove((String) SessionData.get(uuid, Key.Q_NAME));
                 SessionData.set(uuid, Key.Q_NAME, input);
@@ -420,6 +439,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         SessionData.set(uuid, Key.Q_ASK_MESSAGE, SessionData.get(uuid, Key.Q_ASK_MESSAGE) + " "
                                 + input.substring(2));
                         new QuestMainPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.Q_ASK_MESSAGE, input);
@@ -464,6 +484,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         SessionData.set(uuid, Key.Q_FINISH_MESSAGE, SessionData.get(uuid, Key.Q_FINISH_MESSAGE) + " "
                                 + input.substring(2));
                         new QuestMainPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.Q_FINISH_MESSAGE, input);
@@ -494,7 +515,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
             
-            if (Bukkit.getEntity(uuid) instanceof Player) {
+            if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                 final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
@@ -509,7 +530,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final UUID uuid = UUID.fromString(input);
@@ -517,6 +538,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
                         new QuestNPCStartPrompt(uuid).start();
+                        return;
                     }
                     SessionData.set(uuid, Key.Q_START_NPC, uuid.toString());
                     if (sender instanceof Player) {
@@ -525,6 +547,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                     }
                     new QuestMainPrompt(uuid).start();
+                    return;
                 } catch (final IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED 
                             + BukkitLang.get("reqNotAUniqueId").replace("<input>", input));
@@ -572,7 +595,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdDone")) || input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (input.equalsIgnoreCase(BukkitLang.get("cmdDone"))) {
@@ -585,6 +608,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         player.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNoStartBlockSelected"));
                         new QuestBlockStartPrompt(uuid).start();
+                        return;
                     }
                 } else {
                     final ConcurrentHashMap<UUID, Block> selectedBlockStarts
@@ -593,6 +617,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     plugin.getQuestFactory().setSelectedBlockStarts(selectedBlockStarts);
                 }
                 new QuestMainPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 if (sender instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> selectedBlockStarts
@@ -602,6 +627,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 }
                 SessionData.set(uuid, Key.Q_START_BLOCK, null);
                 new QuestMainPrompt(uuid).start();
+                return;
             }
             new QuestBlockStartPrompt(uuid).start();
         }
@@ -654,7 +680,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;
                 boolean done = false;
@@ -679,17 +705,21 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     error = error.replace("<region>", ChatColor.RED + input + ChatColor.YELLOW);
                     sender.sendMessage(ChatColor.YELLOW + error);
                     new QuestRegionPrompt(uuid).start();
-                } else {
-                    SessionData.set(uuid, Key.Q_REGION, found);
-                    new QuestMainPrompt(uuid).start();
+                    return;
                 }
-            } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
+
+                SessionData.set(uuid, Key.Q_REGION, found);
+                new QuestMainPrompt(uuid).start();
+                return;
+            }
+
+            if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.Q_REGION, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("questWGRegionCleared"));
-                new QuestMainPrompt(uuid).start();
-            } else {
-                new QuestMainPrompt(uuid).start();
+                // fall through
             }
+
+            new QuestMainPrompt(uuid).start();
         }
     }
     
@@ -775,18 +805,22 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestGuiDisplayPrompt.this).start();
+                return;
             case 2:
                 SessionData.set(uuid, Key.Q_GUIDISPLAY, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("questGUICleared"));
                 new QuestGuiDisplayPrompt(uuid).start();
+                return;
             case 3:
                 plugin.getQuestFactory().returnToMenu(uuid);
+                return;
             default:
                 new QuestGuiDisplayPrompt(uuid).start();
+                return;
             }
         }
     }
@@ -856,23 +890,34 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
+                // Accept
                 if (plugin.hasLimitedAccess(uuid) && !plugin.getConfigSettings().canTrialSave()) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("modeDeny")
                             .replace("<mode>", BukkitLang.get("trialMode")));
                     new QuestMainPrompt(uuid).start();
+                    return;
                 }
                 if (SessionData.get(uuid, Key.Q_ASK_MESSAGE) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedAskMessage"));
                     new QuestMainPrompt(uuid).start();
-                } else if (SessionData.get(uuid, Key.Q_FINISH_MESSAGE) == null) {
+                    return;
+                }
+
+                if (SessionData.get(uuid, Key.Q_FINISH_MESSAGE) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedFinishMessage"));
                     new QuestMainPrompt(uuid).start();
-                } else if (new QuestStageMenuPrompt(uuid).getStages() == 0) {
+                    return;
+                }
+
+                if (new QuestStageMenuPrompt(uuid).getStages() == 0) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorNeedStages"));
                     new QuestMainPrompt(uuid).start();
+                    return;
                 }
+
                 final FileConfiguration data = new YamlConfiguration();
                 try {
                     data.load(new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml"));
@@ -910,7 +955,6 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 } catch (final IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new QuestMainPrompt(uuid).start();
             } else {
@@ -984,10 +1028,9 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 sender.sendMessage(ChatColor.BOLD + "" + ChatColor.YELLOW + BukkitLang.get("exited"));
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new QuestMainPrompt(uuid).start();
             } else {

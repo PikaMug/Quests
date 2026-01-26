@@ -19,6 +19,7 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -264,7 +265,7 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     public void deleteAction(final UUID uuid) {
         final YamlConfiguration data = new YamlConfiguration();
         final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(actionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -312,7 +313,7 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     public void saveAction(final UUID uuid) {
         final YamlConfiguration data = new YamlConfiguration();
         final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(actionsFile);
         } catch (final IOException | InvalidConfigurationException e) {

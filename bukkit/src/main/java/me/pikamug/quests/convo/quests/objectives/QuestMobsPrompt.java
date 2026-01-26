@@ -225,18 +225,23 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new QuestMobsKillListPrompt(uuid).start();
+            break;
         case 2:
             new QuestMobsTameListPrompt(uuid).start();
+            break;
         case 3:
             new QuestMobsFishPrompt(uuid).start();
+            break;
         case 4:
             new QuestMobsCowsPrompt(uuid).start();
+            break;
         case 5:
             new QuestMobsShearListPrompt(uuid).start();
+            break;
         case 6:
             try {
                 new QuestStageMainPrompt(stageNum, uuid).start();
@@ -244,8 +249,10 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         default:
             new QuestMobsPrompt(stageNum, uuid).start();
+            break;
         }
     }
 
@@ -276,7 +283,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 case 5:
                     return ChatColor.BLUE;
                 case 3:
-                    if (Bukkit.getEntity(uuid) instanceof Player) {
+                    if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                         return ChatColor.BLUE;
                     } else {
                         return ChatColor.GRAY;
@@ -298,7 +305,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             case 2:
                 return ChatColor.YELLOW + BukkitLang.get("stageEditorSetMobAmounts");
             case 3:
-                if (Bukkit.getEntity(uuid) instanceof Player) {
+                if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
                     return ChatColor.YELLOW + BukkitLang.get("stageEditorSetKillLocations");
                 } else {
                     return ChatColor.GRAY + BukkitLang.get("stageEditorSetKillLocations");
@@ -414,18 +421,21 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new QuestMobsTypesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestMobsAmountsPrompt(uuid).start();
+                break;
             case 3:
                 if (sender instanceof Player) {
                     final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
                     if (BukkitMiscUtil.getWorlds().isEmpty()) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
                         new QuestMobsKillListPrompt(uuid).start();
+                        break;
                     }
                     temp.put(((Player) sender).getUniqueId(),
                             Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
@@ -435,10 +445,13 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                     new QuestMobsKillListPrompt(uuid).start();
                 }
+                break;
             case 4:
                 new QuestMobsRadiiPrompt(uuid).start();
+                break;
             case 5:
                 new QuestMobsLocationNamesPrompt(uuid).start();
+                break;
             case 6:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_MOB_TYPES, null);
@@ -447,6 +460,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 SessionData.set(uuid, pref + Key.S_MOB_KILL_LOCATIONS_RADIUS, null);
                 SessionData.set(uuid, pref + Key.S_MOB_KILL_LOCATIONS_NAMES, null);
                 new QuestMobsKillListPrompt(uuid).start();
+                break;
             case 7:
                 final int one;
                 final int two;
@@ -499,8 +513,10 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestMobsKillListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestMobsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -553,7 +569,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -563,6 +579,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
                         new QuestMobsTypesPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_MOB_TYPES, mobTypes);
@@ -614,7 +631,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -624,12 +641,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             new QuestMobsAmountsPrompt(uuid).start();
+                            return;
                         }
                         mobAmounts.add(i);
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", input));
                         new QuestMobsAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_MOB_AMOUNTS, mobAmounts);
@@ -669,7 +688,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Block block = plugin.getQuestFactory().getSelectedKillLocations().get(player.getUniqueId());
@@ -691,6 +710,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlock"));
                     new QuestMobsLocationPrompt(uuid).start();
+                    return;
                 }
                 new QuestMobsKillListPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
@@ -734,7 +754,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> radii = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -744,12 +764,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             new QuestMobsRadiiPrompt(uuid).start();
+                            return;
                         }
                         radii.add(i);
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidItemName")
                                 .replace("<input>", s));
                         new QuestMobsRadiiPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_MOB_KILL_LOCATIONS_RADIUS, radii);
@@ -901,17 +923,20 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestMobsTameTypesPrompt(uuid).start();
+                break;
             case 2:
                 new QuestMobsTameAmountsPrompt(uuid).start();
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_TAME_TYPES, null);
                 SessionData.set(uuid, pref + Key.S_TAME_AMOUNTS, null);
                 new QuestMobsTameListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -933,8 +958,10 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestMobsTameListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestMobsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -988,7 +1015,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1016,12 +1043,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                                 sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                         .replace("<input>", s));
                                 new QuestMobsTameTypesPrompt(uuid).start();
+                                return;
                             }
                         }
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidMob")
                                 .replace("<input>", s));
                         new QuestMobsTameTypesPrompt(uuid).start();
+                        return;
                     }
                 }
             }
@@ -1059,7 +1088,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1069,12 +1098,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             new QuestMobsTameAmountsPrompt(uuid).start();
+                            return;
                         }
                         mobAmounts.add(i);
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", input));
                         new QuestMobsTameAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_TAME_AMOUNTS, mobAmounts);
@@ -1113,13 +1144,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorPositiveAmount"));
                         new QuestMobsFishPrompt(uuid).start();
+                        return;
                     } else if (i > 0) {
                         SessionData.set(uuid, pref + Key.S_FISH, i);
                     }
@@ -1127,6 +1159,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestMobsFishPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, pref + Key.S_FISH, null);
@@ -1165,13 +1198,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
                     if (i < 0) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorPositiveAmount"));
                         new QuestMobsCowsPrompt(uuid).start();
+                        return;
                     } else if (i > 0) {
                         SessionData.set(uuid, pref + Key.S_COW_MILK, i);
                     }
@@ -1179,6 +1213,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestMobsCowsPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, pref + Key.S_COW_MILK, null);
@@ -1293,17 +1328,20 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new QuestMobsShearColorsPrompt(uuid).start();
+                break;
             case 2:
                 new QuestMobsShearAmountsPrompt(uuid).start();
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_SHEAR_COLORS, null);
                 SessionData.set(uuid, pref + Key.S_SHEAR_AMOUNTS, null);
                 new QuestMobsShearListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -1325,8 +1363,10 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestMobsShearListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestMobsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }
@@ -1371,7 +1411,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> colors = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1395,6 +1435,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidDye")
                                 .replace("<input>", s));
                         new QuestMobsShearColorsPrompt(uuid).start();
+                        return;
                     }
                 }
             }
@@ -1432,7 +1473,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> shearAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1442,12 +1483,14 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                                     .replace("<number>", "1"));
                             new QuestMobsShearAmountsPrompt(uuid).start();
+                            return;
                         }
                         shearAmounts.add(i);
                     } catch (final NumberFormatException e) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                                 .replace("<input>", input));
                         new QuestMobsShearAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, pref + Key.S_SHEAR_AMOUNTS, shearAmounts);

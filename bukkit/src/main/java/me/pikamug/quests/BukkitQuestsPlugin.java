@@ -52,7 +52,6 @@ import me.pikamug.quests.util.stack.BlockItemStacks;
 import org.apache.logging.log4j.LogManager;
 import org.browsit.conversations.api.Conversations;
 import org.browsit.conversations.bukkit.BukkitConversations;
-import org.browsit.conversations.bukkit.BukkitConversationsForwarder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -119,7 +118,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
         instance = this;
         BukkitConversations.init(this);
-        new BukkitConversationsForwarder().register(this);
 
         // 1 - Trigger server to initialize Legacy Material Support
         try {

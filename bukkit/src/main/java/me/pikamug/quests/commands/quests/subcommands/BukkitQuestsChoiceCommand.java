@@ -1,6 +1,7 @@
 package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class BukkitQuestsChoiceCommand extends BukkitQuestsSubCommand {
             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "noPermission"));
             return;
         }
-        if (!player.isConversing()) {
+        if (!Conversations.getConversationOf(player.getUniqueId()).isPresent()) {
             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "notConversing"));
             return;
         }
@@ -57,8 +58,10 @@ public class BukkitQuestsChoiceCommand extends BukkitQuestsSubCommand {
             return;
         }
         final String input = concatArgArray(args, 1, args.length - 1, ' ');
-        if (input != null) {
-            player.acceptConversationInput(input);
+        if (input == null) {
+            return;
         }
+
+        Conversations.getConversationOf(player.getUniqueId()).ifPresent(conversation -> conversation.handleInput(input));
     }
 }

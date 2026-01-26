@@ -538,7 +538,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
     public void deleteQuest(final UUID uuid) {
         final FileConfiguration data = new YamlConfiguration();
         final File questsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -621,7 +621,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
         savePlanner(uuid, section);
         saveOptions(uuid, section);
         if (plugin.getConfigSettings().getConsoleLogging() > 0) {
-            final String identifier =  Bukkit.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
+            final String identifier =  BukkitMiscUtil.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + SessionData.get(uuid, Key.Q_NAME));
         }
     }

@@ -253,7 +253,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             }
         }
         int start = 0;
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         if (!(sender instanceof Player)) {
             start = 1;
         }
@@ -271,7 +271,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
     
     @SuppressWarnings({ "unchecked", "deprecation" })
     public void acceptInput(final UUID uuid, final Number input, final ItemStack item) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 0:
             if (sender instanceof Player) {
@@ -318,9 +318,11 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
             }
             new ItemStackPrompt(uuid, oldPrompt).start();
+            break;
         case 1:
             SessionData.set(uuid, "tempMeta", null);
             new ItemNamePrompt(uuid).start();
+            break;
         case 2:
             if (SessionData.get(uuid, "tempName") != null) {
                 new ItemAmountPrompt(uuid).start();
@@ -328,6 +330,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoName"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         case 3:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 new ItemDataPrompt(uuid).start();
@@ -335,6 +338,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         case 4:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 new ItemEnchantmentPrompt(uuid).start();
@@ -342,6 +346,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         case 5:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 new ItemDisplayPrompt(uuid).start();
@@ -349,6 +354,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         case 6:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 new ItemLorePrompt(uuid).start();
@@ -356,6 +362,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         case 7:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 SessionData.set(uuid, "tempMeta", null);
@@ -363,9 +370,11 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
             }
             new ItemStackPrompt(uuid, oldPrompt).start();
+            break;
         case 8:
             clearSessionData(uuid);
             oldPrompt.start();
+            break;
         case 9:
             if (SessionData.get(uuid, "tempName") != null && SessionData.get(uuid, "tempAmount") != null) {
                 final String name = (String) SessionData.get(uuid, "tempName");
@@ -426,6 +435,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateNoNameAmount"));
                 new ItemStackPrompt(uuid, oldPrompt).start();
             }
+            break;
         default:
             try {
                 new ItemStackPrompt(uuid, oldPrompt).start();
@@ -433,6 +443,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
                 return;
             }
+            break;
         }
     }
 
@@ -462,7 +473,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String s = input.replace(":", "");
                 final Material mat = Material.matchMaterial(s.toUpperCase().replace(" ", "_"));
@@ -474,15 +485,15 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                     if (plugin.hasLimitedAccess(uuid)) {
                         if (plugin.getServer().getRecipesFor(new ItemStack(mat)).isEmpty()) {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
-                            new ItemStackPrompt(uuid, oldPrompt);
+                            new ItemStackPrompt(uuid, oldPrompt).start();
                         }
                     }
                     SessionData.set(uuid, "tempName", mat.name());
                     SessionData.set(uuid, "tempAmount", 1);
-                    new ItemStackPrompt(uuid, oldPrompt);
+                    new ItemStackPrompt(uuid, oldPrompt).start();
                 }
             } else {
-                new ItemStackPrompt(uuid, oldPrompt);
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         }
     }
@@ -513,7 +524,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 try {
                     final int amt = Integer.parseInt(input);
@@ -523,14 +534,14 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                         new ItemAmountPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempAmount", Integer.parseInt(input));
-                        new ItemStackPrompt(uuid, oldPrompt);
+                        new ItemStackPrompt(uuid, oldPrompt).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new ItemAmountPrompt(uuid).start();
                 }
             } else {
-                new ItemStackPrompt(uuid, oldPrompt);
+                new ItemStackPrompt(uuid, oldPrompt).start();
             }
         }
     }
@@ -561,7 +572,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int amt = Integer.parseInt(input);
@@ -570,12 +581,12 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                         new ItemDataPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempData", Short.parseShort(input));
-                        new ItemStackPrompt(uuid, oldPrompt);
+                        new ItemStackPrompt(uuid, oldPrompt).start();
                     }
                 } catch (final NumberFormatException e) {
                     if (input.equals("*")) {
                         SessionData.set(uuid, "tempData", Short.parseShort("999")); // wildcard value
-                        new ItemStackPrompt(uuid, oldPrompt);
+                        new ItemStackPrompt(uuid, oldPrompt).start();
                     }
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new ItemDataPrompt(uuid).start();
@@ -583,7 +594,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, "tempData", null);
             }
-            new ItemStackPrompt(uuid, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         }
     }
 
@@ -618,7 +629,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(BukkitLang.get("cmdClear")) && !s.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Enchantment e = BukkitItemUtil.getEnchantmentFromPrettyName(BukkitMiscUtil.getCapitalized(s));
@@ -632,7 +643,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             } else if (s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, "tempEnchantments", null);
             }
-            new ItemStackPrompt(uuid, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         }
     }
     
@@ -662,7 +673,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             try {
                 final int num = Integer.parseInt(input);
                 if (num < 1) {
@@ -683,7 +694,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                         enchs.put((Enchantment) SessionData.get(uuid, "tempEnchant"), num);
                         SessionData.set(uuid, "tempEnchantments", enchs);
                     }
-                    new ItemStackPrompt(uuid, oldPrompt);
+                    new ItemStackPrompt(uuid, oldPrompt).start();
                 }
             } catch (final NumberFormatException e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber").replace("<input>", input));
@@ -725,7 +736,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             } else if (s.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, "tempDisplay", null);
             }
-            new ItemStackPrompt(uuid, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         }
     }
 
@@ -763,7 +774,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             } else if (s.equalsIgnoreCase("clear")) {
                 SessionData.set(uuid, "tempLore", null);
             }
-            new ItemStackPrompt(uuid, oldPrompt);
+            new ItemStackPrompt(uuid, oldPrompt).start();
         }
     }
 

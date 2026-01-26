@@ -378,32 +378,42 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 2:
             new QuestRequirementsQuestPointsPrompt(uuid).start();
+            break;
         case 3:
             new QuestRequirementsItemListPrompt(uuid).start();
+            break;
         case 4:
             new QuestRequirementsExperiencePrompt(uuid).start();
+            break;
         case 5:
             new QuestRequirementsPermissionsPrompt(uuid).start();
+            break;
         case 6:
             new QuestRequirementsQuestListPrompt(uuid, true);
+            break;
         case 7:
             new QuestRequirementsQuestListPrompt(uuid, false);
+            break;
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 9:
             if (plugin.getDependencies().getHeroes() != null) {
                 new QuestRequirementsHeroesListPrompt(uuid).start();
             } else {
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 10:
             new QuestCustomRequirementModulePrompt(uuid).start();
+            break;
         case 11:
             if (hasRequirement) {
                 new OverridePrompt.Builder()
@@ -412,13 +422,16 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                         .promptText(BukkitLang.get("overrideCreateEnter"))
                         .build();
             } else {
-                Bukkit.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
+                BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestRequirementsPrompt(uuid).start();
             }
+            break;
         case 12:
             plugin.getQuestFactory().returnToMenu(uuid);
+            break;
         default:
             new QuestRequirementsPrompt(uuid).start();
+            break;
         }
     }
     
@@ -474,7 +487,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -483,15 +496,18 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRequirementsMoneyPrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRequirementsMoneyPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_MONEY, null);
                 new QuestRequirementsPrompt(uuid).start();
+                return;
             }
             new QuestRequirementsPrompt(uuid).start();
         }
@@ -527,7 +543,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -536,15 +552,18 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRequirementsQuestPointsPrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRequirementsQuestPointsPrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_QUEST_POINTS, null);
                 new QuestRequirementsPrompt(uuid).start();
+                return;
             }
             new QuestRequirementsPrompt(uuid).start();
         }
@@ -692,10 +711,11 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestRequirementsItemListPrompt.this).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.REQ_ITEMS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqMustAddItem"));
@@ -703,11 +723,13 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                 } else {
                     new QuestRemoveItemsPrompt(uuid).start();
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("reqItemCleared"));
                 SessionData.set(uuid, Key.REQ_ITEMS, null);
                 SessionData.set(uuid, Key.REQ_ITEMS_REMOVE, null);
                 new QuestRequirementsItemListPrompt(uuid).start();
+                break;
             case 4:
                 final int missing;
                 final List<ItemStack> items = (List<ItemStack>) SessionData.get(uuid, Key.REQ_ITEMS);
@@ -725,8 +747,10 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                 }
                 SessionData.set(uuid, Key.REQ_ITEMS_REMOVE, remove);
                 new QuestRequirementsPrompt(uuid).start();
+                break;
             default:
                 new QuestRequirementsPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -761,7 +785,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Boolean> booleans = new LinkedList<>();
@@ -775,6 +799,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                         new QuestRemoveItemsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REQ_ITEMS_REMOVE, booleans);
@@ -813,7 +838,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -822,15 +847,18 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("inputPosNum"));
                         new QuestRequirementsExperiencePrompt(uuid).start();
+                        return;
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber")
                             .replace("<input>", input));
                     new QuestRequirementsExperiencePrompt(uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_EXP, null);
                 new QuestRequirementsPrompt(uuid).start();
+                return;
             }
             new QuestRequirementsPrompt(uuid).start();
         }
@@ -912,7 +940,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(BukkitLang.get("charSemi"));
                 final LinkedList<String> questIds = new LinkedList<>();
@@ -1048,12 +1076,16 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestMcMMOSkillsPrompt(uuid).start();
+                break;
             case 2:
                 new QuestMcMMOAmountsPrompt(uuid).start();
+                break;
             case 3:
                 new QuestRequirementsPrompt(uuid).start();
+                break;
             default:
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -1097,7 +1129,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final LinkedList<String> skills = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1107,21 +1139,26 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     } else if (skills.contains(formatted)) {
                         sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("listDuplicate"));
                         new QuestMcMMOSkillsPrompt(uuid).start();
+                        return;
                     } else {
                         String text = BukkitLang.get("reqMcMMOError");
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.YELLOW + text);
                         new QuestMcMMOSkillsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REQ_MCMMO_SKILLS, skills);
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("reqMcMMOCleared"));
                 SessionData.set(uuid, Key.REQ_MCMMO_SKILLS, null);
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             }
             new QuestMcMMOSkillsPrompt(uuid).start();
         }
@@ -1157,7 +1194,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final LinkedList<Integer> amounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1169,16 +1206,20 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                         text = text.replace("<input>", s);
                         sender.sendMessage(ChatColor.YELLOW + text);
                         new QuestMcMMOAmountsPrompt(uuid).start();
+                        return;
                     }
                 }
                 SessionData.set(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS, amounts);
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("reqMcMMOAmountsCleared"));
                 SessionData.set(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS, null);
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
+                return;
             }
             new QuestMcMMOAmountsPrompt(uuid).start();
         }
@@ -1272,12 +1313,16 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestHeroesPrimaryPrompt(uuid).start();
+                break;
             case 2:
                 new QuestHeroesSecondaryPrompt(uuid).start();
+                break;
             case 3:
                 new QuestRequirementsPrompt(uuid).start();
+                break;
             default:
                 new QuestRequirementsHeroesListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -1331,7 +1376,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear")) && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
@@ -1407,7 +1452,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear")) && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final HeroClass hc = plugin.getDependencies().getHeroes().getClassManager().getClass(input);
                 if (hc != null) {
@@ -1456,7 +1501,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1491,13 +1536,13 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
         @Override
         public void acceptInput(@Nullable final String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;
@@ -1519,15 +1564,18 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                 }
                 if (found != null) {
                     new QuestCustomRequirementsPrompt(found, uuid).start();
+                    return;
                 }
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 new QuestRequirementsPrompt(uuid).start();
+                return;
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_CUSTOM, null);
                 SessionData.set(uuid, Key.REQ_CUSTOM_DATA, null);
                 SessionData.set(uuid, Key.REQ_CUSTOM_DATA_TEMP, null);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("reqCustomCleared"));
                 new QuestRequirementsPrompt(uuid).start();
+                return;
             }
             sender.sendMessage(ChatColor.RED + BukkitLang.get("reqCustomNotFound"));
             new QuestCustomRequirementModulePrompt(uuid).start();
@@ -1563,7 +1611,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     = new BukkitQuestsEditorPostOpenStringPromptEvent(uuid, this);
             plugin.getServer().getPluginManager().callEvent(event);
 
-            if (!(Bukkit.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
+            if (!(BukkitMiscUtil.getEntity(uuid) instanceof Player) || !plugin.getConfigSettings().canClickablePrompts()) {
                 final StringBuilder text = new StringBuilder(ChatColor.LIGHT_PURPLE + getTitle() + "\n");
                 if (plugin.getCustomRequirements().isEmpty()) {
                     text.append(ChatColor.DARK_AQUA).append(ChatColor.UNDERLINE)
@@ -1600,7 +1648,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             }
             component.addExtra(line);
             component.addExtra(ChatColor.YELLOW + getQueryText());
-            Bukkit.getEntity(uuid).spigot().sendMessage(component);
+            BukkitMiscUtil.getEntity(uuid).spigot().sendMessage(component);
             return "";
         }
 
@@ -1610,7 +1658,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 CustomRequirement found = null;
                 for (final CustomRequirement cr : plugin.getCustomRequirements()) {
@@ -1637,6 +1685,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                             // Already added, so inform user
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("reqCustomAlreadyAdded"));
                             new QuestCustomRequirementsPrompt(moduleName, uuid).start();
+                            return;
                         }
                     } else {
                         // The custom requirement hasn't been added yet, so let's do it
@@ -1651,10 +1700,12 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     if (!found.getData().isEmpty()) {
                         SessionData.set(uuid, Key.REQ_CUSTOM_DATA_DESCRIPTIONS, found.getDescriptions());
                         new QuestRequirementCustomDataListPrompt(uuid).start();
+                        return;
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("reqCustomNotFound"));
                     new QuestCustomRequirementsPrompt(moduleName, uuid).start();
+                    return;
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_CUSTOM, null);
@@ -1727,9 +1778,11 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     numInput = Integer.parseInt(input);
                 } catch (final NumberFormatException nfe) {
                     new QuestRequirementCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < 1 || numInput > dataMap.size() + 1) {
                     new QuestRequirementCustomDataListPrompt(uuid).start();
+                    return;
                 }
                 if (numInput < dataMap.size() + 1) {
                     final LinkedList<String> dataMapKeys = new LinkedList<>(dataMap.keySet());
@@ -1737,9 +1790,11 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                     final String selectedKey = dataMapKeys.get(numInput - 1);
                     SessionData.set(uuid, Key.REQ_CUSTOM_DATA_TEMP, selectedKey);
                     new QuestRequirementCustomDataPrompt(uuid).start();
+                    return;
                 } else {
                     if (dataMap.containsValue(null)) {
                         new QuestRequirementCustomDataListPrompt(uuid).start();
+                        return;
                     } else {
                         SessionData.set(uuid, Key.REQ_CUSTOM_DATA_DESCRIPTIONS, null);
                     }

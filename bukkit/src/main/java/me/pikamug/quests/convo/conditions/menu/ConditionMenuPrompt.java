@@ -21,6 +21,7 @@ import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpen
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -109,7 +110,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.conditions.create")) {
@@ -119,6 +120,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ConditionMenuPrompt(uuid).start();
             }
+            break;
         case 2:
             if (sender.hasPermission("quests.conditions.edit")) {
                 if (plugin.getLoadedConditions().isEmpty()) {
@@ -132,6 +134,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ConditionMenuPrompt(uuid).start();
             }
+            break;
         case 3:
             if (sender.hasPermission("quests.conditions.delete")) {
                 if (plugin.getLoadedConditions().isEmpty()) {
@@ -145,11 +148,13 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
                 new ConditionMenuPrompt(uuid).start();
             }
+            break;
         case 4:
             sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("exited"));
-            return;
+            break;
         default:
             new ConditionMenuPrompt(uuid).start();
+            break;
         }
     }
     
@@ -180,10 +185,11 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(String input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (input == null) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                 new ConditionSelectCreatePrompt(uuid).start();
+                return;
             }
             input = input.trim();
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
@@ -191,20 +197,24 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                     if (c.getName().equalsIgnoreCase(input)) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("conditionEditorExists"));
                         new ConditionSelectCreatePrompt(uuid).start();
+                        return;
                     }
                 }
                 final List<String> actionNames = plugin.getConditionFactory().getNamesOfConditionsBeingEdited();
                 if (actionNames.contains(input)) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorBeingEdited"));
                     new ConditionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 if (input.contains(".") || input.contains(",")) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("questEditorInvalidQuestName"));
                     new ConditionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 if (input.isEmpty()) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new ConditionSelectCreatePrompt(uuid).start();
+                    return;
                 }
                 SessionData.set(uuid, Key.C_NAME, input);
                 actionNames.add(input);
@@ -247,7 +257,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
@@ -255,6 +265,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                     SessionData.set(uuid, Key.C_NAME, c.getName());
                     plugin.getConditionFactory().loadData(uuid, c);
                     new ConditionMainPrompt(uuid).start();
+                    return;
                 }
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound")
                         .replace("<input>", input));
@@ -296,7 +307,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> used = new LinkedList<>();
                 final Condition c = plugin.getCondition(input);
@@ -323,6 +334,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                                 + BukkitLang.get("eventEditorMustModifyQuests"));
                         new ConditionSelectDeletePrompt(uuid).start();
                     }
+                    return;
                 }
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("conditionEditorNotFound")
                         .replace("<input>", input));
@@ -401,7 +413,6 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord"))) {
                 plugin.getConditionFactory().deleteCondition(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMenuPrompt(uuid).start();
             } else {

@@ -147,10 +147,11 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
             new ActionEffectSoundListPrompt(uuid).start();
+            break;
         case 2:
             if (sender instanceof Player) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
@@ -158,6 +159,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                 if (BukkitMiscUtil.getWorlds().isEmpty()) {
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("unknownError"));
                     new ActionEffectPrompt(uuid).start();
+                    break;
                 }
                 selectedExplosionLocations.put(((Player) sender).getUniqueId(),
                         Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
@@ -167,10 +169,13 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
                 new ActionEffectPrompt(uuid).start();
             }
+            break;
         case 3:
             new ActionMainPrompt(uuid).start();
+            break;
         default:
             new ActionEffectPrompt(uuid).start();
+            break;
         }
     }
     
@@ -273,10 +278,11 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch (input.intValue()) {
             case 1:
                 new ActionEffectSoundPrompt(uuid).start();
+                break;
             case 2:
                 if (SessionData.get(uuid, Key.A_EFFECTS) == null) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorMustAddEffects"));
@@ -288,6 +294,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                         if (BukkitMiscUtil.getWorlds().isEmpty()) {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
                             new ActionEffectSoundListPrompt(uuid).start();
+                            break;
                         }
                         selectedEffectLocations.put(((Player) sender).getUniqueId(),
                                 Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
@@ -298,11 +305,13 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                         new ActionEffectSoundListPrompt(uuid).start();
                     }
                 }
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorEffectsCleared"));
                 SessionData.set(uuid, Key.A_EFFECTS, null);
                 SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, null);
                 new ActionEffectSoundListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -324,8 +333,10 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new ActionEffectSoundListPrompt(uuid).start();
                 }
+                break;
             default:
                 new ActionEffectSoundListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -371,7 +382,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperEffect(input) != null) {
                     final LinkedList<String> effects;
@@ -439,7 +450,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
@@ -457,11 +468,11 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                     }
                     SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locations);
                     selectedEffectLocations.remove(player.getUniqueId());
+                    new ActionEffectSoundListPrompt(uuid).start();
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionEffectSoundLocationPrompt(uuid).start();
                 }
-                new ActionEffectSoundListPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                         = plugin.getActionFactory().getSelectedEffectLocations();
@@ -505,7 +516,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
             if (input == null) {
                 return;
             }
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             final Player player = (Player) sender;
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
@@ -525,11 +536,11 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                     SessionData.set(uuid, Key.A_EXPLOSIONS, locations);
                     selectedExplosionLocations.remove(player.getUniqueId());
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
+                    new ActionMainPrompt(uuid).start();
                 } else {
                     player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionEffectExplosionPrompt(uuid).start();
                 }
-                new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.A_EXPLOSIONS, null);
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations

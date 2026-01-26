@@ -16,6 +16,7 @@ import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -135,7 +136,7 @@ public class BukkitConditionFactory implements ConditionFactory {
     public void deleteCondition(final UUID uuid) {
         final YamlConfiguration data = new YamlConfiguration();
         final File conditionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -177,7 +178,7 @@ public class BukkitConditionFactory implements ConditionFactory {
     public void saveCondition(final UUID uuid) {
         final YamlConfiguration data = new YamlConfiguration();
         final File conditionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "conditions.yml");
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         try {
             data.load(conditionsFile);
         } catch (final IOException | InvalidConfigurationException e) {

@@ -19,6 +19,7 @@ import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpen
 import me.pikamug.quests.events.editor.conditions.BukkitConditionsEditorPostOpenStringPromptEvent;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import org.bukkit.Bukkit;
@@ -172,23 +173,27 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
     @Override
     public void acceptInput(final Number input) {
-        final CommandSender sender = Bukkit.getEntity(uuid);
+        final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch(input.intValue()) {
         case 1:
             new ConditionPermissionsPrompt(uuid).start();
+            break;
         case 2:
             new ConditionItemsInMainHandListPrompt(uuid).start();
+            break;
         case 3:
             new ConditionItemsWearListPrompt(uuid).start();
+            break;
         case 4:
             try {
                 new ConditionMainPrompt(uuid).start();
             } catch (final Exception e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"));
-                return;
             }
+            break;
         default:
             new ConditionPlayerPrompt(uuid).start();
+            break;
         }
     }
     
@@ -341,18 +346,22 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
                 SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, null);
                 new ConditionItemsInMainHandListPrompt(uuid).start();
+                break;
             case 3:
                 new ConditionPlayerPrompt(uuid).start();
+                break;
             default:
                 new ConditionItemsInMainHandListPrompt(uuid).start();
+                break;
             }
         }
     }
@@ -465,18 +474,22 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
 
         @Override
         public void acceptInput(final Number input) {
-            final CommandSender sender = Bukkit.getEntity(uuid);
+            final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
                 case 1:
-                    new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this);
+                    new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this).start();
+                    break;
                 case 2:
                     sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));
                     SessionData.set(uuid, Key.C_WHILE_WEARING, null);
                     new ConditionItemsWearListPrompt(uuid).start();
+                    break;
                 case 3:
                     new ConditionPlayerPrompt(uuid).start();
+                    break;
                 default:
                     new ConditionItemsWearListPrompt(uuid).start();
+                    break;
             }
         }
     }

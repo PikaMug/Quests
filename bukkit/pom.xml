@@ -186,7 +186,7 @@
         <dependency>
             <groupId>com.github.Browsit.ConversationAPI</groupId>
             <artifactId>conversation-bukkit</artifactId>
-            <version>f5e587e641</version>
+            <version>ba4268ee21</version>
         </dependency>
         <dependency>
             <groupId>me.pikamug.quests</groupId>

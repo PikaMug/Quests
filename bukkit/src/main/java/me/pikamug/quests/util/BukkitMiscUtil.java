@@ -10,18 +10,36 @@
 
 package me.pikamug.quests.util;
 
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class BukkitMiscUtil {
+
+    public static Entity getEntity(UUID entityId) {
+        try {
+            // Quick dirty fix, ideally turn this into an interface with some detection method
+            return Bukkit.getEntity(entityId);
+        } catch (final Throwable tr) {
+            for (final World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getUniqueId().equals(entityId)) {
+                        return entity;
+                    }
+                }
+            }
+            return null;
+        }
+    }
     
     /**
      * Gets a human-readable date and time from milliseconds
