@@ -50,7 +50,7 @@ public class BukkitQuestsChoiceCommand extends BukkitQuestsSubCommand {
             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "noPermission"));
             return;
         }
-        if (!player.isConversing()) {
+        if (!Conversations.getConversationOf(player.getUniqueId()).isPresent()) {
             BukkitLang.send(player, ChatColor.RED + BukkitLang.get(player, "notConversing"));
             return;
         }
