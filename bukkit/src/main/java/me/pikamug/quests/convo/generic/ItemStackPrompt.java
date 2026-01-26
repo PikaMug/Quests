@@ -261,7 +261,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
             text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), BukkitQuestsPlugin.getInstance().getQuester(uuid));
     }
 
     @Override

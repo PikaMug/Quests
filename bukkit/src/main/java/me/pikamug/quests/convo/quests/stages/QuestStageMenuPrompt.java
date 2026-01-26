@@ -89,7 +89,7 @@ public class QuestStageMenuPrompt extends QuestsEditorIntegerPrompt {
             text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override

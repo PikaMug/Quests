@@ -12,7 +12,6 @@ package me.pikamug.quests.convo.quests.main;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.generic.ItemStackPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
@@ -259,13 +258,12 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-        System.out.println("Handling input " + input);
         switch (input.intValue()) {
         case 1:
             new QuestNamePrompt(uuid).start();
@@ -800,7 +798,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -882,7 +880,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1020,7 +1018,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

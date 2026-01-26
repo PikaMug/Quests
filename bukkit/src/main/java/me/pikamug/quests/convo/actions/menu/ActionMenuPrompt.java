@@ -104,7 +104,7 @@ public class ActionMenuPrompt extends ActionsEditorIntegerPrompt {
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i).append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override

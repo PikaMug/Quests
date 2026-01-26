@@ -465,7 +465,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     public void acceptInput(final Number input) {
@@ -767,7 +767,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
         
         @SuppressWarnings("unchecked")
@@ -1127,7 +1127,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1429,7 +1429,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
         
         @Override

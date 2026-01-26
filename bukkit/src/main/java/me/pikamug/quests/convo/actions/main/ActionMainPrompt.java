@@ -12,7 +12,6 @@ package me.pikamug.quests.convo.actions.main;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.ActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.tasks.ActionEffectPrompt;
@@ -198,7 +197,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
@@ -407,7 +406,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -538,7 +537,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i))
                         .append(ChatColor.GRAY).append(" ").append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -767,7 +766,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i))
                         .append(ChatColor.GRAY).append(" ").append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1246,7 +1245,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1262,7 +1261,6 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                     new ActionMainPrompt(uuid).start();
                 }
                 plugin.getActionFactory().saveAction(uuid);
-                return;
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ActionMainPrompt(uuid).start();
             } else {
@@ -1328,7 +1326,7 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

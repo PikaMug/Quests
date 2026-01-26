@@ -12,7 +12,6 @@ package me.pikamug.quests.convo.conditions.menu;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.conditions.Condition;
-import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.ConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
@@ -24,7 +23,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +103,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
             text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
@@ -403,7 +401,7 @@ public class ConditionMenuPrompt extends ConditionsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

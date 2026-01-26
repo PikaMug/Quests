@@ -228,7 +228,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
@@ -435,7 +435,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -567,7 +567,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

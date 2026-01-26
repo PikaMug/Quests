@@ -20,7 +20,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -214,7 +213,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
@@ -351,7 +350,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -360,6 +359,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsCraftListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CRAFT_ITEMS, null);
@@ -474,7 +474,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -483,6 +483,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsSmeltListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_SMELT_ITEMS, null);
@@ -597,7 +598,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -720,7 +721,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -729,6 +730,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsBrewListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_BREW_ITEMS, null);
@@ -843,7 +845,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -852,6 +854,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsConsumeListPrompt.this);
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_CONSUME_ITEMS, null);

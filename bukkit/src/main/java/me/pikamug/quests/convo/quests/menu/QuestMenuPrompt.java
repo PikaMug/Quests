@@ -11,7 +11,6 @@
 package me.pikamug.quests.convo.quests.menu;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.QuestsIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.QuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
@@ -22,7 +21,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -102,13 +100,12 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
             text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-        System.out.println("Handling input on menu prompt " + input);
         switch (input.intValue()) {
         case 1:
             if (sender.hasPermission("quests.editor.*") || sender.hasPermission("quests.editor.create")) {
@@ -388,7 +385,7 @@ public class QuestMenuPrompt extends QuestsEditorIntegerPrompt {
                 text.append("\n").append(getNumberColor(i)).append(ChatColor.BOLD).append(i)
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i));
             }
-            return QuestsIntegerPrompt.sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

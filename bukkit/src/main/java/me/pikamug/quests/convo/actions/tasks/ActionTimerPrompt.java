@@ -20,7 +20,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +120,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override

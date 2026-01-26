@@ -27,7 +27,6 @@ import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -386,7 +385,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                     .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                     .append(getAdditionalText(i));
         }
-        return text.toString();
+        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
     }
 
     @Override
@@ -701,7 +700,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
         
         @Override
@@ -964,7 +963,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1214,7 +1213,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
@@ -1484,7 +1483,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                         .append(ChatColor.RESET).append(" - ").append(getSelectionText(i)).append(" ")
                         .append(getAdditionalText(i));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
