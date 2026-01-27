@@ -10,24 +10,27 @@
 
 package me.pikamug.quests.util;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionData {
-    public static Map<UUID, Map<Object, Object>> data = new ConcurrentHashMap<>();
+    public static Map<UUID, Map<Object, Object>> data = new HashMap<>();
 
-    // FIXME: Memory leak waiting to happen. Please add a remove method and call it sometime
-    public static Object get(UUID uuid, Object key) {
-        Map<Object, Object> map = data.get(uuid);
+    public static Object get(final UUID uuid, final Object key) {
+        final Map<Object, Object> map = data.get(uuid);
         if (map == null) {
             return null;
         }
         return map.get(key);
     }
 
-    public static void set(UUID uuid, Object key, Object value) {
-        Map<Object, Object> map = data.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>());
+    public static void set(final UUID uuid, final Object key, final Object value) {
+        final Map<Object, Object> map = data.computeIfAbsent(uuid, k -> new HashMap<>());
         map.put(key, value);
+    }
+
+    public static void remove(final UUID uuid) {
+        data.remove(uuid);
     }
 }

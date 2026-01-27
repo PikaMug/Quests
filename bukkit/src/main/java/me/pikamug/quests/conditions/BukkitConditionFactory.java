@@ -19,7 +19,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -116,21 +115,7 @@ public class BukkitConditionFactory implements ConditionFactory {
     }
 
     public void clearData(final UUID uuid) {
-        SessionData.set(uuid, Key.C_OLD_CONDITION, null);
-        SessionData.set(uuid, Key.C_NAME, null);
-        SessionData.set(uuid, Key.C_FAIL_QUEST, null);
-        SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, null);
-        SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, null);
-        SessionData.set(uuid, Key.C_WHILE_PERMISSION, null);
-        SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, null);
-        SessionData.set(uuid, Key.C_WHILE_WEARING, null);
-        SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, null);
-        SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, null);
-        SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, null);
-        SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, null);
-        SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, null);
-        SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, null);
-        SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, null);
+        SessionData.remove(uuid);
     }
 
     public void deleteCondition(final UUID uuid) {

@@ -22,7 +22,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -48,7 +47,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BukkitActionFactory implements ActionFactory/*, ConversationAbandonedListener*/ {
 
     private final BukkitQuestsPlugin plugin;
-    //private final ConversationFactory conversationFactory;
     private ConcurrentHashMap<UUID, Block> selectedExplosionLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedEffectLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedMobLocations = new ConcurrentHashMap<>();
@@ -58,22 +56,7 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
 
     public BukkitActionFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
-        // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
-        /*this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new ActionMenuPrompt(new ConversationContext(plugin, new BukkitFakeConversable() {
-                    @Override
-                    public void sendRawMessage(@Nullable final UUID uuid, @NotNull final String s) {
-                    }
-                }, new HashMap<>()))).withTimeout(3600)
-                .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);*/
     }
-    
-    /*public static class LineBreakPrefix implements ConversationPrefix {
-        @Override
-        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
-            return "\n";
-        }
-    }*/
     
     public ConcurrentHashMap<UUID, Block> getSelectedExplosionLocations() {
         return selectedExplosionLocations;
@@ -234,32 +217,7 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     }
 
     public void clearData(final UUID uuid) {
-        SessionData.set(uuid, Key.A_OLD_ACTION, null);
-        SessionData.set(uuid, Key.A_NAME, null);
-        SessionData.set(uuid, Key.A_MESSAGE, null);
-        SessionData.set(uuid, Key.A_CLEAR_INVENTORY, null);
-        SessionData.set(uuid, Key.A_FAIL_QUEST, null);
-        SessionData.set(uuid, Key.A_ITEMS, null);
-        SessionData.set(uuid, Key.A_ITEMS_AMOUNTS, null);
-        SessionData.set(uuid, Key.A_EXPLOSIONS, null);
-        SessionData.set(uuid, Key.A_EFFECTS, null);
-        SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, null);
-        SessionData.set(uuid, Key.A_WORLD_STORM, null);
-        SessionData.set(uuid, Key.A_WORLD_STORM_DURATION, null);
-        SessionData.set(uuid, Key.A_WORLD_THUNDER, null);
-        SessionData.set(uuid, Key.A_WORLD_THUNDER_DURATION, null);
-        SessionData.set(uuid, Key.A_MOBS, null);
-        SessionData.set(uuid, Key.A_LIGHTNING, null);
-        SessionData.set(uuid, Key.A_POTION_TYPES, null);
-        SessionData.set(uuid, Key.A_POTION_DURATIONS, null);
-        SessionData.set(uuid, Key.A_POTION_STRENGTH, null);
-        SessionData.set(uuid, Key.A_HUNGER, null);
-        SessionData.set(uuid, Key.A_SATURATION, null);
-        SessionData.set(uuid, Key.A_HEALTH, null);
-        SessionData.set(uuid, Key.A_TELEPORT, null);
-        SessionData.set(uuid, Key.A_COMMANDS, null);
-        SessionData.set(uuid, Key.A_TIMER, null);
-        SessionData.set(uuid, Key.A_CANCEL_TIMER, null);
+        SessionData.remove(uuid);
     }
 
     public void deleteAction(final UUID uuid) {

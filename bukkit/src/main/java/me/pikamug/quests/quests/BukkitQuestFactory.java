@@ -27,7 +27,6 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import me.pikamug.quests.util.stack.BlockItemStack;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -55,7 +54,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandonedListener*/ {
 
     private final BukkitQuestsPlugin plugin;
-    //private final ConversationFactory conversationFactory;
     private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
@@ -64,22 +62,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
 
     public BukkitQuestFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
-        // Ensure to initialize factory last so that 'this' is fully initialized before it is passed
-        /*this.conversationFactory = new ConversationFactory(plugin).withModality(false).withLocalEcho(false)
-                .withFirstPrompt(new QuestMenuPrompt(new ConversationContext(plugin, new BukkitFakeConversable() {
-                    @Override
-                    public void sendRawMessage(@Nullable final UUID uuid, @NotNull final String s) {
-                    }
-                }, new HashMap<>()))).withTimeout(3600)
-                .withPrefix(new LineBreakPrefix()).addConversationAbandonedListener(this);*/
     }
-
-    /*public static class LineBreakPrefix implements ConversationPrefix {
-        @Override
-        public @NotNull String getPrefix(final @NotNull ConversationContext context) {
-            return "\n";
-        }
-    }*/
 
     public ConcurrentHashMap<UUID, Block> getSelectedBlockStarts() {
         return selectedBlockStarts;
@@ -535,6 +518,10 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
         }
     }
 
+    public void clearData(final UUID uuid) {
+        SessionData.remove(uuid);
+    }
+
     public void deleteQuest(final UUID uuid) {
         final FileConfiguration data = new YamlConfiguration();
         final File questsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
@@ -624,6 +611,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
             final String identifier =  BukkitMiscUtil.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + SessionData.get(uuid, Key.Q_NAME));
         }
+        SessionData.remove(uuid);
     }
 
     @SuppressWarnings("unchecked")
