@@ -545,11 +545,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             break;
         case 15:
             if (hasObjective) {
-                new OverridePrompt.Builder()
-                        .source(this)
-                        .promptText(BukkitLang.get("overrideCreateEnter"))
-                        .build()
-                        .start();
+                new OverridePrompt(uuid, this, BukkitLang.get("overrideCreateEnter")).start();
             } else {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestStageMainPrompt(stageNum, uuid).start();

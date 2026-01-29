@@ -115,7 +115,7 @@ public class BukkitConditionFactory implements ConditionFactory {
     }
 
     public void clearData(final UUID uuid) {
-        SessionData.remove(uuid);
+        SessionData.clear(uuid);
     }
 
     public void deleteCondition(final UUID uuid) {

@@ -51,7 +51,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandonedListener*/ {
+public class BukkitQuestFactory implements QuestFactory {
 
     private final BukkitQuestsPlugin plugin;
     private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
@@ -103,23 +103,6 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
     public void setNamesOfQuestsBeingEdited(final List<String> questNames) {
         this.editingQuestNames = questNames;
     }
-
-    /*public ConversationFactory getConversationFactory() {
-        return conversationFactory;
-    }*/
-
-    /*@Override
-    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
-        if (abandonedEvent.getContext().getSessionData(Key.Q_NAME) != null) {
-            editingQuestNames.remove((String) abandonedEvent.getContext().getSessionData(Key.Q_NAME));
-        }
-        if (abandonedEvent.getContext().getForWhom() instanceof Player) {
-            final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
-            selectedBlockStarts.remove(uuid);
-            selectedKillLocations.remove(uuid);
-            selectedReachLocations.remove(uuid);
-        }
-    }*/
 
     public void returnToMenu(final UUID uuid) {
         new QuestMainPrompt(uuid).start();
@@ -519,7 +502,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
     }
 
     public void clearData(final UUID uuid) {
-        SessionData.remove(uuid);
+        SessionData.clear(uuid);
     }
 
     public void deleteQuest(final UUID uuid) {
@@ -611,7 +594,7 @@ public class BukkitQuestFactory implements QuestFactory/*, ConversationAbandoned
             final String identifier =  BukkitMiscUtil.getEntity(uuid) instanceof Player ? "Player " + uuid : "CONSOLE";
             plugin.getLogger().info(identifier + " saved quest " + SessionData.get(uuid, Key.Q_NAME));
         }
-        SessionData.remove(uuid);
+        SessionData.clear(uuid);
     }
 
     @SuppressWarnings("unchecked")

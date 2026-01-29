@@ -30,7 +30,7 @@ public class SessionData {
         map.put(key, value);
     }
 
-    public static void remove(final UUID uuid) {
+    public static void clear(final UUID uuid) {
         data.remove(uuid);
     }
 }

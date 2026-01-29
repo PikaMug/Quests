@@ -358,7 +358,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestItemsCraftListPrompt.this);
+                new ItemStackPrompt(uuid, QuestItemsCraftListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
@@ -482,7 +482,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestItemsSmeltListPrompt.this);
+                new ItemStackPrompt(uuid, QuestItemsSmeltListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
@@ -606,7 +606,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestItemsEnchantListPrompt.this);
+                new ItemStackPrompt(uuid, QuestItemsEnchantListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
@@ -729,7 +729,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestItemsBrewListPrompt.this);
+                new ItemStackPrompt(uuid, QuestItemsBrewListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
@@ -853,7 +853,7 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestItemsConsumeListPrompt.this);
+                new ItemStackPrompt(uuid, QuestItemsConsumeListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));

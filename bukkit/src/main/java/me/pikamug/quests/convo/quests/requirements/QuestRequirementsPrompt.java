@@ -391,10 +391,10 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             new QuestRequirementsPermissionsPrompt(uuid).start();
             break;
         case 6:
-            new QuestRequirementsQuestListPrompt(uuid, true);
+            new QuestRequirementsQuestListPrompt(uuid, true).start();
             break;
         case 7:
-            new QuestRequirementsQuestListPrompt(uuid, false);
+            new QuestRequirementsQuestListPrompt(uuid, false).start();
             break;
         case 8:
             if (plugin.getDependencies().getMcmmoClassic() != null) {
@@ -415,11 +415,7 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
             break;
         case 11:
             if (hasRequirement) {
-                new OverridePrompt.Builder()
-                        .sender(uuid)
-                        .source(this)
-                        .promptText(BukkitLang.get("overrideCreateEnter"))
-                        .build();
+                new OverridePrompt(uuid, this, BukkitLang.get("overrideCreateEnter")).start();
             } else {
                 BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestRequirementsPrompt(uuid).start();
@@ -949,11 +945,11 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
                         String text = BukkitLang.get("reqNotAQuestName");
                         text = text.replace("<quest>", s);
                         sender.sendMessage(text);
-                        new QuestRequirementsQuestListPrompt(uuid, isRequiredQuest);
+                        new QuestRequirementsQuestListPrompt(uuid, isRequiredQuest).start();
                     }
                     if (questIds.contains(plugin.getQuest(s).getId())) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("listDuplicate"));
-                        new QuestRequirementsQuestListPrompt(uuid, isRequiredQuest);
+                        new QuestRequirementsQuestListPrompt(uuid, isRequiredQuest).start();
                     }
                     questIds.add(plugin.getQuest(s).getId());
                 }

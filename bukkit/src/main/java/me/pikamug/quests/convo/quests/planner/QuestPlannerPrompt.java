@@ -179,10 +179,10 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
         switch (input.intValue()) {
         case 1:
-            new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start");
+            new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start").start();
             break;
         case 2:
-            new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "end");
+            new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "end").start();
             break;
         case 3:
             if (SessionData.get(uuid, Key.PLN_START_DATE) != null && SessionData.get(uuid, Key.PLN_END_DATE) != null) {

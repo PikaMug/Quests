@@ -348,7 +348,7 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this);
+                new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this).start();
                 break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("conditionEditorConditionCleared"));

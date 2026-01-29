@@ -17,7 +17,6 @@ import me.pikamug.quests.events.editor.quests.BukkitQuestsEditorPostOpenStringPr
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.SessionData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -77,30 +76,5 @@ public class OverridePrompt extends QuestsEditorStringPrompt {
             SessionData.set(uuid, classPrefix + "-override", input);
         }
         oldPrompt.start();
-    }
-    
-    public static class Builder {
-        private @NotNull UUID uuid;
-        private QuestsIntegerPrompt oldPrompt;
-        private String promptText = "Enter input";
-        
-        public Builder sender(final UUID uuid) {
-            this.uuid = uuid;
-            return this;
-        }
-        
-        public Builder source(final QuestsIntegerPrompt prompt) {
-            this.oldPrompt = prompt;
-            return this;
-        }
-
-        public Builder promptText(final String text) {
-            this.promptText = text;
-            return this;
-        }
-        
-        public OverridePrompt build() {
-            return new OverridePrompt(uuid, oldPrompt, promptText);
-        }
     }
 }

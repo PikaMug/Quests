@@ -375,7 +375,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
             switch(input.intValue()) {
             case 1:
-                new ItemStackPrompt(uuid, QuestNpcsDeliveryListPrompt.this);
+                new ItemStackPrompt(uuid, QuestNpcsDeliveryListPrompt.this).start();
                 break;
             case 2:
                 new QuestNpcDeliveryNpcsPrompt(uuid).start();

@@ -14,6 +14,7 @@ import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
 import me.pikamug.quests.convo.actions.menu.ActionMenuPrompt;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.SessionData;
 import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -69,6 +70,7 @@ public class BukkitQuestsActionsCommand extends BukkitQuestsSubCommand {
                     cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "duplicateEditor"));
                     return;
                 }
+                SessionData.clear(uuid);
                 new ActionMenuPrompt(uuid).start();
             }
             // TODO - determine how to run from console

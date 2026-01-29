@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BukkitActionFactory implements ActionFactory/*, ConversationAbandonedListener*/ {
+public class BukkitActionFactory implements ActionFactory {
 
     private final BukkitQuestsPlugin plugin;
     private ConcurrentHashMap<UUID, Block> selectedExplosionLocations = new ConcurrentHashMap<>();
@@ -97,10 +97,6 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     public void setSelectedTeleportLocations(final ConcurrentHashMap<UUID, Block> selectedTeleportLocations) {
         this.selectedTeleportLocations = selectedTeleportLocations;
     }
-
-    /*public ConversationFactory getConversationFactory() {
-        return conversationFactory;
-    }*/
     
     public List<String> getNamesOfActionsBeingEdited() {
         return editingActionNames;
@@ -109,18 +105,6 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     public void setNamesOfActionsBeingEdited(final List<String> actionNames) {
         this.editingActionNames = actionNames;
     }
-
-    /*@Override
-    public void conversationAbandoned(final ConversationAbandonedEvent abandonedEvent) {
-        if (abandonedEvent.getContext().getForWhom() instanceof Player) {
-            final UUID uuid = ((Player) abandonedEvent.getContext().getForWhom()).getUniqueId();
-            selectedExplosionLocations.remove(uuid);
-            selectedEffectLocations.remove(uuid);
-            selectedMobLocations.remove(uuid);
-            selectedLightningLocations.remove(uuid);
-            selectedTeleportLocations.remove(uuid);
-        }
-    }*/
     
     public void returnToMenu(final UUID uuid) {
         new ActionMainPrompt(uuid).start();
@@ -217,7 +201,7 @@ public class BukkitActionFactory implements ActionFactory/*, ConversationAbandon
     }
 
     public void clearData(final UUID uuid) {
-        SessionData.remove(uuid);
+        SessionData.clear(uuid);
     }
 
     public void deleteAction(final UUID uuid) {

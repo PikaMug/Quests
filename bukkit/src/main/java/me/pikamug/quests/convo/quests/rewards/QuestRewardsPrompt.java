@@ -446,11 +446,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
             break;
         case 11:
             if (hasReward) {
-                new OverridePrompt.Builder()
-                        .source(this)
-                        .promptText(BukkitLang.get("overrideCreateEnter"))
-                        .build()
-                        .start();
+                new OverridePrompt(uuid, this, BukkitLang.get("overrideCreateEnter")).start();
             } else {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidOption"));
                 new QuestRewardsPrompt(uuid).start();

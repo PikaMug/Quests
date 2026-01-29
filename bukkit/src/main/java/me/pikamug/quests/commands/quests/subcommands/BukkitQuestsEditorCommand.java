@@ -16,6 +16,7 @@ import me.pikamug.quests.convo.quests.menu.QuestMenuPrompt;
 import me.pikamug.quests.events.command.BukkitQuestsCommandPreEditorEvent;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.SessionData;
 import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -77,6 +78,7 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
                 if (event.isCancelled()) {
                     return;
                 }
+                SessionData.clear(uuid);
                 new QuestMenuPrompt(uuid).start();
             }
         } else {
