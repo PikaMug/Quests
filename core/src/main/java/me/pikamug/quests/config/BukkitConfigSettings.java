@@ -29,7 +29,7 @@ public class BukkitConfigSettings implements ConfigSettings {
     private boolean confirmAbandon = true;
     private boolean confirmAccept = true;
     private int consoleLogging = 1;
-    private boolean disableCommandFeedback = true;
+    private boolean disableCommandFeedback = false;
     private boolean genFilesOnJoin = true;
     private boolean giveJournalItem = false;
     private boolean ignoreLockedQuests = false;

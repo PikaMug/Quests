@@ -22,7 +22,13 @@ import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.interfaces.ReloadCallback;
-import me.pikamug.quests.listeners.*;
+import me.pikamug.quests.listeners.BukkitBlockListener;
+import me.pikamug.quests.listeners.BukkitCommandManager;
+import me.pikamug.quests.listeners.BukkitConvoListener;
+import me.pikamug.quests.listeners.BukkitItemListener;
+import me.pikamug.quests.listeners.BukkitPartiesListener;
+import me.pikamug.quests.listeners.BukkitPlayerListener;
+import me.pikamug.quests.listeners.BukkitUniteListener;
 import me.pikamug.quests.logging.BukkitQuestsLog4JFilter;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -49,6 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.conversations.Conversable;
@@ -58,9 +65,18 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -615,7 +631,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             customLoader.init();
             questLoader.importQuests();
             if (getConfigSettings().canDisableCommandFeedback()) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
+                try {
+                    // Since 1.21.11
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule minecraft:send_command_feedback false");
+                } catch (final CommandException e) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
+                }
             }
             getServer().getScheduler().runTaskAsynchronously(this, () -> {
                 try {
