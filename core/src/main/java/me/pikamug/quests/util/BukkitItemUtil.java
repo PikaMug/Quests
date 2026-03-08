@@ -151,6 +151,11 @@ public class BukkitItemUtil {
                         final PotionMeta pMeta2 = (PotionMeta) two.getItemMeta();
                         // Base potion data can return null on newer versions (likely 1.20.6+)
                         if (pMeta1.getBasePotionData() != null && pMeta2.getBasePotionData() != null) {
+                            if (pMeta1.getAttributeModifiers() != null && pMeta2.getAttributeModifiers() != null) {
+                                // First, remove ID modifiers
+                                pMeta1.setAttributeModifiers(null);
+                                pMeta2.setAttributeModifiers(null);
+                            }
                             if (!pMeta1.getBasePotionData().getType().equals(pMeta2.getBasePotionData().getType())) {
                                 return -9;
                             }
