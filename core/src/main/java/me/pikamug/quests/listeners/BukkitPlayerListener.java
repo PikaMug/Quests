@@ -41,6 +41,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -653,6 +654,29 @@ public class BukkitPlayerListener implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
+        if (!(event.getRemover() instanceof Player)) {
+            return;
+        }
+        if (event.getEntity().getType().name().equals("PAINTING")
+                || event.getEntity().getType().name().contains("ITEM_FRAME")) {
+            preKillMob(event.getRemover(), event.getEntity());
+        }
+    }
+
+    // TODO - issue #2402
+    /*@EventHandler
+    public void onHangingPlaceByEntityEvent(final HangingPlaceEvent event) {
+        if (event.getPlayer() == null) {
+            return;
+        }
+        if (event.getEntity().getType().name().equals("PAINTING")
+                || event.getEntity().getType().name().contains("ITEM_FRAME")) {
+            preSpawnMob(event.getPlayer(), event.getEntity());
+        }
+    }*/
 
     @EventHandler
     public void onEntityDeath(final EntityDeathEvent event) {
