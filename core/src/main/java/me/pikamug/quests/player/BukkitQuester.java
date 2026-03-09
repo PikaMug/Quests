@@ -1470,11 +1470,7 @@ public class BukkitQuester implements Quester {
                 message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal);
             } else {
                 if (stage.getLocationsToKillWithin().isEmpty()) {
-                    if (e.name().equalsIgnoreCase("PAINTING") || e.name().toUpperCase().contains("ITEM_FRAME")) {
-                        message += BukkitLang.get(getPlayer(), "break");
-                    } else {
-                        message += BukkitLang.get(getPlayer(), "kill");
-                    }
+                    message += BukkitLang.get(getPlayer(), "kill");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + progress + "/" + goal);
                     }
@@ -1491,7 +1487,6 @@ public class BukkitQuester implements Quester {
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
             }
-            message = message.replace("<item>", BukkitMiscUtil.snakeCaseToUpperCamelCase(e.name()));
             if (formatNames) {
                 message = message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(e.name()));
             }
@@ -3557,22 +3552,13 @@ public class BukkitQuester implements Quester {
             final String message = formatCompletedObjectiveMessage("catchFish", goal.getAmount());
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_MOB)) {
-            String message;
-            if (mob.name().equalsIgnoreCase("PAINTING") || mob.name().toUpperCase().contains("ITEM_FRAME")) {
-                message = formatCompletedObjectiveMessage("break", goal.getAmount());
-            } else {
-                message = formatCompletedObjectiveMessage("kill", goal.getAmount());
-            }
+            final String message = formatCompletedObjectiveMessage("kill", goal.getAmount());
             if (plugin.getConfigSettings().canTranslateNames()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message, mob, extra)) {
-                    message = message.replace("<item>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name()));
-                    message = message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name()));
-                    sendMessage(message);
+                    sendMessage(message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name())));
                 }
             } else {
-                message = message.replace("<item>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name()));
-                message = message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name()));
-                sendMessage(message);
+                sendMessage(message.replace("<mob>", BukkitMiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }
         } else if (type.equals(ObjectiveType.KILL_PLAYER)) {
             final String message = formatCompletedObjectiveMessage("killPlayer", goal.getAmount());
