@@ -204,11 +204,14 @@ public class BukkitConfigUtil {
         parsed = parsed.replace("<random>", ChatColor.MAGIC.toString());
         parsed = parsed.replace("<italic>", ChatColor.ITALIC.toString());
         parsed = parsed.replace("<i>", ChatColor.ITALIC.toString());
+        parsed = parsed.replace("<em>", ChatColor.ITALIC.toString());
         parsed = parsed.replace("<bold>", ChatColor.BOLD.toString());
         parsed = parsed.replace("<b>", ChatColor.BOLD.toString());
         parsed = parsed.replace("<underline>", ChatColor.UNDERLINE.toString());
         parsed = parsed.replace("<u>", ChatColor.UNDERLINE.toString());
         parsed = parsed.replace("<strike>", ChatColor.STRIKETHROUGH.toString());
+        parsed = parsed.replace("<st>", ChatColor.STRIKETHROUGH.toString());
+        parsed = parsed.replace("<obf>", ChatColor.MAGIC.toString());
         parsed = parsed.replace("<reset>", ChatColor.RESET.toString());
         parsed = parsed.replace("<br>", "\n");
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
