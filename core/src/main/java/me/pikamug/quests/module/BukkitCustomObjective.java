@@ -247,8 +247,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                     plugin.getServer().getPluginManager().callEvent(preEvent);
 
                     if (progress >= goal) {
-                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
-                                BlockItemStack.of(Material.AIR, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
+                        quester.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.DIRT, 1, (short) 0),
+                                BlockItemStack.of(Material.DIRT, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
 
                         // Multiplayer
                         final int finalIndex = index;
@@ -256,8 +256,8 @@ public class BukkitCustomObjective implements CustomObjective, Listener {
                             final BukkitQuestProgress qBukkitQuestProgress = (BukkitQuestProgress) q.getQuestProgressOrDefault(bukkitQuest);
                             final int old = qBukkitQuestProgress.customObjectiveCounts.get(finalIndex);
                             qBukkitQuestProgress.customObjectiveCounts.set(finalIndex, old + count);
-                            q.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.AIR, 1, (short) 0),
-                                    BlockItemStack.of(Material.AIR, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
+                            q.finishObjective(bukkitQuest, new BukkitObjective(type, null, BlockItemStack.of(Material.DIRT, 1, (short) 0),
+                                    BlockItemStack.of(Material.DIRT, goal, (short) 0)), null, null, null, null, null, null, bukkitCustomObj);
                             return null;
                         });
                     }
