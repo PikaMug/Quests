@@ -123,6 +123,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // 1 - Trigger server to initialize Legacy Material Support
         try {
+            getLogger().info("Attempting to initialize Legacy Material Support. Ignore any warning(s) that follow.");
             Material.matchMaterial("STONE", true);
         } catch (final NoSuchMethodError ignored) {
         }
