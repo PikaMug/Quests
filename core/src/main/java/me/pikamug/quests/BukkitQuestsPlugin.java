@@ -21,6 +21,7 @@ import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
 import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
+import me.pikamug.quests.events.plugin.QuestsPluginPostReloadEvent;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.listeners.BukkitBlockListener;
 import me.pikamug.quests.listeners.BukkitCommandManager;
@@ -726,6 +727,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getServer().getScheduler().runTask(BukkitQuestsPlugin.this, () -> {
                 loading = false;
                 callback.execute(result);
+                
+                final QuestsPluginPostReloadEvent event = new QuestsPluginPostReloadEvent(result, exception);
+                getServer().getPluginManager().callEvent(event);
             });
         }
     }
