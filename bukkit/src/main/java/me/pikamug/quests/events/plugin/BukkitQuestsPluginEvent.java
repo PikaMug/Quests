@@ -5,15 +5,15 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a Quests Plugin-related event
+ * Represents a Quests plugin-related event
  */
-public abstract class QuestsPluginEvent extends QuestsEvent {
+public abstract class BukkitQuestsPluginEvent extends QuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public QuestsPluginEvent() {
+    public BukkitQuestsPluginEvent() {
     }
 
-    public QuestsPluginEvent(final boolean async) {
+    public BukkitQuestsPluginEvent(final boolean async) {
         super(async);
     }
 

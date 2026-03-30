@@ -4,12 +4,12 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class QuestsPluginPostReloadEvent extends QuestsPluginEvent {
+public class BukkitQuestsPluginPostReloadEvent extends BukkitQuestsPluginEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final boolean success;
     private final @Nullable Exception exception;
 
-    public QuestsPluginPostReloadEvent(final boolean success, final @Nullable Exception exception) {
+    public BukkitQuestsPluginPostReloadEvent(final boolean success, final @Nullable Exception exception) {
         this.success = success;
         this.exception = exception;
     }
