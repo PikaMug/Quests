@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
 
@@ -448,7 +448,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
-                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -500,7 +500,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 SessionData.set(uuid, pref + Key.S_DELIVERY_MESSAGES, messages);
             }
             if (sender instanceof Player) {
-                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) sender).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
@@ -571,7 +571,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
-                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -613,7 +613,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 SessionData.set(uuid, pref + Key.S_NPCS_TO_TALK_TO, null);
             }
             if (sender instanceof Player) {
-                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) sender).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
@@ -796,7 +796,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
 
             if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
-                final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -847,7 +847,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 }
                 SessionData.set(uuid, pref + Key.S_NPCS_TO_KILL_AMOUNTS, amounts);
             }
-            final ConcurrentSkipListSet<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+            final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
             selectingNpcs.remove(((Player) sender).getUniqueId());
             plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             new QuestNpcsKillListPrompt(uuid).start();

@@ -46,7 +46,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 public class BukkitQuest implements Quest {
@@ -715,7 +714,7 @@ public class BukkitQuest implements Quest {
             return;
         }
         quester.hardQuit(this);
-        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
+        final Set<Quest> completedQuests = quester.getCompletedQuests();
         completedQuests.add(this);
         quester.setCompletedQuests(completedQuests);
         for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {

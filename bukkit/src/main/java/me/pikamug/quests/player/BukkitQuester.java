@@ -75,10 +75,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,7 +90,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -134,44 +135,49 @@ public class BukkitQuester implements Quester {
             updateJournal();
         }
     };
-    protected ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<Quest>() {
-
-        private static final long serialVersionUID = -269110128568487000L;
-
+    private Set<Quest> completedQuests = new CompletedQuestSet();
+    private class CompletedQuestSet extends AbstractSet<Quest> {
+        private final Set<Quest> delegate = ConcurrentHashMap.newKeySet();
         @Override
         public boolean add(final Quest e) {
-            final boolean b = super.add(e);
-            updateJournal();
-            return b;
+            final boolean changed = delegate.add(e);
+            if (changed) updateJournal();
+            return changed;
         }
-
         @Override
-        public boolean addAll(final @NotNull Collection<? extends Quest> c) {
-            final boolean b = super.addAll(c);
-            updateJournal();
-            return b;
+        public boolean addAll(final Collection<? extends Quest> c) {
+            final boolean changed = delegate.addAll(c);
+            if (changed) updateJournal();
+            return changed;
         }
-
         @Override
         public void clear() {
-            super.clear();
-            updateJournal();
+            if (!delegate.isEmpty()) {
+                delegate.clear();
+                updateJournal();
+            }
         }
-
         @Override
         public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            updateJournal();
-            return b;
+            final boolean changed = delegate.remove(o);
+            if (changed) updateJournal();
+            return changed;
         }
-
         @Override
         public boolean removeAll(final Collection<?> c) {
-            final boolean b = super.removeAll(c);
-            updateJournal();
-            return b;
+            final boolean changed = delegate.removeAll(c);
+            if (changed) updateJournal();
+            return changed;
         }
-    };
+        @Override
+        public Iterator<Quest> iterator() {
+            return delegate.iterator();
+        }
+        @Override
+        public int size() {
+            return delegate.size();
+        }
+    }
     protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
 
@@ -360,8 +366,8 @@ public class BukkitQuester implements Quester {
         this.currentQuests = currentQuests;
     }
 
-    public ConcurrentSkipListSet<Quest> getCompletedQuests() {
-        final ConcurrentSkipListSet<Quest> set = new ConcurrentSkipListSet<>();
+    public Set<Quest> getCompletedQuests() {
+        final Set<Quest> set = ConcurrentHashMap.newKeySet();
         for (final Quest iq : completedQuests) {
             final BukkitQuest q = (BukkitQuest) iq;
             set.add(q);
@@ -370,8 +376,10 @@ public class BukkitQuester implements Quester {
     }
 
     @Override
-    public void setCompletedQuests(final ConcurrentSkipListSet<Quest> completedQuests) {
-        this.completedQuests = completedQuests;
+    public void setCompletedQuests(final Collection<Quest> completedQuests) {
+        final Set<Quest> newCompletedQuests = ConcurrentHashMap.newKeySet();
+        newCompletedQuests.addAll(completedQuests);
+        this.completedQuests = newCompletedQuests;
     }
 
     @Override

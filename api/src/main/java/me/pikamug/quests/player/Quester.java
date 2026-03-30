@@ -16,12 +16,12 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Stage;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -72,9 +72,9 @@ public interface Quester extends Comparable<Quester> {
 
     void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests);
 
-    ConcurrentSkipListSet<Quest> getCompletedQuests();
+    Set<Quest> getCompletedQuests();
 
-    void setCompletedQuests(final ConcurrentSkipListSet<Quest> completedQuests);
+    void setCompletedQuests(final Collection<Quest> completedQuests);
 
     ConcurrentHashMap<Quest, Long> getCompletedTimes();
 

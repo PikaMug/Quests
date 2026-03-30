@@ -25,12 +25,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     private final BukkitQuestsPlugin plugin;
@@ -112,7 +111,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final ConcurrentSkipListSet<Quest> completedQuests = quester.getCompletedQuests();
+        final Set<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getLoadedQuests()) {
@@ -296,8 +295,8 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     }
     
     @Override
-    public Collection<UUID> getSavedUniqueIds() {
-        final Collection<UUID> ids = new ConcurrentSkipListSet<>();
+    public Set<UUID> getSavedUniqueIds() {
+        final Set<UUID> ids = ConcurrentHashMap.newKeySet();
         final File folder = new File(directoryPath);
         if (!folder.exists()) {
             return ids;

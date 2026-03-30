@@ -16,11 +16,13 @@ import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class QuesterStorage {
     private final Quests plugin;
@@ -98,8 +100,8 @@ public class QuesterStorage {
         });
     }
 
-    public CompletableFuture<Collection<Quester>> loadOfflineQuesters() {
-        final Collection<Quester> questers = new ConcurrentSkipListSet<>();
+    public CompletableFuture<Set<Quester>> loadOfflineQuesters() {
+        final Set<Quester> questers = ConcurrentHashMap.newKeySet();
         try {
             for (final UUID uniqueId : implementation.getSavedUniqueIds()) {
                 questers.add(implementation.loadQuester(uniqueId));

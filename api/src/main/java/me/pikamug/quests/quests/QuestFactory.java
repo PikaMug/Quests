@@ -10,19 +10,20 @@
 
 package me.pikamug.quests.quests;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public interface QuestFactory {
 
-    ConcurrentSkipListSet<UUID> getSelectingNpcs();
+    Set<UUID> getSelectingNpcs();
 
-    void setSelectingNpcs(final ConcurrentSkipListSet<UUID> selectingNpcs);
+    void setSelectingNpcs(final Collection<UUID> selectingNpcs);
 
     List<String> getNamesOfQuestsBeingEdited();
 
-    void setNamesOfQuestsBeingEdited(final List<String> questNames);
+    void setNamesOfQuestsBeingEdited(final Collection<String> questNames);
 
     void returnToMenu(final UUID uuid);
 

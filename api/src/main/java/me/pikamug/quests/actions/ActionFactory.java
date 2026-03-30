@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.actions;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface ActionFactory {
 
     List<String> getNamesOfActionsBeingEdited();
 
-    void setNamesOfActionsBeingEdited(final List<String> actionNames);
+    void setNamesOfActionsBeingEdited(final Collection<String> actionNames);
 
     void returnToMenu(final UUID uuid);
 

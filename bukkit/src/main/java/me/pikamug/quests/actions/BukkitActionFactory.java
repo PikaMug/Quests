@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -102,8 +103,8 @@ public class BukkitActionFactory implements ActionFactory {
         return editingActionNames;
     }
     
-    public void setNamesOfActionsBeingEdited(final List<String> actionNames) {
-        this.editingActionNames = actionNames;
+    public void setNamesOfActionsBeingEdited(final Collection<String> actionNames) {
+        this.editingActionNames = new LinkedList<>(actionNames);
     }
     
     public void returnToMenu(final UUID uuid) {
@@ -271,7 +272,7 @@ public class BukkitActionFactory implements ActionFactory {
         if (SessionData.get(uuid, Key.A_OLD_ACTION) != null
                 && !((String) Objects.requireNonNull(SessionData.get(uuid, Key.A_OLD_ACTION))).isEmpty()) {
             data.set(key + "." + SessionData.get(uuid, Key.A_OLD_ACTION), null);
-            final Collection<Action> temp = plugin.getLoadedActions();
+            final Set<Action> temp = plugin.getLoadedActions();
             temp.remove(plugin.getAction((String) SessionData.get(uuid, Key.A_OLD_ACTION)));
             plugin.setLoadedActions(temp);
         }

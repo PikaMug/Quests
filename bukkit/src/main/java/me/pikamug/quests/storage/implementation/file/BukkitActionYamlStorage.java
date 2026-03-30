@@ -25,11 +25,11 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class BukkitActionYamlStorage implements ActionStorageImpl {
@@ -97,7 +97,7 @@ public class BukkitActionYamlStorage implements ActionStorageImpl {
                         e.printStackTrace();
                     }
                     if (action != null) {
-                        final Collection<Action> actions = plugin.getLoadedActions();
+                        final Set<Action> actions = plugin.getLoadedActions();
                         actions.add(action);
                         plugin.setLoadedActions(actions);
                     } else {

@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.conditions;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface ConditionFactory {
 
     List<String> getNamesOfConditionsBeingEdited();
 
-    void setNamesOfConditionsBeingEdited(final List<String> conditionNames);
+    void setNamesOfConditionsBeingEdited(final Collection<String> conditionNames);
 
     void returnToMenu(final UUID uuid);
 

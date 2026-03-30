@@ -69,7 +69,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitPlayerListener implements Listener {
 
@@ -981,11 +980,11 @@ public class BukkitPlayerListener implements Listener {
             }
             
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
-                final ConcurrentSkipListSet<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
+            final Set<Quester> temp = plugin.getOfflineQuesters();
             temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
             temp.add(quester);
             plugin.setOfflineQuesters(temp);

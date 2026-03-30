@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -42,7 +43,7 @@ public interface Quests {
 
     Logger getPluginLogger();
 
-    InputStream getPluginResource(String filename);
+    InputStream getPluginResource(final String filename);
 
     Dependencies getDependencies();
 
@@ -54,17 +55,17 @@ public interface Quests {
 
     List<CustomRequirement> getCustomRequirements();
 
-    Collection<Quest> getLoadedQuests();
+    Set<Quest> getLoadedQuests();
 
-    Collection<Action> getLoadedActions();
+    Set<Action> getLoadedActions();
 
-    Collection<Condition> getLoadedConditions();
+    Set<Condition> getLoadedConditions();
 
     Quester getQuester(final UUID id);
 
-    Collection<Quester> getOnlineQuesters();
+    Set<Quester> getOnlineQuesters();
 
-    Collection<Quester> getOfflineQuesters();
+    Set<Quester> getOfflineQuesters();
 
     void setOfflineQuesters(final Collection<Quester> questers);
 
@@ -74,5 +75,5 @@ public interface Quests {
 
     ConditionFactory getConditionFactory();
 
-    void saveResourceAs(String resourcePath, final String outputPath, final boolean replace);
+    void saveResourceAs(final String resourcePath, final String outputPath, final boolean replace);
 }

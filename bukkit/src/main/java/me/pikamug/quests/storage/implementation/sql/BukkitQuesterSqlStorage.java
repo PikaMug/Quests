@@ -26,13 +26,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -494,8 +492,8 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         return questProgress;
     }
     
-    public ConcurrentSkipListSet<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws SQLException {
-        final ConcurrentSkipListSet<Quest> completedQuests = new ConcurrentSkipListSet<>();
+    public Set<Quest> getQuesterCompletedQuests(final UUID uniqueId) throws SQLException {
+        final Set<Quest> completedQuests = ConcurrentHashMap.newKeySet();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_SELECT_BY_UUID))) {
                 ps.setString(1, uniqueId.toString());
@@ -549,8 +547,8 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
     }
 
     @Override
-    public Collection<UUID> getSavedUniqueIds() throws SQLException {
-        final Collection<UUID> ids = new ConcurrentSkipListSet<>();
+    public Set<UUID> getSavedUniqueIds() throws SQLException {
+        final Set<UUID> ids = ConcurrentHashMap.newKeySet();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_SELECT_UUID))) {
                 try (final ResultSet rs = ps.executeQuery()) {

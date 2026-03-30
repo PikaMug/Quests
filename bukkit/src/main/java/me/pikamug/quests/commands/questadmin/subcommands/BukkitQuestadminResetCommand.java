@@ -10,9 +10,9 @@
 
 package me.pikamug.quests.commands.questadmin.subcommands;
 
-import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
+import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.storage.QuesterStorage;
 import me.pikamug.quests.util.BukkitLang;
@@ -23,8 +23,8 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
 
@@ -84,7 +84,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
                 return;
             }
             final UUID id = target.getUniqueId();
-            final ConcurrentSkipListSet<Quester> temp = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
+            final Set<Quester> temp = plugin.getOfflineQuesters();
             temp.removeIf(quester -> quester.getUUID().equals(id));
             plugin.setOfflineQuesters(temp);
             Quester quester = plugin.getQuester(id);
@@ -108,7 +108,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
             }
             quester = new BukkitQuester(plugin, id);
             quester.saveData();
-            final ConcurrentSkipListSet<Quester> temp2 = (ConcurrentSkipListSet<Quester>) plugin.getOfflineQuesters();
+            final Set<Quester> temp2 = plugin.getOfflineQuesters();
             temp2.add(quester);
             plugin.setOfflineQuesters(temp2);
         } else {

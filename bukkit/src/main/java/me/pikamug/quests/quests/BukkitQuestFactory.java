@@ -42,14 +42,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class BukkitQuestFactory implements QuestFactory {
 
@@ -57,7 +58,7 @@ public class BukkitQuestFactory implements QuestFactory {
     private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
-    private ConcurrentSkipListSet<UUID> selectingNpcs = new ConcurrentSkipListSet<>();
+    private Set<UUID> selectingNpcs = ConcurrentHashMap.newKeySet();
     private List<String> editingQuestNames = new LinkedList<>();
 
     public BukkitQuestFactory(final BukkitQuestsPlugin plugin) {
@@ -88,27 +89,28 @@ public class BukkitQuestFactory implements QuestFactory {
         this.selectedReachLocations = selectedReachLocations;
     }
 
-    public ConcurrentSkipListSet<UUID> getSelectingNpcs() {
+    public Set<UUID> getSelectingNpcs() {
         return selectingNpcs;
     }
 
-    public void setSelectingNpcs(final ConcurrentSkipListSet<UUID> selectingNpcs) {
-        this.selectingNpcs = selectingNpcs;
+    public void setSelectingNpcs(final Collection<UUID> selectingNpcs) {
+        final Set<UUID> newSelectingNpcs = ConcurrentHashMap.newKeySet();
+        newSelectingNpcs.addAll(selectingNpcs);
+        this.selectingNpcs = newSelectingNpcs;
     }
 
     public List<String> getNamesOfQuestsBeingEdited() {
         return editingQuestNames;
     }
 
-    public void setNamesOfQuestsBeingEdited(final List<String> questNames) {
-        this.editingQuestNames = questNames;
+    public void setNamesOfQuestsBeingEdited(final Collection<String> questNames) {
+        this.editingQuestNames = new LinkedList<>(questNames);
     }
 
     public void returnToMenu(final UUID uuid) {
         new QuestMainPrompt(uuid).start();
     }
 
-    @SuppressWarnings("deprecation")
     public void loadQuest(final UUID uuid, final Quest quest) {
         BukkitQuest bukkitQuest = (BukkitQuest) quest;
         try {

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class BukkitConditionFactory implements ConditionFactory {
@@ -48,8 +49,8 @@ public class BukkitConditionFactory implements ConditionFactory {
         return editingConditionNames;
     }
     
-    public void setNamesOfConditionsBeingEdited(final List<String> conditionNames) {
-        this.editingConditionNames = conditionNames;
+    public void setNamesOfConditionsBeingEdited(final Collection<String> conditionNames) {
+        this.editingConditionNames = new LinkedList<>(conditionNames);
     }
     
     public void returnToMenu(final UUID uuid) {
@@ -175,7 +176,7 @@ public class BukkitConditionFactory implements ConditionFactory {
         if (SessionData.get(uuid, Key.C_OLD_CONDITION) != null
                 && !((String) Objects.requireNonNull(SessionData.get(uuid, Key.C_OLD_CONDITION))).isEmpty()) {
             data.set("conditions." + SessionData.get(uuid, Key.C_OLD_CONDITION), null);
-            final Collection<Condition> temp = plugin.getLoadedConditions();
+            final Set<Condition> temp = plugin.getLoadedConditions();
             temp.remove(plugin.getCondition((String) SessionData.get(uuid, Key.C_OLD_CONDITION)));
             plugin.setLoadedConditions(temp);
         }

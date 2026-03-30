@@ -19,7 +19,7 @@ import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.dependencies.BukkitDenizenTrigger;
 import me.pikamug.quests.dependencies.BukkitDependencies;
-import me.pikamug.quests.events.plugin.QuestsPluginPostReloadEvent;
+import me.pikamug.quests.events.plugin.BukkitQuestsPluginPostReloadEvent;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.listeners.BukkitBlockListener;
 import me.pikamug.quests.listeners.BukkitCommandManager;
@@ -75,8 +75,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,11 +95,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private List<CustomObjective> customObjectives = new LinkedList<>();
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
-    private Collection<Quester> questers = new ConcurrentSkipListSet<>();
-    private Collection<Quest> quests = new ConcurrentSkipListSet<>();
-    private Collection<Action> actions = new ConcurrentSkipListSet<>();
-    private Collection<Condition> conditions = new ConcurrentSkipListSet<>();
-    private Collection<UUID> questNpcUuids = new ConcurrentSkipListSet<>();
+    private Set<Quester> questers = ConcurrentHashMap.newKeySet();
+    private Set<Quest> quests = ConcurrentHashMap.newKeySet();
+    private Set<Action> actions = ConcurrentHashMap.newKeySet();
+    private Set<Condition> conditions = ConcurrentHashMap.newKeySet();
+    private Set<UUID> questNpcUuids = ConcurrentHashMap.newKeySet();
     private TabExecutor cmdExecutor;
     private BukkitQuestFactory questFactory;
     private BukkitActionFactory actionFactory;
@@ -341,55 +342,61 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Get every Quest loaded in memory
      *
-     * @return a collection of all Quests
+     * @return a set of all Quests
      */
-    public Collection<Quest> getLoadedQuests() {
+    public Set<Quest> getLoadedQuests() {
         return quests;
     }
 
     /**
      * Set every Quest loaded in memory
      *
-     * @param quests a collection of Quests
+     * @param quests a set of Quests
      */
     public void setLoadedQuests(final Collection<Quest> quests) {
-        this.quests = quests;
+        final Set<Quest> newQuests = ConcurrentHashMap.newKeySet();
+        newQuests.addAll(quests);
+        this.quests = newQuests;
     }
 
     /**
      * Get every Action loaded in memory
      *
-     * @return a collection of all Actions
+     * @return a set of all Actions
      */
-    public Collection<Action> getLoadedActions() {
+    public Set<Action> getLoadedActions() {
         return actions;
     }
 
     /**
      * Set every Action loaded in memory
      *
-     * @param actions a collection of Actions
+     * @param actions a set of Actions
      */
     public void setLoadedActions(final Collection<Action> actions) {
-        this.actions = actions;
+        final Set<Action> newActions = ConcurrentHashMap.newKeySet();
+        newActions.addAll(actions);
+        this.actions = newActions;
     }
 
     /**
      * Get every Condition loaded in memory
      *
-     * @return a collection of all Conditions
+     * @return a set of all Conditions
      */
-    public Collection<Condition> getLoadedConditions() {
+    public Set<Condition> getLoadedConditions() {
         return conditions;
     }
 
     /**
      * Set every Condition loaded in memory
      *
-     * @param conditions a collection of Conditions
+     * @param conditions a set of Conditions
      */
     public void setLoadedConditions(final Collection<Condition> conditions) {
-        this.conditions = conditions;
+        final Set<Condition> newConditions = ConcurrentHashMap.newKeySet();
+        newConditions.addAll(conditions);
+        this.conditions = newConditions;
     }
 
     /**
@@ -399,7 +406,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @return new or existing Quester
      */
     public BukkitQuester getQuester(final @NotNull UUID id) {
-        final ConcurrentSkipListSet<Quester> set = (ConcurrentSkipListSet<Quester>) questers;
+        final Set<Quester> set = questers;
         for (final Quester q : set) {
             if (q != null && q.getUUID().equals(id)) {
                 return (BukkitQuester) q;
@@ -417,10 +424,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Get every online Quester playing on this server
      *
-     * @return a collection of all online Questers
+     * @return a set of all online Questers
      */
-    public Collection<Quester> getOnlineQuesters() {
-        final Collection<Quester> questers = new ConcurrentSkipListSet<>();
+    public Set<Quester> getOnlineQuesters() {
+        final Set<Quester> questers = ConcurrentHashMap.newKeySet();
         for (final Quester q : getOfflineQuesters()) {
             if (((BukkitQuester)q).getOfflinePlayer().isOnline()) {
                 questers.add(q);
@@ -432,38 +439,42 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     /**
      * Get every Quester that has ever played on this server
      *
-     * @return a collection of all Questers
+     * @return a set of all Questers
      */
-    public Collection<Quester> getOfflineQuesters() {
+    public Set<Quester> getOfflineQuesters() {
         return questers;
     }
 
     /**
      * Set every Quester that has ever played on this server
      *
-     * @param questers a collection of Questers
+     * @param questers a set of Questers
      */
     public void setOfflineQuesters(final Collection<Quester> questers) {
-        this.questers = new ConcurrentSkipListSet<>(questers);
+        final Set<Quester> newQuesters = ConcurrentHashMap.newKeySet();
+        newQuesters.addAll(questers);
+        this.questers = newQuesters;
     }
 
     /**
      * Get every NPC UUID which sees use a quest giver, talk target, or kill target
      *
-     * @return a collection of all UUIDs
+     * @return a set of all UUIDs
      */
-    public Collection<UUID> getQuestNpcUuids() {
+    public Set<UUID> getQuestNpcUuids() {
         return questNpcUuids;
     }
 
     /**
      * Set every NPC UUID which sees use a quest giver, talk target, or kill target
      *
-     * @param questNpcUuids a collection of UUIDs
+     * @param questNpcUuids a set of UUIDs
      */
     @SuppressWarnings("unused")
     public void setQuestNpcUuids(final Collection<UUID> questNpcUuids) {
-        this.questNpcUuids = new ConcurrentSkipListSet<>(questNpcUuids);
+        final Set<UUID> newQuestNpcUuids = ConcurrentHashMap.newKeySet();
+        newQuestNpcUuids.addAll(questNpcUuids);
+        this.questNpcUuids = newQuestNpcUuids;
     }
 
     @SuppressWarnings("unused")
@@ -720,7 +731,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 loading = false;
                 callback.execute(result);
                 
-                final QuestsPluginPostReloadEvent event = new QuestsPluginPostReloadEvent(result, exception);
+                final BukkitQuestsPluginPostReloadEvent event = new BukkitQuestsPluginPostReloadEvent(result, exception);
                 getServer().getPluginManager().callEvent(event);
             });
         }
