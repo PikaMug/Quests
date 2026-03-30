@@ -984,10 +984,7 @@ public class BukkitPlayerListener implements Listener {
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            final Set<Quester> temp = plugin.getOfflineQuesters();
-            temp.removeIf(q -> q.getUUID().equals(quester.getUUID()));
-            temp.add(quester);
-            plugin.setOfflineQuesters(temp);
+            plugin.upsertQuester(quester);
         }
     }
 
