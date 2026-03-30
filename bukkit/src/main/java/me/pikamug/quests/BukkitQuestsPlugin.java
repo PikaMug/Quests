@@ -89,7 +89,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private List<CustomObjective> customObjectives = new LinkedList<>();
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
-    private Map<UUID, Quester> questers = new ConcurrentHashMap<>();
+    private final Map<UUID, Quester> questers = new ConcurrentHashMap<>();
     private Set<Quest> quests = ConcurrentHashMap.newKeySet();
     private Set<Action> actions = ConcurrentHashMap.newKeySet();
     private Set<Condition> conditions = ConcurrentHashMap.newKeySet();
