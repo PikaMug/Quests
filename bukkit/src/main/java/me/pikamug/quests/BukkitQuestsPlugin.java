@@ -400,14 +400,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @return new or existing Quester
      */
     public BukkitQuester getQuester(final @NotNull UUID id) {
-        Quester cachedQuester = questers.get(id);
-        if (cachedQuester instanceof BukkitQuester) return (BukkitQuester) cachedQuester;
+        if (depends.isNpc(id)) {
+            return new BukkitQuester(this, id);
+        }
 
-        final BukkitQuester quester = new BukkitQuester(this, id);
-        if (depends.isNpc(id)) return quester;
-
-        questers.put(id, quester);
-        return quester;
+        return (BukkitQuester) questers.computeIfAbsent(id, uuid -> new BukkitQuester(this, uuid));
     }
 
     /**
