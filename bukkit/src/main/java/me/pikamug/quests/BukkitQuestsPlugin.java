@@ -437,8 +437,17 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @param q the Quester object to be inserted or updated in the questers map
      */
-    public void upsertQuester(final Quester q) {
+    public void addQuester(final Quester q) {
         questers.put(q.getUUID(), q);
+    }
+
+    /**
+     * Removes the specified Quester from the internal storage of questers.
+     *
+     * @param q the Quester object to be removed
+     */
+    public void removeQuester(final Quester q) {
+        removeQuester(q.getUUID());
     }
 
     /**

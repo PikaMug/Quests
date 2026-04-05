@@ -67,6 +67,10 @@ public interface Quests {
 
     Collection<Quester> getOfflineQuesters();
 
+    void addQuester(Quester q);
+
+    void removeQuester(Quester q);
+
     QuestFactory getQuestFactory();
 
     ActionFactory getActionFactory();

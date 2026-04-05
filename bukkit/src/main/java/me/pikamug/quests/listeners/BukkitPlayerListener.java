@@ -984,7 +984,7 @@ public class BukkitPlayerListener implements Listener {
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }
-            plugin.upsertQuester(quester);
+            plugin.addQuester(quester);
         }
     }
 

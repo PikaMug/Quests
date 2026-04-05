@@ -105,7 +105,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
             }
             quester = new BukkitQuester(plugin, id);
             quester.saveData();
-            plugin.upsertQuester(quester);
+            plugin.addQuester(quester);
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
         }
