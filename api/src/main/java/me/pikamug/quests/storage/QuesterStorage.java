@@ -14,10 +14,7 @@ import me.pikamug.quests.Quests;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -100,16 +97,16 @@ public class QuesterStorage {
         });
     }
 
-    public CompletableFuture<Set<Quester>> loadOfflineQuesters() {
-        final Set<Quester> questers = ConcurrentHashMap.newKeySet();
+    public CompletableFuture<Map<UUID, Quester>> loadOfflineQuesters() {
+        final Map<UUID, Quester> tmpQuesters = new ConcurrentHashMap<>();
         try {
             for (final UUID uniqueId : implementation.getSavedUniqueIds()) {
-                questers.add(implementation.loadQuester(uniqueId));
+                tmpQuesters.put(uniqueId, implementation.loadQuester(uniqueId));
             }
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        return makeFuture(() -> questers);
+        return makeFuture(() -> tmpQuesters);
     }
 
     public CompletableFuture<Void> saveOfflineQuesters() {

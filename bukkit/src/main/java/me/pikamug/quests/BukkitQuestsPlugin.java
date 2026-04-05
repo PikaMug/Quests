@@ -89,7 +89,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private List<CustomObjective> customObjectives = new LinkedList<>();
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
-    private final Map<UUID, Quester> questers = new ConcurrentHashMap<>();
+    private volatile Map<UUID, Quester> questers = new ConcurrentHashMap<>();
     private Set<Quest> quests = ConcurrentHashMap.newKeySet();
     private Set<Action> actions = ConcurrentHashMap.newKeySet();
     private Set<Condition> conditions = ConcurrentHashMap.newKeySet();
@@ -637,10 +637,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             getServer().getScheduler().runTaskAsynchronously(this, () -> {
                 try {
-                    questers.clear();
-                    for (final Quester q : storage.loadOfflineQuesters().get()) {
-                        questers.put(q.getUUID(), q);
-                    }
+                    questers = storage.loadOfflineQuesters().get();
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
