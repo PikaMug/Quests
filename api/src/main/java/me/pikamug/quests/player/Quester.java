@@ -30,8 +30,6 @@ public interface Quester extends Comparable<Quester> {
 
     UUID getUUID();
 
-    void setUUID(final UUID id);
-
     String getQuestIdToTake();
 
     void setQuestIdToTake(final String questIdToTake);

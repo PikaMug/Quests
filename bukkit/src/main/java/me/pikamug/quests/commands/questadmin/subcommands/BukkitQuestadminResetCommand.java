@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
@@ -84,9 +83,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
                 return;
             }
             final UUID id = target.getUniqueId();
-            final Set<Quester> temp = plugin.getOfflineQuesters();
-            temp.removeIf(quester -> quester.getUUID().equals(id));
-            plugin.setOfflineQuesters(temp);
+            plugin.removeQuester(id);
             Quester quester = plugin.getQuester(id);
             try {
                 quester.resetCompass();
@@ -108,9 +105,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
             }
             quester = new BukkitQuester(plugin, id);
             quester.saveData();
-            final Set<Quester> temp2 = plugin.getOfflineQuesters();
-            temp2.add(quester);
-            plugin.setOfflineQuesters(temp2);
+            plugin.addQuester(quester);
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get("noPermission"));
         }

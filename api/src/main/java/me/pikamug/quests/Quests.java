@@ -65,9 +65,11 @@ public interface Quests {
 
     Set<Quester> getOnlineQuesters();
 
-    Set<Quester> getOfflineQuesters();
+    Collection<Quester> getOfflineQuesters();
 
-    void setOfflineQuesters(final Collection<Quester> questers);
+    void addQuester(Quester q);
+
+    void removeQuester(Quester q);
 
     QuestFactory getQuestFactory();
 

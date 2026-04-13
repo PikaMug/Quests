@@ -70,13 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,7 +89,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private List<CustomObjective> customObjectives = new LinkedList<>();
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
-    private Set<Quester> questers = ConcurrentHashMap.newKeySet();
+    private volatile Map<UUID, Quester> questers = new ConcurrentHashMap<>();
     private Set<Quest> quests = ConcurrentHashMap.newKeySet();
     private Set<Action> actions = ConcurrentHashMap.newKeySet();
     private Set<Condition> conditions = ConcurrentHashMap.newKeySet();
@@ -165,7 +159,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             final BukkitMetrics metrics = new BukkitMetrics(this);
             metrics.addCustomChart(new BukkitMetrics.SimplePie("language", () -> configSettings.getLanguage()));
         }
-        
+
         // 4 - Setup language files
         try {
             BukkitLang.init(this);
@@ -175,10 +169,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // 5 - Load command executor
         cmdExecutor = new BukkitCommandManager(this);
-        
+
         // 6 - Load soft-depends
         depends.init();
-        
+
         // 7 - Transfer resources from jar
         moveStorageResource("quests.yml");
         moveStorageResource("actions.yml");
@@ -186,14 +180,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         saveResourceAs("quests.yml", "storage/quests.yml", false);
         saveResourceAs("actions.yml", "storage/actions.yml", false);
         saveResourceAs("conditions.yml", "storage/conditions.yml", false);
-        
+
         // 8 - Save config with any new options
         getConfig().options().copyDefaults(true);
         getConfig().options().header("See https://pikamug.gitbook.io/quests/setup/configuration");
         saveConfig();
         final BukkitStorageFactory storageFactory = new BukkitStorageFactory(this);
         storage = storageFactory.getInstance();
-        
+
         // 9 - Setup commands
         if (getCommand("quests") != null) {
             Objects.requireNonNull(getCommand("quests")).setExecutor(getTabExecutor());
@@ -406,19 +400,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @return new or existing Quester
      */
     public BukkitQuester getQuester(final @NotNull UUID id) {
-        final Set<Quester> set = questers;
-        for (final Quester q : set) {
-            if (q != null && q.getUUID().equals(id)) {
-                return (BukkitQuester) q;
-            }
-        }
-        final BukkitQuester quester = new BukkitQuester(this, id);
         if (depends.isNpc(id)) {
-            return quester;
+            return new BukkitQuester(this, id);
         }
-        final BukkitQuester q = new BukkitQuester(this, id);
-        questers.add(q);
-        return q;
+
+        return (BukkitQuester) questers.computeIfAbsent(id, uuid -> new BukkitQuester(this, uuid));
     }
 
     /**
@@ -437,23 +423,40 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Get every Quester that has ever played on this server
+     * Retrieves all offline Questers currently stored in memory.
      *
-     * @return a set of all Questers
+     * @return an unmodifiable collection of all offline Questers
      */
-    public Set<Quester> getOfflineQuesters() {
-        return questers;
+    public Collection<Quester> getOfflineQuesters() {
+        return Collections.unmodifiableCollection(questers.values());
     }
 
     /**
-     * Set every Quester that has ever played on this server
+     * Inserts or updates the provided Quester object into the questers map,
+     * using the Quester's UUID as the key.
      *
-     * @param questers a set of Questers
+     * @param q the Quester object to be inserted or updated in the questers map
      */
-    public void setOfflineQuesters(final Collection<Quester> questers) {
-        final Set<Quester> newQuesters = ConcurrentHashMap.newKeySet();
-        newQuesters.addAll(questers);
-        this.questers = newQuesters;
+    public void addQuester(final Quester q) {
+        questers.put(q.getUUID(), q);
+    }
+
+    /**
+     * Removes the specified Quester from the internal storage of questers.
+     *
+     * @param q the Quester object to be removed
+     */
+    public void removeQuester(final Quester q) {
+        removeQuester(q.getUUID());
+    }
+
+    /**
+     * Removes a Quester associated with the specified UUID from the internal storage of questers.
+     *
+     * @param id the UUID of the Quester to be removed
+     */
+    public void removeQuester(final UUID id) {
+        questers.remove(id);
     }
 
     /**
@@ -652,12 +655,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
             // Workaround for issues with the Compass on fast join
             for (final Player p : getServer().getOnlinePlayers()) {
-                final Quester quester =  new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
+                final Quester quester = new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
                 if (!quester.hasData()) {
                     quester.saveData();
                 }
                 quester.findCompassTarget();
-                questers.add(quester);
+                questers.put(p.getUniqueId(), quester);
             }
             loading = false;
         }, 60L);
@@ -695,7 +698,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 conditionLoader.init();
                 actionLoader.init();
                 questLoader.init();
-                for (final Quester quester : questers) {
+                for (final Quester quester : questers.values()) {
                     final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
                     if (loaded == null) {
                         getLogger().severe("Unable to load quester of UUID " + quester.getUUID());
@@ -730,7 +733,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getServer().getScheduler().runTask(BukkitQuestsPlugin.this, () -> {
                 loading = false;
                 callback.execute(result);
-                
+
                 final BukkitQuestsPluginPostReloadEvent event = new BukkitQuestsPluginPostReloadEvent(result, exception);
                 getServer().getPluginManager().callEvent(event);
             });
@@ -739,7 +742,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     /**
      * Checks if player can use the Quests plugin
-     * 
+     *
      * @param uuid the entity UUID to be checked
      * @return {@code true} if entity is a Player that has permission
      */
@@ -790,10 +793,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         return null;
     }
-    
+
     /**
      * Get a Quest by name
-     * 
+     *
      * @param name Name of the quest
      * @return Closest match or null if not found
      */
@@ -825,10 +828,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         return null;
     }
-    
+
     /**
      * Get an Action by name
-     * 
+     *
      * @param name Name of the action
      * @return Closest match or null if not found
      */
@@ -860,10 +863,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         return null;
     }
-    
+
     /**
      * Get a Condition by name
-     * 
+     *
      * @param name Name of the condition
      * @return Closest match or null if not found
      */
