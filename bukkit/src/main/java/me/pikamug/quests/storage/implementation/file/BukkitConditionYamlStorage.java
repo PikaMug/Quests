@@ -64,7 +64,7 @@ public class BukkitConditionYamlStorage implements ConditionStorageImpl {
                         e.printStackTrace();
                     }
                     if (condition != null) {
-                        final Set<Condition> conditions = plugin.getLoadedConditions();
+                        final Collection<Condition> conditions = plugin.getLoadedConditions();
                         conditions.add(condition);
                         plugin.setLoadedConditions(conditions);
                     } else {

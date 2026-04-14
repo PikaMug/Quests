@@ -45,11 +45,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -514,7 +514,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -540,7 +540,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     }
                     SessionData.set(uuid, Key.Q_START_NPC, uuid.toString());
                     if (sender instanceof Player) {
-                        final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                        final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                         selectingNpcs.remove(((Player) sender).getUniqueId());
                         plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                     }
@@ -555,7 +555,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.Q_START_NPC, null);
             }
             if (sender instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) sender).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }

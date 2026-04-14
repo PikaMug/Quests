@@ -25,6 +25,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -111,7 +112,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
         }
         quester.setLastKnownName(data.getString("lastKnownName"));
         quester.setQuestPoints(data.getInt("quest-points"));
-        final Set<Quest> completedQuests = quester.getCompletedQuests();
+        final Collection<Quest> completedQuests = quester.getCompletedQuests();
         if (data.isList("completed-Quests")) {
             for (final String s : data.getStringList("completed-Quests")) {
                 for (final Quest q : plugin.getLoadedQuests()) {

@@ -90,10 +90,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private List<CustomRequirement> customRequirements = new LinkedList<>();
     private List<CustomReward> customRewards = new LinkedList<>();
     private volatile Map<UUID, Quester> questers = new ConcurrentHashMap<>();
-    private Set<Quest> quests = ConcurrentHashMap.newKeySet();
-    private Set<Action> actions = ConcurrentHashMap.newKeySet();
-    private Set<Condition> conditions = ConcurrentHashMap.newKeySet();
-    private Set<UUID> questNpcUuids = ConcurrentHashMap.newKeySet();
+    private Collection<Quest> quests = ConcurrentHashMap.newKeySet();
+    private Collection<Action> actions = ConcurrentHashMap.newKeySet();
+    private Collection<Condition> conditions = ConcurrentHashMap.newKeySet();
+    private Collection<UUID> questNpcUuids = ConcurrentHashMap.newKeySet();
     private TabExecutor cmdExecutor;
     private BukkitQuestFactory questFactory;
     private BukkitActionFactory actionFactory;
@@ -338,7 +338,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a set of all Quests
      */
-    public Set<Quest> getLoadedQuests() {
+    public Collection<Quest> getLoadedQuests() {
         return quests;
     }
 
@@ -358,7 +358,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a set of all Actions
      */
-    public Set<Action> getLoadedActions() {
+    public Collection<Action> getLoadedActions() {
         return actions;
     }
 
@@ -378,7 +378,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a set of all Conditions
      */
-    public Set<Condition> getLoadedConditions() {
+    public Collection<Condition> getLoadedConditions() {
         return conditions;
     }
 
@@ -412,7 +412,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      *
      * @return a set of all online Questers
      */
-    public Set<Quester> getOnlineQuesters() {
+    public Collection<Quester> getOnlineQuesters() {
         final Set<Quester> questers = ConcurrentHashMap.newKeySet();
         for (final Quester q : getOfflineQuesters()) {
             if (((BukkitQuester)q).getOfflinePlayer().isOnline()) {
@@ -423,9 +423,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Retrieves all offline Questers currently stored in memory.
+     * Get every Quester that has played on this server, from memory
      *
-     * @return an unmodifiable collection of all offline Questers
+     * @return an unmodifiable collection of all Questers
      */
     public Collection<Quester> getOfflineQuesters() {
         return Collections.unmodifiableCollection(questers.values());
@@ -460,16 +460,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     /**
-     * Get every NPC UUID which sees use a quest giver, talk target, or kill target
+     * Get every NPC UUID which sees use as a quest giver, talk target, or kill target
      *
      * @return a set of all UUIDs
      */
-    public Set<UUID> getQuestNpcUuids() {
+    public Collection<UUID> getQuestNpcUuids() {
         return questNpcUuids;
     }
 
     /**
-     * Set every NPC UUID which sees use a quest giver, talk target, or kill target
+     * Set every NPC UUID which sees use as a quest giver, talk target, or kill target
      *
      * @param questNpcUuids a set of UUIDs
      */
@@ -765,10 +765,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * @return {@code true} if user is a Player with quests.mode.trial permission
      */
     public boolean hasLimitedAccess(final UUID uuid) {
-        if (Bukkit.getPlayer(uuid) == null) {
+        final Player player = Bukkit.getPlayer(uuid);
+        if (player == null) {
             return false;
         }
-        final Player player = Bukkit.getPlayer(uuid);
         if (player.isOp() || player.hasPermission("*")) {
             return false;
         }

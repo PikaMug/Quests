@@ -18,8 +18,6 @@ import me.pikamug.quests.quests.components.Stage;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -70,7 +68,7 @@ public interface Quester extends Comparable<Quester> {
 
     void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests);
 
-    Set<Quest> getCompletedQuests();
+    Collection<Quest> getCompletedQuests();
 
     void setCompletedQuests(final Collection<Quest> completedQuests);
 
@@ -82,24 +80,13 @@ public interface Quester extends Comparable<Quester> {
 
     void setAmountsCompleted(final ConcurrentHashMap<Quest, Integer> amountsCompleted);
 
-    /*Player getPlayer();
-
-    OfflinePlayer getOfflinePlayer();*/
-
     void sendMessage(final String message);
 
     Stage getCurrentStage(final Quest quest);
 
-    /**
-     * @deprecated Use {@link #getQuestProgressOrDefault(Quest)} instead
-     */
-    QuestProgress getQuestDataOrDefault(final Quest quest);
-
     QuestProgress getQuestProgressOrDefault(final Quest quest);
 
     boolean hasJournal();
-
-    //ItemStack getJournal();
 
     int getJournalIndex();
 
@@ -177,13 +164,13 @@ public interface Quester extends Comparable<Quester> {
 
     void findNextCompassTarget(final boolean notify);
 
-    Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
+    Collection<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
                                               final BiFunction<Quester, Quest, Void> fun);
 
-    Set<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
+    Collection<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
                                               final Function<Quester, Void> fun);
 
-    List<Quester> getMultiplayerQuesters(final Quest quest);
+    Collection<Quester> getMultiplayerQuesters(final Quest quest);
 
     boolean meetsCondition(final Quest quest, final boolean giveReason);
 

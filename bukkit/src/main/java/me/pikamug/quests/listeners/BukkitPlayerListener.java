@@ -64,6 +64,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -980,7 +981,7 @@ public class BukkitPlayerListener implements Listener {
             }
             
             if (plugin.getQuestFactory().getSelectingNpcs().contains(event.getPlayer().getUniqueId())) {
-                final Set<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
+                final Collection<UUID> temp = plugin.getQuestFactory().getSelectingNpcs();
                 temp.remove(event.getPlayer().getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(temp);
             }

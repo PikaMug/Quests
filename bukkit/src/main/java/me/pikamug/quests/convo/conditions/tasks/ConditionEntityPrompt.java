@@ -28,10 +28,10 @@ import org.bukkit.entity.Vehicle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
@@ -264,7 +264,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
             plugin.getServer().getPluginManager().callEvent(event);
             
             if (BukkitMiscUtil.getEntity(uuid) instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.add(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
                 return ChatColor.YELLOW + BukkitLang.get("questEditorClickNPCStart");
@@ -304,7 +304,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, npcs);
             }
             if (sender instanceof Player) {
-                final Set<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
                 selectingNpcs.remove(((Player) sender).getUniqueId());
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }

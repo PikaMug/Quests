@@ -286,7 +286,7 @@ public class BukkitQuest implements Quest {
 
         // Multiplayer
         if (allowSharedProgress && options.getShareProgressLevel() == 3) {
-            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            final Collection<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (currentStage.equals(qq.getCurrentStage(this))) {
                     nextStage(qq, true);
@@ -714,7 +714,7 @@ public class BukkitQuest implements Quest {
             return;
         }
         quester.hardQuit(this);
-        final Set<Quest> completedQuests = quester.getCompletedQuests();
+        final Collection<Quest> completedQuests = quester.getCompletedQuests();
         completedQuests.add(this);
         quester.setCompletedQuests(completedQuests);
         for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
@@ -1065,7 +1065,7 @@ public class BukkitQuest implements Quest {
         
         // Multiplayer
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
-            final List<Quester> mq = quester.getMultiplayerQuesters(this);
+            final Collection<Quester> mq = quester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestProgressOrDefault(this) != null) {
                     completeQuest(qq, false);

@@ -123,7 +123,7 @@ public class BukkitQuester implements Quester {
             updateJournal();
         }
     };
-    private Set<Quest> completedQuests = new CompletedQuestSet();
+    private Collection<Quest> completedQuests = new CompletedQuestSet();
     private class CompletedQuestSet extends AbstractSet<Quest> {
         private final Set<Quest> delegate = ConcurrentHashMap.newKeySet();
         @Override
@@ -361,8 +361,8 @@ public class BukkitQuester implements Quester {
         this.currentQuests = currentQuests;
     }
 
-    public Set<Quest> getCompletedQuests() {
-        final Set<Quest> set = ConcurrentHashMap.newKeySet();
+    public Collection<Quest> getCompletedQuests() {
+        final Collection<Quest> set = ConcurrentHashMap.newKeySet();
         for (final Quest iq : completedQuests) {
             final BukkitQuest q = (BukkitQuest) iq;
             set.add(q);
@@ -372,7 +372,7 @@ public class BukkitQuester implements Quester {
 
     @Override
     public void setCompletedQuests(final Collection<Quest> completedQuests) {
-        final Set<Quest> newCompletedQuests = ConcurrentHashMap.newKeySet();
+        final Collection<Quest> newCompletedQuests = ConcurrentHashMap.newKeySet();
         newCompletedQuests.addAll(completedQuests);
         this.completedQuests = newCompletedQuests;
     }
@@ -427,17 +427,6 @@ public class BukkitQuester implements Quester {
             return quest.getStage(currentQuests.get(quest));
         }
         return null;
-    }
-
-    /**
-     * Get quest progress for given quest, or default values if not found
-     *
-     * @deprecated Use {@link #getQuestProgressOrDefault(Quest)} instead
-     * @param quest The quest to check
-     * @return Existing or current progress, or default
-     */
-    public QuestProgress getQuestDataOrDefault(final Quest quest) {
-        return getQuestProgressOrDefault(quest);
     }
 
     /**
@@ -1029,7 +1018,7 @@ public class BukkitQuester implements Quester {
      *
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
-     * @return List of detailed requirements
+     * @return Ordered list of detailed requirements
      */
     public LinkedList<String> getCurrentRequirements(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
@@ -1197,7 +1186,7 @@ public class BukkitQuester implements Quester {
      * @param quest The quest to get objectives of
      * @param ignoreOverrides Whether to ignore objective-overrides
      * @param formatNames Whether to format item/entity names, if applicable
-     * @return List of detailed objectives
+     * @return Ordered list of detailed objectives
      */
     public LinkedList<Objective> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides,
                                                             final boolean formatNames) {
@@ -4349,8 +4338,8 @@ public class BukkitQuester implements Quester {
      * @param type The type of objective to progress
      * @param fun The function to execute, the event call
      */
-    public Set<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
-                                                     final BiFunction<Quester, Quest, Void> fun) {
+    public Collection<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
+                                                            final BiFunction<Quester, Quest, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
             try {
@@ -4371,7 +4360,7 @@ public class BukkitQuester implements Quester {
                         });
                     }
                 } else if (quest.getOptions().getShareProgressLevel() == 1) {
-                    final List<Quester> mq = getMultiplayerQuesters(quest);
+                    final Collection<Quester> mq = getMultiplayerQuesters(quest);
                     if (mq == null) {
                         return appliedQuestIDs;
                     }
@@ -4410,12 +4399,13 @@ public class BukkitQuester implements Quester {
      * @param quest The current quest
      * @param currentStage The current stage of the quest
      * @param fun The function to execute, the event call
+     * @return applied quest IDs
      */
-    public Set<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
-                                                     final Function<Quester, Void> fun) {
+    public Collection<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
+                                                            final Function<Quester, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest.getOptions().getShareProgressLevel() == 2) {
-            final List<Quester> mq = getMultiplayerQuesters(quest);
+            final Collection<Quester> mq = getMultiplayerQuesters(quest);
             if (mq == null) {
                 return appliedQuestIDs;
             }
@@ -4432,16 +4422,16 @@ public class BukkitQuester implements Quester {
     }
 
     /**
-     * Get a list of fellow Questers in a party or group
+     * Get a collection of fellow Questers in a party or group
      *
      * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
      * @return Potentially empty list of Questers or null for invalid quest
      */
-    public List<Quester> getMultiplayerQuesters(final Quest quest) {
+    public Collection<Quester> getMultiplayerQuesters(final Quest quest) {
         if (quest == null) {
             return null;
         }
-        final List<Quester> mq = new LinkedList<>();
+        final Set<Quester> mq = new HashSet<>();
         if (plugin.getDependencies().getPartyProvider() != null) {
             final PartyProvider partyProvider = plugin.getDependencies().getPartyProvider();
             if (partyProvider != null) {

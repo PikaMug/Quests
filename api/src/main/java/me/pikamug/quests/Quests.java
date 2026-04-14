@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -55,21 +54,21 @@ public interface Quests {
 
     List<CustomRequirement> getCustomRequirements();
 
-    Set<Quest> getLoadedQuests();
+    Collection<Quest> getLoadedQuests();
 
-    Set<Action> getLoadedActions();
+    Collection<Action> getLoadedActions();
 
-    Set<Condition> getLoadedConditions();
+    Collection<Condition> getLoadedConditions();
 
     Quester getQuester(final UUID id);
 
-    Set<Quester> getOnlineQuesters();
+    Collection<Quester> getOnlineQuesters();
 
     Collection<Quester> getOfflineQuesters();
 
-    void addQuester(Quester q);
+    void addQuester(final Quester q);
 
-    void removeQuester(Quester q);
+    void removeQuester(final Quester q);
 
     QuestFactory getQuestFactory();
 
