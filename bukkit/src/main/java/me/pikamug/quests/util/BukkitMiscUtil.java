@@ -10,7 +10,6 @@
 
 package me.pikamug.quests.util;
 
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -22,6 +21,7 @@ import org.bukkit.entity.EntityType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class BukkitMiscUtil {
 
@@ -347,7 +347,7 @@ public class BukkitMiscUtil {
     }
 
     private static boolean _isBelow113(String bukkitVersion) {
-        if (bukkitVersion.matches("^[0-9.]+$")) {
+        if (bukkitVersion.matches("^[0-9A-Za-z]+(\\.[0-9A-Za-z]+)*$")) {
             switch (bukkitVersion) {
                 case "1.12.2":
                 case "1.12.1":
