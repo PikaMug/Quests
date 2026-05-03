@@ -8,6 +8,7 @@ import me.pikamug.quests.util.BukkitLang;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.browsit.conversations.api.Conversations;
+import org.browsit.conversations.api.clause.TimeClause;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -139,8 +140,8 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
                         .converter(String::valueOf)
                         .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
                         .fetch((input, sender) -> acceptInput(input)))
-                //.endWhen(new TimeClause(plugin.getConfigSettings().getAcceptTimeout() * 20L,
-                // ChatColor.YELLOW + BukkitLang.get("questTimeout")))                              needs String support
+                .endWhen(TimeClause.create(plugin.getConfigSettings().getAcceptTimeout() * 1000L,
+                ChatColor.YELLOW + BukkitLang.get("questTimeout")))
                 .start();
     }
 }

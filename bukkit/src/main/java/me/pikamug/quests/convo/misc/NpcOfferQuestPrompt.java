@@ -22,6 +22,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.browsit.conversations.api.Conversations;
+import org.browsit.conversations.api.clause.TimeClause;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -237,8 +238,8 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
                         .converter(String::valueOf)
                         .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
                         .fetch((input, sender) -> acceptInput(input)))
-                //.endWhen(new TimeClause(plugin.getConfigSettings().getAcceptTimeout() * 20L,
-                // ChatColor.YELLOW + BukkitLang.get("questTimeout")))                              needs String support
+                .endWhen(TimeClause.create(plugin.getConfigSettings().getAcceptTimeout() * 1000L,
+                 ChatColor.YELLOW + BukkitLang.get("questTimeout")))
                 .start();
     }
 }
