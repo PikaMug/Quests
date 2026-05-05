@@ -26,6 +26,15 @@ public class BukkitQuestsEditorPostOpenNumericPromptEvent extends BukkitQuestsEd
         this.uuid = uuid;
         this.prompt = prompt;
     }
+
+    /**
+     * Returns the UUID involved in this event
+     *
+     * @return UUID which is involved in this event
+     */
+    public UUID getUniqueId() {
+        return uuid;
+    }
     
     /**
      * Returns the numeric prompt involved in this event
