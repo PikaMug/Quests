@@ -50,6 +50,10 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
         this.npcName = npcName;
     }
 
+    public LinkedList<Quest> getNpcQuests() {
+        return npcQuests;
+    }
+
     private int size = 3;
 
     @Override

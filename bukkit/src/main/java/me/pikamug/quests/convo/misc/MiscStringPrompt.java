@@ -22,11 +22,6 @@ public abstract class MiscStringPrompt extends QuestsStringPrompt {
         this.uuid = uuid;
     }
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
-
     public UUID getUniqueId() {
         return uuid;
     }

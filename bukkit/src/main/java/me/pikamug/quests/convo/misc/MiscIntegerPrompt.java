@@ -23,11 +23,6 @@ public abstract class MiscIntegerPrompt extends QuestsIntegerPrompt {
         this.uuid = uuid;
     }
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
-
     public UUID getUniqueId() {
         return uuid;
     }
