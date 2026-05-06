@@ -23,7 +23,7 @@ public abstract class QuestsEditorIntegerPrompt extends QuestsIntegerPrompt {
     private final UUID uuid;
     private QuestFactory factory;
     
-    public QuestsEditorIntegerPrompt(final UUID uuid) {
+    public QuestsEditorIntegerPrompt(final @NotNull UUID uuid) {
         this.uuid = uuid;
         this.factory = BukkitQuestsPlugin.getInstance().getQuestFactory();
     }

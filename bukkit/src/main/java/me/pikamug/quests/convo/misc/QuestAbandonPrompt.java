@@ -22,7 +22,7 @@ public class QuestAbandonPrompt extends MiscStringPrompt {
     private final BukkitQuestsPlugin plugin;
 
     public QuestAbandonPrompt(final @NotNull UUID uuid, BukkitQuestsPlugin plugin) {
-        super();
+        super(uuid);
         this.uuid = uuid;
         this.plugin = plugin;
     }

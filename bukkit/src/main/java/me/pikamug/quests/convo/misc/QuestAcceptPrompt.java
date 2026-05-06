@@ -21,7 +21,7 @@ public class QuestAcceptPrompt extends MiscStringPrompt {
     private final BukkitQuestsPlugin plugin;
 
     public QuestAcceptPrompt(final @NotNull UUID uuid, BukkitQuestsPlugin plugin) {
-        super();
+        super(uuid);
         this.uuid = uuid;
         this.plugin = plugin;
     }

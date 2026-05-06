@@ -43,7 +43,7 @@ public class NpcOfferQuestPrompt extends MiscStringPrompt {
 
     public NpcOfferQuestPrompt(final @NotNull UUID uuid, final BukkitQuestsPlugin plugin,
                                LinkedList<Quest> npcQuests, String npcName) {
-        super();
+        super(uuid);
         this.uuid = uuid;
         this.plugin = plugin;
         this.npcQuests = npcQuests;

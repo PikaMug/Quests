@@ -22,7 +22,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     private final UUID uuid;
     private QuestFactory factory;
     
-    public QuestsEditorStringPrompt(final UUID uuid) {
+    public QuestsEditorStringPrompt(final @NotNull UUID uuid) {
         this.uuid = uuid;
         this.factory = BukkitQuestsPlugin.getInstance().getQuestFactory();
     }

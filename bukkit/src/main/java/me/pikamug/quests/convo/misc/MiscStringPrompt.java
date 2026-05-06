@@ -11,15 +11,24 @@
 package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.convo.QuestsStringPrompt;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public abstract class MiscStringPrompt extends QuestsStringPrompt {
+    private final UUID uuid;
 
-    public MiscStringPrompt() {
+    public MiscStringPrompt(final @NotNull UUID uuid) {
+        this.uuid = uuid;
     }
 
     @Override
     public String getName() {
         return getClass().getSimpleName();
+    }
+
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     public abstract int getSize();
