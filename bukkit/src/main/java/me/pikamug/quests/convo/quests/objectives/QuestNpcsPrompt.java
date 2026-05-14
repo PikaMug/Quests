@@ -117,7 +117,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     return text.toString();
                 }
             } else {
-                return ChatColor.GRAY + " (" + BukkitLang.get("notInstalled") + ")";
+                return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
             }
         case 2:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
@@ -692,7 +692,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                         return text.toString();
                     }
                 } else {
-                    return ChatColor.GRAY + " (" + BukkitLang.get("notInstalled") + ")";
+                    return ChatColor.GRAY + "(" + BukkitLang.get("notInstalled") + ")";
                 }
             case 2:
                 if (SessionData.get(uuid, pref + Key.S_NPCS_TO_KILL_AMOUNTS) == null) {
