@@ -173,6 +173,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             new ConditionPermissionsPrompt(uuid).start();
@@ -346,6 +349,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ConditionItemsInMainHandListPrompt.this).start();
@@ -474,6 +480,9 @@ public class ConditionPlayerPrompt extends ConditionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
                 case 1:
                     new ItemStackPrompt(uuid, ConditionItemsWearListPrompt.this).start();

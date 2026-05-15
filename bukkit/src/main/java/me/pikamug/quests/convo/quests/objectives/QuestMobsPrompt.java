@@ -48,7 +48,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
     private final int stageNum;
     private final String pref;
 
-    public QuestMobsPrompt(final int stageNum, final UUID uuid) {
+    public QuestMobsPrompt(final int stageNum, final @NotNull UUID uuid) {
         super(uuid);
         this.uuid = uuid;
         this.plugin = BukkitQuestsPlugin.getInstance();
@@ -226,6 +226,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             new QuestMobsKillListPrompt(uuid).start();
@@ -422,6 +425,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new QuestMobsTypesPrompt(uuid).start();
@@ -437,8 +443,7 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                         new QuestMobsKillListPrompt(uuid).start();
                         break;
                     }
-                    temp.put(((Player) sender).getUniqueId(),
-                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                    temp.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                     new QuestMobsLocationPrompt(uuid).start();
                 } else {
@@ -570,6 +575,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -632,6 +640,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -689,9 +700,11 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
-                final Block block = plugin.getQuestFactory().getSelectedKillLocations().get(player.getUniqueId());
+                final Block block = plugin.getQuestFactory().getSelectedKillLocations().get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
@@ -705,17 +718,17 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                     }
                     SessionData.set(uuid, pref + Key.S_MOB_KILL_LOCATIONS, locations);
                     final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
-                    temp.remove(player.getUniqueId());
+                    temp.remove(uuid);
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlock"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlock"));
                     new QuestMobsLocationPrompt(uuid).start();
                     return;
                 }
                 new QuestMobsKillListPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedKillLocations();
-                temp.remove(player.getUniqueId());
+                temp.remove(uuid);
                 plugin.getQuestFactory().setSelectedKillLocations(temp);
                 new QuestMobsKillListPrompt(uuid).start();
             } else {
@@ -755,6 +768,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> radii = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -924,6 +940,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestMobsTameTypesPrompt(uuid).start();
@@ -1016,6 +1035,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1089,6 +1111,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> mobAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1145,6 +1170,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -1199,6 +1227,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel")) && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -1329,6 +1360,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestMobsShearColorsPrompt(uuid).start();
@@ -1412,6 +1446,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> colors = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1474,6 +1511,9 @@ public class QuestMobsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> shearAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {

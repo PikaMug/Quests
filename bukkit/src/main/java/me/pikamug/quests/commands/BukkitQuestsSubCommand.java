@@ -37,13 +37,13 @@ public abstract class BukkitQuestsSubCommand {
 
     public abstract int getMaxArguments();
 
-    public abstract void execute(CommandSender commandSender, String[] args);
+    public abstract void execute(final CommandSender commandSender, final String[] args);
 
-    public List<String> tabComplete(CommandSender commandSender, String[] args) {
+    public List<String> tabComplete(final CommandSender commandSender, final String[] args) {
         return Collections.emptyList();
     }
 
-    public static boolean assertNonPlayer(CommandSender commandSender) {
+    public static boolean assertNonPlayer(final CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(ChatColor.YELLOW + BukkitLang.get("consoleError"));
             return true;

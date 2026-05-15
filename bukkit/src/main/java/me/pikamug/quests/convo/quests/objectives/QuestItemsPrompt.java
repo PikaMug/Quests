@@ -219,6 +219,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             new QuestItemsCraftListPrompt(uuid).start();
@@ -356,6 +359,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsCraftListPrompt.this).start();
@@ -480,6 +486,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsSmeltListPrompt.this).start();
@@ -604,6 +613,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsEnchantListPrompt.this).start();
@@ -727,6 +739,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsBrewListPrompt.this).start();
@@ -851,6 +866,9 @@ public class QuestItemsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestItemsConsumeListPrompt.this).start();

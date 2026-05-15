@@ -539,6 +539,9 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_ALLOW_COMMANDS;
@@ -721,6 +724,9 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
 
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 tempKey = Key.OPT_EXTERNAL_PARTY_PLUGIN;
@@ -896,6 +902,9 @@ public class QuestOptionsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
                 case 1:
                     tempKey = Key.OPT_GIVE_GLOBALLY_AT_LOGIN;

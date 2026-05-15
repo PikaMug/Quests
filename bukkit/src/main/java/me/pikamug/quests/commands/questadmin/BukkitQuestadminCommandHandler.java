@@ -41,7 +41,7 @@ public class BukkitQuestadminCommandHandler {
     private final BukkitQuestsPlugin plugin;
     private final Map<String, BukkitQuestsSubCommand> subCommands;
 
-    public BukkitQuestadminCommandHandler(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminCommandHandler(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
         subCommands = Stream.of(new BukkitQuestadminStatsCommand(plugin),
                         new BukkitQuestadminGiveCommand(plugin),

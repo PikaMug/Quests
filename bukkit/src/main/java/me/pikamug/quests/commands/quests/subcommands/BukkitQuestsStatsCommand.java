@@ -25,7 +25,7 @@ public class BukkitQuestsStatsCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsStatsCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsStatsCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -60,7 +60,7 @@ public class BukkitQuestsStatsCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (assertNonPlayer(cs)) {
             return;
         }

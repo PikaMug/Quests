@@ -176,6 +176,9 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             new ConditionWorldsPrompt(uuid).start();
@@ -356,6 +359,9 @@ public class ConditionWorldPrompt extends ConditionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
                 case 1:
                     new ConditionTickStartPrompt(uuid).start();

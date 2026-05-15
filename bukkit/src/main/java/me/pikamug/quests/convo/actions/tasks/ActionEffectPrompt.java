@@ -148,6 +148,9 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             new ActionEffectSoundListPrompt(uuid).start();
@@ -161,8 +164,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                     new ActionEffectPrompt(uuid).start();
                     break;
                 }
-                selectedExplosionLocations.put(((Player) sender).getUniqueId(),
-                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                selectedExplosionLocations.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 new ActionEffectExplosionPrompt(uuid).start();
             } else {
@@ -279,6 +281,9 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionEffectSoundPrompt(uuid).start();
@@ -296,8 +301,7 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                             new ActionEffectSoundListPrompt(uuid).start();
                             break;
                         }
-                        selectedEffectLocations.put(((Player) sender).getUniqueId(),
-                                Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                        selectedEffectLocations.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                         plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                         new ActionEffectSoundLocationPrompt(uuid).start();
                     } else {
@@ -383,6 +387,9 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (BukkitMiscUtil.getProperEffect(input) != null) {
                     final LinkedList<String> effects;
@@ -451,10 +458,12 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final Map<UUID, Block> selectedEffectLocations = plugin.getActionFactory().getSelectedEffectLocations();
-                final Block block = selectedEffectLocations.get(player.getUniqueId());
+                final Block block = selectedEffectLocations.get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
@@ -467,16 +476,16 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
                     SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locations);
-                    selectedEffectLocations.remove(player.getUniqueId());
+                    selectedEffectLocations.remove(uuid);
                     new ActionEffectSoundListPrompt(uuid).start();
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionEffectSoundLocationPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedEffectLocations
                         = plugin.getActionFactory().getSelectedEffectLocations();
-                selectedEffectLocations.remove(player.getUniqueId());
+                selectedEffectLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedEffectLocations(selectedEffectLocations);
                 new ActionEffectSoundListPrompt(uuid).start();
             } else {
@@ -517,11 +526,13 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
-                final Block block = selectedExplosionLocations.get(player.getUniqueId());
+                final Block block = selectedExplosionLocations.get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
@@ -534,24 +545,24 @@ public class ActionEffectPrompt extends ActionsEditorIntegerPrompt {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
                     SessionData.set(uuid, Key.A_EXPLOSIONS, locations);
-                    selectedExplosionLocations.remove(player.getUniqueId());
+                    selectedExplosionLocations.remove(uuid);
                     plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                     new ActionMainPrompt(uuid).start();
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionEffectExplosionPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.A_EXPLOSIONS, null);
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
-                selectedExplosionLocations.remove(player.getUniqueId());
+                selectedExplosionLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedExplosionLocations
                         = plugin.getActionFactory().getSelectedExplosionLocations();
-                selectedExplosionLocations.remove(player.getUniqueId());
+                selectedExplosionLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedExplosionLocations(selectedExplosionLocations);
                 new ActionMainPrompt(uuid).start();
             } else {

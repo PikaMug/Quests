@@ -234,6 +234,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             new ActionPlayerMessagePrompt(uuid).start();
@@ -262,8 +265,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                     new ActionPlayerPrompt(uuid).start();
                     break;
                 }
-                selectedTeleportLocations.put(((Player) sender).getUniqueId(),
-                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                selectedTeleportLocations.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 new ActionPlayerTeleportPrompt(uuid).start();
             } else {
@@ -441,6 +443,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ActionPlayerItemListPrompt.this).start();
@@ -574,6 +579,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionPlayerPotionTypesPrompt(uuid).start();
@@ -684,6 +692,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> effTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -733,6 +744,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Long> effDurations = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -790,6 +804,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> magAmounts = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -846,6 +863,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -901,6 +921,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -956,6 +979,9 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
                     final int i = Integer.parseInt(input);
@@ -1011,18 +1037,20 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdDone"))) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
-                final Block block = selectedTeleportLocations.get(player.getUniqueId());
+                final Block block = selectedTeleportLocations.get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     SessionData.set(uuid, Key.A_TELEPORT, BukkitConfigUtil.getLocationInfo(loc));
-                    selectedTeleportLocations.remove(player.getUniqueId());
+                    selectedTeleportLocations.remove(uuid);
                     plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionPlayerTeleportPrompt(uuid).start();
                     return;
                 }
@@ -1031,13 +1059,13 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.A_TELEPORT, null);
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
-                selectedTeleportLocations.remove(player.getUniqueId());
+                selectedTeleportLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedTeleportLocations
                         = plugin.getActionFactory().getSelectedTeleportLocations();
-                selectedTeleportLocations.remove(player.getUniqueId());
+                selectedTeleportLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedTeleportLocations(selectedTeleportLocations);
                 new ActionMainPrompt(uuid).start();
             } else {

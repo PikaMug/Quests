@@ -145,6 +145,9 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             new ConditionEntitiesPrompt(uuid).start();
@@ -214,6 +217,9 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -280,6 +286,9 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> npcs = SessionData.get(uuid, Key.C_WHILE_RIDING_NPC) != null
                         ? (LinkedList<String>) SessionData.get(uuid, Key.C_WHILE_RIDING_NPC) : new LinkedList<>();
@@ -305,7 +314,7 @@ public class ConditionEntityPrompt extends ConditionsEditorIntegerPrompt {
             }
             if (sender instanceof Player) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-                selectingNpcs.remove(((Player) sender).getUniqueId());
+                selectingNpcs.remove(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
             new ConditionEntityPrompt(uuid).start();

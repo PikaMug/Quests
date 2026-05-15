@@ -41,7 +41,7 @@ public class BukkitQuestsChoiceCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (assertNonPlayer(cs)) {
             return;
         }

@@ -177,6 +177,9 @@ public class QuestPlannerPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             new QuestDateTimePrompt(uuid, QuestPlannerPrompt.this, "start").start();

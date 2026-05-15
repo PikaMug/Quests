@@ -29,7 +29,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestadminResetCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminResetCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -64,7 +64,7 @@ public class BukkitQuestadminResetCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (args.length == 1) {
             // Shows command usage
             return;

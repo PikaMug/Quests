@@ -26,7 +26,7 @@ public class BukkitQuestsTopCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsTopCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsTopCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -61,7 +61,7 @@ public class BukkitQuestsTopCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission(getPermission())) {
             final int topNumber;
             if (args.length == 1) {

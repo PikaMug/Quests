@@ -28,7 +28,7 @@ public class BukkitQuestsQuitCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsQuitCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsQuitCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -63,7 +63,7 @@ public class BukkitQuestsQuitCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (args.length == 1) {
             // Shows command usage
             return;

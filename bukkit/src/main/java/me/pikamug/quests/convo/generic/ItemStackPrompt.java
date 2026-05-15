@@ -272,6 +272,9 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
     @SuppressWarnings({ "unchecked", "deprecation" })
     public void acceptInput(final UUID uuid, final Number input, final ItemStack item) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 0:
             if (sender instanceof Player) {

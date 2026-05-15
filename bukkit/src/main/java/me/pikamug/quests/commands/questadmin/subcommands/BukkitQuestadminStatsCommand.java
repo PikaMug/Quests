@@ -29,7 +29,7 @@ public class BukkitQuestadminStatsCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestadminStatsCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminStatsCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -64,7 +64,7 @@ public class BukkitQuestadminStatsCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (args.length == 1) {
             // Shows command usage
             return;

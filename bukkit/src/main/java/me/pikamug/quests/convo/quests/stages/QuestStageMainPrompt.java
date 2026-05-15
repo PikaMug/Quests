@@ -470,6 +470,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
 
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             new QuestBlocksPrompt(stageNum, uuid).start();
@@ -620,6 +623,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 try {
@@ -770,6 +776,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 if (sender instanceof Player) {
@@ -778,8 +787,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
                         new QuestReachListPrompt(uuid).start();
                     }
-                    temp.put(((Player) sender).getUniqueId(),
-                            Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                    temp.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                     plugin.getQuestFactory().setSelectedReachLocations(temp);
                     new QuestReachLocationPrompt(uuid).start();
                 } else {
@@ -878,9 +886,11 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
-                final Block block = plugin.getQuestFactory().getSelectedReachLocations().get(player.getUniqueId());
+                final Block block = plugin.getQuestFactory().getSelectedReachLocations().get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations
@@ -913,17 +923,17 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                     SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS_RADIUS, amounts);
                     SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS_NAMES, names);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlockSelected"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorNoBlockSelected"));
                     new QuestReachLocationPrompt(uuid).start();
                     return;
                 }
                 final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
-                temp.remove(player.getUniqueId());
+                temp.remove(uuid);
                 plugin.getQuestFactory().setSelectedReachLocations(temp);
                 new QuestReachListPrompt(uuid).start();
             } else if (input != null && input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> temp = plugin.getQuestFactory().getSelectedReachLocations();
-                temp.remove(player.getUniqueId());
+                temp.remove(uuid);
                 plugin.getQuestFactory().setSelectedReachLocations(temp);
                 new QuestReachListPrompt(uuid).start();
             } else {
@@ -960,6 +970,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<Integer> radii = new LinkedList<>();
                 for (final String s : input.split(" ")) {
@@ -1130,6 +1143,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestPasswordDisplayPrompt(uuid).start();
@@ -1498,6 +1514,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1563,6 +1582,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1628,6 +1650,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1693,6 +1718,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1758,6 +1786,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1823,6 +1854,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -1961,6 +1995,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Action found = null;
@@ -2099,6 +2136,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 Condition found = null;
@@ -2156,6 +2196,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null) {
                 if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                     new QuestStageMainPrompt(stageNum, uuid).start();
@@ -2220,6 +2263,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_DELAY_MESSAGE, input);
@@ -2263,6 +2309,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_START_MESSAGE, input);
@@ -2305,6 +2354,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, stagePrefix + Key.S_COMPLETE_MESSAGE, input);
@@ -2384,6 +2436,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(BukkitLang.get("yesWord")))) {
                 new QuestStageMenuPrompt(uuid).deleteStage(stageNum);
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorDeleteSucces"));
@@ -2461,6 +2516,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(@Nullable final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;
@@ -2575,6 +2633,9 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 CustomObjective found = null;
@@ -2871,8 +2932,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
             String text = "";
             final String temp = (String) SessionData.get(uuid, stagePrefix + Key.S_CUSTOM_OBJECTIVES_DATA_TEMP);
             @SuppressWarnings("unchecked")
-            final
-            Map<String, String> descriptions 
+            final Map<String, String> descriptions
                     = (Map<String, String>) SessionData.get(uuid, stagePrefix 
                     + Key.S_CUSTOM_OBJECTIVES_DATA_DESCRIPTIONS);
             if (descriptions != null && descriptions.get(temp) != null) {
@@ -2887,8 +2947,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             @SuppressWarnings("unchecked")
-            final
-            LinkedList<Entry<String, Object>> dataMapList
+            final LinkedList<Entry<String, Object>> dataMapList
                     = (LinkedList<Entry<String, Object>>) SessionData.get(uuid, stagePrefix
                     + Key.S_CUSTOM_OBJECTIVES_DATA);
             final LinkedList<Entry<String, Object>> promptList = new LinkedList<>();

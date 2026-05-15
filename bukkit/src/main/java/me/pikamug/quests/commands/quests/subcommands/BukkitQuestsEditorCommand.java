@@ -28,7 +28,7 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsEditorCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsEditorCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -63,7 +63,7 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission("quests.editor.*") || cs.hasPermission("quests.editor.editor")
                 || cs.hasPermission("quests.mode.trial")) {
             if (cs instanceof Player) { // TODO - determine how to also run from console

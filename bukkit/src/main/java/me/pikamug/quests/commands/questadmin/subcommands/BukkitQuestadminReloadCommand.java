@@ -21,7 +21,7 @@ public class BukkitQuestadminReloadCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestadminReloadCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminReloadCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -56,7 +56,7 @@ public class BukkitQuestadminReloadCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission("quests.admin.*") || cs.hasPermission("quests.admin.reload")) {
             cs.sendMessage(ChatColor.GOLD + BukkitLang.get("questsReloading"));
             final ReloadCallback<Boolean> callback = response -> {

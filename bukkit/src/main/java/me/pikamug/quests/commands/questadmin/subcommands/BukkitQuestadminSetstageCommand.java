@@ -30,7 +30,7 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestadminSetstageCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminSetstageCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -65,7 +65,7 @@ public class BukkitQuestadminSetstageCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (args.length < 4) {
             // Shows command usage
             return;

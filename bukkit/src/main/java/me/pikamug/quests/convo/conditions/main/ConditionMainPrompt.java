@@ -359,6 +359,9 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ConditionPlaceholderIdentifierPrompt(uuid).start();

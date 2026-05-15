@@ -26,7 +26,7 @@ public class BukkitQuestsActionsCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsActionsCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsActionsCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -61,7 +61,7 @@ public class BukkitQuestsActionsCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission("quests.actions.*") || cs.hasPermission("quests.actions.editor")
                 || cs.hasPermission("quests.mode.trial")) {
             if (cs instanceof Player) {

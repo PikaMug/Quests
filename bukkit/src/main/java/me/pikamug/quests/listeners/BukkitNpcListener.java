@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) PikaMug and contributors
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
@@ -13,6 +23,7 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.BukkitStage;
 import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -40,13 +51,17 @@ public abstract class BukkitNpcListener implements Listener {
         this.npcDependency = npcDependency;
     }
 
-    public void interactNPC(Player player, UUID npcId, ClickType clickType) {
+    public void interactNPC(final Player player, final UUID npcId, final ClickType clickType) {
         if (plugin.getQuestFactory().getSelectingNpcs().contains(player.getUniqueId())) {
             if (npcId == null || !npcDependency.isNpc(npcId)) {
                 plugin.getLogger().severe("NPC was null while selecting");
                 return;
             }
-            player.acceptConversationInput(String.valueOf(npcId));
+            if (!Conversations.getConversationOf(player.getUniqueId()).isPresent()) {
+                plugin.getLogger().severe("Conversation was empty while selecting");
+                return;
+            }
+            Conversations.getConversationOf(player.getUniqueId()).get().handleInput(String.valueOf(npcId));
         }
         if (clickType == ClickType.RIGHT) {
             if (!player.isConversing()) {

@@ -20,7 +20,7 @@ public class BukkitQuestsInfoCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsInfoCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsInfoCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -54,7 +54,7 @@ public class BukkitQuestsInfoCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission("quests.info")) {
             cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD + plugin.getDescription().getVersion());
             cs.sendMessage(ChatColor.GOLD + BukkitLang.get(cs, "developedBy") + " " + "PikaMug & contributors");

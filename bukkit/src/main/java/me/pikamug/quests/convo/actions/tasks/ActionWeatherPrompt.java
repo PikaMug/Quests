@@ -153,6 +153,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             new ActionStormPrompt(uuid).start();
@@ -169,8 +172,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                     new ActionWeatherPrompt(uuid).start();
                     break;
                 }
-                selectedLightningLocations.put(((Player) sender).getUniqueId(),
-                        Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
+                selectedLightningLocations.put(uuid, Bukkit.getWorlds().get(0).getBlockAt(0,0,0));
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 new ActionLightningPrompt(uuid).start();
             } else {
@@ -282,6 +284,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionStormWorldPrompt(uuid).start();
@@ -353,6 +358,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
                     SessionData.set(uuid, Key.A_WORLD_STORM, Objects.requireNonNull(plugin.getServer().getWorld(input))
@@ -396,6 +404,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
@@ -508,6 +519,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionThunderWorldPrompt(uuid).start();
@@ -582,6 +596,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 if (plugin.getServer().getWorld(input) != null) {
                     SessionData.set(uuid, Key.A_WORLD_THUNDER, Objects.requireNonNull(plugin.getServer()
@@ -625,6 +642,9 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             try {
                 final int i = Integer.parseInt(input);
                 if (i < 1) {
@@ -675,11 +695,13 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
-            final Player player = (Player) sender;
+            if (sender == null) {
+                return;
+            }
             if (input.equalsIgnoreCase(BukkitLang.get("cmdAdd"))) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
-                final Block block = selectedLightningLocations.get(player.getUniqueId());
+                final Block block = selectedLightningLocations.get(uuid);
                 if (block != null) {
                     final Location loc = block.getLocation();
                     final LinkedList<String> locations;
@@ -692,10 +714,10 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                         locations.add(BukkitConfigUtil.getLocationInfo(loc));
                     }
                     SessionData.set(uuid, Key.A_LIGHTNING, locations);
-                    selectedLightningLocations.remove(player.getUniqueId());
+                    selectedLightningLocations.remove(uuid);
                     plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 } else {
-                    player.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
+                    sender.sendMessage(ChatColor.RED + BukkitLang.get("eventEditorSelectBlockFirst"));
                     new ActionLightningPrompt(uuid).start();
                     return;
                 }
@@ -704,13 +726,13 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                 SessionData.set(uuid, Key.A_LIGHTNING, null);
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
-                selectedLightningLocations.remove(player.getUniqueId());
+                selectedLightningLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 new ActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final ConcurrentHashMap<UUID, Block> selectedLightningLocations
                         = plugin.getActionFactory().getSelectedLightningLocations();
-                selectedLightningLocations.remove(player.getUniqueId());
+                selectedLightningLocations.remove(uuid);
                 plugin.getActionFactory().setSelectedLightningLocations(selectedLightningLocations);
                 new ActionMainPrompt(uuid).start();
             } else {

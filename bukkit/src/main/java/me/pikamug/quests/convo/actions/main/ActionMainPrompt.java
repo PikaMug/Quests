@@ -412,6 +412,9 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionMobPrompt(uuid, null).start();
@@ -544,6 +547,9 @@ public class ActionMainPrompt extends ActionsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ActionMobNamePrompt(uuid, questMob).start();

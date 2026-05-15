@@ -707,6 +707,9 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestRequirementsItemListPrompt.this).start();
@@ -1538,6 +1541,9 @@ public class QuestRequirementsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(@Nullable final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;

@@ -41,7 +41,7 @@ public class BukkitQuestsCommandHandler {
     private final BukkitQuestsPlugin plugin;
     private final Map<String, BukkitQuestsSubCommand> subCommands;
 
-    public BukkitQuestsCommandHandler(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsCommandHandler(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
         subCommands = Stream.of(new BukkitQuestsListCommand(plugin),
                         new BukkitQuestsTakeCommand(plugin),
@@ -62,7 +62,7 @@ public class BukkitQuestsCommandHandler {
             printHelp(cs);
             return true;
         }
-        for (Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
+        for (final Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
             if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
                 if (args.length < cmd.getValue().getMaxArguments()) {
                     cs.sendMessage(getCommandUsage(cs, args[0]));

@@ -187,6 +187,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch(input.intValue()) {
         case 1:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
@@ -373,6 +376,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestNpcsDeliveryListPrompt.this).start();
@@ -464,6 +470,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final LinkedList<String> npcs = SessionData.get(uuid, pref + Key.S_DELIVERY_NPCS) != null
                         ? (LinkedList<String>) SessionData.get(uuid, pref + Key.S_DELIVERY_NPCS) : new LinkedList<>();
@@ -501,7 +510,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             }
             if (sender instanceof Player) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-                selectingNpcs.remove(((Player) sender).getUniqueId());
+                selectingNpcs.remove(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
             new QuestNpcsDeliveryListPrompt(uuid).start();
@@ -587,6 +596,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 final String[] args = input.split(" ");
@@ -614,7 +626,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             }
             if (sender instanceof Player) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-                selectingNpcs.remove(((Player) sender).getUniqueId());
+                selectingNpcs.remove(uuid);
                 plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             }
             new QuestStageMainPrompt(stageNum, uuid).start();
@@ -735,6 +747,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestNpcIdsToKillPrompt(uuid).start();
@@ -812,6 +827,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<String> npcs = SessionData.get(uuid, pref + Key.S_NPCS_TO_KILL) != null
@@ -848,7 +866,7 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 SessionData.set(uuid, pref + Key.S_NPCS_TO_KILL_AMOUNTS, amounts);
             }
             final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-            selectingNpcs.remove(((Player) sender).getUniqueId());
+            selectingNpcs.remove(uuid);
             plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             new QuestNpcsKillListPrompt(uuid).start();
         }
@@ -885,6 +903,9 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                 return;
             }
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (!input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))) {
                 final String[] args = input.split(" ");
                 final LinkedList<Integer> amounts = new LinkedList<>();

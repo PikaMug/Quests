@@ -28,7 +28,7 @@ public class BukkitQuestsJournalCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsJournalCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsJournalCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -64,7 +64,7 @@ public class BukkitQuestsJournalCommand extends BukkitQuestsSubCommand {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (assertNonPlayer(cs)) {
             return;
         }

@@ -391,6 +391,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
     @Override
     public void acceptInput(final Number input) {
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         switch (input.intValue()) {
         case 1:
             if (plugin.getDependencies().getVaultEconomy() != null) {
@@ -702,6 +705,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, QuestRewardsItemListPrompt.this).start();
@@ -965,6 +971,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch (input.intValue()) {
             case 1:
                 new QuestPermissionsPrompt(uuid).start();
@@ -1216,6 +1225,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestMcMMOSkillsPrompt(uuid).start();
@@ -1486,6 +1498,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
         @SuppressWarnings("unchecked")
         public void acceptInput(final Number input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             switch(input.intValue()) {
             case 1:
                 new QuestHeroesClassesPrompt(uuid).start();
@@ -1776,6 +1791,9 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
         @Override
         public void acceptInput(@Nullable final String input) {
             final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+            if (sender == null) {
+                return;
+            }
             if (input != null && !input.equalsIgnoreCase(BukkitLang.get("cmdCancel"))
                     && !input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 String found = null;

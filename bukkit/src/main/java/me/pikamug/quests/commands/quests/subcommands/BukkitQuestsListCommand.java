@@ -24,7 +24,7 @@ public class BukkitQuestsListCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestsListCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestsListCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -59,7 +59,7 @@ public class BukkitQuestsListCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission(getPermission())) {
             if (!(cs instanceof Player)) {
                 int num = 1;

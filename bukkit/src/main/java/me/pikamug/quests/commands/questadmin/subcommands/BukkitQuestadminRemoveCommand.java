@@ -31,7 +31,7 @@ public class BukkitQuestadminRemoveCommand extends BukkitQuestsSubCommand {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BukkitQuestadminRemoveCommand(BukkitQuestsPlugin plugin) {
+    public BukkitQuestadminRemoveCommand(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -66,7 +66,7 @@ public class BukkitQuestadminRemoveCommand extends BukkitQuestsSubCommand {
     }
 
     @Override
-    public void execute(CommandSender cs, String[] args) {
+    public void execute(final CommandSender cs, final String[] args) {
         if (args.length < 3) {
             // Shows command usage
             return;
