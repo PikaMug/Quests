@@ -58,7 +58,7 @@ public abstract class QuestsIntegerPrompt implements QuestsPrompt {
      * @return        plain text to deliver
      */
     public static String sendClickableSelection(final String input, final BukkitQuester quester) {
-        if (quester == null || quester.getPlugin() == null) {
+        if (quester == null || quester.getPlugin() == null || quester.getPlayer() == null) {
             return "ERROR";
         }
         if (!quester.getPlugin().getConfigSettings().canClickablePrompts()) {
