@@ -5,6 +5,8 @@ Thank you for your interest in contributing to Quests! We appreciate your
 effort, but to make sure that the inclusion of your patch is a smooth process, we
 ask that you make note of the following guidelines.
 
+* **Learn the process.** Those new to Minecraft plugin development should read 
+  https://pikamug.gitbook.io/quests/master/plugin-compilation
 * **Target Java 8 for source and compilation.** Make sure to mark methods with
   ` @Override` that override methods of parent classes, or that implement
   methods of interfaces.
@@ -24,6 +26,7 @@ ask that you make note of the following guidelines.
 * **Keep commit summaries under 70 characters.** For more details, place two
   new lines after the summary line and write away!
 * **Test your code.** We're not interested in broken code, for the obvious reasons.
+  If AI was used in any way, please explain in your summary or a comment.
 
 
 Branches
@@ -31,6 +34,9 @@ Branches
 When submitting a feature or bugfix, base your code on the newest development branch,
 and PR against that same branch. If such a branch does not exist, base your code
 against the `main` branch, and PR against that same branch.
+
+Do not submit language localization as a PR. Translations must be submitted at
+https://crowdin.com/project/translate-quests
 
 
 Checklist
