@@ -64,7 +64,7 @@ public abstract class BukkitNpcListener implements Listener {
             Conversations.getConversationOf(player.getUniqueId()).get().handleInput(String.valueOf(npcId));
         }
         if (clickType == ClickType.RIGHT) {
-            if (!player.isConversing()) {
+            if (!Conversations.getConversationOf(player.getUniqueId()).isPresent()) {
                 final BukkitQuester quester = plugin.getQuester(player.getUniqueId());
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     final BukkitStage currentStage = (BukkitStage) quester.getCurrentStage(quest);

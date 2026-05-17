@@ -56,6 +56,7 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.unite.api.objects.PartyProvider;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -527,7 +528,7 @@ public class BukkitQuester implements Quester {
         }
         if (canAcceptOffer(quest, giveReason)) {
             if (getPlayer() != null) {
-                if (!getPlayer().isConversing()) {
+                if (!Conversations.getConversationOf(getPlayer().getUniqueId()).isPresent()) {
                     setQuestIdToTake(quest.getId());
                     final String s = ChatColor.GOLD + BukkitConfigUtil.parseString(BukkitLang.get("questObjectivesTitle")
                             + "\n" + ChatColor.RESET + quest.getDescription(), quest, getPlayer());

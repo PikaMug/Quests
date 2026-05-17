@@ -22,6 +22,7 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
+import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -376,7 +377,7 @@ public class BukkitPlayerListener implements Listener {
                                         + BukkitItemUtil.getName(new ItemStack(block.getType())) + ChatColor.GOLD + ")");
                             }
                             event.setCancelled(true);
-                        } else if (!player.isConversing()) {
+                        } else if (!Conversations.getConversationOf(event.getPlayer().getUniqueId()).isPresent()) {
                             for (final Quest quest : plugin.getLoadedQuests()) {
                                 final BukkitQuest bukkitQuest = (BukkitQuest) quest;
                                 if (bukkitQuest.getBlockStart() != null && event.getClickedBlock() != null) {
