@@ -13,7 +13,9 @@ package me.pikamug.quests.convo.quests;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.convo.QuestsStringPrompt;
 import me.pikamug.quests.quests.QuestFactory;
+import me.pikamug.quests.util.BukkitLang;
 import org.browsit.conversations.api.Conversations;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -50,6 +52,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
 
     public void start() {
         Conversations.create(uuid).prompt(getPromptText(), String.class, prompt -> prompt
+                .attempts(99).conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"))
                 .converter(String::valueOf).fetch((input, sender) -> acceptInput(input))).start();
     }
 }

@@ -543,16 +543,14 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     if (!plugin.getDependencies().isNpc(npcUuid)) {
                         sender.sendMessage(ChatColor.RED + BukkitLang.get("stageEditorInvalidNPC")
                                 .replace("<input>", input));
-                        new QuestNPCStartPrompt(npcUuid).start();
+                        new QuestNPCStartPrompt(uuid).start();
                         return;
                     }
-                    SessionData.set(npcUuid, Key.Q_START_NPC, npcUuid.toString());
-                    if (sender instanceof Player) {
-                        final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-                        selectingNpcs.remove(uuid);
-                        plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-                    }
-                    new QuestMainPrompt(npcUuid).start();
+                    SessionData.set(uuid, Key.Q_START_NPC, npcUuid.toString());
+                    final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+                    selectingNpcs.remove(uuid);
+                    plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
+                    new QuestMainPrompt(uuid).start();
                     return;
                 } catch (final IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED 
@@ -562,11 +560,9 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
             } else if (input.equalsIgnoreCase(BukkitLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.Q_START_NPC, null);
             }
-            if (sender instanceof Player) {
-                final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
-                selectingNpcs.remove(uuid);
-                plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
-            }
+            final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
+            selectingNpcs.remove(uuid);
+            plugin.getQuestFactory().setSelectingNpcs(selectingNpcs);
             new QuestMainPrompt(uuid).start();
         }
     }
