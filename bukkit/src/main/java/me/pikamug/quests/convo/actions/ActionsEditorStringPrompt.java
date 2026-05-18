@@ -49,7 +49,7 @@ public abstract class ActionsEditorStringPrompt extends QuestsStringPrompt {
     public abstract void acceptInput(String input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), String.class, prompt -> prompt
+        Conversations.create(uuid).title(getName()).prompt(getPromptText(), String.class, prompt -> prompt
                 .converter(String::valueOf).fetch((input, sender) -> acceptInput(input))).start();
     }
 }

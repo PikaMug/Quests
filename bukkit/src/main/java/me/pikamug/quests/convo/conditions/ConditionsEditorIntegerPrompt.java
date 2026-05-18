@@ -56,7 +56,7 @@ public abstract class ConditionsEditorIntegerPrompt extends QuestsIntegerPrompt 
     public abstract void acceptInput(final Number input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), Integer.class, prompt -> prompt
+        Conversations.create(uuid).title(getName()).prompt(getPromptText(), Integer.class, prompt -> prompt
                 .converter(Integer::parseInt).fetch((input, sender) -> acceptInput(input))).start();
     }
 }

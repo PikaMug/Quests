@@ -127,13 +127,13 @@ public class QuestAcceptPrompt extends MiscStringPrompt {
     }
 
     public void start() {
-        Conversations.create(uuid)
+        Conversations.create(uuid).title(getName())
                 .prompt(getPromptText(), String.class, prompt -> prompt
-                .converter(String::valueOf)
-                .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
-                .fetch((input, sender) -> acceptInput(input)))
+                        .converter(String::valueOf)
+                        .conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateCriticalError"))
+                        .fetch((input, sender) -> acceptInput(input)))
                 .endWhen(TimeClause.create(plugin.getConfigSettings().getAcceptTimeout() * 1000L,
-                ChatColor.YELLOW + BukkitLang.get("questTimeout")))
+                        ChatColor.YELLOW + BukkitLang.get("questTimeout")))
                 .start();
     }
 }

@@ -57,7 +57,7 @@ public abstract class QuestsEditorIntegerPrompt extends QuestsIntegerPrompt {
     public abstract void acceptInput(final Number input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), Integer.class, prompt -> prompt
+        Conversations.create(uuid).title(getName()).prompt(getPromptText(), Integer.class, prompt -> prompt
                 .attempts(99).conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"))
                 .converter(Integer::parseInt).fetch((input, sender) -> acceptInput(input))).start();
     }

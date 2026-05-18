@@ -51,7 +51,7 @@ public abstract class QuestsEditorStringPrompt extends QuestsStringPrompt {
     public abstract void acceptInput(String input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), String.class, prompt -> prompt
+        Conversations.create(uuid).title(getName()).prompt(getPromptText(), String.class, prompt -> prompt
                 .attempts(99).conversionFailText(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"))
                 .converter(String::valueOf).fetch((input, sender) -> acceptInput(input))).start();
     }

@@ -56,7 +56,7 @@ public abstract class ActionsEditorIntegerPrompt extends QuestsIntegerPrompt {
     public abstract void acceptInput(final Number input);
 
     public void start() {
-        Conversations.create(uuid).prompt(getPromptText(), Number.class, prompt -> prompt
+        Conversations.create(uuid).title(getName()).prompt(getPromptText(), Number.class, prompt -> prompt
                 .converter(Integer::parseInt).fetch((input, sender) -> acceptInput(input))).start();
     }
 }
