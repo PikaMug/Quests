@@ -50,7 +50,7 @@ public class BukkitNpcEffectThread implements Runnable {
      * @param targetLocation Target NPC location to place the effect above
      */
     public void showConfigEffect(final BukkitQuester quester, final UUID targetUuid, final Location targetLocation) {
-        if (targetUuid != null) {
+        if (quester != null && targetUuid != null && targetLocation != null) {
             targetLocation.add(0, 2, 0);
             final BukkitQuesterPostViewEffectEvent event;
             if (quester.canAcceptQuest(targetUuid)) {

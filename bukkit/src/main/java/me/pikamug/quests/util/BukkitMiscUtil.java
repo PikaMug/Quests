@@ -25,9 +25,19 @@ import java.util.UUID;
 
 public class BukkitMiscUtil {
 
-    public static Entity getEntity(UUID entityId) {
+    /**
+     * Gets an entity associated with the provided UUID
+     *
+     * @param entityId the unique ID
+     * @return the entity (i.e. player), or null
+     */
+    public static Entity getEntity(final UUID entityId) {
+        // Check for player first, as its faster and happens most often
+        final Entity potentialPlayer = Bukkit.getPlayer(entityId);
+        if (potentialPlayer != null) {
+            return potentialPlayer;
+        }
         try {
-            // Quick dirty fix, ideally turn this into an interface with some detection method
             return Bukkit.getEntity(entityId);
         } catch (final Throwable tr) {
             for (final World world : Bukkit.getWorlds()) {

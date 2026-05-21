@@ -23,7 +23,6 @@ import me.pikamug.quests.events.plugin.BukkitQuestsPluginPostReloadEvent;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.listeners.BukkitBlockListener;
 import me.pikamug.quests.listeners.BukkitCommandManager;
-import me.pikamug.quests.listeners.BukkitConvoListener;
 import me.pikamug.quests.listeners.BukkitItemListener;
 import me.pikamug.quests.listeners.BukkitPartiesListener;
 import me.pikamug.quests.listeners.BukkitPlayerListener;
@@ -98,7 +97,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitQuestFactory questFactory;
     private BukkitActionFactory actionFactory;
     private BukkitConditionFactory conditionFactory;
-    private BukkitConvoListener convoListener;
     private BukkitBlockListener blockListener;
     private BukkitItemListener itemListener;
     private BukkitPlayerListener playerListener;
@@ -139,7 +137,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             getLogger().warning("LocaleLib not present! Is this a debug environment?");
         }
         BlockItemStacks.init(!BukkitMiscUtil.isBelow113());
-        convoListener = new BukkitConvoListener();
         blockListener = new BukkitBlockListener(this);
         itemListener = new BukkitItemListener(this);
         playerListener = new BukkitPlayerListener(this);
@@ -499,10 +496,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public BukkitConditionFactory getConditionFactory() {
         return conditionFactory;
-    }
-
-    public BukkitConvoListener getConvoListener() {
-        return convoListener;
     }
 
     public BukkitBlockListener getBlockListener() {

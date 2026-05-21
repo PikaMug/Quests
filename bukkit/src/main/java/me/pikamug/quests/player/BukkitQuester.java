@@ -3821,6 +3821,7 @@ public class BukkitQuester implements Quester {
         try {
             plugin.getStorage().saveQuester(this).get();
         } catch (final Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;

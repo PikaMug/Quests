@@ -25,12 +25,16 @@ public class BukkitPlayerMoveThread implements Runnable {
     @Override
     public void run() {
         for (final Player player : plugin.getServer().getOnlinePlayers()) {
+            boolean isNpc = false;
             for (final BukkitNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
                 if (npcDependency.isNpc(player.getUniqueId())) {
-                    return;
+                    isNpc = true;
+                    break;
                 }
             }
-            plugin.getPlayerListener().playerMove(player.getUniqueId(), player.getLocation());
+            if (!isNpc) {
+                plugin.getPlayerListener().playerMove(player.getUniqueId(), player.getLocation());
+            }
         }
     }
 }
