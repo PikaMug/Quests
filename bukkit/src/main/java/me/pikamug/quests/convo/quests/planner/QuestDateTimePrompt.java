@@ -149,43 +149,51 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempYear") 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 2:
             final Integer month = (Integer) SessionData.get(uuid, "tempMonth");
             if (month != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + (month + 1) + ChatColor.GRAY + ")";
             }
+            break;
         case 3:
             if (SessionData.get(uuid, "tempDay") != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempDay") 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 4:
             if (SessionData.get(uuid, "tempHour") != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempHour") 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 5:
             if (SessionData.get(uuid, "tempMinute") != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempMinute") 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 6:
             if (SessionData.get(uuid, "tempSecond") != null) {
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + SessionData.get(uuid, "tempSecond") 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 7:
             if (SessionData.get(uuid, "tempZone") != null) {
                 final TimeZone tz = TimeZone.getTimeZone((String) SessionData.get(uuid, "tempZone"));
                 return ChatColor.GRAY + "(" + ChatColor.AQUA + tz.getDisplayName(false, TimeZone.SHORT) 
                         + ChatColor.GRAY + ")";
             }
+            break;
         case 8:
         case 9:
             return "";
         default:
             return null;
         }
+        return "";
     }
     
     @Override

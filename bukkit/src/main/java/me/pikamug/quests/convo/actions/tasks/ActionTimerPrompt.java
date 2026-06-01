@@ -88,6 +88,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + BukkitMiscUtil.getTime(timer * 1000L) + ChatColor.GRAY
                             + ")";
                 }
+                break;
             }
         case 2:
             if (SessionData.get(uuid, Key.A_CANCEL_TIMER) == null) {
@@ -102,6 +103,7 @@ public class ActionTimerPrompt extends ActionsEditorIntegerPrompt {
         default:
             return null;
         }
+        return "";
     }
 
     @Override

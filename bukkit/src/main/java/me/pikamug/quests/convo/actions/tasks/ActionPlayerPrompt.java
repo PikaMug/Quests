@@ -137,6 +137,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
                     }
                     return text.toString();
                 }
+                break;
             }
         case 3:
             if (SessionData.get(uuid, Key.A_POTION_TYPES) == null) {
@@ -210,6 +211,7 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
         default:
             return null;
         }
+        return "";
     }
 
     @Override
@@ -449,14 +451,18 @@ public class ActionPlayerPrompt extends ActionsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new ItemStackPrompt(uuid, ActionPlayerItemListPrompt.this).start();
+                break;
             case 2:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("eventEditorItemsCleared"));
                 SessionData.set(uuid, Key.A_ITEMS, null);
                 new ActionPlayerItemListPrompt(uuid).start();
+                break;
             case 3:
                 new ActionMainPrompt(uuid).start();
+                break;
             default:
                 new ActionPlayerItemListPrompt(uuid).start();
+                break;
             }
         }
     }

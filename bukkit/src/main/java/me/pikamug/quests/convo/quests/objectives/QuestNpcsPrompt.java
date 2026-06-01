@@ -753,13 +753,16 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
             switch(input.intValue()) {
             case 1:
                 new QuestNpcIdsToKillPrompt(uuid).start();
+                break;
             case 2:
                 new QuestNpcAmountsToKillPrompt(uuid).start();
+                break;
             case 3:
                 sender.sendMessage(ChatColor.YELLOW + BukkitLang.get("stageEditorObjectiveCleared"));
                 SessionData.set(uuid, pref + Key.S_NPCS_TO_KILL, null);
                 SessionData.set(uuid, pref + Key.S_NPCS_TO_KILL_AMOUNTS, null);
                 new QuestNpcsKillListPrompt(uuid).start();
+                break;
             case 4:
                 final int one;
                 final int two;
@@ -782,8 +785,10 @@ public class QuestNpcsPrompt extends QuestsEditorIntegerPrompt {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
                     new QuestNpcsKillListPrompt(uuid).start();
                 }
+                break;
             default:
                 new QuestNpcsPrompt(stageNum, uuid).start();
+                break;
             }
         }
     }

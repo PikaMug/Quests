@@ -214,6 +214,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
                     return ChatColor.GRAY + "(" + ChatColor.AQUA + l.getWorld().getName() + ", " + l.getBlockX() + ", "
                             + l.getBlockY() + ", " + l.getBlockZ() + ChatColor.RESET + ChatColor.GRAY + ")";
                 }
+                break;
             }
         case 6:
             if (plugin.getDependencies().getWorldGuardApi() != null) {
@@ -240,6 +241,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
         default:
             return null;
         }
+        return "";
     }
 
     @Override

@@ -103,6 +103,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                             + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                             + ChatColor.GRAY + ")";
                 }
+                break;
             }
         case 2:
             if (SessionData.get(uuid, Key.A_WORLD_THUNDER) == null) {
@@ -114,6 +115,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
                             + ChatColor.GRAY + " -> " + ChatColor.DARK_AQUA + BukkitMiscUtil.getTime(duration * 1000L)
                             + ChatColor.GRAY + ")";
                 }
+                break;
             }
         case 3:
             if (SessionData.get(uuid, Key.A_LIGHTNING) == null) {
@@ -133,6 +135,7 @@ public class ActionWeatherPrompt extends ActionsEditorIntegerPrompt {
         default:
             return null;
         }
+        return "";
     }
 
     @Override
