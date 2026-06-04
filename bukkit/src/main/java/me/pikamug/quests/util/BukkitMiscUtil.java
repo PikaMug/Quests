@@ -171,12 +171,13 @@ public class BukkitMiscUtil {
     public static String snakeCaseToUpperCamelCase(final String input) {
         String name = input.toLowerCase();
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        for (int i = 0; i < input.chars().filter(num -> num == '_').count(); i++) {
+        while (name.contains("_")) {
             final int index = name.indexOf('_');
-            if (index != -1) {
-                name = name.substring(0, (index + 1)) + Character.toUpperCase(name.charAt(index + 1)) 
+            if (index + 1 < name.length()) {
+                name = name.substring(0, index) + Character.toUpperCase(name.charAt(index + 1))
                         + name.substring(index + 2);
-                name = name.replaceFirst("_", "");
+            } else {
+                name = name.substring(0, index);
             }
         }
         return name;
