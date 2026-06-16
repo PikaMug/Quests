@@ -2831,7 +2831,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                             if (currentData.getKey().equals(dataMap.getKey())) {
                                 text.append(ChatColor.BLUE).append(ChatColor.BOLD).append(index).append(ChatColor.RESET)
                                         .append(ChatColor.YELLOW).append(" - ").append(dataMap.getKey());
-                                if (currentData.getValue() != null) {
+                                if (currentData.getValue() != null && !currentData.getValue().toString().trim().isEmpty()) {
                                     text.append(ChatColor.GRAY).append(" (").append(ChatColor.AQUA)
                                             .append(ChatColor.translateAlternateColorCodes('&',
                                             currentData.getValue().toString())).append(ChatColor.GRAY).append(")\n");
@@ -2847,7 +2847,7 @@ public class QuestStageMainPrompt extends QuestsEditorIntegerPrompt {
                 text.append(ChatColor.GREEN).append(ChatColor.BOLD).append(index).append(ChatColor.YELLOW)
                         .append(" - ").append(BukkitLang.get("done"));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override

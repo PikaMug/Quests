@@ -2002,7 +2002,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 for (final String dataKey : dataMapKeys) {
                     text.append(ChatColor.BLUE).append(ChatColor.BOLD).append(index).append(ChatColor.RESET)
                             .append(ChatColor.YELLOW).append(" - ").append(dataKey);
-                    if (dataMap.get(dataKey) != null) {
+                    if (dataMap.get(dataKey) != null && !dataMap.get(dataKey).toString().trim().isEmpty()) {
                         text.append(ChatColor.GRAY).append(" (").append(ChatColor.AQUA)
                                 .append(ChatColor.translateAlternateColorCodes('&', dataMap.get(dataKey).toString()))
                                 .append(ChatColor.GRAY).append(")\n");
@@ -2015,7 +2015,7 @@ public class QuestRewardsPrompt extends QuestsEditorIntegerPrompt {
                 text.append(ChatColor.GREEN).append(ChatColor.BOLD).append(index).append(ChatColor.YELLOW).append(" - ")
                         .append(BukkitLang.get("done"));
             }
-            return text.toString();
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
         }
 
         @Override
