@@ -13,6 +13,7 @@ package me.pikamug.quests.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -162,7 +163,7 @@ public class BukkitInventoryUtil {
     }
 
     /**
-     * Get number of empty inventory slots
+     * Get number of empty inventory slots.
      *
      * @param player Player to check
      * @return number of empty slots
@@ -181,5 +182,22 @@ public class BukkitInventoryUtil {
                 i++;
             }
         return 36 - i;
+    }
+
+    /**
+     * Create a false/cloned inventory of the supplied Player.
+     * <p>Most—but not all—server environments include armor.
+     *
+     * @param player Player whose inventory will be cloned
+     * @return cloned inventory
+     */
+    public static Inventory cloneInventory(final Player player) {
+        final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
+        try {
+            fakeInv.setContents(player.getInventory().getContents().clone());
+        } catch (final IllegalArgumentException ignored) {
+            fakeInv.setStorageContents(player.getInventory().getStorageContents().clone());
+        }
+        return fakeInv;
     }
 }

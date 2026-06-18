@@ -69,7 +69,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -1059,6 +1058,10 @@ public class BukkitQuester implements Quester {
         final LinkedList<String> finishedRequirements = new LinkedList<>();
         final LinkedList<String> current = new LinkedList<>();
         final OfflinePlayer player = getPlayer();
+        if (player == null) {
+            current.add("Player was null");
+            return current;
+        }
         if (requirements.getMoney() > 0 && plugin.getDependencies().getVaultEconomy() != null) {
             final String currency = requirements.getMoney() > 1 ? plugin.getDependencies().getVaultEconomy()
                     .currencyNamePlural() : plugin.getDependencies().getVaultEconomy().currencyNameSingular();
@@ -1133,15 +1136,9 @@ public class BukkitQuester implements Quester {
                         + requirements.getHeroesSecondaryClass());
             }
         }
-        if (player.isOnline()) {
-            final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
-            try {
-                fakeInv.setContents(getPlayer().getInventory().getContents().clone());
-            } catch (final IllegalArgumentException e) {
-                plugin.getLogger().severe("Most likely outdated server build, see SPIGOT-8070");
-                getPlayer().sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
-            }
-
+        if (player.isOnline() && getPlayer() != null) {
+            final Player p = getPlayer();
+            final Inventory fakeInv = BukkitInventoryUtil.cloneInventory(p);
             int num = 0;
             for (final ItemStack is : requirements.getItems()) {
                 if (BukkitInventoryUtil.canRemoveItem(fakeInv, is)) {
@@ -1155,9 +1152,8 @@ public class BukkitQuester implements Quester {
                 }
                 num = 0;
             }
-
             for (final String perm :requirements.getPermissions()) {
-                if (getPlayer().hasPermission(perm)) {
+                if (p.hasPermission(perm)) {
                     finishedRequirements.add(ChatColor.GREEN + BukkitLang.get("permissionDisplay") + " " + perm);
                 } else {
                     unfinishedRequirements.add(ChatColor.GRAY + BukkitLang.get("permissionDisplay") + " " + perm);
@@ -1181,7 +1177,7 @@ public class BukkitQuester implements Quester {
                                 ne.printStackTrace();
                             }
                         }
-                        if (cr.testRequirement(getPlayer().getUniqueId(), m.getValue())) {
+                        if (cr.testRequirement(p.getUniqueId(), m.getValue())) {
                             finishedRequirements.add(ChatColor.GREEN + "" + message);
                         } else {
                             unfinishedRequirements.add(ChatColor.GRAY + "" + message);

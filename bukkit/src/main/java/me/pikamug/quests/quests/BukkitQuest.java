@@ -23,28 +23,53 @@ import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.events.quest.BukkitQuestUpdateCompassEvent;
-import me.pikamug.quests.events.quester.*;
+import me.pikamug.quests.events.quester.BukkitQuesterPostChangeStageEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostCompleteQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPostFailQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreChangeStageEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreCompleteQuestEvent;
+import me.pikamug.quests.events.quester.BukkitQuesterPreFailQuestEvent;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.nms.BukkitTitleProvider;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.components.*;
-import me.pikamug.quests.util.*;
-import org.bukkit.*;
+import me.pikamug.quests.quests.components.BukkitOptions;
+import me.pikamug.quests.quests.components.BukkitPlanner;
+import me.pikamug.quests.quests.components.BukkitRequirements;
+import me.pikamug.quests.quests.components.BukkitRewards;
+import me.pikamug.quests.quests.components.Options;
+import me.pikamug.quests.quests.components.Planner;
+import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.Rewards;
+import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.BukkitConfigUtil;
+import me.pikamug.quests.util.BukkitInventoryUtil;
+import me.pikamug.quests.util.BukkitItemUtil;
+import me.pikamug.quests.util.BukkitLang;
+import me.pikamug.quests.util.BukkitMiscUtil;
+import me.pikamug.quests.util.RomanNumeral;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -627,14 +652,7 @@ public class BukkitQuest implements Quest {
             if (p.getTotalExperience() < requirements.getExp()) {
                 return false;
             }
-            final Inventory fakeInv = Bukkit.createInventory(null, InventoryType.PLAYER);
-            try {
-                fakeInv.setContents(p.getInventory().getContents().clone());
-            } catch (final IllegalArgumentException e) {
-                plugin.getLogger().severe("Most likely outdated server build, see SPIGOT-8070");
-                p.sendMessage(ChatColor.RED + BukkitLang.get("unknownError"));
-                return false;
-            }
+            final Inventory fakeInv = BukkitInventoryUtil.cloneInventory(p);
             for (final ItemStack is : requirements.getItems()) {
                 if (BukkitInventoryUtil.canRemoveItem(fakeInv, is)) {
                     BukkitInventoryUtil.removeItem(fakeInv, is);
