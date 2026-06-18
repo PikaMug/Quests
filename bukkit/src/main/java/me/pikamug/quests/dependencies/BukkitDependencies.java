@@ -39,8 +39,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ro.niconeko.astralbooks.api.AstralBooks;
-import ro.niconeko.astralbooks.api.AstralBooksAPI;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -59,7 +57,6 @@ public class BukkitDependencies implements Dependencies {
     private static mcMMO mcmmo = null;
     private static Heroes heroes = null;
     private static DenizenAPI denizen = null;
-    private static AstralBooksAPI astralBooks = null;
     private static PartiesAPI parties = null;
     private final BukkitQuestsPlugin plugin;
     private int npcEffectThread = -1;
@@ -196,18 +193,6 @@ public class BukkitDependencies implements Dependencies {
             denizen = new DenizenAPI();
         }
         return denizen;
-    }
-
-    public AstralBooksAPI getAstralBooksApi() {
-        if (astralBooks == null && isPluginAvailable("AstralBooks")) {
-            try {
-                astralBooks = ((AstralBooks) Objects.requireNonNull(plugin.getServer().getPluginManager()
-                        .getPlugin("AstralBooks"))).getAPI();
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return astralBooks;
     }
 
     public PartiesAPI getPartiesApi() {
@@ -413,7 +398,6 @@ public class BukkitDependencies implements Dependencies {
         getMcmmoClassic();
         getHeroes();
         getPlaceholderApi();
-        getAstralBooksApi();
         getPartiesApi();
         getPartyProvider();
         getVaultEconomy();

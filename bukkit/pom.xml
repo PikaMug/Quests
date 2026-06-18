@@ -55,11 +55,6 @@
             <url>https://nexus.hc.to/content/repositories/pub_releases/</url>
         </repository>
         <repository>
-            <!-- AstralBooks -->
-            <id>repsy-release</id>
-            <url>https://repo.repsy.io/mvn/niconeko/release</url>
-        </repository>
-        <repository>
             <!-- PacketEvents for ZNPCsPlus -->
             <id>codemc-snapshots</id>
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
@@ -125,12 +120,6 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ro.niconeko</groupId>
-            <artifactId>astralbooks-api</artifactId>
-            <version>3.0.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

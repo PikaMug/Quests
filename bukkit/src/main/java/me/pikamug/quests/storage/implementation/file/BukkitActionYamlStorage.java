@@ -145,6 +145,7 @@ public class BukkitActionYamlStorage implements ActionStorageImpl {
             action.setMessage(BukkitConfigUtil.parseString(data.getString(actionKey + "message")));
         }
         if (data.contains(actionKey + "open-book")) {
+            // Legacy
             action.setBook(data.getString(actionKey + "open-book"));
         }
         if (data.contains(actionKey + "clear-inventory")) {

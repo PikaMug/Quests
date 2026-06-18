@@ -394,14 +394,7 @@ public class BukkitAction implements Action {
             }
         }
         if (book != null) {
-            if (!book.isEmpty()) {
-                if (plugin.getDependencies().getAstralBooksApi() != null) {
-                    if (plugin.getDependencies().getAstralBooksApi().hasFilterBook(book)) {
-                        plugin.getDependencies().getAstralBooksApi().openBook(player, plugin.getDependencies()
-                                .getAstralBooksApi().getFilterBook(book));
-                    }
-                }
-            }
+            plugin.getLogger().severe("AstralBooks/CitizensBook support removed in Quests 5.3.2");
         }
         if (failQuest) {
             quest.failQuest(quester, true);
