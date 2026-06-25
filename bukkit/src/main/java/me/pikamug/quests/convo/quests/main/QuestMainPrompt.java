@@ -134,7 +134,7 @@ public class QuestMainPrompt extends QuestsEditorIntegerPrompt {
         case 3:
             return ChatColor.YELLOW + BukkitLang.get("questEditorFinishMessage");
         case 4:
-            if (SessionData.get(uuid, Key.Q_START_NPC) == null || plugin.getDependencies().hasAnyNpcDependencies()) {
+            if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatColor.YELLOW + BukkitLang.get("questEditorNPCStart");
             } else {
                 return ChatColor.GRAY + BukkitLang.get("questEditorNPCStart");
