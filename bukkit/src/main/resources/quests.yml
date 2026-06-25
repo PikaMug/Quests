@@ -57,7 +57,7 @@ quests:
       exp: 100
       quest-points: 1
   default3:
-    name: 'Catch Fish'
+    name: 'Casual Angler'
     ask-message: '<yellow>Catch some fish!'
     finish-message: '<yellow>Good job. Here is some <green>experience<yellow>.'
     stages:
@@ -69,7 +69,7 @@ quests:
     rewards:
       exp: 250
   default4:
-    name: 'Timed Quest'
+    name: 'Time Trial'
     ask-message: '<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!'
     finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
     requirements:
