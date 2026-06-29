@@ -71,7 +71,7 @@ quests:
   default4:
     name: 'Time Trial'
     ask-message: '<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!'
-    finish-message: '<yellow>You did it in time! Have an <pink>Iron Shovel<yellow> and some <green>experience<yellow>.'
+    finish-message: '<yellow>You did it in time! Have a <pink>Gold Ingot<yellow> and some <green>experience<yellow>.'
     requirements:
       quest-points: 1
       fail-requirement-message: '<red>Complete <pink>Iron Miner<red> or <pink>Mob Hunter<red> first.'
