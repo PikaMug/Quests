@@ -36,7 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BukkitQuestsCommandHandler {
+public class    BukkitQuestsCommandHandler {
 
     private final BukkitQuestsPlugin plugin;
     private final Map<String, BukkitQuestsSubCommand> subCommands;
@@ -76,18 +76,20 @@ public class BukkitQuestsCommandHandler {
     }
 
     public List<String> suggest(final CommandSender cs, final String[] args) {
-        if (args.length == 1) {
-            final List<String> results = new ArrayList<>();
-            for (Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
-                if (cmd.getKey().startsWith(args[0]) || cmd.getValue().getNameI18N().startsWith(args[0])) {
-                    results.add(cmd.getValue().getNameI18N());
+        if (cs.hasPermission("quests.quest.tab")) {
+            if (args.length == 1) {
+                final List<String> results = new ArrayList<>();
+                for (Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
+                    if (cmd.getKey().startsWith(args[0]) || cmd.getValue().getNameI18N().startsWith(args[0])) {
+                        results.add(cmd.getValue().getNameI18N());
+                    }
                 }
+                return results;
             }
-            return results;
-        }
-        for (Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
-            if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
-                return cmd.getValue().tabComplete(cs, args);
+            for (Map.Entry<String, BukkitQuestsSubCommand> cmd : subCommands.entrySet()) {
+                if (args[0].equalsIgnoreCase(cmd.getKey()) || args[0].equalsIgnoreCase(cmd.getValue().getNameI18N())) {
+                    return cmd.getValue().tabComplete(cs, args);
+                }
             }
         }
         return Collections.emptyList();
