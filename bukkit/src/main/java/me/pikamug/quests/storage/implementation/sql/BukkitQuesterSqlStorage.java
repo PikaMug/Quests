@@ -331,7 +331,6 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         return;
                     }
                     if (!bukkitQuester.getAmountsCompleted().containsKey(entry.getKey()) || bukkitQuester.getAmountsCompleted().get(entry.getKey()) == null) {
-                        plugin.getLogger().warning("Quester " + bukkitQuester.getUUID() + " is missing amounts completed for quest ID " + entry.getKey().getId());
                         return;
                     }
                     final int amount = bukkitQuester.getAmountsCompleted().get(entry.getKey());
