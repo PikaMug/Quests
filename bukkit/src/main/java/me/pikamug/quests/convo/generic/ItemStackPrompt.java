@@ -638,7 +638,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 final Enchantment e = BukkitItemUtil.getEnchantmentFromPrettyName(BukkitMiscUtil.getCapitalized(s));
                 if (e != null) {
                     SessionData.set(uuid, "tempEnchant", e);
-                    new ItemEnchantmentLevelPrompt(uuid, BukkitItemUtil.getPrettyEnchantmentName(e));
+                    new ItemEnchantmentLevelPrompt(uuid, BukkitItemUtil.getPrettyEnchantmentName(e)).start();
                 } else {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidEnch"));
                     new ItemEnchantmentPrompt(uuid).start();
@@ -682,7 +682,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 if (num < 1) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("invalidMinimum")
                             .replace("<number>", "1"));
-                    new ItemEnchantmentLevelPrompt(uuid, enchantment);
+                    new ItemEnchantmentLevelPrompt(uuid, enchantment).start();
                 } else {
                     if (SessionData.get(uuid, "tempEnchantments") != null) {
                         @SuppressWarnings("unchecked")
@@ -701,7 +701,7 @@ public class ItemStackPrompt extends QuestsEditorIntegerPrompt {
                 }
             } catch (final NumberFormatException e) {
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("reqNotANumber").replace("<input>", input));
-                new ItemEnchantmentLevelPrompt(uuid, enchantment);
+                new ItemEnchantmentLevelPrompt(uuid, enchantment).start();
             }
         }
     }
