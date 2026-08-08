@@ -229,7 +229,7 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
             SessionData.set(uuid, "tempMinute", cal.get(Calendar.MINUTE));
             SessionData.set(uuid, "tempSecond", cal.get(Calendar.SECOND));
             SessionData.set(uuid, "tempZone", cal.getTimeZone().getID());
-            new QuestDateTimePrompt(uuid, oldPrompt, source);
+            new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             break;
         case 1:
             new QuestYearPrompt(uuid).start();
@@ -300,13 +300,13 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                     || SessionData.get(uuid, "tempMinute") != null || SessionData.get(uuid, "tempSecond") != null
                     || SessionData.get(uuid, "tempZone") != null) {
                 BukkitMiscUtil.getEntity(uuid).sendMessage(ChatColor.RED + BukkitLang.get("listsNotSameSize"));
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             } else {
                 oldPrompt.start();
             }
             break;
         default:
-            new QuestDateTimePrompt(uuid, oldPrompt, source);
+            new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             break;
         }
     }
@@ -351,14 +351,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestYearPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempYear", Integer.parseInt(input));
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestYearPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -403,14 +403,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestMonthPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempMonth", Integer.parseInt(input) - 1);
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestMonthPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -455,14 +455,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestDayPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempDay", Integer.parseInt(input));
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestDayPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -507,14 +507,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestHourPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempHour", Integer.parseInt(input));
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestHourPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -559,14 +559,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestMinutePrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempMinute", Integer.parseInt(input));
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestMinutePrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -611,14 +611,14 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                         new QuestSecondPrompt(uuid).start();
                     } else {
                         SessionData.set(uuid, "tempSecond", Integer.parseInt(input));
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestSecondPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -664,20 +664,20 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                     } else {
                         final String[] t = TimeZone.getAvailableIDs((int) Math.round(amt * 60.0 * 60.0 * 1000.0));
                         if (t.length > 1) {
-                            new QuestZonePrompt(uuid, t);
+                            new QuestZonePrompt(uuid, t).start();
                         } else if (t.length > 0) {
                             SessionData.set(uuid, "tempZone", t[0]);
                         }  else {
                             sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                         }    
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 } catch (final NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
                     new QuestOffsetPrompt(uuid).start();
                 }
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }
@@ -725,13 +725,13 @@ public class QuestDateTimePrompt extends QuestsEditorIntegerPrompt {
                 for (final String z : zones) {
                     if (z.toLowerCase().startsWith(input.toLowerCase())) {
                         SessionData.set(uuid, "tempZone", z);
-                        new QuestDateTimePrompt(uuid, oldPrompt, source);
+                        new QuestDateTimePrompt(uuid, oldPrompt, source).start();
                     }
                 }
                 sender.sendMessage(ChatColor.RED + BukkitLang.get("itemCreateInvalidInput"));
-                new QuestZonePrompt(uuid, zones);
+                new QuestZonePrompt(uuid, zones).start();
             } else {
-                new QuestDateTimePrompt(uuid, oldPrompt, source);
+                new QuestDateTimePrompt(uuid, oldPrompt, source).start();
             }
         }
     }

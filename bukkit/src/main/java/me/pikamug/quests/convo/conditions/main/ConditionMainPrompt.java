@@ -170,7 +170,7 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
             break;
         case 7:
             if (SessionData.get(uuid, Key.C_OLD_CONDITION) != null) {
-                new ConditionSavePrompt(uuid, (String) SessionData.get(uuid, Key.C_OLD_CONDITION));
+                new ConditionSavePrompt(uuid, (String) SessionData.get(uuid, Key.C_OLD_CONDITION)).start();
             } else {
                 new ConditionSavePrompt(uuid, null).start();
             }
@@ -591,7 +591,7 @@ public class ConditionMainPrompt extends ConditionsEditorIntegerPrompt {
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(BukkitLang.get("noWord"))) {
                 new ConditionMainPrompt(uuid).start();
             } else {
-                new ConditionSavePrompt(uuid, modName);
+                new ConditionSavePrompt(uuid, modName).start();
             }
         }
     }

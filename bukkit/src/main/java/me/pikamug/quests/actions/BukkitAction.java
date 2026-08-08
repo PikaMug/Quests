@@ -393,7 +393,7 @@ public class BukkitAction implements Action {
                 player.teleport(teleport);
             }
         }
-        if (book != null) {
+        if (book != null && !book.isEmpty()) {
             plugin.getLogger().severe("AstralBooks/CitizensBook support removed in Quests 5.3.2");
         }
         if (failQuest) {
