@@ -11,7 +11,6 @@
 package me.pikamug.quests.util;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import org.bukkit.Bukkit;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +30,7 @@ public class BukkitUpdateChecker {
 
     public void getVersion(final Consumer<String> consumer) {
         if (plugin.getConfigSettings().canUpdateCheck()) {
-            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            plugin.getFoliaLib().getScheduler().runAsync(task -> {
                 try (final InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource="
                         + this.resourceId).openStream(); final Scanner scanner = new Scanner(inputStream)) {
                     if (scanner.hasNext()) {

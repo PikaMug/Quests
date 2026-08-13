@@ -49,6 +49,7 @@ import me.pikamug.quests.util.BukkitItemUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -281,7 +282,7 @@ public class BukkitQuest implements Quest {
             doNextStage(q, allowSharedProgress);
         } else {
             // Here we avoid BukkitStageTimer as the stage objectives are incomplete
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            plugin.getFoliaLib().getScheduler().runLater(() -> {
                 doNextStage(q, allowSharedProgress);
             }, (long) (currentStage.getDelay() * 0.02));
         }
@@ -408,7 +409,7 @@ public class BukkitQuest implements Quest {
             return false;
         }
         final Quest quest = this;
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        plugin.getFoliaLib().getScheduler().runNextTick(task -> {
             Location targetLocation = null;
             if (stage.getNpcsToInteract() != null && !stage.getNpcsToInteract().isEmpty()) {
                 targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToInteract().getFirst());
@@ -703,12 +704,13 @@ public class BukkitQuest implements Quest {
      */
     @SuppressWarnings("deprecation")
     public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
-        final OfflinePlayer player = ((BukkitQuester) quester).getOfflinePlayer();
+        final BukkitQuester bQuester = (BukkitQuester)quester;
+        final OfflinePlayer player = bQuester.getOfflinePlayer();
         boolean cancelled = false;
         if (player.isOnline()) {
             if (Bukkit.isPrimaryThread()) {
                 final BukkitQuesterPreCompleteQuestEvent preEvent
-                        = new BukkitQuesterPreCompleteQuestEvent((BukkitQuester) quester, this, false);
+                        = new BukkitQuesterPreCompleteQuestEvent(bQuester, this, false);
                 plugin.getServer().getPluginManager().callEvent(preEvent);
                 if (preEvent.isCancelled()) {
                     return;
@@ -716,7 +718,7 @@ public class BukkitQuest implements Quest {
             } else {
                 final CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
                     final BukkitQuesterPreCompleteQuestEvent preEvent
-                            = new BukkitQuesterPreCompleteQuestEvent((BukkitQuester) quester, BukkitQuest.this, true);
+                            = new BukkitQuesterPreCompleteQuestEvent(bQuester, BukkitQuest.this, true);
                     plugin.getServer().getPluginManager().callEvent(preEvent);
                     return preEvent.isCancelled();
                 });
@@ -731,28 +733,28 @@ public class BukkitQuest implements Quest {
         if (cancelled) {
             return;
         }
-        quester.hardQuit(this);
-        final Collection<Quest> completedQuests = quester.getCompletedQuests();
+        bQuester.hardQuit(this);
+        final Collection<Quest> completedQuests = bQuester.getCompletedQuests();
         completedQuests.add(this);
-        quester.setCompletedQuests(completedQuests);
-        for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
+        bQuester.setCompletedQuests(completedQuests);
+        for (final Map.Entry<WrappedTask, Quest> entry : bQuester.getTimers().entrySet()) {
             if (entry.getValue().getName().equals(getName())) {
-                plugin.getServer().getScheduler().cancelTask(entry.getKey());
-                quester.getTimers().remove(entry.getKey());
+                plugin.getFoliaLib().getScheduler().cancelTask(entry.getKey());
+                bQuester.getTimers().remove(entry.getKey());
             }
         }
         if (player.isOnline()) {
             final Player p = (Player)player;
             final String[] ps = BukkitConfigUtil.parseStringWithPossibleLineBreaks(ChatColor.AQUA
                     + finished, this, p);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(ps), 40);
+            plugin.getFoliaLib().getScheduler().runLater(() -> p.sendMessage(ps), 40);
         }
         if (planner.getCooldown() > -1) {
-            quester.getCompletedTimes().put(this, System.currentTimeMillis());
-            if (quester.getAmountsCompleted().containsKey(this)) {
-                quester.getAmountsCompleted().put(this, quester.getAmountsCompleted().get(this) + 1);
+            bQuester.getCompletedTimes().put(this, System.currentTimeMillis());
+            if (bQuester.getAmountsCompleted().containsKey(this)) {
+                bQuester.getAmountsCompleted().put(this, bQuester.getAmountsCompleted().get(this) + 1);
             } else {
-                quester.getAmountsCompleted().put(this, 1);
+                bQuester.getAmountsCompleted().put(this, 1);
             }
         }
         
@@ -774,7 +776,7 @@ public class BukkitQuest implements Quest {
                 } catch (final Exception e) {
                     plugin.getLogger().severe("Unable to add null reward item to inventory of " 
                             + player.getName() + " upon completion of quest " + name);
-                    quester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
+                    bQuester.sendMessage(ChatColor.RED + "Quests encountered a problem with an item. "
                             + "Please contact an administrator.");
                 }
                 issuedReward = true;
@@ -796,7 +798,7 @@ public class BukkitQuest implements Quest {
             if (Bukkit.isPrimaryThread()) {
                 Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
             } else {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+                plugin.getFoliaLib().getScheduler().runAsync(task ->
                         Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command));
             }
             issuedReward = true;
@@ -871,7 +873,7 @@ public class BukkitQuest implements Quest {
             issuedReward = true;
         }
         if (rewards.getQuestPoints() > 0) {
-            quester.setQuestPoints(quester.getQuestPoints() + rewards.getQuestPoints());
+            bQuester.setQuestPoints(bQuester.getQuestPoints() + rewards.getQuestPoints());
             if (plugin.getConfigSettings().getConsoleLogging() > 2) {
                 plugin.getLogger().info(player.getUniqueId() + " was rewarded " + rewards.getQuestPoints() + " "
                         + BukkitLang.get("questPoints"));
@@ -918,15 +920,15 @@ public class BukkitQuest implements Quest {
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
                         message = PlaceholderAPI.setPlaceholders(p, message);
                     }
-                    quester.sendMessage("- " + message);
+                    bQuester.sendMessage("- " + message);
                 }
             } else {
                 if (rewards.getExp() > 0) {
-                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getExp() + " "
+                    bQuester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getExp() + " "
                             + BukkitLang.get(p, "experience"));
                 }
                 if (rewards.getQuestPoints() > 0) {
-                    quester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
+                    bQuester.sendMessage("- " + ChatColor.DARK_GREEN + rewards.getQuestPoints() + " "
                             + BukkitLang.get(p, "questPoints"));
                 }
                 for (final ItemStack i : rewards.getItems()) {
@@ -983,7 +985,7 @@ public class BukkitQuest implements Quest {
                                         e.getKey())));
                                 text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
                             }
-                            quester.sendMessage(text.toString().replace("<item>", BukkitItemUtil.getName(i)));
+                            bQuester.sendMessage(text.toString().replace("<item>", BukkitItemUtil.getName(i)));
                         }
                     } else {
                         for (final Entry<Enchantment, Integer> e : i.getEnchantments().entrySet()) {
@@ -991,11 +993,11 @@ public class BukkitQuest implements Quest {
                                     e.getKey())));
                             text = new StringBuilder(text.toString().replaceFirst("<level>", RomanNumeral.getNumeral(e.getValue())));
                         }
-                        quester.sendMessage(text.toString().replace("<item>", BukkitItemUtil.getName(i)));
+                        bQuester.sendMessage(text.toString().replace("<item>", BukkitItemUtil.getName(i)));
                     }
                 }
                 if (rewards.getMoney() > 0 && depends.getVaultEconomy() != null) {
-                    quester.sendMessage("- " + ChatColor.DARK_GREEN
+                    bQuester.sendMessage("- " + ChatColor.DARK_GREEN
                             + depends.getVaultEconomy().format(rewards.getMoney()));
                 }
                 if (!rewards.getCommands().isEmpty()) {
@@ -1004,11 +1006,11 @@ public class BukkitQuest implements Quest {
                         if (!rewards.getCommandsOverrideDisplay().isEmpty()
                                 && rewards.getCommandsOverrideDisplay().size() > index) {
                             if (!rewards.getCommandsOverrideDisplay().get(index).trim().isEmpty()) {
-                                quester.sendMessage("- " + ChatColor.DARK_GREEN
+                                bQuester.sendMessage("- " + ChatColor.DARK_GREEN
                                         + rewards.getCommandsOverrideDisplay().get(index));
                             }
                         } else {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            bQuester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                         }
                         index++;
                     }
@@ -1017,10 +1019,10 @@ public class BukkitQuest implements Quest {
                     int index = 0;
                     for (final String s : rewards.getPermissions()) {
                         if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s + " ("
+                            bQuester.sendMessage("- " + ChatColor.DARK_GREEN + s + " ("
                                     + rewards.getPermissionWorlds().get(index) + ")");
                         } else {
-                            quester.sendMessage("- " + ChatColor.DARK_GREEN + s);
+                            bQuester.sendMessage("- " + ChatColor.DARK_GREEN + s);
                             
                         }
                         index++;
@@ -1028,14 +1030,14 @@ public class BukkitQuest implements Quest {
                 }
                 if (!rewards.getMcmmoSkills().isEmpty()) {
                     for (final String s : rewards.getMcmmoSkills()) {
-                        quester.sendMessage("- " + ChatColor.DARK_GREEN
+                        bQuester.sendMessage("- " + ChatColor.DARK_GREEN
                                 + rewards.getMcmmoAmounts().get(rewards.getMcmmoSkills().indexOf(s)) + " "
                                 + ChatColor.DARK_PURPLE + s + " " + BukkitLang.get(p, "experience"));
                     }
                 }
                 if (!rewards.getHeroesClasses().isEmpty()) {
                     for (final String s : rewards.getHeroesClasses()) {
-                        quester.sendMessage("- " + ChatColor.AQUA
+                        bQuester.sendMessage("- " + ChatColor.AQUA
                                 + rewards.getHeroesAmounts().get(rewards.getHeroesClasses().indexOf(s)) + " " + ChatColor.BLUE
                                 + s + " " + BukkitLang.get(p, "experience"));
                     }
@@ -1059,7 +1061,7 @@ public class BukkitQuest implements Quest {
                             for (final String key : dataMap.keySet()) {
                                 message = message.replace("%" + key + "%", dataMap.get(key).toString());
                             }
-                            quester.sendMessage("- " + ChatColor.GOLD + message);
+                            bQuester.sendMessage("- " + ChatColor.GOLD + message);
                         } else {
                             plugin.getLogger().warning("Failed to notify player: " 
                                     + "Custom Reward does not have an assigned name");
@@ -1068,22 +1070,22 @@ public class BukkitQuest implements Quest {
                 }
             }
         }
-        quester.saveData();
+        bQuester.saveData();
         if (player.isOnline()) {
             if (player.getPlayer() != null) {
                 player.getPlayer().updateInventory();
             }
         }
-        quester.updateJournal();
-        quester.findCompassTarget();
+        bQuester.updateJournal();
+        bQuester.findCompassTarget();
         if (player.isOnline()) {
-            final BukkitQuesterPostCompleteQuestEvent postEvent = new BukkitQuesterPostCompleteQuestEvent((BukkitQuester) quester, this);
+            final BukkitQuesterPostCompleteQuestEvent postEvent = new BukkitQuesterPostCompleteQuestEvent((BukkitQuester) bQuester, this);
             plugin.getServer().getPluginManager().callEvent(postEvent);
         }
         
         // Multiplayer
         if (allowMultiplayer && options.getShareProgressLevel() == 4) {
-            final Collection<Quester> mq = quester.getMultiplayerQuesters(this);
+            final Collection<Quester> mq = bQuester.getMultiplayerQuesters(this);
             for (final Quester qq : mq) {
                 if (qq.getQuestProgressOrDefault(this) != null) {
                     completeQuest(qq, false);
@@ -1108,33 +1110,34 @@ public class BukkitQuest implements Quest {
      * @param ignoreFailAction Whether to ignore quest fail Action
      */
     public void failQuest(final Quester quester, final boolean ignoreFailAction) {
-        final BukkitQuesterPreFailQuestEvent preEvent = new BukkitQuesterPreFailQuestEvent((BukkitQuester) quester, this);
+        final BukkitQuester bQuester = (BukkitQuester)quester;
+        final BukkitQuesterPreFailQuestEvent preEvent = new BukkitQuesterPreFailQuestEvent((BukkitQuester) bQuester, this);
         plugin.getServer().getPluginManager().callEvent(preEvent);
         if (preEvent.isCancelled()) {
             return;
         }
-        for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
+        for (final Map.Entry<WrappedTask, Quest> entry : bQuester.getTimers().entrySet()) {
             if (entry.getValue().getId().equals(getId())) {
-                plugin.getServer().getScheduler().cancelTask(entry.getKey());
-                quester.getTimers().remove(entry.getKey());
+                plugin.getFoliaLib().getScheduler().cancelTask(entry.getKey());
+                bQuester.getTimers().remove(entry.getKey());
             }
         }
-        final OfflinePlayer player = ((BukkitQuester) quester).getOfflinePlayer();
+        final OfflinePlayer player = bQuester.getOfflinePlayer();
         if (!ignoreFailAction) {
-            final Stage stage = quester.getCurrentStage(this);
+            final Stage stage = bQuester.getCurrentStage(this);
             if (stage != null && stage.getFailAction() != null) {
-                quester.getCurrentStage(this).getFailAction().fire(quester, this);
+                bQuester.getCurrentStage(this).getFailAction().fire(bQuester, this);
             }
         }
         final String[] messages = {
                 ChatColor.RED + BukkitLang.get(player.isOnline() ? (Player)player : null, "questFailed")
                         .replace("<quest>", name)
         };
-        quester.quitQuest(this, messages);
+        bQuester.quitQuest(this, messages);
         if (player.isOnline()) {
             ((Player)player).updateInventory();
         }
-        final BukkitQuesterPostFailQuestEvent postEvent = new BukkitQuesterPostFailQuestEvent((BukkitQuester) quester, this);
+        final BukkitQuesterPostFailQuestEvent postEvent = new BukkitQuesterPostFailQuestEvent((BukkitQuester) bQuester, this);
         plugin.getServer().getPluginManager().callEvent(postEvent);
     }
     

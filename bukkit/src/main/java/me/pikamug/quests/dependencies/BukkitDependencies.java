@@ -31,6 +31,7 @@ import me.pikamug.quests.dependencies.reflect.worldguard.WorldGuardAPI;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.unite.api.objects.PartyProvider;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
@@ -59,7 +60,7 @@ public class BukkitDependencies implements Dependencies {
     private static DenizenAPI denizen = null;
     private static PartiesAPI parties = null;
     private final BukkitQuestsPlugin plugin;
-    private int npcEffectThread = -1;
+    private WrappedTask npcEffectThread = null;
 
     public BukkitDependencies(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -335,15 +336,17 @@ public class BukkitDependencies implements Dependencies {
     }
 
     public void startNpcEffectThread() {
-        if (npcEffectThread == -1 && plugin.getConfigSettings().canNpcEffects()) {
-            npcEffectThread = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,
-                    plugin.getNpcEffectThread(), 20, 20);
+        if (npcEffectThread == null && plugin.getConfigSettings().canNpcEffects()) {
+            npcEffectThread = plugin.getFoliaLib().getScheduler().runTimer(plugin.getNpcEffectThread(), 20, 20);
         }
     }
 
     @SuppressWarnings("unused")
     public void stopNpcEffectThread() {
-        plugin.getServer().getScheduler().cancelTask(npcEffectThread);
+        if (npcEffectThread != null) {
+            plugin.getFoliaLib().getScheduler().cancelTask(npcEffectThread);
+            npcEffectThread = null;
+        }
     }
 
     public SkillType getMcMMOSkill(final String s) {

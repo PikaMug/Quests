@@ -20,6 +20,7 @@ import me.pikamug.quests.util.BukkitConfigUtil;
 import me.pikamug.quests.util.BukkitInventoryUtil;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -306,7 +307,8 @@ public class BukkitAction implements Action {
     }
 
     public void fire(final Quester quester, final Quest quest) {
-        final Player player = ((BukkitQuester)quester).getPlayer();
+        final BukkitQuester bukkitQuester = (BukkitQuester)quester;
+        final Player player = bukkitQuester.getPlayer();
         if (message != null) {
             player.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
         }
@@ -397,7 +399,7 @@ public class BukkitAction implements Action {
             plugin.getLogger().severe("AstralBooks/CitizensBook support removed in Quests 5.3.2");
         }
         if (failQuest) {
-            quest.failQuest(quester, true);
+            quest.failQuest(bukkitQuester, true);
         }
         if (timer > 0) {
             player.sendMessage(ChatColor.GREEN + BukkitLang.get(player, "timerStart")
@@ -405,23 +407,28 @@ public class BukkitAction implements Action {
             final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
             for (final int seconds : toNotify) {
                 if (timer > seconds) {
-                    quester.getTimers().put(new BukkitActionTimer(quester, quest, seconds)
-                            .runTaskLater(plugin, (timer - seconds) * 20L).getTaskId(), quest);
+                    final BukkitActionTimer actionTimer = new BukkitActionTimer(bukkitQuester, quest, seconds);
+                    final WrappedTask task = plugin.getFoliaLib().getScheduler()
+                            .runLater(actionTimer, (timer - seconds) * 20L);
+                    actionTimer.setTask(task);
+                    bukkitQuester.getTimers().put(task, quest);
                 }
             }
-            quester.getTimers().put(new BukkitActionTimer(quester, quest, 0)
-                    .runTaskLater(plugin, timer * 20L).getTaskId(), quest);
+            final BukkitActionTimer actionTimer = new BukkitActionTimer(bukkitQuester, quest, 0);
+            final WrappedTask task = plugin.getFoliaLib().getScheduler().runLater(actionTimer, timer * 20L);
+            actionTimer.setTask(task);
+            bukkitQuester.getTimers().put(task, quest);
         }
         if (cancelTimer) {
-            for (final Map.Entry<Integer, Quest> entry : quester.getTimers().entrySet()) {
+            for (final Map.Entry<WrappedTask, Quest> entry : bukkitQuester.getTimers().entrySet()) {
                 if (entry.getValue().getId().equals(quest.getId())) {
-                    plugin.getServer().getScheduler().cancelTask(entry.getKey());
-                    quester.getTimers().remove(entry.getKey());
+                    plugin.getFoliaLib().getScheduler().cancelTask(entry.getKey());
+                    bukkitQuester.getTimers().remove(entry.getKey());
                 }
             }
         }
         if (denizenScript != null) {
-            plugin.getDenizenTrigger().runDenizenScript(denizenScript, quester, null);
+            plugin.getDenizenTrigger().runDenizenScript(denizenScript, bukkitQuester, null);
         }
     }
 }

@@ -49,6 +49,7 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import me.pikamug.quests.util.stack.BlockItemStacks;
+import com.tcoded.folialib.FoliaLib;
 import org.apache.logging.log4j.LogManager;
 import org.browsit.conversations.api.Conversations;
 import org.browsit.conversations.bukkit.BukkitConversations;
@@ -105,6 +106,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitUniteListener uniteListener;
     private BukkitPartiesListener partiesListener;
     private BukkitDenizenTrigger trigger;
+    private FoliaLib foliaLib;
     private LocaleManager localeManager;
     private QuesterStorage storage;
 
@@ -112,6 +114,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
         instance = this;
+        foliaLib = new FoliaLib(this);
         BukkitConversations.init(this);
 
         // 1 - Trigger server to initialize Legacy Material Support
@@ -205,7 +208,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         getServer().getPluginManager().registerEvents(getPlayerListener(), this);
         if (configSettings.getStrictPlayerMovement() > 0) {
             final long ticks = configSettings.getStrictPlayerMovement() * 20L;
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, getPlayerMoveThread(), ticks, ticks);
+            foliaLib.getScheduler().runTimer(getPlayerMoveThread(), ticks, ticks);
         }
         if (depends.getPartyProvider() != null) {
             getServer().getPluginManager().registerEvents(getUniteListener(), this);
@@ -232,7 +235,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         for (final Player p : getServer().getOnlinePlayers()) {
             getQuester(p.getUniqueId()).saveData();
         }
-        getServer().getScheduler().cancelTasks(this);
+        foliaLib.getScheduler().cancelAllTasks();
         getLogger().info("Closing storage...");
         if (storage != null) {
             storage.close();
@@ -270,6 +273,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public BukkitDependencies getDependencies() {
         return depends;
+    }
+
+    public FoliaLib getFoliaLib() {
+        return foliaLib;
     }
 
     public BukkitConfigSettings getConfigSettings() {
@@ -621,7 +628,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
      * At startup, this lets soft-depends (namely Citizens) fully load first
      */
     private void delayLoadQuestInfo() {
-        getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+        foliaLib.getScheduler().runLater(() -> {
             conditionLoader.init();
             actionLoader.init();
             questLoader.init();
@@ -637,7 +644,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule sendCommandFeedback false");
                 }
             }
-            getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            foliaLib.getScheduler().runAsync(task -> {
                 try {
                     questers = storage.loadOfflineQuesters().get();
                 } catch (final Exception e) {
@@ -645,7 +652,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 }
             });
         }, 5L);
-        getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+        foliaLib.getScheduler().runLater(() -> {
             // Workaround for issues with the Compass on fast join
             for (final Player p : getServer().getOnlinePlayers()) {
                 final Quester quester = new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
@@ -671,7 +678,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         loading = true;
         reloadConfig();
-        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+        foliaLib.getScheduler().runAsync(task -> {
             try {
                 final long startTime = System.currentTimeMillis();
                 if (getConfigSettings().getConsoleLogging() > 3) {
@@ -723,7 +730,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             exception.printStackTrace();
         }
         if (callback != null) {
-            getServer().getScheduler().runTask(BukkitQuestsPlugin.this, () -> {
+            foliaLib.getScheduler().runNextTick(task -> {
                 loading = false;
                 callback.execute(result);
 

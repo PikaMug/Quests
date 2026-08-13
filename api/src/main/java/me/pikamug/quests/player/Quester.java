@@ -58,12 +58,6 @@ public interface Quester extends Comparable<Quester> {
      */
     void setCompassTarget(final Quest quest);
 
-    ConcurrentHashMap<Integer, Quest> getTimers();
-
-    void setTimers(final ConcurrentHashMap<Integer, Quest> timers);
-
-    void removeTimer(final Integer timerId);
-
     ConcurrentHashMap<Quest, Integer> getCurrentQuests();
 
     void setCurrentQuests(final ConcurrentHashMap<Quest, Integer> currentQuests);

@@ -10,19 +10,20 @@
 
 package me.pikamug.quests.tasks;
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class BukkitActionTimer extends BukkitRunnable {
+public class BukkitActionTimer implements Runnable {
 
     private final Quester quester;
     private final Quest quest;
     private final int time;
+    private WrappedTask task;
 
     public BukkitActionTimer(final Quester quester, final Quest quest, final int time) {
         this.quester = quester;
@@ -30,10 +31,14 @@ public class BukkitActionTimer extends BukkitRunnable {
         this.time = time;
     }
 
+    public void setTask(final WrappedTask task) {
+        this.task = task;
+    }
+
     @Override
     public void run() {
         final BukkitQuester q = (BukkitQuester) quester;
-        q.removeTimer(getTaskId());
+        q.removeTimer(task);
         if (time < 1) {
             quest.failQuest(q, false);
             q.updateJournal();

@@ -56,6 +56,7 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.unite.api.objects.PartyProvider;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -106,7 +107,8 @@ public class BukkitQuester implements Quester {
     protected int questPoints = 0;
     private String compassTargetQuestId;
     private long lastNotifiedCondition = 0L;
-    protected ConcurrentHashMap<Integer, Quest> timers = new ConcurrentHashMap<>();
+
+    protected ConcurrentHashMap<WrappedTask, Quest> timers = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
         private static final long serialVersionUID = 6361484975823846780L;
@@ -345,19 +347,16 @@ public class BukkitQuester implements Quester {
         }
     }
 
-    @Override
-    public ConcurrentHashMap<Integer, Quest> getTimers() {
+    public ConcurrentHashMap<WrappedTask, Quest> getTimers() {
         return timers;
     }
 
-    @Override
-    public void setTimers(final ConcurrentHashMap<Integer, Quest> timers) {
+    public void setTimers(final ConcurrentHashMap<WrappedTask, Quest> timers) {
         this.timers = timers;
     }
 
-    @Override
-    public void removeTimer(final Integer timerId) {
-        this.timers.remove(timerId);
+    public void removeTimer(final WrappedTask task) {
+        this.timers.remove(task);
     }
 
     @Override
@@ -3306,7 +3305,7 @@ public class BukkitQuester implements Quester {
     public void sayPassword(final Quest quest, final AsyncPlayerChatEvent evt) {
         final ObjectiveType type = ObjectiveType.PASSWORD;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
+        plugin.getFoliaLib().getScheduler().runNextTick(task -> {
             final BukkitQuesterPreUpdateObjectiveEvent preEvent = new BukkitQuesterPreUpdateObjectiveEvent(this, quest,
                     new BukkitObjective(type, null, 1, 1));
             plugin.getServer().getPluginManager().callEvent(preEvent);
@@ -3318,7 +3317,7 @@ public class BukkitQuester implements Quester {
                     final String display = getCurrentStage(quest).getPasswordDisplays().get(index);
                     bukkitQuestProgress.passwordsSaid.set(index, true);
 
-                    plugin.getServer().getScheduler().runTask(plugin, () -> finishObjective(quest,
+                    plugin.getFoliaLib().getScheduler().runNextTick(t -> finishObjective(quest,
                             new BukkitObjective(type, null, BlockItemStack.of(Material.DIRT, 1, (short) 0),
                             BlockItemStack.of(Material.DIRT, 1, (short) 0)), null, null, null, null, null, display, null));
 
@@ -4019,10 +4018,10 @@ public class BukkitQuester implements Quester {
      */
     public void startStageTimer(final Quest quest) {
         if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BukkitStageTimer(plugin, this, quest),
+            plugin.getFoliaLib().getScheduler().runLater(new BukkitStageTimer(plugin, this, quest),
                     (long) (getQuestProgressOrDefault(quest).getDelayTimeLeft() * 0.02));
         } else {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BukkitStageTimer(plugin, this, quest),
+            plugin.getFoliaLib().getScheduler().runLater(new BukkitStageTimer(plugin, this, quest),
                     (long) (getCurrentStage(quest).getDelay() * 0.02));
             if (getCurrentStage(quest).getDelayMessage() != null) {
                 final Player p = plugin.getServer().getPlayer(id);
@@ -4148,9 +4147,9 @@ public class BukkitQuester implements Quester {
             currentQuests.remove(quest);
             questProgress.remove(quest);
             if (!timers.isEmpty()) {
-                for (final Map.Entry<Integer, Quest> entry : timers.entrySet()) {
+                for (final Map.Entry<WrappedTask, Quest> entry : timers.entrySet()) {
                     if (entry.getValue().getName().equals(quest.getName())) {
-                        plugin.getServer().getScheduler().cancelTask(entry.getKey());
+                        plugin.getFoliaLib().getScheduler().cancelTask(entry.getKey());
                         timers.remove(entry.getKey());
                     }
                 }
@@ -4284,7 +4283,7 @@ public class BukkitQuester implements Quester {
         if (getPlayer() == null || !getPlayer().hasPermission("quests.compass")) {
             return;
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getFoliaLib().getScheduler().runAsync(task -> {
             final LinkedList<String> list = currentQuests.keySet().stream()
                     .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
                     .collect(Collectors.toCollection(LinkedList::new));
@@ -4585,7 +4584,7 @@ public class BukkitQuester implements Quester {
                         .replace("<quest>", quest.getName()));
                 }
                 if (stage.getFailAction() != null) {
-                    plugin.getServer().getScheduler().runTask(plugin, () -> stage.getFailAction().fire(this, quest));
+                    plugin.getFoliaLib().getScheduler().runNextTick(task -> stage.getFailAction().fire(this, quest));
                 }
                 hardQuit(quest);
             } else if (giveReason) {

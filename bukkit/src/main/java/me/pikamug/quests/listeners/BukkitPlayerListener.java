@@ -23,7 +23,6 @@ import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.BukkitUpdateChecker;
 import org.browsit.conversations.api.Conversations;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,7 +62,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -138,7 +136,7 @@ public class BukkitPlayerListener implements Listener {
                                     e.printStackTrace();
                                 }
                             }
-                            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                            plugin.getFoliaLib().getScheduler().runLater(() ->
                                     event.getWhoClicked().closeInventory(), 1L);
                             return;
                         }
@@ -519,13 +517,8 @@ public class BukkitPlayerListener implements Listener {
                         final String chat = event.getMessage();
                         for (final String s : currentStage.getChatActions().keySet()) {
                             if (s.equalsIgnoreCase(chat)) {
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        currentStage.getChatActions().get(s).fire(quester, quest);
-                                    }
-
-                                }.runTask(this.plugin);
+                                plugin.getFoliaLib().getScheduler().runNextTick(task ->
+                                        currentStage.getChatActions().get(s).fire(quester, quest));
                             }
                         }
                     }
@@ -865,7 +858,7 @@ public class BukkitPlayerListener implements Listener {
         final Player player = event.getPlayer();
         if (plugin.canUseQuests(player.getUniqueId())) {
             final Quester quester = plugin.getQuester(player.getUniqueId());
-            Bukkit.getScheduler().runTaskLater(plugin, quester::findCompassTarget, 10);
+            plugin.getFoliaLib().getScheduler().runLater(quester::findCompassTarget, 10);
         }
     }
 
@@ -888,7 +881,7 @@ public class BukkitPlayerListener implements Listener {
                 noobCheck.saveData();
             }
 
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            plugin.getFoliaLib().getScheduler().runLaterAsync(task -> {
                 final CompletableFuture<Quester> cf = plugin.getStorage().loadQuester(player.getUniqueId());
                 try {
                     final Quester quester = cf.get();
@@ -910,7 +903,7 @@ public class BukkitPlayerListener implements Listener {
                             quester.startStageTimer(quest);
                         }
                     }
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    plugin.getFoliaLib().getScheduler().runLater(() -> {
                         boolean alreadyHasAtLeastOneGlobalQuest = false;
                         for (final Quest cq : quester.getCurrentQuests().keySet()) {
                             if (cq.getOptions().canGiveGloballyAtLogin()) {
@@ -1014,7 +1007,7 @@ public class BukkitPlayerListener implements Listener {
      * @since 3.8.2
      */
     public void playerMove(final UUID uuid, final Location location) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getFoliaLib().getScheduler().runAsync(task -> {
             final BukkitQuester quester = plugin.getQuester(uuid);
             if (quester != null) {
                 if (plugin.canUseQuests(uuid)) {
@@ -1028,7 +1021,7 @@ public class BukkitPlayerListener implements Listener {
                         if (quester.getCurrentQuests().containsKey(quest)) {
                             if (quester.getCurrentStage(quest) != null
                                     && quester.getCurrentStage(quest).containsObjective(type)) {
-                                plugin.getServer().getScheduler().runTask(plugin, () -> quester
+                                plugin.getFoliaLib().getScheduler().runNextTick(t -> quester
                                         .reachLocation(quest, location));
                             }
                         }
@@ -1036,7 +1029,7 @@ public class BukkitPlayerListener implements Listener {
                         dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type,
                                 (final Quester q, final Quest cq) -> {
                             if (!dispatchedQuestIDs.contains(cq.getId())) {
-                                plugin.getServer().getScheduler().runTask(plugin, () -> ((BukkitQuester) q)
+                                plugin.getFoliaLib().getScheduler().runNextTick(t -> ((BukkitQuester) q)
                                         .reachLocation(cq, location));
                             }
                             return null;

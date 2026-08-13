@@ -53,7 +53,7 @@ public class BukkitQuestCommandHandler {
                                     || quester.getStageTime(q) < 0L) {
                                 final String msg = BukkitLang.get(player, "questObjectivesTitle")
                                         .replace("<quest>", q.getName());
-                                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                                plugin.getFoliaLib().getScheduler().runLater(() -> {
                                     BukkitLang.send(player, ChatColor.GOLD + msg);
                                     quester.showCurrentObjectives(q, quester, false);
                                     ticks[0]++;
@@ -63,7 +63,7 @@ public class BukkitQuestCommandHandler {
                                 final String msg = ChatColor.YELLOW + "(" + BukkitLang.get(player, "delay") + ") "
                                         + ChatColor.RED + BukkitLang.get(player, "plnTooEarly")
                                         .replace("<quest>", q.getName().replace("<time>", BukkitMiscUtil.getTime(time)));
-                                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                                plugin.getFoliaLib().getScheduler().runLater(() -> {
                                     BukkitLang.send(player, msg);
                                     ticks[0]++;
                                 }, ticks[0]);

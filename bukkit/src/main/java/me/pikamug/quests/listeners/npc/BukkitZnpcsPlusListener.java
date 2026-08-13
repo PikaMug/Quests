@@ -31,7 +31,7 @@ public class BukkitZnpcsPlusListener extends BukkitNpcListener {
         UUID npcUUID = event.getNpc() != null ? event.getNpc().getUuid() : null;
 
         // Needed because the NpcInteractEvent is fired async
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
+        plugin.getFoliaLib().getScheduler().runAtEntity(player, task -> {
             if (event.getClickType().equals(InteractionType.LEFT_CLICK)) {
                 interactNPC(player, npcUUID, ClickType.LEFT);
             } else if (event.getClickType().equals(InteractionType.RIGHT_CLICK)) {

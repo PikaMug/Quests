@@ -2,6 +2,7 @@ name: Quests
 main: me.pikamug.quests.BukkitQuestsPlugin
 version: ${project.version}-b${env.BUILD_NUMBER}
 api-version: 1.13
+folia-supported: true
 description: An extensive questing system.
 website: https://github.com/PikaMug/Quests
 author: PikaMug
