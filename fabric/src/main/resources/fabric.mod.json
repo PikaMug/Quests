@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "quests",
+  "version": "${version}",
+  "name": "Quests",
+  "entrypoints": {
+    "server": [
+      "me.pikamug.quests.FabricQuestsPlugin"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "fabric": "*"
+  }
+}
