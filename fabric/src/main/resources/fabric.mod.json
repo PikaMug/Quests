@@ -3,13 +3,26 @@
   "id": "quests",
   "version": "${version}",
   "name": "Quests",
+  "description": "A powerful and flexible quest plugin for Minecraft servers",
+  "authors": ["PikaMug"],
+  "contact": {
+    "homepage": "https://github.com/PikaMug/Quests/",
+    "sources": "https://github.com/PikaMug/Quests/"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "server",
   "entrypoints": {
     "server": [
       "me.pikamug.quests.FabricQuestsPlugin"
     ]
   },
   "depends": {
-    "fabricloader": ">=0.16.10",
-    "fabric": "*"
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.20.4",
+    "java": ">=17"
+  },
+  "suggests": {
+    "fabric-api": "*"
   }
 }

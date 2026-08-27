@@ -1,0 +1,21 @@
+﻿{
+    "questTooEarly":  "Ти не можеш опет узети \u003cquest\u003e за следећих \u003ctime\u003e.",
+    "COMMAND_LIST_HELP":  "\u003ccommand\u003e [страна] - Наброј доступне задатке",
+    "COMMAND_LIST":  "листа",
+    "COMMAND_QUESTADMIN_TAKEPOINTS":  "узмипоене",
+    "COMMAND_TAKE":  "започни",
+    "questObjectivesTitle":  "---(\u003cquest\u003e)---",
+    "COMMAND_JOURNAL":  "журнал",
+    "COMMAND_QUESTADMIN_QUIT":  "поништи",
+    "questInvalidDeliveryItem":  "\u003citem\u003e није потребан за овај Задатак!",
+    "questMaxAllowed":  "Можеш само имати до \u003cnumber\u003e Задатака.",
+    "questFailed":  "*ЗАДАТАК НЕУСПЕШАН*",
+    "questDisplayHelp":  "- Приказати ову помоћ",
+    "questSelectedLocation":  "Изабрана локација",
+    "COMMAND_QUESTADMIN_STATS":  "статистике",
+    "questAlreadyCompleted":  "Већ си урадио \u003cquest\u003e.",
+    "COMMAND_EDITOR":  "уређивач",
+    "questInvalidLocation":  "Не можеш започети \u003cquest\u003e на овој локацији.",
+    "questAlreadyOn":  "Већ радиш тај задатак!",
+    "COMMAND_QUESTADMIN_GIVEPOINTS":  "дајпоене"
+}

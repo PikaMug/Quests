@@ -1,49 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>me.pikamug.quests</groupId>
         <artifactId>quests-parent</artifactId>
-        <version>5.3.3</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>quests-fabric</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <fabric.version>0.91.2+1.20.4</fabric.version>
+        <fabric.loader.version>0.15.11</fabric.loader.version>
+        <minecraft.version>1.20.4</minecraft.version>
+        <yarn_mappings>1.20.4+build.3</yarn_mappings>
     </properties>
 
     <repositories>
         <repository>
-            <!-- ConversationAPI-Fabric -->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <!--<repository>
+        <repository>
             <id>fabricmc</id>
             <url>https://maven.fabricmc.net/</url>
-        </repository>-->
+        </repository>
+        <repository>
+            <id>modmaven</id>
+            <url>https://modmaven.dev/</url>
+        </repository>
+        <repository>
+            <id>cursemaven</id>
+            <url>https://cursemaven.com</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <!--<dependency>
+        <!-- Minecraft mappings (provided at runtime by server) -->
+        <dependency>
+            <groupId>net.fabricmc</groupId>
+            <artifactId>yarn</artifactId>
+            <version>${yarn_mappings}</version>
+            <classifier>v2</classifier>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Fabric Loader (provided at runtime by server) -->
+        <dependency>
             <groupId>net.fabricmc</groupId>
             <artifactId>fabric-loader</artifactId>
-            <version>0.16.10</version>
+            <version>${fabric.loader.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Fabric API sub-modules (provided at runtime by server) -->
+        <dependency>
+            <groupId>net.fabricmc.fabric-api</groupId>
+            <artifactId>fabric-lifecycle-events-v1</artifactId>
+            <version>${fabric.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.fabricmc.fabric-api</groupId>
-            <artifactId>fabric-api</artifactId>
-            <version>0.100.0+1.21</version>
+            <artifactId>fabric-events-interaction-v0</artifactId>
+            <version>${fabric.version}</version>
             <scope>provided</scope>
-        </dependency>-->
+            <exclusions>
+                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.fabricmc.fabric-api</groupId>
+            <artifactId>fabric-command-api-v2</artifactId>
+            <version>${fabric.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.fabricmc.fabric-api</groupId>
+            <artifactId>fabric-api-base</artifactId>
+            <version>${fabric.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Gson (on Minecraft's classpath) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- SLF4J (on Minecraft's classpath) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ConversationAPI-Fabric (shaded into jar) -->
         <dependency>
             <groupId>com.github.Browsit</groupId>
             <artifactId>ConversationAPI-Fabric</artifactId>
             <version>-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.fabricmc</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!-- NPC libs: BOs-Easy-NPC and Taterzens are NOT compile dependencies -->
+        <!-- They are detected at runtime via FabricLoader.isModLoaded() and reflection -->
+
+        <!-- quests-api (shaded into jar) -->
         <dependency>
             <groupId>me.pikamug.quests</groupId>
             <artifactId>quests-api</artifactId>
@@ -51,4 +151,92 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <defaultGoal>clean package</defaultGoal>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <directory>${basedir}/src/main/resources/</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>lang/**/*.*</include>
+                    <include>fabric.mod.json</include>
+                    <include>config.json</include>
+                    <include>quests.json</include>
+                    <include>actions.json</include>
+                    <include>conditions.json</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>false</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                    <artifactSet>
+                        <includes>
+                            <include>com.github.Browsit.ConversationAPI:*</include>
+                            <include>me.pikamug.quests:quests-api</include>
+                        </includes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                                <exclude>LICENSE</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.browsit.conversation</pattern>
+                            <shadedPattern>me.pikamug.quests.libs.conversation</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.browsit.libs.kyori</pattern>
+                            <shadedPattern>me.pikamug.quests.libs.kyori</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

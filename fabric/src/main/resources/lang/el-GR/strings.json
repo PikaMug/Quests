@@ -1,0 +1,7 @@
+﻿{
+    "questInvalidLocation":  "Δεν μπορεις να παρεις την \u003cquest\u003e σε αυτη την τοποθεσία.",
+    "questAlreadyCompleted":  "Εχεις ήδη τελειώσει την \u003cquest\u003e.",
+    "questAlreadyOn":  "Εχεις επιλέξει ήδη αυτή την αποστολή!",
+    "questTooEarly":  "Δεν μπορεις να επιλέξεις την \u003cquest\u003e για ακομα \u003ctime\u003e.",
+    "questMaxAllowed":  "Μπορείς να έχεις ενεργές μόνο \u003cnumber\u003e αποστολές."
+}
