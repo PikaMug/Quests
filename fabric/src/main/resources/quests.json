@@ -1,0 +1,97 @@
+{
+  "default1": {
+    "name": "Iron Miner",
+    "finished": "<yellow>Well done. Here is your reward.",
+    "planner": {
+      "cooldown": 1800
+    },
+    "stages": [
+      {
+        "start-message": "<yellow>Mine 2 blocks of Iron Ore.",
+        "break-blocks": [
+          "minecraft:iron_ore",
+          "minecraft:iron_ore"
+        ]
+      }
+    ],
+    "rewards": {
+      "quest-points": 1
+    }
+  },
+  "default2": {
+    "name": "Mob Hunter",
+    "finished": "<yellow>Excellent. Here is a Diamond Sword.",
+    "stages": [
+      {
+        "start-message": "<yellow>Kill 3 Pigs.",
+        "mobs-to-kill": [
+          "Pig"
+        ],
+        "mob-num-to-kill": [
+          3
+        ]
+      },
+      {
+        "start-message": "<yellow>Kill 2 Zombies.",
+        "mobs-to-kill": [
+          "Zombie"
+        ],
+        "mob-num-to-kill": [
+          2
+        ]
+      },
+      {
+        "start-message": "<yellow>Kill 1 Skeleton.",
+        "mobs-to-kill": [
+          "Skeleton"
+        ],
+        "mob-num-to-kill": [
+          1
+        ]
+      }
+    ],
+    "rewards": {
+      "quest-points": 1
+    }
+  },
+  "default3": {
+    "name": "Casual Angler",
+    "finished": "<yellow>Good job. Here is some experience.",
+    "stages": [
+      {
+        "start-message": "<yellow>Catch some fish!",
+        "fish-to-catch": 5
+      }
+    ],
+    "rewards": {
+      "quest-points": 1
+    }
+  },
+  "default4": {
+    "name": "Time Trial",
+    "finished": "<yellow>You did it in time! Have a Gold Ingot and some experience.",
+    "requirements": {
+      "quest-points": 1
+    },
+    "stages": [
+      {
+        "start-message": "<yellow>Dig up 10 blocks of Dirt before time runs out!",
+        "break-blocks": [
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt",
+          "minecraft:dirt"
+        ]
+      }
+    ],
+    "rewards": {
+      "quest-points": 1
+    }
+  }
+}

@@ -1,6 +1,7 @@
 package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
@@ -29,7 +30,7 @@ public class FabricPlayerMoveThread implements Runnable {
     public void run() {
         if (plugin.getServer() == null) return;
         for (final ServerPlayer player : plugin.getServer().getPlayerList().getPlayers()) {
-            if (plugin.getDependencies().isNpc(player.getUUID())) continue;
+            if (((FabricDependencies) plugin.getDependencies()).isNpc(player.getUUID())) continue;
             checkLocationObjectives(player);
         }
     }

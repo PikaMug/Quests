@@ -1,0 +1,8 @@
+{
+  "RideThePig": {
+    "fail-quest": true,
+    "ride-entity": [
+      "minecraft:pig"
+    ]
+  }
+}

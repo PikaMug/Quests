@@ -1,0 +1,27 @@
+{
+  "ApplyPotion": {
+    "message": "<blue>You received potion effects!"
+  },
+  "NiceFinish": {
+    "message": "<green>Nice work!"
+  },
+  "DeathFail": {
+    "fail-quest": true
+  },
+  "GiveRod": {
+    "message": "<green>Here's a rod to get you started!"
+  },
+  "TimerStart": {
+    "timer": 40
+  },
+  "CancelTimer": {
+    "cancel-timer": true,
+    "fail-quest": true
+  },
+  "RunCommand": {
+    "message": "<red>Answer to life, the universe, and everything?",
+    "commands": [
+      "tell <player> 42"
+    ]
+  }
+}

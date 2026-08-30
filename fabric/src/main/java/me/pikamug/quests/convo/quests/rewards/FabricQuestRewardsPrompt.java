@@ -324,7 +324,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new QuestRewardsCommandsPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("noPermission")));
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
             }
             break;
         case 6:
@@ -332,14 +332,14 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new QuestRewardsPermissionsListPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("noPermission")));
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
             }
             break;
         case 7:
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
             break;
         case 8:
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
             break;
         case 9:
             new QuestRewardsPartiesExperiencePrompt(uuid).start();
@@ -352,14 +352,14 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new FabricOverridePrompt(uuid, this, FabricLang.get("overrideCreateEnter")).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("invalidOption")));
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
             }
             break;
         case 12:
             plugin.getQuestFactory().returnToMenu(uuid);
             break;
         default:
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
             break;
         }
     }
@@ -432,10 +432,10 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_MONEY, null);
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
 
@@ -488,10 +488,10 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_QUEST_POINTS, null);
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
 
@@ -611,7 +611,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new QuestRewardsItemListPrompt(uuid).start();
                 break;
             case 3:
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 break;
             default:
                 new QuestRewardsItemListPrompt(uuid).start();
@@ -669,10 +669,10 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_EXP, null);
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
     
@@ -738,7 +738,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_COMMAND, null);
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
     
@@ -875,10 +875,10 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new QuestRewardsPermissionsListPrompt(uuid).start();
                 break;
             case 4:
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 break;
             default:
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 break;
             }
         }
@@ -1131,7 +1131,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    new QuestRewardsPrompt(uuid).start();
+                    new FabricQuestRewardsPrompt(uuid).start();
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("listsNotSameSize")));
                     new QuestRewardsMcMMOListPrompt(uuid).start();
@@ -1382,9 +1382,9 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                     two = 0;
                 }
                 if (one == two) {
-                    new QuestRewardsPrompt(uuid).start();
+                    new FabricQuestRewardsPrompt(uuid).start();
                 } else {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("rewHeroesListsNotSameSize")));
+                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("listsNotSameSize")));
                     new QuestRewardsHeroesListPrompt(uuid).start();
                 }
                 break;
@@ -1538,10 +1538,10 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, null);
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
 
@@ -1630,14 +1630,14 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                     return;
                 }
             } else if (input != null && input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             } else if (input != null && input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REW_CUSTOM, null);
                 SessionData.set(uuid, Key.REW_CUSTOM_DATA, null);
                 SessionData.set(uuid, Key.REW_CUSTOM_DATA_TEMP, null);
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("rewCustomCleared")));
-                new QuestRewardsPrompt(uuid).start();
+                new FabricQuestRewardsPrompt(uuid).start();
                 return;
             }
             sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("rewCustomNotFound")));
@@ -1772,7 +1772,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("rewCustomCleared")));
                 }
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
 
@@ -1859,7 +1859,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                     }
                 }
             }
-            new QuestRewardsPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
         }
     }
 

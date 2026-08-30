@@ -70,4 +70,16 @@ public class FabricItemUtil {
         }
         return name;
     }
+
+    /**
+     * Checks whether an ItemStack is a Quest Journal
+     *
+     * @param is ItemStack to check
+     * @return true if item is a written book carrying the Quests journal marker
+     */
+    public static boolean isJournal(ItemStack is) {
+        if (is == null || is.isEmpty() || is.getItem() != Items.WRITTEN_BOOK) return false;
+        if (is.getTag() == null) return false;
+        return is.getTag().getBoolean("quests.journal");
+    }
 }

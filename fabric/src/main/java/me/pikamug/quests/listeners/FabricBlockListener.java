@@ -63,6 +63,19 @@ public class FabricBlockListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
 
+            // DAMAGE_BLOCK
+            if (!stage.getBlocksToDamage().isEmpty()) {
+                for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
+                    final Object goal = stage.getBlocksToDamage().get(i);
+                    if (goal != null && FabricItemUtil.isSimilar(state.getBlock().asItem().getDefaultInstance(),
+                            FabricItemUtil.deserialize(goal.toString()))) {
+                        quester.getQuestProgressOrDefault(quest).getBlocksDamaged().set(i,
+                                quester.getQuestProgressOrDefault(quest).getBlocksDamaged().get(i) + 1);
+                        quester.checkQuest(quest);
+                    }
+                }
+            }
+
             // BREAK_BLOCK
             if (!stage.getBlocksToBreak().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
@@ -71,6 +84,7 @@ public class FabricBlockListener {
                             FabricItemUtil.deserialize(goal.toString()))) {
                         quester.getQuestProgressOrDefault(quest).getBlocksBroken().set(i,
                                 quester.getQuestProgressOrDefault(quest).getBlocksBroken().get(i) + 1);
+                        quester.checkQuest(quest);
                     }
                 }
             }
@@ -83,6 +97,7 @@ public class FabricBlockListener {
                             FabricItemUtil.deserialize(goal.toString()))) {
                         quester.getQuestProgressOrDefault(quest).getBlocksCut().set(i,
                                 quester.getQuestProgressOrDefault(quest).getBlocksCut().get(i) + 1);
+                        quester.checkQuest(quest);
                     }
                 }
             }
@@ -108,6 +123,7 @@ public class FabricBlockListener {
                             FabricItemUtil.deserialize(goal.toString()))) {
                         quester.getQuestProgressOrDefault(quest).getBlocksUsed().set(i,
                                 quester.getQuestProgressOrDefault(quest).getBlocksUsed().get(i) + 1);
+                        quester.checkQuest(quest);
                     }
                 }
             }

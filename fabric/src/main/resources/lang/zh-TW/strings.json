@@ -1,4 +1,4 @@
-﻿{
+{
     "conditionEditorNoneToDelete":  "目前沒有可刪除的條件！",
     "rewNoHeroesClasses":  "未設定職業",
     "reqMcMMOAmountsPrompt":  "輸入 mcMMO Classic 技能等級，\u003cspace\u003e，\u003cclear\u003e，\u003ccancel\u003e",
@@ -800,5 +800,31 @@
     "heroesClass":  "職業",
     "eventEditorPotionsCleared":  "已清除藥水效果。",
     "thankYouMore":  "謝謝你。只剩下 \u003camount\u003e 了！",
-    "reqSetQuestPoints":  "設定任務 \u003cpoints\u003e 需求"
+    "reqSetQuestPoints":  "設定任務 \u003cpoints\u003e 需求",
+    "confirmQuestTake":  "Do you wish to take the quest \u003cquest\u003e?",
+    "doesNotMeetReqs":  "You do not meet the requirements for this quest.",
+    "noQuests":  "There are no quests available.",
+    "notStarted":  "This quest has not started yet.",
+    "questExpired":  "This quest has expired.",
+    "questNowTracking":  "Now tracking \u003cquest\u003e",
+    "questTrackingLocation":  "Tracking location",
+    "reqBreakBlock":  "Break blocks",
+    "reqPlaceBlock":  "Place blocks",
+    "reqCraftItem":  "Craft items",
+    "reqKillMob":  "Kill \u003camount\u003e mob(s)",
+    "reqTalkToNpc":  "Talk to NPCs",
+    "reqKillPlayer":  "Kill \u003camount\u003e player(s)",
+    "questBreakBlock":  "Break blocks: \u003cgoal\u003e",
+    "questPlaceBlock":  "Place blocks: \u003cgoal\u003e",
+    "questUseBlock":  "Use blocks: \u003cgoal\u003e",
+    "questCraftItem":  "Craft items: \u003cgoal\u003e",
+    "questKillMob":  "Kill mobs: \u003cgoal\u003e",
+    "questKillNpc":  "Kill NPCs: \u003cgoal\u003e",
+    "questKillPlayer":  "Kill players: \u003cgoal\u003e",
+    "questConsumeItem":  "Consume items: \u003cgoal\u003e",
+    "questTalkToNpc":  "Talk to NPCs",
+    "stageEditorChatEventsCleared":  "Chat events cleared.",
+    "stageEditorCommandEventsCleared":  "Command events cleared.",
+    "true":  "True",
+    "false":  "False"
 }

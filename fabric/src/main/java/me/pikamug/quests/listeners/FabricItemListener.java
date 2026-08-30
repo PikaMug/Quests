@@ -62,6 +62,7 @@ public class FabricItemListener {
                     if (goal != null && consumed.getItem().toString().equalsIgnoreCase(goal.toString())) {
                         quester.getQuestProgressOrDefault(quest).getItemsConsumed().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsConsumed().get(i) + 1);
+                        quester.checkQuest(quest);
                     }
                 }
             }

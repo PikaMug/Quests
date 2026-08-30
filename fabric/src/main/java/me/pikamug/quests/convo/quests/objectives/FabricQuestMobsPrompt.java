@@ -21,10 +21,10 @@ import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.TameableEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -538,18 +538,18 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            final List<EntityType<?>> mobArr = new LinkedList<>(ForgeRegistries.ENTITIES.getValues());
+            final List<EntityType<?>> mobArr = new LinkedList<>(BuiltInRegistries.ENTITY_TYPE.iterator());
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
-                if (!type.isFriendly() && !type.isDangerous()) {
+                if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {
                     toRemove.add(type);
                 }
             }
             mobArr.removeAll(toRemove);
-            mobArr.sort(Comparator.comparing(EntityType::getRegistryName));
+            mobArr.sort(Comparator.comparing(type -> BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath()));
             for (int i = 0; i < mobArr.size(); i++) {
                 mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.snakeCaseToUpperCamelCase(
-                        mobArr.get(i).getRegistryName().getPath()));
+                        BuiltInRegistries.ENTITY_TYPE.getKey(mobArr.get(i)).getPath()));
                 if (i < (mobArr.size() - 1)) {
                      mobs.append(ChatFormatting.GRAY).append(", ");
                 }
@@ -708,7 +708,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                     plugin.getQuestFactory().setSelectedKillLocations(temp);
                 } else {
                     sender.sendSystemMessage(net.minecraft.network.chat.Component.literal(
-                            ChatFormatting.RED + FabricLang.get("stageEditorNoBlock")));
+                            ChatFormatting.RED + FabricLang.get("stageEditorNoBlockSelected")));
                     new QuestMobsLocationPrompt(uuid).start();
                     return;
                 }
@@ -984,18 +984,18 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            final List<EntityType<?>> mobArr = new LinkedList<>(ForgeRegistries.ENTITIES.getValues());
+            final List<EntityType<?>> mobArr = new LinkedList<>(BuiltInRegistries.ENTITY_TYPE.iterator());
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
-                if (!type.isFriendly() && !type.isDangerous()) {
+                if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {
                     toRemove.add(type);
                 }
             }
             mobArr.removeAll(toRemove);
-            mobArr.sort(Comparator.comparing(EntityType::getRegistryName));
+            mobArr.sort(Comparator.comparing(type -> BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath()));
             for (int i = 0; i < mobArr.size(); i++) {
                 mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.snakeCaseToUpperCamelCase(
-                        mobArr.get(i).getRegistryName().getPath()));
+                        BuiltInRegistries.ENTITY_TYPE.getKey(mobArr.get(i)).getPath()));
                 if (i < (mobArr.size() - 1)) {
                      mobs.append(ChatFormatting.GRAY).append(", ");
                 }

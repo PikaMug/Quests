@@ -69,7 +69,8 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
             if (json.has("denizen-script")) action.setDenizenScript(json.get("denizen-script").getAsString());
             return action;
         } catch (final Exception e) {
-            throw new ActionFormatException("Failed to load action: " + name, e);
+            throw new ActionFormatException("Failed to load action: " + name
+                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
         }
     }
 
@@ -85,6 +86,13 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
                     final Path individualFile = storageDir.resolve(name + ".json");
                     if (!Files.exists(individualFile)) {
                         Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
+                    }
+                    if (plugin.getAction(name) == null) {
+                        final Action action = loadAction(name);
+                        if (action != null) {
+                            plugin.getLoadedActions().add(action);
+                            plugin.getPluginLogger().info("Loaded action '{}'", name);
+                        }
                     }
                 }
             }

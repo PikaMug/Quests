@@ -19,7 +19,7 @@ import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -486,11 +486,11 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
         public @NotNull String getPromptText() {
             final StringBuilder biomes = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final LinkedList<Biome> biomeArr = new LinkedList<>();
-            for (final Biome biome : Registry.BIOME) {
+            for (final Biome biome : BuiltInRegistries.BIOME) {
                 biomeArr.add(biome);
             }
             for (int i = 0; i < biomeArr.size(); i++) {
-                final ResourceLocation loc = Registry.BIOME.getKey(biomeArr.get(i));
+                final ResourceLocation loc = BuiltInRegistries.BIOME.getKey(biomeArr.get(i));
                 biomes.append(ChatFormatting.AQUA).append(loc != null ? loc.toString() : biomeArr.get(i).toString());
                 if (i < (biomeArr.size() - 1)) {
                     biomes.append(ChatFormatting.GRAY).append(", ");
@@ -514,7 +514,7 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
                 for (final String s : input.split(" ")) {
                     // Validate biome exists in registry
                     final ResourceLocation loc = new ResourceLocation(s);
-                    if (Registry.BIOME.get(loc) != null) {
+                    if (BuiltInRegistries.BIOME.get(loc) != null) {
                         biomes.add(s);
                     } else {
                         sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("conditionEditorInvalidBiome")

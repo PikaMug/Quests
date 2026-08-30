@@ -1,4 +1,4 @@
-﻿{
+{
     "conditionEditorNoneToDelete":  "No conditions currently exist to be deleted!",
     "rewNoHeroesClasses":  "No classes set",
     "reqMcMMOAmountsPrompt":  "Enter mcMMO Classic skill amounts, \u003cspace\u003e, \u003cclear\u003e, \u003ccancel\u003e",
@@ -800,5 +800,31 @@
     "heroesClass":  "class",
     "eventEditorPotionsCleared":  "Potion effects cleared.",
     "thankYouMore":  "Thank you. Only %purple%\u003camount\u003e %reset%more to go!",
-    "reqSetQuestPoints":  "Set \u003cpoints\u003e requirement"
+    "reqSetQuestPoints":  "Set \u003cpoints\u003e requirement",
+    "confirmQuestTake":  "Do you wish to take the quest \u003cquest\u003e?",
+    "doesNotMeetReqs":  "You do not meet the requirements for this quest.",
+    "noQuests":  "There are no quests available.",
+    "notStarted":  "This quest has not started yet.",
+    "questExpired":  "This quest has expired.",
+    "questNowTracking":  "Now tracking \u003cquest\u003e",
+    "questTrackingLocation":  "Tracking location",
+    "reqBreakBlock":  "Break blocks",
+    "reqPlaceBlock":  "Place blocks",
+    "reqCraftItem":  "Craft items",
+    "reqKillMob":  "Kill \u003camount\u003e mob(s)",
+    "reqTalkToNpc":  "Talk to NPCs",
+    "reqKillPlayer":  "Kill \u003camount\u003e player(s)",
+    "questBreakBlock":  "Break blocks: \u003cgoal\u003e",
+    "questPlaceBlock":  "Place blocks: \u003cgoal\u003e",
+    "questUseBlock":  "Use blocks: \u003cgoal\u003e",
+    "questCraftItem":  "Craft items: \u003cgoal\u003e",
+    "questKillMob":  "Kill mobs: \u003cgoal\u003e",
+    "questKillNpc":  "Kill NPCs: \u003cgoal\u003e",
+    "questKillPlayer":  "Kill players: \u003cgoal\u003e",
+    "questConsumeItem":  "Consume items: \u003cgoal\u003e",
+    "questTalkToNpc":  "Talk to NPCs",
+    "stageEditorChatEventsCleared":  "Chat events cleared.",
+    "stageEditorCommandEventsCleared":  "Command events cleared.",
+    "true":  "True",
+    "false":  "False"
 }

@@ -1,4 +1,4 @@
-﻿{
+{
     "eventEditorMobsTitle":  "- Creaturi -",
     "COMMAND_QUESTADMIN_POINTS_HELP":  "\u003ccommand\u003e [player] [amount] - Set a players Quest Points",
     "stageEditorShearAmountsPrompt":  "Introduceți cantitate de lână să se taie, \u003cspace\u003e, \u003ccancel\u003e",
@@ -291,5 +291,31 @@
     "COMMAND_QUESTADMIN_STATS":  "statistice",
     "stageEditorDeliveryMessagesPrompt":  "Introdu mesajul de trimitere, \u003csemicolon\u003e, \u003ccancel\u003e",
     "stageEditorSetLocationRadii":  "Setați raza locației",
-    "stageEditorMustSetPasswordDisplays":  "Trebuie să adăugați cel puțin o parolă!"
+    "stageEditorMustSetPasswordDisplays":  "Trebuie să adăugați cel puțin o parolă!",
+    "confirmQuestTake":  "Do you wish to take the quest \u003cquest\u003e?",
+    "doesNotMeetReqs":  "You do not meet the requirements for this quest.",
+    "noQuests":  "There are no quests available.",
+    "notStarted":  "This quest has not started yet.",
+    "questExpired":  "This quest has expired.",
+    "questNowTracking":  "Now tracking \u003cquest\u003e",
+    "questTrackingLocation":  "Tracking location",
+    "reqBreakBlock":  "Break blocks",
+    "reqPlaceBlock":  "Place blocks",
+    "reqCraftItem":  "Craft items",
+    "reqKillMob":  "Kill \u003camount\u003e mob(s)",
+    "reqTalkToNpc":  "Talk to NPCs",
+    "reqKillPlayer":  "Kill \u003camount\u003e player(s)",
+    "questBreakBlock":  "Break blocks: \u003cgoal\u003e",
+    "questPlaceBlock":  "Place blocks: \u003cgoal\u003e",
+    "questUseBlock":  "Use blocks: \u003cgoal\u003e",
+    "questCraftItem":  "Craft items: \u003cgoal\u003e",
+    "questKillMob":  "Kill mobs: \u003cgoal\u003e",
+    "questKillNpc":  "Kill NPCs: \u003cgoal\u003e",
+    "questKillPlayer":  "Kill players: \u003cgoal\u003e",
+    "questConsumeItem":  "Consume items: \u003cgoal\u003e",
+    "questTalkToNpc":  "Talk to NPCs",
+    "stageEditorChatEventsCleared":  "Chat events cleared.",
+    "stageEditorCommandEventsCleared":  "Command events cleared.",
+    "true":  "True",
+    "false":  "False"
 }

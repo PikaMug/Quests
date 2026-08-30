@@ -27,26 +27,27 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.FabricQuestFactory;
 import me.pikamug.quests.storage.FabricStorageFactory;
 import me.pikamug.quests.storage.QuesterStorage;
+import me.pikamug.quests.statistics.FabricMetrics;
 import me.pikamug.quests.storage.implementation.file.FabricActionJsonStorage;
 import me.pikamug.quests.storage.implementation.file.FabricConditionJsonStorage;
 import me.pikamug.quests.storage.implementation.file.FabricQuestJsonStorage;
 import me.pikamug.quests.storage.implementation.jar.FabricModuleJarStorage;
 import me.pikamug.quests.tasks.FabricNpcEffectThread;
 import me.pikamug.quests.tasks.FabricPlayerMoveThread;
+import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.commands.FabricCommandManager;
 import me.pikamug.quests.listeners.FabricBlockListener;
 import me.pikamug.quests.listeners.FabricItemListener;
 import me.pikamug.quests.listeners.FabricPlayerListener;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
+import me.pikamug.quests.util.FabricQuestsLogger;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.browsit.conversations.api.Conversations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -56,7 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests {
 
     public static final String MOD_ID = "quests";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final FabricQuestsLogger LOGGER = new FabricQuestsLogger();
 
     private boolean loading = true;
     private static FabricQuestsPlugin instance;
@@ -115,6 +116,10 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
 
         // 2 - Load main config
         configSettings.init();
+        if (configSettings.getLanguage().contains("-")) {
+            final FabricMetrics metrics = new FabricMetrics(this);
+            metrics.addCustomChart(new FabricMetrics.SimplePie("language", () -> configSettings.getLanguage()));
+        }
 
         // 3 - Setup language files
         try {
@@ -141,6 +146,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         // 7 - Register listeners
         new FabricBlockListener(this);
         new FabricItemListener(this);
+        new FabricCraftingListener(this);
         new FabricPlayerListener(this);
         if (depends.hasEasyNpc()) {
             new me.pikamug.quests.listeners.npc.FabricEasyNpcListener(this);
@@ -212,7 +218,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     }
 
     @Override
-    public Logger getPluginLogger() {
+    public FabricQuestsLogger getPluginLogger() {
         return LOGGER;
     }
 
@@ -227,7 +233,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     }
 
     @Override
-    public Dependencies getDependencies() {
+    public FabricDependencies getDependencies() {
         return depends;
     }
 
@@ -288,8 +294,30 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         return conditions;
     }
 
+    public Condition getCondition(final String name) {
+        if (name == null) {
+            return null;
+        }
+        for (final Condition c : conditions) {
+            if (c.getName().equalsIgnoreCase(name)) {
+                return c;
+            }
+        }
+        for (final Condition c : conditions) {
+            if (c.getName().toLowerCase().startsWith(name.toLowerCase())) {
+                return c;
+            }
+        }
+        for (final Condition c : conditions) {
+            if (c.getName().toLowerCase().contains(name.toLowerCase())) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     @Override
-    public Quester getQuester(final UUID id) {
+    public FabricQuester getQuester(final UUID id) {
         if (depends.isNpc(id)) {
             return new FabricQuester(this, id);
         }
@@ -329,17 +357,14 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
      * Checks if user is non-op player in Trial Mode
      *
      * @param uuid the editor user to be checked
-     * @return {@code true} if user is a ServerPlayer with quests.mode.trial permission
+     * @return {@code true} if user is an online non-operator, {@code false} otherwise
      */
     public boolean hasLimitedAccess(final UUID uuid) {
         final net.minecraft.server.level.ServerPlayer player = FabricMiscUtil.getPlayer(uuid, this);
         if (player == null) {
             return false;
         }
-        if (player.hasPermissions(2)) {
-            return false;
-        }
-        return false;
+        return !player.hasPermissions(2);
     }
 
     /**

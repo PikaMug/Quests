@@ -15,6 +15,7 @@ import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.convo.conditions.FabricConditionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.conditions.FabricConditionsEditorStringPrompt;
 import me.pikamug.quests.convo.conditions.main.FabricConditionMainPrompt;
+import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricLang;
@@ -98,7 +99,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
                     .append(ChatFormatting.RESET).append(" - ").append(getSelectionText(i));
         }
-        return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+        return sendClickableSelection(text.toString(), (FabricQuester) plugin.getQuester(uuid));
     }
 
     @Override
@@ -241,7 +242,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
         public @NotNull String getPromptText() {
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName)
                     .collect(Collectors.toList());
-            return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
+            return sendClickableMenu(getTitle(), names, getQueryText(), (FabricQuester) plugin.getQuester(uuid));
         }
 
         @Override
@@ -291,7 +292,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
         public @NotNull String getPromptText() {
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName)
                     .collect(Collectors.toList());
-            return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
+            return sendClickableMenu(getTitle(), names, getQueryText(), (FabricQuester) plugin.getQuester(uuid));
         }
 
         @Override
@@ -394,7 +395,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
                         .append(ChatFormatting.RESET).append(" - ").append(getSelectionText(i));
             }
-            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+            return sendClickableSelection(text.toString(), (FabricQuester) plugin.getQuester(uuid));
         }
 
         @Override

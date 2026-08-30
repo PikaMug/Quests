@@ -15,14 +15,17 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.item.FabricQuestJournal;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -72,6 +75,9 @@ public class FabricCommandManager {
                             )
                             .then(Commands.literal("info")
                                     .executes(ctx -> handleQuestsInfo(ctx.getSource()))
+                            )
+                            .then(Commands.literal("journal")
+                                    .executes(ctx -> handleQuestsJournal(ctx.getSource()))
                             )
             );
             dispatcher.register(Commands.literal("qs").redirect(questsNode));
@@ -214,7 +220,7 @@ public class FabricCommandManager {
             player.sendSystemMessage(Component.literal(FabricLang.get("questNotFound")));
             return 0;
         }
-        quester.quitQuest(quest, FabricLang.get("questAbandoned").replace("<quest>", quest.getName()));
+        quester.quitQuest(quest, FabricLang.get("questQuit").replace("<quest>", quest.getName()));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -232,6 +238,33 @@ public class FabricCommandManager {
     private int handleQuestsInfo(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal("Quests Plugin v5.3.3 (Fabric)"), false);
         source.sendSuccess(() -> Component.literal("Loaded: " + plugin.getLoadedQuests().size() + " quests"), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int handleQuestsJournal(CommandSourceStack source) {
+        if (!source.isPlayer()) return 0;
+        final ServerPlayer player = source.getPlayer();
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final net.minecraft.world.entity.player.Inventory inv = player.getInventory();
+        final int index = quester.getJournalIndex();
+        if (index != -1) {
+            inv.setItem(index, ItemStack.EMPTY);
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalPutAway")
+                    .replace("<journal>", FabricLang.get("journalTitle"))));
+        } else if (player.getMainHandItem().isEmpty()) {
+            final FabricQuestJournal journal = new FabricQuestJournal(plugin, quester);
+            player.getInventory().setItem(player.getInventory().selected, journal.toItemStack());
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalTaken")
+                    .replace("<journal>", FabricLang.get("journalTitle"))));
+        } else if (inv.getFreeSlot() != -1) {
+            final FabricQuestJournal journal = new FabricQuestJournal(plugin, quester);
+            inv.add(journal.toItemStack());
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalTaken")
+                    .replace("<journal>", FabricLang.get("journalTitle"))));
+        } else {
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalNoRoom")
+                    .replace("<journal>", FabricLang.get("journalTitle"))));
+        }
         return Command.SINGLE_SUCCESS;
     }
 

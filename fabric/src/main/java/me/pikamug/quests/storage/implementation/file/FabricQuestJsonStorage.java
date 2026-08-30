@@ -17,9 +17,13 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class FabricQuestJsonStorage implements QuestStorageImpl {
+
+    private static final Set<String> INDEX_FILES = Set.of("quests.json", "actions.json", "conditions.json");
 
     private final FabricQuestsPlugin plugin;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -53,7 +57,8 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             if (json == null) return null;
             return parseQuest(name, json);
         } catch (final Exception e) {
-            throw new QuestFormatException("Failed to load quest: " + name, e);
+            throw new QuestFormatException("Failed to load quest: " + name
+                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
         }
     }
 
@@ -76,7 +81,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("gui-display")) {
             // Gui display is stored as a string for now
             if (json.get("gui-display").isJsonPrimitive()) {
-                quest.getRewards().setDetailsOverride(json.get("gui-display").getAsString());
+                quest.getRewards().setDetailsOverride(List.of(json.get("gui-display").getAsString()));
             }
         }
         // Parse requirements
@@ -353,13 +358,16 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
 
     public void loadQuests() {
         if (!Files.exists(storageDir)) return;
+        splitIndex("quests.json");
         try (var stream = Files.list(storageDir)) {
             stream.filter(p -> p.toString().endsWith(".json")).forEach(p -> {
+                final String name = p.getFileName().toString().replace(".json", "");
+                if (INDEX_FILES.contains(name)) return;
                 try {
-                    final String name = p.getFileName().toString().replace(".json", "");
                     final Quest quest = loadQuest(name);
                     if (quest != null) {
                         plugin.getLoadedQuests().add(quest);
+                        plugin.getPluginLogger().info("Loaded quest '{}' from {}", name, p.getFileName());
                     }
                 } catch (final Exception e) {
                     plugin.getPluginLogger().error("Failed to load quest from {}", p, e);
@@ -367,6 +375,25 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             });
         } catch (final Exception e) {
             plugin.getPluginLogger().error("Failed to list quest files", e);
+        }
+    }
+
+    private void splitIndex(final String indexName) {
+        final Path indexFile = storageDir.resolve(indexName);
+        if (!Files.exists(indexFile)) return;
+        try (Reader reader = Files.newBufferedReader(indexFile)) {
+            final JsonObject json = gson.fromJson(reader, JsonObject.class);
+            if (json == null) return;
+            for (final String name : json.keySet()) {
+                if (json.get(name).isJsonObject()) {
+                    final Path individualFile = storageDir.resolve(name + ".json");
+                    if (!Files.exists(individualFile)) {
+                        Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            plugin.getPluginLogger().error("Failed to split quest index {}", indexName, e);
         }
     }
 

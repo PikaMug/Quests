@@ -160,6 +160,10 @@ public class FabricStage implements Stage {
     @Override public LinkedList<Map.Entry<String, Object>> getCustomObjectiveData() { return customObjectiveData; }
     @Override public void clearCustomObjectiveData() { customObjectiveData.clear(); }
 
+    public void addCustomObjectives(final CustomObjective v) { customObjectives.add(v); }
+    public void addCustomObjectiveCounts(final int v) { customObjectiveCounts.add(v); }
+    public void addCustomObjectiveData(final Map.Entry<String, Object> v) { customObjectiveData.add(v); }
+
     @Override
     public boolean hasObjective() {
         return !blocksToBreak.isEmpty() || !blocksToDamage.isEmpty() || !blocksToPlace.isEmpty()

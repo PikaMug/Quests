@@ -626,7 +626,7 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
                 if (one == two && two == three) {
                     new FabricActionMainPrompt(uuid).start();
                 } else {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorListSizeMismatch")));
+                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("listsNotSameSize")));
                     new ActionPlayerPotionListPrompt(uuid).start();
                 }
                 break;

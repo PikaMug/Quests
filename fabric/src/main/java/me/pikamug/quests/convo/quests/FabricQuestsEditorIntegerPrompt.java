@@ -1,5 +1,6 @@
 package me.pikamug.quests.convo.quests;
 
+import me.pikamug.quests.convo.FabricQuestsIntegerPrompt;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.quests.QuestFactory;

@@ -315,10 +315,10 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
             new QuestRequirementsQuestListPrompt(uuid, false).start();
             break;
         case 8:
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
             break;
         case 9:
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
             break;
         case 10:
             new QuestCustomRequirementModulePrompt(uuid).start();
@@ -331,14 +331,14 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 if (sender != null) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("invalidOption")));
                 }
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
             }
             break;
         case 12:
             plugin.getQuestFactory().returnToMenu(uuid);
             break;
         default:
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
             break;
         }
     }
@@ -411,10 +411,10 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_MONEY, null);
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 return;
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -467,10 +467,10 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_QUEST_POINTS, null);
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 return;
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -650,10 +650,10 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                     }
                 }
                 SessionData.set(uuid, Key.REQ_ITEMS_REMOVE, remove);
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 break;
             default:
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 break;
             }
         }
@@ -759,10 +759,10 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_EXP, null);
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 return;
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -799,7 +799,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_PERMISSION, null);
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -870,7 +870,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                     SessionData.set(uuid, Key.REQ_QUEST_BLOCK, null);
                 }
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -978,7 +978,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 new QuestMcMMOAmountsPrompt(uuid).start();
                 break;
             case 3:
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 break;
             default:
                 new QuestRequirementsMcMMOListPrompt(uuid).start();
@@ -1191,7 +1191,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 new QuestHeroesSecondaryPrompt(uuid).start();
                 break;
             case 3:
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 break;
             default:
                 new QuestRequirementsHeroesListPrompt(uuid).start();
@@ -1375,14 +1375,14 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                     return;
                 }
             } else if (input != null && input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 return;
             } else if (input != null && input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.REQ_CUSTOM, null);
                 SessionData.set(uuid, Key.REQ_CUSTOM_DATA, null);
                 SessionData.set(uuid, Key.REQ_CUSTOM_DATA_TEMP, null);
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("reqCustomCleared")));
-                new QuestRequirementsPrompt(uuid).start();
+                new FabricQuestRequirementsPrompt(uuid).start();
                 return;
             }
             sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("reqCustomNotFound")));
@@ -1516,7 +1516,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("reqCustomCleared")));
                 }
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 
@@ -1603,7 +1603,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                     }
                 }
             }
-            new QuestRequirementsPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
         }
     }
 

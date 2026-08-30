@@ -108,7 +108,8 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
             }
             return condition;
         } catch (final Exception e) {
-            throw new ConditionFormatException("Failed to load condition: " + name, e);
+            throw new ConditionFormatException("Failed to load condition: " + name
+                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
         }
     }
 
@@ -124,6 +125,13 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
                     final Path individualFile = storageDir.resolve(name + ".json");
                     if (!Files.exists(individualFile)) {
                         Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
+                    }
+                    if (plugin.getCondition(name) == null) {
+                        final Condition condition = loadCondition(name);
+                        if (condition != null) {
+                            plugin.getLoadedConditions().add(condition);
+                            plugin.getPluginLogger().info("Loaded condition '{}'", name);
+                        }
                     }
                 }
             }

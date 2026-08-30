@@ -1,6 +1,7 @@
 package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import net.minecraft.core.particles.ParticleOptions;
@@ -48,7 +49,7 @@ public class FabricNpcEffectThread implements Runnable {
                     if (stage == null) continue;
                     if (stage.getNpcsToInteract().contains(npcUuid) || stage.getNpcsToKill().contains(npcUuid)) {
                         final ServerLevel level = player.serverLevel();
-                        level.sendParticles(player, particle, npcPos.x, npcPos.y + 2, npcPos.z, 5, 0.3, 0.5, 0.3, 0.01);
+                        level.sendParticles(player, particle, false, npcPos.x, npcPos.y + 2, npcPos.z, 5, 0.3, 0.5, 0.3, 0.01);
                         break;
                     }
                 }
@@ -59,7 +60,7 @@ public class FabricNpcEffectThread implements Runnable {
     private Vec3 getNpcLocation(UUID npcUuid) {
         // NPC libs (BOs-Easy-NPC, Taterzens) store NPCs as regular entities
         // Use reflection to try known APIs, fall back to entity lookup
-        if (plugin.getDependencies().hasEasyNpc()) {
+        if (((FabricDependencies) plugin.getDependencies()).hasEasyNpc()) {
             try {
                 final Class<?> npcApi = Class.forName("com.bos infos.easynpc.api.NpcAPI");
                 final Method getNpc = npcApi.getMethod("getNpc", UUID.class);
@@ -73,7 +74,7 @@ public class FabricNpcEffectThread implements Runnable {
                 }
             } catch (final Exception ignored) {}
         }
-        if (plugin.getDependencies().hasTaterzens()) {
+        if (((FabricDependencies) plugin.getDependencies()).hasTaterzens()) {
             try {
                 final Class<?> taterzensApi = Class.forName("org.policymc.taterzens.api.TaterzensAPI");
                 final Method getNpc = taterzensApi.getMethod("getNpc", UUID.class);

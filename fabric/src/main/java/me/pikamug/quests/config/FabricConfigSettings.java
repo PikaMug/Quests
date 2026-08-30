@@ -55,6 +55,17 @@ public class FabricConfigSettings implements ConfigSettings {
     private boolean translateNames = true;
     private boolean translateSubCommands = true;
     private boolean updateCheck = true;
+    private String storageMethod = "yaml";
+    private String storageAddress;
+    private String storageDatabase;
+    private String storageUsername;
+    private String storagePassword;
+    private String storageTablePrefix = "";
+    private int storageMaxPoolSize = 10;
+    private int storageMinIdle = 10;
+    private int storageMaxLifetime = 1800000;
+    private int storageKeepAliveTime = 0;
+    private int storageConnectionTimeout = 5000;
 
     public FabricConfigSettings(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -107,6 +118,17 @@ public class FabricConfigSettings implements ConfigSettings {
         defaults.addProperty("translateNames", translateNames);
         defaults.addProperty("translateSubCommands", translateSubCommands);
         defaults.addProperty("updateCheck", updateCheck);
+        defaults.addProperty("storageMethod", storageMethod);
+        defaults.addProperty("storageAddress", storageAddress);
+        defaults.addProperty("storageDatabase", storageDatabase);
+        defaults.addProperty("storageUsername", storageUsername);
+        defaults.addProperty("storagePassword", storagePassword);
+        defaults.addProperty("storageTablePrefix", storageTablePrefix);
+        defaults.addProperty("storageMaxPoolSize", storageMaxPoolSize);
+        defaults.addProperty("storageMinIdle", storageMinIdle);
+        defaults.addProperty("storageMaxLifetime", storageMaxLifetime);
+        defaults.addProperty("storageKeepAliveTime", storageKeepAliveTime);
+        defaults.addProperty("storageConnectionTimeout", storageConnectionTimeout);
         try (Writer writer = Files.newBufferedWriter(configFile.toPath())) {
             gson.toJson(defaults, writer);
         } catch (final IOException e) {
@@ -146,6 +168,17 @@ public class FabricConfigSettings implements ConfigSettings {
         translateNames = getBool("translateNames", translateNames);
         translateSubCommands = getBool("translateSubCommands", translateSubCommands);
         updateCheck = getBool("updateCheck", updateCheck);
+        storageMethod = getString("storageMethod", storageMethod);
+        storageAddress = getString("storageAddress", storageAddress);
+        storageDatabase = getString("storageDatabase", storageDatabase);
+        storageUsername = getString("storageUsername", storageUsername);
+        storagePassword = getString("storagePassword", storagePassword);
+        storageTablePrefix = getString("storageTablePrefix", storageTablePrefix);
+        storageMaxPoolSize = getInt("storageMaxPoolSize", storageMaxPoolSize);
+        storageMinIdle = getInt("storageMinIdle", storageMinIdle);
+        storageMaxLifetime = getInt("storageMaxLifetime", storageMaxLifetime);
+        storageKeepAliveTime = getInt("storageKeepAliveTime", storageKeepAliveTime);
+        storageConnectionTimeout = getInt("storageConnectionTimeout", storageConnectionTimeout);
     }
 
     private int getInt(String key, int def) {
@@ -230,4 +263,16 @@ public class FabricConfigSettings implements ConfigSettings {
     @Override public void setTranslateSubCommands(boolean v) { translateSubCommands = v; setAndSave("translateSubCommands", v); }
     @Override public boolean canUpdateCheck() { return updateCheck; }
     @Override public void setUpdateCheck(boolean v) { updateCheck = v; setAndSave("updateCheck", v); }
+
+    public String getStorageMethod() { return storageMethod; }
+    public String getStorageAddress() { return storageAddress; }
+    public String getStorageDatabase() { return storageDatabase; }
+    public String getStorageUsername() { return storageUsername; }
+    public String getStoragePassword() { return storagePassword; }
+    public String getStorageTablePrefix() { return storageTablePrefix; }
+    public int getStorageMaxPoolSize() { return storageMaxPoolSize; }
+    public int getStorageMinIdle() { return storageMinIdle; }
+    public int getStorageMaxLifetime() { return storageMaxLifetime; }
+    public int getStorageKeepAliveTime() { return storageKeepAliveTime; }
+    public int getStorageConnectionTimeout() { return storageConnectionTimeout; }
 }

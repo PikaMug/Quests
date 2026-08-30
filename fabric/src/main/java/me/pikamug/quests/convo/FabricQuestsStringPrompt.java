@@ -66,7 +66,7 @@ public abstract class FabricQuestsStringPrompt implements QuestsPrompt {
         }
         component.append(Component.literal("\n" + footer)
                 .withStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)));
-        quester.getPlayer().sendSystemMessage(component);
+        quester.getServerPlayer().sendSystemMessage(component);
         return "";
     }
 }

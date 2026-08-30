@@ -1,4 +1,4 @@
-﻿{
+{
     "COMMAND_QUESTADMIN_POINTS_HELP":  "\u003ccommand\u003e [بازیکن] [میزان] - یک بازیکن را تنظیم کنید \u003cpoints\u003e",
     "questPartiesLeaveBroadcast":  "\u003cplayer\u003e دیگر نمی تواند ماموریت ها را با شما انجام دهد.",
     "questWGPrompt":  "وارد منطقه گارد جهانی شوید، \u003cclear\u003e، \u003ccancel\u003e",
@@ -168,5 +168,31 @@
     "questEditorEnterQuestName":  "نام جستجو را وارد کنید، \u003ccancel\u003e",
     "stageEditorBrewPotions":  "ساختن معجون ها",
     "COMMAND_QUESTADMIN_STATS":  "آمار",
-    "stageEditorSetLocationRadii":  "شعاع مکان را تنظیم کنید"
+    "stageEditorSetLocationRadii":  "شعاع مکان را تنظیم کنید",
+    "confirmQuestTake":  "Do you wish to take the quest \u003cquest\u003e?",
+    "doesNotMeetReqs":  "You do not meet the requirements for this quest.",
+    "noQuests":  "There are no quests available.",
+    "notStarted":  "This quest has not started yet.",
+    "questExpired":  "This quest has expired.",
+    "questNowTracking":  "Now tracking \u003cquest\u003e",
+    "questTrackingLocation":  "Tracking location",
+    "reqBreakBlock":  "Break blocks",
+    "reqPlaceBlock":  "Place blocks",
+    "reqCraftItem":  "Craft items",
+    "reqKillMob":  "Kill \u003camount\u003e mob(s)",
+    "reqTalkToNpc":  "Talk to NPCs",
+    "reqKillPlayer":  "Kill \u003camount\u003e player(s)",
+    "questBreakBlock":  "Break blocks: \u003cgoal\u003e",
+    "questPlaceBlock":  "Place blocks: \u003cgoal\u003e",
+    "questUseBlock":  "Use blocks: \u003cgoal\u003e",
+    "questCraftItem":  "Craft items: \u003cgoal\u003e",
+    "questKillMob":  "Kill mobs: \u003cgoal\u003e",
+    "questKillNpc":  "Kill NPCs: \u003cgoal\u003e",
+    "questKillPlayer":  "Kill players: \u003cgoal\u003e",
+    "questConsumeItem":  "Consume items: \u003cgoal\u003e",
+    "questTalkToNpc":  "Talk to NPCs",
+    "stageEditorChatEventsCleared":  "Chat events cleared.",
+    "stageEditorCommandEventsCleared":  "Command events cleared.",
+    "true":  "True",
+    "false":  "False"
 }

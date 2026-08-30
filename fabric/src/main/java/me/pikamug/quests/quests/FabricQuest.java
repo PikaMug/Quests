@@ -53,6 +53,7 @@ public class FabricQuest implements Quest {
     @Override public UUID getNpcStart() { return npcStart; }
     @Override public void setNpcStart(UUID v) { this.npcStart = v; }
     @Override public String getNpcStartName() { return npcStartName; }
+    public void setNpcStartName(String v) { this.npcStartName = v; }
     @Override public Action getInitialAction() { return initialAction; }
     @Override public void setInitialAction(Action v) { this.initialAction = v; }
     @Override public Requirements getRequirements() { return requirements; }

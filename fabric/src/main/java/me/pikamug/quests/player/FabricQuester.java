@@ -106,30 +106,53 @@ public class FabricQuester implements Quester {
 
     @Override
     public boolean hasJournal() {
+        final ServerPlayer player = getServerPlayer();
+        if (player == null) return false;
+        for (final net.minecraft.world.item.ItemStack is : player.getInventory().items) {
+            if (me.pikamug.quests.util.FabricItemUtil.isJournal(is)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public int getJournalIndex() {
-        return 0;
+        final ServerPlayer player = getServerPlayer();
+        if (player == null) return -1;
+        final List<net.minecraft.world.item.ItemStack> items = player.getInventory().items;
+        for (int i = 0; i < items.size(); i++) {
+            if (me.pikamug.quests.util.FabricItemUtil.isJournal(items.get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public void updateJournal() {
-        // Journal not supported on Fabric; quests are tracked via commands
+        final ServerPlayer player = getServerPlayer();
+        if (player == null) return;
+        final int index = getJournalIndex();
+        if (index != -1) {
+            final me.pikamug.quests.item.FabricQuestJournal journal
+                    = new me.pikamug.quests.item.FabricQuestJournal(plugin, this);
+            player.getInventory().setItem(index, journal.toItemStack());
+        }
     }
 
     @Override
     public boolean offerQuest(Quest quest, boolean giveReason) {
         if (quest == null) return false;
         if (currentQuests.containsKey(quest)) {
-            if (giveReason) sendMessage(FabricLang.get("alreadyOnQuest"));
+            if (giveReason) sendMessage(FabricLang.get("questAlreadyOn"));
             return false;
         }
         if (plugin.getConfigSettings().getMaxQuests() > 0
                 && currentQuests.size() >= plugin.getConfigSettings().getMaxQuests()
                 && !quest.getOptions().canOverrideMaxQuests()) {
-            if (giveReason) sendMessage(FabricLang.get("tooManyQuests"));
+            if (giveReason) sendMessage(FabricLang.get("questMaxAllowed")
+                    .replace("<number>", String.valueOf(plugin.getConfigSettings().getMaxQuests())));
             return false;
         }
         if (plugin.getConfigSettings().canConfirmAccept()) {
@@ -145,11 +168,11 @@ public class FabricQuester implements Quester {
     public boolean canAcceptOffer(Quest quest, boolean giveReason) {
         if (quest == null) return false;
         if (currentQuests.containsKey(quest)) {
-            if (giveReason) sendMessage(FabricLang.get("alreadyOnQuest"));
+            if (giveReason) sendMessage(FabricLang.get("questAlreadyOn"));
             return false;
         }
         if (completedQuests.contains(quest) && !quest.getPlanner().hasRepeat()) {
-            if (giveReason) sendMessage(FabricLang.get("alreadyCompleted"));
+            if (giveReason) sendMessage(FabricLang.get("questAlreadyCompleted"));
             return false;
         }
         return true;
@@ -195,6 +218,7 @@ public class FabricQuester implements Quester {
         }
         questIdToTake = null;
         saveData();
+        updateJournal();
     }
 
     @Override
@@ -206,7 +230,7 @@ public class FabricQuester implements Quester {
     public boolean abandonQuest(Quest quest, String[] messages) {
         if (quest == null || !currentQuests.containsKey(quest)) return false;
         if (!quest.getOptions().canAllowQuitting()) {
-            sendMessage(FabricLang.get("cannotQuit"));
+            sendMessage(FabricLang.get("questQuitDisabled"));
             return false;
         }
         quitQuest(quest, messages);
@@ -228,8 +252,9 @@ public class FabricQuester implements Quester {
                 sendMessage(msg);
             }
         }
-        sendMessage(FabricLang.get("questAbandoned").replace("<quest>", quest.getName()));
+        sendMessage(FabricLang.get("questQuit").replace("<quest>", quest.getName()));
         saveData();
+        updateJournal();
     }
 
     @Override
@@ -350,16 +375,14 @@ public class FabricQuester implements Quester {
 
         // Consume items
         for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
-            final int goal = (stage.getItemConsumeAmounts() != null && stage.getItemConsumeAmounts().size() > i)
-                    ? stage.getItemConsumeAmounts().get(i) : 1;
+            final int goal = 1;
             final int current = (progress.getItemsConsumed().size() > i) ? progress.getItemsConsumed().get(i) : 0;
             objs.add(new FabricObjective(ObjectiveType.CONSUME_ITEM, FabricLang.get("questConsumeItem"), current, goal));
         }
 
         // Use blocks
         for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
-            final int goal = (stage.getBlockUseAmounts() != null && stage.getBlockUseAmounts().size() > i)
-                    ? stage.getBlockUseAmounts().get(i) : 1;
+            final int goal = 1;
             final int current = (progress.getBlocksUsed().size() > i) ? progress.getBlocksUsed().get(i) : 0;
             objs.add(new FabricObjective(ObjectiveType.USE_BLOCK, FabricLang.get("questUseBlock"), current, goal));
         }
@@ -419,6 +442,12 @@ public class FabricQuester implements Quester {
             if (progress.getBlocksBroken().get(i) < 1) return false;
         }
 
+        // Damage blocks
+        for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
+            if (progress.getBlocksDamaged().size() <= i) return false;
+            if (progress.getBlocksDamaged().get(i) < 1) return false;
+        }
+
         // Place blocks
         for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
             if (progress.getBlocksPlaced().size() <= i) return false;
@@ -429,6 +458,24 @@ public class FabricQuester implements Quester {
         for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
             if (progress.getItemsCrafted().size() <= i) return false;
             if (progress.getItemsCrafted().get(i) < 1) return false;
+        }
+
+        // Items smelted
+        for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
+            if (progress.getItemsSmelted().size() <= i) return false;
+            if (progress.getItemsSmelted().get(i) < 1) return false;
+        }
+
+        // Items enchanted
+        for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
+            if (progress.getItemsEnchanted().size() <= i) return false;
+            if (progress.getItemsEnchanted().get(i) < 1) return false;
+        }
+
+        // Items brewed
+        for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
+            if (progress.getItemsBrewed().size() <= i) return false;
+            if (progress.getItemsBrewed().get(i) < 1) return false;
         }
 
         // Mobs killed
@@ -476,6 +523,14 @@ public class FabricQuester implements Quester {
             if (progress.getItemsConsumed().get(i) < 1) return false;
         }
 
+        // Custom objectives
+        for (int i = 0; i < stage.getCustomObjectives().size(); i++) {
+            if (progress.getCustomObjectiveCounts().size() <= i) return false;
+            final int goal = stage.getCustomObjectiveCounts().size() > i
+                    ? stage.getCustomObjectiveCounts().get(i) : 1;
+            if (progress.getCustomObjectiveCounts().get(i) < goal) return false;
+        }
+
         return true;
     }
 
@@ -489,11 +544,23 @@ public class FabricQuester implements Quester {
         while (progress.getBlocksBroken().size() < s.getBlocksToBreak().size()) {
             progress.getBlocksBroken().add(0);
         }
+        while (progress.getBlocksDamaged().size() < s.getBlocksToDamage().size()) {
+            progress.getBlocksDamaged().add(0);
+        }
         while (progress.getBlocksPlaced().size() < s.getBlocksToPlace().size()) {
             progress.getBlocksPlaced().add(0);
         }
         while (progress.getItemsCrafted().size() < s.getItemsToCraft().size()) {
             progress.getItemsCrafted().add(0);
+        }
+        while (progress.getItemsSmelted().size() < s.getItemsToSmelt().size()) {
+            progress.getItemsSmelted().add(0);
+        }
+        while (progress.getItemsEnchanted().size() < s.getItemsToEnchant().size()) {
+            progress.getItemsEnchanted().add(0);
+        }
+        while (progress.getItemsBrewed().size() < s.getItemsToBrew().size()) {
+            progress.getItemsBrewed().add(0);
         }
         while (progress.getMobNumKilled().size() < s.getMobsToKill().size()) {
             progress.getMobNumKilled().add(0);
@@ -504,13 +571,16 @@ public class FabricQuester implements Quester {
         while (progress.getNpcsNumKilled().size() < s.getNpcsToKill().size()) {
             progress.getNpcsNumKilled().add(0);
         }
+        while (progress.getCustomObjectiveCounts().size() < s.getCustomObjectives().size()) {
+            progress.getCustomObjectiveCounts().add(0);
+        }
     }
 
     @Override
     public boolean saveData() {
         hasData = true;
         try {
-            plugin.getStorage().saveQuesterData(this);
+            plugin.getStorage().saveQuester(this).get();
         } catch (final Exception e) {
             FabricQuestsPlugin.LOGGER.error("Failed to save quester data for " + uuid, e);
             return false;
@@ -611,8 +681,10 @@ public class FabricQuester implements Quester {
                     next.getStartAction().fire(this, quest);
                 }
                 startStageTimer(quest);
+                updateJournal();
             } else {
                 quest.completeQuest(this);
+                updateJournal();
             }
         }
     }
@@ -815,7 +887,7 @@ public class FabricQuester implements Quester {
         return Integer.compare(this.questPoints, other.getQuestPoints());
     }
 
-    private ServerPlayer getServerPlayer() {
+    public ServerPlayer getServerPlayer() {
         return plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;
     }
 }
