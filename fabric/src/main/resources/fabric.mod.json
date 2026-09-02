@@ -3,7 +3,7 @@
   "id": "quests",
   "version": "${version}",
   "name": "Quests",
-  "description": "A powerful and flexible quest plugin for Minecraft servers",
+  "description": "An extensive questing system.",
   "authors": ["PikaMug"],
   "contact": {
     "homepage": "https://github.com/PikaMug/Quests/",
@@ -23,6 +23,8 @@
     "java": ">=25"
   },
   "suggests": {
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "placeholder-api": "*",
+    "openpartiesandclaims": "*"
   }
 }

@@ -39,6 +39,16 @@
             <id>cursemaven</id>
             <url>https://cursemaven.com</url>
         </repository>
+        <repository>
+            <!-- TextPlaceholderAPI (eu.pb4:placeholder-api) -->
+            <id>nucleoid</id>
+            <url>https://maven.nucleoid.xyz/</url>
+        </repository>
+        <repository>
+            <!-- Open Parties and Claims (xaero.pac:open-parties-and-claims-fabric-*) -->
+            <id>chocolateminecraft</id>
+            <url>https://chocolateminecraft.com/maven/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -195,6 +205,36 @@
 
         <!-- NPC libs: BOs-Easy-NPC and Taterzens are NOT compile dependencies -->
         <!-- They are detected at runtime via FabricLoader.isModLoaded() and reflection -->
+
+        <!-- TextPlaceholderAPI (provided at runtime by the placeholder-api mod; resolves from maven.nucleoid.xyz) -->
+        <dependency>
+            <groupId>eu.pb4</groupId>
+            <artifactId>placeholder-api</artifactId>
+            <version>3.0.0+26.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Open Parties and Claims (provided at runtime by the openpartiesandclaims mod; Mojang-mapped,
+             resolves from chocolateminecraft.com/maven). No artifact exists for 26.1, so 26.1.2 is used;
+             its fabric.mod.json declares minecraft ">=26.1 <26.2.0", so the 26.1.2 jar loads on 26.1. -->
+        <dependency>
+            <groupId>xaero.pac</groupId>
+            <artifactId>open-parties-and-claims-fabric-26.1.2</artifactId>
+            <version>0.30.3</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- quests-api (shaded into jar) -->
         <dependency>

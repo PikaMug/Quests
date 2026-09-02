@@ -13,6 +13,7 @@ package me.pikamug.quests.conditions;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
@@ -20,6 +21,8 @@ import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
+import eu.pb4.placeholders.api.Placeholders;
+import eu.pb4.placeholders.api.ServerPlaceholderContext;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -152,6 +155,33 @@ public class FabricCondition implements Condition {
                 }
             }
             if (!inBiome) return false;
+        }
+
+        // Placeholders while staying within (TextPlaceholderAPI)
+        if (placeholdersCheckIdentifier != null && !placeholdersCheckIdentifier.isEmpty()) {
+            if (!FabricLoader.getInstance().isModLoaded("placeholder-api")) {
+                FabricQuestsPlugin.LOGGER.warn(
+                        "Placeholder API must be installed for placeholder checks: {}", placeholdersCheckIdentifier.get(0));
+                return false;
+            }
+            int index = 0;
+            for (final String i : placeholdersCheckIdentifier) {
+                if (placeholdersCheckValue.size() <= index) {
+                    FabricQuestsPlugin.LOGGER.warn(
+                            "Condition placeholder values outweigh identifiers: {}", i);
+                    return false;
+                }
+                final String value = Placeholders.SERVER_PLACEHOLDER_PARSER
+                        .parseComponent(i, ServerPlaceholderContext.of(player).asParserContext()).getString();
+                if (!placeholdersCheckValue.get(index).equals(value)) {
+                    if (FabricQuestsPlugin.getInstance().getConfigSettings().getConsoleLogging() > 3) {
+                        FabricQuestsPlugin.LOGGER.info(
+                                "DEBUG: Condition placeholder mismatch for {}: {}", player.getName().getString(), i);
+                    }
+                    return false;
+                }
+                index++;
+            }
         }
 
         return true;

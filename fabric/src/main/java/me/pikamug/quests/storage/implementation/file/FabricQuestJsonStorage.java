@@ -350,9 +350,14 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("allow-commands")) opt.setAllowCommands(json.get("allow-commands").getAsBoolean());
         if (json.has("allow-quitting")) opt.setAllowQuitting(json.get("allow-quitting").getAsBoolean());
         if (json.has("ignore-silk-touch")) opt.setIgnoreSilkTouch(json.get("ignore-silk-touch").getAsBoolean());
+        if (json.has("use-parties-plugin")) opt.setUsePartiesPlugin(json.get("use-parties-plugin").getAsBoolean());
+        if (json.has("share-progress-level")) opt.setShareProgressLevel(json.get("share-progress-level").getAsInt());
+        if (json.has("same-quest-only")) opt.setShareSameQuestOnly(json.get("same-quest-only").getAsBoolean());
+        if (json.has("share-distance")) opt.setShareDistance(json.get("share-distance").getAsDouble());
+        if (json.has("handle-offline-players")) opt.setHandleOfflinePlayers(json.get("handle-offline-players").getAsBoolean());
+        if (json.has("give-at-login")) opt.setGiveGloballyAtLogin(json.get("give-at-login").getAsBoolean());
+        if (json.has("inform-on-start")) opt.setInformOnStart(json.get("inform-on-start").getAsBoolean());
         if (json.has("override-max-quests")) opt.setOverrideMaxQuests(json.get("override-max-quests").getAsBoolean());
-        if (json.has("inform-quest-start")) opt.setInformOnStart(json.get("inform-quest-start").getAsBoolean());
-        if (json.has("give-globally-at-login")) opt.setGiveGloballyAtLogin(json.get("give-globally-at-login").getAsBoolean());
     }
 
     public void loadQuests() {

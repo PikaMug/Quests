@@ -20,6 +20,7 @@ public class FabricDependencies implements Dependencies {
     private final FabricQuestsPlugin plugin;
     private boolean hasEasyNpc = false;
     private boolean hasTaterzens = false;
+    private boolean hasOpenParties = false;
 
     public FabricDependencies(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -29,12 +30,16 @@ public class FabricDependencies implements Dependencies {
     public void init() {
         hasEasyNpc = FabricLoader.getInstance().isModLoaded("easy_npc");
         hasTaterzens = FabricLoader.getInstance().isModLoaded("taterzens");
+        hasOpenParties = FabricLoader.getInstance().isModLoaded("openpartiesandclaims");
 
         if (hasEasyNpc) {
-            FabricQuestsPlugin.LOGGER.info("Detected BOs-Easy-NPC support");
+            FabricQuestsPlugin.LOGGER.info("Detected {} support", "BOs-Easy-NPC");
         }
         if (hasTaterzens) {
-            FabricQuestsPlugin.LOGGER.info("Detected Taterzens support");
+            FabricQuestsPlugin.LOGGER.info("Detected {} support", "Taterzens");
+        }
+        if (hasOpenParties) {
+            FabricQuestsPlugin.LOGGER.info("Detected {} support", "Open Parties and Claims");
         }
     }
 
@@ -59,6 +64,14 @@ public class FabricDependencies implements Dependencies {
         return hasEasyNpc || hasTaterzens;
     }
 
+    /**
+     * Returns whether the Open Parties and Claims mod is installed, which
+     * backs the "use parties plugin" quest option on Fabric.
+     */
+    public boolean hasOpenParties() {
+        return hasOpenParties;
+    }
+
     public String getNpcName(UUID uuid) {
         final net.minecraft.server.level.ServerPlayer player =
                 plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;
@@ -66,10 +79,11 @@ public class FabricDependencies implements Dependencies {
     }
 
     /**
-     * PlaceholderAPI is not available on Fabric/vanilla-loader. Returns null so
-     * placeholder-based conditions are reported as "not installed".
+     * Returns the TextPlaceholderAPI marker when the placeholder-api mod is
+     * installed. Otherwise returns null so placeholder-based conditions are
+     * reported as "not installed".
      */
     public Object getPlaceholderApi() {
-        return null;
+        return FabricLoader.getInstance().isModLoaded("placeholder-api") ? Boolean.TRUE : null;
     }
 }

@@ -35,3 +35,26 @@ Translate
 Help localize into your language:
 - Project (https://crowdin.com/project/translate-quests)
 - Documentation (https://github.com/PikaMug/QuestsDoc)
+
+About the Fabric module (`fabric/`)
+---
+
+The `fabric` module only supports newer Minecraft versions (floor is 26.1, the first unobfuscated release) and is
+compiled against Mojang's official (mojmap) classes supplied by the `quests-minecraft-official` dependency and the
+Fabric API. Since Minecraft 26.1 ships unobfuscated (official) names, the built jar loads directly on a vanilla-loader
+(Fabric) server **without any remapping**. It has been boot-verified on Minecraft 26.1 (Fabric Loader 0.18.4,
+Fabric API 0.145.4+26.1.1) and 26.1.2 (Fabric Loader 0.19.2, Fabric API 0.155.2+26.1.2). Running
+`mvn -pl fabric -am package -DskipTests -B` produces:
+- `fabric/target/quests-fabric-5.3.3.jar` — shaded, official-mapped build, runnable as-is.
+
+Build requirements:
+- JDK 25 (bytecode targets Java 25; see `fabric.mod.json` `"java": ">=25"`).
+- The `quests-minecraft-official:26.1` artifact in the local Maven repository (Mojang-mapped, compile-only; the real
+  server jar is provided by the Fabric loader at runtime).
+
+Additional Fabric caveats:
+- Kyori/adventure (`net.kyori:adventure-api:4.14.0`, provided) is a compile-only bridge for the
+  `ConversationAPI.TimeClause.create(long, Component)` overload; only the `String` overload is used at runtime.
+- The `quests-minecraft-official` dependency and the Fabric API sub-modules (`fabric-api-base`, `fabric-networking-api-v1`,
+  etc., pinned to the Minecraft 26.1 / Fabric API 0.145.x line) in the local Maven repository are Mojang-mapped builds for
+  compilation; they are compile-only and are not shipped.

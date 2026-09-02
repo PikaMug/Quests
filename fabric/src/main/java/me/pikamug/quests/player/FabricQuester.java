@@ -22,6 +22,9 @@ import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.server.api.OpenPACServerAPI;
+import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
+import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -782,59 +785,118 @@ public class FabricQuester implements Quester {
 
     @Override
     public Collection<String> dispatchMultiplayerEverything(Quest quest, ObjectiveType type, BiFunction<Quester, Quest, Void> fun) {
-        // Multiplayer share not yet implemented for Fabric
-        final Collection<String> nearbyNames = new ArrayList<>();
-        final ServerPlayer player = getServerPlayer();
-        if (player == null) return nearbyNames;
-        final double shareDistance = quest.getOptions().getShareDistance();
-        if (shareDistance <= 0) return nearbyNames;
-        for (final ServerPlayer other : player.level().players()) {
-            if (other.equals(player)) continue;
-            if (player.distanceTo(other) > shareDistance) continue;
-            final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
-            if (otherQuester.getCurrentQuests().containsKey(quest)) {
-                fun.apply(otherQuester, quest);
-                nearbyNames.add(other.getName().getString());
+        final Set<String> appliedQuestIDs = new HashSet<>();
+        if (quest != null) {
+            final Collection<Quester> mq = getMultiplayerQuesters(quest);
+            for (final Quester q : mq) {
+                if (q == null) {
+                    continue;
+                }
+                if (quest.getOptions().canShareSameQuestOnly()) {
+                    if (q.getCurrentStage(quest) != null) {
+                        fun.apply(q, quest);
+                        appliedQuestIDs.add(quest.getId());
+                    }
+                }
+                q.getCurrentQuests().forEach((otherQuest, i) -> {
+                    if (otherQuest.getStage(i).containsObjective(type)) {
+                        if (!otherQuest.getOptions().canShareSameQuestOnly()) {
+                            fun.apply(q, otherQuest);
+                            appliedQuestIDs.add(otherQuest.getId());
+                        }
+                    }
+                });
             }
         }
-        return nearbyNames;
+        return appliedQuestIDs;
     }
 
     @Override
     public Collection<String> dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
-        final Collection<String> nearbyNames = new ArrayList<>();
-        final ServerPlayer player = getServerPlayer();
-        if (player == null) return nearbyNames;
-        final double shareDistance = quest.getOptions().getShareDistance();
-        if (shareDistance <= 0) return nearbyNames;
-        for (final ServerPlayer other : player.level().players()) {
-            if (other.equals(player)) continue;
-            if (player.distanceTo(other) > shareDistance) continue;
-            final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
-            if (otherQuester.getCurrentQuests().containsKey(quest)) {
-                fun.apply(otherQuester);
-                nearbyNames.add(other.getName().getString());
+        final Set<String> appliedQuestIDs = new HashSet<>();
+        final Collection<Quester> mq = getMultiplayerQuesters(quest);
+        for (final Quester q : mq) {
+            if (q == null) {
+                continue;
+            }
+            if (q.getCurrentQuests().containsKey(quest) && currentStage.equals(q.getCurrentStage(quest))) {
+                fun.apply(q);
+                appliedQuestIDs.add(quest.getId());
             }
         }
-        return nearbyNames;
+        return appliedQuestIDs;
     }
 
     @Override
     public Collection<Quester> getMultiplayerQuesters(Quest quest) {
-        final Collection<Quester> multiplayerQuesters = new ArrayList<>();
+        final Set<Quester> mq = new HashSet<>();
+        if (quest == null) {
+            return mq;
+        }
+        // Party sharing via Open Parties and Claims (parties only)
+        if (plugin.getDependencies().hasOpenParties() && quest.getOptions().canUsePartiesPlugin()) {
+            try {
+                final OpenPACServerAPI api = OpenPACServerAPI.get(plugin.getServer());
+                if (api != null) {
+                    final IPartyManagerAPI partyManager = api.getPartyManager();
+                    if (partyManager != null) {
+                        final IServerPartyAPI party = partyManager.getPartyByMember(getUUID());
+                        if (party != null) {
+                            final double distanceSquared = quest.getOptions().getShareDistance()
+                                    * quest.getOptions().getShareDistance();
+                            if (quest.getOptions().canHandleOfflinePlayers()) {
+                                party.getMemberInfoStream().forEach(member -> {
+                                    if (member != null && !member.getUUID().equals(getUUID())) {
+                                        final FabricQuester otherQuester = plugin.getQuester(member.getUUID());
+                                        if (otherQuester != null) {
+                                            mq.add(otherQuester);
+                                        }
+                                    }
+                                });
+                            } else {
+                                party.getOnlineMemberStream().forEach(other -> {
+                                    if (other == null || other.getUUID().equals(getUUID())) {
+                                        return;
+                                    }
+                                    final ServerPlayer player = getServerPlayer();
+                                    if (player == null) {
+                                        return;
+                                    }
+                                    if (distanceSquared > 0) {
+                                        if (player.level() == other.level() && player.distanceToSqr(other) <= distanceSquared) {
+                                            mq.add(plugin.getQuester(other.getUUID()));
+                                        }
+                                    } else {
+                                        mq.add(plugin.getQuester(other.getUUID()));
+                                    }
+                                });
+                            }
+                            if (plugin.getConfigSettings().getConsoleLogging() > 3) {
+                                FabricQuestsPlugin.LOGGER.info("Found {} party members for quest ID {}",
+                                        mq.size(), quest.getId());
+                            }
+                            return mq;
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                FabricQuestsPlugin.LOGGER.warn("Failed to resolve party members for quest ID {}", quest.getId(), e);
+            }
+        }
+        // Fallback: proximity-based sharing
         final ServerPlayer player = getServerPlayer();
-        if (player == null) return multiplayerQuesters;
+        if (player == null) return mq;
         final double shareDistance = quest.getOptions().getShareDistance();
-        if (shareDistance <= 0) return multiplayerQuesters;
+        if (shareDistance <= 0) return mq;
         for (final ServerPlayer other : player.level().players()) {
             if (other.equals(player)) continue;
             if (player.distanceTo(other) > shareDistance) continue;
             final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
             if (otherQuester.getCurrentQuests().containsKey(quest)) {
-                multiplayerQuesters.add(otherQuester);
+                mq.add(otherQuester);
             }
         }
-        return multiplayerQuesters;
+        return mq;
     }
 
     @Override
