@@ -11,10 +11,11 @@
 package me.pikamug.quests.util;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -55,8 +56,17 @@ public class FabricMiscUtil {
         return plugin.getServer().getPlayerList().getPlayer(uuid);
     }
 
+    public static boolean hasPermission(ServerPlayer player, PermissionLevel level) {
+        if (player == null || level == null) return false;
+        final PermissionSet set = player.permissions();
+        if (set instanceof LevelBasedPermissionSet lbs) {
+            return lbs.level().isEqualOrHigherThan(level);
+        }
+        return false;
+    }
+
     public static String locationToString(ServerLevel level, Vec3 pos) {
-        return level.dimension().location() + " " + (int) pos.x + " " + (int) pos.y + " " + (int) pos.z;
+        return level.dimension().identifier() + " " + (int) pos.x + " " + (int) pos.y + " " + (int) pos.z;
     }
 
     public static boolean isItemType(ItemStack item, String materialName) {
@@ -71,5 +81,43 @@ public class FabricMiscUtil {
         final String firstLetter = input.substring(0, 1);
         final String remainder = input.substring(1);
         return firstLetter.toUpperCase() + remainder.toLowerCase();
+    }
+
+    public static String getTime(final Long millis) {
+        return formatTime(millis != null ? millis : 0L);
+    }
+
+    public static List<ServerLevel> getWorlds() {
+        final FabricQuestsPlugin plugin = FabricQuestsPlugin.getInstance();
+        if (plugin.getServer() == null) return new LinkedList<>();
+        final List<ServerLevel> worlds = new LinkedList<>();
+        plugin.getServer().getAllLevels().forEach(worlds::add);
+        return worlds;
+    }
+
+    public static EntityType<?> getProperMobType(final String mob) {
+        if (mob == null) return null;
+        final Optional<EntityType<?>> type = EntityType.byString(mob.toUpperCase());
+        return type.orElse(null);
+    }
+
+    public static String snakeCaseToUpperCamelCase(final String input) {
+        if (input == null || input.isEmpty()) return input;
+        final String[] parts = input.toLowerCase().split("_");
+        final StringBuilder sb = new StringBuilder();
+        for (final String part : parts) {
+            if (!part.isEmpty()) {
+                sb.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String getProperDyeColor(final String input) {
+        if (input == null) return null;
+        final String stripped = input.toLowerCase().replace("_", "").replace(" ", "");
+        if (stripped.equals("lightgray") || stripped.equals("silver")) return "LIGHT_GRAY";
+        if (stripped.equals("dark") || stripped.equals("darkgray")) return "DARK_GRAY";
+        return stripped.toUpperCase();
     }
 }

@@ -18,12 +18,10 @@ import me.pikamug.quests.convo.actions.tasks.FabricActionEffectPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionPlayerPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionTimerPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionWeatherPrompt;
-import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
 import me.pikamug.quests.entity.FabricQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
@@ -32,13 +30,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -472,7 +466,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                         + ")";
             case 4:
                 return ChatFormatting.GRAY + "(" + (questMob.getLocation() == null ? ChatFormatting.GRAY
-                        + FabricLang.get("noneSet") : ChatFormatting.AQUA + questMob.getLocation().getX() + " "
+                        + FabricLang.get("noneSet") : ChatFormatting.AQUA + "" + questMob.getLocation().getX() + " "
                         + questMob.getLocation().getY() + " " + questMob.getLocation().getZ()) + ChatFormatting.GRAY + ")";
             case 5:
                 return ChatFormatting.GRAY + "(" + ChatFormatting.GRAY + FabricLang.get("noneSet") + ChatFormatting.GRAY + ")";
@@ -631,7 +625,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final LinkedList<EntityType<?>> mobList = new LinkedList<>();
-            net.minecraft.core.Registry.ENTITY_TYPE.stream()
+            net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
                     .filter(et -> et != EntityType.PLAYER)
                     .sorted(Comparator.comparing(et -> et.getDescription().getString()))
                     .forEach(mobList::add);

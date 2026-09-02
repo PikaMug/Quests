@@ -25,11 +25,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -657,7 +654,7 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
         public @NotNull String getPromptText() {
             final StringBuilder potions = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final List<MobEffect> effArr = new LinkedList<>();
-            net.minecraft.core.Registry.MOB_EFFECT.stream()
+            net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.stream()
                     .sorted(Comparator.comparing(e -> e.getDescriptionId()))
                     .forEach(effArr::add);
             for (int i = 0; i < effArr.size(); i++) {
@@ -684,9 +681,9 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
             if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 final LinkedList<String> effTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
-                    final MobEffect effect = net.minecraft.core.Registry.MOB_EFFECT.get(
-                            new net.minecraft.resources.ResourceLocation("minecraft", s.toLowerCase()));
-                    if (effect != null && effect != net.minecraft.world.effect.MobEffects.EMPTY) {
+                    final MobEffect effect = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.getValue(
+                            net.minecraft.resources.Identifier.tryBuild("minecraft", s.toLowerCase()));
+                    if (effect != null) {
                         effTypes.add(s.toUpperCase());
                         SessionData.set(uuid, Key.A_POTION_TYPES, effTypes);
                     } else {

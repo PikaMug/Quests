@@ -125,7 +125,6 @@ public class FabricNpcOfferQuestPrompt extends FabricMiscStringPrompt {
         return FabricLang.get("enterAnOption");
     }
 
-    @Override
     public @NotNull String getPromptText() {
         final LinkedList<Quest> quests = npcQuests;
         if (plugin == null || quests == null || npcName == null) {
@@ -157,12 +156,10 @@ public class FabricNpcOfferQuestPrompt extends FabricMiscStringPrompt {
                     "\n" + getNumberColor(i) + ChatFormatting.BOLD + i + ". "
                             + ChatFormatting.RESET + getSelectionText(i))
                     .withStyle(Style.EMPTY
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                    "/quests choice " + i)));
+                            .withClickEvent(new ClickEvent.RunCommand("/quests choice " + i)));
             if (configSettings.canShowQuestReqs() && i <= size) {
                 choice.withStyle(Style.EMPTY
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                Component.literal(quests.get(i - 1).getDescription()))));
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(quests.get(i - 1).getDescription()))));
             }
             line.append(choice);
             line.append(Component.literal(getAdditionalText(i)));
@@ -178,6 +175,7 @@ public class FabricNpcOfferQuestPrompt extends FabricMiscStringPrompt {
         if (plugin == null || quests == null) {
             return;
         }
+        final FabricConfigSettings configSettings = (FabricConfigSettings) plugin.getConfigSettings();
         final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
         final Quester quester = plugin.getQuester(uuid);
         int numInput = -1;

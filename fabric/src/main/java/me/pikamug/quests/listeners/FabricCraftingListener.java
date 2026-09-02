@@ -15,7 +15,6 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.BrewingStandMenu;
@@ -24,6 +23,7 @@ import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.FurnaceMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,8 +110,7 @@ public class FabricCraftingListener {
     }
 
     private boolean hasEnchantments(ItemStack item) {
-        if (item.getTag() == null) return false;
-        return item.getTag().contains("Enchantments");
+        return EnchantmentHelper.hasAnyEnchantments(item);
     }
 
     private void onCraftItem(ServerPlayer player, ItemStack crafted) {

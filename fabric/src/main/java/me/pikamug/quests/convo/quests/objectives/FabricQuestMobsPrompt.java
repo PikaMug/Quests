@@ -14,13 +14,12 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.FabricQuestStageMainPrompt;
-import me.pikamug.quests.config.FabricConfigSettings;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -115,7 +114,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                         for (int i = 0; i < mobs.size(); i++) {
                             if (FabricMiscUtil.getProperMobType(mobs.get(i)) != null) {
                                 text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
-                                        .append(FabricMiscUtil.getPrettyMobName(Objects.requireNonNull(FabricMiscUtil
+                                        .append(FabricMiscUtil.getEntityName(Objects.requireNonNull(FabricMiscUtil
                                                 .getProperMobType(mobs.get(i))))).append(ChatFormatting.GRAY).append(" x ")
                                         .append(ChatFormatting.DARK_AQUA).append(amounts.get(i));
                             }
@@ -132,7 +131,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                                 String msg = FabricLang.get("blocksWithin");
                                 msg = msg.replace("<amount>", String.valueOf(radii.get(i)));
                                 text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.BLUE)
-                                        .append(FabricMiscUtil.getPrettyMobName(Objects.requireNonNull(FabricMiscUtil
+                                        .append(FabricMiscUtil.getEntityName(Objects.requireNonNull(FabricMiscUtil
                                                 .getProperMobType(mobs.get(i))))).append(ChatFormatting.GRAY).append(" x ")
                                         .append(ChatFormatting.DARK_AQUA).append(amounts.get(i)).append(ChatFormatting.GRAY)
                                         .append(msg).append(ChatFormatting.YELLOW).append(names.get(i)).append(" (")
@@ -538,7 +537,8 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            final List<EntityType<?>> mobArr = new LinkedList<>(BuiltInRegistries.ENTITY_TYPE.iterator());
+            final List<EntityType<?>> mobArr = new LinkedList<>();
+            BuiltInRegistries.ENTITY_TYPE.iterator().forEachRemaining(mobArr::add);
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
                 if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {
@@ -984,7 +984,8 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            final List<EntityType<?>> mobArr = new LinkedList<>(BuiltInRegistries.ENTITY_TYPE.iterator());
+            final List<EntityType<?>> mobArr = new LinkedList<>();
+            BuiltInRegistries.ENTITY_TYPE.iterator().forEachRemaining(mobArr::add);
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
                 if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {

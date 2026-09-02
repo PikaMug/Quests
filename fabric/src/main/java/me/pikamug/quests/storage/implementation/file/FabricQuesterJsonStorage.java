@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.player.FabricQuestProgress;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;

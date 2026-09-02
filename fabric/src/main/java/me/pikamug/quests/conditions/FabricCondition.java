@@ -14,11 +14,12 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -117,7 +118,8 @@ public class FabricCondition implements Condition {
                 final var commands = server.getCommands();
                 for (final String perm : permissions) {
                     if (!commands.getDispatcher().parse(
-                            player.createCommandSourceStack().withPermission(4), perm).consume().isEmpty()) {
+                            perm, player.createCommandSourceStack().withPermission(
+                                    LevelBasedPermissionSet.forLevel(PermissionLevel.OWNERS))).getExceptions().isEmpty()) {
                         // Player has all permissions via command access, but we check for simple perms
                     }
                     // Fallback: assume granted if no permission system
@@ -128,9 +130,9 @@ public class FabricCondition implements Condition {
         // Worlds while staying within
         if (worldsWhileStayingWithin != null && !worldsWhileStayingWithin.isEmpty()) {
             boolean inWorld = false;
-            final String currentWorld = player.level().dimension().location().toString();
+            final String currentWorld = player.level().dimension().identifier().toString();
             for (final String world : worldsWhileStayingWithin) {
-                if (currentWorld.equalsIgnoreCase(world) || player.level().dimension().location().getPath().equalsIgnoreCase(world)) {
+                if (currentWorld.equalsIgnoreCase(world) || player.level().dimension().identifier().getPath().equalsIgnoreCase(world)) {
                     inWorld = true;
                     break;
                 }
@@ -140,7 +142,8 @@ public class FabricCondition implements Condition {
 
         // Biomes while staying within
         if (biomesWhileStayingWithin != null && !biomesWhileStayingWithin.isEmpty()) {
-            final String currentBiome = player.level().getBiome(player.blockPosition()).value().toShortString();
+            final String currentBiome = player.level().getBiome(player.blockPosition())
+                .unwrapKey().map(resourceKey -> resourceKey.identifier().toString()).orElse("unknown");
             boolean inBiome = false;
             for (final String biome : biomesWhileStayingWithin) {
                 if (currentBiome.toLowerCase().contains(biome.toLowerCase())) {
@@ -157,7 +160,7 @@ public class FabricCondition implements Condition {
     private ServerPlayer getPlayer(Quester quester) {
         final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (server == null) return null;
-        return server.getPlayerList().getPlayerByName(quester.getName());
+        return server.getPlayerList().getPlayer(quester.getUUID());
     }
 
     @Override

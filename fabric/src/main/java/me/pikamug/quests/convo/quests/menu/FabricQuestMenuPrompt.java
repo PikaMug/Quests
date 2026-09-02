@@ -107,7 +107,7 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
         }
         switch (input.intValue()) {
         case 1:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 new FabricQuestSelectCreatePrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("noPermission")));
@@ -115,7 +115,7 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             break;
         case 2:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 new FabricQuestSelectEditPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("noPermission")));
@@ -123,7 +123,7 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             break;
         case 3:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 new FabricQuestSelectDeletePrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("noPermission")));

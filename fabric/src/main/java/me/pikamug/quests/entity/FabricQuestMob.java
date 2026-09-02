@@ -12,10 +12,9 @@ package me.pikamug.quests.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.item.ItemStack;
 
 public class FabricQuestMob implements QuestMob {
 
@@ -44,9 +43,11 @@ public class FabricQuestMob implements QuestMob {
     public void spawn() {
         if (entityType == null || level == null || location == null) return;
         for (int i = 0; i < (spawnAmounts != null ? spawnAmounts : 1); i++) {
-            final Mob mob = (Mob) entityType.create(level);
+            final Mob mob = (Mob) entityType.create(level, EntitySpawnReason.COMMAND);
             if (mob != null) {
-                mob.moveTo(location.getX() + 0.5, location.getY(), location.getZ() + 0.5, 0, 0);
+                mob.setPos(location.getX() + 0.5, location.getY(), location.getZ() + 0.5);
+                mob.setYRot(0);
+                mob.setXRot(0);
                 level.addFreshEntity(mob);
             }
         }

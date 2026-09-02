@@ -1591,8 +1591,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 for (final String name : plugin.getCustomRewards().stream().map(CustomReward::getModuleName)
                         .collect(Collectors.toCollection(TreeSet::new))) {
                     final MutableComponent click = Component.literal(ChatFormatting.DARK_PURPLE + "  - " + name + "\n")
-                            .withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                    "/quests choice " + name)));
+                            .withStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand("/quests choice " + name)));
                     line.append(click);
                 }
             }
@@ -1697,8 +1696,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 for (final CustomReward co : plugin.getCustomRewards()) {
                     if (co.getModuleName().equals(moduleName)) {
                         final MutableComponent click = Component.literal(ChatFormatting.DARK_PURPLE + "  - " + co.getName()
-                                + "\n").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                "/quests choice " + co.getName())));
+                                + "\n").withStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand("/quests choice " + co.getName())));
                         line.append(click);
                     }
                 }

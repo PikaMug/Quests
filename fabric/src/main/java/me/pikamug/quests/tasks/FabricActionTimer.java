@@ -12,7 +12,6 @@ package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
-import me.pikamug.quests.player.QuestProgress;
 import me.pikamug.quests.quests.Quest;
 
 public class FabricActionTimer implements Runnable {

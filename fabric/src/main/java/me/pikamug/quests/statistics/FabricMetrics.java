@@ -133,8 +133,8 @@ public class FabricMetrics {
   private void appendPlatformData(final JsonObjectBuilder builder) {
     builder.appendField("playerAmount", getPlayerAmount());
     builder.appendField("onlineMode", getOnlineMode() ? 1 : 0);
-    builder.appendField("fabricVersion", SharedConstants.getCurrentVersion().getName());
-    builder.appendField("minecraftVersion", SharedConstants.getCurrentVersion().getName());
+    builder.appendField("fabricVersion", SharedConstants.getCurrentVersion().name());
+    builder.appendField("minecraftVersion", SharedConstants.getCurrentVersion().name());
     builder.appendField("javaVersion", System.getProperty("java.version"));
     builder.appendField("osName", System.getProperty("os.name"));
     builder.appendField("osArch", System.getProperty("os.arch"));

@@ -10,8 +10,6 @@
 
 package me.pikamug.quests.player;
 
-import me.pikamug.quests.enums.ObjectiveType;
-
 import java.util.LinkedList;
 
 public class FabricQuestProgress implements QuestProgress {

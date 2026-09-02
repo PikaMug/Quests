@@ -22,7 +22,7 @@ import me.pikamug.quests.convo.quests.objectives.FabricQuestItemsPrompt;
 import me.pikamug.quests.convo.quests.objectives.FabricQuestMobsPrompt;
 import me.pikamug.quests.convo.quests.objectives.FabricQuestNpcsPrompt;
 import me.pikamug.quests.module.CustomObjective;
-import me.pikamug.quests.config.FabricConfigSettings;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class FabricQuestStageMainPrompt extends FabricQuestsEditorIntegerPrompt {

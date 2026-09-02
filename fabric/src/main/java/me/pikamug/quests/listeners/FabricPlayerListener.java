@@ -5,8 +5,8 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,8 +39,9 @@ public class FabricPlayerListener {
         });
 
         // Player join - load quester data
-        ServerLifecycleEvents.PLAYER_JOIN.register((server, player) -> {
-            if (plugin.isLoading()) return;
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            final ServerPlayer player = handler.getPlayer();
+            if (plugin.isLoading() || player == null) return;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             quester.setLastKnownName(player.getName().getString());
             if (!quester.hasData()) {
@@ -53,8 +54,9 @@ public class FabricPlayerListener {
         });
 
         // Player quit - save quester data
-        ServerLifecycleEvents.PLAYER_DISCONNECTION.register((server, player) -> {
-            if (plugin.isLoading()) return;
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            final ServerPlayer player = handler.getPlayer();
+            if (plugin.isLoading() || player == null) return;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             for (final Quest quest : quester.getCurrentQuests().keySet()) {
                 quester.stopStageTimer(quest);

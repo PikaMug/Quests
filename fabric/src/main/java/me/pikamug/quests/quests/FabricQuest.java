@@ -12,7 +12,6 @@ package me.pikamug.quests.quests;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
-import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.*;
 

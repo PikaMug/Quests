@@ -10,8 +10,12 @@
 
 package me.pikamug.quests.util;
 
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+
+import java.util.Optional;
 
 public class FabricItemUtil {
 
@@ -43,8 +47,9 @@ public class FabricItemUtil {
             } catch (final NumberFormatException ignored) {}
         }
         // Try to find the item by registry name
-        final var registry = net.minecraft.core.Registry.ITEM;
-        final var optional = registry.getOptional(new net.minecraft.resources.ResourceLocation(materialName.toLowerCase()));
+        final var registry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
+        final Identifier id = Identifier.tryParse(materialName.toLowerCase());
+        final var optional = id == null ? Optional.<net.minecraft.world.item.Item>empty() : registry.getOptional(id);
         if (optional.isPresent()) {
             return new ItemStack(optional.get(), count);
         }
@@ -79,7 +84,8 @@ public class FabricItemUtil {
      */
     public static boolean isJournal(ItemStack is) {
         if (is == null || is.isEmpty() || is.getItem() != Items.WRITTEN_BOOK) return false;
-        if (is.getTag() == null) return false;
-        return is.getTag().getBoolean("quests.journal");
+        final net.minecraft.world.item.component.CustomData data = is.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        if (data == null || data.isEmpty()) return false;
+        return data.copyTag().getBooleanOr("quests.journal", false);
     }
 }

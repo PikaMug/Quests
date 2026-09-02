@@ -20,14 +20,18 @@ import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -157,10 +161,10 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
                     return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
                 } else {
                     final StringBuilder text = new StringBuilder();
-                    final Map<Enchantment, Integer> map
-                            = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
+                    final Map<Holder<Enchantment>, Integer> map
+                            = (Map<Holder<Enchantment>, Integer>) SessionData.get(uuid, "tempEnchantments");
                     if (map != null) {
-                        for (final Map.Entry<Enchantment, Integer> e : map.entrySet()) {
+                        for (final Map.Entry<Holder<Enchantment>, Integer> e : map.entrySet()) {
                             text.append("\n").append(getPrettyEnchantmentName(e.getKey())).append(" ")
                                     .append(RomanNumeral.getNumeral(e.getValue()));
                         }
@@ -269,7 +273,7 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
         switch (input.intValue()) {
             case 0:
                 final ItemStack is = item == null ? sender.getMainHandItem() : item;
-                if (is.is(Items.AIR)) {
+                if (is.isEmpty()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("itemCreateNoItem")));
                 } else {
                     SessionData.set(uuid, "tempMeta", null);
@@ -282,31 +286,26 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
                     if (is.getDamageValue() != 0) {
                         SessionData.set(uuid, "tempData", (short) is.getDamageValue());
                     }
-                    if (!is.getAllEnchantments().isEmpty()) {
-                        SessionData.set(uuid, "tempEnchantments", new HashMap<>(is.getAllEnchantments()));
+                    if (!is.getEnchantments().isEmpty()) {
+                        final Map<Holder<Enchantment>, Integer> enchs = new HashMap<>();
+                        for (final it.unimi.dsi.fastutil.objects.Object2IntMap.Entry<Holder<Enchantment>> e
+                                : is.getEnchantments().entrySet()) {
+                            enchs.put(e.getKey(), e.getIntValue());
+                        }
+                        SessionData.set(uuid, "tempEnchantments", enchs);
                     }
-                    if (is.hasCustomHoverName()) {
+                    if (is.get(DataComponents.CUSTOM_NAME) != null) {
                         final String display = ChatFormatting.stripFormatting(
-                                is.getHoverName().getString()).replace(ChatFormatting.COLOR_CHAR, '&');
+                                is.getHoverName().getString()).replace(ChatFormatting.PREFIX_CODE, '&');
                         SessionData.set(uuid, "tempDisplay", display);
                     }
-                    final CompoundTag tag = is.getTag();
-                    if (tag != null) {
-                        final LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                        if (tag.contains("display")) {
-                            final CompoundTag displayTag = tag.getCompound("display");
-                            if (displayTag.contains("Lore")) {
-                                final net.minecraft.nbt.ListTag loreTag = displayTag.getList("Lore", 8);
-                                final LinkedList<String> lore = new LinkedList<>();
-                                for (int i = 0; i < loreTag.size(); i++) {
-                                    lore.add(loreTag.getString(i));
-                                }
-                                SessionData.set(uuid, "tempLore", lore);
-                            }
+                    final ItemLore loreData = is.get(DataComponents.LORE);
+                    if (loreData != null && !loreData.lines().isEmpty()) {
+                        final LinkedList<String> lore = new LinkedList<>();
+                        for (final Component line : loreData.lines()) {
+                            lore.add(line.getString());
                         }
-                        if (!map.isEmpty()) {
-                            SessionData.set(uuid, "tempMeta", map);
-                        }
+                        SessionData.set(uuid, "tempLore", lore);
                     }
                 }
                 new FabricItemStackPrompt(uuid, oldPrompt).start();
@@ -377,59 +376,55 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
                     final String name = (String) SessionData.get(uuid, "tempName");
                     final Integer amount = (Integer) SessionData.get(uuid, "tempAmount");
                     Short data = -1;
-                    Map<Enchantment, Integer> enchs = null;
+                    Map<Holder<Enchantment>, Integer> enchs = null;
                     String display = null;
                     List<String> lore = null;
                     if (SessionData.get(uuid, "tempData") != null) {
                         data = (Short) SessionData.get(uuid, "tempData");
                     }
                     if (SessionData.get(uuid, "tempEnchantments") != null) {
-                        enchs = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
+                        enchs = (Map<Holder<Enchantment>, Integer>) SessionData.get(uuid, "tempEnchantments");
                     }
                     if (SessionData.get(uuid, "tempDisplay") != null) {
-                        display = ChatFormatting.translateAlternateColorCodes('&',
-                                (String) Objects.requireNonNull(SessionData.get(uuid, "tempDisplay")));
+                        display = ((String) Objects.requireNonNull(SessionData.get(uuid, "tempDisplay")))
+                                .replace('&', ChatFormatting.PREFIX_CODE);
                     }
                     if (SessionData.get(uuid, "tempLore") != null) {
                         lore = new ArrayList<>();
                         final LinkedList<String> loadedLore = (LinkedList<String>) SessionData.get(uuid, "tempLore");
                         if (loadedLore != null) {
                             for (final String line : loadedLore) {
-                                lore.add(ChatFormatting.translateAlternateColorCodes('&', line));
+                                lore.add(line.replace('&', ChatFormatting.PREFIX_CODE));
                             }
                         }
                     }
 
                     if (name != null && amount != null && data != null) {
-                        final ResourceLocation resLoc = new ResourceLocation(name.toLowerCase());
-                        final net.minecraft.world.item.Item itemObj = BuiltInRegistries.ITEM.get(resLoc);
-                        final ItemStack stack = new ItemStack(itemObj, amount);
-                        if (data != -1) {
-                            stack.setDamageValue(data);
-                        }
-                        if (enchs != null) {
-                            for (final Map.Entry<Enchantment, Integer> e : enchs.entrySet()) {
-                                stack.enchant(e.getKey(), e.getValue());
+                        final Identifier resLoc = Identifier.tryParse(name.toLowerCase());
+                        final net.minecraft.world.item.Item itemObj = resLoc == null ? null : BuiltInRegistries.ITEM.getValue(resLoc);
+                        if (itemObj != null) {
+                            final ItemStack stack = new ItemStack(itemObj, amount);
+                            if (data != -1) {
+                                stack.setDamageValue(data);
                             }
-                        }
-                        if (display != null) {
-                            stack.hoverName(Component.literal(display));
-                        }
-                        if (lore != null) {
-                            final CompoundTag tag = stack.getOrCreateTag();
-                            CompoundTag displayTag = tag.getCompound("display");
-                            if (displayTag == null) {
-                                displayTag = new CompoundTag();
+                            if (enchs != null) {
+                                for (final Map.Entry<Holder<Enchantment>, Integer> e : enchs.entrySet()) {
+                                    stack.enchant(e.getKey(), e.getValue());
+                                }
                             }
-                            final net.minecraft.nbt.ListTag loreTag = new net.minecraft.nbt.ListTag();
-                            for (final String line : lore) {
-                                loreTag.add(net.minecraft.nbt.StringTag.valueOf(line));
+                            if (display != null) {
+                                stack.set(DataComponents.CUSTOM_NAME, Component.literal(display));
                             }
-                            displayTag.put("Lore", loreTag);
-                            tag.put("display", displayTag);
+                            if (lore != null) {
+                                final List<Component> loreLines = new ArrayList<>();
+                                for (final String line : lore) {
+                                    loreLines.add(Component.literal(line));
+                                }
+                                stack.set(DataComponents.LORE, new ItemLore(loreLines));
+                            }
+                            SessionData.set(uuid, "tempStack", stack);
+                            oldPrompt.start();
                         }
-                        SessionData.set(uuid, "tempStack", stack);
-                        oldPrompt.start();
                     }
                 } else {
                     sender.sendSystemMessage(Component.literal(
@@ -478,8 +473,8 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
             final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, FabricQuestsPlugin.getInstance());
             if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 final String s = input.replace(":", "");
-                final ResourceLocation resLoc = new ResourceLocation(s.toLowerCase().replace(" ", "_"));
-                final net.minecraft.world.item.Item mat = BuiltInRegistries.ITEM.get(resLoc);
+                final Identifier resLoc = Identifier.tryParse(s.toLowerCase().replace(" ", "_"));
+                final net.minecraft.world.item.Item mat = resLoc == null ? null : BuiltInRegistries.ITEM.getValue(resLoc);
                 if (mat == Items.AIR || mat == null) {
                     sender.sendSystemMessage(Component.literal(
                             ChatFormatting.RED + FabricLang.get("itemCreateInvalidName")));
@@ -619,7 +614,7 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder sb = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            for (final Enchantment e : BuiltInRegistries.ENCHANTMENT) {
+            for (final Holder.Reference<Enchantment> e : getAllEnchantments()) {
                 sb.append(ChatFormatting.GREEN).append(getPrettyEnchantmentName(e)).append(", ");
             }
             final String text = sb.substring(0, sb.length() - 2);
@@ -634,7 +629,7 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
             final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, FabricQuestsPlugin.getInstance());
             final String s = input.replace(":", "");
             if (!s.equalsIgnoreCase(FabricLang.get("cmdClear")) && !s.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                final Enchantment e = getEnchantmentFromPrettyName(capitalize(s));
+                final Holder.Reference<Enchantment> e = getEnchantmentFromPrettyName(capitalize(s));
                 if (e != null) {
                     SessionData.set(uuid, "tempEnchant", e);
                     new ItemEnchantmentLevelPrompt(uuid, getPrettyEnchantmentName(e)).start();
@@ -686,15 +681,15 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
                 } else {
                     if (SessionData.get(uuid, "tempEnchantments") != null) {
                         @SuppressWarnings("unchecked")
-                        final Map<Enchantment, Integer> enchs
-                                = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
+                        final Map<Holder<Enchantment>, Integer> enchs
+                                = (Map<Holder<Enchantment>, Integer>) SessionData.get(uuid, "tempEnchantments");
                         if (enchs != null) {
-                            enchs.put((Enchantment) SessionData.get(uuid, "tempEnchant"), num);
+                            enchs.put((Holder<Enchantment>) SessionData.get(uuid, "tempEnchant"), num);
                             SessionData.set(uuid, "tempEnchantments", enchs);
                         }
                     } else {
-                        final Map<Enchantment, Integer> enchs = new HashMap<>();
-                        enchs.put((Enchantment) SessionData.get(uuid, "tempEnchant"), num);
+                        final Map<Holder<Enchantment>, Integer> enchs = new HashMap<>();
+                        enchs.put((Holder<Enchantment>) SessionData.get(uuid, "tempEnchant"), num);
                         SessionData.set(uuid, "tempEnchantments", enchs);
                     }
                     new FabricItemStackPrompt(uuid, oldPrompt).start();
@@ -807,10 +802,10 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
         }
         if (SessionData.get(uuid, "tempEnchantments") != null) {
             @SuppressWarnings("unchecked")
-            final Map<Enchantment, Integer> enchantments
-                    = (Map<Enchantment, Integer>) SessionData.get(uuid, "tempEnchantments");
+            final Map<Holder<Enchantment>, Integer> enchantments
+                    = (Map<Holder<Enchantment>, Integer>) SessionData.get(uuid, "tempEnchantments");
             if (enchantments != null) {
-                for (final Map.Entry<Enchantment, Integer> e : enchantments.entrySet()) {
+                for (final Map.Entry<Holder<Enchantment>, Integer> e : enchantments.entrySet()) {
                     item.append("\n").append(ChatFormatting.GRAY).append("  - ").append(ChatFormatting.RED)
                             .append(getPrettyEnchantmentName(e.getKey())).append(" ")
                             .append(RomanNumeral.getNumeral(e.getValue()));
@@ -842,27 +837,32 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
 
     private static String getPrettyItemName(final String registryName) {
         if (registryName == null || registryName.isEmpty()) return "Unknown";
-        final ResourceLocation resLoc = new ResourceLocation(registryName.toLowerCase());
-        final net.minecraft.world.item.Item item = BuiltInRegistries.ITEM.get(resLoc);
+        final Identifier resLoc = Identifier.tryParse(registryName.toLowerCase());
+        final net.minecraft.world.item.Item item = resLoc == null ? null : BuiltInRegistries.ITEM.getValue(resLoc);
         if (item == null || item == Items.AIR) return registryName;
         final ItemStack stack = new ItemStack(item);
         return stack.getHoverName().getString();
     }
 
-    public static String getPrettyEnchantmentName(final Enchantment ench) {
+    public static String getPrettyEnchantmentName(final Holder<Enchantment> ench) {
         if (ench == null) return "Unknown";
-        final ItemStack stack = new ItemStack(Items.AIR);
-        return ench.getDescription().getString();
+        return Enchantment.getFullname(ench, 1).getString();
     }
 
-    private static Enchantment getEnchantmentFromPrettyName(final String name) {
+    private static Holder.Reference<Enchantment> getEnchantmentFromPrettyName(final String name) {
         if (name == null || name.isEmpty()) return null;
-        for (final Enchantment e : BuiltInRegistries.ENCHANTMENT) {
-            if (e.getDescription().getString().equalsIgnoreCase(name)) {
+        for (final Holder.Reference<Enchantment> e : getAllEnchantments()) {
+            if (Enchantment.getFullname(e, 1).getString().equalsIgnoreCase(name)) {
                 return e;
             }
         }
         return null;
+    }
+
+    private static List<Holder.Reference<Enchantment>> getAllEnchantments() {
+        final var server = FabricQuestsPlugin.getInstance().getServer();
+        if (server == null) return List.of();
+        return server.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).listElements().toList();
     }
 
     private static String capitalize(final String s) {

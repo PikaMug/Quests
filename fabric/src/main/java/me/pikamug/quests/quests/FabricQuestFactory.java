@@ -21,6 +21,8 @@ public class FabricQuestFactory implements QuestFactory {
     private final FabricQuestsPlugin plugin;
     private final Set<UUID> selectingNpcs = ConcurrentHashMap.newKeySet();
     private final List<String> namesOfQuestsBeingEdited = Collections.synchronizedList(new ArrayList<>());
+    private final ConcurrentHashMap<UUID, net.minecraft.world.level.block.Block> selectedKillLocations
+            = new ConcurrentHashMap<>();
 
     public FabricQuestFactory(FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -73,5 +75,14 @@ public class FabricQuestFactory implements QuestFactory {
 
     public void clearData(final UUID uuid) {
         SessionData.clear(uuid);
+    }
+
+    public ConcurrentHashMap<UUID, net.minecraft.world.level.block.Block> getSelectedKillLocations() {
+        return selectedKillLocations;
+    }
+
+    public void setSelectedKillLocations(final ConcurrentHashMap<UUID, net.minecraft.world.level.block.Block> v) {
+        selectedKillLocations.clear();
+        selectedKillLocations.putAll(v);
     }
 }

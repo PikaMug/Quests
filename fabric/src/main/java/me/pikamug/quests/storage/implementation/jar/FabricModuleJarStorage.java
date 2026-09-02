@@ -130,6 +130,8 @@ public class FabricModuleJarStorage implements ModuleStorageImpl {
                     c = Class.forName(className, true, cl);
                 } catch (final NoClassDefFoundError e) {
                     plugin.getPluginLogger().error("Module error! Seek help from developer of jar " + jar.getName());
+                } catch (final ClassNotFoundException e) {
+                    plugin.getPluginLogger().error("Module error! Seek help from developer of jar " + jar.getName());
                 }
                 if (c != null) {
                     if (FabricCustomRequirement.class.isAssignableFrom(c)) {

@@ -27,7 +27,6 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -325,11 +324,15 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
             final StringBuilder worlds = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final MinecraftServer server = plugin.getServer();
             if (server != null) {
+                int total = 0;
+                for (final ServerLevel level : server.getAllLevels()) {
+                    total++;
+                }
                 int idx = 0;
                 for (final ServerLevel level : server.getAllLevels()) {
-                    final String name = level.dimension().location().toString();
+                    final String name = level.dimension().identifier().toString();
                     worlds.append(ChatFormatting.AQUA).append(name);
-                    if (idx < (server.getAllLevels().size() - 1)) {
+                    if (idx < (total - 1)) {
                         worlds.append(ChatFormatting.GRAY).append(", ");
                     }
                     idx++;
@@ -352,9 +355,9 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
                 final MinecraftServer server = plugin.getServer();
                 if (server != null) {
                     for (final ServerLevel level : server.getAllLevels()) {
-                        if (level.dimension().location().toString().equalsIgnoreCase(input)
-                                || level.dimension().location().getPath().equalsIgnoreCase(input)) {
-                            SessionData.set(uuid, Key.A_WORLD_STORM, level.dimension().location().toString());
+                        if (level.dimension().identifier().toString().equalsIgnoreCase(input)
+                                || level.dimension().identifier().getPath().equalsIgnoreCase(input)) {
+                            SessionData.set(uuid, Key.A_WORLD_STORM, level.dimension().identifier().toString());
                             new ActionStormPrompt(uuid).start();
                             return;
                         }
@@ -562,11 +565,15 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
             final StringBuilder worlds = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final MinecraftServer server = plugin.getServer();
             if (server != null) {
+                int total = 0;
+                for (final ServerLevel level : server.getAllLevels()) {
+                    total++;
+                }
                 int idx = 0;
                 for (final ServerLevel level : server.getAllLevels()) {
-                    final String name = level.dimension().location().toString();
+                    final String name = level.dimension().identifier().toString();
                     worlds.append(ChatFormatting.AQUA).append(name);
-                    if (idx < (server.getAllLevels().size() - 1)) {
+                    if (idx < (total - 1)) {
                         worlds.append(ChatFormatting.GRAY).append(", ");
                     }
                     idx++;
@@ -589,9 +596,9 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
                 final MinecraftServer server = plugin.getServer();
                 if (server != null) {
                     for (final ServerLevel level : server.getAllLevels()) {
-                        if (level.dimension().location().toString().equalsIgnoreCase(input)
-                                || level.dimension().location().getPath().equalsIgnoreCase(input)) {
-                            SessionData.set(uuid, Key.A_WORLD_THUNDER, level.dimension().location().toString());
+                        if (level.dimension().identifier().toString().equalsIgnoreCase(input)
+                                || level.dimension().identifier().getPath().equalsIgnoreCase(input)) {
+                            SessionData.set(uuid, Key.A_WORLD_THUNDER, level.dimension().identifier().toString());
                             new ActionThunderPrompt(uuid).start();
                             return;
                         }

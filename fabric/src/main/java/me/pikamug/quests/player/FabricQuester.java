@@ -18,10 +18,8 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.tasks.FabricStageTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricLang;
-import me.pikamug.quests.util.FabricMiscUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -108,7 +106,7 @@ public class FabricQuester implements Quester {
     public boolean hasJournal() {
         final ServerPlayer player = getServerPlayer();
         if (player == null) return false;
-        for (final net.minecraft.world.item.ItemStack is : player.getInventory().items) {
+        for (final net.minecraft.world.item.ItemStack is : player.getInventory().getNonEquipmentItems()) {
             if (me.pikamug.quests.util.FabricItemUtil.isJournal(is)) {
                 return true;
             }
@@ -120,7 +118,7 @@ public class FabricQuester implements Quester {
     public int getJournalIndex() {
         final ServerPlayer player = getServerPlayer();
         if (player == null) return -1;
-        final List<net.minecraft.world.item.ItemStack> items = player.getInventory().items;
+        final List<net.minecraft.world.item.ItemStack> items = player.getInventory().getNonEquipmentItems();
         for (int i = 0; i < items.size(); i++) {
             if (me.pikamug.quests.util.FabricItemUtil.isJournal(items.get(i))) {
                 return i;
@@ -790,7 +788,7 @@ public class FabricQuester implements Quester {
         if (player == null) return nearbyNames;
         final double shareDistance = quest.getOptions().getShareDistance();
         if (shareDistance <= 0) return nearbyNames;
-        for (final ServerPlayer other : player.serverLevel().players()) {
+        for (final ServerPlayer other : player.level().players()) {
             if (other.equals(player)) continue;
             if (player.distanceTo(other) > shareDistance) continue;
             final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
@@ -809,7 +807,7 @@ public class FabricQuester implements Quester {
         if (player == null) return nearbyNames;
         final double shareDistance = quest.getOptions().getShareDistance();
         if (shareDistance <= 0) return nearbyNames;
-        for (final ServerPlayer other : player.serverLevel().players()) {
+        for (final ServerPlayer other : player.level().players()) {
             if (other.equals(player)) continue;
             if (player.distanceTo(other) > shareDistance) continue;
             final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
@@ -828,7 +826,7 @@ public class FabricQuester implements Quester {
         if (player == null) return multiplayerQuesters;
         final double shareDistance = quest.getOptions().getShareDistance();
         if (shareDistance <= 0) return multiplayerQuesters;
-        for (final ServerPlayer other : player.serverLevel().players()) {
+        for (final ServerPlayer other : player.level().players()) {
             if (other.equals(player)) continue;
             if (player.distanceTo(other) > shareDistance) continue;
             final FabricQuester otherQuester = plugin.getQuester(other.getUUID());

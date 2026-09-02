@@ -676,8 +676,8 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
             for (final String z : zones) {
                 text.append(ChatFormatting.GREEN).append(z).append(", ");
             }
-            text = new StringBuilder(text.substring(0, text.length() - 2));
-            return text + "\n" + ChatFormatting.YELLOW + getQueryText();
+            final String trimmed = text.substring(0, Math.max(0, text.length() - 2));
+            return trimmed + "\n" + ChatFormatting.YELLOW + getQueryText();
         }
 
         @Override

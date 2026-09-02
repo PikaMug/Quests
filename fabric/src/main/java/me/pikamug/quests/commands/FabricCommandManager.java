@@ -28,7 +28,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class FabricCommandManager {
 
@@ -43,7 +42,7 @@ public class FabricCommandManager {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             // /quest - Show current quest objectives
             dispatcher.register(Commands.literal("quest")
-                    .requires(source -> source.hasPermission(0))
+                    .requires(Commands.hasPermission(Commands.LEVEL_ALL))
                     .executes(ctx -> {
                         if (ctx.getSource().isPlayer()) {
                             return handleQuest(ctx.getSource().getPlayer());
@@ -56,7 +55,7 @@ public class FabricCommandManager {
             // /quests - Quest management
             final LiteralCommandNode<CommandSourceStack> questsNode = dispatcher.register(
                     Commands.literal("quests")
-                            .requires(source -> source.hasPermission(0))
+                            .requires(Commands.hasPermission(Commands.LEVEL_ALL))
                             .then(Commands.literal("list")
                                     .executes(ctx -> handleQuestsList(ctx.getSource(), 1))
                                     .then(Commands.argument("page", IntegerArgumentType.integer(1))
@@ -155,7 +154,7 @@ public class FabricCommandManager {
 
             final LiteralCommandNode<CommandSourceStack> qaNode = dispatcher.register(
                     Commands.literal("questadmin")
-                            .requires(source -> source.hasPermission(2))
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                             .then(reloadSub)
                             .then(giveSub)
                             .then(quitSub)
@@ -253,7 +252,7 @@ public class FabricCommandManager {
                     .replace("<journal>", FabricLang.get("journalTitle"))));
         } else if (player.getMainHandItem().isEmpty()) {
             final FabricQuestJournal journal = new FabricQuestJournal(plugin, quester);
-            player.getInventory().setItem(player.getInventory().selected, journal.toItemStack());
+            player.getInventory().setItem(player.getInventory().getSelectedSlot(), journal.toItemStack());
             player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalTaken")
                     .replace("<journal>", FabricLang.get("journalTitle"))));
         } else if (inv.getFreeSlot() != -1) {

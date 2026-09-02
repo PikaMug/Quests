@@ -11,7 +11,6 @@
 package me.pikamug.quests.util;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

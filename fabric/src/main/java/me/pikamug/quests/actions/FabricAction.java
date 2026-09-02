@@ -11,20 +11,20 @@
 package me.pikamug.quests.actions;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.entity.FabricQuestMob;
 import me.pikamug.quests.entity.QuestMob;
+import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.FabricActionTimer;
-import me.pikamug.quests.util.FabricLang;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.saveddata.WeatherData;
 
 import java.util.LinkedList;
 
@@ -89,8 +89,8 @@ public class FabricAction implements Action {
         // Get player
         final ServerPlayer player = getPlayer(quester);
         if (player == null) return;
-        final MinecraftServer server = player.getServer();
-        final ServerLevel level = player.serverLevel();
+        final MinecraftServer server = player.level().getServer();
+        final ServerLevel level = player.level();
 
         // Clear inventory
         if (clearInv) {
@@ -103,11 +103,18 @@ public class FabricAction implements Action {
         }
 
         // Weather
+        final WeatherData weatherData = level.getWeatherData();
         if (stormDuration > 0) {
-            level.setWeatherDuration(0, true, false, stormDuration * 20);
+            weatherData.setClearWeatherTime(0);
+            weatherData.setRaining(true);
+            weatherData.setRainTime(stormDuration * 20);
+            weatherData.setThundering(false);
         }
         if (thunderDuration > 0) {
-            level.setWeatherDuration(0, false, true, thunderDuration * 20);
+            weatherData.setClearWeatherTime(0);
+            weatherData.setRaining(false);
+            weatherData.setRainTime(thunderDuration * 20);
+            weatherData.setThundering(true);
         }
 
         // Hunger and saturation
@@ -129,7 +136,7 @@ public class FabricAction implements Action {
         if (commands != null && !commands.isEmpty()) {
             for (final String command : commands) {
                 if (server != null) {
-                    server.getCommands().performCommand(server.createCommandSourceStack(), command.replace("%player%", player.getName().getString()));
+                    server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command.replace("%player%", player.getName().getString()));
                 }
             }
         }
@@ -143,22 +150,26 @@ public class FabricAction implements Action {
 
         // Timer
         if (timer > 0) {
-            new FabricActionTimer(FabricQuestsPlugin.getInstance(), quester, quest, timer);
+            new FabricActionTimer(FabricQuestsPlugin.getInstance(), (FabricQuester) quester, quest, timer);
         }
     }
 
     private void spawnMob(ServerPlayer player, ServerLevel level, QuestMob mob) {
-        if (mob == null || mob.getType() == null) return;
-        final EntityType<?> entityType = mob.getType();
-        for (int i = 0; i < mob.getAmountToSpawn(); i++) {
-            final var entity = entityType.create(level);
+        if (!(mob instanceof FabricQuestMob fabricMob)
+                || fabricMob.getEntityType() == null) return;
+        final EntityType<?> entityType = fabricMob.getEntityType();
+        final Integer amount = fabricMob.getSpawnAmounts();
+        final int max = amount != null ? amount : 1;
+        for (int i = 0; i < max; i++) {
+            final var entity = entityType.create(level, EntitySpawnReason.COMMAND);
             if (entity instanceof Mob mobEntity) {
-                mobEntity.moveTo(player.getX() + (Math.random() * 4) - 2,
+                mobEntity.setPos(player.getX() + (Math.random() * 4) - 2,
                         player.getY() + (Math.random() * 4) - 2,
-                        player.getZ() + (Math.random() * 4) - 2,
-                        (float) (Math.random() * 360), 0);
+                        player.getZ() + (Math.random() * 4) - 2);
+                mobEntity.setYRot((float) (Math.random() * 360));
+                mobEntity.setXRot(0);
                 mobEntity.finalizeSpawn(level, level.getCurrentDifficultyAt(mobEntity.blockPosition()),
-                        MobSpawnType.MOB_SUMMONED, null, null);
+                        EntitySpawnReason.COMMAND, null);
                 level.addFreshEntity(mobEntity);
             }
         }
@@ -167,7 +178,7 @@ public class FabricAction implements Action {
     private ServerPlayer getPlayer(Quester quester) {
         final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (server == null) return null;
-        return server.getPlayerList().getPlayerByName(quester.getName());
+        return server.getPlayerList().getPlayer(quester.getUUID());
     }
 
     @Override

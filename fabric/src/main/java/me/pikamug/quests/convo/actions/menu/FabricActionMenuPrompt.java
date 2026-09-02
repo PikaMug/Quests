@@ -109,7 +109,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
         }
         switch (input.intValue()) {
         case 1:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 SessionData.set(uuid, Key.A_OLD_ACTION, "");
                 new ActionSelectCreatePrompt(uuid).start();
             } else {
@@ -118,7 +118,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
             }
             break;
         case 2:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 if (plugin.getLoadedActions().isEmpty()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
                             + FabricLang.get("eventEditorNoneToEdit")));
@@ -132,7 +132,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
             }
             break;
         case 3:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 if (plugin.getLoadedActions().isEmpty()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
                             + FabricLang.get("eventEditorNoneToDelete")));

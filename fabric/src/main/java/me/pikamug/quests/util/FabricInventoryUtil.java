@@ -11,7 +11,7 @@
 package me.pikamug.quests.util;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricInventoryUtil {
@@ -49,8 +49,9 @@ public class FabricInventoryUtil {
 
     public static int getArmorCount(ServerPlayer player, net.minecraft.world.item.Item item) {
         int count = 0;
-        for (int i = 0; i < 4; i++) {
-            final ItemStack armor = player.getInventory().getArmor(i);
+        for (final EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
+            final ItemStack armor = player.getItemBySlot(slot);
             if (!armor.isEmpty() && armor.getItem() == item) {
                 count += armor.getCount();
             }

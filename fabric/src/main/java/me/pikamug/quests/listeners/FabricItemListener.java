@@ -14,7 +14,6 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.util.FabricItemUtil;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -34,7 +33,7 @@ public class FabricItemListener {
         UseItemCallback.EVENT.register((player, level, hand) -> {
             if (player instanceof ServerPlayer serverPlayer && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
                 final ItemStack item = player.getItemInHand(hand);
-                if (item.isEdible()) {
+                if (item.has(net.minecraft.core.component.DataComponents.FOOD)) {
                     onConsumeItem(serverPlayer, item);
                 }
             }

@@ -77,12 +77,10 @@ public class FabricQuestAcceptPrompt extends FabricMiscStringPrompt {
         return FabricLang.get("acceptQuest");
     }
 
-    @Override
-    public @NotNull String getPromptText() {
+public @NotNull String getPromptText() {
         if (plugin == null) {
             return ChatFormatting.YELLOW + FabricLang.get("itemCreateCriticalError");
         }
-
         final FabricConfigSettings configSettings = (FabricConfigSettings) plugin.getConfigSettings();
         if (!configSettings.canClickablePrompts()) {
             return ChatFormatting.YELLOW + getQueryText() + "  " + ChatFormatting.GREEN
@@ -94,15 +92,13 @@ public class FabricQuestAcceptPrompt extends FabricMiscStringPrompt {
                 .withStyle(Style.EMPTY));
         final MutableComponent yes = Component.literal(getSelectionText(1))
                 .withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                "/quests choice " + FabricLang.get("yesWord"))));
+                        .withClickEvent(new ClickEvent.RunCommand("/quests choice " + FabricLang.get("yesWord"))));
         component.append(yes);
         component.append(Component.literal(ChatFormatting.RESET + " / ")
                 .withStyle(Style.EMPTY));
         final MutableComponent no = Component.literal(getSelectionText(2))
                 .withStyle(Style.EMPTY.withColor(ChatFormatting.RED)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                "/quests choice " + FabricLang.get("noWord"))));
+                        .withClickEvent(new ClickEvent.RunCommand("/quests choice " + FabricLang.get("noWord"))));
         component.append(no);
 
         final ServerPlayer player = plugin.getServer().getPlayerList().getPlayer(uuid);

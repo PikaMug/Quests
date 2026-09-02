@@ -66,8 +66,7 @@ public abstract class FabricQuestsIntegerPrompt implements QuestsPrompt {
             if (matcher.find()) {
                 lineComponent = Component.literal(stripped)
                         .withStyle(Style.EMPTY.withClickEvent(
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                        "/quests choice " + matcher.group(1))));
+                                new ClickEvent.RunCommand("/quests choice " + matcher.group(1))));
             } else {
                 lineComponent = Component.literal(stripped);
             }

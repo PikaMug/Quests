@@ -11,21 +11,22 @@
 package me.pikamug.quests.item;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.Filterable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.WrittenBookContent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,17 +46,16 @@ public class FabricQuestJournal {
         final ServerPlayer player = FabricMiscUtil.getPlayer(owner.getUUID(), plugin);
         final String title = FabricLang.get("journalTitle");
         journal = new ItemStack(Items.WRITTEN_BOOK);
-        final CompoundTag tag = journal.getOrCreateTag();
-        tag.putString("title", title);
-        tag.putString("author", player != null ? player.getGameProfile().getName() : "Quests");
-        final ListTag pages = new ListTag();
-        for (final Component page : getPages()) {
-            pages.add(StringTag.valueOf(Component.Serializer.toJson(page)));
-        }
-        tag.put("pages", pages);
-        tag.putByte("resolved", (byte) 1);
-        tag.putBoolean("quests.journal", true);
-        journal.setHoverName(Component.literal(title).withStyle(ChatFormatting.LIGHT_PURPLE));
+        journal.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(
+                Filterable.passThrough(title),
+                player != null ? player.getGameProfile().name() : "Quests",
+                0,
+                getPages().stream().map(Filterable::passThrough).collect(Collectors.toList()),
+                true));
+        final CompoundTag marker = new CompoundTag();
+        marker.putBoolean("quests.journal", true);
+        journal.set(DataComponents.CUSTOM_DATA, CustomData.of(marker));
+        journal.set(DataComponents.CUSTOM_NAME, Component.literal(title).withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
     public List<Component> getPages() {

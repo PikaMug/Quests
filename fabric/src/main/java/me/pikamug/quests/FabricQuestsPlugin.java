@@ -16,7 +16,6 @@ import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.conditions.FabricConditionFactory;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.config.FabricConfigSettings;
-import me.pikamug.quests.dependencies.Dependencies;
 import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
@@ -37,6 +36,7 @@ import me.pikamug.quests.tasks.FabricPlayerMoveThread;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.commands.FabricCommandManager;
 import me.pikamug.quests.listeners.FabricBlockListener;
+import me.pikamug.quests.listeners.FabricCraftingListener;
 import me.pikamug.quests.listeners.FabricItemListener;
 import me.pikamug.quests.listeners.FabricPlayerListener;
 import me.pikamug.quests.util.FabricLang;
@@ -47,7 +47,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
-import org.browsit.conversations.api.Conversations;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -229,7 +228,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
 
     @Override
     public String getDetectedServerSoftwareVersion() {
-        return "Fabric " + net.minecraft.SharedConstants.getCurrentVersion().getName();
+        return "Fabric " + net.minecraft.SharedConstants.getCurrentVersion().name();
     }
 
     @Override
@@ -321,7 +320,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         if (depends.isNpc(id)) {
             return new FabricQuester(this, id);
         }
-        return questers.computeIfAbsent(id, uuid -> new FabricQuester(this, uuid));
+        return (FabricQuester) questers.computeIfAbsent(id, uuid -> new FabricQuester(this, uuid));
     }
 
     @Override
@@ -364,7 +363,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         if (player == null) {
             return false;
         }
-        return !player.hasPermissions(2);
+        return !me.pikamug.quests.util.FabricMiscUtil.hasPermission(player, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS);
     }
 
     /**
@@ -508,13 +507,17 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     private void delayLoadQuestInfo() {
         // Load conditions, actions, quests after a short delay to let soft-depends initialize
         FabricScheduler.runLater(() -> {
-            conditionLoader.init();
-            actionLoader.init();
-            questLoader.init();
-            LOGGER.info("Loaded {} Quest(s), {} Action(s), {} Condition(s) and {} Phrase(s)",
-                    quests.size(), actions.size(), conditions.size(), FabricLang.size());
-            customLoader.init();
-            questLoader.importQuests();
+            try {
+                conditionLoader.init();
+                actionLoader.init();
+                questLoader.init();
+                LOGGER.info("Loaded {} Quest(s), {} Action(s), {} Condition(s) and {} Phrase(s)",
+                        quests.size(), actions.size(), conditions.size(), FabricLang.size());
+                customLoader.init();
+                questLoader.importQuests();
+            } catch (final Exception e) {
+                LOGGER.error("Failed to load quests, actions or conditions", e);
+            }
         }, 5L);
 
         FabricScheduler.runLater(() -> {

@@ -19,7 +19,6 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorStringPrompt;
-import me.pikamug.quests.convo.quests.menu.FabricQuestMenuPrompt;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
@@ -37,7 +36,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -219,7 +217,6 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
         default:
             return null;
         }
-        return "";
     }
 
     @Override

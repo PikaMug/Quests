@@ -2,16 +2,11 @@ package me.pikamug.quests.tasks;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.dependencies.FabricDependencies;
-import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.LinkedList;
 
 public class FabricPlayerMoveThread implements Runnable {
 
@@ -62,7 +57,7 @@ public class FabricPlayerMoveThread implements Runnable {
                     final double x = Double.parseDouble(coords[0]);
                     final double y = Double.parseDouble(coords[1]);
                     final double z = Double.parseDouble(coords[2]);
-                    final String currentWorld = player.level().dimension().location().getPath();
+                    final String currentWorld = player.level().dimension().identifier().getPath();
                     if (!currentWorld.equalsIgnoreCase(worldName)) continue;
                     final int radius = (stage.getRadiiToReachWithin() != null && stage.getRadiiToReachWithin().size() > i)
                             ? stage.getRadiiToReachWithin().get(i) : 0;

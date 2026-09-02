@@ -19,7 +19,7 @@ import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -182,7 +182,7 @@ public class FabricConditionEntityPrompt extends FabricConditionsEditorIntegerPr
         public @NotNull String getPromptText() {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final LinkedList<EntityType<?>> mobList = new LinkedList<>();
-            Registry.ENTITY_TYPE.stream()
+            BuiltInRegistries.ENTITY_TYPE.stream()
                     .filter(et -> et != EntityType.PLAYER)
                     .sorted(Comparator.comparing(et -> et.getDescription().getString()))
                     .forEach(mobList::add);

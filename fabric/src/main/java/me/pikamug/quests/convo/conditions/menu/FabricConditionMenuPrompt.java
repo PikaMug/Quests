@@ -110,7 +110,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
         }
         switch (input.intValue()) {
         case 1:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 SessionData.set(uuid, Key.C_OLD_CONDITION, "");
                 new ConditionSelectCreatePrompt(uuid).start();
             } else {
@@ -119,7 +119,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
             }
             break;
         case 2:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 if (plugin.getLoadedConditions().isEmpty()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
                             + FabricLang.get("conditionEditorNoneToEdit")));
@@ -133,7 +133,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
             }
             break;
         case 3:
-            if (sender.hasPermissions(2)) {
+            if (me.pikamug.quests.util.FabricMiscUtil.hasPermission(sender, net.minecraft.server.permissions.PermissionLevel.GAMEMASTERS)) {
                 if (plugin.getLoadedConditions().isEmpty()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
                             + FabricLang.get("conditionEditorNoneToDelete")));

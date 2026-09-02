@@ -14,14 +14,13 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorIntegerPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.FabricQuestStageMainPrompt;
-import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -217,8 +216,8 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
     private static String getPrettyItemName(final String registryName) {
         if (registryName == null || registryName.isEmpty()) return "Unknown";
-        final ResourceLocation resLoc = new ResourceLocation(registryName.toLowerCase());
-        final net.minecraft.world.item.Item item = Registry.ITEM.get(resLoc);
+        final Identifier resLoc = Identifier.tryParse(registryName.toLowerCase());
+        final net.minecraft.world.item.Item item = resLoc == null ? null : BuiltInRegistries.ITEM.getValue(resLoc);
         if (item == null || item == net.minecraft.world.item.Items.AIR) return registryName;
         final net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(item);
         return stack.getHoverName().getString();
@@ -442,8 +441,8 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
                 final LinkedList<String> names = new LinkedList<>();
                 for (final String s : args) {
                     try {
-                        final ResourceLocation resLoc = new ResourceLocation(s.toLowerCase());
-                        final net.minecraft.world.level.block.Block block = Registry.BLOCK.get(resLoc);
+                        final Identifier resLoc = Identifier.tryParse(s.toLowerCase());
+                        final net.minecraft.world.level.block.Block block = resLoc == null ? null : BuiltInRegistries.BLOCK.getValue(resLoc);
                         if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
                             names.add(resLoc.toString());
                         } else {
@@ -806,8 +805,8 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
                 final LinkedList<String> names = new LinkedList<>();
                 for (final String s : args) {
                     try {
-                        final ResourceLocation resLoc = new ResourceLocation(s.toLowerCase());
-                        final net.minecraft.world.level.block.Block block = Registry.BLOCK.get(resLoc);
+                        final Identifier resLoc = Identifier.tryParse(s.toLowerCase());
+                        final net.minecraft.world.level.block.Block block = resLoc == null ? null : BuiltInRegistries.BLOCK.getValue(resLoc);
                         if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
                             names.add(resLoc.toString());
                         } else {
@@ -1170,8 +1169,8 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
                 final LinkedList<String> names = new LinkedList<>();
                 for (final String s : args) {
                     try {
-                        final ResourceLocation resLoc = new ResourceLocation(s.toLowerCase());
-                        final net.minecraft.world.level.block.Block block = Registry.BLOCK.get(resLoc);
+                        final Identifier resLoc = Identifier.tryParse(s.toLowerCase());
+                        final net.minecraft.world.level.block.Block block = resLoc == null ? null : BuiltInRegistries.BLOCK.getValue(resLoc);
                         if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
                             names.add(resLoc.toString());
                         } else {
@@ -1532,8 +1531,8 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
                 final LinkedList<String> names = new LinkedList<>();
                 for (final String s : args) {
                     try {
-                        final ResourceLocation resLoc = new ResourceLocation(s.toLowerCase());
-                        final net.minecraft.world.level.block.Block block = Registry.BLOCK.get(resLoc);
+                        final Identifier resLoc = Identifier.tryParse(s.toLowerCase());
+                        final net.minecraft.world.level.block.Block block = resLoc == null ? null : BuiltInRegistries.BLOCK.getValue(resLoc);
                         if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
                             names.add(resLoc.toString());
                         } else {

@@ -17,7 +17,6 @@ import me.pikamug.quests.FabricQuestsPlugin;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class FabricConfigSettings implements ConfigSettings {
 

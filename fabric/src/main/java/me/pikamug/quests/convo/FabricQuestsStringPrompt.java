@@ -56,8 +56,7 @@ public abstract class FabricQuestsStringPrompt implements QuestsPrompt {
             final String stripped = ChatFormatting.stripFormatting(list.get(i));
             final Component questName = Component.literal(list.get(i))
                     .withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA)
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                    "/quests choice " + stripped)));
+                            .withClickEvent(new ClickEvent.RunCommand("/quests choice " + stripped)));
             component.append(questName);
             if (i < (list.size() - 1)) {
                 component.append(Component.literal(", ")

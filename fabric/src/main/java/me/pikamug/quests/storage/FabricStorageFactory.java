@@ -11,6 +11,7 @@
 package me.pikamug.quests.storage;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.config.FabricConfigSettings;
 import me.pikamug.quests.enums.StorageType;
 import me.pikamug.quests.storage.implementation.QuesterStorageImpl;
 import me.pikamug.quests.storage.implementation.file.FabricQuesterJsonStorage;
@@ -37,8 +38,12 @@ public class FabricStorageFactory {
         return storage;
     }
 
+    private FabricConfigSettings config() {
+        return (FabricConfigSettings) plugin.getConfigSettings();
+    }
+
     private String getStorageMethod() {
-        return plugin.getConfigSettings().getStorageMethod();
+        return config().getStorageMethod();
     }
 
     private QuesterStorageImpl prepareImplementation(final StorageType method) {
@@ -47,7 +52,9 @@ public class FabricStorageFactory {
                 return new FabricQuesterSqlStorage(
                         plugin,
                         new MySqlConnectionFactory(getDatabaseValues()),
-                        plugin.getConfigSettings().getStorageTablePrefix()
+                        plugin.getConfigSettings() instanceof FabricConfigSettings
+                                ? ((FabricConfigSettings) plugin.getConfigSettings()).getStorageTablePrefix()
+                                : "quests_"
                 );
             case YAML:
             default:
@@ -56,20 +63,21 @@ public class FabricStorageFactory {
     }
 
     private StorageCredentials getDatabaseValues() {
-        final int maxPoolSize = plugin.getConfigSettings().getStorageMaxPoolSize();
-        final int minIdle = plugin.getConfigSettings().getStorageMinIdle();
-        final int maxLifetime = plugin.getConfigSettings().getStorageMaxLifetime();
-        final int keepAliveTime = plugin.getConfigSettings().getStorageKeepAliveTime();
-        final int connectionTimeout = plugin.getConfigSettings().getStorageConnectionTimeout();
+        final FabricConfigSettings c = config();
+        final int maxPoolSize = c.getStorageMaxPoolSize();
+        final int minIdle = c.getStorageMinIdle();
+        final int maxLifetime = c.getStorageMaxLifetime();
+        final int keepAliveTime = c.getStorageKeepAliveTime();
+        final int connectionTimeout = c.getStorageConnectionTimeout();
         final Map<String, String> properties = new HashMap<>();
         properties.put("useUnicode", "true");
         properties.put("characterEncoding", "utf8");
 
         return new StorageCredentials(
-                plugin.getConfigSettings().getStorageAddress(),
-                plugin.getConfigSettings().getStorageDatabase(),
-                plugin.getConfigSettings().getStorageUsername(),
-                plugin.getConfigSettings().getStoragePassword(),
+                c.getStorageAddress(),
+                c.getStorageDatabase(),
+                c.getStorageUsername(),
+                c.getStoragePassword(),
                 maxPoolSize, minIdle, maxLifetime, keepAliveTime, connectionTimeout, properties
         );
     }

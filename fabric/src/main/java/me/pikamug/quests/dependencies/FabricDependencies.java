@@ -64,4 +64,12 @@ public class FabricDependencies implements Dependencies {
                 plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;
         return player != null ? player.getName().getString() : uuid.toString().substring(0, 8);
     }
+
+    /**
+     * PlaceholderAPI is not available on Fabric/vanilla-loader. Returns null so
+     * placeholder-based conditions are reported as "not installed".
+     */
+    public Object getPlaceholderApi() {
+        return null;
+    }
 }

@@ -6,6 +6,7 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SpellParticleOption;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,8 +49,8 @@ public class FabricNpcEffectThread implements Runnable {
                     final var stage = quester.getCurrentStage(quest);
                     if (stage == null) continue;
                     if (stage.getNpcsToInteract().contains(npcUuid) || stage.getNpcsToKill().contains(npcUuid)) {
-                        final ServerLevel level = player.serverLevel();
-                        level.sendParticles(player, particle, false, npcPos.x, npcPos.y + 2, npcPos.z, 5, 0.3, 0.5, 0.3, 0.01);
+                        final ServerLevel level = player.level();
+                        level.sendParticles(player, particle, false, false, npcPos.x, npcPos.y + 2, npcPos.z, 5, 0.3, 0.5, 0.3, 0.01);
                         break;
                     }
                 }
@@ -113,7 +114,7 @@ public class FabricNpcEffectThread implements Runnable {
             case "HEART": return ParticleTypes.HEART;
             case "PORTAL": return ParticleTypes.PORTAL;
             case "VILLAGER_HAPPY": return ParticleTypes.HAPPY_VILLAGER;
-            case "SPELL": return ParticleTypes.INSTANT_EFFECT;
+            case "SPELL": return SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFFFFF, 1.0f);
             default: return ParticleTypes.ENCHANT;
         }
     }
