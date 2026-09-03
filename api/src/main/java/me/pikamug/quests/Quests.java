@@ -62,6 +62,38 @@ public interface Quests {
 
     Quester getQuester(final UUID id);
 
+    /**
+     * Get a Quest by ID
+     *
+     * @param id ID of the quest
+     * @return Exact match or null if not found
+     */
+    Quest getQuestById(final String id);
+
+    /**
+     * Get a Quest by name
+     *
+     * @param name Name of the quest
+     * @return Closest match or null if not found
+     */
+    Quest getQuest(final String name);
+
+    /**
+     * Get an Action by name
+     *
+     * @param name Name of the action
+     * @return Closest match or null if not found
+     */
+    Action getAction(final String name);
+
+    /**
+     * Get a Condition by name
+     *
+     * @param name Name of the condition
+     * @return Closest match or null if not found
+     */
+    Condition getCondition(final String name);
+
     Collection<Quester> getOnlineQuesters();
 
     Collection<Quester> getOfflineQuesters();

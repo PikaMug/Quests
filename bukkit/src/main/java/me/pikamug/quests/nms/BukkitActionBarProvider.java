@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.nms;
 
+import me.pikamug.quests.BukkitQuestsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -18,7 +19,7 @@ public abstract class BukkitActionBarProvider {
     private static BukkitActionBarProvider loaded;
 
     static {
-        final String bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        final String bukkitVersion = BukkitQuestsPlugin.getInstance().getDetectedServerSoftwareVersion();
         try {
             final String packageName = BukkitParticleProvider.class.getPackage().getName();
             if (bukkitVersion.startsWith("1.8.") || bukkitVersion.equals("1.8")) {
