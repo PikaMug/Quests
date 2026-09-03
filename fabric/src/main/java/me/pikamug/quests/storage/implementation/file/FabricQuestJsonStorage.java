@@ -65,17 +65,16 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         final FabricQuest quest = new FabricQuest();
         quest.setId(name);
         if (json.has("name")) quest.setName(json.get("name").getAsString());
-        if (json.has("description")) quest.setDescription(json.get("description").getAsString());
-        if (json.has("finished")) quest.setFinished(json.get("finished").getAsString());
-        if (json.has("region-start")) quest.setRegionStart(json.get("region-start").getAsString());
-        if (json.has("regionStart")) quest.setRegionStart(json.get("regionStart").getAsString());
-        if (json.has("npc-start")) {
+        if (json.has("ask-message")) quest.setDescription(json.get("ask-message").getAsString());
+        if (json.has("finish-message")) quest.setFinished(json.get("finish-message").getAsString());
+        if (json.has("region")) quest.setRegionStart(json.get("region").getAsString());
+        if (json.has("npc-giver-uuid")) {
             try {
-                quest.setNpcStart(UUID.fromString(json.get("npc-start").getAsString()));
+                quest.setNpcStart(UUID.fromString(json.get("npc-giver-uuid").getAsString()));
             } catch (final Exception ignored) {}
         }
-        if (json.has("npc-start-name")) {
-            quest.setNpcStartName(json.get("npc-start-name").getAsString());
+        if (json.has("npc-giver-name")) {
+            quest.setNpcStartName(json.get("npc-giver-name").getAsString());
         }
         if (json.has("gui-display")) {
             // Gui display is stored as a string for now
@@ -120,12 +119,10 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     private FabricStage parseStage(JsonObject json) {
         final FabricStage stage = new FabricStage();
         if (json.has("start-message")) stage.setStartMessage(json.get("start-message").getAsString());
-        if (json.has("startMessage")) stage.setStartMessage(json.get("startMessage").getAsString());
         if (json.has("complete-message")) stage.setCompleteMessage(json.get("complete-message").getAsString());
-        if (json.has("completeMessage")) stage.setCompleteMessage(json.get("completeMessage").getAsString());
         if (json.has("delay")) stage.setDelay(json.get("delay").getAsLong());
         if (json.has("delay-message")) stage.setDelayMessage(json.get("delay-message").getAsString());
-        if (json.has("script")) stage.setScript(json.get("script").getAsString());
+        if (json.has("script-to-run")) stage.setScript(json.get("script-to-run").getAsString());
         if (json.has("password-displays")) {
             final JsonArray arr = json.getAsJsonArray("password-displays");
             final LinkedList<String> list = new LinkedList<>();
@@ -139,14 +136,14 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             stage.setPasswordPhrases(list);
         }
         // Block objectives
-        parseBlockList(json, "break-blocks", stage, "break");
-        parseBlockList(json, "place-blocks", stage, "place");
-        parseBlockList(json, "use-blocks", stage, "use");
-        parseBlockList(json, "cut-blocks", stage, "cut");
+        parseBlockList(json, "break-block-names", "break-block-amounts", stage, "break");
+        parseBlockList(json, "place-block-names", "place-block-amounts", stage, "place");
+        parseBlockList(json, "use-block-names", "use-block-amounts", stage, "use");
+        parseBlockList(json, "cut-block-names", "cut-block-amounts", stage, "cut");
         // Item objectives
-        parseItemList(json, "craft-items", stage, "craft");
-        parseItemList(json, "smelt-items", stage, "smelt");
-        parseItemList(json, "consume-items", stage, "consume");
+        parseItemList(json, "items-to-craft", stage, "craft");
+        parseItemList(json, "items-to-smelt", stage, "smelt");
+        parseItemList(json, "items-to-consume", stage, "consume");
         // Mob objectives
         if (json.has("mobs-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("mobs-to-kill");
@@ -154,31 +151,31 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> mobs.add(e.getAsString()));
             stage.setMobsToKill(mobs);
         }
-        if (json.has("mob-num-to-kill")) {
-            final JsonArray arr = json.getAsJsonArray("mob-num-to-kill");
+        if (json.has("mob-amounts")) {
+            final JsonArray arr = json.getAsJsonArray("mob-amounts");
             final LinkedList<Integer> nums = new LinkedList<>();
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setMobNumToKill(nums);
         }
         // NPC objectives
-        if (json.has("npcs-to-interact")) {
-            final JsonArray arr = json.getAsJsonArray("npcs-to-interact");
+        if (json.has("npc-uuids-to-talk-to")) {
+            final JsonArray arr = json.getAsJsonArray("npc-uuids-to-talk-to");
             final LinkedList<UUID> npcs = new LinkedList<>();
             arr.forEach(e -> {
                 try { npcs.add(UUID.fromString(e.getAsString())); } catch (final Exception ignored) {}
             });
             stage.setNpcsToInteract(npcs);
         }
-        if (json.has("npcs-to-kill")) {
-            final JsonArray arr = json.getAsJsonArray("npcs-to-kill");
+        if (json.has("npc-uuids-to-kill")) {
+            final JsonArray arr = json.getAsJsonArray("npc-uuids-to-kill");
             final LinkedList<UUID> npcs = new LinkedList<>();
             arr.forEach(e -> {
                 try { npcs.add(UUID.fromString(e.getAsString())); } catch (final Exception ignored) {}
             });
             stage.setNpcsToKill(npcs);
         }
-        if (json.has("npc-num-to-kill")) {
-            final JsonArray arr = json.getAsJsonArray("npc-num-to-kill");
+        if (json.has("npc-kill-amounts")) {
+            final JsonArray arr = json.getAsJsonArray("npc-kill-amounts");
             final LinkedList<Integer> nums = new LinkedList<>();
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setNpcNumToKill(nums);
@@ -194,14 +191,14 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> locs.add(e.getAsString()));
             stage.setLocationsToReach(locs);
         }
-        if (json.has("radii-to-reach-within")) {
-            final JsonArray arr = json.getAsJsonArray("radii-to-reach-within");
+        if (json.has("reach-location-radii")) {
+            final JsonArray arr = json.getAsJsonArray("reach-location-radii");
             final LinkedList<Integer> radii = new LinkedList<>();
             arr.forEach(e -> radii.add(e.getAsInt()));
             stage.setRadiiToReachWithin(radii);
         }
-        if (json.has("location-names")) {
-            final JsonArray arr = json.getAsJsonArray("location-names");
+        if (json.has("reach-location-names")) {
+            final JsonArray arr = json.getAsJsonArray("reach-location-names");
             final LinkedList<String> names = new LinkedList<>();
             arr.forEach(e -> names.add(e.getAsString()));
             stage.setLocationNames(names);
@@ -213,8 +210,8 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> mobs.add(e.getAsString()));
             stage.setMobsToTame(mobs);
         }
-        if (json.has("mob-num-to-tame")) {
-            final JsonArray arr = json.getAsJsonArray("mob-num-to-tame");
+        if (json.has("mob-tame-amounts")) {
+            final JsonArray arr = json.getAsJsonArray("mob-tame-amounts");
             final LinkedList<Integer> nums = new LinkedList<>();
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setMobNumToTame(nums);
@@ -226,8 +223,8 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> sheep.add(e.getAsString()));
             stage.setSheepToShear(sheep);
         }
-        if (json.has("sheep-num-to-shear")) {
-            final JsonArray arr = json.getAsJsonArray("sheep-num-to-shear");
+        if (json.has("sheep-amounts")) {
+            final JsonArray arr = json.getAsJsonArray("sheep-amounts");
             final LinkedList<Integer> nums = new LinkedList<>();
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setSheepNumToShear(nums);
@@ -235,8 +232,8 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("fish-to-catch")) stage.setFishToCatch(json.get("fish-to-catch").getAsInt());
         if (json.has("cows-to-milk")) stage.setCowsToMilk(json.get("cows-to-milk").getAsInt());
         // Objective overrides
-        if (json.has("objective-overrides")) {
-            final JsonArray arr = json.getAsJsonArray("objective-overrides");
+        if (json.has("objective-override")) {
+            final JsonArray arr = json.getAsJsonArray("objective-override");
             final LinkedList<String> overrides = new LinkedList<>();
             arr.forEach(e -> overrides.add(e.getAsString()));
             stage.setObjectiveOverrides(overrides);
@@ -244,7 +241,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         return stage;
     }
 
-    private void parseBlockList(JsonObject json, String key, FabricStage stage, String type) {
+    private void parseBlockList(JsonObject json, String key, String amountKey, FabricStage stage, String type) {
         if (json.has(key)) {
             final JsonArray arr = json.getAsJsonArray(key);
             final LinkedList<Object> list = new LinkedList<>();
@@ -255,11 +252,30 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                     list.add(e.getAsString());
                 }
             });
+            final LinkedList<Integer> amounts = new LinkedList<>();
+            if (json.has(amountKey)) {
+                json.getAsJsonArray(amountKey).forEach(a -> amounts.add(a.getAsInt()));
+            }
+            while (amounts.size() < list.size()) {
+                amounts.add(1);
+            }
             switch (type) {
-                case "break" -> stage.setBlocksToBreak(list);
-                case "place" -> stage.setBlocksToPlace(list);
-                case "use" -> stage.setBlocksToUse(list);
-                case "cut" -> stage.setBlocksToCut(list);
+                case "break" -> {
+                    stage.setBlocksToBreak(list);
+                    stage.setBlocksToBreakAmounts(amounts);
+                }
+                case "place" -> {
+                    stage.setBlocksToPlace(list);
+                    stage.setBlocksToPlaceAmounts(amounts);
+                }
+                case "use" -> {
+                    stage.setBlocksToUse(list);
+                    stage.setBlocksToUseAmounts(amounts);
+                }
+                case "cut" -> {
+                    stage.setBlocksToCut(list);
+                    stage.setBlocksToCutAmounts(amounts);
+                }
             }
         }
     }
@@ -286,18 +302,23 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     private void parseRequirements(FabricQuest quest, JsonObject json) {
         final var req = quest.getRequirements();
         if (json.has("quest-points")) req.setQuestPoints(json.get("quest-points").getAsInt());
-        if (json.has("quest-points-amount")) req.setQuestPoints(json.get("quest-points-amount").getAsInt());
-        if (json.has("needed-quests")) {
-            final JsonArray arr = json.getAsJsonArray("needed-quests");
+        if (json.has("quests")) {
+            final JsonArray arr = json.getAsJsonArray("quests");
             final LinkedList<String> ids = new LinkedList<>();
             arr.forEach(e -> ids.add(e.getAsString()));
             req.setNeededQuestIds(ids);
         }
-        if (json.has("blocked-quests")) {
-            final JsonArray arr = json.getAsJsonArray("blocked-quests");
+        if (json.has("quest-blocks")) {
+            final JsonArray arr = json.getAsJsonArray("quest-blocks");
             final LinkedList<String> ids = new LinkedList<>();
             arr.forEach(e -> ids.add(e.getAsString()));
             req.setBlockQuestIds(ids);
+        }
+        if (json.has("permissions")) {
+            final JsonArray arr = json.getAsJsonArray("permissions");
+            final LinkedList<String> perms = new LinkedList<>();
+            arr.forEach(e -> perms.add(e.getAsString()));
+            req.setPermissions(perms);
         }
     }
 

@@ -22,13 +22,21 @@ import java.util.UUID;
 public interface Stage {
     LinkedList<?> getBlocksToBreak();
 
+    default LinkedList<Integer> getBlocksToBreakAmounts() { return new LinkedList<>(); }
+
     LinkedList<?> getBlocksToDamage();
 
     LinkedList<?> getBlocksToPlace();
 
+    default LinkedList<Integer> getBlocksToPlaceAmounts() { return new LinkedList<>(); }
+
     LinkedList<?> getBlocksToUse();
 
+    default LinkedList<Integer> getBlocksToUseAmounts() { return new LinkedList<>(); }
+
     LinkedList<?> getBlocksToCut();
+
+    default LinkedList<Integer> getBlocksToCutAmounts() { return new LinkedList<>(); }
 
     LinkedList<?> getItemsToCraft();
 

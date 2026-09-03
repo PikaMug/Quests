@@ -326,16 +326,18 @@ public class FabricQuester implements Quester {
         for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
             final Object goalObj = stage.getBlocksToBreak().get(i);
             if (goalObj == null) continue;
+            final int goal = getBlockAmount(stage.getBlocksToBreakAmounts(), i);
             final int current = (progress.getBlocksBroken().size() > i) ? progress.getBlocksBroken().get(i) : 0;
-            final String msg = FabricLang.get("questBreakBlock").replace("<goal>", "1");
-            objs.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, formatNames ? msg : msg, current, 1));
+            final String msg = FabricLang.get("questBreakBlock").replace("<goal>", String.valueOf(goal));
+            objs.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, formatNames ? msg : msg, current, goal));
         }
 
         // Place blocks
         for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
+            final int goal = getBlockAmount(stage.getBlocksToPlaceAmounts(), i);
             final int current = (progress.getBlocksPlaced().size() > i) ? progress.getBlocksPlaced().get(i) : 0;
-            final String msg = FabricLang.get("questPlaceBlock").replace("<goal>", "1");
-            objs.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, formatNames ? msg : msg, current, 1));
+            final String msg = FabricLang.get("questPlaceBlock").replace("<goal>", String.valueOf(goal));
+            objs.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, formatNames ? msg : msg, current, goal));
         }
 
         // Items crafted
@@ -383,12 +385,20 @@ public class FabricQuester implements Quester {
 
         // Use blocks
         for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
-            final int goal = 1;
+            final int goal = getBlockAmount(stage.getBlocksToUseAmounts(), i);
             final int current = (progress.getBlocksUsed().size() > i) ? progress.getBlocksUsed().get(i) : 0;
             objs.add(new FabricObjective(ObjectiveType.USE_BLOCK, FabricLang.get("questUseBlock"), current, goal));
         }
 
         return objs;
+    }
+
+    private int getBlockAmount(final LinkedList<Integer> amounts, final int index) {
+        return amountPresent(amounts, index) ? amounts.get(index) : 1;
+    }
+
+    private boolean amountPresent(final LinkedList<Integer> amounts, final int index) {
+        return amounts != null && !amounts.isEmpty() && amounts.size() > index;
     }
 
     @Override
@@ -440,7 +450,8 @@ public class FabricQuester implements Quester {
         // Break blocks
         for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
             if (progress.getBlocksBroken().size() <= i) return false;
-            if (progress.getBlocksBroken().get(i) < 1) return false;
+            final int goal = getBlockAmount(stage.getBlocksToBreakAmounts(), i);
+            if (progress.getBlocksBroken().get(i) < goal) return false;
         }
 
         // Damage blocks
@@ -452,7 +463,8 @@ public class FabricQuester implements Quester {
         // Place blocks
         for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
             if (progress.getBlocksPlaced().size() <= i) return false;
-            if (progress.getBlocksPlaced().get(i) < 1) return false;
+            final int goal = getBlockAmount(stage.getBlocksToPlaceAmounts(), i);
+            if (progress.getBlocksPlaced().get(i) < goal) return false;
         }
 
         // Items crafted
@@ -509,13 +521,15 @@ public class FabricQuester implements Quester {
         // Cut blocks
         for (int i = 0; i < stage.getBlocksToCut().size(); i++) {
             if (progress.getBlocksCut().size() <= i) return false;
-            if (progress.getBlocksCut().get(i) < 1) return false;
+            final int goal = getBlockAmount(stage.getBlocksToCutAmounts(), i);
+            if (progress.getBlocksCut().get(i) < goal) return false;
         }
 
         // Use blocks
         for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
             if (progress.getBlocksUsed().size() <= i) return false;
-            if (progress.getBlocksUsed().get(i) < 1) return false;
+            final int goal = getBlockAmount(stage.getBlocksToUseAmounts(), i);
+            if (progress.getBlocksUsed().get(i) < goal) return false;
         }
 
         // Consume items

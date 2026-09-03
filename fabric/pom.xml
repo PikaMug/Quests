@@ -178,6 +178,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- LuckPerms API (compile-only; provided at runtime by the LuckPerms Fabric mod) -->
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.5</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- SLF4J (on Minecraft's classpath) -->
         <dependency>
             <groupId>org.slf4j</groupId>

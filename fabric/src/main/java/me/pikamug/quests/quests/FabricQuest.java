@@ -129,6 +129,15 @@ public class FabricQuest implements Quest {
             }
         }
 
+        // Check permissions (LuckPerms)
+        if (requirements.getPermissions() != null && !requirements.getPermissions().isEmpty()) {
+            for (final String perm : requirements.getPermissions()) {
+                if (!FabricQuestsPlugin.getInstance().getDependencies().hasPermission(quester.getUUID(), perm)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

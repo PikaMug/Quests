@@ -1,16 +1,19 @@
 {
   "default1": {
     "name": "Iron Miner",
-    "finished": "<yellow>Well done. Here is your reward.",
+    "ask-message": "<yellow>Mine <pink>2<yellow> blocks of <pink>Iron Ore<yellow>.",
+    "finish-message": "<yellow>Well done. Here is your reward.",
     "planner": {
       "cooldown": 1800
     },
     "stages": [
       {
         "start-message": "<yellow>Mine 2 blocks of Iron Ore.",
-        "break-blocks": [
-          "minecraft:iron_ore",
+        "break-block-names": [
           "minecraft:iron_ore"
+        ],
+        "break-block-amounts": [
+          2
         ]
       }
     ],
@@ -20,14 +23,15 @@
   },
   "default2": {
     "name": "Mob Hunter",
-    "finished": "<yellow>Excellent. Here is a Diamond Sword.",
+    "ask-message": "<yellow>Kill an assortment of Mobs.",
+    "finish-message": "<yellow>Excellent. Here is a Diamond Sword.",
     "stages": [
       {
         "start-message": "<yellow>Kill 3 Pigs.",
         "mobs-to-kill": [
           "Pig"
         ],
-        "mob-num-to-kill": [
+        "mob-amounts": [
           3
         ]
       },
@@ -36,7 +40,7 @@
         "mobs-to-kill": [
           "Zombie"
         ],
-        "mob-num-to-kill": [
+        "mob-amounts": [
           2
         ]
       },
@@ -45,7 +49,7 @@
         "mobs-to-kill": [
           "Skeleton"
         ],
-        "mob-num-to-kill": [
+        "mob-amounts": [
           1
         ]
       }
@@ -56,7 +60,8 @@
   },
   "default3": {
     "name": "Casual Angler",
-    "finished": "<yellow>Good job. Here is some experience.",
+    "ask-message": "<yellow>Catch some fish!",
+    "finish-message": "<yellow>Good job. Here is some experience.",
     "stages": [
       {
         "start-message": "<yellow>Catch some fish!",
@@ -69,24 +74,19 @@
   },
   "default4": {
     "name": "Time Trial",
-    "finished": "<yellow>You did it in time! Have a Gold Ingot and some experience.",
+    "ask-message": "<yellow>Dig up <pink>10<yellow> blocks of <pink>Dirt<yellow> before time runs out!",
+    "finish-message": "<yellow>You did it in time! Have a Gold Ingot and some experience.",
     "requirements": {
       "quest-points": 1
     },
     "stages": [
       {
         "start-message": "<yellow>Dig up 10 blocks of Dirt before time runs out!",
-        "break-blocks": [
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
-          "minecraft:dirt",
+        "break-block-names": [
           "minecraft:dirt"
+        ],
+        "break-block-amounts": [
+          10
         ]
       }
     ],

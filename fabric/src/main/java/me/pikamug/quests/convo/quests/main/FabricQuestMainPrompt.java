@@ -830,7 +830,7 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                     questData.addProperty("ask-message", (String) SessionData.get(uuid, Key.Q_ASK_MESSAGE));
                     questData.addProperty("finish-message", (String) SessionData.get(uuid, Key.Q_FINISH_MESSAGE));
                     if (SessionData.get(uuid, Key.Q_START_NPC) != null) {
-                        questData.addProperty("npc-start", (String) SessionData.get(uuid, Key.Q_START_NPC));
+                        questData.addProperty("npc-giver-uuid", (String) SessionData.get(uuid, Key.Q_START_NPC));
                     }
                     if (SessionData.get(uuid, Key.Q_START_BLOCK) != null) {
                         final BlockPos pos = (BlockPos) SessionData.get(uuid, Key.Q_START_BLOCK);

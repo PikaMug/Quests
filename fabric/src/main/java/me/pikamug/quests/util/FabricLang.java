@@ -16,9 +16,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,16 +65,21 @@ public class FabricLang {
     private static Set<String> extractLocaleList() {
         final Set<String> locales = new LinkedHashSet<>();
         try {
-            final InputStream indexStream = plugin.getPluginResource("lang/_index.txt");
-            if (indexStream != null) {
-                final Scanner scanner = new Scanner(indexStream);
-                while (scanner.hasNextLine()) {
-                    locales.add(scanner.nextLine().trim());
+            final File jarFile = new File(plugin.getClass().getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            if (jarFile.isFile()) {
+                final JarFile jar = new JarFile(jarFile);
+                final Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    final String name = entries.nextElement().getName();
+                    if (name.startsWith("lang/") && name.endsWith("/strings.json")) {
+                        final String locale = name.substring(5, name.length() - 14);
+                        locales.add(locale);
+                    }
                 }
-                scanner.close();
-                indexStream.close();
+                jar.close();
             }
-        } catch (final Exception ignored) {}
+        } catch (final URISyntaxException | IOException ignored) {}
         if (locales.isEmpty()) {
             locales.add("en-US");
         }

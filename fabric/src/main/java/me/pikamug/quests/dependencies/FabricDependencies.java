@@ -12,6 +12,7 @@ package me.pikamug.quests.dependencies;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import net.fabricmc.loader.api.FabricLoader;
+import net.luckperms.api.LuckPermsProvider;
 
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class FabricDependencies implements Dependencies {
     private boolean hasEasyNpc = false;
     private boolean hasTaterzens = false;
     private boolean hasOpenParties = false;
+    private boolean hasLuckPerms = false;
 
     public FabricDependencies(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -31,6 +33,7 @@ public class FabricDependencies implements Dependencies {
         hasEasyNpc = FabricLoader.getInstance().isModLoaded("easy_npc");
         hasTaterzens = FabricLoader.getInstance().isModLoaded("taterzens");
         hasOpenParties = FabricLoader.getInstance().isModLoaded("openpartiesandclaims");
+        hasLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
 
         if (hasEasyNpc) {
             FabricQuestsPlugin.LOGGER.info("Detected {} support", "BOs-Easy-NPC");
@@ -40,6 +43,9 @@ public class FabricDependencies implements Dependencies {
         }
         if (hasOpenParties) {
             FabricQuestsPlugin.LOGGER.info("Detected {} support", "Open Parties and Claims");
+        }
+        if (hasLuckPerms) {
+            FabricQuestsPlugin.LOGGER.info("Detected {} support", "LuckPerms");
         }
     }
 
@@ -70,6 +76,36 @@ public class FabricDependencies implements Dependencies {
      */
     public boolean hasOpenParties() {
         return hasOpenParties;
+    }
+
+    /**
+     * Returns whether the LuckPerms mod is installed.
+     */
+    public boolean hasLuckPerms() {
+        return hasLuckPerms;
+    }
+
+    /**
+     * Checks whether a player has a permission node, using LuckPerms when it is
+     * installed. Mirrors the Bukkit module's Vault-backed permission requirement
+     * check. Returns {@code false} when LuckPerms is not available.
+     *
+     * @param uuid       the player's UUID
+     * @param permission the permission node to check
+     * @return {@code true} if the player is granted the permission
+     */
+    public boolean hasPermission(UUID uuid, String permission) {
+        if (!hasLuckPerms || uuid == null || permission == null) {
+            return false;
+        }
+        try {
+            final net.luckperms.api.model.user.User user =
+                    LuckPermsProvider.get().getUserManager().getUser(uuid);
+            return user != null && user.getCachedData().getPermissionData()
+                    .checkPermission(permission).asBoolean();
+        } catch (final Exception e) {
+            return false;
+        }
     }
 
     public String getNpcName(UUID uuid) {

@@ -24,6 +24,10 @@ public class FabricStage implements Stage {
     private LinkedList<Object> blocksToPlace = new LinkedList<>();
     private LinkedList<Object> blocksToUse = new LinkedList<>();
     private LinkedList<Object> blocksToCut = new LinkedList<>();
+    private LinkedList<Integer> blocksToBreakAmounts = new LinkedList<>();
+    private LinkedList<Integer> blocksToPlaceAmounts = new LinkedList<>();
+    private LinkedList<Integer> blocksToUseAmounts = new LinkedList<>();
+    private LinkedList<Integer> blocksToCutAmounts = new LinkedList<>();
     private LinkedList<Object> itemsToCraft = new LinkedList<>();
     private LinkedList<Object> itemsToSmelt = new LinkedList<>();
     private LinkedList<Object> itemsToEnchant = new LinkedList<>();
@@ -77,6 +81,14 @@ public class FabricStage implements Stage {
     @Override public LinkedList<?> getBlocksToPlace() { return blocksToPlace; }
     @Override public LinkedList<?> getBlocksToUse() { return blocksToUse; }
     @Override public LinkedList<?> getBlocksToCut() { return blocksToCut; }
+    public LinkedList<Integer> getBlocksToBreakAmounts() { return blocksToBreakAmounts; }
+    public void setBlocksToBreakAmounts(LinkedList<Integer> v) { this.blocksToBreakAmounts = v; }
+    public LinkedList<Integer> getBlocksToPlaceAmounts() { return blocksToPlaceAmounts; }
+    public void setBlocksToPlaceAmounts(LinkedList<Integer> v) { this.blocksToPlaceAmounts = v; }
+    public LinkedList<Integer> getBlocksToUseAmounts() { return blocksToUseAmounts; }
+    public void setBlocksToUseAmounts(LinkedList<Integer> v) { this.blocksToUseAmounts = v; }
+    public LinkedList<Integer> getBlocksToCutAmounts() { return blocksToCutAmounts; }
+    public void setBlocksToCutAmounts(LinkedList<Integer> v) { this.blocksToCutAmounts = v; }
     @Override public LinkedList<?> getItemsToCraft() { return itemsToCraft; }
     @Override public LinkedList<?> getItemsToSmelt() { return itemsToSmelt; }
     @Override public LinkedList<?> getItemsToEnchant() { return itemsToEnchant; }

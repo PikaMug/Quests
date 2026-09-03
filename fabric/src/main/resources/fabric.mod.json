@@ -25,6 +25,7 @@
   "suggests": {
     "fabric-api": "*",
     "placeholder-api": "*",
-    "openpartiesandclaims": "*"
+    "openpartiesandclaims": "*",
+    "luckperms": "*"
   }
 }
