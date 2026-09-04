@@ -14,6 +14,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.FabricItemUtil;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -58,7 +59,7 @@ public class FabricItemListener {
             if (!stage.getItemsToConsume().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
                     final Object goal = stage.getItemsToConsume().get(i);
-                    if (goal != null && consumed.getItem().toString().equalsIgnoreCase(goal.toString())) {
+                    if (goal != null && FabricItemUtil.matches(consumed, (ItemStack) goal)) {
                         quester.getQuestProgressOrDefault(quest).getItemsConsumed().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsConsumed().get(i) + 1);
                         quester.checkQuest(quest);

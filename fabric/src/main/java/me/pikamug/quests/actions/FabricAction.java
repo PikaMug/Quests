@@ -20,10 +20,12 @@ import me.pikamug.quests.tasks.FabricActionTimer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.WeatherData;
 
 import java.util.LinkedList;
@@ -40,6 +42,8 @@ public class FabricAction implements Action {
     private boolean cancelTimer = false;
     private LinkedList<QuestMob> mobSpawns = new LinkedList<>();
     private LinkedList<String> commands = new LinkedList<>();
+    private LinkedList<MobEffectInstance> potionEffects = new LinkedList<>();
+    private LinkedList<ItemStack> items = new LinkedList<>();
     private int hunger = 0;
     private int saturation = 0;
     private float health = 0;
@@ -66,6 +70,13 @@ public class FabricAction implements Action {
     @Override public void setMobSpawns(LinkedList<QuestMob> v) { this.mobSpawns = v; }
     @Override public LinkedList<String> getCommands() { return commands; }
     @Override public void setCommands(LinkedList<String> v) { this.commands = v; }
+
+    public LinkedList<MobEffectInstance> getPotionEffects() { return potionEffects; }
+    public void setPotionEffects(LinkedList<MobEffectInstance> v) { this.potionEffects = v; }
+
+    public LinkedList<ItemStack> getItems() { return items; }
+    public void setItems(LinkedList<ItemStack> v) { this.items = v; }
+
     @Override public int getHunger() { return hunger; }
     @Override public void setHunger(int v) { this.hunger = v; }
     @Override public int getSaturation() { return saturation; }
@@ -130,6 +141,29 @@ public class FabricAction implements Action {
         // Health
         if (health > 0) {
             player.setHealth(Math.max(1.0f, Math.min(player.getMaxHealth(), player.getHealth() + health)));
+        }
+
+        // Potion effects
+        if (potionEffects != null && !potionEffects.isEmpty()) {
+            for (final MobEffectInstance effect : potionEffects) {
+                player.addEffect(effect);
+            }
+        }
+
+        // Item rewards
+        if (items != null && !items.isEmpty()) {
+            for (final ItemStack stack : items) {
+                try {
+                    me.pikamug.quests.util.FabricInventoryUtil.addItem(player, stack);
+                } catch (final Exception e) {
+                    FabricQuestsPlugin.LOGGER.warn("Unable to add null item to inventory of {} during quest {} event {}",
+                            player.getName().getString(),
+                            quest != null ? quest.getName() : "?",
+                            name, e);
+                    player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                            "<red>Quests encountered a problem with an item. Please contact an administrator."));
+                }
+            }
         }
 
         // Commands

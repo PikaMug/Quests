@@ -11,12 +11,14 @@
 package me.pikamug.quests.conditions;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import net.minecraft.world.item.ItemStack;
 
 import java.io.*;
 import java.nio.file.*;
@@ -75,6 +77,12 @@ public class FabricConditionFactory implements ConditionFactory {
         }
         if (fabCondition.getPlaceholdersCheckValue() != null && !fabCondition.getPlaceholdersCheckValue().isEmpty()) {
             SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, new LinkedList<>(fabCondition.getPlaceholdersCheckValue()));
+        }
+        if (fabCondition.getItemsWhileHoldingMainHand() != null && !fabCondition.getItemsWhileHoldingMainHand().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, new LinkedList<>(fabCondition.getItemsWhileHoldingMainHand()));
+        }
+        if (fabCondition.getItemsWhileWearing() != null && !fabCondition.getItemsWhileWearing().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_WEARING, new LinkedList<>(fabCondition.getItemsWhileWearing()));
         }
     }
 
@@ -157,6 +165,8 @@ public class FabricConditionFactory implements ConditionFactory {
             if (SessionData.get(uuid, Key.C_WHILE_PLACEHOLDER_VAL) != null) {
                 section.add("check-placeholder-value", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_PLACEHOLDER_VAL)));
             }
+            writeItems(uuid, section, Key.C_WHILE_HOLDING_MAIN_HAND, "hold-main-hand");
+            writeItems(uuid, section, Key.C_WHILE_WEARING, "wear");
             if (json == null) {
                 final JsonObject newJson = new JsonObject();
                 newJson.add(conditionName, section);
@@ -170,6 +180,19 @@ public class FabricConditionFactory implements ConditionFactory {
             clearData(uuid);
         } catch (final Exception e) {
             FabricQuestsPlugin.LOGGER.error("Failed to save condition: {}", conditionName, e);
+        }
+    }
+
+    private void writeItems(UUID uuid, JsonObject section, String key, String nodeKey) {
+        final Object data = SessionData.get(uuid, key);
+        if (data instanceof LinkedList<?> itemList) {
+            final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
+            for (final Object stack : itemList) {
+                if (stack instanceof ItemStack itemStack) {
+                    itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
+                }
+            }
+            section.add(nodeKey, itemsJson);
         }
     }
 }

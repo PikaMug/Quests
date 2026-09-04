@@ -17,6 +17,9 @@ import me.pikamug.quests.util.SessionData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import me.pikamug.quests.util.FabricItemUtil;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.ItemStack;
 
 import java.io.*;
 import java.nio.file.*;
@@ -76,6 +79,23 @@ public class FabricActionFactory implements ActionFactory {
         }
         if (fabAction.isCancelTimer()) {
             SessionData.set(uuid, Key.A_CANCEL_TIMER, true);
+        }
+        if (fabAction.getPotionEffects() != null && !fabAction.getPotionEffects().isEmpty()) {
+            final LinkedList<String> types = new LinkedList<>();
+            final LinkedList<Long> durations = new LinkedList<>();
+            final LinkedList<Integer> strengths = new LinkedList<>();
+            for (final MobEffectInstance pe : fabAction.getPotionEffects()) {
+                types.add(pe.getEffect().value().getDescriptionId()
+                        .replaceFirst("effect\\.minecraft\\.", "").toUpperCase());
+                durations.add((long) pe.getDuration());
+                strengths.add(pe.getAmplifier());
+            }
+            SessionData.set(uuid, Key.A_POTION_TYPES, types);
+            SessionData.set(uuid, Key.A_POTION_DURATIONS, durations);
+            SessionData.set(uuid, Key.A_POTION_STRENGTH, strengths);
+        }
+        if (fabAction.getItems() != null && !fabAction.getItems().isEmpty()) {
+            SessionData.set(uuid, Key.A_ITEMS, fabAction.getItems());
         }
     }
 
@@ -159,6 +179,24 @@ public class FabricActionFactory implements ActionFactory {
             }
             if (SessionData.get(uuid, Key.A_CANCEL_TIMER) != null) {
                 section.addProperty("cancel-timer", (Boolean) SessionData.get(uuid, Key.A_CANCEL_TIMER));
+            }
+            if (SessionData.get(uuid, Key.A_POTION_TYPES) != null) {
+                section.add("potion-effect-types", gson.toJsonTree(SessionData.get(uuid, Key.A_POTION_TYPES)));
+            }
+            if (SessionData.get(uuid, Key.A_POTION_DURATIONS) != null) {
+                section.add("potion-effect-durations", gson.toJsonTree(SessionData.get(uuid, Key.A_POTION_DURATIONS)));
+            }
+            if (SessionData.get(uuid, Key.A_POTION_STRENGTH) != null) {
+                section.add("potion-effect-amplifiers", gson.toJsonTree(SessionData.get(uuid, Key.A_POTION_STRENGTH)));
+            }
+            if (SessionData.get(uuid, Key.A_ITEMS) != null && SessionData.get(uuid, Key.A_ITEMS) instanceof LinkedList<?> itemList) {
+                final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
+                for (final Object stack : itemList) {
+                    if (stack instanceof ItemStack itemStack) {
+                        itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
+                    }
+                }
+                section.add("items", itemsJson);
             }
             if (json == null) {
                 final JsonObject newJson = new JsonObject();

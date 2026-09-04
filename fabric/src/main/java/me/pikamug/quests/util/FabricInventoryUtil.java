@@ -21,7 +21,7 @@ public class FabricInventoryUtil {
         int count = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             final ItemStack slot = player.getInventory().getItem(i);
-            if (!slot.isEmpty() && slot.getItem() == item.getItem()) {
+            if (!slot.isEmpty() && FabricItemUtil.matches(slot, item)) {
                 count += slot.getCount();
             }
         }
@@ -38,7 +38,7 @@ public class FabricInventoryUtil {
         int remaining = item.getCount();
         for (int i = 0; i < player.getInventory().getContainerSize() && remaining > 0; i++) {
             final ItemStack slot = player.getInventory().getItem(i);
-            if (!slot.isEmpty() && slot.getItem() == item.getItem()) {
+            if (!slot.isEmpty() && FabricItemUtil.matches(slot, item)) {
                 final int toRemove = Math.min(slot.getCount(), remaining);
                 slot.shrink(toRemove);
                 remaining -= toRemove;

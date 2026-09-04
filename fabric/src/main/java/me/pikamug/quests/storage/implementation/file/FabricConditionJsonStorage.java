@@ -9,6 +9,8 @@ import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.exceptions.ConditionFormatException;
 import me.pikamug.quests.conditions.FabricCondition;
 import me.pikamug.quests.storage.implementation.ConditionStorageImpl;
+import me.pikamug.quests.util.FabricItemUtil;
+import net.minecraft.world.item.ItemStack;
 
 import java.io.Reader;
 import java.nio.file.Files;
@@ -106,11 +108,36 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
                 arr.forEach(e -> vals.add(e.getAsString()));
                 condition.setPlaceholdersCheckValue(vals);
             }
+            if (json.has("hold-main-hand")) {
+                condition.setItemsWhileHoldingMainHand(parseItemList(json, "hold-main-hand"));
+                if (condition.getItemsWhileHoldingMainHand().isEmpty()) {
+                    throw new ConditionFormatException("'hold-main-hand' is not a list of items", name);
+                }
+            }
+            if (json.has("wear")) {
+                condition.setItemsWhileWearing(parseItemList(json, "wear"));
+                if (condition.getItemsWhileWearing().isEmpty()) {
+                    throw new ConditionFormatException("'wear' is not a list of items", name);
+                }
+            }
             return condition;
         } catch (final Exception e) {
             throw new ConditionFormatException("Failed to load condition: " + name
                     + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
         }
+    }
+
+    private LinkedList<ItemStack> parseItemList(JsonObject json, String key) {
+        final LinkedList<ItemStack> list = new LinkedList<>();
+        final JsonArray arr = json.getAsJsonArray(key);
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr.get(i).isJsonObject()) {
+                list.add(FabricItemUtil.deserializeFromJson(arr.get(i).getAsJsonObject()));
+            } else {
+                list.add(FabricItemUtil.deserialize(arr.get(i).getAsString()));
+            }
+        }
+        return list;
     }
 
     private void loadConditions() {

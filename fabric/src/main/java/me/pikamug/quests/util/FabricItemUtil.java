@@ -10,6 +10,11 @@
 
 package me.pikamug.quests.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
+import me.pikamug.quests.FabricQuestsPlugin;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +59,76 @@ public class FabricItemUtil {
             return new ItemStack(optional.get(), count);
         }
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * Serializes an {@link ItemStack} to its CODEC JSON form, preserving count and all data components
+     * (enchantments, custom name, lore, etc.). This is the preferred form for config files.
+     *
+     * @param stack ItemStack to serialize
+     * @return the CODEC {@link JsonElement}, or {@link JsonNull} if the stack is null or empty
+     */
+    public static JsonElement serializeToJson(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return JsonNull.INSTANCE;
+        }
+        final DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, stack);
+        if (result.result().isPresent()) {
+            return result.result().get();
+        }
+        FabricQuestsPlugin.LOGGER.warn("Could not serialize item (upgrade format?) {}",
+                result.error().map(error -> error.message()).orElse(stack.toString()));
+        return JsonNull.INSTANCE;
+    }
+
+    /**
+     * Deserializes an {@link ItemStack} from its CODEC JSON form (see {@link #serializeToJson}). If the format
+     * cannot be read (e.g. a config written by a newer Minecraft version), a warning is logged to the server console
+     * and an empty stack is returned so the offending node degrades gracefully rather than stalling startup.
+     *
+     * @param element the CODEC {@link JsonElement}
+     * @return the deserialized {@link ItemStack}, or {@link ItemStack#EMPTY} on failure
+     */
+    public static ItemStack deserializeFromJson(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
+            return ItemStack.EMPTY;
+        }
+        try {
+            final DataResult<ItemStack> result = ItemStack.CODEC.parse(JsonOps.INSTANCE, element);
+            if (result.result().isPresent()) {
+                return result.result().get();
+            }
+            FabricQuestsPlugin.LOGGER.warn("Could not load item from config (upgrade format?) {}",
+                    result.error().map(error -> error.message()).orElse(element.toString()));
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.warn("Could not load item from config (upgrade format?) {}", element, e);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Compares two stacks by material, count and data components (enchantments, custom name, lore, etc.).
+     * Amounts are optional; when {@code ignoreAmount} is true, count is not considered.
+     *
+     * @param one          first stack
+     * @param two          second stack
+     * @param ignoreAmount whether to ignore stack counts
+     * @return 1 if either stack is null, 2 if amounts differ (when compared), 3 if items differ, 4 if components differ,
+     *         0 if equivalent
+     */
+    public static int compareItems(ItemStack one, ItemStack two, boolean ignoreAmount) {
+        if (one == null || two == null) return 1;
+        if (!ignoreAmount && one.getCount() != two.getCount()) return 2;
+        if (!ItemStack.isSameItem(one, two)) return 3;
+        if (!ItemStack.isSameItemSameComponents(one, two)) return 4;
+        return 0;
+    }
+
+    /**
+     * Returns whether the two stacks are equivalent for a quest objective, comparing material, count and components.
+     */
+    public static boolean matches(ItemStack one, ItemStack two) {
+        return compareItems(one, two, false) == 0;
     }
 
     public static String getName(ItemStack item) {

@@ -14,6 +14,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.FabricItemUtil;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -122,7 +123,7 @@ public class FabricCraftingListener {
             if (!stage.getItemsToCraft().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
                     final Object goal = stage.getItemsToCraft().get(i);
-                    if (goal != null && crafted.getItem().toString().equalsIgnoreCase(goal.toString())) {
+                    if (goal != null && FabricItemUtil.matches(crafted, (ItemStack) goal)) {
                         quester.getQuestProgressOrDefault(quest).getItemsCrafted().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsCrafted().get(i) + 1);
                         quester.checkQuest(quest);
@@ -141,7 +142,7 @@ public class FabricCraftingListener {
             if (!stage.getItemsToSmelt().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
                     final Object goal = stage.getItemsToSmelt().get(i);
-                    if (goal != null && smelted.getItem().toString().equalsIgnoreCase(goal.toString())) {
+                    if (goal != null && FabricItemUtil.matches(smelted, (ItemStack) goal)) {
                         quester.getQuestProgressOrDefault(quest).getItemsSmelted().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsSmelted().get(i) + 1);
                         quester.checkQuest(quest);
@@ -160,7 +161,7 @@ public class FabricCraftingListener {
             if (!stage.getItemsToEnchant().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
                     final Object goal = stage.getItemsToEnchant().get(i);
-                    if (goal != null && enchanted.getItem().toString().equalsIgnoreCase(goal.toString())) {
+                    if (goal != null && FabricItemUtil.matches(enchanted, (ItemStack) goal)) {
                         quester.getQuestProgressOrDefault(quest).getItemsEnchanted().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsEnchanted().get(i) + 1);
                         quester.checkQuest(quest);
@@ -179,7 +180,7 @@ public class FabricCraftingListener {
             if (!stage.getItemsToBrew().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
                     final Object goal = stage.getItemsToBrew().get(i);
-                    if (goal != null && brewed.getItem().toString().equalsIgnoreCase(goal.toString())) {
+                    if (goal != null && FabricItemUtil.matches(brewed, (ItemStack) goal)) {
                         quester.getQuestProgressOrDefault(quest).getItemsBrewed().set(i,
                                 quester.getQuestProgressOrDefault(quest).getItemsBrewed().get(i) + 1);
                         quester.checkQuest(quest);

@@ -138,6 +138,30 @@ public class FabricQuest implements Quest {
             }
         }
 
+        // Check item requirements (player must have enough of each item; remove if enabled)
+        if (requirements.getItems() != null && !requirements.getItems().isEmpty()) {
+            final var server = FabricQuestsPlugin.getInstance().getServer();
+            final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
+            final boolean remove = requirements.getRemoveItems() != null
+                    && requirements.getRemoveItems().size() == requirements.getItems().size();
+            for (int i = 0; i < requirements.getItems().size(); i++) {
+                final Object itemObj = requirements.getItems().get(i);
+                if (!(itemObj instanceof net.minecraft.world.item.ItemStack item)) return false;
+                if (player == null) return false;
+                final int have = me.pikamug.quests.util.FabricInventoryUtil.countItem(player, item);
+                if (have < item.getCount()) return false;
+            }
+            if (remove) {
+                for (int i = 0; i < requirements.getItems().size(); i++) {
+                    final Object itemObj = requirements.getItems().get(i);
+                    final boolean doRemove = Boolean.TRUE.equals(requirements.getRemoveItems().get(i));
+                    if (doRemove && itemObj instanceof net.minecraft.world.item.ItemStack item && player != null) {
+                        me.pikamug.quests.util.FabricInventoryUtil.removeItem(player, item);
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -157,6 +181,17 @@ public class FabricQuest implements Quest {
         // Grant rewards
         if (rewards != null) {
             quester.setQuestPoints(quester.getQuestPoints() + rewards.getQuestPoints());
+            if (rewards.getItems() != null && !rewards.getItems().isEmpty()) {
+                final var server = FabricQuestsPlugin.getInstance().getServer();
+                final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
+                if (player != null) {
+                    for (final Object itemObj : rewards.getItems()) {
+                        if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
+                            me.pikamug.quests.util.FabricInventoryUtil.addItem(player, item);
+                        }
+                    }
+                }
+            }
         }
         quester.saveData();
         FabricQuestsPlugin.LOGGER.info("Quest '{}' completed by {}", name, quester.getUUID());

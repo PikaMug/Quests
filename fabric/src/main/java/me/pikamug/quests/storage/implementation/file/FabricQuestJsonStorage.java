@@ -11,6 +11,8 @@ import me.pikamug.quests.exceptions.QuestFormatException;
 import me.pikamug.quests.quests.components.FabricStage;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.storage.implementation.QuestStorageImpl;
+import me.pikamug.quests.util.FabricItemUtil;
+import net.minecraft.world.item.ItemStack;
 
 import java.io.Reader;
 import java.nio.file.Files;
@@ -143,7 +145,10 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         // Item objectives
         parseItemList(json, "items-to-craft", stage, "craft");
         parseItemList(json, "items-to-smelt", stage, "smelt");
+        parseItemList(json, "items-to-enchant", stage, "enchant");
+        parseItemList(json, "items-to-brew", stage, "brew");
         parseItemList(json, "items-to-consume", stage, "consume");
+        parseItemList(json, "items-to-deliver", stage, "deliver");
         // Mob objectives
         if (json.has("mobs-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("mobs-to-kill");
@@ -249,7 +254,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 if (e.isJsonObject()) {
                     list.add(e.getAsJsonObject().toString());
                 } else {
-                    list.add(e.getAsString());
+                    list.add(normalizeBlockName(e.getAsString()));
                 }
             });
             final LinkedList<Integer> amounts = new LinkedList<>();
@@ -280,21 +285,44 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         }
     }
 
+    /**
+     * Normalizes a block name read from config. Plain names such as {@code DIRT}
+     * are given the default {@code minecraft:} namespace so they can be resolved
+     * against the item registry (e.g. {@code minecraft:dirt}). Values that already
+     * carry a namespace are left untouched, just lowercased.
+     */
+    private String normalizeBlockName(String name) {
+        if (name == null) {
+            return name;
+        }
+        final String trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            return trimmed;
+        }
+        if (trimmed.contains(":")) {
+            return trimmed.toLowerCase();
+        }
+        return "minecraft:" + trimmed.toLowerCase();
+    }
+
     private void parseItemList(JsonObject json, String key, FabricStage stage, String type) {
         if (json.has(key)) {
             final JsonArray arr = json.getAsJsonArray(key);
             final LinkedList<Object> list = new LinkedList<>();
             arr.forEach(e -> {
                 if (e.isJsonObject()) {
-                    list.add(e.getAsJsonObject().toString());
+                    list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
                 } else {
-                    list.add(e.getAsString());
+                    list.add(FabricItemUtil.deserialize(e.getAsString()));
                 }
             });
             switch (type) {
                 case "craft" -> stage.setItemsToCraft(list);
                 case "smelt" -> stage.setItemsToSmelt(list);
+                case "enchant" -> stage.setItemsToEnchant(list);
+                case "brew" -> stage.setItemsToBrew(list);
                 case "consume" -> stage.setItemsToConsume(list);
+                case "deliver" -> stage.setItemsToDeliver(list);
             }
         }
     }
@@ -319,6 +347,16 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             final LinkedList<String> perms = new LinkedList<>();
             arr.forEach(e -> perms.add(e.getAsString()));
             req.setPermissions(perms);
+        }
+        if (json.has("items")) {
+            ((me.pikamug.quests.quests.components.FabricRequirements) req)
+                    .setItems(parseItemObjectList(json.getAsJsonArray("items")));
+        }
+        if (json.has("remove-items")) {
+            final JsonArray arr = json.getAsJsonArray("remove-items");
+            final LinkedList<Boolean> remove = new LinkedList<>();
+            arr.forEach(e -> remove.add(e.getAsBoolean()));
+            req.setRemoveItems(remove);
         }
     }
 
@@ -364,6 +402,22 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 rew.setDetailsOverride(overrides);
             }
         }
+        if (json.has("items")) {
+            ((me.pikamug.quests.quests.components.FabricRewards) rew)
+                    .setItems(parseItemObjectList(json.getAsJsonArray("items")));
+        }
+    }
+
+    private LinkedList<ItemStack> parseItemObjectList(JsonArray arr) {
+        final LinkedList<ItemStack> list = new LinkedList<>();
+        arr.forEach(e -> {
+            if (e.isJsonObject()) {
+                list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
+            } else {
+                list.add(FabricItemUtil.deserialize(e.getAsString()));
+            }
+        });
+        return list;
     }
 
     private void parseOptions(FabricQuest quest, JsonObject json) {

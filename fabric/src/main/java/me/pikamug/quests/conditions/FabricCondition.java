@@ -13,14 +13,18 @@ package me.pikamug.quests.conditions;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.util.FabricItemUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
+import net.minecraft.world.item.ItemStack;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.ServerPlaceholderContext;
 
@@ -41,6 +45,8 @@ public class FabricCondition implements Condition {
     private LinkedList<String> regionsWhileStayingWithin = new LinkedList<>();
     private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<>();
     private LinkedList<String> placeholdersCheckValue = new LinkedList<>();
+    private LinkedList<ItemStack> itemsWhileHoldingMainHand = new LinkedList<>();
+    private LinkedList<ItemStack> itemsWhileWearing = new LinkedList<>();
 
     @Override public String getName() { return name; }
     @Override public void setName(String v) { this.name = v; }
@@ -67,6 +73,11 @@ public class FabricCondition implements Condition {
     @Override public LinkedList<String> getPlaceholdersCheckValue() { return placeholdersCheckValue; }
     @Override public void setPlaceholdersCheckValue(LinkedList<String> v) { this.placeholdersCheckValue = v; }
 
+    public LinkedList<ItemStack> getItemsWhileHoldingMainHand() { return itemsWhileHoldingMainHand; }
+    public void setItemsWhileHoldingMainHand(LinkedList<ItemStack> v) { this.itemsWhileHoldingMainHand = v; }
+    public LinkedList<ItemStack> getItemsWhileWearing() { return itemsWhileWearing; }
+    public void setItemsWhileWearing(LinkedList<ItemStack> v) { this.itemsWhileWearing = v; }
+
     @Override
     public boolean check(Quester quester, Quest quest) {
         if (quester == null) return true;
@@ -92,7 +103,8 @@ public class FabricCondition implements Condition {
                     matches = true;
                     break;
                 }
-                if (vehicle.getType().toString().equalsIgnoreCase(entityName)) {
+                final EntityType<?> type = resolveEntityType(entityName);
+                if (type != null && type == vehicle.getType()) {
                     matches = true;
                     break;
                 }
@@ -184,6 +196,35 @@ public class FabricCondition implements Condition {
             }
         }
 
+        // Items while holding main hand (must match at least one)
+        if (itemsWhileHoldingMainHand != null && !itemsWhileHoldingMainHand.isEmpty()) {
+            final ItemStack held = player.getMainHandItem();
+            boolean atLeastOne = false;
+            for (final ItemStack is : itemsWhileHoldingMainHand) {
+                if (FabricItemUtil.matches(held, is)) {
+                    atLeastOne = true;
+                    break;
+                }
+            }
+            if (!atLeastOne) return false;
+        }
+
+        // Items while wearing (must have ALL listed equipped)
+        if (itemsWhileWearing != null && !itemsWhileWearing.isEmpty()) {
+            int matches = 0;
+            for (final ItemStack is : itemsWhileWearing) {
+                for (final EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
+                    final ItemStack armor = player.getItemBySlot(slot);
+                    if (!armor.isEmpty() && FabricItemUtil.matches(armor, is)) {
+                        matches++;
+                        break;
+                    }
+                }
+            }
+            if (matches != itemsWhileWearing.size()) return false;
+        }
+
         return true;
     }
 
@@ -191,6 +232,20 @@ public class FabricCondition implements Condition {
         final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (server == null) return null;
         return server.getPlayerList().getPlayer(quester.getUUID());
+    }
+
+    /**
+     * Resolves an entity name read from config (e.g. {@code PIG} or
+     * {@code minecraft:pig}) to its {@link EntityType}. Plain names such as
+     * {@code PIG} are given the default {@code minecraft:} namespace so they can
+     * be resolved against the entity type registry.
+     */
+    private EntityType<?> resolveEntityType(String name) {
+        if (name == null) return null;
+        final String trimmed = name.trim();
+        if (trimmed.isEmpty()) return null;
+        final String id = trimmed.contains(":") ? trimmed.toLowerCase() : "minecraft:" + trimmed.toLowerCase();
+        return EntityType.byString(id).orElse(null);
     }
 
     @Override

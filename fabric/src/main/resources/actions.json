@@ -1,6 +1,18 @@
 {
   "ApplyPotion": {
-    "message": "<blue>You received potion effects!"
+    "message": "<blue>You received potion effects!",
+    "potion-effect-types": [
+      "Speed",
+      "Jump"
+    ],
+    "potion-effect-durations": [
+      100,
+      25
+    ],
+    "potion-effect-amplifiers": [
+      3,
+      2
+    ]
   },
   "NiceFinish": {
     "message": "<green>Nice work!"
@@ -9,7 +21,13 @@
     "fail-quest": true
   },
   "GiveRod": {
-    "message": "<green>Here's a rod to get you started!"
+    "message": "<green>Here's a rod to get you started!",
+    "items": [
+      {
+        "id": "minecraft:fishing_rod",
+        "count": 1
+      }
+    ]
   },
   "TimerStart": {
     "timer": 40

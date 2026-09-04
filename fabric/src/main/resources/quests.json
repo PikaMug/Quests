@@ -6,11 +6,22 @@
     "planner": {
       "cooldown": 1800
     },
+    "requirements": {
+      "items": [
+        {
+          "id": "minecraft:stone_pickaxe",
+          "count": 1
+        }
+      ],
+      "remove-items": [
+        false
+      ]
+    },
     "stages": [
       {
         "start-message": "<yellow>Mine 2 blocks of Iron Ore.",
         "break-block-names": [
-          "minecraft:iron_ore"
+          "IRON_ORE"
         ],
         "break-block-amounts": [
           2
@@ -55,7 +66,13 @@
       }
     ],
     "rewards": {
-      "quest-points": 1
+      "quest-points": 1,
+      "items": [
+        {
+          "id": "minecraft:diamond_sword",
+          "count": 1
+        }
+      ]
     }
   },
   "default3": {
@@ -83,7 +100,7 @@
       {
         "start-message": "<yellow>Dig up 10 blocks of Dirt before time runs out!",
         "break-block-names": [
-          "minecraft:dirt"
+          "DIRT"
         ],
         "break-block-amounts": [
           10
@@ -91,7 +108,13 @@
       }
     ],
     "rewards": {
-      "quest-points": 1
+      "quest-points": 1,
+      "items": [
+        {
+          "id": "minecraft:gold_ingot",
+          "count": 1
+        }
+      ]
     }
   }
 }

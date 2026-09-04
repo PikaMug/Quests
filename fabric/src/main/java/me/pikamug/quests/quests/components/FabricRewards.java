@@ -48,6 +48,7 @@ public class FabricRewards implements Rewards {
     @Override public List<String> getPermissionWorlds() { return permissionWorlds; }
     @Override public void setPermissionWorlds(List<String> v) { this.permissionWorlds = v; }
     @Override public List<?> getItems() { return items; }
+    public void setItems(List<ItemStack> v) { this.items = v; }
     @Override public List<String> getMcmmoSkills() { return mcmmoSkills; }
     @Override public void setMcmmoSkills(List<String> v) { this.mcmmoSkills = v; }
     @Override public List<Integer> getMcmmoAmounts() { return mcmmoAmounts; }

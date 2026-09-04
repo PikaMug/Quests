@@ -38,6 +38,7 @@ public class FabricRequirements implements Requirements {
     @Override public int getExp() { return exp; }
     @Override public void setExp(int v) { this.exp = v; }
     @Override public List<?> getItems() { return items; }
+    public void setItems(List<ItemStack> v) { this.items = v; }
     @Override public List<Boolean> getRemoveItems() { return removeItems; }
     @Override public void setRemoveItems(List<Boolean> v) { this.removeItems = v; }
     @Override public List<String> getNeededQuestIds() { return neededQuestIds; }
