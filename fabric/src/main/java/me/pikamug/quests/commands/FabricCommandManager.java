@@ -15,10 +15,14 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.convo.actions.menu.FabricActionMenuPrompt;
+import me.pikamug.quests.convo.conditions.menu.FabricConditionMenuPrompt;
+import me.pikamug.quests.convo.quests.menu.FabricQuestMenuPrompt;
 import me.pikamug.quests.item.FabricQuestJournal;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.SessionData;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
@@ -26,8 +30,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import org.browsit.conversations.api.Conversations;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class FabricCommandManager {
 
@@ -77,6 +83,23 @@ public class FabricCommandManager {
                             )
                             .then(Commands.literal("journal")
                                     .executes(ctx -> handleQuestsJournal(ctx.getSource()))
+                            )
+                            .then(Commands.literal("choice")
+                                    .then(Commands.argument("value", StringArgumentType.greedyString())
+                                            .executes(ctx -> handleQuestsChoice(ctx.getSource(),
+                                                    StringArgumentType.getString(ctx, "value"))))
+                            )
+                            .then(Commands.literal("editor")
+                                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                                    .executes(ctx -> handleQuestsEditor(ctx.getSource(), "editor"))
+                            )
+                            .then(Commands.literal("actions")
+                                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                                    .executes(ctx -> handleQuestsEditor(ctx.getSource(), "actions"))
+                            )
+                            .then(Commands.literal("conditions")
+                                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                                    .executes(ctx -> handleQuestsEditor(ctx.getSource(), "conditions"))
                             )
             );
             dispatcher.register(Commands.literal("qs").redirect(questsNode));
@@ -263,6 +286,45 @@ public class FabricCommandManager {
         } else {
             player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("journalNoRoom")
                     .replace("<journal>", FabricLang.get("journalTitle"))));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int handleQuestsChoice(CommandSourceStack source, String input) {
+        if (!source.isPlayer()) return 0;
+        if (input == null || input.isEmpty()) return Command.SINGLE_SUCCESS;
+        final ServerPlayer player = source.getPlayer();
+        final Optional<org.browsit.conversations.api.data.Conversation> conversation = Conversations
+                .getConversationOf(player.getUUID());
+        if (!conversation.isPresent()) {
+            player.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("notConversing")));
+            return Command.SINGLE_SUCCESS;
+        }
+        conversation.get().handleInput(input);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int handleQuestsEditor(CommandSourceStack source, String editor) {
+        if (!source.isPlayer()) {
+            source.sendSuccess(() -> Component.literal("Use /quests " + editor + " in-game"), false);
+            return 0;
+        }
+        final ServerPlayer player = source.getPlayer();
+        if (Conversations.getConversationOf(player.getUUID()).isPresent()) {
+            player.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("duplicateEditor")));
+            return Command.SINGLE_SUCCESS;
+        }
+        SessionData.clear(player.getUUID());
+        switch (editor) {
+        case "actions":
+            new FabricActionMenuPrompt(player.getUUID()).start();
+            break;
+        case "conditions":
+            new FabricConditionMenuPrompt(player.getUUID()).start();
+            break;
+        default:
+            new FabricQuestMenuPrompt(player.getUUID()).start();
+            break;
         }
         return Command.SINGLE_SUCCESS;
     }

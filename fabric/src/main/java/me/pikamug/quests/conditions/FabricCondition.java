@@ -17,8 +17,6 @@ import me.pikamug.quests.util.FabricItemUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.LevelBasedPermissionSet;
-import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -39,8 +37,8 @@ public class FabricCondition implements Condition {
     private LinkedList<UUID> npcsWhileRiding = new LinkedList<>();
     private LinkedList<String> permissions = new LinkedList<>();
     private LinkedList<String> worldsWhileStayingWithin = new LinkedList<>();
-    private int tickStartWhileStayingWithin = 0;
-    private int tickEndWhileStayingWithin = 0;
+    private int tickStartWhileStayingWithin = -1;
+    private int tickEndWhileStayingWithin = -1;
     private LinkedList<String> biomesWhileStayingWithin = new LinkedList<>();
     private LinkedList<String> regionsWhileStayingWithin = new LinkedList<>();
     private LinkedList<String> placeholdersCheckIdentifier = new LinkedList<>();
@@ -85,92 +83,139 @@ public class FabricCondition implements Condition {
         final ServerPlayer player = getPlayer(quester);
         if (player == null) return true;
 
+        boolean failed = false;
+
         // Entities while riding
-        if (entitiesWhileRiding != null && !entitiesWhileRiding.isEmpty()) {
-            final Entity vehicle = player.getVehicle();
-            if (vehicle == null) {
+        if (!entitiesWhileRiding.isEmpty()) {
+            boolean atLeastOne = false;
+            if (player.getVehicle() == null) {
                 return false;
             }
+            final Entity vehicle = player.getVehicle();
             final boolean isBoat = vehicle instanceof Boat;
             final boolean isMinecart = vehicle instanceof Minecart;
-            boolean matches = false;
             for (final String entityName : entitiesWhileRiding) {
                 if (entityName.equalsIgnoreCase("boats") && isBoat) {
-                    matches = true;
+                    atLeastOne = true;
                     break;
                 }
                 if (entityName.equalsIgnoreCase("minecarts") && isMinecart) {
-                    matches = true;
+                    atLeastOne = true;
                     break;
                 }
                 final EntityType<?> type = resolveEntityType(entityName);
                 if (type != null && type == vehicle.getType()) {
-                    matches = true;
+                    atLeastOne = true;
                     break;
                 }
             }
-            if (!matches) return false;
-        }
-
-        // NPCs while riding
-        if (npcsWhileRiding != null && !npcsWhileRiding.isEmpty()) {
+            if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (!npcsWhileRiding.isEmpty()) {
+            // NPCs while riding
+            boolean atLeastOne = false;
+            if (player.getVehicle() == null) {
+                return false;
+            }
             final Entity vehicle = player.getVehicle();
-            if (vehicle == null) return false;
-            boolean matches = false;
             for (final UUID npcUuid : npcsWhileRiding) {
                 if (vehicle.getUUID().equals(npcUuid)) {
-                    matches = true;
+                    atLeastOne = true;
                     break;
                 }
             }
-            if (!matches) return false;
-        }
-
-        // Permissions
-        if (permissions != null && !permissions.isEmpty()) {
-            final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
-            if (server != null) {
-                final var commands = server.getCommands();
-                for (final String perm : permissions) {
-                    if (!commands.getDispatcher().parse(
-                            perm, player.createCommandSourceStack().withPermission(
-                                    LevelBasedPermissionSet.forLevel(PermissionLevel.OWNERS))).getExceptions().isEmpty()) {
-                        // Player has all permissions via command access, but we check for simple perms
+            if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (!permissions.isEmpty()) {
+            // Must have ALL listed permissions
+            for (final String p : permissions) {
+                if (!FabricQuestsPlugin.getInstance().getDependencies().hasPermission(quester.getUUID(), p)) {
+                    failed = true;
+                    if (FabricQuestsPlugin.getInstance().getConfigSettings().getConsoleLogging() > 3) {
+                        FabricQuestsPlugin.LOGGER.info(
+                                "DEBUG: Condition permission mismatch for {}: {}", player.getName().getString(), p);
                     }
-                    // Fallback: assume granted if no permission system
+                    break;
                 }
             }
-        }
-
-        // Worlds while staying within
-        if (worldsWhileStayingWithin != null && !worldsWhileStayingWithin.isEmpty()) {
-            boolean inWorld = false;
+        } else if (!itemsWhileHoldingMainHand.isEmpty()) {
+            // Must hold one of the listed items in main hand
+            boolean atLeastOne = false;
+            final ItemStack held = player.getMainHandItem();
+            for (final ItemStack is : itemsWhileHoldingMainHand) {
+                if (FabricItemUtil.matches(held, is)) {
+                    atLeastOne = true;
+                    break;
+                }
+            }
+            if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (!itemsWhileWearing.isEmpty()) {
+            // Must have ALL listed armor equipped
+            int matches = 0;
+            for (final ItemStack is : itemsWhileWearing) {
+                for (final EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
+                    final ItemStack armor = player.getItemBySlot(slot);
+                    if (!armor.isEmpty() && FabricItemUtil.matches(armor, is)) {
+                        matches++;
+                        break;
+                    }
+                }
+            }
+            if (matches != itemsWhileWearing.size()) {
+                failed = true;
+            }
+        } else if (!worldsWhileStayingWithin.isEmpty()) {
+            // Must be in one of the listed worlds
+            boolean atLeastOne = false;
             final String currentWorld = player.level().dimension().identifier().toString();
-            for (final String world : worldsWhileStayingWithin) {
-                if (currentWorld.equalsIgnoreCase(world) || player.level().dimension().identifier().getPath().equalsIgnoreCase(world)) {
-                    inWorld = true;
+            for (final String w : worldsWhileStayingWithin) {
+                if (currentWorld.equalsIgnoreCase(w) || player.level().dimension().identifier().getPath().equalsIgnoreCase(w)) {
+                    atLeastOne = true;
                     break;
                 }
             }
-            if (!inWorld) return false;
-        }
-
-        // Biomes while staying within
-        if (biomesWhileStayingWithin != null && !biomesWhileStayingWithin.isEmpty()) {
+            if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (tickStartWhileStayingWithin > -1 && tickEndWhileStayingWithin > -1) {
+            // Must be within the allowed time-of-day range (in ticks)
+            final long t = player.level().getDefaultClockTime();
+            if (t < tickStartWhileStayingWithin || t > tickEndWhileStayingWithin) {
+                failed = true;
+            }
+        } else if (!biomesWhileStayingWithin.isEmpty()) {
+            // Must be in one of the listed biomes
+            boolean atLeastOne = false;
             final String currentBiome = player.level().getBiome(player.blockPosition())
-                .unwrapKey().map(resourceKey -> resourceKey.identifier().toString()).orElse("unknown");
-            boolean inBiome = false;
-            for (final String biome : biomesWhileStayingWithin) {
-                if (currentBiome.toLowerCase().contains(biome.toLowerCase())) {
-                    inBiome = true;
+                    .unwrapKey().map(resourceKey -> resourceKey.identifier().toString()).orElse("unknown");
+            for (final String b : biomesWhileStayingWithin) {
+                if (currentBiome.toLowerCase().contains(b.toLowerCase())) {
+                    atLeastOne = true;
                     break;
                 }
             }
-            if (!inBiome) return false;
-        }
-
-        // Placeholders while staying within (TextPlaceholderAPI)
-        if (placeholdersCheckIdentifier != null && !placeholdersCheckIdentifier.isEmpty()) {
+            if (!atLeastOne) {
+                failed = true;
+            }
+        } else if (!regionsWhileStayingWithin.isEmpty()) {
+            // Must be within ALL listed regions
+            for (final String r : regionsWhileStayingWithin) {
+                if (!quester.isInRegion(r)) {
+                    failed = true;
+                    if (FabricQuestsPlugin.getInstance().getConfigSettings().getConsoleLogging() > 3) {
+                        FabricQuestsPlugin.LOGGER.info(
+                                "DEBUG: Condition region mismatch for {}: {}", player.getName().getString(), r);
+                    }
+                    break;
+                }
+            }
+        } else if (!placeholdersCheckIdentifier.isEmpty()) {
+            // Must have ALL listed placeholders equal the checked value
             if (!FabricLoader.getInstance().isModLoaded("placeholder-api")) {
                 FabricQuestsPlugin.LOGGER.warn(
                         "Placeholder API must be installed for placeholder checks: {}", placeholdersCheckIdentifier.get(0));
@@ -186,46 +231,17 @@ public class FabricCondition implements Condition {
                 final String value = Placeholders.SERVER_PLACEHOLDER_PARSER
                         .parseComponent(i, ServerPlaceholderContext.of(player).asParserContext()).getString();
                 if (!placeholdersCheckValue.get(index).equals(value)) {
+                    failed = true;
                     if (FabricQuestsPlugin.getInstance().getConfigSettings().getConsoleLogging() > 3) {
                         FabricQuestsPlugin.LOGGER.info(
                                 "DEBUG: Condition placeholder mismatch for {}: {}", player.getName().getString(), i);
                     }
-                    return false;
+                    break;
                 }
                 index++;
             }
         }
-
-        // Items while holding main hand (must match at least one)
-        if (itemsWhileHoldingMainHand != null && !itemsWhileHoldingMainHand.isEmpty()) {
-            final ItemStack held = player.getMainHandItem();
-            boolean atLeastOne = false;
-            for (final ItemStack is : itemsWhileHoldingMainHand) {
-                if (FabricItemUtil.matches(held, is)) {
-                    atLeastOne = true;
-                    break;
-                }
-            }
-            if (!atLeastOne) return false;
-        }
-
-        // Items while wearing (must have ALL listed equipped)
-        if (itemsWhileWearing != null && !itemsWhileWearing.isEmpty()) {
-            int matches = 0;
-            for (final ItemStack is : itemsWhileWearing) {
-                for (final EquipmentSlot slot : EquipmentSlot.values()) {
-                    if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
-                    final ItemStack armor = player.getItemBySlot(slot);
-                    if (!armor.isEmpty() && FabricItemUtil.matches(armor, is)) {
-                        matches++;
-                        break;
-                    }
-                }
-            }
-            if (matches != itemsWhileWearing.size()) return false;
-        }
-
-        return true;
+        return !failed;
     }
 
     private ServerPlayer getPlayer(Quester quester) {

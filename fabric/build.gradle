@@ -1,0 +1,97 @@
+plugins {
+    id("net.fabricmc.fabric-loom") version "1.16.3"
+    id("com.gradleup.shadow") version "9.6.1"
+}
+
+group = "me.pikamug.quests"
+version = "5.3.3"
+
+base {
+    archivesName = "Quests-Fabric"
+}
+
+// Minecraft 26.1+ is unobfuscated, so the non-remapping fabric-loom plugin is used:
+// no mappings are needed and the game classes compile against their official names.
+
+configurations {
+    shaded
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://libraries.minecraft.net/" }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://maven.nucleoid.xyz/" }
+    maven { url = "https://chocolateminecraft.com/maven/" }
+    maven { url = "https://api.modrinth.com/maven" }
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:26.1.2")
+    implementation("net.fabricmc:fabric-loader:0.19.2")
+    implementation("net.fabricmc.fabric-api:fabric-api:0.146.1+26.1.2")
+
+    // YAWP (Yet Another World Protector) via Modrinth's public Maven.
+    implementation("maven.modrinth:yawp:26.1.2-0.6.3-beta3")
+
+    // Hosted by their respective mods at runtime; compile-only here.
+    compileOnly("net.luckperms:api:5.5")
+    compileOnly("me.lucko:fabric-permissions-api:0.7.0")
+    compileOnly("eu.pb4:placeholder-api:3.0.0+26.1")
+    compileOnly("xaero.pac:open-parties-and-claims-fabric-26.1.2:0.30.3") {
+        transitive = false
+    }
+
+    // Bundled (and relocated) into the final jar.
+    shaded(project(":api"))
+    shaded("com.github.Browsit.ConversationAPI:conversation-api:3ad4823656")
+    shaded("com.github.Browsit.ConversationAPI:conversation-impl:3ad4823656")
+}
+
+// The shaded libraries are needed on the compile classpath but only bundled via shadowJar.
+sourceSets.main.compileClasspath += configurations.shaded
+
+processResources {
+    inputs.property("version", project.version)
+    filesMatching("fabric.mod.json") {
+        expand("version": project.version)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-proc:none")
+}
+
+// The distributable mod jar is the shadowed jar; the plain jar is kept as a slim variant.
+shadowJar {
+    archiveClassifier.set("")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    configurations = [project.configurations.shaded]
+    relocate("org.browsit.conversations", "me.pikamug.quests.libs.conversations")
+    relocate("com.zaxxer.hikari", "me.pikamug.quests.libs.hikari")
+    relocate("com.mysql", "me.pikamug.quests.libs.mysql")
+    exclude("META-INF/*.MF")
+    exclude("LICENSE")
+    exclude("module-info.class")
+    dependencies {
+        exclude(dependency("org.jetbrains:annotations"))
+    }
+    mergeServiceFiles()
+}
+
+tasks.jar {
+    archiveClassifier.set("slim")
+}
+
+tasks.build {
+    dependsOn(shadowJar)
+}

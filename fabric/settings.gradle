@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        maven { name = "Fabric"; url = "https://maven.fabricmc.net/" }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { name = "Fabric"; url = "https://maven.fabricmc.net/" }
+        maven { name = "Mojang"; url = "https://libraries.minecraft.net/" }
+        maven { name = "JitPack"; url = "https://jitpack.io" }
+        maven { name = "Nucleoid"; url = "https://maven.nucleoid.xyz/" }
+        maven { name = "ChocolateMinecraft"; url = "https://chocolateminecraft.com/maven/" }
+        maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
+    }
+}
+
+rootProject.name = "quests"
+
+// The fabric module's build (this project) compiles against the api sources as a sibling module.
+includeFlat("api")

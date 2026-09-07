@@ -14,6 +14,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.*;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -102,6 +103,16 @@ public class FabricQuest implements Quest {
         // Check quest points
         if (requirements.getQuestPoints() > 0 && quester.getQuestPoints() < requirements.getQuestPoints()) {
             return false;
+        }
+
+        // Check experience (online players only)
+        if (requirements.getExp() > 0) {
+            final var server = FabricQuestsPlugin.getInstance().getServer();
+            final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
+            if (player == null) return false;
+            if (player.totalExperience < requirements.getExp()) {
+                return false;
+            }
         }
 
         // Check needed quests
@@ -212,8 +223,18 @@ public class FabricQuest implements Quest {
 
     @Override
     public boolean isInRegionStart(Quester quester) {
-        // TODO: implement WorldGuard region check
-        return true;
+        if (quester == null || regionStart == null) {
+            return false;
+        }
+        final FabricQuestsPlugin plugin = (FabricQuestsPlugin) quester.getPlugin();
+        if (plugin.getServer() == null) {
+            return false;
+        }
+        final ServerPlayer player = plugin.getServer().getPlayerList().getPlayer(quester.getUUID());
+        if (player == null) {
+            return false;
+        }
+        return plugin.getDependencies().getRegionsAt(player).contains(regionStart);
     }
 
     @Override

@@ -16,10 +16,13 @@ import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.FabricObjective;
+import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.tasks.FabricActionTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricMiscUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.api.OpenPACServerAPI;
@@ -45,6 +48,7 @@ public class FabricQuester implements Quester {
     private final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Quest, QuestProgress> progressData = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<FabricActionTimer, Quest> actionTimers = new ConcurrentHashMap<>();
     private boolean hasData = false;
 
     public FabricQuester(FabricQuestsPlugin plugin, UUID uuid) {
@@ -72,6 +76,8 @@ public class FabricQuester implements Quester {
     @Override public void setCompletedTimes(ConcurrentHashMap<Quest, Long> v) { completedTimes.clear(); completedTimes.putAll(v); }
     @Override public ConcurrentHashMap<Quest, Integer> getAmountsCompleted() { return amountsCompleted; }
     @Override public void setAmountsCompleted(ConcurrentHashMap<Quest, Integer> v) { amountsCompleted.clear(); amountsCompleted.putAll(v); }
+
+    public ConcurrentHashMap<FabricActionTimer, Quest> getActionTimers() { return actionTimers; }
 
     @Override
     public void sendMessage(String message) {
@@ -176,23 +182,118 @@ public class FabricQuester implements Quester {
             if (giveReason) sendMessage(FabricLang.get("questAlreadyCompleted"));
             return false;
         }
+        if (getRemainingCooldown(quest) > 0 && completedQuests.contains(quest)
+                && !quest.getPlanner().getOverride()) {
+            if (giveReason) {
+                final String msg = FabricLang.get("questTooEarly").replace("<quest>",
+                        quest.getName()).replace("<time>", FabricMiscUtil
+                        .getTime(getRemainingCooldown(quest)));
+                sendMessage(msg);
+            }
+            return false;
+        }
+        if (quest.getRegionStart() != null && !quest.isInRegionStart(this)) {
+            if (giveReason) {
+                sendMessage(FabricLang.get("questInvalidLocation").replace("<quest>", quest.getName()));
+            }
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean isOnTime(Quest quest, boolean giveReason) {
         if (quest == null) return true;
-        final long now = System.currentTimeMillis();
-        if (quest.getPlanner().hasStart()) {
-            if (now < quest.getPlanner().getStartInMillis()) {
-                if (giveReason) sendMessage(FabricLang.get("notStarted"));
+        final Planner pln = quest.getPlanner();
+        final long currentTime = System.currentTimeMillis();
+        final long start = pln.getStartInMillis(); // Start time in milliseconds since UTC epoch
+        final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
+        final long duration = end - start; // How long the quest can be active for
+        final long repeat = pln.getRepeat(); // Length to wait in-between start times
+        if (pln.hasStart()) {
+            if (currentTime < start) {
+                if (giveReason) {
+                    String early = FabricLang.get("plnTooEarly");
+                    early = early.replace("<quest>", quest.getName());
+                    early = early.replace("<time>", FabricMiscUtil.getTime(start - currentTime));
+                    sendMessage(early);
+                }
                 return false;
             }
         }
-        if (quest.getPlanner().hasEnd()) {
-            if (now > quest.getPlanner().getEndInMillis()) {
-                if (giveReason) sendMessage(FabricLang.get("questExpired"));
+        if (pln.hasEnd() && !pln.hasRepeat()) {
+            if (currentTime > end) {
+                if (giveReason) {
+                    String late = FabricLang.get("plnTooLate");
+                    late = late.replace("<quest>", quest.getName());
+                    late = late.replace("<time>", FabricMiscUtil.getTime(currentTime - end));
+                    sendMessage(late);
+                }
                 return false;
+            }
+        }
+        if (pln.hasRepeat() && pln.hasStart() && pln.hasEnd()) {
+            // Repeatable quest
+            if (currentTime <= end) {
+                // Initial period where quest may be active
+                if (getCompletedTimes().containsKey(quest) && pln.hasCooldown()
+                        && getRemainingCooldown(quest) > 0) {
+                    if (giveReason) {
+                        final String early = FabricLang.get("plnTooEarly").replace("<quest>", quest.getName())
+                                .replace("<time>", FabricMiscUtil.getTime(end - currentTime));
+                        sendMessage(early);
+                        return false;
+                    }
+                }
+            } else {
+                // Subsequent period where quest may be active
+                final int maxSize = 2;
+                final LinkedHashMap<Long, Long> mostRecent = new LinkedHashMap<Long, Long>() {
+                    private static final long serialVersionUID = 3046838061019897713L;
+
+                    @Override
+                    protected boolean removeEldestEntry(final Map.Entry<Long, Long> eldest) {
+                        return size() > maxSize;
+                    }
+                };
+
+                // Get last completed time
+                long completedTime = 0L;
+                if (getCompletedTimes().containsKey(quest)) {
+                    completedTime = getCompletedTimes().get(quest);
+                }
+                long completedEnd = 0L;
+
+                // Store last completed, upcoming, and most recent periods of activity
+                long nextStart = start;
+                long nextEnd = end;
+                while (currentTime >= nextStart) {
+                    if (nextStart < completedTime && completedTime < nextEnd) {
+                        completedEnd = nextEnd;
+                    }
+                    nextStart += repeat;
+                    nextEnd = nextStart + duration;
+                    mostRecent.put(nextStart, nextEnd);
+                }
+
+                // Check whether the quest is currently active
+                boolean active = false;
+                for (final Map.Entry<Long, Long> startEnd : mostRecent.entrySet()) {
+                    if (startEnd.getKey() <= currentTime && currentTime < startEnd.getValue()) {
+                        active = true;
+                        break;
+                    }
+                }
+
+                // If quest is not active, or new period of activity should override player cooldown
+                if (!active || (pln.getOverride() && completedEnd > 0L && currentTime < completedEnd)) {
+                    if (giveReason) {
+                        final String early = FabricLang.get("plnTooEarly").replace("<quest>", quest.getName())
+                                .replace("<time>", FabricMiscUtil.getTime(completedEnd - currentTime));
+                        sendMessage(early);
+                    }
+                    return false;
+                }
             }
         }
         return true;
@@ -201,6 +302,11 @@ public class FabricQuester implements Quester {
     @Override
     public void takeQuest(Quest quest, boolean ignoreRequirements) {
         if (quest == null) return;
+        if (getServerPlayer() != null) {
+            if (!isOnTime(quest, true)) {
+                return;
+            }
+        }
         if (!ignoreRequirements && !quest.testRequirements(this)) {
             sendMessage(FabricLang.get("doesNotMeetReqs"));
             return;
@@ -546,6 +652,38 @@ public class FabricQuester implements Quester {
             if (progress.getCustomObjectiveCounts().get(i) < goal) return false;
         }
 
+        // Mobs tamed
+        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
+            if (progress.getMobsTamed().size() <= i) return false;
+            final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
+                    ? stage.getMobNumToTame().get(i) : 1;
+            if (progress.getMobsTamed().get(i) < goal) return false;
+        }
+
+        // Sheep sheared
+        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
+            if (progress.getSheepSheared().size() <= i) return false;
+            final int goal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
+                    ? stage.getSheepNumToShear().get(i) : 1;
+            if (progress.getSheepSheared().get(i) < goal) return false;
+        }
+
+        // Cows milked
+        if (stage.getCowsToMilk() != null && stage.getCowsToMilk() > 0) {
+            if (progress.getCowsMilked() < stage.getCowsToMilk()) return false;
+        }
+
+        // Fish caught
+        if (stage.getFishToCatch() != null && stage.getFishToCatch() > 0) {
+            if (progress.getFishCaught() < stage.getFishToCatch()) return false;
+        }
+
+        // Passwords said
+        for (int i = 0; i < stage.getPasswordPhrases().size(); i++) {
+            if (progress.getPasswordsSaid().size() <= i) return false;
+            if (!progress.getPasswordsSaid().get(i)) return false;
+        }
+
         return true;
     }
 
@@ -585,6 +723,15 @@ public class FabricQuester implements Quester {
         }
         while (progress.getNpcsNumKilled().size() < s.getNpcsToKill().size()) {
             progress.getNpcsNumKilled().add(0);
+        }
+        while (progress.getMobsTamed().size() < s.getMobsToTame().size()) {
+            progress.getMobsTamed().add(0);
+        }
+        while (progress.getSheepSheared().size() < s.getSheepToShear().size()) {
+            progress.getSheepSheared().add(0);
+        }
+        while (progress.getPasswordsSaid().size() < s.getPasswordPhrases().size()) {
+            progress.getPasswordsSaid().add(false);
         }
         while (progress.getCustomObjectiveCounts().size() < s.getCustomObjectives().size()) {
             progress.getCustomObjectiveCounts().add(0);
@@ -935,8 +1082,9 @@ public class FabricQuester implements Quester {
 
     @Override
     public boolean isInRegion(String regionID) {
-        // No WorldGuard equivalent on Fabric; always pass
-        return true;
+        final ServerPlayer player = getServerPlayer();
+        if (player == null) return false;
+        return plugin.getDependencies().getRegionsAt(player).contains(regionID);
     }
 
     @Override

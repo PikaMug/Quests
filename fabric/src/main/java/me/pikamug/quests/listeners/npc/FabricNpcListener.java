@@ -47,11 +47,14 @@ public abstract class FabricNpcListener {
 
             // TALK_TO_NPC
             if (!stage.getNpcsToInteract().isEmpty()) {
+                boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     if (npcUuid.equals(stage.getNpcsToInteract().get(i))) {
                         quester.getQuestProgressOrDefault(quest).getNpcsInteracted().set(i, true);
+                        matched = true;
                     }
                 }
+                if (matched) quester.checkQuest(quest);
             }
         }
 
@@ -71,12 +74,15 @@ public abstract class FabricNpcListener {
             if (stage == null) continue;
 
             if (!stage.getNpcsToKill().isEmpty()) {
+                boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToKill().size(); i++) {
                     if (npcUuid.equals(stage.getNpcsToKill().get(i))) {
                         quester.getQuestProgressOrDefault(quest).getNpcsNumKilled().set(i,
                                 quester.getQuestProgressOrDefault(quest).getNpcsNumKilled().get(i) + 1);
+                        matched = true;
                     }
                 }
+                if (matched) quester.checkQuest(quest);
             }
         }
     }

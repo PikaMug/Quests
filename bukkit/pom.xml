@@ -267,6 +267,7 @@
                         <configuration>
                             <minimizeJar>false</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <finalName>Quests-Bukkit-${project.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>

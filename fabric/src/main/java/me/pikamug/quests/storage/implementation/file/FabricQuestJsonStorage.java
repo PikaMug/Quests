@@ -3,8 +3,11 @@ package me.pikamug.quests.storage.implementation.file;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.quests.FabricQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.exceptions.QuestFormatException;
@@ -17,8 +20,10 @@ import net.minecraft.world.item.ItemStack;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -139,6 +144,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         }
         // Block objectives
         parseBlockList(json, "break-block-names", "break-block-amounts", stage, "break");
+        parseBlockList(json, "damage-block-names", "damage-block-amounts", stage, "damage");
         parseBlockList(json, "place-block-names", "place-block-amounts", stage, "place");
         parseBlockList(json, "use-block-names", "use-block-amounts", stage, "use");
         parseBlockList(json, "cut-block-names", "cut-block-amounts", stage, "cut");
@@ -149,6 +155,20 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         parseItemList(json, "items-to-brew", stage, "brew");
         parseItemList(json, "items-to-consume", stage, "consume");
         parseItemList(json, "items-to-deliver", stage, "deliver");
+        if (json.has("npc-delivery-uuids")) {
+            final JsonArray arr = json.getAsJsonArray("npc-delivery-uuids");
+            final LinkedList<UUID> targets = new LinkedList<>();
+            arr.forEach(e -> {
+                try { targets.add(UUID.fromString(e.getAsString())); } catch (final Exception ignored) {}
+            });
+            stage.setItemDeliveryTargets(targets);
+        }
+        if (json.has("delivery-messages")) {
+            final JsonArray arr = json.getAsJsonArray("delivery-messages");
+            final LinkedList<String> msgs = new LinkedList<>();
+            arr.forEach(e -> msgs.add(e.getAsString()));
+            stage.setDeliverMessages(msgs);
+        }
         // Mob objectives
         if (json.has("mobs-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("mobs-to-kill");
@@ -188,6 +208,25 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         // Player objectives
         if (json.has("players-to-kill")) {
             stage.setPlayersToKill(json.get("players-to-kill").getAsInt());
+        }
+        // Kill location restrictions
+        if (json.has("locations-to-kill")) {
+            final JsonArray arr = json.getAsJsonArray("locations-to-kill");
+            final LinkedList<Object> locs = new LinkedList<>();
+            arr.forEach(e -> locs.add(e.getAsString()));
+            stage.setLocationsToKillWithin(locs);
+        }
+        if (json.has("kill-location-radii")) {
+            final JsonArray arr = json.getAsJsonArray("kill-location-radii");
+            final LinkedList<Integer> radii = new LinkedList<>();
+            arr.forEach(e -> radii.add(e.getAsInt()));
+            stage.setRadiiToKillWithin(radii);
+        }
+        if (json.has("kill-location-names")) {
+            final JsonArray arr = json.getAsJsonArray("kill-location-names");
+            final LinkedList<String> names = new LinkedList<>();
+            arr.forEach(e -> names.add(e.getAsString()));
+            stage.setKillNames(names);
         }
         // Location objectives
         if (json.has("locations-to-reach")) {
@@ -238,12 +277,95 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("cows-to-milk")) stage.setCowsToMilk(json.get("cows-to-milk").getAsInt());
         // Objective overrides
         if (json.has("objective-override")) {
-            final JsonArray arr = json.getAsJsonArray("objective-override");
+            final JsonElement element = json.get("objective-override");
             final LinkedList<String> overrides = new LinkedList<>();
-            arr.forEach(e -> overrides.add(e.getAsString()));
+            if (element.isJsonArray()) {
+                element.getAsJsonArray().forEach(e -> overrides.add(e.getAsString()));
+            } else {
+                // Legacy
+                overrides.add(element.getAsString());
+            }
             stage.setObjectiveOverrides(overrides);
         }
+        // Stage actions
+        parseStageAction(json, "start-event", stage, "start");
+        parseStageAction(json, "finish-event", stage, "finish");
+        parseStageAction(json, "fail-event", stage, "fail");
+        parseStageAction(json, "death-event", stage, "death");
+        parseStageAction(json, "disconnect-event", stage, "disconnect");
+        // Chat and command event actions
+        parseTriggeredActions(json, "chat-events", "chat-event-triggers", stage, true);
+        parseTriggeredActions(json, "command-events", "command-event-triggers", stage, false);
+        // Stage condition
+        if (json.has("condition")) {
+            final Condition condition = resolveCondition(json.get("condition").getAsString());
+            if (condition != null) {
+                stage.setCondition(condition);
+            } else {
+                plugin.getPluginLogger().error("Failed to load condition '{}' for stage",
+                        json.get("condition").getAsString());
+            }
+        }
         return stage;
+    }
+
+    private void parseStageAction(JsonObject json, String key, FabricStage stage, String type) {
+        if (!json.has(key)) return;
+        final Action action = resolveAction(json.get(key).getAsString());
+        if (action == null) {
+            plugin.getPluginLogger().error("Failed to load action '{}' for stage '{}'",
+                    json.get(key).getAsString(), type);
+            return;
+        }
+        switch (type) {
+            case "start" -> stage.setStartAction(action);
+            case "finish" -> stage.setFinishAction(action);
+            case "fail" -> stage.setFailAction(action);
+            case "death" -> stage.setDeathAction(action);
+            case "disconnect" -> stage.setDisconnectAction(action);
+        }
+    }
+
+    private void parseTriggeredActions(JsonObject json, String eventsKey, String triggersKey,
+                                       FabricStage stage, boolean chat) {
+        if (!json.has(eventsKey) || !json.get(eventsKey).isJsonArray()) return;
+        final JsonArray events = json.getAsJsonArray(eventsKey);
+        final JsonArray triggers = json.has(triggersKey) ? json.getAsJsonArray(triggersKey) : null;
+        final Map<String, Action> actions = new LinkedHashMap<>();
+        for (int i = 0; i < events.size(); i++) {
+            if (triggers == null || triggers.size() <= i) {
+                return;
+            }
+            final Action action = resolveAction(events.get(i).getAsString());
+            if (action != null) {
+                actions.put(triggers.get(i).getAsString(), action);
+            } else {
+                plugin.getPluginLogger().error("Failed to load action '{}' for stage", events.get(i).getAsString());
+            }
+        }
+        if (chat) {
+            stage.setChatActions(actions);
+        } else {
+            stage.setCommandActions(actions);
+        }
+    }
+
+    private Action resolveAction(String name) {
+        for (final Action action : plugin.getLoadedActions()) {
+            if (action.getName().equals(name)) {
+                return action;
+            }
+        }
+        return null;
+    }
+
+    private Condition resolveCondition(String name) {
+        for (final Condition condition : plugin.getLoadedConditions()) {
+            if (condition.getName().equals(name)) {
+                return condition;
+            }
+        }
+        return null;
     }
 
     private void parseBlockList(JsonObject json, String key, String amountKey, FabricStage stage, String type) {
@@ -269,6 +391,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                     stage.setBlocksToBreak(list);
                     stage.setBlocksToBreakAmounts(amounts);
                 }
+                case "damage" -> stage.setBlocksToDamage(list);
                 case "place" -> {
                     stage.setBlocksToPlace(list);
                     stage.setBlocksToPlaceAmounts(amounts);
@@ -330,6 +453,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     private void parseRequirements(FabricQuest quest, JsonObject json) {
         final var req = quest.getRequirements();
         if (json.has("quest-points")) req.setQuestPoints(json.get("quest-points").getAsInt());
+        if (json.has("exp")) req.setExp(json.get("exp").getAsInt());
         if (json.has("quests")) {
             final JsonArray arr = json.getAsJsonArray("quests");
             final LinkedList<String> ids = new LinkedList<>();
@@ -357,6 +481,22 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             final LinkedList<Boolean> remove = new LinkedList<>();
             arr.forEach(e -> remove.add(e.getAsBoolean()));
             req.setRemoveItems(remove);
+        }
+        if (json.has("fail-requirement-message")) {
+            final JsonElement element = json.get("fail-requirement-message");
+            final LinkedList<String> override = new LinkedList<>();
+            if (element.isJsonArray()) {
+                element.getAsJsonArray().forEach(e -> override.add(e.getAsString()));
+            } else {
+                // Legacy
+                override.add(element.getAsString());
+            }
+            req.setDetailsOverride(override);
+        } else if (json.has("details-override")) {
+            final JsonArray arr = json.getAsJsonArray("details-override");
+            final LinkedList<String> override = new LinkedList<>();
+            arr.forEach(e -> override.add(e.getAsString()));
+            req.setDetailsOverride(override);
         }
     }
 
@@ -388,11 +528,30 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     private void parseRewards(FabricQuest quest, JsonObject json) {
         final var rew = quest.getRewards();
         if (json.has("quest-points")) rew.setQuestPoints(json.get("quest-points").getAsInt());
+        if (json.has("exp")) rew.setExp(json.get("exp").getAsInt());
         if (json.has("commands")) {
             final JsonArray arr = json.getAsJsonArray("commands");
             final LinkedList<String> cmds = new LinkedList<>();
             arr.forEach(e -> cmds.add(e.getAsString()));
             rew.setCommands(cmds);
+        }
+        if (json.has("commands-override-display")) {
+            final JsonArray arr = json.getAsJsonArray("commands-override-display");
+            final LinkedList<String> overrides = new LinkedList<>();
+            arr.forEach(e -> overrides.add(e.getAsString()));
+            rew.setCommandsOverrideDisplay(overrides);
+        }
+        if (json.has("permissions")) {
+            final JsonArray arr = json.getAsJsonArray("permissions");
+            final LinkedList<String> perms = new LinkedList<>();
+            arr.forEach(e -> perms.add(e.getAsString()));
+            rew.setPermissions(perms);
+        }
+        if (json.has("permission-worlds")) {
+            final JsonArray arr = json.getAsJsonArray("permission-worlds");
+            final LinkedList<String> worlds = new LinkedList<>();
+            arr.forEach(e -> worlds.add(e.getAsString()));
+            rew.setPermissionWorlds(worlds);
         }
         if (json.has("details-override")) {
             final JsonArray arr = json.getAsJsonArray("details-override");
@@ -425,12 +584,15 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("allow-commands")) opt.setAllowCommands(json.get("allow-commands").getAsBoolean());
         if (json.has("allow-quitting")) opt.setAllowQuitting(json.get("allow-quitting").getAsBoolean());
         if (json.has("ignore-silk-touch")) opt.setIgnoreSilkTouch(json.get("ignore-silk-touch").getAsBoolean());
+        if (json.has("external-party-plugin")) opt.setExternalPartyPlugin(json.get("external-party-plugin").getAsString());
         if (json.has("use-parties-plugin")) opt.setUsePartiesPlugin(json.get("use-parties-plugin").getAsBoolean());
         if (json.has("share-progress-level")) opt.setShareProgressLevel(json.get("share-progress-level").getAsInt());
         if (json.has("same-quest-only")) opt.setShareSameQuestOnly(json.get("same-quest-only").getAsBoolean());
         if (json.has("share-distance")) opt.setShareDistance(json.get("share-distance").getAsDouble());
         if (json.has("handle-offline-players")) opt.setHandleOfflinePlayers(json.get("handle-offline-players").getAsBoolean());
+        if (json.has("ignore-block-replace")) opt.setIgnoreBlockReplace(json.get("ignore-block-replace").getAsBoolean());
         if (json.has("give-at-login")) opt.setGiveGloballyAtLogin(json.get("give-at-login").getAsBoolean());
+        if (json.has("allow-stacking-global")) opt.setAllowStackingGlobal(json.get("allow-stacking-global").getAsBoolean());
         if (json.has("inform-on-start")) opt.setInformOnStart(json.get("inform-on-start").getAsBoolean());
         if (json.has("override-max-quests")) opt.setOverrideMaxQuests(json.get("override-max-quests").getAsBoolean());
     }

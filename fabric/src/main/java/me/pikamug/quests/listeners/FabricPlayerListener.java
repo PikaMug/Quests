@@ -4,14 +4,12 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.UUID;
 
@@ -31,11 +29,6 @@ public class FabricPlayerListener {
                 onEntityInteract(serverPlayer, entity);
             }
             return InteractionResult.PASS;
-        });
-
-        // Entity death (for KILL_MOB and KILL_PLAYER objectives)
-        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            // We listen for entity death via tracking living entities
         });
 
         // Player join - load quester data
@@ -76,43 +69,16 @@ public class FabricPlayerListener {
 
             // TALK_TO_NPC
             if (!stage.getNpcsToInteract().isEmpty()) {
+                boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     final UUID npcUuid = stage.getNpcsToInteract().get(i);
                     if (entity.getUUID().equals(npcUuid)) {
                         quester.getQuestProgressOrDefault(quest).getNpcsInteracted().set(i, true);
+                        matched = true;
                     }
                 }
+                if (matched) quester.checkQuest(quest);
             }
-        }
-    }
-
-    public void onMobKill(ServerPlayer killer, LivingEntity victim) {
-        if (plugin.isLoading() || killer == null) return;
-        final FabricQuester quester = plugin.getQuester(killer.getUUID());
-
-        for (final Quest quest : plugin.getLoadedQuests()) {
-            if (!quester.getCurrentQuests().containsKey(quest)) continue;
-            final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null) continue;
-
-            // KILL_MOB
-            if (!stage.getMobsToKill().isEmpty()) {
-                for (int i = 0; i < stage.getMobsToKill().size(); i++) {
-                    final Object goal = stage.getMobsToKill().get(i);
-                    if (goal != null && victim.getType().toString().equalsIgnoreCase(goal.toString())) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
-                        progress.getMobNumKilled().set(i, progress.getMobNumKilled().get(i) + 1);
-                    }
-                }
-            }
-
-            // KILL_PLAYER
-            if (victim instanceof ServerPlayer && stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
-                quester.getQuestProgressOrDefault(quest).setPlayersKilled(
-                        quester.getQuestProgressOrDefault(quest).getPlayersKilled() + 1);
-            }
-
-            // TAME_MOB and SHEAR_SHEEP require mixins for proper detection on Fabric
         }
     }
 }

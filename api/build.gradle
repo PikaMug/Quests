@@ -1,0 +1,32 @@
+plugins {
+    id("java-library")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+}
+
+group = "me.pikamug.quests"
+version = "5.3.3"
+
+dependencies {
+    api("org.jetbrains:annotations:24.0.1")
+    api("com.mysql:mysql-connector-j:8.3.0") {
+        exclude group: "com.google.protobuf", module: "protobuf-java"
+    }
+    api("com.zaxxer:HikariCP:4.0.3") {
+        exclude group: "org.slf4j", module: "slf4j-api"
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.jar {
+    manifest {
+        attributes("Implementation-Version": project.version)
+    }
+}

@@ -36,7 +36,9 @@ import me.pikamug.quests.tasks.FabricPlayerMoveThread;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.commands.FabricCommandManager;
 import me.pikamug.quests.listeners.FabricBlockListener;
+import me.pikamug.quests.listeners.FabricChatListener;
 import me.pikamug.quests.listeners.FabricCraftingListener;
+import me.pikamug.quests.listeners.FabricEntityListener;
 import me.pikamug.quests.listeners.FabricItemListener;
 import me.pikamug.quests.listeners.FabricPlayerListener;
 import me.pikamug.quests.util.FabricLang;
@@ -147,6 +149,8 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         new FabricItemListener(this);
         new FabricCraftingListener(this);
         new FabricPlayerListener(this);
+        new FabricEntityListener(this);
+        new FabricChatListener(this);
         if (depends.hasEasyNpc()) {
             new me.pikamug.quests.listeners.npc.FabricEasyNpcListener(this);
         }
@@ -330,7 +334,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
             return online;
         }
         for (final Quester q : getOfflineQuesters()) {
-            if (server.getPlayerList().getPlayer(((FabricQuester) q).getUUID()) != null) {
+            if (server.getPlayerList().getPlayer(q.getUUID()) != null) {
                 online.add(q);
             }
         }

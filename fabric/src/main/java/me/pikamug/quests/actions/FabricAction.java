@@ -17,6 +17,13 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.FabricActionTimer;
+import me.pikamug.quests.tasks.FabricScheduler;
+import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricMiscUtil;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,11 +31,18 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.WeatherData;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class FabricAction implements Action {
 
@@ -49,6 +63,10 @@ public class FabricAction implements Action {
     private float health = 0;
     private String book;
     private String denizenScript;
+    private LinkedList<String> explosions = new LinkedList<>();
+    private Map<String, String> effects = new LinkedHashMap<>();
+    private LinkedList<String> lightningStrikes = new LinkedList<>();
+    private String teleport;
 
     @Override public String getName() { return name; }
     @Override public void setName(String v) { this.name = v; }
@@ -88,6 +106,18 @@ public class FabricAction implements Action {
     @Override public String getDenizenScript() { return denizenScript; }
     @Override public void setDenizenScript(String v) { this.denizenScript = v; }
 
+    public LinkedList<String> getExplosions() { return explosions; }
+    public void setExplosions(LinkedList<String> v) { this.explosions = v; }
+
+    public Map<String, String> getEffects() { return effects; }
+    public void setEffects(Map<String, String> v) { this.effects = v; }
+
+    public LinkedList<String> getLightningStrikes() { return lightningStrikes; }
+    public void setLightningStrikes(LinkedList<String> v) { this.lightningStrikes = v; }
+
+    public String getTeleport() { return teleport; }
+    public void setTeleport(String v) { this.teleport = v; }
+
     @Override
     public void fire(Quester quester, Quest quest) {
         if (quester == null) return;
@@ -106,6 +136,29 @@ public class FabricAction implements Action {
         // Clear inventory
         if (clearInv) {
             player.getInventory().clearContent();
+        }
+
+        // Explosions
+        if (explosions != null && !explosions.isEmpty()) {
+            for (final String locStr : explosions) {
+                final LocPos loc = parseLocation(server, locStr);
+                if (loc != null) {
+                    loc.level().explode(null, loc.x(), loc.y(), loc.z(), 4.0F, Level.ExplosionInteraction.BLOCK);
+                }
+            }
+        }
+
+        // Effects (particles)
+        if (effects != null && !effects.isEmpty()) {
+            for (final Map.Entry<String, String> entry : effects.entrySet()) {
+                final LocPos loc = parseLocation(server, entry.getKey());
+                if (loc == null) continue;
+                final ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE
+                        .getValue(Identifier.tryBuild("minecraft", entry.getValue().toLowerCase()));
+                if (particle instanceof ParticleOptions particles) {
+                    loc.level().sendParticles(particles, loc.x(), loc.y(), loc.z(), 1, 0, 0, 0, 0);
+                }
+            }
         }
 
         // Fail quest
@@ -141,6 +194,15 @@ public class FabricAction implements Action {
         // Health
         if (health > 0) {
             player.setHealth(Math.max(1.0f, Math.min(player.getMaxHealth(), player.getHealth() + health)));
+        }
+
+        // Teleport
+        if (teleport != null && !teleport.isEmpty()) {
+            final LocPos loc = parseLocation(server, teleport);
+            if (loc != null && player.isAlive()) {
+                player.teleportTo(loc.level(), loc.x(), loc.y(), loc.z(),
+                        java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+            }
         }
 
         // Potion effects
@@ -182,9 +244,47 @@ public class FabricAction implements Action {
             }
         }
 
+        // Lightning strikes
+        if (lightningStrikes != null && !lightningStrikes.isEmpty()) {
+            for (final String locStr : lightningStrikes) {
+                final LocPos loc = parseLocation(server, locStr);
+                if (loc == null) continue;
+                final LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(loc.level(), EntitySpawnReason.TRIGGERED);
+                if (bolt != null) {
+                    bolt.setPos(loc.x(), loc.y(), loc.z());
+                    loc.level().addFreshEntity(bolt);
+                }
+            }
+        }
+
         // Timer
         if (timer > 0) {
-            new FabricActionTimer(FabricQuestsPlugin.getInstance(), (FabricQuester) quester, quest, timer);
+            final FabricQuester fq = (FabricQuester) quester;
+            quester.sendMessage(FabricLang.get(player, "timerStart")
+                    .replace("<time>", FabricMiscUtil.formatTime(timer * 1000L))
+                    .replace("<quest>", quest != null ? quest.getName() : ""));
+            final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
+            for (final int seconds : toNotify) {
+                if (timer > seconds) {
+                    final FabricActionTimer notifyTimer = new FabricActionTimer(fq, quest, seconds);
+                    FabricScheduler.runLater(notifyTimer, (timer - seconds) * 20L);
+                    fq.getActionTimers().put(notifyTimer, quest);
+                }
+            }
+            final FabricActionTimer failTimer = new FabricActionTimer(fq, quest, 0);
+            FabricScheduler.runLater(failTimer, timer * 20L);
+            fq.getActionTimers().put(failTimer, quest);
+        }
+        if (cancelTimer) {
+            final Iterator<Map.Entry<FabricActionTimer, Quest>> it =
+                    ((FabricQuester) quester).getActionTimers().entrySet().iterator();
+            while (it.hasNext()) {
+                final Map.Entry<FabricActionTimer, Quest> entry = it.next();
+                if (quest != null && entry.getValue().getId().equals(quest.getId())) {
+                    entry.getKey().cancel();
+                    it.remove();
+                }
+            }
         }
     }
 
@@ -214,6 +314,35 @@ public class FabricAction implements Action {
         if (server == null) return null;
         return server.getPlayerList().getPlayer(quester.getUUID());
     }
+
+    private LocPos parseLocation(MinecraftServer server, String locStr) {
+        if (server == null || locStr == null || locStr.isEmpty()) return null;
+        final String[] parts = locStr.split(":");
+        if (parts.length < 2) return null;
+        final String worldName = parts[0];
+        final String[] coords = parts[1].split(",");
+        if (coords.length < 3) return null;
+        ServerLevel level = null;
+        for (final ServerLevel sl : server.getAllLevels()) {
+            final String path = sl.dimension().identifier().getPath();
+            final String full = sl.dimension().identifier().toString();
+            if (path.equalsIgnoreCase(worldName) || full.equalsIgnoreCase(worldName)) {
+                level = sl;
+                break;
+            }
+        }
+        if (level == null) return null;
+        try {
+            final double x = Double.parseDouble(coords[0]);
+            final double y = Double.parseDouble(coords[1]);
+            final double z = Double.parseDouble(coords[2]);
+            return new LocPos(level, x, y, z);
+        } catch (final NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private record LocPos(ServerLevel level, double x, double y, double z) {}
 
     @Override
     public int compareTo(Action other) {

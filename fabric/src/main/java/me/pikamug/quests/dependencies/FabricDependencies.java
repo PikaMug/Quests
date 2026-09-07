@@ -10,10 +10,17 @@
 
 package me.pikamug.quests.dependencies;
 
+import de.z0rdak.yawp.api.core.ILevelRegionApi;
+import de.z0rdak.yawp.api.core.RegionManager;
+import de.z0rdak.yawp.core.region.IMarkableRegion;
 import me.pikamug.quests.FabricQuestsPlugin;
 import net.fabricmc.loader.api.FabricLoader;
 import net.luckperms.api.LuckPermsProvider;
+import net.minecraft.server.level.ServerPlayer;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class FabricDependencies implements Dependencies {
@@ -23,6 +30,7 @@ public class FabricDependencies implements Dependencies {
     private boolean hasTaterzens = false;
     private boolean hasOpenParties = false;
     private boolean hasLuckPerms = false;
+    private boolean hasYawp = false;
 
     public FabricDependencies(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -34,6 +42,7 @@ public class FabricDependencies implements Dependencies {
         hasTaterzens = FabricLoader.getInstance().isModLoaded("taterzens");
         hasOpenParties = FabricLoader.getInstance().isModLoaded("openpartiesandclaims");
         hasLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
+        hasYawp = FabricLoader.getInstance().isModLoaded("yawp");
 
         if (hasEasyNpc) {
             FabricQuestsPlugin.LOGGER.info("Detected {} support", "BOs-Easy-NPC");
@@ -46,6 +55,9 @@ public class FabricDependencies implements Dependencies {
         }
         if (hasLuckPerms) {
             FabricQuestsPlugin.LOGGER.info("Detected {} support", "LuckPerms");
+        }
+        if (hasYawp) {
+            FabricQuestsPlugin.LOGGER.info("Detected {} support", "Yet Another World Protector");
         }
     }
 
@@ -83,6 +95,43 @@ public class FabricDependencies implements Dependencies {
      */
     public boolean hasLuckPerms() {
         return hasLuckPerms;
+    }
+
+    /**
+     * Returns whether the Yet Another World Protector (YAWP) mod is installed,
+     * which backs the WorldGuard-style region checks on Fabric.
+     */
+    public boolean hasYawp() {
+        return hasYawp;
+    }
+
+    /**
+     * Returns the names of the YAWP regions the given player is currently
+     * standing in. Returns an empty list when YAWP is not installed, the
+     * player is offline, or the region data cannot be resolved.
+     *
+     * @param player the player to check
+     * @return the names of the regions the player is inside
+     */
+    public List<String> getRegionsAt(ServerPlayer player) {
+        final List<String> regions = new LinkedList<>();
+        if (!hasYawp || player == null) {
+            return regions;
+        }
+        try {
+            final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(player.level().dimension());
+            if (api.isPresent()) {
+                for (final IMarkableRegion region : api.get().getRegionsAt(player.blockPosition())) {
+                    final String name = region.getName();
+                    if (name != null) {
+                        regions.add(name);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.warn("Failed to resolve YAWP regions at player position", e);
+        }
+        return regions;
     }
 
     /**

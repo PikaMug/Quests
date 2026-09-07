@@ -11,6 +11,10 @@
             <unpack>true</unpack>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <useProjectArtifact>false</useProjectArtifact>
+            <excludes>
+                <!-- quests-fabric is a separate platform mod, bundled by Fabric from the Modrinth jar. -->
+                <exclude>me.pikamug.quests:quests-fabric</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
 </assembly>

@@ -18,7 +18,7 @@
         <module>v1_8_R3</module>
         <module>bukkit</module>
         <module>dist</module>
-        <module>fabric</module>
+        <module>fabric-proxy</module>
     </modules>
 
     <properties>

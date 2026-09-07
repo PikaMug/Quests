@@ -19,6 +19,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 public class FabricActionJsonStorage implements ActionStorageImpl {
@@ -73,6 +74,33 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
             }
             if (json.has("book")) action.setBook(json.get("book").getAsString());
             if (json.has("denizen-script")) action.setDenizenScript(json.get("denizen-script").getAsString());
+            if (json.has("explosions")) {
+                final JsonArray arr = json.getAsJsonArray("explosions");
+                final LinkedList<String> explosions = new LinkedList<>();
+                arr.forEach(e -> explosions.add(e.getAsString()));
+                action.setExplosions(explosions);
+            }
+            if (json.has("effects") && json.has("effect-locations")) {
+                final JsonArray effectsArr = json.getAsJsonArray("effects");
+                final JsonArray locationsArr = json.getAsJsonArray("effect-locations");
+                if (effectsArr.size() != locationsArr.size()) {
+                    throw new ActionFormatException("'effects' and 'effect-locations' must be lists of the same size", name);
+                }
+                final LinkedHashMap<String, String> effects = new LinkedHashMap<>();
+                for (int i = 0; i < effectsArr.size(); i++) {
+                    effects.put(locationsArr.get(i).getAsString(), effectsArr.get(i).getAsString());
+                }
+                action.setEffects(effects);
+            }
+            if (json.has("lightning-strikes")) {
+                final JsonArray arr = json.getAsJsonArray("lightning-strikes");
+                final LinkedList<String> strikes = new LinkedList<>();
+                arr.forEach(e -> strikes.add(e.getAsString()));
+                action.setLightningStrikes(strikes);
+            }
+            if (json.has("teleport-location")) {
+                action.setTeleport(json.get("teleport-location").getAsString());
+            }
             if (json.has("potion-effect-types") && json.has("potion-effect-durations")
                     && json.has("potion-effect-amplifiers")) {
                 final JsonArray typesArr = json.getAsJsonArray("potion-effect-types");

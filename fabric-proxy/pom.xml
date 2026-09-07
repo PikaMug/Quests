@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Proxy module for the fabric module. The fabric module itself is built by Gradle (Loom),
+        see fabric/build.gradle and fabric/settings.gradle (the fabric directory is the Gradle root);
+        this POM shells out to Gradle and publishes the resulting jar under the quests-fabric
+        coordinates so that the rest of the Maven reactor (e.g. quests-dist) can consume it as usual.
+    -->
+
+    <parent>
+        <groupId>me.pikamug.quests</groupId>
+        <artifactId>quests-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>quests-fabric</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- The Gradle wrapper script (the root project lives in fabric/); override (e.g. `../fabric/gradlew`) on POSIX CI. -->
+        <gradle.executable>${project.basedir}/../fabric/gradlew.bat</gradle.executable>
+        <!-- Gradle must run on a JDK supporting Java level 25 (see fabric/build.gradle). -->
+        <gradle.java.home>C:\Program Files\Zulu\zulu-25</gradle.java.home>
+        <!-- Output of the Gradle shadowJar task for the fabric module (see fabric/build.gradle). -->
+        <gradle.jar.path>${project.basedir}/../fabric/build/libs/Quests-Fabric-${project.version}.jar</gradle.jar.path>
+    </properties>
+
+    <build>
+        <defaultGoal>clean package</defaultGoal>
+
+        <plugins>
+            <!-- Shell out to the Gradle build for the fabric module. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>build-fabric-with-gradle</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${gradle.executable}</executable>
+                            <workingDirectory>${project.basedir}/../fabric</workingDirectory>
+                            <arguments>
+                                <argument>shadowJar</argument>
+                                <argument>--no-daemon</argument>
+                            </arguments>
+                            <environmentVariables>
+                                <JAVA_HOME>${gradle.java.home}</JAVA_HOME>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Attach the jar produced by Gradle as this module's artifact. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-gradle-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${gradle.jar.path}</file>
+                                    <type>jar</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -70,5 +70,10 @@
             <artifactId>quests-bukkit</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>me.pikamug.quests</groupId>
+            <artifactId>quests-fabric</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>

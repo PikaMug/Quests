@@ -10,37 +10,35 @@
 
 package me.pikamug.quests.tasks;
 
-import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricMiscUtil;
 
 public class FabricActionTimer implements Runnable {
 
-    private final FabricQuestsPlugin plugin;
     private final FabricQuester quester;
     private final Quest quest;
-    private int timeLeft;
+    private final int time;
     private boolean cancelled = false;
 
-    public FabricActionTimer(FabricQuestsPlugin plugin, FabricQuester quester, Quest quest, int seconds) {
-        this.plugin = plugin;
+    public FabricActionTimer(FabricQuester quester, Quest quest, int seconds) {
         this.quester = quester;
         this.quest = quest;
-        this.timeLeft = seconds;
+        this.time = seconds;
     }
 
     @Override
     public void run() {
         if (cancelled) return;
-        if (!quester.getCurrentQuests().containsKey(quest)) {
-            cancelled = true;
-            return;
-        }
-        timeLeft--;
-        if (timeLeft <= 0) {
-            // Timer expired - fail quest
+        quester.getActionTimers().remove(this);
+        if (time < 1) {
             quest.failQuest(quester);
-            cancelled = true;
+            quester.updateJournal();
+        } else {
+            quester.sendMessage(FabricLang.get("timerMessage")
+                    .replace("<time>", FabricMiscUtil.formatTime(time * 1000L))
+                    .replace("<quest>", quest.getName()));
         }
     }
 
@@ -50,9 +48,5 @@ public class FabricActionTimer implements Runnable {
 
     public boolean isCancelled() {
         return cancelled;
-    }
-
-    public int getTimeLeft() {
-        return timeLeft;
     }
 }
