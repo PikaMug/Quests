@@ -1,14 +1,11 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 
 import java.util.UUID;
@@ -23,17 +20,15 @@ public class FabricPlayerListener {
     }
 
     private void register() {
-        // Entity interact (right-click entity - for NPC interaction objectives)
-        UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
-            if (player instanceof ServerPlayer serverPlayer && hand == InteractionHand.MAIN_HAND) {
-                onEntityInteract(serverPlayer, entity);
-            }
-            return InteractionResult.PASS;
+        // Entity interact (right-click entity - for NPC interaction objectives). The mixin already filters
+        // to MAIN_HAND, so a non-null ServerPlayer is guaranteed here.
+        QuestsEvents.registerUseEntity((player, entity) -> {
+            onEntityInteract(player, entity);
+            return false;
         });
 
         // Player join - load quester data
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            final ServerPlayer player = handler.getPlayer();
+        QuestsEvents.registerPlayerJoin(player -> {
             if (plugin.isLoading() || player == null) return;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             quester.setLastKnownName(player.getName().getString());
@@ -47,8 +42,7 @@ public class FabricPlayerListener {
         });
 
         // Player quit - save quester data
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            final ServerPlayer player = handler.getPlayer();
+        QuestsEvents.registerPlayerDisconnect(player -> {
             if (plugin.isLoading() || player == null) return;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             for (final Quest quest : quester.getCurrentQuests().keySet()) {

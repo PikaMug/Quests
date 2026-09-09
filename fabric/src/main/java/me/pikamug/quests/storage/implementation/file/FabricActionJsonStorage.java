@@ -160,7 +160,6 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
                         final Action action = loadAction(name);
                         if (action != null) {
                             plugin.getLoadedActions().add(action);
-                            plugin.getPluginLogger().info("Loaded action '{}'", name);
                         }
                     }
                 }

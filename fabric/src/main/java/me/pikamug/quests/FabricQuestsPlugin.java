@@ -45,8 +45,6 @@ import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.FabricQuestsLogger;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 
@@ -89,12 +87,12 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     public void onInitializeServer() {
         instance = this;
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+        QuestsEvents.registerServerStarted(server -> {
             this.server = server;
             onEnable();
         });
 
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+        QuestsEvents.registerServerStopping(server -> {
             onDisable();
         });
     }
@@ -162,7 +160,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         new FabricCommandManager(this);
 
         // 9 - Register tick events
-        ServerTickEvents.END_SERVER_TICK.register(this::onTick);
+        QuestsEvents.registerServerTick(this::onTick);
 
         if (configSettings.getStrictPlayerMovement() > 0) {
             final long ticks = configSettings.getStrictPlayerMovement();

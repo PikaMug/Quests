@@ -157,7 +157,6 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
                         final Condition condition = loadCondition(name);
                         if (condition != null) {
                             plugin.getLoadedConditions().add(condition);
-                            plugin.getPluginLogger().info("Loaded condition '{}'", name);
                         }
                     }
                 }

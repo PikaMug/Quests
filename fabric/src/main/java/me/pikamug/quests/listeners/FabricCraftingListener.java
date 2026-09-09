@@ -11,11 +11,11 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.BrewingStandMenu;
@@ -37,7 +37,7 @@ public class FabricCraftingListener {
 
     public FabricCraftingListener(FabricQuestsPlugin plugin) {
         this.plugin = plugin;
-        ServerTickEvents.END_SERVER_TICK.register(this::onTick);
+        QuestsEvents.registerServerTick(this::onTick);
     }
 
     private void onTick(net.minecraft.server.MinecraftServer server) {

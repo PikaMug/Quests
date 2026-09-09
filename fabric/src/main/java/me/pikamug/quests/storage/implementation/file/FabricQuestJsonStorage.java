@@ -608,7 +608,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                     final Quest quest = loadQuest(name);
                     if (quest != null) {
                         plugin.getLoadedQuests().add(quest);
-                        plugin.getPluginLogger().info("Loaded quest '{}' from {}", name, p.getFileName());
                     }
                 } catch (final Exception e) {
                     plugin.getPluginLogger().error("Failed to load quest from {}", p, e);

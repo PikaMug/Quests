@@ -15,6 +15,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.convo.actions.menu.FabricActionMenuPrompt;
 import me.pikamug.quests.convo.conditions.menu.FabricConditionMenuPrompt;
 import me.pikamug.quests.convo.quests.menu.FabricQuestMenuPrompt;
@@ -23,7 +24,6 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.SessionData;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
@@ -45,7 +45,7 @@ public class FabricCommandManager {
     }
 
     private void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        QuestsEvents.registerCommandRegister(dispatcher -> {
             // /quest - Show current quest objectives
             dispatcher.register(Commands.literal("quest")
                     .requires(Commands.hasPermission(Commands.LEVEL_ALL))

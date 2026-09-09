@@ -11,12 +11,11 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
-import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
-import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Locale;
@@ -32,15 +31,15 @@ public class FabricChatListener {
     }
 
     private void register() {
-        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, player, chatType) -> {
-            if (plugin.isLoading() || message == null || player == null) return true;
+        QuestsEvents.registerChatAllow((player, content) -> {
+            if (plugin.isLoading() || player == null || content == null) return true;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             for (final Quest quest : plugin.getLoadedQuests()) {
                 if (!quester.getCurrentQuests().containsKey(quest)) continue;
                 final Stage stage = quester.getCurrentStage(quest);
                 if (stage == null || stage.getPasswordPhrases().isEmpty()) continue;
                 for (final String phrase : stage.getPasswordPhrases()) {
-                    if (phrase != null && phrase.equalsIgnoreCase(message.signedContent())) {
+                    if (phrase != null && phrase.equalsIgnoreCase(content)) {
                         return false;
                     }
                 }
@@ -48,14 +47,14 @@ public class FabricChatListener {
             return true;
         });
 
-        ServerMessageEvents.CHAT_MESSAGE.register((message, player, chatType) -> {
-            if (plugin.isLoading() || message == null || player == null) return;
-            handleChat(player, message.signedContent());
+        QuestsEvents.registerChatMessage((player, content) -> {
+            if (plugin.isLoading() || player == null || content == null) return;
+            handleChat(player, content);
         });
 
-        ServerMessageEvents.COMMAND_MESSAGE.register((message, source, chatType) -> {
-            if (plugin.isLoading() || source == null || source.getPlayer() == null) return;
-            handleCommand(source.getPlayer(), message.signedContent());
+        QuestsEvents.registerCommandMessage((player, content) -> {
+            if (plugin.isLoading() || player == null || content == null) return;
+            handleCommand(player, content);
         });
     }
 

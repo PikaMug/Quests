@@ -11,13 +11,13 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricItemListener {
@@ -31,19 +31,17 @@ public class FabricItemListener {
 
     private void register() {
         // Consume item (right-click food)
-        UseItemCallback.EVENT.register((player, level, hand) -> {
-            if (player instanceof ServerPlayer serverPlayer && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
-                final ItemStack item = player.getItemInHand(hand);
+        QuestsEvents.registerUseItem((serverPlayer, hand) -> {
+            if (hand == InteractionHand.MAIN_HAND) {
+                final ItemStack item = serverPlayer.getItemInHand(hand);
                 if (item.has(net.minecraft.core.component.DataComponents.FOOD)) {
                     onConsumeItem(serverPlayer, item);
                 }
             }
-            return InteractionResult.PASS;
         });
 
-        // TODO: Register crafting, smelting, enchanting events via Fabric API callbacks
-        // Fabric does not have direct CraftItemEvent/EnchantItemEvent equivalents;
-        // these would need to be handled via mixin or InventoryListener pattern
+        // TODO: Register crafting, smelting, enchanting events via mixin hooks
+        // Cross-version inventory-activity detection is handled in FabricCraftingListener
     }
 
     private void onConsumeItem(ServerPlayer player, ItemStack consumed) {

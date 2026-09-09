@@ -3,7 +3,7 @@
     "message": "<blue>You received potion effects!",
     "potion-effect-types": [
       "Speed",
-      "Jump"
+      "jump_boost"
     ],
     "potion-effect-durations": [
       100,

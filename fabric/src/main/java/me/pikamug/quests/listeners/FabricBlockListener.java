@@ -11,16 +11,14 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -34,20 +32,14 @@ public class FabricBlockListener {
     }
 
     private void register() {
-        // Block break
-        AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {
-            if (player instanceof ServerPlayer serverPlayer) {
-                onBlockBreak(serverPlayer, pos);
-            }
-            return InteractionResult.PASS;
+        // Block break (START_DESTROY_BLOCK). The mixin only fires for ServerPlayer.
+        QuestsEvents.registerAttackBlock((serverPlayer, pos) -> {
+            onBlockBreak(serverPlayer, pos);
         });
 
-        // Block use (right-click)
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
-            if (player instanceof ServerPlayer serverPlayer) {
-                onBlockUse(serverPlayer, hitResult.getBlockPos(), hand);
-            }
-            return InteractionResult.PASS;
+        // Block use (right-click). The mixin only fires for ServerPlayer.
+        QuestsEvents.registerUseBlock((serverPlayer, pos, hand) -> {
+            onBlockUse(serverPlayer, pos, hand);
         });
     }
 

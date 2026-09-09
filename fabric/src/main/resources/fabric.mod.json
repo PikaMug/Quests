@@ -17,13 +17,15 @@
       "me.pikamug.quests.FabricQuestsPlugin"
     ]
   },
+  "mixins": [
+    "quests.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.18.4",
-    "minecraft": "~26.1",
-    "java": ">=25"
+    "minecraft": ">=26.1",
+    "java": ">=17"
   },
   "suggests": {
-    "fabric-api": "*",
     "placeholder-api": "*",
     "openpartiesandclaims": "*",
     "luckperms": "*",

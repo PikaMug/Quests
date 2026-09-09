@@ -11,10 +11,8 @@
 package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import me.pikamug.quests.QuestsEvents;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -25,16 +23,17 @@ public class FabricTaterzensListener extends FabricNpcListener {
 
     public FabricTaterzensListener(FabricQuestsPlugin plugin) {
         super(plugin);
+        register();
     }
 
     @Override
     public void register() {
-        UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
-            if (player instanceof ServerPlayer serverPlayer && hand == InteractionHand.MAIN_HAND && isNpc(entity)) {
-                handleNpcInteract(serverPlayer, entity);
-                return InteractionResult.SUCCESS;
+        QuestsEvents.registerUseEntity((player, entity) -> {
+            if (isNpc(entity)) {
+                handleNpcInteract(player, entity);
+                return true;
             }
-            return InteractionResult.PASS;
+            return false;
         });
     }
 

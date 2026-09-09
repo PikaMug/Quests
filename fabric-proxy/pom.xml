@@ -48,6 +48,7 @@
                             <executable>${gradle.executable}</executable>
                             <workingDirectory>${project.basedir}/../fabric</workingDirectory>
                             <arguments>
+                                <argument>clean</argument>
                                 <argument>shadowJar</argument>
                                 <argument>--no-daemon</argument>
                             </arguments>

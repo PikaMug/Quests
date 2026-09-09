@@ -11,17 +11,15 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.FabricScheduler;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -45,26 +43,24 @@ public class FabricEntityListener {
     }
 
     private void register() {
-        ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register((level, killer, victim, damageSource) -> {
-            onEntityKilled(level, killer, victim, damageSource);
-        });
+        QuestsEvents.registerEntityKilled(this::onEntityKilled);
 
-        UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
-            if (player instanceof ServerPlayer serverPlayer && hand == InteractionHand.MAIN_HAND) {
+        QuestsEvents.registerUseEntity((serverPlayer, entity) -> {
+            if (entity != null) {
                 final ItemStack stack = serverPlayer.getMainHandItem();
                 if ((entity.getType() == EntityType.COW || entity.getType() == EntityType.MOOSHROOM)
                         && stack.getItem() == Items.BUCKET) {
-                    deferredMilkCheck(serverPlayer, level, entity);
+                    deferredMilkCheck(serverPlayer, serverPlayer.level(), entity);
                 } else if (entity.getType() == EntityType.SHEEP && stack.getItem() == Items.SHEARS) {
                     final Sheep sheep = (Sheep) entity;
                     if (!sheep.isSheared()) {
-                        deferredShearCheck(serverPlayer, level, entity);
+                        deferredShearCheck(serverPlayer, serverPlayer.level(), entity);
                     }
                 } else if (entity instanceof TamableAnimal tamed && !tamed.isTame()) {
-                    deferredTameCheck(serverPlayer, level, entity);
+                    deferredTameCheck(serverPlayer, serverPlayer.level(), entity);
                 }
             }
-            return InteractionResult.PASS;
+            return false;
         });
     }
 

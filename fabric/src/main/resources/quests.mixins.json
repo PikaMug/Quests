@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "me.pikamug.quests.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinMinecraftServer",
+    "MixinPlayerList",
+    "MixinServerGamePacketListener",
+    "MixinLivingEntity",
+    "MixinCommands"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

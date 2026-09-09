@@ -30,14 +30,13 @@ repositories {
 dependencies {
     minecraft("com.mojang:minecraft:26.1.2")
     implementation("net.fabricmc:fabric-loader:0.19.2")
-    implementation("net.fabricmc.fabric-api:fabric-api:0.146.1+26.1.2")
 
     // YAWP (Yet Another World Protector) via Modrinth's public Maven.
     implementation("maven.modrinth:yawp:26.1.2-0.6.3-beta3")
 
     // Hosted by their respective mods at runtime; compile-only here.
     compileOnly("net.luckperms:api:5.5")
-    compileOnly("me.lucko:fabric-permissions-api:0.7.0")
+    compileOnly("me.lucko:fabric-permissions-api:0.3.3")
     compileOnly("eu.pb4:placeholder-api:3.0.0+26.1")
     compileOnly("xaero.pac:open-parties-and-claims-fabric-26.1.2:0.30.3") {
         transitive = false
@@ -60,13 +59,13 @@ processResources {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 25
+    options.release = 17
     options.encoding = "UTF-8"
     options.compilerArgs.add("-proc:none")
 }
