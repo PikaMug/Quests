@@ -10,11 +10,6 @@
 
 package me.pikamug.quests.convo.quests.main;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorIntegerPrompt;
@@ -793,22 +788,6 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
 
                 try {
-                    final Path storageDir = plugin.getPluginDataFolder().toPath().resolve("storage");
-                    if (!Files.exists(storageDir)) {
-                        Files.createDirectories(storageDir);
-                    }
-                    final Path questsFile = storageDir.resolve("quests.json");
-                    JsonObject root = new JsonObject();
-                    if (Files.exists(questsFile)) {
-                        try (Reader reader = Files.newBufferedReader(questsFile)) {
-                            final JsonElement parsed = JsonParser.parseReader(reader);
-                            if (parsed.isJsonObject()) {
-                                root = parsed.getAsJsonObject();
-                            }
-                        }
-                    }
-                    JsonObject quests = root.has("quests") ? root.getAsJsonObject("quests") : new JsonObject();
-
                     String questId;
                     if (SessionData.get(uuid, Key.Q_ID) == null) {
                         final Locale locale = Locale.US;
@@ -816,7 +795,8 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                         String format = "%0" + padding + "d";
                         int num = 1;
                         String customNum = String.format(locale, format, num);
-                        while (quests.has(customNum)) {
+                        final Path storageDir = plugin.getPluginDataFolder().toPath().resolve("storage");
+                        while (Files.exists(storageDir.resolve(customNum + ".json"))) {
                             num++;
                             customNum = String.format(locale, format, num);
                         }
@@ -825,33 +805,11 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                         questId = (String) SessionData.get(uuid, Key.Q_ID);
                     }
 
-                    final JsonObject questData = new JsonObject();
-                    questData.addProperty("name", (String) SessionData.get(uuid, Key.Q_NAME));
-                    questData.addProperty("ask-message", (String) SessionData.get(uuid, Key.Q_ASK_MESSAGE));
-                    questData.addProperty("finish-message", (String) SessionData.get(uuid, Key.Q_FINISH_MESSAGE));
-                    if (SessionData.get(uuid, Key.Q_START_NPC) != null) {
-                        questData.addProperty("npc-giver-uuid", (String) SessionData.get(uuid, Key.Q_START_NPC));
+                    if (FabricQuestEditorSaver.save(uuid, questId, plugin)) {
+                        sender.sendSystemMessage(Component.literal(ChatFormatting.GREEN
+                                + FabricLang.get("questEditorSaved").replace("<command>", "/questadmin "
+                                + FabricLang.get("COMMAND_QUESTADMIN_RELOAD"))));
                     }
-                    if (SessionData.get(uuid, Key.Q_START_BLOCK) != null) {
-                        final BlockPos pos = (BlockPos) SessionData.get(uuid, Key.Q_START_BLOCK);
-                        questData.addProperty("block-start-x", pos.getX());
-                        questData.addProperty("block-start-y", pos.getY());
-                        questData.addProperty("block-start-z", pos.getZ());
-                    }
-                    if (SessionData.get(uuid, Key.Q_REGION) != null) {
-                        questData.addProperty("region", (String) SessionData.get(uuid, Key.Q_REGION));
-                    }
-                    quests.add(questId, questData);
-                    root.add("quests", quests);
-
-                    final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    try (Writer writer = Files.newBufferedWriter(questsFile)) {
-                        gson.toJson(root, writer);
-                    }
-
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.GREEN
-                            + FabricLang.get("questEditorSaved").replace("<command>", "/questadmin "
-                            + FabricLang.get("COMMAND_QUESTADMIN_RELOAD"))));
                 } catch (final IOException e) {
                     FabricQuestsPlugin.LOGGER.error("Failed to save quest", e);
                 }

@@ -47,6 +47,24 @@ public class FabricInventoryUtil {
         return remaining == 0;
     }
 
+    /**
+     * Removes up to {@code count} items matching the goal by material and data
+     * components, regardless of stack amounts. Used by item-exchange objectives.
+     */
+    public static boolean removeItemIgnoreAmount(ServerPlayer player, ItemStack goal, int count) {
+        if (player == null || goal == null || goal.isEmpty() || count <= 0) return false;
+        int remaining = count;
+        for (int i = 0; i < player.getInventory().getContainerSize() && remaining > 0; i++) {
+            final ItemStack slot = player.getInventory().getItem(i);
+            if (!slot.isEmpty() && FabricItemUtil.compareItems(slot, goal, true) == 0) {
+                final int toRemove = Math.min(slot.getCount(), remaining);
+                slot.shrink(toRemove);
+                remaining -= toRemove;
+            }
+        }
+        return remaining == 0;
+    }
+
     public static int getArmorCount(ServerPlayer player, net.minecraft.world.item.Item item) {
         int count = 0;
         for (final EquipmentSlot slot : EquipmentSlot.values()) {

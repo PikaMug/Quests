@@ -49,19 +49,26 @@ public final class FabricScheduler {
 
     /**
      * Schedule a task to run after a delay (in ticks).
+     *
+     * @return the scheduled task, which can be cancelled before it fires
      */
-    public static void runLater(Runnable runnable, long delayTicks) {
-        tasks.add(new ScheduledTask(runnable, delayTicks, false));
+    public static ScheduledTask runLater(Runnable runnable, long delayTicks) {
+        final ScheduledTask task = new ScheduledTask(runnable, delayTicks, false);
+        tasks.add(task);
+        return task;
     }
 
     /**
      * Schedule a task to run repeatedly at a fixed interval (in ticks).
+     *
+     * @return the scheduled task, which can be cancelled via {@link ScheduledTask#cancel()}
      */
-    public static void runTimer(Runnable runnable, long delayTicks, long periodTicks) {
+    public static ScheduledTask runTimer(Runnable runnable, long delayTicks, long periodTicks) {
         final ScheduledTask task = new ScheduledTask(runnable, delayTicks, true);
         task.periodTicks = periodTicks;
         task.repeating = true;
         tasks.add(task);
+        return task;
     }
 
     /**
@@ -78,18 +85,29 @@ public final class FabricScheduler {
         tasks.clear();
     }
 
-    private static class ScheduledTask {
-        final Runnable runnable;
-        final long delayTicks;
-        boolean repeating;
-        long periodTicks;
-        long currentTick = 0;
-        boolean cancelled = false;
+    public static class ScheduledTask {
+        private final Runnable runnable;
+        private final long delayTicks;
+        private boolean repeating;
+        private long periodTicks;
+        private long currentTick = 0;
+        private boolean cancelled = false;
 
         ScheduledTask(Runnable runnable, long delayTicks, boolean repeating) {
             this.runnable = runnable;
             this.delayTicks = delayTicks;
             this.repeating = repeating;
+        }
+
+        /**
+         * Prevents a pending task from running when its tick arrives.
+         */
+        public void cancel() {
+            this.cancelled = true;
+        }
+
+        public boolean isCancelled() {
+            return cancelled;
         }
     }
 }

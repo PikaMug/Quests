@@ -37,7 +37,6 @@ import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.commands.FabricCommandManager;
 import me.pikamug.quests.listeners.FabricBlockListener;
 import me.pikamug.quests.listeners.FabricChatListener;
-import me.pikamug.quests.listeners.FabricCraftingListener;
 import me.pikamug.quests.listeners.FabricEntityListener;
 import me.pikamug.quests.listeners.FabricItemListener;
 import me.pikamug.quests.listeners.FabricPlayerListener;
@@ -145,7 +144,6 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         // 7 - Register listeners
         new FabricBlockListener(this);
         new FabricItemListener(this);
-        new FabricCraftingListener(this);
         new FabricPlayerListener(this);
         new FabricEntityListener(this);
         new FabricChatListener(this);

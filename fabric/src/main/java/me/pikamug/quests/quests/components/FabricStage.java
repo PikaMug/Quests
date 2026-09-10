@@ -201,7 +201,6 @@ public class FabricStage implements Stage {
             case DAMAGE_BLOCK: return !blocksToDamage.isEmpty();
             case PLACE_BLOCK: return !blocksToPlace.isEmpty();
             case USE_BLOCK: return !blocksToUse.isEmpty();
-            case CUT_BLOCK: return !blocksToCut.isEmpty();
             case CRAFT_ITEM: return !itemsToCraft.isEmpty();
             case SMELT_ITEM: return !itemsToSmelt.isEmpty();
             case ENCHANT_ITEM: return !itemsToEnchant.isEmpty();

@@ -157,6 +157,23 @@ public class FabricDependencies implements Dependencies {
         }
     }
 
+    /**
+     * Grants a permission node to a player through LuckPerms. No-op when
+     * LuckPerms is not installed (mirrors Bukkit where the Vault permission
+     * reward silently does nothing without a permission plugin).
+     */
+    public void grantPermission(UUID uuid, String permission) {
+        if (!hasLuckPerms || uuid == null || permission == null) {
+            return;
+        }
+        try {
+            LuckPermsProvider.get().getUserManager().modifyUser(uuid, user ->
+                    user.data().add(net.luckperms.api.node.Node.builder(permission).build()));
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.warn("Failed to grant permission '{}' to {}", permission, uuid, e);
+        }
+    }
+
     public String getNpcName(UUID uuid) {
         final net.minecraft.server.level.ServerPlayer player =
                 plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;

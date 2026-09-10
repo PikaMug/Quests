@@ -45,6 +45,8 @@ public class FabricEntityListener {
     private void register() {
         QuestsEvents.registerEntityKilled(this::onEntityKilled);
 
+        QuestsEvents.registerFishingCatch(this::onFishingCatch);
+
         QuestsEvents.registerUseEntity((serverPlayer, entity) -> {
             if (entity != null) {
                 final ItemStack stack = serverPlayer.getMainHandItem();
@@ -156,6 +158,19 @@ public class FabricEntityListener {
             if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) continue;
             final var progress = quester.getQuestProgressOrDefault(quest);
             progress.setCowsMilked(progress.getCowsMilked() + 1);
+            quester.checkQuest(quest);
+        }
+    }
+
+    private void onFishingCatch(ServerPlayer player) {
+        if (plugin.isLoading() || player == null) return;
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) continue;
+            final var progress = quester.getQuestProgressOrDefault(quest);
+            progress.setFishCaught(progress.getFishCaught() + 1);
             quester.checkQuest(quest);
         }
     }

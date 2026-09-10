@@ -7,7 +7,15 @@
     "MixinPlayerList",
     "MixinServerGamePacketListener",
     "MixinLivingEntity",
-    "MixinCommands"
+    "MixinCommands",
+    "MixinFishingHook",
+    "MixinBlockItem",
+    "MixinServerPlayerGameMode",
+    "MixinResultSlot",
+    "MixinFurnaceResultSlot",
+    "MixinBrewingStandSlot",
+    "MixinEnchantmentMenu",
+    "MixinAbstractContainerMenu"
   ],
   "injectors": {
     "defaultRequire": 1

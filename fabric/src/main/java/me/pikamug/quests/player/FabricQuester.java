@@ -22,9 +22,12 @@ import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.FabricActionTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricMiscUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
@@ -49,6 +52,7 @@ public class FabricQuester implements Quester {
     private final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Quest, QuestProgress> progressData = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<FabricActionTimer, Quest> actionTimers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Quest, FabricScheduler.ScheduledTask> stageTimers = new ConcurrentHashMap<>();
     private boolean hasData = false;
 
     public FabricQuester(FabricQuestsPlugin plugin, UUID uuid) {
@@ -496,6 +500,21 @@ public class FabricQuester implements Quester {
             objs.add(new FabricObjective(ObjectiveType.USE_BLOCK, FabricLang.get("questUseBlock"), current, goal));
         }
 
+        // Items delivered
+        for (int i = 0; i < stage.getItemsToDeliver().size(); i++) {
+            final Object goalObj = stage.getItemsToDeliver().get(i);
+            if (!(goalObj instanceof ItemStack goal)) continue;
+            final int goalAmount = Math.max(1, goal.getCount());
+            final int current = (progress.getItemsDelivered().size() > i) ? progress.getItemsDelivered().get(i) : 0;
+            final UUID npcUuid = (stage.getItemDeliveryTargets().size() > i)
+                    ? stage.getItemDeliveryTargets().get(i) : null;
+            final String msg = FabricLang.get("deliver")
+                    .replace("<item>", FabricItemUtil.getName(goal))
+                    .replace("<npc>", npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?")
+                    .replace("<count>", String.valueOf(goalAmount));
+            objs.add(new FabricObjective(ObjectiveType.DELIVER_ITEM, formatNames ? msg : msg, current, goalAmount));
+        }
+
         return objs;
     }
 
@@ -624,13 +643,6 @@ public class FabricQuester implements Quester {
             if (progress.getPlayersKilled() < stage.getPlayersToKill()) return false;
         }
 
-        // Cut blocks
-        for (int i = 0; i < stage.getBlocksToCut().size(); i++) {
-            if (progress.getBlocksCut().size() <= i) return false;
-            final int goal = getBlockAmount(stage.getBlocksToCutAmounts(), i);
-            if (progress.getBlocksCut().get(i) < goal) return false;
-        }
-
         // Use blocks
         for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
             if (progress.getBlocksUsed().size() <= i) return false;
@@ -642,6 +654,14 @@ public class FabricQuester implements Quester {
         for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
             if (progress.getItemsConsumed().size() <= i) return false;
             if (progress.getItemsConsumed().get(i) < 1) return false;
+        }
+
+        // Items delivered
+        for (int i = 0; i < stage.getItemsToDeliver().size(); i++) {
+            if (progress.getItemsDelivered().size() <= i) return false;
+            final Object goal = stage.getItemsToDeliver().get(i);
+            final int goalAmount = (goal instanceof ItemStack is) ? Math.max(1, is.getCount()) : 1;
+            if (progress.getItemsDelivered().get(i) < goalAmount) return false;
         }
 
         // Custom objectives
@@ -703,6 +723,9 @@ public class FabricQuester implements Quester {
         while (progress.getBlocksPlaced().size() < s.getBlocksToPlace().size()) {
             progress.getBlocksPlaced().add(0);
         }
+        while (progress.getBlocksUsed().size() < s.getBlocksToUse().size()) {
+            progress.getBlocksUsed().add(0);
+        }
         while (progress.getItemsCrafted().size() < s.getItemsToCraft().size()) {
             progress.getItemsCrafted().add(0);
         }
@@ -714,6 +737,9 @@ public class FabricQuester implements Quester {
         }
         while (progress.getItemsBrewed().size() < s.getItemsToBrew().size()) {
             progress.getItemsBrewed().add(0);
+        }
+        while (progress.getItemsDelivered().size() < s.getItemsToDeliver().size()) {
+            progress.getItemsDelivered().add(0);
         }
         while (progress.getMobNumKilled().size() < s.getMobsToKill().size()) {
             progress.getMobNumKilled().add(0);
@@ -783,14 +809,22 @@ public class FabricQuester implements Quester {
         final Stage stage = getCurrentStage(quest);
         if (stage == null) return;
         final long delay = stage.getDelay();
+        final FabricScheduler.ScheduledTask previous = stageTimers.remove(quest);
+        if (previous != null) {
+            previous.cancel();
+        }
         if (delay > 0) {
-            FabricScheduler.runLater(() -> checkQuest(quest), delay * 20);
+            stageTimers.put(quest, FabricScheduler.runLater(() -> checkQuest(quest), delay * 20));
         }
     }
 
     @Override
     public void stopStageTimer(Quest quest) {
-        // Stage timers are fire-and-forget; stopping is handled by the timer checking if quest is still active
+        if (quest == null) return;
+        final FabricScheduler.ScheduledTask task = stageTimers.remove(quest);
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     @Override
@@ -909,6 +943,13 @@ public class FabricQuester implements Quester {
     @Override
     public void resetCompass() {
         compassTarget = null;
+        final ServerPlayer player = getServerPlayer();
+        final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
+        if (player == null || server == null) return;
+        final net.minecraft.server.level.ServerLevel overworld = server.overworld();
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket(
+                net.minecraft.world.level.storage.LevelData.RespawnData.of(
+                        overworld.dimension(), overworld.getRespawnData().pos(), 0f, 0f)));
     }
 
     @Override
@@ -916,10 +957,11 @@ public class FabricQuester implements Quester {
         if (compassTarget == null) return;
         final Stage stage = getCurrentStage(compassTarget);
         if (stage == null) return;
-        // Set compass to first location objective if available
         if (stage.hasLocatableObjective() && !stage.getLocationsToReach().isEmpty()) {
             final Object locObj = stage.getLocationsToReach().get(0);
-            if (locObj != null) {
+            final BlockPos target = parseLocationBlock(locObj);
+            if (target != null) {
+                setPlayerCompass(target);
                 sendMessage(FabricLang.get("questNowTracking").replace("<quest>", compassTarget.getName()));
             }
         }
@@ -930,17 +972,41 @@ public class FabricQuester implements Quester {
         if (compassTarget == null) return;
         final Stage stage = getCurrentStage(compassTarget);
         if (stage == null || stage.getLocationsToReach().isEmpty()) return;
-        // Find the first unreached location
         final QuestProgress progress = getQuestProgressOrDefault(compassTarget);
         for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
             final boolean reached = (progress.getLocationsReached().size() > i) && progress.getLocationsReached().get(i);
             if (!reached) {
                 final Object locObj = stage.getLocationsToReach().get(i);
+                final BlockPos target = parseLocationBlock(locObj);
+                if (target != null) {
+                    setPlayerCompass(target);
+                }
                 if (locObj != null && notify) {
                     sendMessage(FabricLang.get("questTrackingLocation"));
                 }
                 return;
             }
+        }
+    }
+
+    private void setPlayerCompass(BlockPos pos) {
+        if (pos == null) return;
+        final ServerPlayer player = getServerPlayer();
+        if (player == null) return;
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket(
+                net.minecraft.world.level.storage.LevelData.RespawnData.of(
+                        player.level().dimension(), pos, 0f, 0f)));
+    }
+
+    private static BlockPos parseLocationBlock(Object locObj) {
+        if (locObj == null) return null;
+        final String[] parts = locObj.toString().split(" ");
+        if (parts.length < 3) return null;
+        try {
+            return new BlockPos(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
+                    Integer.parseInt(parts[2]));
+        } catch (final NumberFormatException e) {
+            return null;
         }
     }
 
@@ -1089,18 +1155,48 @@ public class FabricQuester implements Quester {
 
     @Override
     public boolean canAcceptQuest(UUID npc) {
-        // Accept all quests from any NPC
-        return true;
+        for (final Quest q : plugin.getLoadedQuests()) {
+            if (q.getNpcStart() != null && !completedQuests.contains(q)) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(this)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean canAcceptCompletedQuest(UUID npc) {
-        return true;
+        for (final Quest q : plugin.getLoadedQuests()) {
+            if (q.getNpcStart() != null && completedQuests.contains(q)) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(this)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean canAcceptCompletedRedoableQuest(UUID npc) {
-        return true;
+        for (final Quest q : plugin.getLoadedQuests()) {
+            if (q.getNpcStart() != null && completedQuests.contains(q)
+                    && q.getPlanner() != null && q.getPlanner().getCooldown() > -1) {
+                if (q.getNpcStart().equals(npc)) {
+                    final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
+                    if (!ignoreLockedQuests || q.testRequirements(this)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

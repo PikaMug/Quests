@@ -33,6 +33,8 @@ import net.minecraft.world.item.ItemStack;
 import org.browsit.conversations.api.Conversations;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class FabricCommandManager {
@@ -77,6 +79,12 @@ public class FabricCommandManager {
                             )
                             .then(Commands.literal("stats")
                                     .executes(ctx -> handleQuestsStats(ctx.getSource()))
+                            )
+                            .then(Commands.literal("top")
+                                    .executes(ctx -> handleQuestsTop(ctx.getSource(), 5))
+                                    .then(Commands.argument("number", IntegerArgumentType.integer(1))
+                                            .executes(ctx -> handleQuestsTop(ctx.getSource(),
+                                                    IntegerArgumentType.getInteger(ctx, "number"))))
                             )
                             .then(Commands.literal("info")
                                     .executes(ctx -> handleQuestsInfo(ctx.getSource()))
@@ -175,6 +183,13 @@ public class FabricCommandManager {
                             .executes(ctx -> handleAdminStats(ctx.getSource(),
                                     StringArgumentType.getString(ctx, "player"))));
 
+            final var setstageSub = Commands.literal("setstage")
+                    .then(Commands.argument("player", StringArgumentType.word())
+                            .then(Commands.argument("rest", StringArgumentType.greedyString())
+                                    .executes(ctx -> handleAdminSetStage(ctx.getSource(),
+                                            StringArgumentType.getString(ctx, "player"),
+                                            StringArgumentType.getString(ctx, "rest")))));
+
             final LiteralCommandNode<CommandSourceStack> qaNode = dispatcher.register(
                     Commands.literal("questadmin")
                             .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -189,6 +204,7 @@ public class FabricCommandManager {
                             .then(nextstageSub)
                             .then(removeSub)
                             .then(statsSub)
+                            .then(setstageSub)
             );
             dispatcher.register(Commands.literal("qa").redirect(qaNode));
         });
@@ -254,6 +270,34 @@ public class FabricCommandManager {
         source.sendSuccess(() -> Component.literal("Quest Points: " + quester.getQuestPoints()), false);
         source.sendSuccess(() -> Component.literal("Active Quests: " + quester.getCurrentQuests().size()), false);
         source.sendSuccess(() -> Component.literal("Completed Quests: " + quester.getCompletedQuests().size()), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int handleQuestsTop(CommandSourceStack source, int topNumber) {
+        final int limit = plugin.getConfigSettings().getTopLimit();
+        if (topNumber < 1 || topNumber > limit) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW
+                    + FabricLang.get("invalidRange").replace("<least>", "1")
+                    .replace("<greatest>", String.valueOf(limit))), false);
+            return Command.SINGLE_SUCCESS;
+        }
+        final Map<String, Integer> questPoints = new java.util.LinkedHashMap<>();
+        for (final me.pikamug.quests.player.Quester quester : plugin.getOfflineQuesters()) {
+            questPoints.put(quester.getLastKnownName(), quester.getQuestPoints());
+        }
+        final List<java.util.Map.Entry<String, Integer>> sorted = new java.util.ArrayList<>(questPoints.entrySet());
+        sorted.sort(java.util.Map.Entry.comparingByValue(java.util.Collections.reverseOrder()));
+        source.sendSuccess(() -> Component.literal(ChatFormatting.GOLD
+                + FabricLang.get("topQuestersTitle").replace("<number>", String.valueOf(topNumber))), false);
+        int printed = 0;
+        for (final java.util.Map.Entry<String, Integer> entry : sorted) {
+            printed++;
+            final int lineNo = printed;
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW + String.valueOf(lineNo) + ". "
+                    + entry.getKey() + " - " + ChatFormatting.DARK_PURPLE + entry.getValue()
+                    + ChatFormatting.YELLOW + " " + FabricLang.get("questPoints")), false);
+            if (printed >= topNumber) break;
+        }
         return Command.SINGLE_SUCCESS;
     }
 
@@ -483,6 +527,58 @@ public class FabricCommandManager {
         source.sendSuccess(() -> Component.literal("Quest Points: " + quester.getQuestPoints()), false);
         source.sendSuccess(() -> Component.literal("Active Quests: " + quester.getCurrentQuests().size()), false);
         source.sendSuccess(() -> Component.literal("Completed Quests: " + quester.getCompletedQuests().size()), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int handleAdminSetStage(CommandSourceStack source, String playerName, String rest) {
+        if (rest == null) return 0;
+        final String[] parts = rest.split(" ");
+        if (parts.length < 2) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW + FabricLang.get("inputNum")), false);
+            return 0;
+        }
+        int stage;
+        try {
+            stage = Integer.parseInt(parts[parts.length - 1]);
+        } catch (final NumberFormatException e) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW + FabricLang.get("inputNum")), false);
+            return 0;
+        }
+        final String questName = String.join(" ", java.util.Arrays.copyOf(parts, parts.length - 1));
+        final ServerPlayer target = source.getServer().getPlayerList().getPlayerByName(playerName);
+        if (target == null) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW + FabricLang.get("playerNotFound")), false);
+            return 0;
+        }
+        final FabricQuester quester = plugin.getQuester(target.getUUID());
+        if (quester.getCurrentQuests().isEmpty()) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.YELLOW + FabricLang.get("noCurrentQuest")), false);
+            return 0;
+        }
+        final Quest quest = findQuest(questName);
+        if (quest == null) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.RED + FabricLang.get("questNotFound")
+                    .replace("<input>", questName)), false);
+            return 0;
+        }
+        if (!quester.getCurrentQuests().containsKey(quest)) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.GOLD + FabricLang.get("questForceTake")
+                    .replace("<player>", quester.getLastKnownName())
+                    .replace("<quest>", quest.getName())), false);
+            target.sendSystemMessage(Component.literal(ChatFormatting.GREEN + FabricLang.get("questForcedTake")
+                    .replace("<player>", quester.getLastKnownName())
+                    .replace("<quest>", quest.getName())));
+            quester.takeQuest(quest, true);
+        }
+        final int index = stage - 1;
+        if (index < 0 || index >= quest.getStages().size()) {
+            source.sendSuccess(() -> Component.literal(ChatFormatting.RED + FabricLang.get("invalidRange")
+                    .replace("<least>", "1")
+                    .replace("<greatest>", String.valueOf(quest.getStages().size()))), false);
+            return 0;
+        }
+        quest.setStage(quester, index);
+        quester.saveData();
         return Command.SINGLE_SUCCESS;
     }
 

@@ -17,6 +17,7 @@ import me.pikamug.quests.quests.components.Stage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -89,13 +90,21 @@ public abstract class FabricNpcListener {
 
     private void handleNpcQuestOffer(ServerPlayer player, UUID npcUuid) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final LinkedList<Quest> available = new LinkedList<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
             if (quest.getNpcStart() != null && quest.getNpcStart().equals(npcUuid)) {
                 if (quester.canAcceptOffer(quest, false)) {
-                    quester.offerQuest(quest, true);
-                    return;
+                    available.add(quest);
                 }
             }
+        }
+        if (available.isEmpty()) {
+            return;
+        }
+        if (available.size() == 1) {
+            quester.offerQuest(available.getFirst(), true);
+        } else {
+            me.pikamug.quests.gui.FabricQuestMenu.show(player, available);
         }
     }
 }

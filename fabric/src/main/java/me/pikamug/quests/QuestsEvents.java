@@ -20,6 +20,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -80,8 +82,20 @@ public final class QuestsEvents {
         void onAttackBlock(ServerPlayer player, BlockPos pos);
     }
 
+    public interface BlockBrokenHandler {
+        void onBlockBroken(ServerPlayer player, BlockPos pos, BlockState state);
+    }
+
+    public interface BlockPlacedHandler {
+        void onBlockPlaced(ServerPlayer player, BlockPos pos, BlockState state);
+    }
+
     public interface EntityKilledHandler {
         void onEntityKilled(ServerLevel level, Entity killer, LivingEntity victim, DamageSource damageSource);
+    }
+
+    public interface FishingCatchHandler {
+        void onFishingCatch(ServerPlayer player);
     }
 
     /**
@@ -103,6 +117,26 @@ public final class QuestsEvents {
         void onCommandRegister(CommandDispatcher<CommandSourceStack> dispatcher);
     }
 
+    public interface ItemCraftedHandler {
+        void onItemCrafted(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface ItemSmeltedHandler {
+        void onItemSmelted(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface ItemEnchantedHandler {
+        void onItemEnchanted(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface ItemBrewedHandler {
+        void onItemBrewed(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface ItemConsumedHandler {
+        void onItemConsumed(ServerPlayer player, ItemStack stack);
+    }
+
     // --- registries --------------------------------------------------------
 
     private static final List<ServerStartedHandler> SERVER_STARTED = new CopyOnWriteArrayList<>();
@@ -114,11 +148,19 @@ public final class QuestsEvents {
     private static final List<UseItemHandler> USE_ITEM = new CopyOnWriteArrayList<>();
     private static final List<UseBlockHandler> USE_BLOCK = new CopyOnWriteArrayList<>();
     private static final List<AttackBlockHandler> ATTACK_BLOCK = new CopyOnWriteArrayList<>();
+    private static final List<BlockBrokenHandler> BLOCK_BROKEN = new CopyOnWriteArrayList<>();
+    private static final List<BlockPlacedHandler> BLOCK_PLACED = new CopyOnWriteArrayList<>();
     private static final List<EntityKilledHandler> ENTITY_KILLED = new CopyOnWriteArrayList<>();
+    private static final List<FishingCatchHandler> FISHING_CATCH = new CopyOnWriteArrayList<>();
     private static final List<ChatAllowHandler> CHAT_ALLOW = new CopyOnWriteArrayList<>();
     private static final List<ChatMessageHandler> CHAT_MESSAGE = new CopyOnWriteArrayList<>();
     private static final List<CommandMessageHandler> COMMAND_MESSAGE = new CopyOnWriteArrayList<>();
     private static final List<CommandRegisterHandler> COMMAND_REGISTER = new CopyOnWriteArrayList<>();
+    private static final List<ItemCraftedHandler> ITEM_CRAFTED = new CopyOnWriteArrayList<>();
+    private static final List<ItemSmeltedHandler> ITEM_SMELTED = new CopyOnWriteArrayList<>();
+    private static final List<ItemEnchantedHandler> ITEM_ENCHANTED = new CopyOnWriteArrayList<>();
+    private static final List<ItemBrewedHandler> ITEM_BREWED = new CopyOnWriteArrayList<>();
+    private static final List<ItemConsumedHandler> ITEM_CONSUMED = new CopyOnWriteArrayList<>();
 
     // --- registration ------------------------------------------------------
 
@@ -158,8 +200,20 @@ public final class QuestsEvents {
         ATTACK_BLOCK.add(handler);
     }
 
+    public static void registerBlockBroken(final BlockBrokenHandler handler) {
+        BLOCK_BROKEN.add(handler);
+    }
+
+    public static void registerBlockPlaced(final BlockPlacedHandler handler) {
+        BLOCK_PLACED.add(handler);
+    }
+
     public static void registerEntityKilled(final EntityKilledHandler handler) {
         ENTITY_KILLED.add(handler);
+    }
+
+    public static void registerFishingCatch(final FishingCatchHandler handler) {
+        FISHING_CATCH.add(handler);
     }
 
     public static void registerChatAllow(final ChatAllowHandler handler) {
@@ -176,6 +230,26 @@ public final class QuestsEvents {
 
     public static void registerCommandRegister(final CommandRegisterHandler handler) {
         COMMAND_REGISTER.add(handler);
+    }
+
+    public static void registerItemCrafted(final ItemCraftedHandler handler) {
+        ITEM_CRAFTED.add(handler);
+    }
+
+    public static void registerItemSmelted(final ItemSmeltedHandler handler) {
+        ITEM_SMELTED.add(handler);
+    }
+
+    public static void registerItemEnchanted(final ItemEnchantedHandler handler) {
+        ITEM_ENCHANTED.add(handler);
+    }
+
+    public static void registerItemBrewed(final ItemBrewedHandler handler) {
+        ITEM_BREWED.add(handler);
+    }
+
+    public static void registerItemConsumed(final ItemConsumedHandler handler) {
+        ITEM_CONSUMED.add(handler);
     }
 
     // --- dispatch (mixin targets) -----------------------------------------
@@ -242,11 +316,32 @@ public final class QuestsEvents {
         }
     }
 
+    public static void invokeBlockBroken(final ServerPlayer player, final BlockPos pos, final BlockState state) {
+        if (player == null || pos == null || state == null) return;
+        for (final BlockBrokenHandler handler : BLOCK_BROKEN) {
+            handler.onBlockBroken(player, pos, state);
+        }
+    }
+
+    public static void invokeBlockPlaced(final ServerPlayer player, final BlockPos pos, final BlockState state) {
+        if (player == null || pos == null || state == null) return;
+        for (final BlockPlacedHandler handler : BLOCK_PLACED) {
+            handler.onBlockPlaced(player, pos, state);
+        }
+    }
+
     public static void invokeEntityKilled(final ServerLevel level, final Entity killer,
                                    final LivingEntity victim, final DamageSource damageSource) {
         if (level == null || killer == null || victim == null) return;
         for (final EntityKilledHandler handler : ENTITY_KILLED) {
             handler.onEntityKilled(level, killer, victim, damageSource);
+        }
+    }
+
+    public static void invokeFishingCatch(final ServerPlayer player) {
+        if (player == null) return;
+        for (final FishingCatchHandler handler : FISHING_CATCH) {
+            handler.onFishingCatch(player);
         }
     }
 
@@ -279,6 +374,41 @@ public final class QuestsEvents {
         if (dispatcher == null) return;
         for (final CommandRegisterHandler handler : COMMAND_REGISTER) {
             handler.onCommandRegister(dispatcher);
+        }
+    }
+
+    public static void invokeItemCrafted(final ServerPlayer player, final ItemStack stack) {
+        if (player == null || stack == null) return;
+        for (final ItemCraftedHandler handler : ITEM_CRAFTED) {
+            handler.onItemCrafted(player, stack);
+        }
+    }
+
+    public static void invokeItemSmelted(final ServerPlayer player, final ItemStack stack) {
+        if (player == null || stack == null) return;
+        for (final ItemSmeltedHandler handler : ITEM_SMELTED) {
+            handler.onItemSmelted(player, stack);
+        }
+    }
+
+    public static void invokeItemEnchanted(final ServerPlayer player, final ItemStack stack) {
+        if (player == null || stack == null) return;
+        for (final ItemEnchantedHandler handler : ITEM_ENCHANTED) {
+            handler.onItemEnchanted(player, stack);
+        }
+    }
+
+    public static void invokeItemBrewed(final ServerPlayer player, final ItemStack stack) {
+        if (player == null || stack == null) return;
+        for (final ItemBrewedHandler handler : ITEM_BREWED) {
+            handler.onItemBrewed(player, stack);
+        }
+    }
+
+    public static void invokeItemConsumed(final ServerPlayer player, final ItemStack stack) {
+        if (player == null || stack == null) return;
+        for (final ItemConsumedHandler handler : ITEM_CONSUMED) {
+            handler.onItemConsumed(player, stack);
         }
     }
 }

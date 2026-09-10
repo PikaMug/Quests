@@ -173,6 +173,28 @@ public class FabricQuest implements Quest {
             }
         }
 
+        // Check custom requirements (from module jars)
+        if (requirements.getCustomRequirements() != null && !requirements.getCustomRequirements().isEmpty()) {
+            final var customRequirements = FabricQuestsPlugin.getInstance().getCustomRequirements();
+            for (final var entry : requirements.getCustomRequirements().entrySet()) {
+                boolean found = false;
+                for (final var custom : customRequirements) {
+                    if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                        found = true;
+                        if (!custom.testRequirement(quester.getUUID(), entry.getValue())) {
+                            return false;
+                        }
+                        break;
+                    }
+                }
+                if (!found) {
+                    FabricQuestsPlugin.LOGGER.warn("Custom requirement module '{}' not loaded for quest '{}'",
+                            entry.getKey(), name);
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -192,18 +214,63 @@ public class FabricQuest implements Quest {
         // Grant rewards
         if (rewards != null) {
             quester.setQuestPoints(quester.getQuestPoints() + rewards.getQuestPoints());
-            if (rewards.getItems() != null && !rewards.getItems().isEmpty()) {
-                final var server = FabricQuestsPlugin.getInstance().getServer();
-                final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
-                if (player != null) {
-                    for (final Object itemObj : rewards.getItems()) {
-                        if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
-                            me.pikamug.quests.util.FabricInventoryUtil.addItem(player, item);
+            final var server = FabricQuestsPlugin.getInstance().getServer();
+            final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
+
+            if (rewards.getExp() > 0 && player != null) {
+                player.giveExperiencePoints(rewards.getExp());
+            }
+
+            if (rewards.getCommands() != null && !rewards.getCommands().isEmpty() && server != null) {
+                final String playerName = player != null ? player.getName().getString()
+                        : quester.getUUID().toString();
+                for (final String command : rewards.getCommands()) {
+                    server.getCommands().performPrefixedCommand(server.createCommandSourceStack(),
+                            command.replace("<player>", playerName));
+                }
+            }
+
+            if (rewards.getPermissions() != null && !rewards.getPermissions().isEmpty()) {
+                final var dependencies = FabricQuestsPlugin.getInstance().getDependencies();
+                for (final String permission : rewards.getPermissions()) {
+                    if (permission != null && !permission.isEmpty()) {
+                        dependencies.grantPermission(quester.getUUID(), permission);
+                    }
+                }
+            }
+
+            if (rewards.getItems() != null && !rewards.getItems().isEmpty() && player != null) {
+                for (final Object itemObj : rewards.getItems()) {
+                    if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
+                        me.pikamug.quests.util.FabricInventoryUtil.addItem(player, item);
+                    }
+                }
+            }
+
+            if (rewards.getCustomRewards() != null && !rewards.getCustomRewards().isEmpty()) {
+                final var customRewards = FabricQuestsPlugin.getInstance().getCustomRewards();
+                for (final var entry : rewards.getCustomRewards().entrySet()) {
+                    boolean found = false;
+                    for (final var custom : customRewards) {
+                        if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                            found = true;
+                            try {
+                                custom.giveReward(quester.getUUID(), entry.getValue());
+                            } catch (final Exception e) {
+                                FabricQuestsPlugin.LOGGER.warn("Custom reward '{}' failed for player {}",
+                                        entry.getKey(), quester.getUUID(), e);
+                            }
+                            break;
                         }
+                    }
+                    if (!found) {
+                        FabricQuestsPlugin.LOGGER.warn("Custom reward module '{}' not loaded for quest '{}'",
+                                entry.getKey(), name);
                     }
                 }
             }
         }
+        quester.stopStageTimer(this);
         quester.saveData();
         FabricQuestsPlugin.LOGGER.info("Quest '{}' completed by {}", name, quester.getUUID());
     }
@@ -216,6 +283,14 @@ public class FabricQuest implements Quest {
     @Override
     public void failQuest(Quester quester, boolean ignoreFailAction) {
         if (quester == null) return;
+        if (!ignoreFailAction) {
+            final int stageNum = quester.getCurrentQuests().getOrDefault(this, 0);
+            final Stage stage = stages.isEmpty() ? null : stages.get(Math.min(stageNum, stages.size() - 1));
+            if (stage != null && stage.getFailAction() != null) {
+                stage.getFailAction().fire(quester, this);
+            }
+        }
+        quester.stopStageTimer(this);
         quester.getCurrentQuests().remove(this);
         quester.saveData();
         FabricQuestsPlugin.LOGGER.info("Quest '{}' failed by {}", name, quester.getUUID());

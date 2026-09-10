@@ -17,7 +17,6 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricItemListener {
@@ -30,30 +29,95 @@ public class FabricItemListener {
     }
 
     private void register() {
-        // Consume item (right-click food)
-        QuestsEvents.registerUseItem((serverPlayer, hand) -> {
-            if (hand == InteractionHand.MAIN_HAND) {
-                final ItemStack item = serverPlayer.getItemInHand(hand);
-                if (item.has(net.minecraft.core.component.DataComponents.FOOD)) {
-                    onConsumeItem(serverPlayer, item);
-                }
-            }
-        });
-
-        // TODO: Register crafting, smelting, enchanting events via mixin hooks
-        // Cross-version inventory-activity detection is handled in FabricCraftingListener
+        QuestsEvents.registerItemCrafted(this::onCraftItem);
+        QuestsEvents.registerItemSmelted(this::onSmeltItem);
+        QuestsEvents.registerItemEnchanted(this::onEnchantItem);
+        QuestsEvents.registerItemBrewed(this::onBrewItem);
+        QuestsEvents.registerItemConsumed(this::onConsumeItem);
     }
 
-    private void onConsumeItem(ServerPlayer player, ItemStack consumed) {
-        if (plugin.isLoading()) return;
+    private void onCraftItem(ServerPlayer player, ItemStack crafted) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
-
         for (final Quest quest : plugin.getLoadedQuests()) {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
+            if (!stage.getItemsToCraft().isEmpty()) {
+                for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
+                    final Object goal = stage.getItemsToCraft().get(i);
+                    if (goal != null && FabricItemUtil.matches(crafted, (ItemStack) goal)) {
+                        quester.getQuestProgressOrDefault(quest).getItemsCrafted().set(i,
+                                quester.getQuestProgressOrDefault(quest).getItemsCrafted().get(i) + 1);
+                        quester.checkQuest(quest);
+                    }
+                }
+            }
+        }
+    }
 
-            // CONSUME_ITEM
+    private void onSmeltItem(ServerPlayer player, ItemStack smelted) {
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
+            if (!stage.getItemsToSmelt().isEmpty()) {
+                for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
+                    final Object goal = stage.getItemsToSmelt().get(i);
+                    if (goal != null && FabricItemUtil.matches(smelted, (ItemStack) goal)) {
+                        quester.getQuestProgressOrDefault(quest).getItemsSmelted().set(i,
+                                quester.getQuestProgressOrDefault(quest).getItemsSmelted().get(i) + 1);
+                        quester.checkQuest(quest);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onEnchantItem(ServerPlayer player, ItemStack enchanted) {
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
+            if (!stage.getItemsToEnchant().isEmpty()) {
+                for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
+                    final Object goal = stage.getItemsToEnchant().get(i);
+                    if (goal != null && FabricItemUtil.matches(enchanted, (ItemStack) goal)) {
+                        quester.getQuestProgressOrDefault(quest).getItemsEnchanted().set(i,
+                                quester.getQuestProgressOrDefault(quest).getItemsEnchanted().get(i) + 1);
+                        quester.checkQuest(quest);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onBrewItem(ServerPlayer player, ItemStack brewed) {
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
+            if (!stage.getItemsToBrew().isEmpty()) {
+                for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
+                    final Object goal = stage.getItemsToBrew().get(i);
+                    if (goal != null && FabricItemUtil.matches(brewed, (ItemStack) goal)) {
+                        quester.getQuestProgressOrDefault(quest).getItemsBrewed().set(i,
+                                quester.getQuestProgressOrDefault(quest).getItemsBrewed().get(i) + 1);
+                        quester.checkQuest(quest);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onConsumeItem(ServerPlayer player, ItemStack consumed) {
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
             if (!stage.getItemsToConsume().isEmpty()) {
                 for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
                     final Object goal = stage.getItemsToConsume().get(i);

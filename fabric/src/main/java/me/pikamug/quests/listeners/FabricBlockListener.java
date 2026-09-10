@@ -16,11 +16,17 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricLang;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public class FabricBlockListener {
 
@@ -32,21 +38,20 @@ public class FabricBlockListener {
     }
 
     private void register() {
-        // Block break (START_DESTROY_BLOCK). The mixin only fires for ServerPlayer.
-        QuestsEvents.registerAttackBlock((serverPlayer, pos) -> {
-            onBlockBreak(serverPlayer, pos);
-        });
+        // Block damaged (START_DESTROY_BLOCK). The mixin only fires for ServerPlayer.
+        QuestsEvents.registerAttackBlock(this::onBlockDamage);
 
-        // Block use (right-click). The mixin only fires for ServerPlayer.
-        QuestsEvents.registerUseBlock((serverPlayer, pos, hand) -> {
-            onBlockUse(serverPlayer, pos, hand);
-        });
+        // Block used (right-click). The mixin only fires for ServerPlayer.
+        QuestsEvents.registerUseBlock(this::onBlockUse);
+
+        // Blocks actually broken / placed. Both mixins only fire for ServerPlayer.
+        QuestsEvents.registerBlockBroken(this::onBlockBroken);
+        QuestsEvents.registerBlockPlaced(this::onBlockPlaced);
     }
 
-    private void onBlockBreak(ServerPlayer player, BlockPos pos) {
+    private void onBlockDamage(ServerPlayer player, BlockPos pos) {
         if (plugin.isLoading()) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
-        final ItemStack tool = player.getMainHandItem();
         final BlockState state = player.level().getBlockState(pos);
 
         for (final Quest quest : plugin.getLoadedQuests()) {
@@ -57,38 +62,80 @@ public class FabricBlockListener {
             // DAMAGE_BLOCK
             if (!stage.getBlocksToDamage().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
-                    final Object goal = stage.getBlocksToDamage().get(i);
-                    if (goal != null && FabricItemUtil.isSimilar(state.getBlock().asItem().getDefaultInstance(),
-                            FabricItemUtil.deserialize(goal.toString()))) {
+                    if (matchesBlock(state, stage.getBlocksToDamage().get(i))) {
                         quester.getQuestProgressOrDefault(quest).getBlocksDamaged().set(i,
                                 quester.getQuestProgressOrDefault(quest).getBlocksDamaged().get(i) + 1);
                         quester.checkQuest(quest);
                     }
                 }
             }
+        }
+    }
+
+    private void onBlockBroken(ServerPlayer player, BlockPos pos, BlockState state) {
+        if (plugin.isLoading()) return;
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ItemStack tool = player.getMainHandItem();
+
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
+            final var progress = quester.getQuestProgressOrDefault(quest);
 
             // BREAK_BLOCK
             if (!stage.getBlocksToBreak().isEmpty()) {
-                for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
-                    final Object goal = stage.getBlocksToBreak().get(i);
-                    if (goal != null && FabricItemUtil.isSimilar(state.getBlock().asItem().getDefaultInstance(),
-                            FabricItemUtil.deserialize(goal.toString()))) {
-                        quester.getQuestProgressOrDefault(quest).getBlocksBroken().set(i,
-                                quester.getQuestProgressOrDefault(quest).getBlocksBroken().get(i) + 1);
+                if (quest.getOptions().canIgnoreSilkTouch() && hasSilkTouch(tool)) {
+                    quester.sendMessage(FabricLang.get("optionSilkTouchFail")
+                            .replace("<quest>", quest.getName()));
+                } else {
+                    for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
+                        if (matchesBlock(state, stage.getBlocksToBreak().get(i))) {
+                            progress.getBlocksBroken().set(i, progress.getBlocksBroken().get(i) + 1);
+                            quester.checkQuest(quest);
+                        }
+                    }
+                }
+            }
+
+            // Replacing a block that was a placement goal counts against it
+            if (quest.getOptions().canIgnoreBlockReplace() && !stage.getBlocksToPlace().isEmpty()) {
+                for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
+                    final int placed = progress.getBlocksPlaced().get(i);
+                    if (matchesBlock(state, stage.getBlocksToPlace().get(i)) && placed > 0) {
+                        progress.getBlocksPlaced().set(i, placed - 1);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onBlockPlaced(ServerPlayer player, BlockPos pos, BlockState state) {
+        if (plugin.isLoading()) return;
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.getCurrentQuests().containsKey(quest)) continue;
+            final Stage stage = quester.getCurrentStage(quest);
+            if (stage == null) continue;
+            final var progress = quester.getQuestProgressOrDefault(quest);
+
+            // PLACE_BLOCK
+            if (!stage.getBlocksToPlace().isEmpty()) {
+                for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
+                    if (matchesBlock(state, stage.getBlocksToPlace().get(i))) {
+                        progress.getBlocksPlaced().set(i, progress.getBlocksPlaced().get(i) + 1);
                         quester.checkQuest(quest);
                     }
                 }
             }
 
-            // CUT_BLOCK
-            if (!stage.getBlocksToCut().isEmpty()) {
-                for (int i = 0; i < stage.getBlocksToCut().size(); i++) {
-                    final Object goal = stage.getBlocksToCut().get(i);
-                    if (goal != null && FabricItemUtil.isSimilar(state.getBlock().asItem().getDefaultInstance(),
-                            FabricItemUtil.deserialize(goal.toString()))) {
-                        quester.getQuestProgressOrDefault(quest).getBlocksCut().set(i,
-                                quester.getQuestProgressOrDefault(quest).getBlocksCut().get(i) + 1);
-                        quester.checkQuest(quest);
+            // Replacing a block that counted toward a break goal rolls it back
+            if (quest.getOptions().canIgnoreBlockReplace() && !stage.getBlocksToBreak().isEmpty()) {
+                for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
+                    final int broken = progress.getBlocksBroken().get(i);
+                    if (matchesBlock(state, stage.getBlocksToBreak().get(i)) && broken > 0) {
+                        progress.getBlocksBroken().set(i, broken - 1);
                     }
                 }
             }
@@ -98,7 +145,6 @@ public class FabricBlockListener {
     private void onBlockUse(ServerPlayer player, BlockPos pos, InteractionHand hand) {
         if (plugin.isLoading() || hand != InteractionHand.MAIN_HAND) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
-        final ItemStack tool = player.getMainHandItem();
         final BlockState state = player.level().getBlockState(pos);
 
         for (final Quest quest : plugin.getLoadedQuests()) {
@@ -109,9 +155,7 @@ public class FabricBlockListener {
             // USE_BLOCK
             if (!stage.getBlocksToUse().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
-                    final Object goal = stage.getBlocksToUse().get(i);
-                    if (goal != null && FabricItemUtil.isSimilar(state.getBlock().asItem().getDefaultInstance(),
-                            FabricItemUtil.deserialize(goal.toString()))) {
+                    if (matchesBlock(state, stage.getBlocksToUse().get(i))) {
                         quester.getQuestProgressOrDefault(quest).getBlocksUsed().set(i,
                                 quester.getQuestProgressOrDefault(quest).getBlocksUsed().get(i) + 1);
                         quester.checkQuest(quest);
@@ -119,5 +163,19 @@ public class FabricBlockListener {
                 }
             }
         }
+    }
+
+    private boolean matchesBlock(BlockState state, Object goal) {
+        if (state == null || goal == null) return false;
+        final ItemStack goalStack = FabricItemUtil.deserialize(goal.toString());
+        return !goalStack.isEmpty() && state.getBlock().asItem() == goalStack.getItem();
+    }
+
+    private boolean hasSilkTouch(ItemStack tool) {
+        if (tool == null || tool.isEmpty()) return false;
+        for (final Object2IntMap.Entry<Holder<Enchantment>> entry : tool.getEnchantments().entrySet()) {
+            if (entry.getKey().is(Enchantments.SILK_TOUCH)) return true;
+        }
+        return false;
     }
 }
