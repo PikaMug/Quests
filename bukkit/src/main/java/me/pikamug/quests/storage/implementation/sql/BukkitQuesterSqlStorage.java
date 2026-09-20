@@ -324,12 +324,8 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         throw new SQLException("Quest was null for completed times of quester "
                                 + bukkitQuester.getUUID());
                     }
-                    if (!bukkitQuester.getAmountsCompleted().containsKey(entry.getKey())
-                            || bukkitQuester.getAmountsCompleted().get(entry.getKey()) == null) {
-                        throw new SQLException("Completion amount was null for quest " + entry.getKey().getId()
-                                + " of quester " + bukkitQuester.getUUID());
-                    }
-                    final int amount = bukkitQuester.getAmountsCompleted().get(entry.getKey());
+                    final int amount = Math.max(1, bukkitQuester.getAmountsCompleted()
+                            .getOrDefault(entry.getKey(), 1));
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
                         ps.setString(2, entry.getKey().getId());

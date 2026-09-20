@@ -890,8 +890,9 @@ public class BukkitPlayerListener implements Listener {
                     }
                     for (final Quest q : quester.getCompletedQuests()) {
                         if (q != null) {
-                            if (!quester.getCompletedTimes().containsKey(q) && q.getPlanner().getCooldown() > -1) {
-                                quester.getCompletedTimes().put(q, System.currentTimeMillis());
+                            if (q.getPlanner().getCooldown() > -1) {
+                                quester.getCompletedTimes().putIfAbsent(q, System.currentTimeMillis());
+                                quester.getAmountsCompleted().putIfAbsent(q, 1);
                             }
                         }
                     }

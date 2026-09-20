@@ -104,10 +104,13 @@ public class BukkitQuesterSqlStorageTest {
     @Test
     public void rollsBackAllChangesWhenSaveFails() throws Exception {
         setCurrentState(1, 5);
+        final Quest invalidQuest = quest(String.join("", Collections.nCopies(101, "q")));
         final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
-        completedTimes.put(activeQuest, 100L);
+        completedTimes.put(invalidQuest, 100L);
+        final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
+        amountsCompleted.put(invalidQuest, 1);
         when(quester.getCompletedTimes()).thenReturn(completedTimes);
-        when(quester.getAmountsCompleted()).thenReturn(new ConcurrentHashMap<>());
+        when(quester.getAmountsCompleted()).thenReturn(amountsCompleted);
 
         try {
             storage.saveQuester(quester);
@@ -120,6 +123,20 @@ public class BukkitQuesterSqlStorageTest {
                 + "WHERE uuid=? AND questid='active'"));
         assertEquals("1", queryString("SELECT mobs_killed FROM quests_player_questdata "
                 + "WHERE uuid=? AND quest_id='active'"));
+    }
+
+    @Test
+    public void repairsMissingCompletionAmount() throws Exception {
+        setCurrentState(1, 5);
+        final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
+        completedTimes.put(activeQuest, 100L);
+        when(quester.getCompletedTimes()).thenReturn(completedTimes);
+        when(quester.getAmountsCompleted()).thenReturn(new ConcurrentHashMap<>());
+
+        storage.saveQuester(quester);
+
+        assertEquals(1, queryInt("SELECT amount FROM quests_player_redoablequests "
+                + "WHERE uuid=? AND questid='active'"));
     }
 
     private void setCurrentState(final int stage, final int mobsKilled) {
