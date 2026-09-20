@@ -264,22 +264,23 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
         oldQuestData.removeAll(questProgress);
         
         try (final Connection c = connectionFactory.getConnection()) {
-            if (oldLastKnownName != null && lastKnownName != null && !lastKnownName.equals(oldLastKnownName)) {
-                try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_UPDATE_USERNAME))) {
-                    ps.setString(1, lastKnownName);
-                    ps.setString(2, uniqueId.toString());
-                    ps.execute();
+            c.setAutoCommit(false);
+            try {
+                if (oldLastKnownName != null && lastKnownName != null && !lastKnownName.equals(oldLastKnownName)) {
+                    try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_UPDATE_USERNAME))) {
+                        ps.setString(1, lastKnownName);
+                        ps.setString(2, uniqueId.toString());
+                        ps.execute();
+                    }
+                } else {
+                    try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
+                        ps.setString(1, uniqueId.toString());
+                        ps.setString(2, lastKnownName != null ? lastKnownName : "unspecified");
+                        ps.setInt(3, bukkitQuester.getQuestPoints());
+                        ps.execute();
+                    }
                 }
-            } else {
-                try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_INSERT))) {
-                    ps.setString(1, uniqueId.toString());
-                    ps.setString(2, lastKnownName != null ? lastKnownName : "unspecified");
-                    ps.setInt(3, bukkitQuester.getQuestPoints());
-                    ps.execute();
-                }
-            }
-            
-            if (!oldCurrentQuests.isEmpty()) {
+
                 for (final String questId : oldCurrentQuests) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
                         ps.setString(1, uniqueId.toString());
@@ -287,7 +288,6 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            } else {
                 for (final Entry<Quest, Integer> entry : bukkitQuester.getCurrentQuests().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_CURRENT_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
@@ -296,9 +296,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            }
-            
-            if (!oldCompletedQuests.isEmpty()) {
+
                 for (final String questId : oldCompletedQuests) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
                         ps.setString(1, uniqueId.toString());
@@ -306,7 +304,6 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            } else {
                 for (final Quest quest : bukkitQuester.getCompletedQuests()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_COMPLETED_QUESTS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
@@ -314,9 +311,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            }
-            
-            if (!oldRedoableQuests.isEmpty()) {
+
                 for (final String questId : oldRedoableQuests) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_DELETE_FOR_UUID_AND_QUEST))) {
                         ps.setString(1, uniqueId.toString());
@@ -324,14 +319,15 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            } else {
                 for (final Entry<Quest, Long> entry : bukkitQuester.getCompletedTimes().entrySet()) {
                     if (entry.getKey() == null) {
-                        plugin.getLogger().severe("Quest was null for completed times of quester " + bukkitQuester.getUUID());
-                        return;
+                        throw new SQLException("Quest was null for completed times of quester "
+                                + bukkitQuester.getUUID());
                     }
-                    if (!bukkitQuester.getAmountsCompleted().containsKey(entry.getKey()) || bukkitQuester.getAmountsCompleted().get(entry.getKey()) == null) {
-                        return;
+                    if (!bukkitQuester.getAmountsCompleted().containsKey(entry.getKey())
+                            || bukkitQuester.getAmountsCompleted().get(entry.getKey()) == null) {
+                        throw new SQLException("Completion amount was null for quest " + entry.getKey().getId()
+                                + " of quester " + bukkitQuester.getUUID());
                     }
                     final int amount = bukkitQuester.getAmountsCompleted().get(entry.getKey());
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_REDOABLE_QUESTS_INSERT))) {
@@ -342,9 +338,7 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            }
 
-            if (!oldQuestData.isEmpty()) {
                 for (final String questId : oldQuestData) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_PROGRESS_DELETE_FOR_UUID_AND_QUEST))) {
                         ps.setString(1, uniqueId.toString());
@@ -352,7 +346,6 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
-            } else {
                 for (final Entry<Quest, BukkitQuestProgress> entry : bukkitQuester.getQuestProgress().entrySet()) {
                     try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_PROGRESS_INSERT))) {
                         ps.setString(1, uniqueId.toString());
@@ -384,6 +377,14 @@ public class BukkitQuesterSqlStorage implements QuesterStorageImpl {
                         ps.execute();
                     }
                 }
+                c.commit();
+            } catch (final SQLException | RuntimeException e) {
+                try {
+                    c.rollback();
+                } catch (final SQLException rollbackException) {
+                    e.addSuppressed(rollbackException);
+                }
+                throw e;
             }
         }
     }

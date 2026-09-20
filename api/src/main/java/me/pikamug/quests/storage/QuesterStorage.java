@@ -51,16 +51,6 @@ public class QuesterStorage {
         });
     }
 
-    private CompletableFuture<Void> makeFuture(final Runnable runnable) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                runnable.run();
-            } catch (final Exception e) {
-                throw (RuntimeException) e;
-            }
-        });
-    }
-
     public String getName() {
         return implementation.getImplementationName();
     }
@@ -89,11 +79,8 @@ public class QuesterStorage {
 
     public CompletableFuture<Void> saveQuester(final Quester quester) {
         return makeFuture(() -> {
-            try {
-                implementation.saveQuester(quester);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            implementation.saveQuester(quester);
+            return null;
         });
     }
 
@@ -111,23 +98,17 @@ public class QuesterStorage {
 
     public CompletableFuture<Void> saveOfflineQuesters() {
         return makeFuture(() -> {
-            try {
-                for (final Quester quester : plugin.getOfflineQuesters()) {
-                    implementation.saveQuester(quester);
-                }
-            } catch (final Exception e) {
-                e.printStackTrace();
+            for (final Quester quester : plugin.getOfflineQuesters()) {
+                implementation.saveQuester(quester);
             }
+            return null;
         });
     }
 
     public CompletableFuture<Void> deleteQuester(final UUID uniqueId) {
         return makeFuture(() -> {
-            try {
-                implementation.deleteQuester(uniqueId);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            implementation.deleteQuester(uniqueId);
+            return null;
         });
     }
 
